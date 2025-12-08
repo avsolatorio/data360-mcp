@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "data360-mcp"
+version = "0.1.0"
+description = "Data360 MCP library"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=2.12.4",
+    "mcp>=1.18.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

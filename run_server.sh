@@ -1,0 +1,1 @@
+uv run fastmcp run data360-mcp-server/src/data360_mcp_server/main.py:mcp --transport http --port 8021

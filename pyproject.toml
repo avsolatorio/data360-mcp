@@ -1,13 +1,15 @@
-[project]
-name = "data360-mcp"
-version = "0.1.0"
-description = "Data360 MCP Server"
-readme = "README.md"
-requires-python = ">=3.10"
-dependencies = [
-    "mcp>=1.18.0",
+[tool.uv.workspace]
+members = [
+  "data360-mcp",
+  "data360-mcp-server",
 ]
 
+[tool.uv.sources]
+data360-mcp = { workspace = true }
+data360-mcp-server = { workspace = true }
 
-[tool.setuptools.packages.find]
-where = ["data360_mcp"]
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.0",
+    "ruff>=0.14.8",
+]
