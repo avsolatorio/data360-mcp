@@ -1,4 +1,4 @@
-# Data360 MCP Server
+# Data360 MCP Project
 
 A Model Context Protocol (MCP) library and server for accessing and searching the World Bank Data360 Platform. This project provides both a reusable library and a ready-to-use MCP server implementation for integrating Data360 data into AI applications.
 
