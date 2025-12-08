@@ -11,6 +11,14 @@ class Data360Settings(BaseSettings):
         ...,
         description="Base URL for the Data360 API",
     )
+    codelist_api_base_url: str | None = Field(
+        ...,
+        description="Base URL for the Data360 codelist API",
+    )
+    search_url: str | None = Field(
+        default=None,
+        description="URL for search endpoint (defaults to {api_base_url}/data360/searchv2)",
+    )
     metadata_url: str | None = Field(
         default=None,
         description="URL for metadata endpoint (defaults to {api_base_url}/data360/metadata)",
@@ -18,6 +26,10 @@ class Data360Settings(BaseSettings):
     disaggregation_url: str | None = Field(
         default=None,
         description="URL for disaggregation endpoint (defaults to {api_base_url}/data360/disaggregation)",
+    )
+    data_url: str | None = Field(
+        default=None,
+        description="URL for data endpoint (defaults to {api_base_url}/data)",
     )
     metadata_search_fields: list[str] = Field(
         default=[

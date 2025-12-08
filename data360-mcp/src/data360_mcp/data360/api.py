@@ -4,7 +4,7 @@ from typing import Any
 import httpx
 
 from .config import get_data360_settings
-from .models import MetadataResponse, SearchResponse
+from .models import IndicatorDataResponse, MetadataResponse, SearchResponse
 
 _logger = logging.getLogger(__name__)
 
@@ -210,3 +210,209 @@ async def get_metadata(
         disaggregation_options=disaggregations,
         error=error_message,
     )
+
+
+class CodelistManager:
+    """Manager for fetching and querying Data360 codelist data."""
+
+    def __init__(self, codelist_url: str | None = None):
+        """Initialize the CodelistManager."""
+        self.codelist_url = (
+            codelist_url
+            or data360_config.codelist_url
+            or f"{BASE_URL}/metadata/codelist"
+        )
+        self.codelist: dict[str, Any] | None = None
+
+    async def set_codelist(self) -> None:
+        """Fetch and cache the codelist from the API."""
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(self.codelist_url)
+                response.raise_for_status()
+                self.codelist = response.json()
+        except httpx.HTTPStatusError as e:
+            error_msg = f"HTTP error fetching codelist: {e.response.status_code} - {e.response.text}"
+            _logger.error(error_msg)
+            raise
+        except httpx.TimeoutException as e:
+            error_msg = f"Timeout fetching codelist: {str(e)}"
+            _logger.error(error_msg)
+            raise
+        except httpx.RequestError as e:
+            error_msg = f"Request error fetching codelist: {str(e)}"
+            _logger.error(error_msg)
+            raise
+        except Exception as e:
+            error_msg = f"Unexpected error fetching codelist: {str(e)}"
+            _logger.exception("Unexpected error in codelist fetch")
+            raise
+
+    async def get_name(self, field_name: str, field_value_id: str) -> str | None:
+        """
+        Get the name for a given field_name and field_value_id from the codelist.
+
+        Args:
+            field_name: The name of the field (e.g., "UNIT_MEASURE", "FREQ")
+            field_value_id: The ID value to look up (e.g., "PS", "M")
+
+        Returns:
+            The name associated with the field_value_id, or None if not found
+        """
+        if self.codelist is None:
+            await self.set_codelist()
+
+        if field_name not in self.codelist:
+            _logger.warning(f"field_name '{field_name}' not found in codelist.")
+            return None
+
+        # Filter for the code with the matching ID
+        found_codes = list(
+            filter(lambda x: x["id"] == field_value_id, self.codelist[field_name])
+        )
+
+        if not found_codes:
+            _logger.warning(
+                f"field_value_id '{field_value_id}' not found for field_name '{field_name}'."
+            )
+            return None
+
+        # Assuming unique IDs within each field_name, return the name of the first match
+        return found_codes[0]["name"]
+
+    def get_code(self, field_name: str, field_value_id: str) -> dict[str, Any] | None:
+        """
+        Get the full code object for a given field_name and field_value_id.
+
+        Args:
+            field_name: The name of the field (e.g., "UNIT_MEASURE", "FREQ")
+            field_value_id: The ID value to look up (e.g., "PS", "M")
+
+        Returns:
+            The code dictionary, or None if not found
+        """
+        if self.codelist is None:
+            raise ValueError("Codelist not loaded. Call set_codelist() first.")
+
+        if field_name not in self.codelist:
+            _logger.warning(f"field_name '{field_name}' not found in codelist.")
+            return None
+
+        found_codes = list(
+            filter(lambda x: x["id"] == field_value_id, self.codelist[field_name])
+        )
+
+        if not found_codes:
+            _logger.warning(
+                f"field_value_id '{field_value_id}' not found for field_name '{field_name}'."
+            )
+            return None
+
+        if len(found_codes) != 1:
+            _logger.warning(
+                f"Multiple codes found for field_name '{field_name}' and field_value_id '{field_value_id}'."
+            )
+
+        return found_codes[0]
+
+
+# Global codelist manager instance
+_codelist_manager: CodelistManager | None = None
+
+
+async def get_code_name(field_name: str, field_value_id: str) -> str | None:
+    """
+    Convenience function to get code name from the global codelist manager.
+
+    Args:
+        field_name: The name of the field (e.g., "UNIT_MEASURE", "FREQ")
+        field_value_id: The ID value to look up (e.g., "PS", "M")
+
+    Returns:
+        The name associated with the field_value_id, or None if not found
+    """
+    global _codelist_manager
+    if _codelist_manager is None:
+        _codelist_manager = CodelistManager()
+    return await _codelist_manager.get_name(field_name, field_value_id)
+
+
+async def get_data(
+    database_id: str,
+    indicator_id: str,
+    disaggregation_filters: dict[str, str] | None = None,
+) -> IndicatorDataResponse:
+    """
+    Fetch indicator data from Data360 API with pagination support.
+
+    Args:
+        database_id: Database identifier (e.g., "IPC_IPC", "WB_WDI")
+        indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_WDI_SP_POP_TOTL")
+        disaggregation_filters: Optional dictionary of disaggregation filters
+            (e.g., {"REF_AREA": "UGA", "UNIT_MEASURE": "PT"})
+
+    Returns:
+        IndicatorDataResponse with data and count
+    """
+    data_url = data360_config.data_url or f"{BASE_URL}/data"
+    all_data: list[dict[str, Any]] = []
+    skip = 0
+
+    # Prepare base parameters for the API call
+    params: dict[str, Any] = {
+        "DATABASE_ID": database_id,
+        "INDICATOR": indicator_id,
+    }
+
+    # Add disaggregation filters to parameters if provided
+    if disaggregation_filters:
+        params.update(disaggregation_filters)
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            while True:
+                current_params = params.copy()
+                current_params["skip"] = skip
+
+                try:
+                    data_res = await client.get(data_url, params=current_params)
+                    data_res.raise_for_status()
+
+                    try:
+                        data_json = data_res.json()
+                    except ValueError as e:
+                        error_msg = f"Failed to parse data JSON response: {str(e)}"
+                        _logger.error(error_msg)
+                        return IndicatorDataResponse(data=None, error=error_msg)
+
+                    if not data_json.get("value"):
+                        break  # No more data
+
+                    all_data.extend(data_json["value"])
+
+                    # Continue fetching if there's more data than currently retrieved
+                    if data_json.get("count", 0) <= len(all_data):
+                        break
+                    skip = len(all_data)
+
+                except httpx.HTTPStatusError as e:
+                    error_msg = f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
+                    _logger.error(error_msg)
+                    return IndicatorDataResponse(data=None, error=error_msg)
+                except httpx.TimeoutException as e:
+                    error_msg = f"Timeout fetching data: {str(e)}"
+                    _logger.error(error_msg)
+                    return IndicatorDataResponse(data=None, error=error_msg)
+                except httpx.RequestError as e:
+                    error_msg = (
+                        f"Request error fetching data for {indicator_id!r}: {str(e)}"
+                    )
+                    _logger.error(error_msg)
+                    return IndicatorDataResponse(data=None, error=error_msg)
+
+        return IndicatorDataResponse(data=all_data, count=len(all_data), error=None)
+
+    except Exception as e:
+        error_msg = f"Unexpected error fetching data: {str(e)}"
+        _logger.exception("Unexpected error in data fetch")
+        return IndicatorDataResponse(data=None, error=error_msg)

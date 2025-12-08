@@ -106,16 +106,9 @@ class IndicatorDataRequest(BaseModel):
         ..., description="Unique identifier for the database (e.g., WB_WDI)"
     )
     indicator: str = Field(..., description="Indicator ID (e.g., WB_WDI_SP_POP_TOTL)")
-    iso_3_country_code: str | None = Field(
-        default=None, description="3 character country code"
-    )
-    sex: str | None = Field(
-        default=None, description="Sex of the subjects, if applicable"
-    )
-    age: str | None = Field(default=None, description="Age group filter")
-    urbanisation: str | None = Field(default=None, description="Urbanisation filter")
-    comp_breakdown_1: str | None = Field(
-        default=None, description="Indicator specific dimension"
+    disaggregation_filters: dict[str, str] | None = Field(
+        default=None,
+        description="Dictionary of disaggregation filters (e.g., {'REF_AREA': 'UGA', 'UNIT_MEASURE': 'PT'})",
     )
 
 
