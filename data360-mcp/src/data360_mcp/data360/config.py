@@ -11,6 +11,14 @@ class Data360Settings(BaseSettings):
         ...,
         description="Base URL for the Data360 API",
     )
+    metadata_url: str | None = Field(
+        default=None,
+        description="URL for metadata endpoint (defaults to {api_base_url}/data360/metadata)",
+    )
+    disaggregation_url: str | None = Field(
+        default=None,
+        description="URL for disaggregation endpoint (defaults to {api_base_url}/data360/disaggregation)",
+    )
     metadata_search_fields: list[str] = Field(
         default=[
             "series_description/idno",

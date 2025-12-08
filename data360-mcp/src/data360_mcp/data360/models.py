@@ -79,13 +79,20 @@ class MetadataRequest(BaseModel):
     """Request model for data 360 metadata retrieval."""
 
     idno: str = Field(..., description="Series ID (idno) to retrieve metadata for")
+    database_id: str = Field(
+        ..., description="Database identifier (e.g., IPC_IPC, WB_WDI)"
+    )
 
 
 class MetadataResponse(BaseModel):
     """Response model for metadata retrieval."""
 
-    metadata: dict[str, Any] | None = Field(
+    indicator_metadata: dict[str, Any] | None = Field(
         default=None, description="Metadata information for the requested series"
+    )
+    disaggregation_options: list[dict[str, Any]] = Field(
+        default_factory=list,
+        description="Available disaggregation options for the indicator",
     )
     error: str | None = Field(
         default=None, description="Error message if metadata retrieval failed"
