@@ -3,16 +3,10 @@ from typing import Any
 
 import httpx
 
-from .config import get_data360_settings
+from .config import settings
 from .models import IndicatorDataResponse, MetadataResponse, SearchResponse
 
 _logger = logging.getLogger(__name__)
-
-data360_config = get_data360_settings()
-
-
-BASE_URL = data360_config.api_base_url
-BASE_URL = f"{BASE_URL}/data360"
 
 
 def _get_valid_disaggregations(
@@ -39,7 +33,7 @@ async def search(
     count: bool = False,
 ) -> SearchResponse:
     """Search for indicators in Data360."""
-    url = data360_config.search_url or f"{BASE_URL}/searchv2"
+    url = settings.search_url or f"{settings.api_base_url}/searchv2"
 
     # Build the payload according to the API specification
     payload = {
@@ -114,9 +108,9 @@ async def get_metadata(
         get_valid_disaggregations_func = _get_valid_disaggregations
 
     # Determine URLs
-    metadata_url = data360_config.metadata_url or f"{BASE_URL}/metadata"
+    metadata_url = settings.metadata_url or f"{settings.api_base_url}/metadata"
     disaggregation_url = (
-        data360_config.disaggregation_url or f"{BASE_URL}/disaggregation"
+        settings.disaggregation_url or f"{settings.api_base_url}/disaggregation"
     )
 
     indicator_metadata: dict[str, Any] | None = None
@@ -215,13 +209,11 @@ async def get_metadata(
 class CodelistManager:
     """Manager for fetching and querying Data360 codelist data."""
 
-    def __init__(self, codelist_url: str | None = None):
+    def __init__(self, codelist_api_base_url: str | None = None):
         """Initialize the CodelistManager."""
-        self.codelist_url = (
-            codelist_url
-            or data360_config.codelist_url
-            or f"{BASE_URL}/metadata/codelist"
-        )
+        self.codelist_url = codelist_api_base_url or settings.codelist_api_base_url
+        if self.codelist_url is None:
+            raise ValueError("codelist_api_base_url is not set")
         self.codelist: dict[str, Any] | None = None
 
     async def set_codelist(self) -> None:
@@ -354,7 +346,7 @@ async def get_data(
     Returns:
         IndicatorDataResponse with data and count
     """
-    data_url = data360_config.data_url or f"{BASE_URL}/data"
+    data_url = settings.data_url or f"{settings.api_base_url}/data"
     all_data: list[dict[str, Any]] = []
     skip = 0
 

@@ -51,3 +51,6 @@ class Data360Settings(BaseSettings):
 def get_data360_settings() -> Data360Settings:
     """Get cached Data360 settings instance."""
     return Data360Settings()  # pyright: ignore[reportCallIssue]
+
+
+settings = get_data360_settings()
