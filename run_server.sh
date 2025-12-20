@@ -1,1 +1,2 @@
-uv run fastmcp run data360-mcp-server/src/data360_mcp_server/main.py:mcp --transport http --port 8021
+#!/usr/bin/env bash
+uv run fastmcp run src/data360/server.py --transport streamable-http --port 8021

@@ -1,0 +1,9 @@
+{
+    "servers": {
+        "data360-mcp": {
+            "url": "http://localhost:8021/mcp",
+            "type": "sse"
+        }
+    },
+    "inputs": []
+}

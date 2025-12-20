@@ -1,10 +1,13 @@
-# Data360 MCP Project
+# Data360 MCP
 
-A Model Context Protocol (MCP) library and server for accessing and searching the World Bank Data360 Platform. This project provides both a reusable library and a ready-to-use MCP server implementation for integrating Data360 data into AI applications.
+A small Python package + FastMCP server that exposes World Bank Data360 search/metadata/data endpoints via the Model Context Protocol (MCP).
 
 ## Overview
 
-Data360 MCP Server enables AI assistants and applications to search, retrieve, and work with data from the World Bank's Data360 platform. It implements the MCP specification to provide a standardized interface for accessing Data360's extensive collection of development indicators.
+This repo provides:
+
+- A Python client module (`data360.api`) for calling Data360 endpoints.
+- An MCP server (`data360.mcp_server`) built on `fastmcp` that wraps those calls as MCP tools.
 
 ### What is Data360?
 
@@ -12,20 +15,31 @@ The World Bank's Data360 Platform is a comprehensive data platform that provides
 
 ## Features
 
-- 🔍 **Powerful Search**: Semantic search across Data360 data with relevance scoring
-- 📊 **Structured Responses**: Type-safe response models with Pydantic validation
-- 🛡️ **Error Handling**: Comprehensive error handling with graceful degradation
-- 🚀 **FastMCP Integration**: Built on FastMCP for high-performance MCP server implementation
-- 🔧 **Configurable**: Environment-based configuration for API endpoints and settings
-- 📦 **Modular Design**: Separate library and server packages for flexibility
+- **Search**: POST to Data360 `searchv2` and return typed results.
+- **Metadata**: Fetch metadata and available disaggregation options.
+- **Data**: Fetch indicator data (auto-paginates by `skip`).
+- **MCP server**: Exposes the functions above as MCP tools over `streamable-http` (default).
 
 
 ## Project Structure
 
-This repository contains two main packages:
+The package lives under `src/data360`:
 
-- **`data360-mcp`**: Core library providing Data360 MCP functionality. This library implements the MCP specification for the Data360 Platform that can be used to build MCP servers. Tools, resources, and prompts are implemented in this library.
-- **`data360-mcp-server`**: MCP server implementation that exposes the MCP tools, resources, and prompts defined in the `data360-mcp` library. This server is implemented using FastMCP.
+- `src/data360/api.py`: async Data360 API client functions
+- `src/data360/config.py`: `pydantic-settings` configuration (`DATA360_*` env vars)
+- `src/data360/models.py`: Pydantic request/response models
+- `src/data360/mcp_server/*`: FastMCP server definition + tool registration
+
+## Library API
+
+The library entrypoint is `data360.api`.
+
+| Function | Description |
+|---|---|
+| `data360.api.search(...)` | Search for indicators/series via `searchv2`. |
+| `data360.api.get_metadata(indicator_id, database_id, ...)` | Fetch series metadata and disaggregation options. |
+| `data360.api.get_data(database_id, indicator_id, disaggregation_filters=None)` | Fetch indicator observations (auto-paginates). |
+
 
 ## Installation
 
@@ -34,7 +48,7 @@ This repository contains two main packages:
 - Python 3.10 or higher
 - [uv](https://github.com/astral-sh/uv) (recommended) or pip
 
-### Using uv (Recommended)
+### Using `uv` (recommended)
 
 ```bash
 # Clone the repository
@@ -44,27 +58,23 @@ cd data360-mcp
 # Install dependencies
 uv sync
 
-# Install the packages
-uv pip install -e data360-mcp
-uv pip install -e data360-mcp-server
+# Install editable
+uv pip install -e .
 ```
 
 ### Using pip
 
 ```bash
-# Install the library
-pip install -e data360-mcp/
-
-# Install the server
-pip install -e data360-mcp-server/
+pip install -e .
 ```
 
 ## Configuration
 
-The server requires configuration via environment variables. Create a `.env` file or set the following:
+Configuration is read via `pydantic-settings` with the prefix `DATA360_`.
+Create a `.env` file (see `.env.example`) or export env vars.
 
 ```bash
-# Required: Base URL for the Data360 API
+# Required
 DATA360_API_BASE_URL=https://data360api.worldbank.org
 ```
 
@@ -73,38 +83,57 @@ DATA360_API_BASE_URL=https://data360api.worldbank.org
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
 | `DATA360_API_BASE_URL` | Base URL for the Data360 API | Yes | - |
+| `DATA360_SEARCH_URL` | Override search endpoint URL | No | `${DATA360_API_BASE_URL}/data360/searchv2` |
+| `DATA360_METADATA_URL` | Override metadata endpoint URL | No | `${DATA360_API_BASE_URL}/data360/metadata` |
+| `DATA360_DISAGGREGATION_URL` | Override disaggregation endpoint URL | No | `${DATA360_API_BASE_URL}/data360/disaggregation` |
+| `DATA360_DATA_URL` | Override data endpoint URL | No | `${DATA360_API_BASE_URL}/data360/data` |
+| `DATA360_CODELIST_API_BASE_URL` | Override codelist base URL | No | `${DATA360_API_BASE_URL}/data360/metadata/codelist` |
 
 ## Usage
 
 ### Running the MCP Server
 
-#### Using the provided script:
+#### Using the provided script
 
 ```bash
 ./run_server.sh
 ```
 
-#### Using uv:
+#### Using `poe` (task runner)
+
+The repo defines a Poetry-like task via `poethepoet`:
 
 ```bash
-uv run fastmcp run data360-mcp-server/src/data360_mcp_server/main.py:mcp --transport http --port 8021
+uv run poe serve
+uv run poe serve --transport streamable-http --port 8021
 ```
 
-#### Using Python directly:
+#### Using `uv` directly
 
 ```bash
-python -m data360_mcp_server.main
+uv run fastmcp run src/data360/server.py --transport streamable-http --port 8021
 ```
 
-The server will start on `http://localhost:8021` by default.
+#### Using Python directly
+
+```bash
+uv run python -m data360.mcp_server --transport streamable-http --port 8021
+```
+
+The server binds on port `8021` by default. With `streamable-http`, clients typically connect at `http://localhost:8021/mcp`.
 
 ### Using the Library Directly
 
 ```python
 import asyncio
-from data360_mcp.data360 import api as data360_api
+import os
+
+from data360 import api as data360_api
 
 async def main():
+  # Required configuration
+  # os.environ["DATA360_API_BASE_URL"] = "https://data360api.worldbank.org"
+
     # Simple search
     result = await data360_api.search(
         query="food security",
@@ -139,9 +168,9 @@ result = await data360_api.search(
 
 ## MCP Tools
 
-The server exposes the following MCP tools:
+The server exposes these tools (see `src/data360/mcp_server/tools.py`):
 
-### `data360_search`
+### `data360_search_indicators`
 
 Search for Data360 indicators using the World Bank Data360 API.
 
@@ -247,8 +276,9 @@ pre-commit install
 ### Running Tests
 
 ```bash
-# Run tests (when available)
-uv run pytest
+# There are currently no repo tests.
+# If you add tests, run them like:
+# uv run pytest
 ```
 
 ### Code Quality
@@ -258,33 +288,35 @@ The project uses:
 - **pre-commit**: For git hooks
 
 ```bash
-# Format code
+# Format
 uv run ruff format .
 
-# Lint code
+# Lint
 uv run ruff check .
+
+# Type check
+uv run pyright
 ```
 
-### Project Structure
+### Repository Layout
 
 ```
-data360-mcp/
-├── data360-mcp/              # Core library package
-│   ├── src/
-│   │   └── data360_mcp/
-│   │       ├── data360/      # Data360 API client
-│   │       │   ├── api.py   # API functions
-│   │       │   ├── config.py # Configuration
-│   │       │   └── models.py # Pydantic models
-│   │       └── ...
-│   └── pyproject.toml
-├── data360-mcp-server/       # MCP server package
-│   ├── src/
-│   │   └── data360_mcp_server/
-│   │       └── main.py      # FastMCP server implementation
-│   └── pyproject.toml
-├── run_server.sh            # Server startup script
-└── pyproject.toml           # Workspace configuration
+.
+├── src/
+│   └── data360/
+│       ├── api.py
+│       ├── config.py
+│       ├── models.py
+│       ├── server.py
+│       └── mcp_server/
+│           ├── __main__.py
+│           ├── _server_definition.py
+│           ├── tools.py
+│           ├── resources.py
+│           └── prompts.py
+├── run_server.sh
+├── pyproject.toml
+└── notebooks/example.ipynb
 ```
 
 ## Integration Examples
@@ -297,7 +329,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 
 client = MultiServerMCPClient({
     "data360": {
-        "transport": "streamable_http",
+    "transport": "streamable_http",
         "url": "http://localhost:8021/mcp",
     }
 })
@@ -306,7 +338,7 @@ async def search_indicators():
     async with client:
         tools = await client.get_tools()
         result = await client.call_tool(
-            "data360_search",
+          "data360_search_indicators",
             {
                 "query": "poverty",
                 "n_results": 10
