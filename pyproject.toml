@@ -1,15 +1,46 @@
-[tool.uv.workspace]
-members = [
-  "data360-mcp",
-  "data360-mcp-server",
+
+[project]
+name = "data360-mcp"
+version = "0.1.2"
+description = "Data360 MCP Project"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "fastmcp>=2.12.4",
+  "mcp>=1.18.0",
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  "langchain-mcp-adapters>=0.1.13",
+  "typer>=0.20.1",
 ]
 
-[tool.uv.sources]
-data360-mcp = { workspace = true }
-data360-mcp-server = { workspace = true }
+[build-system]
+requires = ["setuptools>=42", 'setuptools-scm']
+build-backend = "setuptools.build_meta"
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.5.0",
-    "ruff>=0.14.8",
+  "pre-commit>=4.5.0",
+  "pyright>=1.1.407",
+  "ruff>=0.14.8",
+  "poethepoet>=0.27.0",
+]
+
+[tool.ruff.lint]
+select = ['I', 'UP', 'PL', 'F401']
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true
+
+[tool.pyright]
+typeCheckingMode = "standard"
+
+[tool.poe.tasks.serve]
+help = "Run the Data360 MCP server"
+cmd = "uv run fastmcp run src/data360/server.py --transport ${transport} --port ${port}"
+args = [
+   {name = "transport", options = ["--transport", "-t"], default = "streamable-http"},
+   {name = "port", options = ["--port", "-p"], default = "8021"},
 ]

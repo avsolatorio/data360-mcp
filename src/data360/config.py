@@ -12,7 +12,7 @@ class Data360Settings(BaseSettings):
         description="Base URL for the Data360 API",
     )
     codelist_api_base_url: str | None = Field(
-        ...,
+        default=None,
         description="Base URL for the Data360 codelist API",
     )
     search_url: str | None = Field(
@@ -45,6 +45,11 @@ class Data360Settings(BaseSettings):
     )
 
     model_config = SettingsConfigDict(env_prefix="DATA360_")
+
+    @property
+    def api_url(self) -> str:
+        """Get the full search API URL."""
+        return f"{self.api_base_url}/data360/"
 
 
 @ft.cache
