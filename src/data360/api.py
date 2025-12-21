@@ -33,75 +33,106 @@ def _get_valid_disaggregations(
     return valid
 
 
+def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescription]:
+    """Extract and validate series descriptions from API response."""
+    values = response_data.get("value", [])
+    items = []
+    for value in values:
+        series_description = value.get("series_description", {})
+        # Only include items that have required fields (idno, name, database_id)
+        if (
+            series_description
+            and series_description.get("idno")
+            and series_description.get("name")
+            and series_description.get("database_id")
+        ):
+            try:
+                items.append(SeriesDescription.model_validate(series_description))
+            except Exception as e:
+                _logger.warning(
+                    f"Failed to validate series_description: [{series_description}], error: {e}, skipping item"
+                )
+    return items
+
+
+def _build_search_payload(request: SearchRequest) -> dict[str, Any]:
+    """Build the search API payload from SearchRequest."""
+    payload = {
+        "search": request.query,
+        "top": request.limit,
+        "skip": request.offset,
+        "count": request.count,
+        "filter": request.filter,
+        "select": request.select,
+    }
+    if request.orderby is not None:
+        payload["orderby"] = request.orderby
+    return payload
+
+
+def _process_search_response(
+    response_data: dict[str, Any], request: SearchRequest
+) -> SearchResponse:
+    """Process API response and build SearchResponse."""
+    search_response_data = {
+        "items": _get_items_from_response(response_data),
+        "total_count": response_data.get("@odata.count", None),
+        "offset": request.offset,
+    }
+    search_response_data["count"] = len(search_response_data["items"])
+
+    # Calculate has_more and next_offset
+    if (
+        search_response_data["total_count"] is not None
+        and search_response_data["total_count"] > request.offset + request.limit
+    ):
+        search_response_data["has_more"] = True
+        search_response_data["next_offset"] = request.offset + request.limit
+    else:
+        search_response_data["has_more"] = False
+        search_response_data["next_offset"] = None
+
+    return SearchResponse.model_validate(search_response_data)
+
+
 async def search(
     query: str,
     limit: int = 10,
-    filter: str | None = None,
-    orderby: str | None = None,
-    select: str | None = None,
     offset: int = 0,
     count: bool = True,
+    odata_options: dict[str, str] | None = None,
 ) -> SearchResponse:
     """Search for data360 indicators using the World Bank Data360 API.
 
     Args:
          query: Search query string to find relevant data series
          limit: Number of results to return (default is 10)
-         filter: OData filter expression (e.g., "type eq 'indicator'")
-         orderby: OData orderby expression (e.g., "series_description/name")
-         select: OData select expression (e.g., "series_description/idno, series_description/name")
          offset: Offset of the current page
          count: Whether to include total count in response
+         odata_options: Optional dict with OData parameters:
+             - filter: OData filter expression (e.g., "type eq 'indicator'")
+             - orderby: OData orderby expression (e.g., "series_description/name")
+             - select: OData select expression (e.g., "series_description/idno, series_description/name")
     """
+    # Extract OData options from dict if provided
+    filter_val = odata_options.get("filter") if odata_options else None
+    orderby_val = odata_options.get("orderby") if odata_options else None
+    select_val = odata_options.get("select") if odata_options else None
 
-    def _get_items(response_data: dict[str, Any]) -> list[SeriesDescription]:
-        values = response_data.get("value", [])
-        items = []
-        for value in values:
-            series_description = value.get("series_description", {})
-            # Only include items that have required fields (idno, name, database_id)
-            if (
-                series_description
-                and series_description.get("idno")
-                and series_description.get("name")
-                and series_description.get("database_id")
-            ):
-                try:
-                    items.append(SeriesDescription.model_validate(series_description))
-                except Exception as e:
-                    _logger.warning(
-                        f"Failed to validate series_description: [{series_description}], error: {e}, skipping item"
-                    )
-
-        return items
-
-    # Validate and construct SearchRequest from individual parameters
     request = SearchRequest(
         query=query,
         limit=limit,
-        filter=filter,
-        orderby=orderby,
-        select=select,
+        filter=filter_val,
+        orderby=orderby_val,
+        select=select_val,
         offset=offset,
         count=count,
     )
 
     url = data360_config.search_url or f"{data360_config.api_url}/searchv2"
+    payload = _build_search_payload(request)
 
-    # Build the payload according to the API specification
-    payload = {
-        "search": request.query,
-        "top": request.limit,
-        "skip": request.offset,
-        "count": request.count,
-    }
-    payload["filter"] = request.filter
-    if request.orderby is not None:
-        payload["orderby"] = request.orderby
-    # select always has a default value (set by model_validator if None was provided)
-    payload["select"] = request.select
-    # Add optional parameters if provided
-
+    error_msg: str | None = None
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(url, json=payload)
@@ -111,60 +142,36 @@ async def search(
                 response_data = response.json()
             except ValueError as e:
                 _logger.error(f"Failed to parse JSON response: {e}")
-                return SearchResponse(
-                    items=None, error=f"Failed to parse API response: {str(e)}"
-                )
+                error_msg = f"Failed to parse API response: {str(e)}"
+            else:
+                try:
+                    print(response_data)
+                    return _process_search_response(response_data, request)
+                except Exception as e:
+                    _logger.error(f"Failed to validate response data: {e}")
+                    error_msg = f"Failed to validate API response: {str(e)}"
 
-            # Map the API response structure to SearchResponse
-            # API returns {"@odata.context": "...", "value": [...]}
-            # We map "value" to "items"
-            try:
-                print(response_data)
-                search_response_data = {
-                    "items": _get_items(response_data),
-                    "total_count": response_data.get("@odata.count", None),
-                    "offset": request.offset,
-                }
-
-                search_response_data["count"] = len(search_response_data["items"])
-
-                # Calculate has_more and next_offset
-                if (
-                    search_response_data["total_count"] is not None
-                    and search_response_data["total_count"]
-                    > request.offset + request.limit
-                ):
-                    search_response_data["has_more"] = True
-                    search_response_data["next_offset"] = request.offset + request.limit
-                else:
-                    search_response_data["has_more"] = False
-                    search_response_data["next_offset"] = None
-
-                return SearchResponse.model_validate(search_response_data)
-            except Exception as e:
-                _logger.error(f"Failed to validate response data: {e}")
-                return SearchResponse(
-                    items=None, error=f"Failed to validate API response: {str(e)}"
-                )
-
-    except httpx.HTTPStatusError as e:
-        error_msg = f"HTTP error {e.response.status_code}: {e.response.text}"
+    except (httpx.HTTPStatusError, httpx.TimeoutException, httpx.RequestError) as e:
+        if isinstance(e, httpx.HTTPStatusError):
+            error_msg = f"HTTP error {e.response.status_code}: {e.response.text}"
+        elif isinstance(e, httpx.TimeoutException):
+            error_msg = f"Request timeout: {str(e)}"
+        else:
+            error_msg = f"Request error: {str(e)}"
         _logger.error(error_msg)
-        return SearchResponse(items=None, error=error_msg)
-    except httpx.TimeoutException as e:
-        error_msg = f"Request timeout: {str(e)}"
-        _logger.error(error_msg)
-        return SearchResponse(items=None, error=error_msg)
-    except httpx.RequestError as e:
-        error_msg = f"Request error: {str(e)}"
-        _logger.error(error_msg)
-        return SearchResponse(items=None, error=error_msg)
     except Exception as e:
         error_msg = f"Unexpected error: {str(e)}"
         _logger.exception("Unexpected error in search function")
+
+    if error_msg:
         return SearchResponse(items=None, error=error_msg)
+    # This should never be reached, but pyright needs it for type checking
+    return SearchResponse(
+        items=None, error="Unexpected error: no response and no error message"
+    )
 
 
+# ruff: noqa: PLR0913, PLR0912, PLR0915
 async def get_metadata(
     indicator_id: str,
     database_id: str,
@@ -324,6 +331,10 @@ class CodelistManager:
         if self.codelist is None:
             await self.set_codelist()
 
+        if self.codelist is None:
+            _logger.warning("Codelist is None after set_codelist()")
+            return None
+
         if field_name not in self.codelist:
             _logger.warning(f"field_name '{field_name}' not found in codelist.")
             return None
@@ -393,6 +404,7 @@ async def get_code_name(field_name: str, field_value_id: str) -> str | None:
     Returns:
         The name associated with the field_value_id, or None if not found
     """
+    # ruff: noqa: PLW0603
     global _codelist_manager
     if _codelist_manager is None:
         _codelist_manager = CodelistManager()
