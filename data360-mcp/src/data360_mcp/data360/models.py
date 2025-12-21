@@ -3,6 +3,24 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
+class MCPPaginationResponse(BaseModel):
+    """Response model for MCP pagination."""
+
+    count: int = Field(default=0, description="Number of results returned")
+    total: int | None = Field(
+        default=None, description="Total number of results available"
+    )
+    offset: int | None = Field(
+        default=None, description="Offset of the current results set"
+    )
+    has_more: bool | None = Field(
+        default=None, description="Whether there are more results"
+    )
+    next_offset: int | None = Field(
+        default=None, description="Offset of the next results set"
+    )
+
+
 class SearchRequest(BaseModel):
     """Request model for data360 search queries."""
 
@@ -51,24 +69,11 @@ class SearchResponseItem(BaseModel):
     model_config = {"populate_by_name": True}
 
 
-class SearchResponse(BaseModel):
+class SearchResponse(MCPPaginationResponse):
     """Response model for data360 search results."""
 
     items: list[SearchResponseItem] | None = Field(
         default=None, description="List of search results containing series information"
-    )
-    count: int | None = Field(default=None, description="Number of results returned")
-    total: int | None = Field(
-        default=None, description="Total number of results available"
-    )
-    offset: int | None = Field(
-        default=None, description="Offset of the current results set"
-    )
-    has_more: bool | None = Field(
-        default=None, description="Whether there are more results"
-    )
-    next_offset: int | None = Field(
-        default=None, description="Offset of the next results set"
     )
     error: str | None = Field(
         default=None, description="Error message if search failed"
@@ -112,14 +117,11 @@ class IndicatorDataRequest(BaseModel):
     )
 
 
-class IndicatorDataResponse(BaseModel):
+class IndicatorDataResponse(MCPPaginationResponse):
     """Response model for indicator data retrieval."""
 
     data: list[dict[str, Any]] | None = Field(
         default=None, description="List of indicator data points"
-    )
-    count: int | None = Field(
-        default=None, description="Total number of data points returned"
     )
     error: str | None = Field(
         default=None, description="Error message if data retrieval failed"

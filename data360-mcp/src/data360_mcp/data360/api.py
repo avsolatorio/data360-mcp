@@ -4,7 +4,12 @@ from typing import Any
 import httpx
 
 from .config import settings
-from .models import IndicatorDataResponse, MetadataResponse, SearchResponse
+from .models import (
+    IndicatorDataRequest,
+    IndicatorDataResponse,
+    MetadataResponse,
+    SearchResponse,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -330,9 +335,7 @@ async def get_code_name(field_name: str, field_value_id: str) -> str | None:
 
 
 async def get_data(
-    database_id: str,
-    indicator_id: str,
-    disaggregation_filters: dict[str, str] | None = None,
+    request: IndicatorDataRequest,
 ) -> IndicatorDataResponse:
     """
     Fetch indicator data from Data360 API with pagination support.
@@ -352,19 +355,19 @@ async def get_data(
 
     # Prepare base parameters for the API call
     params: dict[str, Any] = {
-        "DATABASE_ID": database_id,
-        "INDICATOR": indicator_id,
+        "DATABASE_ID": request.database_id,
+        "INDICATOR": request.indicator,
     }
 
     # Add disaggregation filters to parameters if provided
-    if disaggregation_filters:
-        params.update(disaggregation_filters)
+    if request.disaggregation_filters:
+        params.update(request.disaggregation_filters)
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             while True:
                 current_params = params.copy()
-                current_params["skip"] = skip
+                current_params["skip"] = request.skip
 
                 try:
                     data_res = await client.get(data_url, params=current_params)
@@ -385,7 +388,7 @@ async def get_data(
                     # Continue fetching if there's more data than currently retrieved
                     if data_json.get("count", 0) <= len(all_data):
                         break
-                    skip = len(all_data)
+                    request.skip = len(all_data)
 
                 except httpx.HTTPStatusError as e:
                     error_msg = f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
@@ -396,9 +399,7 @@ async def get_data(
                     _logger.error(error_msg)
                     return IndicatorDataResponse(data=None, error=error_msg)
                 except httpx.RequestError as e:
-                    error_msg = (
-                        f"Request error fetching data for {indicator_id!r}: {str(e)}"
-                    )
+                    error_msg = f"Request error fetching data for {request.indicator!r}: {str(e)}"
                     _logger.error(error_msg)
                     return IndicatorDataResponse(data=None, error=error_msg)
 
