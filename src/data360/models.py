@@ -1,6 +1,24 @@
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+
+
+class MCPPagedResponse(BaseModel):
+    """Response model for MCP paged results.
+    For more information, see: https://github.com/anthropics/skills/blob/main/skills/mcp-builder/reference/mcp_best_practices.md#pagination
+
+    Always respect limit parameter
+    Return has_more, next_offset, total_count
+    Default to 20-50 items
+    """
+
+    count: int = Field(default=0, description="Number of results in the current page")
+    total_count: int | None = Field(default=None, description="Total number of results")
+    offset: int | None = Field(default=None, description="Offset of the current page")
+    has_more: bool | None = Field(
+        default=None, description="Whether there are more results"
+    )
+    next_offset: int | None = Field(default=None, description="Offset of the next page")
 
 
 class SearchRequest(BaseModel):
@@ -9,8 +27,14 @@ class SearchRequest(BaseModel):
     query: str = Field(
         ..., description="Search query string to find relevant data series"
     )
-    n_results: int = Field(
-        10, description="Number of top results to return (default is 10)", ge=1, le=50
+    limit: int = Field(
+        default=10,
+        description="Number of results to return (default is 10)",
+        ge=1,
+        le=50,
+    )
+    count: bool = Field(
+        default=True, description="Whether to include total count in response"
     )
     filter: str | None = Field(
         default=None,
@@ -24,10 +48,21 @@ class SearchRequest(BaseModel):
         default=None,
         description='OData select expression (e.g., "series_description/idno, series_description/name")',
     )
-    skip: int = Field(default=0, description="Number of results to skip for pagination")
-    count: bool = Field(
-        default=False, description="Whether to include total count in response"
-    )
+    offset: int = Field(default=0, description="Offset of the current page")
+
+    @model_validator(mode="after")
+    def set_select_default(self) -> "SearchRequest":
+        """Set default select value when None is provided."""
+        if self.select is None:
+            self.select = "series_description/idno, series_description/name, series_description/database_id, series_description/definition_long"
+        return self
+
+    @model_validator(mode="after")
+    def set_filter_default(self) -> "SearchRequest":
+        """Set default filter value when None is provided."""
+        if self.filter is None:
+            self.filter = "type eq 'indicator'"
+        return self
 
 
 class SeriesDescription(BaseModel):
@@ -36,39 +71,14 @@ class SeriesDescription(BaseModel):
     idno: str = Field(..., description="Series identifier")
     name: str = Field(..., description="Series name")
     database_id: str = Field(..., description="Database identifier")
+    definition_long: str | None = Field(None, description="Series definition")
 
 
-class SearchResponseItem(BaseModel):
-    """Model for a single search result item from the value array."""
-
-    search_score: float = Field(
-        ..., alias="@search.score", description="Relevance score for the search result"
-    )
-    series_description: SeriesDescription = Field(
-        ..., description="Series description information"
-    )
-
-    model_config = {"populate_by_name": True}
-
-
-class SearchResponse(BaseModel):
+class SearchResponse(MCPPagedResponse):
     """Response model for data360 search results."""
 
-    items: list[SearchResponseItem] | None = Field(
+    items: list[SeriesDescription] | None = Field(
         default=None, description="List of search results containing series information"
-    )
-    count: int | None = Field(default=None, description="Number of results returned")
-    total: int | None = Field(
-        default=None, description="Total number of results available"
-    )
-    offset: int | None = Field(
-        default=None, description="Offset of the current results set"
-    )
-    has_more: bool | None = Field(
-        default=None, description="Whether there are more results"
-    )
-    next_offset: int | None = Field(
-        default=None, description="Offset of the next results set"
     )
     error: str | None = Field(
         default=None, description="Error message if search failed"
@@ -112,14 +122,11 @@ class IndicatorDataRequest(BaseModel):
     )
 
 
-class IndicatorDataResponse(BaseModel):
+class IndicatorDataResponse(MCPPagedResponse):
     """Response model for indicator data retrieval."""
 
     data: list[dict[str, Any]] | None = Field(
         default=None, description="List of indicator data points"
-    )
-    count: int | None = Field(
-        default=None, description="Total number of data points returned"
     )
     error: str | None = Field(
         default=None, description="Error message if data retrieval failed"
