@@ -210,10 +210,12 @@ class TestSearch:
         result = await search(
             "population",
             limit=LIMIT,
-            filter="type eq 'indicator'",
-            orderby="series_description/name",
-            select="series_description/idno, series_description/name",
             offset=0,
+            odata_options={
+                "filter": "type eq 'indicator'",
+                "orderby": "series_description/name",
+                "select": "series_description/idno, series_description/name",
+            },
         )
 
         # Verify the request was made with correct parameters
