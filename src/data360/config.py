@@ -44,6 +44,17 @@ class Data360Settings(BaseSettings):
         ]
     )
 
+    # Limit the data observations to the following confidentiality levels
+    data_obs_confidentiality_levels: list[str] = Field(
+        default=[
+            "PU",  # Public
+            # "OU",  # Official Use
+            # "CO",  # Confidential
+            # "SC",  # Strictly Confidential
+        ],
+        description="Confidentiality levels to limit the data observations to",
+    )
+
     model_config = SettingsConfigDict(env_prefix="DATA360_")
 
     @property

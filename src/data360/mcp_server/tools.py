@@ -8,13 +8,16 @@ from ._server_definition import app
 search_indicators = app.tool(
     data360_api.search,
     name="data360_search_indicators",
+    description=data360_api.search.__doc__,
 )
 get_metadata = app.tool(
     data360_api.get_metadata,
     name="data360_get_metadata",
+    description=data360_api.get_metadata.__doc__,
 )
 
 get_data = app.tool(
     data360_api.get_data,
     name="data360_get_data",
+    description=data360_api.get_data.__doc__,
 )
