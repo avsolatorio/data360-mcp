@@ -173,8 +173,8 @@ async def search(
 
 # ruff: noqa: PLR0913, PLR0912, PLR0915
 async def get_metadata(
-    indicator_id: str,
     database_id: str,
+    indicator_id: str,
     get_valid_disaggregations_func: Any | None = None,
 ) -> MetadataResponse:
     """Get metadata and disaggregation options for a Data360 indicator."""
@@ -191,11 +191,10 @@ async def get_metadata(
     indicator_metadata: dict[str, Any] | None = None
     disaggregations: list[dict[str, Any]] = []
     errors: list[str] = []
-
+    headers = {"accept": "*/*", "Content-Type": "application/json"}
     # 1. Fetch Metadata
     try:
         metadata_payload = {"query": f"series_description/idno eq '{indicator_id}'"}
-        headers = {"accept": "*/*", "Content-Type": "application/json"}
 
         async with httpx.AsyncClient(timeout=30.0) as client:
             metadata_res = await client.post(
@@ -241,6 +240,7 @@ async def get_metadata(
             disagg_res = await client.get(
                 disaggregation_url,
                 params={"datasetId": database_id, "indicatorId": indicator_id},
+                headers=headers,
             )
             disagg_res.raise_for_status()
 
