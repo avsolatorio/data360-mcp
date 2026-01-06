@@ -113,7 +113,22 @@ async def search(
              - filter: OData filter expression (e.g., "type eq 'indicator'")
              - orderby: OData orderby expression (e.g., "series_description/name")
              - select: OData select expression (e.g., "series_description/idno, series_description/name")
+
+    Returns:
+        SearchResponse with search results
+
+    Example API Request Payload:
+        {
+            "count": false,
+            "filter": "series_description/topics/any(t: t/name eq 'Health' or t/name eq 'Jobs') and type eq 'indicator'",
+            "orderby": "series_description/name",
+            "select": "series_description/idno, series_description/name, series_description/database_id",
+            "search": "nutrition",
+            "top": 20,
+            "skip": 0
+        }
     """
+
     # Extract OData options from dict if provided
     filter_val = odata_options.get("filter") if odata_options else None
     orderby_val = odata_options.get("orderby") if odata_options else None
@@ -151,17 +166,16 @@ async def search(
                     _logger.error(f"Failed to validate response data: {e}")
                     error_msg = f"Failed to validate API response: {str(e)}"
 
-    except (httpx.HTTPStatusError, httpx.TimeoutException, httpx.RequestError) as e:
+    except Exception as e:
         if isinstance(e, httpx.HTTPStatusError):
             error_msg = f"HTTP error {e.response.status_code}: {e.response.text}"
         elif isinstance(e, httpx.TimeoutException):
             error_msg = f"Request timeout: {str(e)}"
-        else:
+        elif isinstance(e, httpx.RequestError):
             error_msg = f"Request error: {str(e)}"
+        else:
+            error_msg = f"Unexpected error: {str(e)}"
         _logger.error(error_msg)
-    except Exception as e:
-        error_msg = f"Unexpected error: {str(e)}"
-        _logger.exception("Unexpected error in search function")
 
     if error_msg:
         return SearchResponse(items=None, error=error_msg)
@@ -177,7 +191,26 @@ async def get_metadata(
     indicator_id: str,
     get_valid_disaggregations_func: Any | None = None,
 ) -> MetadataResponse:
-    """Get metadata and disaggregation options for a Data360 indicator."""
+    """Get metadata and disaggregation options for a Data360 indicator.
+
+    Args:
+        database_id: Database identifier (e.g., IPC_IPC, WB_WDI)
+        indicator_id: Indicator ID (e.g., IPC_IPC_PHASE, WB_WDI_SP_POP_TOTL)
+        get_valid_disaggregations_func: Function to get valid disaggregations (default is _get_valid_disaggregations)
+
+    Returns:
+        MetadataResponse with metadata and disaggregation options
+
+    Example API Request Payload:
+        {
+            "query": "&$filter=series_description/idno eq 'WB_WDI_SP_POP_TOTL' and series_description/ref_country/any(t: t/code eq 'PHL')&$select=series_description/database_id,series_description/idno"
+        }
+
+        {
+            "query": "&$filter=type eq 'indicator' and series_description/ref_country/all(t: t/code eq 'BRN' or t/code eq 'PHL') and series_description/ref_country/any()&$select=series_description/database_id,series_description/idno"
+        }
+
+    """
     # Use provided function or default
     if get_valid_disaggregations_func is None:
         get_valid_disaggregations_func = _get_valid_disaggregations
@@ -217,21 +250,19 @@ async def get_metadata(
                 _logger.error(error_msg)
                 errors.append(error_msg)
 
-    except httpx.HTTPStatusError as e:
-        error_msg = f"HTTP error fetching metadata: {e.response.status_code} - {e.response.text}"
-        _logger.error(error_msg)
-        errors.append(error_msg)
-    except httpx.TimeoutException as e:
-        error_msg = f"Timeout fetching metadata: {str(e)}"
-        _logger.error(error_msg)
-        errors.append(error_msg)
-    except httpx.RequestError as e:
-        error_msg = f"Request error fetching metadata for {indicator_id!r}: {str(e)}"
-        _logger.error(error_msg)
-        errors.append(error_msg)
     except Exception as e:
-        error_msg = f"Unexpected error fetching metadata: {str(e)}"
-        _logger.exception("Unexpected error in metadata fetch")
+        error_msg: str
+        if isinstance(e, httpx.HTTPStatusError):
+            error_msg = f"HTTP error fetching metadata: {e.response.status_code} - {e.response.text}"
+        elif isinstance(e, httpx.TimeoutException):
+            error_msg = f"Timeout fetching metadata: {str(e)}"
+        elif isinstance(e, httpx.RequestError):
+            error_msg = (
+                f"Request error fetching metadata for {indicator_id!r}: {str(e)}"
+            )
+        else:
+            error_msg = f"Unexpected error fetching metadata: {str(e)}"
+        _logger.exception(error_msg)
         errors.append(error_msg)
 
     # 2. Fetch Disaggregation
@@ -339,18 +370,15 @@ async def get_data(
                         break
                     skip = len(all_data)
 
-                except httpx.HTTPStatusError as e:
-                    error_msg = f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
-                    _logger.error(error_msg)
-                    return IndicatorDataResponse(data=None, error=error_msg)
-                except httpx.TimeoutException as e:
-                    error_msg = f"Timeout fetching data: {str(e)}"
-                    _logger.error(error_msg)
-                    return IndicatorDataResponse(data=None, error=error_msg)
-                except httpx.RequestError as e:
-                    error_msg = (
-                        f"Request error fetching data for {indicator_id!r}: {str(e)}"
-                    )
+                except Exception as e:
+                    if isinstance(e, httpx.HTTPStatusError):
+                        error_msg = f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
+                    elif isinstance(e, httpx.TimeoutException):
+                        error_msg = f"Timeout fetching data: {str(e)}"
+                    elif isinstance(e, httpx.RequestError):
+                        error_msg = f"Request error fetching data for {indicator_id!r}: {str(e)}"
+                    else:
+                        error_msg = f"Unexpected error fetching data: {str(e)}"
                     _logger.error(error_msg)
                     return IndicatorDataResponse(data=None, error=error_msg)
 
