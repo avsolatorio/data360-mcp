@@ -1,4 +1,6 @@
-from data360.mcp_server import app
+from data360.mcp_server import mcp
 
 # NOTE: import to be able to run the server with all definitions loaded
-app  # pyright: ignore[reportUnusedExpression]
+
+# https://gofastmcp.com/deployment/http#asgi-application
+app = mcp.http_app()  # pyright: ignore[reportUnusedExpression]

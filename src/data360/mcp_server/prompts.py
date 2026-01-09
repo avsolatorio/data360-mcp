@@ -1,7 +1,7 @@
-from ._server_definition import app
+from ._server_definition import mcp
 
 
-@app.prompt
+@mcp.prompt
 def data360_prompt(query: str) -> str:
     """
     Get a prompt from the Data360 MCP Server.
