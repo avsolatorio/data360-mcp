@@ -1,7 +1,7 @@
-from ._server_definition import app
+from ._server_definition import mcp
 
 
-@app.resource("users://{query}/profile")
+@mcp.resource("users://{query}/profile")
 async def data360_resource(query: str) -> str:
     """
     Get a resource from the Data360 MCP Server.

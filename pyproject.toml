@@ -12,6 +12,7 @@ dependencies = [
   "uvicorn[standard]>=0.30.0",
   "langchain-mcp-adapters>=0.1.13",
   "typer>=0.20.1",
+  "gunicorn>=23.0.0",
 ]
 
 [build-system]

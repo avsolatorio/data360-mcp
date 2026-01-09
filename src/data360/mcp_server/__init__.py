@@ -3,10 +3,10 @@ from . import (
     resources,
     tools,
 )
-from ._server_definition import app
+from ._server_definition import mcp
 
 __all__ = [
-    "app",
+    "mcp",
     "tools",
     "resources",
     "prompts",
