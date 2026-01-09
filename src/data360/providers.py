@@ -163,3 +163,17 @@ class ReferenceAreaManager:
         """
 
         raise NotImplementedError("Not implemented yet.")
+
+
+def build_disaggregation_filter(query: str) -> str:
+    """Build a filter string for the disaggregation filters.
+
+    Args:
+        query: The query to search for
+
+    Returns:
+        A filter string for the disaggregation filters
+    """
+    filter_string = ""
+    filter_string += f"series_description/ref_country/any(t: t/code eq '{query}')"
+    return filter_string
