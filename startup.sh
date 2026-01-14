@@ -5,4 +5,4 @@
 
 # uv run gunicorn -w 4 -k uvicorn.workers.UvicornWorker data360.server:app --error-logfile '-'
 
-gunicorn -w 4 -k uvicorn.workers.UvicornWorker data360.server:app --error-logfile '-'
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker fast_server:app --error-logfile '-'
