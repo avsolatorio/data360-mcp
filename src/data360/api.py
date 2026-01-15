@@ -388,3 +388,175 @@ async def get_data(
         error_msg = f"Unexpected error fetching data: {str(e)}"
         _logger.exception("Unexpected error in data fetch")
         return IndicatorDataResponse(data=None, error=error_msg)
+
+
+async def search_and_validate(
+    query: str,
+    required_country: str | None = None,
+    required_dimensions: list[str] | None = None,
+    limit: int = 5,
+) -> dict[str, Any]:
+    """Search for indicators and validate their capabilities.
+
+    This is the primary tool that combines:
+    1. Search for top K indicators matching the query
+    2. Fetch metadata for all K indicators in parallel
+    3. Cross-check capabilities (countries, dimensions available)
+    4. Return condensed, validated results for LLM to select from
+
+    Args:
+        query: Search query string (e.g., "unemployment rate", "poverty")
+        required_country: Country name or code to validate (e.g., "Kenya" or "KEN")
+        required_dimensions: List of required disaggregations (e.g., ["SEX", "AGE"])
+        limit: Maximum number of indicators to search and validate (default: 5)
+
+    Returns:
+        Dict with:
+        - indicators: List of validated indicator summaries
+        - error: Error message if search failed
+
+    Example:
+        search_and_validate(
+            query="unemployment rate",
+            required_country="Kenya",
+            required_dimensions=["SEX", "AGE"]
+        )
+        →
+        {
+          "indicators": [
+            {
+              "indicator_id": "WB_SSGD_UNEMPLOYMENT_RATE",
+              "database_id": "WB_SSGD",
+              "name": "Unemployment rate",
+              "definition_short": "Unemployment Rate",
+              "search_score": 88,
+              "has_country": true,
+              "country_code": "KEN",
+              "available_dimensions": ["SEX", "AGE", "URBANISATION"],
+              "has_required_dimensions": true,
+              "time_range": {"start": "2015", "end": "2022"}
+            },
+            ...
+          ]
+        }
+    """
+    from data360.providers import find_reference_areas
+
+    result: dict[str, Any] = {"indicators": [], "error": None}
+
+    # Step 1: Resolve country code if provided as name
+    country_code: str | None = None
+    if required_country:
+        # Check if it's already a code (3 letters uppercase)
+        if len(required_country) == 3 and required_country.isupper():
+            country_code = required_country
+        else:
+            # Try to resolve the country name
+            matches = await find_reference_areas(required_country, limit=1)
+            if matches and matches[0]["score"] >= 80:
+                country_code = matches[0]["id"]
+            else:
+                result["error"] = f"Could not resolve country: '{required_country}'"
+                return result
+
+    # Step 2: Search for indicators
+    try:
+        search_result = await search(query=query, limit=limit)
+        if search_result.error:
+            result["error"] = search_result.error
+            return result
+        if not search_result.items:
+            result["error"] = f"No indicators found for query: '{query}'"
+            return result
+    except Exception as e:
+        result["error"] = f"Search failed: {str(e)}"
+        return result
+
+    # Step 3: Fetch metadata for all indicators in parallel
+    async def fetch_indicator_metadata(item: SeriesDescription) -> dict[str, Any]:
+        """Fetch and process metadata for a single indicator."""
+        indicator_info: dict[str, Any] = {
+            "indicator_id": item.idno,
+            "database_id": item.database_id,
+            "name": item.name,
+            "definition_short": item.definition_long[:100] if item.definition_long else item.name,
+            "has_country": False,
+            "country_code": country_code,
+            "available_dimensions": [],
+            "has_required_dimensions": True,  # Assume true until proven false
+            "time_range": None,
+            "error": None,
+        }
+
+        try:
+            metadata_result = await get_metadata(
+                database_id=item.database_id, indicator_id=item.idno
+            )
+
+            if metadata_result.error:
+                indicator_info["error"] = metadata_result.error
+                return indicator_info
+
+            # Extract time range from metadata
+            if metadata_result.indicator_metadata:
+                time_periods = metadata_result.indicator_metadata.get("time_periods", [])
+                if time_periods:
+                    indicator_info["time_range"] = {
+                        "start": time_periods[0].get("start"),
+                        "end": time_periods[0].get("end"),
+                    }
+
+                # Check if required country is in ref_country
+                if country_code:
+                    ref_countries = metadata_result.indicator_metadata.get(
+                        "ref_country", []
+                    )
+                    country_codes = [c.get("code") for c in ref_countries]
+                    indicator_info["has_country"] = country_code in country_codes
+
+            # Extract available dimensions from disaggregation options
+            available_dims: list[str] = []
+            for dim in metadata_result.disaggregation_options:
+                field_name = dim.get("field_name", "")
+                field_values = dim.get("field_value", [])
+                # Only include if not just "_T" or "_Z"
+                if field_values and not (
+                    len(field_values) == 1 and field_values[0] in ["_T", "_Z"]
+                ):
+                    available_dims.append(field_name)
+
+            indicator_info["available_dimensions"] = available_dims
+
+            # Check if required dimensions are available
+            if required_dimensions:
+                missing_dims = set(required_dimensions) - set(available_dims)
+                indicator_info["has_required_dimensions"] = len(missing_dims) == 0
+
+        except Exception as e:
+            indicator_info["error"] = str(e)
+
+        return indicator_info
+
+    # Fetch all metadata in parallel
+    import asyncio
+
+    tasks = [fetch_indicator_metadata(item) for item in search_result.items]
+    indicators = await asyncio.gather(*tasks)
+
+    # Step 4: Sort by relevance
+    # Priority: has_country + has_required_dimensions > has_country > everything else
+    def sort_key(ind: dict[str, Any]) -> tuple[int, int, int]:
+        score = 0
+        if ind.get("has_country"):
+            score += 100
+        if ind.get("has_required_dimensions"):
+            score += 50
+        if ind.get("error") is None:
+            score += 10
+        return (-score, 0, 0)
+
+    indicators_sorted = sorted(indicators, key=sort_key)
+    result["indicators"] = indicators_sorted
+
+    return result
+

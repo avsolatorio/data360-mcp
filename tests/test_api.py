@@ -7,9 +7,7 @@ import pytest
 import pytest_httpx
 
 from data360.api import (
-    CodelistManager,
     _get_valid_disaggregations,
-    get_code_name,
     get_data,
     get_metadata,
     search,
@@ -697,130 +695,6 @@ class TestGetData:
         assert "Failed to parse" in result.error
 
 
-class TestCodelistManager:
-    """Tests for CodelistManager class."""
-
-    @pytest.mark.asyncio
-    async def test_set_codelist_success(self, httpx_mock: pytest_httpx.HTTPXMock):
-        """Test successful codelist fetch."""
-        mock_codelist = {
-            "UNIT_MEASURE": [
-                {"id": "PT", "name": "Percentage"},
-                {"id": "NR", "name": "Number"},
-            ],
-            "FREQ": [
-                {"id": "M", "name": "Monthly"},
-                {"id": "A", "name": "Annual"},
-            ],
-        }
-
-        httpx_mock.add_response(
-            method="GET",
-            url="https://api.test.example.com/codelist",
-            json=mock_codelist,
-        )
-
-        manager = CodelistManager()
-        await manager.set_codelist()
-
-        assert manager.codelist is not None
-        assert manager.codelist == mock_codelist
-
-    @pytest.mark.asyncio
-    async def test_get_name_success(self, httpx_mock: pytest_httpx.HTTPXMock):
-        """Test successful name retrieval."""
-        mock_codelist = {
-            "UNIT_MEASURE": [
-                {"id": "PT", "name": "Percentage"},
-                {"id": "NR", "name": "Number"},
-            ],
-        }
-
-        httpx_mock.add_response(
-            method="GET",
-            url="https://api.test.example.com/codelist",
-            json=mock_codelist,
-        )
-
-        manager = CodelistManager()
-        name = await manager.get_name("UNIT_MEASURE", "PT")
-
-        assert name == "Percentage"
-
-    @pytest.mark.asyncio
-    async def test_get_name_not_found(self, httpx_mock: pytest_httpx.HTTPXMock):
-        """Test name retrieval when field or value not found."""
-        mock_codelist = {
-            "UNIT_MEASURE": [
-                {"id": "PT", "name": "Percentage"},
-            ],
-        }
-
-        httpx_mock.add_response(
-            method="GET",
-            url="https://api.test.example.com/codelist",
-            json=mock_codelist,
-        )
-
-        manager = CodelistManager()
-
-        # Test field not found
-        name = await manager.get_name("INVALID_FIELD", "PT")
-        assert name is None
-
-        # Test value not found
-        name = await manager.get_name("UNIT_MEASURE", "INVALID_ID")
-        assert name is None
-
-    @pytest.mark.asyncio
-    async def test_get_code_success(self, httpx_mock: pytest_httpx.HTTPXMock):
-        """Test successful code retrieval."""
-        mock_codelist = {
-            "UNIT_MEASURE": [
-                {"id": "PT", "name": "Percentage", "description": "Percentage value"},
-            ],
-        }
-
-        httpx_mock.add_response(
-            method="GET",
-            url="https://api.test.example.com/codelist",
-            json=mock_codelist,
-        )
-
-        manager = CodelistManager()
-        await manager.set_codelist()
-
-        code = manager.get_code("UNIT_MEASURE", "PT")
-
-        assert code is not None
-        assert code["id"] == "PT"
-        assert code["name"] == "Percentage"
-
-    @pytest.mark.asyncio
-    async def test_get_code_not_loaded(self):
-        """Test get_code raises error when codelist not loaded."""
-        manager = CodelistManager()
-
-        with pytest.raises(ValueError, match="Codelist not loaded"):
-            manager.get_code("UNIT_MEASURE", "PT")
-
-    @pytest.mark.asyncio
-    async def test_get_code_name_global_function(
-        self, httpx_mock: pytest_httpx.HTTPXMock
-    ):
-        """Test the global get_code_name convenience function."""
-        mock_codelist = {
-            "UNIT_MEASURE": [
-                {"id": "PT", "name": "Percentage"},
-            ],
-        }
-
-        httpx_mock.add_response(
-            method="GET",
-            url="https://api.test.example.com/codelist",
-            json=mock_codelist,
-        )
-
-        name = await get_code_name("UNIT_MEASURE", "PT")
-
-        assert name == "Percentage"
+# NOTE: TestCodelistManager tests removed - CodelistManager was replaced with
+# ReferenceAreaManager in providers.py with a different API.
+# New tests for ReferenceAreaManager should be added in test_providers.py
