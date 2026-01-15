@@ -1,3 +1,5 @@
+"""Providers for Data360 codelist and reference area data."""
+
 import asyncio
 import logging
 from functools import lru_cache
@@ -12,168 +14,198 @@ data360_config = get_data360_settings()
 _logger = logging.getLogger(__name__)
 
 
-class CodelistManager:
-    """Manager for fetching and querying Data360 codelist data."""
-
-    def __init__(self, codelist_url: str | None = None):
-        """Initialize the CodelistManager."""
-        self.codelist_url = (
-            codelist_url
-            or data360_config.codelist_api_base_url
-            or f"{data360_config.api_url}/metadata/codelist"
-        )
-        self._codelist: dict[str, Any] | None = None
-
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            asyncio.run(self._load())
-        else:
-            loop.create_task(self._load())
-
-    @property
-    def codelist(self) -> dict[str, Any]:
-        """Get the codelist."""
-        if self._codelist is None:
-            raise RuntimeError("Codelist not loaded.")
-        return self._codelist
-
-    async def _load(self) -> None:
-        """Fetch and cache the codelist from the API."""
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                response = await client.get(self.codelist_url)
-                response.raise_for_status()
-                self._codelist = response.json()
-        except httpx.HTTPStatusError as e:
-            error_msg = f"HTTP error fetching codelist: {e.response.status_code} - {e.response.text}"
-            _logger.error(error_msg)
-            raise
-        except httpx.TimeoutException as e:
-            error_msg = f"Timeout fetching codelist: {str(e)}"
-            _logger.error(error_msg)
-            raise
-        except httpx.RequestError as e:
-            error_msg = f"Request error fetching codelist: {str(e)}"
-            _logger.error(error_msg)
-            raise
-        except Exception as e:
-            error_msg = f"Unexpected error fetching codelist: {str(e)}"
-            _logger.exception("Unexpected error in codelist fetch")
-            raise
-
-    def get_field_codelist(self, field_name: str) -> dict[str, Any] | None:
-        """
-        Get the codelist for a given field_name from the codelist.
-
-        Args:
-            field_name: The name of the field (e.g., "UNIT_MEASURE", "FREQ")
-
-        Returns:
-            The codelist for the given field_name, or None if not found
-        """
-        if self.codelist is None:
-            raise ValueError("Codelist not loaded. Call set_codelist() first.")
-        if field_name not in self.codelist:
-            _logger.warning(f"field_name '{field_name}' not found in codelist.")
-            return None
-        return self.codelist[field_name]
-
-    def get_name(self, field_name: str, field_value_id: str) -> str | None:
-        """
-        Get the name for a given field_name and field_value_id from the codelist.
-
-        Args:
-            field_name: The name of the field (e.g., "UNIT_MEASURE", "FREQ")
-            field_value_id: The ID value to look up (e.g., "PS", "M")
-
-        Returns:
-            The name associated with the field_value_id, or None if not found
-        """
-        code = self.get_code(field_name, field_value_id)
-        if code is None:
-            return None
-        return code["name"]
-
-    def get_code(self, field_name: str, field_value_id: str) -> dict[str, Any] | None:
-        """
-        Get the full code object for a given field_name and field_value_id.
-
-        Args:
-            field_name: The name of the field (e.g., "UNIT_MEASURE", "FREQ")
-            field_value_id: The ID value to look up (e.g., "PS", "M")
-
-        Returns:
-            The code dictionary, or None if not found
-        """
-        if self.codelist is None:
-            raise ValueError("Codelist not loaded. Call set_codelist() first.")
-
-        if field_name not in self.codelist:
-            _logger.warning(f"field_name '{field_name}' not found in codelist.")
-            return None
-
-        found_codes = list(
-            filter(lambda x: x["id"] == field_value_id, self.codelist[field_name])
-        )
-
-        if not found_codes:
-            _logger.warning(
-                f"field_value_id '{field_value_id}' not found for field_name '{field_name}'."
-            )
-            return None
-
-        if len(found_codes) != 1:
-            _logger.warning(
-                f"Multiple codes found for field_name '{field_name}' and field_value_id '{field_value_id}'."
-            )
-
-        return found_codes[0]
-
-
-@lru_cache(maxsize=1)
-def get_codelist_manager() -> CodelistManager:
-    """Get the global codelist manager instance."""
-    return CodelistManager()
-
-
-# Implement reference area provider
 class ReferenceAreaManager:
     """Manager for fetching and querying Data360 reference area data.
 
-    We implement a search to get relevant reference areas.
-
+    This manager fetches the REF_AREA codelist from the Data360 API and provides
+    methods to search for reference areas by name or code.
     """
 
-    def __init__(self, ref_area_field: str = "REF_AREA"):
+    def __init__(self):
         """Initialize the ReferenceAreaManager."""
-        self.ref_area_field = ref_area_field
-        self.ref_area_codelist: dict[str, Any] | None = (
-            get_codelist_manager().get_field_codelist(ref_area_field)
-        )
+        self._codelist: list[dict[str, Any]] | None = None
+        self._loaded = False
 
-    def find_reference_areas(self, query: str) -> list[str]:
+    async def _ensure_loaded(self) -> None:
+        """Ensure the codelist is loaded."""
+        if not self._loaded:
+            await self._load()
+
+    async def _load(self) -> None:
+        """Fetch and cache the REF_AREA codelist from the API."""
+        url = f"{data360_config.api_url}codelist"
+        params = {"type": "REF_AREA"}
+
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(url, params=params)
+                response.raise_for_status()
+                data = response.json()
+                self._codelist = data.get("value", [])
+                self._loaded = True
+                _logger.info(
+                    f"Loaded {len(self._codelist)} reference areas from codelist"
+                )
+        except httpx.HTTPStatusError as e:
+            error_msg = f"HTTP error fetching REF_AREA codelist: {e.response.status_code}"
+            _logger.error(error_msg)
+            raise
+        except httpx.TimeoutException as e:
+            error_msg = f"Timeout fetching REF_AREA codelist: {str(e)}"
+            _logger.error(error_msg)
+            raise
+        except httpx.RequestError as e:
+            error_msg = f"Request error fetching REF_AREA codelist: {str(e)}"
+            _logger.error(error_msg)
+            raise
+
+    @property
+    def codelist(self) -> list[dict[str, Any]]:
+        """Get the codelist."""
+        if self._codelist is None:
+            raise RuntimeError(
+                "REF_AREA codelist not loaded. Call ensure_loaded() first."
+            )
+        return self._codelist
+
+    async def find_reference_areas(
+        self, query: str, limit: int = 5
+    ) -> list[dict[str, Any]]:
         """Find reference areas matching the query.
 
+        This tool validates that the geographic context (country, region) is valid
+        based on the available reference areas from the Data360 codelist.
+
         Args:
-            query: The query to search for
+            query: The geographic entity to search for (e.g., "Kenya", "East Africa")
+            limit: Maximum number of matches to return
 
         Returns:
-            A list of reference areas likely to match the query.
+            A list of matching reference areas with id, name, and match score.
+
+        Example:
+            >>> await manager.find_reference_areas("Kenya")
+            [{"id": "KEN", "name": "Kenya", "score": 100}]
+
+            >>> await manager.find_reference_areas("Kanya")  # typo
+            [{"id": "KEN", "name": "Kenya", "score": 91}]
         """
+        await self._ensure_loaded()
 
-        raise NotImplementedError("Not implemented yet.")
+        query_lower = query.lower().strip()
+        results: list[dict[str, Any]] = []
+
+        for item in self.codelist:
+            item_id = item.get("Id", "")
+            item_name = item.get("Name", "")
+            name_lower = item_name.lower()
+
+            # Calculate match score
+            score = 0
+
+            # Exact ID match (highest priority)
+            if query_lower == item_id.lower():
+                score = 100
+            # Exact name match
+            elif query_lower == name_lower:
+                score = 100
+            # ID starts with query or query starts with ID
+            elif item_id.lower().startswith(query_lower) or query_lower.startswith(
+                item_id.lower()
+            ):
+                score = 95
+            # Name contains query exactly
+            elif query_lower in name_lower:
+                score = 90
+            # Query contains name (partial match)
+            elif name_lower in query_lower:
+                score = 85
+            else:
+                # Fuzzy matching using simple similarity
+                similarity = self._calculate_similarity(query_lower, name_lower)
+                if similarity > 0.7:  # 70% similarity threshold
+                    score = int(similarity * 100)
+
+            if score > 0:
+                results.append(
+                    {
+                        "id": item_id,
+                        "name": item_name,
+                        "score": score,
+                    }
+                )
+
+        # Sort by score descending, then by name
+        results.sort(key=lambda x: (-x["score"], x["name"]))
+
+        return results[:limit]
+
+    def _calculate_similarity(self, s1: str, s2: str) -> float:
+        """Calculate similarity ratio between two strings.
+
+        Uses a simple approach based on common characters and length difference.
+        """
+        if not s1 or not s2:
+            return 0.0
+
+        # For very short queries, use character-based matching
+        if len(s1) <= 3:
+            if s1 in s2 or s2.startswith(s1):
+                return 0.8
+            return 0.0
+
+        # Calculate longest common subsequence ratio
+        len1, len2 = len(s1), len(s2)
+
+        # Quick length check - if lengths are very different, low similarity
+        if abs(len1 - len2) > max(len1, len2) * 0.5:
+            return 0.0
+
+        # Count matching characters (simple approach)
+        s1_chars = set(s1)
+        s2_chars = set(s2)
+        common = len(s1_chars & s2_chars)
+        total = len(s1_chars | s2_chars)
+
+        char_similarity = common / total if total > 0 else 0
+
+        # Check prefix match
+        prefix_len = 0
+        for c1, c2 in zip(s1, s2):
+            if c1 == c2:
+                prefix_len += 1
+            else:
+                break
+
+        prefix_ratio = prefix_len / min(len1, len2)
+
+        # Combined score
+        return (char_similarity * 0.4) + (prefix_ratio * 0.6)
 
 
-def build_disaggregation_filter(query: str) -> str:
-    """Build a filter string for the disaggregation filters.
+# Global instance
+_reference_area_manager: ReferenceAreaManager | None = None
+
+
+def get_reference_area_manager() -> ReferenceAreaManager:
+    """Get the global ReferenceAreaManager instance."""
+    global _reference_area_manager
+    if _reference_area_manager is None:
+        _reference_area_manager = ReferenceAreaManager()
+    return _reference_area_manager
+
+
+async def find_reference_areas(query: str, limit: int = 5) -> list[dict[str, Any]]:
+    """Find reference areas matching the query.
+
+    This is a convenience function that uses the global ReferenceAreaManager.
 
     Args:
-        query: The query to search for
+        query: The geographic entity to search for (e.g., "Kenya", "East Africa")
+        limit: Maximum number of matches to return
 
     Returns:
-        A filter string for the disaggregation filters
+        A list of matching reference areas with id, name, and match score.
     """
-    filter_string = ""
-    filter_string += f"series_description/ref_country/any(t: t/code eq '{query}')"
-    return filter_string
+    manager = get_reference_area_manager()
+    return await manager.find_reference_areas(query, limit)
