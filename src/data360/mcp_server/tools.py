@@ -23,6 +23,13 @@ get_data = mcp.tool(
     description=data360_api.get_data.__doc__,
 )
 
+# Get disaggregation options (available filter values)
+get_disaggregation = mcp.tool(
+    data360_api.get_disaggregation,
+    name="data360_get_disaggregation",
+    description=data360_api.get_disaggregation.__doc__,
+)
+
 # Unified codelist lookup tool
 find_codelist_value = mcp.tool(
     data360_providers.find_codelist_value,
@@ -36,7 +43,7 @@ list_indicators = mcp.tool(
     description=data360_api.get_indicators.__doc__,
 )
 
-# Primary search and validate tool
+# DEPRECATED: Use search() + get_disaggregation() + get_metadata() workflow instead
 discover_indicators = mcp.tool(
     data360_api.discover_indicators,
     name="data360_discover_indicators",

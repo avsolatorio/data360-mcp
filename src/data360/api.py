@@ -102,39 +102,47 @@ async def search(
     limit: int = 10,
     offset: int = 0,
     count: bool = True,
+    select_fields: list[str] | None = None,
     odata_options: dict[str, str] | None = None,
 ) -> SearchResponse:
     """Search for data360 indicators using the World Bank Data360 API.
 
     Args:
-         query: Search query string to find relevant data series
-         limit: Number of results to return (default is 10)
-         offset: Offset of the current page
-         count: Whether to include total count in response
-         odata_options: Optional dict with OData parameters:
-             - filter: OData filter expression (e.g., "type eq 'indicator'")
-             - orderby: OData orderby expression (e.g., "series_description/name")
-             - select: OData select expression (e.g., "series_description/idno, series_description/name")
+        query: Search query string to find relevant data series
+        limit: Number of results to return (default is 10)
+        offset: Offset of the current page
+        count: Whether to include total count in response
+        select_fields: List of fields to return (e.g., ["idno", "name", "periodicity"]).
+            Available fields: idno, name, database_id, definition_long, periodicity,
+            time_periods, dimensions, topics, ref_country
+        odata_options: DEPRECATED - kept for backward compatibility, prefer select_fields
 
     Returns:
         SearchResponse with search results
 
-    Example API Request Payload:
-        {
-            "count": false,
-            "filter": "series_description/topics/any(t: t/name eq 'Health' or t/name eq 'Jobs') and type eq 'indicator'",
-            "orderby": "series_description/name",
-            "select": "series_description/idno, series_description/name, series_description/database_id",
-            "search": "nutrition",
-            "top": 20,
-            "skip": 0
-        }
+    Example:
+        # Basic search
+        await search(query="poverty", limit=10)
+        
+        # Enriched search for indicator selection
+        await search(
+            query="unemployment",
+            limit=5,
+            select_fields=["idno", "name", "database_id", "definition_long", "periodicity"]
+        )
     """
+    # Build select clause from select_fields if provided
+    if select_fields:
+        select_val = ", ".join(f"series_description/{f}" for f in select_fields)
+    elif odata_options and odata_options.get("select"):
+        # Backward compatibility: use odata_options.select if provided
+        select_val = odata_options.get("select")
+    else:
+        select_val = None
 
-    # Extract OData options from dict if provided
+    # odata_options kept for backward compatibility but discouraged
     filter_val = odata_options.get("filter") if odata_options else None
     orderby_val = odata_options.get("orderby") if odata_options else None
-    select_val = odata_options.get("select") if odata_options else None
 
     request = SearchRequest(
         query=query,
@@ -191,6 +199,7 @@ async def search(
 async def get_metadata(
     database_id: str,
     indicator_id: str,
+    select_fields: list[str] | None = None,
     get_valid_disaggregations_func: Any | None = None,
 ) -> MetadataResponse:
     """Get metadata and disaggregation options for a Data360 indicator.
@@ -198,20 +207,21 @@ async def get_metadata(
     Args:
         database_id: Database identifier (e.g., IPC_IPC, WB_WDI)
         indicator_id: Indicator ID (e.g., IPC_IPC_PHASE, WB_WDI_SP_POP_TOTL)
+        select_fields: Optional list of metadata fields to return (e.g., ["methodology", "statistical_concept"]).
+            If None, returns all fields. Available fields include:
+            methodology, statistical_concept, definition_long, limitation, relevance,
+            aggregation_method, periodicity, time_periods, ref_country, sources_note
         get_valid_disaggregations_func: Function to get valid disaggregations (default is _get_valid_disaggregations)
 
     Returns:
         MetadataResponse with metadata and disaggregation options
 
-    Example API Request Payload:
-        {
-            "query": "&$filter=series_description/idno eq 'WB_WDI_SP_POP_TOTL' and series_description/ref_country/any(t: t/code eq 'PHL')&$select=series_description/database_id,series_description/idno"
-        }
-
-        {
-            "query": "&$filter=type eq 'indicator' and series_description/ref_country/all(t: t/code eq 'BRN' or t/code eq 'PHL') and series_description/ref_country/any()&$select=series_description/database_id,series_description/idno"
-        }
-
+    Example:
+        # Get only methodology
+        await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL", select_fields=["methodology"])
+        
+        # Get full metadata
+        await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
     """
     # Use provided function or default
     if get_valid_disaggregations_func is None:
@@ -227,10 +237,17 @@ async def get_metadata(
     disaggregations: list[dict[str, Any]] = []
     errors: list[str] = []
     headers = {"accept": "*/*", "Content-Type": "application/json"}
+    
+    # Build query with optional select clause
+    query = f"series_description/idno eq '{indicator_id}'"
+    if select_fields:
+        select_clause = ", ".join(f"series_description/{f}" for f in select_fields)
+        metadata_payload = {"query": query, "select": select_clause}
+    else:
+        metadata_payload = {"query": query}
+
     # 1. Fetch Metadata
     try:
-        metadata_payload = {"query": f"series_description/idno eq '{indicator_id}'"}
-
         async with httpx.AsyncClient(timeout=30.0) as client:
             metadata_res = await client.post(
                 metadata_url, json=metadata_payload, headers=headers
@@ -312,6 +329,70 @@ async def get_metadata(
         disaggregation_options=disaggregations,
         error=error_message,
     )
+
+
+async def get_disaggregation(
+    database_id: str,
+    indicator_id: str,
+) -> dict[str, Any]:
+    """Get disaggregation options for a Data360 indicator.
+    
+    This is the primary tool for checking what filter values are available
+    for an indicator, including actual years (TIME_PERIOD), countries (REF_AREA),
+    and dimensions (SEX, AGE, URBANISATION).
+
+    Args:
+        database_id: Database identifier (e.g., WB_WDI, WB_SSGD)
+        indicator_id: Indicator ID (e.g., WB_WDI_SP_POP_TOTL)
+
+    Returns:
+        Dict with dimensions, each containing field_name, label_name, and field_value list.
+        Returns {"error": "..."} on failure.
+
+    Example:
+        result = await get_disaggregation("WB_SSGD", "WB_SSGD_LF_PARTICIPATION_RATE")
+        # Returns:
+        # {
+        #     "dimensions": [
+        #         {"field_name": "TIME_PERIOD", "field_value": ["2015", "2018", "2020", "2022"]},
+        #         {"field_name": "REF_AREA", "field_value": ["KEN", "UGA", "TZA", ...]},
+        #         {"field_name": "SEX", "field_value": ["F", "M", "_T"]},
+        #     ]
+        # }
+    
+    Note:
+        - TIME_PERIOD shows actual available years (may have gaps)
+        - REF_AREA shows countries with data for this indicator
+        - DO NOT use FREQ for filtering - it breaks queries
+    """
+    disaggregation_url = (
+        data360_config.disaggregation_url or f"{data360_config.api_url}/disaggregation"
+    )
+    headers = {"accept": "*/*", "Content-Type": "application/json"}
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(
+                disaggregation_url,
+                params={"datasetId": database_id, "indicatorId": indicator_id},
+                headers=headers,
+            )
+            response.raise_for_status()
+            
+            raw_data = response.json()
+            # Filter out _Z values and format response
+            valid_dimensions = _get_valid_disaggregations(raw_data)
+            return {"dimensions": valid_dimensions}
+
+    except httpx.HTTPStatusError as e:
+        return {"error": f"HTTP error: {e.response.status_code} - {e.response.text}"}
+    except httpx.TimeoutException as e:
+        return {"error": f"Timeout: {str(e)}"}
+    except httpx.RequestError as e:
+        return {"error": f"Request error: {str(e)}"}
+    except Exception as e:
+        _logger.exception("Unexpected error in get_disaggregation")
+        return {"error": f"Unexpected error: {str(e)}"}
 
 
 async def get_data(
@@ -452,6 +533,12 @@ async def discover_indicators(
     limit: int = 5,
 ) -> DiscoveryResult:
     """Search for indicators and validate their capabilities.
+    
+    .. deprecated::
+        This function is deprecated. Use the following workflow instead:
+        1. search() with select_fields for candidates
+        2. get_disaggregation() to validate availability
+        3. get_metadata() with select_fields for specific info
 
     This is the primary tool that combines:
     1. Search for top K indicators matching the query
@@ -475,6 +562,13 @@ async def discover_indicators(
             required_dimensions=["SEX", "AGE"]
         )
     """
+    import warnings
+    warnings.warn(
+        "discover_indicators is deprecated. Use search() + get_disaggregation() + get_metadata() instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    
     from data360.providers import find_reference_area
 
     # Step 1: Resolve country code if provided as name
