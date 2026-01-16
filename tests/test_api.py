@@ -1,6 +1,7 @@
 """Tests for data360.api module."""
 
 import json
+import re
 
 import httpx
 import pytest
@@ -698,3 +699,139 @@ class TestGetData:
 # NOTE: TestCodelistManager tests removed - CodelistManager was replaced with
 # ReferenceAreaManager in providers.py with a different API.
 # New tests for ReferenceAreaManager should be added in test_providers.py
+
+class TestDiscoverIndicators:
+    """Tests for discover_indicators() function."""
+
+    @pytest.mark.asyncio
+    async def test_discover_indicators_success(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test successful indicator discovery."""
+        from data360.api import discover_indicators
+        from data360.models import DiscoveryResult
+
+        # Mock search response
+        search_response = {
+            "@odata.context": "https://api.test.example.com/$metadata",
+            "@odata.count": 1,
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "WB_WDI_SP_POP_TOTL",
+                        "name": "Population, total",
+                        "database_id": "WB_WDI",
+                        "definition_long": "Total population",
+                    }
+                }
+            ],
+        }
+
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/searchv2",
+            json=search_response,
+        )
+
+        # Mock metadata response
+        metadata_response = {
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "WB_WDI_SP_POP_TOTL",
+                        "name": "Population, total",
+                        "database_id": "WB_WDI",
+                        "definition_long": "Total population",
+                        "time_periods": [{"start": "1960", "end": "2022"}],
+                        "periodicity": "Annual",
+                    }
+                }
+            ]
+        }
+        
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json=metadata_response,
+        )
+
+        # Mock disaggregation response
+        disaggregation_response = [
+            {"field_value": ["AFG", "ALB"], "field_name": "REF_AREA"},
+            {"field_value": ["A"], "field_name": "FREQ"}
+        ]
+
+        def disaggregation_callback(request: httpx.Request) -> httpx.Response | None:
+            if (
+                request.method == "GET"
+                and request.url.path == "/disaggregation"
+            ):
+                return httpx.Response(200, json=disaggregation_response)
+            return None
+        
+        httpx_mock.add_callback(disaggregation_callback)
+
+        result = await discover_indicators("population")
+
+        assert isinstance(result, DiscoveryResult)
+        assert len(result.indicators) == 1
+        assert result.error is None
+        
+        ind = result.indicators[0]
+        assert ind.indicator_id == "WB_WDI_SP_POP_TOTL"
+        assert ind.available_frequencies == ["A"]
+        assert ind.periodicity == "Annual"
+        assert ind.time_range == {"start": "1960", "end": "2022"}
+
+    @pytest.mark.asyncio
+    async def test_discover_indicators_with_country_validation(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test discovery with country validation."""
+        from data360.api import discover_indicators
+
+        # Mock Search
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/searchv2",
+            json={"value": [{"series_description": {"idno": "IND1", "name": "Ind 1", "database_id": "DB1"}}]}
+        )
+
+        # Mock Metadata with ref_country including KEN
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={
+                "value": [{
+                    "series_description": {
+                        "idno": "IND1",
+                        "ref_country": [{"code": "KEN"}, {"code": "UGA"}]
+                    }
+                }]
+            }
+        )
+
+        # Mock Disaggregation
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[]
+        )
+
+        result = await discover_indicators("test", required_country="KEN")
+        
+        assert len(result.indicators) == 1
+        assert result.indicators[0].has_country is True
+        assert result.indicators[0].country_code == "KEN"
+
+    @pytest.mark.asyncio
+    async def test_discover_indicators_search_error(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test handling of search errors."""
+        from data360.api import discover_indicators
+
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/searchv2",
+            status_code=500
+        )
+
+        result = await discover_indicators("test")
+        
+        assert result.error is not None
+        assert "HTTP error 500" in result.error

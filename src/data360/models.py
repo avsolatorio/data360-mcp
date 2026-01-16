@@ -131,3 +131,39 @@ class IndicatorDataResponse(MCPPagedResponse):
     error: str | None = Field(
         default=None, description="Error message if data retrieval failed"
     )
+
+
+class DiscoveredIndicator(BaseModel):
+    """Model for a discovered and validated indicator."""
+
+    indicator_id: str = Field(..., description="Indicator ID")
+    database_id: str = Field(..., description="Database identifier")
+    name: str = Field(..., description="Indicator name")
+    definition_short: str = Field(..., description="Short definition (max 100 chars)")
+    has_country: bool = Field(..., description="Whether data exists for the requested country")
+    country_code: str | None = Field(default=None, description="Country code used for validation")
+    available_dimensions: list[str] = Field(
+        default_factory=list, description="List of available disaggregation dimensions"
+    )
+    available_frequencies: list[str] = Field(
+        default_factory=list, description="List of available frequencies"
+    )
+    periodicity: str | None = Field(default=None, description="Periodicity of the indicator")
+    has_required_dimensions: bool = Field(
+        default=True, description="Whether the indicator has all required dimensions"
+    )
+    time_range: dict[str, str | None] | None = Field(
+        default=None, description="Start and end years of data availability"
+    )
+    error: str | None = Field(default=None, description="Error message if validation failed")
+
+
+class DiscoveryResult(BaseModel):
+    """Result of indicator discovery process."""
+
+    indicators: list[DiscoveredIndicator] = Field(
+        default_factory=list, description="List of discovered and validated indicators"
+    )
+    error: str | None = Field(
+        default=None, description="Error message if discovery failed entirely"
+    )
