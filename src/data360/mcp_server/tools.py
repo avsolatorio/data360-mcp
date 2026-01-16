@@ -30,25 +30,11 @@ find_codelist_value = mcp.tool(
     description=data360_providers.find_codelist_value.__doc__,
 )
 
-@mcp.tool()
-async def data360_list_indicators(database_id: str) -> str:
-    """List all indicator IDs available in a specific database.
-
-    Use this tool to discover what indicators exist in a dataset before searching
-    or to audit available data.
-
-    Args:
-        database_id: The database identifier (e.g. "WB_WDI", "WB_GS")
-    
-    Returns:
-        A list of indicator ID strings.
-    """
-    try:
-        from data360.api import get_indicators
-        indicators = await get_indicators(database_id)
-        return json.dumps(indicators, indent=2)
-    except Exception as e:
-        return f"Error listing indicators: {str(e)}"
+list_indicators = mcp.tool(
+    data360_api.get_indicators,
+    name="data360_list_indicators",
+    description=data360_api.get_indicators.__doc__,
+)
 
 # Primary search and validate tool
 discover_indicators = mcp.tool(
