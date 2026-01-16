@@ -6,6 +6,8 @@ import httpx
 
 from .config import get_data360_settings
 from .models import (
+    DiscoveryResult,
+    DiscoveredIndicator,
     IndicatorDataResponse,
     MetadataResponse,
     SearchRequest,
@@ -316,6 +318,8 @@ async def get_data(
     database_id: str,
     indicator_id: str,
     disaggregation_filters: dict[str, str] | None = None,
+    start_year: int | None = None,
+    end_year: int | None = None,
 ) -> IndicatorDataResponse:
     """
     Fetch indicator data from Data360 API with pagination support.
@@ -325,9 +329,17 @@ async def get_data(
         indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_WDI_SP_POP_TOTL")
         disaggregation_filters: Optional dictionary of disaggregation filters
             (e.g., {"REF_AREA": "UGA", "UNIT_MEASURE": "PT"})
+        start_year: Optional start year to filter data (inclusive)
+        end_year: Optional end year to filter data (inclusive)
 
     Returns:
         IndicatorDataResponse with data and count
+    
+    Example:
+        # Get data for Philippines for years 2020-2023
+        get_data("WB_WDI", "WB_WDI_MS_MIL_XPND_CD", 
+                 disaggregation_filters={"REF_AREA": "PHL"},
+                 start_year=2020, end_year=2023)
     """
     data_url = data360_config.data_url or f"{data360_config.api_url}/data"
     all_data: list[dict[str, Any]] = []
@@ -341,7 +353,16 @@ async def get_data(
 
     # Add disaggregation filters to parameters if provided
     if disaggregation_filters:
-        params.update(disaggregation_filters)
+        # Suppress FREQ parameter since indicators are single-frequency
+        # Filtering by FREQ (e.g. "A") when the indicator is "M" would result in no data
+        filters_to_apply = {k: v for k, v in disaggregation_filters.items() if k != "FREQ"}
+        params.update(filters_to_apply)
+    
+    # Add time period filters to API parameters (more efficient than filtering in Python)
+    if start_year is not None:
+        params["timePeriodFrom"] = str(start_year)
+    if end_year is not None:
+        params["timePeriodTo"] = str(end_year)
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -382,6 +403,12 @@ async def get_data(
                     _logger.error(error_msg)
                     return IndicatorDataResponse(data=None, error=error_msg)
 
+        # Note: Time filtering is now done at the API level via timePeriodFrom/timePeriodTo
+        # This is more efficient than fetching all data and filtering in Python
+        
+        # Sort by TIME_PERIOD descending (most recent first)
+        all_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
+
         return IndicatorDataResponse(data=all_data, count=len(all_data), error=None)
 
     except Exception as e:
@@ -390,12 +417,40 @@ async def get_data(
         return IndicatorDataResponse(data=None, error=error_msg)
 
 
-async def search_and_validate(
+async def get_indicators(database_id: str) -> list[str]:
+    """Get all indicator IDs for a specific database.
+    
+    Args:
+        database_id: The database ID to fetch indicators for (e.g., "WB_WDI")
+        
+    Returns:
+        List of indicator IDs
+    """
+    url = f"{data360_config.api_url}/indicators"
+    params = {"datasetId": database_id}
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(url, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            if isinstance(data, list):
+                # Data is a list of indicator ID strings
+                return data
+            return []
+            
+    except Exception as e:
+        _logger.error(f"Failed to fetch indicators for {database_id}: {e}")
+        raise
+
+
+async def discover_indicators(
     query: str,
     required_country: str | None = None,
     required_dimensions: list[str] | None = None,
     limit: int = 5,
-) -> dict[str, Any]:
+) -> DiscoveryResult:
     """Search for indicators and validate their capabilities.
 
     This is the primary tool that combines:
@@ -411,38 +466,16 @@ async def search_and_validate(
         limit: Maximum number of indicators to search and validate (default: 5)
 
     Returns:
-        Dict with:
-        - indicators: List of validated indicator summaries
-        - error: Error message if search failed
+        DiscoveryResult with list of validated indicator summaries and optional error
 
     Example:
-        search_and_validate(
+        discover_indicators(
             query="unemployment rate",
             required_country="Kenya",
             required_dimensions=["SEX", "AGE"]
         )
-        →
-        {
-          "indicators": [
-            {
-              "indicator_id": "WB_SSGD_UNEMPLOYMENT_RATE",
-              "database_id": "WB_SSGD",
-              "name": "Unemployment rate",
-              "definition_short": "Unemployment Rate",
-              "search_score": 88,
-              "has_country": true,
-              "country_code": "KEN",
-              "available_dimensions": ["SEX", "AGE", "URBANISATION"],
-              "has_required_dimensions": true,
-              "time_range": {"start": "2015", "end": "2022"}
-            },
-            ...
-          ]
-        }
     """
-    from data360.providers import find_reference_areas
-
-    result: dict[str, Any] = {"indicators": [], "error": None}
+    from data360.providers import find_reference_area
 
     # Step 1: Resolve country code if provided as name
     country_code: str | None = None
@@ -452,30 +485,26 @@ async def search_and_validate(
             country_code = required_country
         else:
             # Try to resolve the country name
-            matches = await find_reference_areas(required_country, limit=1)
+            matches = await find_reference_area(required_country, limit=1)
             if matches and matches[0]["score"] >= 80:
                 country_code = matches[0]["id"]
             else:
-                result["error"] = f"Could not resolve country: '{required_country}'"
-                return result
+                return DiscoveryResult(error=f"Could not resolve country: '{required_country}'")
 
     # Step 2: Search for indicators
     try:
         search_result = await search(query=query, limit=limit)
         if search_result.error:
-            result["error"] = search_result.error
-            return result
+            return DiscoveryResult(error=search_result.error)
         if not search_result.items:
-            result["error"] = f"No indicators found for query: '{query}'"
-            return result
+            return DiscoveryResult(error=f"No indicators found for query: '{query}'")
     except Exception as e:
-        result["error"] = f"Search failed: {str(e)}"
-        return result
+        return DiscoveryResult(error=f"Search failed: {str(e)}")
 
     # Step 3: Fetch metadata for all indicators in parallel
-    async def fetch_indicator_metadata(item: SeriesDescription) -> dict[str, Any]:
+    async def fetch_indicator_metadata(item: SeriesDescription) -> DiscoveredIndicator:
         """Fetch and process metadata for a single indicator."""
-        indicator_info: dict[str, Any] = {
+        base_info = {
             "indicator_id": item.idno,
             "database_id": item.database_id,
             "name": item.name,
@@ -483,7 +512,9 @@ async def search_and_validate(
             "has_country": False,
             "country_code": country_code,
             "available_dimensions": [],
-            "has_required_dimensions": True,  # Assume true until proven false
+            "available_frequencies": [],
+            "periodicity": None,
+            "has_required_dimensions": True,
             "time_range": None,
             "error": None,
         }
@@ -494,17 +525,20 @@ async def search_and_validate(
             )
 
             if metadata_result.error:
-                indicator_info["error"] = metadata_result.error
-                return indicator_info
+                base_info["error"] = metadata_result.error
+                return DiscoveredIndicator(**base_info)
 
-            # Extract time range from metadata
+            # Extract time range and periodicity from metadata
             if metadata_result.indicator_metadata:
                 time_periods = metadata_result.indicator_metadata.get("time_periods", [])
                 if time_periods:
-                    indicator_info["time_range"] = {
+                    base_info["time_range"] = {
                         "start": time_periods[0].get("start"),
                         "end": time_periods[0].get("end"),
                     }
+                
+                # Get periodicity (more human-readable than FREQ codes)
+                base_info["periodicity"] = metadata_result.indicator_metadata.get("periodicity")
 
                 # Check if required country is in ref_country
                 if country_code:
@@ -512,30 +546,38 @@ async def search_and_validate(
                         "ref_country", []
                     )
                     country_codes = [c.get("code") for c in ref_countries]
-                    indicator_info["has_country"] = country_code in country_codes
+                    base_info["has_country"] = country_code in country_codes
 
-            # Extract available dimensions from disaggregation options
+            # Extract available dimensions and frequencies from disaggregation options
             available_dims: list[str] = []
+            available_freqs: list[str] = []
+            #forces the LLM to only see dimensions that offer actual choices (like "Male/Female" or "Urban/Rural")
             for dim in metadata_result.disaggregation_options:
                 field_name = dim.get("field_name", "")
                 field_values = dim.get("field_value", [])
-                # Only include if not just "_T" or "_Z"
-                if field_values and not (
+                
+                # Extract FREQ values
+                if field_name == "FREQ" and field_values:
+                    available_freqs = field_values
+
+                # Only include if not just "_T" or "_Z" and not FREQ
+                if field_name != "FREQ" and field_values and not (
                     len(field_values) == 1 and field_values[0] in ["_T", "_Z"]
                 ):
                     available_dims.append(field_name)
-
-            indicator_info["available_dimensions"] = available_dims
+            
+            base_info["available_frequencies"] = available_freqs
+            base_info["available_dimensions"] = available_dims
 
             # Check if required dimensions are available
             if required_dimensions:
                 missing_dims = set(required_dimensions) - set(available_dims)
-                indicator_info["has_required_dimensions"] = len(missing_dims) == 0
+                base_info["has_required_dimensions"] = len(missing_dims) == 0
 
         except Exception as e:
-            indicator_info["error"] = str(e)
+            base_info["error"] = str(e)
 
-        return indicator_info
+        return DiscoveredIndicator(**base_info)
 
     # Fetch all metadata in parallel
     import asyncio
@@ -545,18 +587,17 @@ async def search_and_validate(
 
     # Step 4: Sort by relevance
     # Priority: has_country + has_required_dimensions > has_country > everything else
-    def sort_key(ind: dict[str, Any]) -> tuple[int, int, int]:
+    def sort_key(ind: DiscoveredIndicator) -> tuple[int, int, int]:
         score = 0
-        if ind.get("has_country"):
+        if ind.has_country:
             score += 100
-        if ind.get("has_required_dimensions"):
+        if ind.has_required_dimensions:
             score += 50
-        if ind.get("error") is None:
+        if ind.error is None:
             score += 10
         return (-score, 0, 0)
 
     indicators_sorted = sorted(indicators, key=sort_key)
-    result["indicators"] = indicators_sorted
-
-    return result
+    
+    return DiscoveryResult(indicators=indicators_sorted)
 

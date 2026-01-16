@@ -2,7 +2,6 @@
 
 import asyncio
 import logging
-from functools import lru_cache
 from typing import Any
 
 import httpx
@@ -14,198 +13,332 @@ data360_config = get_data360_settings()
 _logger = logging.getLogger(__name__)
 
 
-class ReferenceAreaManager:
-    """Manager for fetching and querying Data360 reference area data.
-
-    This manager fetches the REF_AREA codelist from the Data360 API and provides
-    methods to search for reference areas by name or code.
+class CodelistManager:
+    """Unified manager for all Data360 codelists.
+    
+    Handles both global codelists (fetched from API) and static codelists
+    (hardcoded mappings for dimensions without global API endpoints).
+    
+    Global codelists available via API:
+    - REF_AREA: 284 countries/regions
+    - UNIT_MEASURE: 42 measurement units
+    
+    Static codelists (indicator-specific, using common patterns):
+    - FREQ: Frequency codes (A=Annual, M=Monthly, Q=Quarterly)
+    - SEX: Sex/gender codes (F=Female, M=Male, _T=Total)
+    - AGE: Age group codes (Y15T24, Y_GE25, etc.)
+    - URBANISATION: Urban/rural codes (URB, RUR, _T)
     """
 
+    # Codelists available via /codelist?type=X API
+    GLOBAL_CODELISTS = ["REF_AREA", "UNIT_MEASURE"]
+    
+    # Static mappings for codelists without global API endpoints
+    # These are based on actual values from disaggregation responses
+    # Reference: WB_SSGD_UNEMPLOYMENT_RATE_disaggregation.json
+    STATIC_MAPPINGS: dict[str, dict[str, str]] = {
+        "FREQ": {
+            # Common frequency codes found in Data360
+            "annual": "A",
+            "yearly": "A",
+            "year": "A",
+            "monthly": "M",
+            "month": "M",
+            "quarterly": "Q",
+            "quarter": "Q",
+            "other": "_O",
+            "irregular": "_O",
+        },
+        "SEX": {
+            # Sex codes from actual disaggregation data
+            "female": "F",
+            "women": "F",
+            "woman": "F",
+            "girls": "F",
+            "girl": "F",
+            "male": "M",
+            "men": "M",
+            "man": "M",
+            "boys": "M",
+            "boy": "M",
+            "total": "_T",
+            "all": "_T",
+            "both": "_T",
+            "overall": "_T",
+        },
+        "AGE": {
+            # Age group codes from actual disaggregation data
+            "youth": "Y15T24",
+            "young": "Y15T24",
+            "15-24": "Y15T24",
+            "15 to 24": "Y15T24",
+            "young adults": "Y15T29",
+            "15-29": "Y15T29",
+            "adults": "Y30T59",
+            "30-59": "Y30T59",
+            "25+": "Y_GE25",
+            "25 and over": "Y_GE25",
+            "adult": "Y_GE25",
+            "elderly": "Y_GE60",
+            "60+": "Y_GE60",
+            "60 and over": "Y_GE60",
+            "seniors": "Y_GE60",
+            "total": "_T",
+            "all ages": "_T",
+        },
+        "URBANISATION": {
+            # Urbanisation codes from actual disaggregation data
+            "urban": "URB",
+            "city": "URB",
+            "cities": "URB",
+            "rural": "RUR",
+            "countryside": "RUR",
+            "village": "RUR",
+            "total": "_T",
+            "all": "_T",
+        },
+    }
+
     def __init__(self):
-        """Initialize the ReferenceAreaManager."""
-        self._codelist: list[dict[str, Any]] | None = None
-        self._loaded = False
+        """Initialize the CodelistManager."""
+        self._cache: dict[str, list[dict[str, Any]]] = {}
+        self._loaded: set[str] = set()
 
-    async def _ensure_loaded(self) -> None:
-        """Ensure the codelist is loaded."""
-        if not self._loaded:
-            await self._load()
+    async def _ensure_loaded(self, codelist_type: str) -> None:
+        """Ensure a global codelist is loaded."""
+        if codelist_type in self._loaded:
+            return
+        if codelist_type in self.GLOBAL_CODELISTS:
+            await self._load_from_api(codelist_type)
 
-    async def _load(self) -> None:
-        """Fetch and cache the REF_AREA codelist from the API."""
+    async def _load_from_api(self, codelist_type: str) -> None:
+        """Fetch a global codelist from the API."""
         url = f"{data360_config.api_url}codelist"
-        params = {"type": "REF_AREA"}
+        params = {"type": codelist_type}
 
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 response = await client.get(url, params=params)
                 response.raise_for_status()
                 data = response.json()
-                self._codelist = data.get("value", [])
-                self._loaded = True
+                self._cache[codelist_type] = data.get("value", [])
+                self._loaded.add(codelist_type)
                 _logger.info(
-                    f"Loaded {len(self._codelist)} reference areas from codelist"
+                    f"Loaded {len(self._cache[codelist_type])} items for {codelist_type}"
                 )
         except httpx.HTTPStatusError as e:
-            error_msg = f"HTTP error fetching REF_AREA codelist: {e.response.status_code}"
-            _logger.error(error_msg)
-            raise
-        except httpx.TimeoutException as e:
-            error_msg = f"Timeout fetching REF_AREA codelist: {str(e)}"
+            error_msg = f"HTTP error fetching {codelist_type} codelist: {e.response.status_code}"
             _logger.error(error_msg)
             raise
         except httpx.RequestError as e:
-            error_msg = f"Request error fetching REF_AREA codelist: {str(e)}"
+            error_msg = f"Request error fetching {codelist_type} codelist: {str(e)}"
             _logger.error(error_msg)
             raise
 
-    @property
-    def codelist(self) -> list[dict[str, Any]]:
-        """Get the codelist."""
-        if self._codelist is None:
-            raise RuntimeError(
-                "REF_AREA codelist not loaded. Call ensure_loaded() first."
-            )
-        return self._codelist
-
-    async def find_reference_areas(
-        self, query: str, limit: int = 5
+    async def find_value(
+        self, codelist_type: str, query: str, limit: int = 5
     ) -> list[dict[str, Any]]:
-        """Find reference areas matching the query.
-
-        This tool validates that the geographic context (country, region) is valid
-        based on the available reference areas from the Data360 codelist.
-
+        """Find values in a codelist matching the query.
+        
         Args:
-            query: The geographic entity to search for (e.g., "Kenya", "East Africa")
-            limit: Maximum number of matches to return
-
+            codelist_type: Type of codelist (REF_AREA, FREQ, SEX, etc.)
+            query: Search query (e.g., "Kenya", "monthly", "female")
+            limit: Maximum number of results to return
+            
         Returns:
-            A list of matching reference areas with id, name, and match score.
-
-        Example:
-            >>> await manager.find_reference_areas("Kenya")
-            [{"id": "KEN", "name": "Kenya", "score": 100}]
-
-            >>> await manager.find_reference_areas("Kanya")  # typo
-            [{"id": "KEN", "name": "Kenya", "score": 91}]
+            List of matches with id, name, and score
         """
-        await self._ensure_loaded()
-
+        codelist_type = codelist_type.upper()
         query_lower = query.lower().strip()
+        
+        # Handle global codelists (API-based)
+        if codelist_type in self.GLOBAL_CODELISTS:
+            await self._ensure_loaded(codelist_type)
+            return self._search_global(codelist_type, query_lower, limit)
+        
+        # Handle static codelists
+        if codelist_type in self.STATIC_MAPPINGS:
+            return self._search_static(codelist_type, query_lower, limit)
+        
+        # Unknown codelist
+        _logger.warning(f"Unknown codelist type: {codelist_type}")
+        return []
+
+    def _search_global(
+        self, codelist_type: str, query: str, limit: int
+    ) -> list[dict[str, Any]]:
+        """Search in a global (API-fetched) codelist."""
+        items = self._cache.get(codelist_type, [])
         results: list[dict[str, Any]] = []
 
-        for item in self.codelist:
+        for item in items:
             item_id = item.get("Id", "")
             item_name = item.get("Name", "")
             name_lower = item_name.lower()
 
-            # Calculate match score
             score = 0
-
-            # Exact ID match (highest priority)
-            if query_lower == item_id.lower():
+            
+            # Exact ID match
+            if query == item_id.lower():
                 score = 100
             # Exact name match
-            elif query_lower == name_lower:
+            elif query == name_lower:
                 score = 100
-            # ID starts with query or query starts with ID
-            elif item_id.lower().startswith(query_lower) or query_lower.startswith(
-                item_id.lower()
-            ):
+            # ID starts with query
+            elif item_id.lower().startswith(query):
                 score = 95
             # Name contains query exactly
-            elif query_lower in name_lower:
+            elif query in name_lower:
                 score = 90
-            # Query contains name (partial match)
-            elif name_lower in query_lower:
+            # Query contains name
+            elif name_lower in query:
                 score = 85
             else:
-                # Fuzzy matching using simple similarity
-                similarity = self._calculate_similarity(query_lower, name_lower)
-                if similarity > 0.7:  # 70% similarity threshold
+                # Fuzzy: prefix matching
+                similarity = self._calculate_similarity(query, name_lower)
+                if similarity > 0.7:
                     score = int(similarity * 100)
 
             if score > 0:
-                results.append(
-                    {
-                        "id": item_id,
-                        "name": item_name,
-                        "score": score,
-                    }
-                )
+                results.append({
+                    "id": item_id,
+                    "name": item_name,
+                    "score": score,
+                })
 
-        # Sort by score descending, then by name
         results.sort(key=lambda x: (-x["score"], x["name"]))
-
         return results[:limit]
 
-    def _calculate_similarity(self, s1: str, s2: str) -> float:
-        """Calculate similarity ratio between two strings.
+    def _search_static(
+        self, codelist_type: str, query: str, limit: int
+    ) -> list[dict[str, Any]]:
+        """Search in a static (hardcoded) codelist."""
+        mapping = self.STATIC_MAPPINGS.get(codelist_type, {})
+        results: list[dict[str, Any]] = []
 
-        Uses a simple approach based on common characters and length difference.
-        """
+        for name, code in mapping.items():
+            name_lower = name.lower()
+            score = 0
+
+            # Exact match
+            if query == name_lower:
+                score = 100
+            # Query is the code itself
+            elif query == code.lower():
+                score = 100
+            # Name contains query
+            elif query in name_lower:
+                score = 90
+            # Query contains name
+            elif name_lower in query:
+                score = 80
+
+            if score > 0:
+                results.append({
+                    "id": code,
+                    "name": name.capitalize(),
+                    "score": score,
+                })
+
+        # Deduplicate by id (keep highest score)
+        seen: dict[str, dict[str, Any]] = {}
+        for r in results:
+            rid = r["id"]
+            if rid not in seen or r["score"] > seen[rid]["score"]:
+                seen[rid] = r
+        
+        deduped = list(seen.values())
+        deduped.sort(key=lambda x: (-x["score"], x["name"]))
+        return deduped[:limit]
+
+    def _calculate_similarity(self, s1: str, s2: str) -> float:
+        """Calculate similarity ratio between two strings."""
         if not s1 or not s2:
             return 0.0
 
-        # For very short queries, use character-based matching
         if len(s1) <= 3:
             if s1 in s2 or s2.startswith(s1):
                 return 0.8
             return 0.0
 
-        # Calculate longest common subsequence ratio
         len1, len2 = len(s1), len(s2)
-
-        # Quick length check - if lengths are very different, low similarity
         if abs(len1 - len2) > max(len1, len2) * 0.5:
             return 0.0
 
-        # Count matching characters (simple approach)
         s1_chars = set(s1)
         s2_chars = set(s2)
         common = len(s1_chars & s2_chars)
         total = len(s1_chars | s2_chars)
-
         char_similarity = common / total if total > 0 else 0
 
-        # Check prefix match
         prefix_len = 0
         for c1, c2 in zip(s1, s2):
             if c1 == c2:
                 prefix_len += 1
             else:
                 break
-
         prefix_ratio = prefix_len / min(len1, len2)
 
-        # Combined score
         return (char_similarity * 0.4) + (prefix_ratio * 0.6)
 
 
 # Global instance
-_reference_area_manager: ReferenceAreaManager | None = None
+_codelist_manager: CodelistManager | None = None
 
 
-def get_reference_area_manager() -> ReferenceAreaManager:
-    """Get the global ReferenceAreaManager instance."""
-    global _reference_area_manager
-    if _reference_area_manager is None:
-        _reference_area_manager = ReferenceAreaManager()
-    return _reference_area_manager
+def get_codelist_manager() -> CodelistManager:
+    """Get the global CodelistManager instance."""
+    global _codelist_manager
+    if _codelist_manager is None:
+        _codelist_manager = CodelistManager()
+    return _codelist_manager
 
 
-async def find_reference_areas(query: str, limit: int = 5) -> list[dict[str, Any]]:
-    """Find reference areas matching the query.
-
-    This is a convenience function that uses the global ReferenceAreaManager.
-
+async def find_codelist_value(
+    codelist_type: str, query: str, limit: int = 5
+) -> list[dict[str, Any]]:
+    """Find values in a codelist matching the query.
+    
+    This is a convenience function that uses the global CodelistManager.
+    
     Args:
-        query: The geographic entity to search for (e.g., "Kenya", "East Africa")
-        limit: Maximum number of matches to return
-
+        codelist_type: Type of codelist (REF_AREA, FREQ, SEX, AGE, URBANISATION, UNIT_MEASURE)
+        query: Search query (e.g., "Kenya", "monthly", "female")
+        limit: Maximum number of results to return
+        
     Returns:
-        A list of matching reference areas with id, name, and match score.
+        List of matches with id, name, and score
+        
+    Examples:
+        >>> await find_codelist_value("REF_AREA", "Kenya")
+        [{"id": "KEN", "name": "Kenya", "score": 100}]
+        
+        >>> await find_codelist_value("FREQ", "monthly")
+        [{"id": "M", "name": "Monthly", "score": 100}]
+        
+        >>> await find_codelist_value("SEX", "women")
+        [{"id": "F", "name": "Female", "score": 100}]
     """
-    manager = get_reference_area_manager()
-    return await manager.find_reference_areas(query, limit)
+    manager = get_codelist_manager()
+    return await manager.find_value(codelist_type, query, limit)
+
+
+# Convenience functions for common codelists
+async def find_reference_area(query: str, limit: int = 5) -> list[dict[str, Any]]:
+    """Find reference areas (countries/regions) matching the query."""
+    return await find_codelist_value("REF_AREA", query, limit)
+
+
+async def find_frequency(query: str, limit: int = 5) -> list[dict[str, Any]]:
+    """Find frequency codes matching the query."""
+    return await find_codelist_value("FREQ", query, limit)
+
+
+async def find_sex(query: str, limit: int = 5) -> list[dict[str, Any]]:
+    """Find sex/gender codes matching the query."""
+    return await find_codelist_value("SEX", query, limit)
+
+
+async def find_age_group(query: str, limit: int = 5) -> list[dict[str, Any]]:
+    """Find age group codes matching the query."""
+    return await find_codelist_value("AGE", query, limit)
