@@ -57,13 +57,6 @@ class SearchRequest(BaseModel):
             self.select = "series_description/idno, series_description/name, series_description/database_id, series_description/definition_long"
         return self
 
-    @model_validator(mode="after")
-    def set_filter_default(self) -> "SearchRequest":
-        """Set default filter value when None is provided."""
-        if self.filter is None:
-            self.filter = "type eq 'indicator'"
-        return self
-
 
 class SeriesDescription(BaseModel):
     """Model for series description in search results.

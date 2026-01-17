@@ -66,9 +66,10 @@ def _build_search_payload(request: SearchRequest) -> dict[str, Any]:
         "top": request.limit,
         "skip": request.offset,
         "count": request.count,
-        "filter": request.filter,
         "select": request.select,
     }
+    if request.filter:
+        payload["filter"] = request.filter
     if request.orderby is not None:
         payload["orderby"] = request.orderby
     return payload
