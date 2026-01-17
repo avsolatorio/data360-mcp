@@ -84,13 +84,54 @@ class SeriesDescription(BaseModel):
 
 
 class SearchResponse(MCPPagedResponse):
-    """Response model for data360 search results."""
+    """Response model for data360 search results (raw API response)."""
 
     items: list[SeriesDescription] | None = Field(
         default=None, description="List of search results containing series information"
     )
     error: str | None = Field(
         default=None, description="Error message if search failed"
+    )
+
+
+class EnrichedIndicator(BaseModel):
+    """Model for an enriched indicator in search results.
+    
+    Optimized for LLM consumption with compact, relevant fields.
+    """
+
+    idno: str = Field(..., description="Indicator ID (e.g., WB_WDI_SL_UEM_TOTL_ZS)")
+    database_id: str = Field(..., description="Database ID (e.g., WB_WDI)")
+    name: str = Field(..., description="Indicator name")
+    definition_short: str = Field(..., description="Truncated definition (max 100 chars)")
+    periodicity: str | None = Field(None, description="Data periodicity (Annual, Monthly)")
+    latest_data: str | None = Field(None, description="Most recent year with data")
+    covers_country: bool | None = Field(
+        None, description="True if indicator has data for the requested country"
+    )
+    dimensions: list[str] | None = Field(
+        None, description="Available disaggregations (SEX, AGE, URBANISATION)"
+    )
+
+
+class EnrichedSearchResponse(BaseModel):
+    """Response model for enriched search (LLM-optimized).
+    
+    Returns indicators sorted by country coverage and recency.
+    Pick the FIRST indicator - it's the best match.
+    """
+
+    indicators: list[EnrichedIndicator] = Field(
+        default_factory=list, description="Enriched indicators sorted by relevance"
+    )
+    total_found: int | None = Field(
+        None, description="Total matching indicators in database"
+    )
+    required_country: str | None = Field(
+        None, description="Resolved country code (e.g., KEN for Kenya)"
+    )
+    error: str | None = Field(
+        None, description="Error message if search failed"
     )
 
 

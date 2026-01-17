@@ -12,9 +12,9 @@ from ._server_definition import mcp
 
 # Register tools - just wrap the API functions
 search_indicators = mcp.tool(
-    data360_api.search_indicators_enriched,
+    data360_api.search,
     name="data360_search_indicators",
-    description=data360_api.search_indicators_enriched.__doc__,
+    description=data360_api.search.__doc__,
 )
 
 get_metadata = mcp.tool(

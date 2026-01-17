@@ -97,7 +97,7 @@ def _process_search_response(
     return SearchResponse.model_validate(search_response_data)
 
 
-async def search(
+async def _search_raw(
     query: str,
     limit: int = 5,
     offset: int = 0,
@@ -105,10 +105,9 @@ async def search(
     select_fields: list[str] | None = None,
     odata_options: dict[str, str] | None = None,
 ) -> SearchResponse:
-    """Search for data360 indicators using the World Bank Data360 API.
+    """Internal: Raw search for data360 indicators using the World Bank Data360 API.
     
-    Returns top 5 indicators with compact metadata. Pick the SINGLE best match
-    based on name and definition_long - do not call search multiple times.
+    This is the low-level API. Use `search()` for the enriched LLM-friendly version.
 
     Args:
         query: Search query string to find relevant data series
@@ -121,22 +120,13 @@ async def search(
         odata_options: DEPRECATED - kept for backward compatibility, prefer select_fields
 
     Returns:
-        SearchResponse with top indicators. Pick ONE best match from results.
-
-    Example:
-        # Basic search
-        await search(query="poverty")
-        
-        # Enriched search for indicator selection
-        await search(
-            query="unemployment",
-            select_fields=["idno", "name", "database_id", "definition_long", "periodicity"]
-        )
+        SearchResponse with raw API results.
     """
     # Build select clause from select_fields if provided
     # Keep defaults minimal - tools layer handles enrichment
     if select_fields is None and not (odata_options and odata_options.get("select")):
         select_fields = ["idno", "name", "database_id", "definition_long"]
+
     
     if select_fields:
         select_val = ", ".join(f"series_description/{f}" for f in select_fields)
@@ -217,11 +207,11 @@ async def _resolve_country_code(country_query: str) -> str | None:
     return None
 
 
-async def search_indicators_enriched(
+async def search(
     query: str,
     required_country: str | None = None,
     limit: int = 5,
-) -> dict[str, Any]:
+) -> "EnrichedSearchResponse":
     """Search for Data360 indicators with enriched metadata for selection.
     
     Returns top indicators sorted by relevance. If required_country is provided:
@@ -235,23 +225,24 @@ async def search_indicators_enriched(
         limit: Max results (default 5)
     
     Returns:
-        indicators: List with:
-            - idno, database_id, name
-            - definition_short (max 100 chars)
-            - periodicity (Annual/Monthly)
-            - latest_data (most recent year)
-            - covers_country (True if country has data, only if required_country provided)
-            - dimensions (list of available disaggregations like SEX, AGE)
+        EnrichedSearchResponse with:
+            - indicators: List of EnrichedIndicator (idno, database_id, name, 
+              definition_short, periodicity, latest_data, covers_country, dimensions)
+            - total_found: Total matching indicators in database
+            - required_country: Resolved country code
+            - error: Error message if failed
     
     Selection: Pick the FIRST indicator - it's sorted by country coverage and recency.
     """
+    from .models import EnrichedIndicator, EnrichedSearchResponse
+    
     # Resolve country code upfront using cached codelist
     country_code = None
     if required_country:
         country_code = await _resolve_country_code(required_country)
     
     # Fetch all needed metadata in ONE search call
-    search_result = await search(
+    search_result = await _search_raw(
         query=query,
         limit=limit,
         select_fields=[
@@ -261,49 +252,37 @@ async def search_indicators_enriched(
     )
     
     if search_result.error:
-        return {"error": search_result.error, "indicators": []}
+        return EnrichedSearchResponse(error=search_result.error)
     
     if not search_result.items:
-        return {"error": f"No indicators found for: '{query}'", "indicators": []}
+        return EnrichedSearchResponse(error=f"No indicators found for: '{query}'")
     
     # Process each indicator
-    indicators = []
+    indicators: list[EnrichedIndicator] = []
     for item in search_result.items:
         raw = item.model_dump() if hasattr(item, 'model_dump') else vars(item)
         
-        # Build compact indicator
-        ind: dict[str, Any] = {
-            "idno": raw.get("idno"),
-            "database_id": raw.get("database_id"),
-            "name": raw.get("name"),
-            "definition_short": (raw.get("definition_long") or "")[:100],
-            "periodicity": raw.get("periodicity"),
-        }
-        
         # Extract latest_data from time_periods
         time_periods = raw.get("time_periods", [])
+        latest_data = None
         if time_periods and isinstance(time_periods, list):
             tp = time_periods[0] if isinstance(time_periods[0], dict) else {}
-            ind["latest_data"] = tp.get("LATEST_DATA_POINT") or tp.get("end")
-        else:
-            ind["latest_data"] = None
+            latest_data = tp.get("LATEST_DATA_POINT") or tp.get("end")
         
         # Check covers_country from ref_country
+        covers_country = None
         ref_country = raw.get("ref_country", [])
         if country_code and ref_country and isinstance(ref_country, list):
             country_codes = [
                 c.get("code") if isinstance(c, dict) else c 
                 for c in ref_country
             ]
-            ind["covers_country"] = country_code in country_codes
+            covers_country = country_code in country_codes
         elif country_code:
-            ind["covers_country"] = False
+            covers_country = False
         
         # Extract dimension names from series_description/dimensions
-        # The API returns labels like "Sex", "Age", "Residential area" - map to codes
         dimensions = raw.get("dimensions", [])
-        
-        # Map from human-readable labels to dimension codes
         label_to_code = {
             "sex": "SEX",
             "age": "AGE", 
@@ -312,7 +291,7 @@ async def search_indicators_enriched(
             "education": "EDUCATION",
         }
         
-        useful_dims = []
+        useful_dims: list[str] = []
         if dimensions and isinstance(dimensions, list):
             for dim in dimensions:
                 if isinstance(dim, dict):
@@ -320,25 +299,31 @@ async def search_indicators_enriched(
                     if label in label_to_code:
                         useful_dims.append(label_to_code[label])
         
-        ind["dimensions"] = useful_dims if useful_dims else None
-        
-        indicators.append(ind)
+        # Build EnrichedIndicator
+        indicators.append(EnrichedIndicator(
+            idno=raw.get("idno", ""),
+            database_id=raw.get("database_id", ""),
+            name=raw.get("name", ""),
+            definition_short=(raw.get("definition_long") or "")[:100],
+            periodicity=raw.get("periodicity"),
+            latest_data=latest_data,
+            covers_country=covers_country,
+            dimensions=useful_dims if useful_dims else None,
+        ))
     
     # Sort: covers_country=True first, then by latest_data descending
     if country_code:
         indicators.sort(key=lambda x: (
-            not x.get("covers_country", False),
-            -(int(x.get("latest_data") or 0) if str(x.get("latest_data", "")).isdigit() else 0)
+            not (x.covers_country or False),
+            -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0)
         ))
     
-    result: dict[str, Any] = {
-        "indicators": indicators,
-        "total_found": search_result.total_count,
-    }
-    if country_code:
-        result["required_country"] = country_code
-    
-    return result
+    return EnrichedSearchResponse(
+        indicators=indicators,
+        total_found=search_result.total_count,
+        required_country=country_code,
+    )
+
 
 # ruff: noqa: PLR0913, PLR0912, PLR0915
 async def get_metadata(
