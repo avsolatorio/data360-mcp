@@ -66,12 +66,21 @@ class SearchRequest(BaseModel):
 
 
 class SeriesDescription(BaseModel):
-    """Model for series description in search results."""
+    """Model for series description in search results.
+    
+    Fields available via select_fields in search:
+    - idno, name, database_id, definition_long (core)
+    - periodicity, time_periods, ref_country, dimensions (extended)
+    """
 
     idno: str = Field(..., description="Series identifier")
     name: str = Field(..., description="Series name")
     database_id: str = Field(..., description="Database identifier")
     definition_long: str | None = Field(None, description="Series definition")
+    periodicity: str | None = Field(None, description="Data periodicity (Annual, Monthly, etc)")
+    time_periods: list[dict[str, Any]] | None = Field(None, description="Time period coverage")
+    ref_country: list[dict[str, Any]] | None = Field(None, description="Countries with data")
+    dimensions: list[dict[str, Any]] | None = Field(None, description="Available disaggregations")
 
 
 class SearchResponse(MCPPagedResponse):

@@ -99,17 +99,20 @@ def _process_search_response(
 
 async def search(
     query: str,
-    limit: int = 10,
+    limit: int = 5,
     offset: int = 0,
     count: bool = True,
     select_fields: list[str] | None = None,
     odata_options: dict[str, str] | None = None,
 ) -> SearchResponse:
     """Search for data360 indicators using the World Bank Data360 API.
+    
+    Returns top 5 indicators with compact metadata. Pick the SINGLE best match
+    based on name and definition_long - do not call search multiple times.
 
     Args:
         query: Search query string to find relevant data series
-        limit: Number of results to return (default is 10)
+        limit: Number of results to return (default is 5)
         offset: Offset of the current page
         count: Whether to include total count in response
         select_fields: List of fields to return (e.g., ["idno", "name", "periodicity"]).
@@ -118,20 +121,23 @@ async def search(
         odata_options: DEPRECATED - kept for backward compatibility, prefer select_fields
 
     Returns:
-        SearchResponse with search results
+        SearchResponse with top indicators. Pick ONE best match from results.
 
     Example:
         # Basic search
-        await search(query="poverty", limit=10)
+        await search(query="poverty")
         
         # Enriched search for indicator selection
         await search(
             query="unemployment",
-            limit=5,
             select_fields=["idno", "name", "database_id", "definition_long", "periodicity"]
         )
     """
     # Build select clause from select_fields if provided
+    # Keep defaults minimal - tools layer handles enrichment
+    if select_fields is None and not (odata_options and odata_options.get("select")):
+        select_fields = ["idno", "name", "database_id", "definition_long"]
+    
     if select_fields:
         select_val = ", ".join(f"series_description/{f}" for f in select_fields)
     elif odata_options and odata_options.get("select"):
