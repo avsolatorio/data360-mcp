@@ -229,9 +229,20 @@ async def demo_with_langchain():
                 for iteration in range(1, 15):  # Allow up to 15 iterations per turn
                     print(f"🤖 Step {iteration}: ", end="")
                     response = await llm_with_tools.ainvoke(messages)
-                    tracker.add(response)
-                    
+                    # Print content (reasoning) if present, even if there are tool calls
+                    if response.content:
+                        print(f"        {response.content.strip()}")
+                        print()
+
                     if not response.tool_calls:
+                        # Handle Chain-of-Thought (intermediate steps)
+                        # If it contains "Thought:", assume it's reasoning and continue
+                        if "Thought:" in response.content:
+                            print("🤔 Reasoning (continuing)...")
+                            print()
+                            messages.append(response)
+                            continue
+
                         print("Generating response...")
                         tracker.print_step(response)
                         print()
