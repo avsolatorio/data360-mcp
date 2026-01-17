@@ -51,10 +51,26 @@ class SearchRequest(BaseModel):
     offset: int = Field(default=0, description="Offset of the current page")
 
     @model_validator(mode="after")
+    def validate_query(self) -> "SearchRequest":
+        """Validate search query."""
+        if not self.query or not self.query.strip():
+            raise ValueError("Search query cannot be empty")
+        return self
+
+    @model_validator(mode="after")
     def set_select_default(self) -> "SearchRequest":
         """Set default select value when None is provided."""
         if self.select is None:
             self.select = "series_description/idno, series_description/name, series_description/database_id, series_description/definition_long"
+        return self
+
+    @model_validator(mode="after")
+    def set_filter_default(self) -> "SearchRequest":
+        """Set default filter value when None is provided."""
+        if self.filter is None:
+            # Default to None to allow strict searching without inferred types
+            # Previously: self.filter = "type eq 'indicator'"
+            pass
         return self
 
 
@@ -131,10 +147,23 @@ class EnrichedSearchResponse(BaseModel):
 class MetadataRequest(BaseModel):
     """Request model for data 360 metadata retrieval."""
 
-    idno: str = Field(..., description="Series ID (idno) to retrieve metadata for")
+    indicator_id: str = Field(..., description="Series ID (idno) to retrieve metadata for")
     database_id: str = Field(
         ..., description="Database identifier (e.g., IPC_IPC, WB_WDI)"
     )
+
+    @model_validator(mode="after")
+    def validate_ids(self) -> "MetadataRequest":
+        """Validate database_id and indicator_id logic."""
+        if self.database_id == self.indicator_id:
+            raise ValueError(
+                f"Invalid database_id: '{self.database_id}'. It matches indicator_id."
+            )
+        if len(self.database_id) > 20:
+             raise ValueError(
+                f"Invalid database_id: '{self.database_id}'. It is too long."
+            )
+        return self
 
 
 class MetadataResponse(BaseModel):
@@ -158,11 +187,30 @@ class IndicatorDataRequest(BaseModel):
     database_id: str = Field(
         ..., description="Unique identifier for the database (e.g., WB_WDI)"
     )
-    indicator: str = Field(..., description="Indicator ID (e.g., WB_WDI_SP_POP_TOTL)")
+    indicator_id: str = Field(..., description="Indicator ID (e.g., WB_WDI_SP_POP_TOTL)")
     disaggregation_filters: dict[str, str] | None = Field(
         default=None,
         description="Dictionary of disaggregation filters (e.g., {'REF_AREA': 'UGA', 'UNIT_MEASURE': 'PT'})",
     )
+
+    @model_validator(mode="after")
+    def validate_ids(self) -> "IndicatorDataRequest":
+        """Validate database_id and indicator_id logic."""
+        # 1. Check if database_id is suspicious (same as indicator_id)
+        if self.database_id == self.indicator_id:
+            raise ValueError(
+                f"Invalid database_id: '{self.database_id}'. It matches indicator_id. "
+                "Database ID should be the short dataset code (e.g., 'WB_WDI', 'WB_HCP')."
+            )
+        
+        # 2. Check if database_id length is suspicious (likely an indicator ID passed as DB ID)
+        if len(self.database_id) > 20:
+             raise ValueError(
+                f"Invalid database_id: '{self.database_id}'. It is too long. "
+                "Database ID should be the short dataset code (e.g., 'WB_WDI')."
+            )
+
+        return self
 
 
 class IndicatorDataResponse(MCPPagedResponse):

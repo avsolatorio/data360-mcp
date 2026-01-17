@@ -3,6 +3,7 @@ from typing import Any
 
 import dotenv
 import httpx
+from pydantic import ValidationError
 
 from .config import get_data360_settings
 from .models import (
@@ -10,6 +11,7 @@ from .models import (
     DiscoveredIndicator,
     EnrichedIndicator,
     EnrichedSearchResponse,
+    IndicatorDataRequest,
     IndicatorDataResponse,
     MetadataResponse,
     SearchRequest,
@@ -357,6 +359,12 @@ async def get_metadata(
     if get_valid_disaggregations_func is None:
         get_valid_disaggregations_func = _get_valid_disaggregations
 
+    # Validate inputs
+    try:
+        MetadataRequest(database_id=database_id, indicator_id=indicator_id)
+    except ValidationError as e:
+        return MetadataResponse(error=f"Invalid arguments: {e}")
+
     # Determine URLs
     metadata_url = data360_config.metadata_url or f"{data360_config.api_url}/metadata"
     disaggregation_url = (
@@ -555,6 +563,18 @@ async def get_data(
     data_url = data360_config.data_url or f"{data360_config.api_url}/data"
     all_data: list[dict[str, Any]] = []
     skip = 0
+
+    # Validate arguments using Pydantic model
+    try:
+        IndicatorDataRequest(
+            database_id=database_id,
+            indicator_id=indicator_id,
+            disaggregation_filters=disaggregation_filters,
+        )
+    except ValidationError as e:
+        error_msg = f"Invalid arguments: {e}"
+        _logger.error(error_msg)
+        return IndicatorDataResponse(error=error_msg)
 
     # Prepare base parameters for the API call
     params: dict[str, Any] = {
