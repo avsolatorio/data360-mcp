@@ -264,12 +264,17 @@ async def search(
     for item in search_result.items:
         raw = item.model_dump() if hasattr(item, 'model_dump') else vars(item)
         
-        # Extract latest_data from time_periods
+        # Extract latest_data and time_period_range
         time_periods = raw.get("time_periods", [])
         latest_data = None
+        time_period_range = None
         if time_periods and isinstance(time_periods, list):
             tp = time_periods[0] if isinstance(time_periods[0], dict) else {}
             latest_data = tp.get("LATEST_DATA_POINT") or tp.get("end")
+            start = tp.get("start")
+            end = tp.get("end")
+            if start and end:
+                time_period_range = f"{start}-{end}"
         
         # Check covers_country from ref_country
         covers_country = None
@@ -309,6 +314,7 @@ async def search(
             definition_short=(raw.get("definition_long") or "")[:100],
             periodicity=raw.get("periodicity"),
             latest_data=latest_data,
+            time_period_range=time_period_range,
             covers_country=covers_country,
             dimensions=useful_dims if useful_dims else None,
         ))
