@@ -115,6 +115,9 @@ class EnrichedIndicator(BaseModel):
     definition_short: str = Field(..., description="Truncated definition (max 100 chars)")
     periodicity: str | None = Field(None, description="Data periodicity (Annual, Monthly)")
     latest_data: str | None = Field(None, description="Most recent year with data")
+    time_period_range: str | None = Field(
+        None, description="Data availability range (e.g., '1990-2024')"
+    )
     covers_country: bool | None = Field(
         None, description="True if indicator has data for the requested country"
     )
