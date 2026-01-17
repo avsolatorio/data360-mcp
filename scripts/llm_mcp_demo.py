@@ -190,122 +190,156 @@ async def demo_with_langchain():
         llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
         llm_with_tools = llm.bind_tools(tools)
         
-        # Get query from user
-        print("-" * 70)
-        query = input("👤 Enter your question: ").strip()
-        if not query:
-            query = "What is the unemployment rate in Brazil?"
-            print(f"   Using default: {query}")
-        print("-" * 70)
-        print()
+        # Initialize conversation history
+        messages = [{"role": "system", "content": full_system_prompt}]
         
-        messages = [
-            {"role": "system", "content": full_system_prompt},
-            {"role": "user", "content": query}
-        ]
+        print("💡 Commands:")
+        print("   /clear   - Clear conversation history")
+        print("   quit     - Exit the demo")
+        print("-" * 70)
         
-        for iteration in range(1, 10):  # Allow up to 10 iterations
-            print(f"🤖 Step {iteration}: ", end="")
-            response = await llm_with_tools.ainvoke(messages)
-            tracker.add(response)
-            
-            if not response.tool_calls:
-                print("Generating response...")
-                tracker.print_step(response)
+        while True:
+            try:
                 print()
-                print("=" * 70)
-                print("📊 ANSWER:")
-                print("=" * 70)
-                print()
-                print(response.content)
-                break
-            
-            tool_name = response.tool_calls[0]['name']
-            tool_args = response.tool_calls[0]['args']
-            print(f"Calling {tool_name}")
-            tracker.print_step(response)
-            
-            # Show ALL args
-            print(f"        Args: {json.dumps(tool_args, indent=2).replace(chr(10), chr(10) + '              ')}")
-            
-            # Execute tools
-            tool_results = []
-            for tc in response.tool_calls:
-                tool = next((t for t in tools if t.name == tc['name']), None)
-                if tool:
-                    result = await tool.ainvoke(tc['args'])
-                    raw_text = result[0]['text'] if result else "{}"
+                query = input("👤 Enter your question: ").strip()
+                
+                if not query:
+                    continue
                     
-                    # Debug: show raw JSON if enabled
-                    DEBUG = os.environ.get('DEBUG', '').lower() == 'true'
-                    if DEBUG:
-                        print(f"\n        📋 RAW JSON ({len(raw_text)} chars):")
-                        try:
-                            raw_parsed = json.loads(raw_text)
-                            print(json.dumps(raw_parsed, indent=2)[:2000])  # Limit output
-                            if len(raw_text) > 2000:
-                                print(f"        ... (truncated, {len(raw_text)} total chars)")
-                        except:
-                            print(raw_text[:500])
+                if query.lower() in ['quit', 'exit']:
+                    print("👋 Goodbye!")
+                    break
+                    
+                if query.lower() == '/clear':
+                    messages = [{"role": "system", "content": full_system_prompt}]
+                    print("🧹 Conversation history cleared.")
+                    print("-" * 70)
+                    continue
+                
+                print("-" * 70)
+                
+                # Add user message to history
+                messages.append({"role": "user", "content": query})
+                
+                # Run agent loop for this turn
+                for iteration in range(1, 15):  # Allow up to 15 iterations per turn
+                    print(f"🤖 Step {iteration}: ", end="")
+                    response = await llm_with_tools.ainvoke(messages)
+                    tracker.add(response)
+                    
+                    if not response.tool_calls:
+                        print("Generating response...")
+                        tracker.print_step(response)
                         print()
+                        print("=" * 70)
+                        print("📊 ANSWER:")
+                        print("=" * 70)
+                        print()
+                        print(response.content)
+                        print()
+                        print("=" * 70)
+                        
+                        # Add final response to history
+                        messages.append(response)
+                        break
                     
-                    result_text = truncate_result(raw_text)
+                    tool_name = response.tool_calls[0]['name']
+                    tool_args = response.tool_calls[0]['args']
+                    print(f"Calling {tool_name}")
+                    tracker.print_step(response)
                     
-                    # Log size reduction
-                    reduction = (1 - len(result_text) / len(raw_text)) * 100 if raw_text else 0
-                    if reduction > 5:
-                        print(f"        💾 Result truncated: {len(raw_text):,} → {len(result_text):,} chars ({reduction:.0f}% saved)")
+                    # Show ALL args
+                    print(f"        Args: {json.dumps(tool_args, indent=2).replace(chr(10), chr(10) + '              ')}")
                     
-                    tool_results.append({
-                        "tool_call_id": tc['id'],
-                        "content": result_text
-                    })
-                    
-                    # Show result summary
-                    try:
-                        parsed = json.loads(result_text)
-                        # Handle search results (from our enhanced search)
-                        if 'indicators' in parsed:
-                            country = parsed.get('required_country')
-                            returned = len(parsed['indicators'])
-                            total = parsed.get('total_found', returned)
-                            print(f"        ✅ Returning {returned} of {total} total" + 
-                                  (f" (country: {country})" if country else ""))
-                            for ind in parsed['indicators']:  # Show ALL indicators
-                                covers = ind.get('covers_country')
-                                dims = ind.get('dimensions', [])
-                                latest = ind.get('latest_data', '?')
-                                coverage_str = f"{'✅' if covers else '❌'}" if covers is not None else "  "
-                                dims_str = f" [{','.join(dims)}]" if dims else ""
-                                print(f"           {coverage_str} {ind.get('idno')}: {ind.get('name', '')[:35]}... (→{latest}){dims_str}")
-                        elif 'results' in parsed:
-                            print(f"        ✅ Found {parsed.get('_total_count', len(parsed['results']))} indicators")
-                            for r in parsed['results'][:2]:
-                                print(f"           - {r.get('idno')}: {r.get('name', '')[:50]}")
-                        elif 'data' in parsed:
-                            count = parsed.get('_original_count', len(parsed['data']))
-                            print(f"        ✅ Retrieved {count} data points")
-                            for d in parsed['data'][:3]:
-                                year = d.get('TIME_PERIOD', '?')
-                                val = d.get('OBS_VALUE', '?')
-                                print(f"           {year}: {val}")
-                        elif 'TIME_PERIOD' in parsed or 'REF_AREA' in parsed or 'dimensions' in parsed:
-                            print(f"        ✅ Disaggregation loaded")
-                    except:
-                        pass
-            
-            messages.append(response)
-            for tr in tool_results:
-                messages.append({
-                    "role": "tool",
-                    "tool_call_id": tr["tool_call_id"],
-                    "content": tr["content"]
-                })
-            print()
-        
-        # Print token summary
-        tracker.print_summary()
+                    # Execute tools
+                    tool_results = []
+                    for tc in response.tool_calls:
+                        tool = next((t for t in tools if t.name == tc['name']), None)
+                        if tool:
+                            try:
+                                result = await tool.ainvoke(tc['args'])
+                                raw_text = result[0]['text'] if result else "{}"
+                            except Exception as e:
+                                raw_text = json.dumps({"error": str(e)})
 
+                            # Debug: show raw JSON if enabled
+                            DEBUG = os.environ.get('DEBUG', '').lower() == 'true'
+                            if DEBUG:
+                                print(f"\n        📋 RAW JSON ({len(raw_text)} chars):")
+                                try:
+                                    raw_parsed = json.loads(raw_text)
+                                    print(json.dumps(raw_parsed, indent=2)[:2000])  # Limit output
+                                    if len(raw_text) > 2000:
+                                        print(f"        ... (truncated, {len(raw_text)} total chars)")
+                                except:
+                                    print(raw_text[:500])
+                                print()
+                            
+                            result_text = truncate_result(raw_text)
+                            
+                            # Log size reduction
+                            reduction = (1 - len(result_text) / len(raw_text)) * 100 if raw_text else 0
+                            if reduction > 5:
+                                print(f"        💾 Result truncated: {len(raw_text):,} → {len(result_text):,} chars ({reduction:.0f}% saved)")
+                            
+                            tool_results.append({
+                                "tool_call_id": tc['id'],
+                                "content": result_text
+                            })
+                            
+                            # Show result summary
+                            try:
+                                parsed = json.loads(result_text)
+                                # Handle search results (from our enhanced search)
+                                if 'indicators' in parsed:
+                                    country = parsed.get('required_country')
+                                    returned = len(parsed['indicators'])
+                                    total = parsed.get('total_found', returned)
+                                    print(f"        ✅ Returning {returned} of {total} total" + 
+                                          (f" (country: {country})" if country else ""))
+                                    for ind in parsed['indicators']:  # Show ALL indicators
+                                        covers = ind.get('covers_country')
+                                        dims = ind.get('dimensions', [])
+                                        latest = ind.get('latest_data', '?')
+                                        coverage_str = f"{'✅' if covers else '❌'}" if covers is not None else "  "
+                                        dims_str = f" [{','.join(dims)}]" if dims else ""
+                                        print(f"           {coverage_str} {ind.get('idno')}: {ind.get('name', '')[:35]}... (→{latest}){dims_str}")
+                                elif 'results' in parsed:
+                                    print(f"        ✅ Found {parsed.get('_total_count', len(parsed['results']))} indicators")
+                                    for r in parsed['results'][:2]:
+                                        print(f"           - {r.get('idno')}: {r.get('name', '')[:50]}")
+                                elif 'data' in parsed:
+                                    count = parsed.get('_original_count', len(parsed['data']))
+                                    print(f"        ✅ Retrieved {count} data points")
+                                    for d in parsed['data'][:3]:
+                                        year = d.get('TIME_PERIOD', '?')
+                                        val = d.get('OBS_VALUE', '?')
+                                        print(f"           {year}: {val}")
+                                elif 'TIME_PERIOD' in parsed or 'REF_AREA' in parsed or 'dimensions' in parsed:
+                                    print(f"        ✅ Disaggregation loaded")
+                            except:
+                                pass
+                    
+                    messages.append(response)
+                    for tr in tool_results:
+                        messages.append({
+                            "role": "tool",
+                            "tool_call_id": tr["tool_call_id"],
+                            "content": tr["content"]
+                        })
+                    print()
+                
+                # Print token summary after each turn
+                tracker.print_summary()
+            
+            except KeyboardInterrupt:
+                print("\n👋 Goodbye!")
+                break
+            except Exception as e:
+                print(f"\n❌ Error: {e}")
 
 if __name__ == "__main__":
-    asyncio.run(demo_with_langchain())
+    try:
+        asyncio.run(demo_with_langchain())
+    except KeyboardInterrupt:
+        pass
