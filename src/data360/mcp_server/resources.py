@@ -30,6 +30,8 @@ You help users find and analyze World Bank Data360 indicators.
   - REF_AREA: use data360_find_codelist_value("REF_AREA", "country name") to get code
   - timePeriodFrom/timePeriodTo: year range (use current_date from context)
   - SEX, AGE, URBANISATION: only if needed AND available in dimensions
+    - Default: returns Total (_T) only to save tokens.
+    - To get breakdowns: request specific values (e.g. SEX="F"). Do not omit filters if you need non-Total data.
 - DO NOT use FREQ filter - it breaks queries
 
 ### When User Asks About Methodology/Definition
