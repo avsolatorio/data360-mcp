@@ -45,18 +45,38 @@ The server will start on port `8021` at `/sse`.
 - **URL**: `http://localhost:8021/sse`
 - **Docker Users**: Use `http://host.docker.internal:8021/sse`
 
+### 4. Try the Demo Script (Optional)
+```bash
+uv run scripts/llm_mcp_demo.py
+```
+For debug mode (shows raw JSON):
+```bash
+DEBUG=true uv run scripts/llm_mcp_demo.py
+```
+
 ---
 
 ## 🛠️ Tools Available
 
 | Tool | Description |
 |------|-------------|
-| **`data360_search_indicators`** | Search for indicators. Use `select_fields` for enriched results. |
-| **`data360_get_disaggregation`** | Check available filter values (countries, years, dimensions). |
+| **`data360_search_indicators`** | Search for indicators with enriched metadata. Pass `required_country` for server-side coverage check. Returns `covers_country`, `latest_data`, `dimensions`. |
+| **`data360_get_data`** | Fetch data points with filters (REF_AREA, time period, SEX, AGE, etc.). |
 | **`data360_get_metadata`** | Get indicator metadata. Use `select_fields` for specific fields. |
-| **`data360_get_data`** | Fetch data points with filters (REF_AREA, time period, etc.). |
-| **`data360_find_codelist_value`** | Resolve country names to codes (e.g., "Kenya" → "KEN"). |
+| **`data360_get_disaggregation`** | Check available filter values (countries, years, dimensions). |
+| **`data360_find_codelist_value`** | Resolve names to codes (e.g., "Kenya" → "KEN", "female" → "F"). |
 | **`data360_list_indicators`** | List all indicators for a database. |
+
+### Recommended Workflow
+
+```
+1. Search → data360_search_indicators(query, required_country="Kenya")
+   Returns: covers_country, latest_data, dimensions for each indicator
+   
+2. Get Data → data360_get_data(database_id, indicator_id, filters)
+   Use REF_AREA code from search, add time filters
+```
+
 
 ---
 
