@@ -9,6 +9,10 @@ import asyncio
 import json
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_mcp_adapters.tools import load_mcp_tools
 
@@ -301,9 +305,11 @@ async def demo_with_langchain():
                                         covers = ind.get('covers_country')
                                         dims = ind.get('dimensions', [])
                                         latest = ind.get('latest_data', '?')
+                                        trange = ind.get('time_period_range')
+                                        range_str = f" [{trange}]" if trange else ""
                                         coverage_str = f"{'✅' if covers else '❌'}" if covers is not None else "  "
                                         dims_str = f" [{','.join(dims)}]" if dims else ""
-                                        print(f"           {coverage_str} {ind.get('idno')}: {ind.get('name', '')[:35]}... (→{latest}){dims_str}")
+                                        print(f"           {coverage_str} {ind.get('idno')}: {ind.get('name', '')[:35]}... (→{latest}){range_str}{dims_str}")
                                 elif 'results' in parsed:
                                     print(f"        ✅ Found {parsed.get('_total_count', len(parsed['results']))} indicators")
                                     for r in parsed['results'][:2]:
