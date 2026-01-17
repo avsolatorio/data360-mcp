@@ -132,3 +132,15 @@ When developing chatbot integrations, use the `data360://system-prompt` resource
 - Chain-of-thought reasoning templates
 - Step-by-step workflow guidance
 - Best practices for tool usage
+
+## Technical Findings & Limitations
+
+### 1. OData Filtering Reliability
+Native OData filters (specifically `contains` on text fields) often return incomplete or irrelevant results for search queries involving definitions.
+- **Impact**: We cannot rely on OData for high-quality search.
+- **Solution**: The `search` tool implements server-side logic to fetch broader results and enrich/rank them in application code.
+
+### 2. Metadata vs. Data availability
+The `dimensions` field in search results/metadata indicates *potential* breakdowns (e.g., `SEX`), but does **not guarantee** data exists for all values. 
+- **Example**: An indicator might list `SEX` as a dimension but only contain data for `_T` (Total).
+- **Verification**: Use `get_disaggregation` to check *actual* available values for a specific indicator. It scans the data and returns only values present (e.g. `['F', '_T']` only, missing 'M').
