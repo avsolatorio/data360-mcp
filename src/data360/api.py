@@ -8,6 +8,8 @@ from .config import get_data360_settings
 from .models import (
     DiscoveryResult,
     DiscoveredIndicator,
+    EnrichedIndicator,
+    EnrichedSearchResponse,
     IndicatorDataResponse,
     MetadataResponse,
     SearchRequest,
@@ -234,8 +236,6 @@ async def search(
     
     Selection: Pick the FIRST indicator - it's sorted by country coverage and recency.
     """
-    from .models import EnrichedIndicator, EnrichedSearchResponse
-    
     # Resolve country code upfront using cached codelist
     country_code = None
     if required_country:
@@ -598,19 +598,31 @@ async def get_data(
                     all_data.extend(data_json["value"])
 
                     # Continue fetching if there's more data than currently retrieved
-                    if data_json.get("count", 0) <= len(all_data):
+                    # Note: API does not always return @odata.count, so we rely on non-empty values
+                    if len(data_json["value"]) < 50:  # Assumed page size
                         break
-                    skip = len(all_data)
+                    skip += 50
+                    
+                    # Safety break to prevent infinite loops or huge data fetches
+                    # 5000 records should be enough for any reasonable LLM query
+                    if len(all_data) > 5000:
+                        _logger.warning("Data fetch limit reached (5000 records)")
+                        break
 
+                except httpx.HTTPStatusError as e:
+                    error_msg = f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
+                    _logger.error(error_msg)
+                    return IndicatorDataResponse(data=None, error=error_msg)
+                except httpx.TimeoutException as e:
+                    error_msg = f"Timeout fetching data: {str(e)}"
+                    _logger.error(error_msg)
+                    return IndicatorDataResponse(data=None, error=error_msg)
+                except httpx.RequestError as e:
+                    error_msg = f"Request error fetching data for {indicator_id!r}: {str(e)}"
+                    _logger.error(error_msg)
+                    return IndicatorDataResponse(data=None, error=error_msg)
                 except Exception as e:
-                    if isinstance(e, httpx.HTTPStatusError):
-                        error_msg = f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
-                    elif isinstance(e, httpx.TimeoutException):
-                        error_msg = f"Timeout fetching data: {str(e)}"
-                    elif isinstance(e, httpx.RequestError):
-                        error_msg = f"Request error fetching data for {indicator_id!r}: {str(e)}"
-                    else:
-                        error_msg = f"Unexpected error fetching data: {str(e)}"
+                    error_msg = f"Unexpected error fetching data: {str(e)}"
                     _logger.error(error_msg)
                     return IndicatorDataResponse(data=None, error=error_msg)
 
@@ -619,6 +631,32 @@ async def get_data(
         
         # Sort by TIME_PERIOD descending (most recent first)
         all_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
+
+        # Smart Default Filtering
+        # If user didn't specify filters for standard dimensions, and 'Total' (_T) exists,
+        # filter to show ONLY Total to save tokens and reduce noise.
+        passed_filters = disaggregation_filters or {}
+        standard_dims = ["SEX", "AGE", "URBANISATION"]
+        
+        if all_data:
+            for dim in standard_dims:
+                # Skip if user explicitly filtered this dimension
+                if dim in passed_filters:
+                    continue
+                
+                # Check if dimension exists in data
+                if dim not in all_data[0]:
+                    continue
+                    
+                # Check if _T (Total) is available in the values
+                has_total = any(row.get(dim) == "_T" for row in all_data)
+                
+                if has_total:
+                    # Keep only rows where dim == "_T"
+                    original_count = len(all_data)
+                    all_data = [row for row in all_data if row.get(dim) == "_T"]
+                    if len(all_data) < original_count:
+                        _logger.info(f"Smart filter: Restricted {dim} to '_T' ({original_count} -> {len(all_data)} rows)")
 
         return IndicatorDataResponse(data=all_data, count=len(all_data), error=None)
 
