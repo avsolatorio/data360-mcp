@@ -135,6 +135,10 @@ class CodelistManager:
             _logger.error(error_msg)
             raise
 
+    def _normalize_query(self, query: str) -> str:
+        """Normalize query for case-insensitive and whitespace-invariant search."""
+        return query.lower().strip()
+
     async def find_value(
         self, codelist_type: str, query: str, limit: int = 5
     ) -> list[dict[str, Any]]:
@@ -149,7 +153,8 @@ class CodelistManager:
             List of matches with id, name, and score
         """
         codelist_type = codelist_type.upper()
-        query_lower = query.lower().strip()
+        # Explicitly normalize using helper
+        query_lower = self._normalize_query(query)
         
         # Handle global codelists (API-based)
         if codelist_type in self.GLOBAL_CODELISTS:
@@ -165,37 +170,47 @@ class CodelistManager:
         return []
 
     def _search_global(
-        self, codelist_type: str, query: str, limit: int
+        self, codelist_type: str, query_lower: str, limit: int
     ) -> list[dict[str, Any]]:
         """Search in a global (API-fetched) codelist."""
         items = self._cache.get(codelist_type, [])
         results: list[dict[str, Any]] = []
+        
+        # Also search without spaces for cases like "Vietnam" vs "Viet Nam"
+        query_no_spaces = query_lower.replace(" ", "")
 
         for item in items:
             item_id = item.get("Id", "")
             item_name = item.get("Name", "")
             name_lower = item_name.lower()
+            name_no_spaces = name_lower.replace(" ", "")
 
             score = 0
             
             # Exact ID match
-            if query == item_id.lower():
+            if query_lower == item_id.lower():
                 score = 100
             # Exact name match
-            elif query == name_lower:
+            elif query_lower == name_lower:
+                score = 100
+            # Exact match ignoring spaces (Vietnam == Viet Nam)
+            elif query_no_spaces == name_no_spaces:
                 score = 100
             # ID starts with query
-            elif item_id.lower().startswith(query):
+            elif item_id.lower().startswith(query_lower):
                 score = 95
             # Name contains query exactly
-            elif query in name_lower:
+            elif query_lower in name_lower:
+                score = 90
+            # No-space match (vietnam in vietnam)
+            elif query_no_spaces in name_no_spaces:
                 score = 90
             # Query contains name
-            elif name_lower in query:
+            elif name_lower in query_lower:
                 score = 85
             else:
                 # Fuzzy: prefix matching
-                similarity = self._calculate_similarity(query, name_lower)
+                similarity = self._calculate_similarity(query_lower, name_lower)
                 if similarity > 0.7:
                     score = int(similarity * 100)
 
@@ -210,7 +225,7 @@ class CodelistManager:
         return results[:limit]
 
     def _search_static(
-        self, codelist_type: str, query: str, limit: int
+        self, codelist_type: str, query_lower: str, limit: int
     ) -> list[dict[str, Any]]:
         """Search in a static (hardcoded) codelist."""
         mapping = self.STATIC_MAPPINGS.get(codelist_type, {})
@@ -221,16 +236,16 @@ class CodelistManager:
             score = 0
 
             # Exact match
-            if query == name_lower:
+            if query_lower == name_lower:
                 score = 100
             # Query is the code itself
-            elif query == code.lower():
+            elif query_lower == code.lower():
                 score = 100
             # Name contains query
-            elif query in name_lower:
+            elif query_lower in name_lower:
                 score = 90
             # Query contains name
-            elif name_lower in query:
+            elif name_lower in query_lower:
                 score = 80
 
             if score > 0:

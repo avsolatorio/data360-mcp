@@ -170,7 +170,6 @@ async def _search_raw(
                 error_msg = f"Failed to parse API response: {str(e)}"
             else:
                 try:
-                    print(response_data)
                     return _process_search_response(response_data, request)
                 except Exception as e:
                     _logger.error(f"Failed to validate response data: {e}")
@@ -215,29 +214,27 @@ async def search(
     query: str,
     required_country: str | None = None,
     limit: int = 5,
+    offset: int = 0,
 ) -> "EnrichedSearchResponse":
     """Search for Data360 indicators with enriched metadata for selection.
-    
-    Returns top indicators sorted by relevance. If required_country is provided:
-    - Results include covers_country flag (True if country has data)
-    - Sorted with covers_country=True first, then by latest_data descending
-    - First indicator in list is the BEST MATCH - pick that one
     
     Args:
         query: Search query (e.g., "unemployment rate", "poverty")
         required_country: Country name or code (e.g., "Kenya" or "KEN")
+        required_country: Country name or code (e.g., "Kenya" or "KEN")
         limit: Max results (default 5)
+        offset: Offset for pagination (default 0)
     
     Returns:
         EnrichedSearchResponse with:
             - indicators: List of EnrichedIndicator (idno, database_id, name, 
-              definition_short, periodicity, latest_data, covers_country, dimensions)
-            - total_found: Total matching indicators in database
+              truncated_definition, periodicity, latest_data, covers_country, dimensions)
+            - count, total_count, offset, has_more, next_offset: Pagination fields
             - required_country: Resolved country code
             - error: Error message if failed
-    
-    Selection: Pick the FIRST indicator - it's sorted by country coverage and recency.
     """
+    # NOTE: This function is for MVP only, we should be testing the relevance and performance
+    # of the retrieval process in the future.
     # Resolve country code upfront using cached codelist
     country_code = None
     if required_country:
@@ -247,6 +244,7 @@ async def search(
     search_result = await _search_raw(
         query=query,
         limit=limit,
+        offset=offset,
         select_fields=[
             "idno", "name", "database_id", "definition_long",
             "periodicity", "time_periods", "ref_country", "dimensions"
@@ -262,7 +260,7 @@ async def search(
     # Process each indicator
     indicators: list[EnrichedIndicator] = []
     for item in search_result.items:
-        raw = item.model_dump() if hasattr(item, 'model_dump') else vars(item)
+        raw = item.model_dump()
         
         # Extract latest_data and time_period_range
         time_periods = raw.get("time_periods", [])
@@ -311,7 +309,7 @@ async def search(
             idno=raw.get("idno", ""),
             database_id=raw.get("database_id", ""),
             name=raw.get("name", ""),
-            definition_short=(raw.get("definition_long") or "")[:100],
+            truncated_definition=(raw.get("definition_long") or "")[:100],
             periodicity=raw.get("periodicity"),
             latest_data=latest_data,
             time_period_range=time_period_range,
@@ -328,8 +326,13 @@ async def search(
     
     return EnrichedSearchResponse(
         indicators=indicators,
-        total_found=search_result.total_count,
         required_country=country_code,
+        # Map pagination fields from underlying search result
+        count=search_result.count,
+        total_count=search_result.total_count,
+        offset=search_result.offset,
+        has_more=search_result.has_more,
+        next_offset=search_result.next_offset,
     )
 
 
@@ -545,30 +548,52 @@ async def get_data(
     disaggregation_filters: dict[str, str] | None = None,
     start_year: int | None = None,
     end_year: int | None = None,
+    limit: int = 50,
+    offset: int = 0,
 ) -> IndicatorDataResponse:
     """
-    Fetch indicator data from Data360 API with pagination support.
+    Fetch indicator data from Data360 API with LLM-friendly pagination.
 
     Args:
         database_id: Database identifier (e.g., "IPC_IPC", "WB_WDI")
         indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_WDI_SP_POP_TOTL")
         disaggregation_filters: Optional dictionary of disaggregation filters
             (e.g., {"REF_AREA": "UGA", "UNIT_MEASURE": "PT"})
-        start_year: Optional start year to filter data (inclusive)
-        end_year: Optional end year to filter data (inclusive)
+        start_year: Optional start year to filter data (inclusive). Defaults to last 5 years.
+        end_year: Optional end year to filter data (inclusive). Defaults to current year.
+        limit: Maximum number of records to return (default 50, max 100)
+        offset: Number of records to skip for pagination (default 0)
 
     Returns:
-        IndicatorDataResponse with data and count
+        IndicatorDataResponse with:
+            - data: List of data points for this page
+            - count: Number of records in this response
+            - total_count: Total records available (if known)
+            - has_more: True if more data is available
+            - next_offset: Offset to use for next page (if has_more)
     
     Example:
-        # Get data for Philippines for years 2020-2023
-        get_data("WB_WDI", "WB_WDI_MS_MIL_XPND_CD", 
-                 disaggregation_filters={"REF_AREA": "PHL"},
-                 start_year=2020, end_year=2023)
+        # First page
+        result = get_data("WB_WDI", "WB_WDI_SP_POP_TOTL", 
+                          disaggregation_filters={"REF_AREA": "KEN"})
+        
+        # If has_more=True, get next page:
+        result2 = get_data("WB_WDI", "WB_WDI_SP_POP_TOTL",
+                           disaggregation_filters={"REF_AREA": "KEN"}, 
+                           offset=result.next_offset)
     """
     data_url = data360_config.data_url or f"{data360_config.api_url}/data"
-    all_data: list[dict[str, Any]] = []
-    skip = 0
+    
+    # Cap limit to prevent token overflow
+    limit = min(limit, 100)
+    
+    # Smart time defaults: if no time range specified, default to last 5 years
+    if start_year is None and end_year is None:
+        from datetime import datetime
+        current_year = datetime.now().year
+        end_year = current_year
+        start_year = current_year - 4  # Last 5 years
+        _logger.info(f"Smart default: Applied time range {start_year}-{end_year}")
 
     # Validate arguments using Pydantic model
     try:
@@ -582,109 +607,92 @@ async def get_data(
         _logger.error(error_msg)
         return IndicatorDataResponse(error=error_msg)
 
-    # Prepare base parameters for the API call
+    # Prepare API parameters
     params: dict[str, Any] = {
         "DATABASE_ID": database_id,
         "INDICATOR": indicator_id,
+        "timePeriodFrom": str(start_year),
+        "timePeriodTo": str(end_year),
+        "skip": offset,
+        # Request one extra to detect if there are more results
+        "$top": limit + 1,
     }
 
     # Add disaggregation filters to parameters if provided
     if disaggregation_filters:
         # Suppress FREQ parameter since indicators are single-frequency
-        # Filtering by FREQ (e.g. "A") when the indicator is "M" would result in no data
         filters_to_apply = {k: v for k, v in disaggregation_filters.items() if k != "FREQ"}
         params.update(filters_to_apply)
-    
-    # Add time period filters to API parameters (more efficient than filtering in Python)
-    if start_year is not None:
-        params["timePeriodFrom"] = str(start_year)
-    if end_year is not None:
-        params["timePeriodTo"] = str(end_year)
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
-            while True:
-                current_params = params.copy()
-                current_params["skip"] = skip
+            try:
+                data_res = await client.get(data_url, params=params)
+                data_res.raise_for_status()
 
                 try:
-                    data_res = await client.get(data_url, params=current_params)
-                    data_res.raise_for_status()
-
-                    try:
-                        data_json = data_res.json()
-                    except ValueError as e:
-                        error_msg = f"Failed to parse data JSON response: {str(e)}"
-                        _logger.error(error_msg)
-                        return IndicatorDataResponse(data=None, error=error_msg)
-
-                    if not data_json.get("value"):
-                        break  # No more data
-
-                    all_data.extend(data_json["value"])
-
-                    # Continue fetching if there's more data than currently retrieved
-                    # Note: API does not always return @odata.count, so we rely on non-empty values
-                    if len(data_json["value"]) < 50:  # Assumed page size
-                        break
-                    skip += 50
-                    
-                    # Safety break to prevent infinite loops or huge data fetches
-                    # 5000 records should be enough for any reasonable LLM query
-                    if len(all_data) > 5000:
-                        _logger.warning("Data fetch limit reached (5000 records)")
-                        break
-
-                except httpx.HTTPStatusError as e:
-                    error_msg = f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
-                    _logger.error(error_msg)
-                    return IndicatorDataResponse(data=None, error=error_msg)
-                except httpx.TimeoutException as e:
-                    error_msg = f"Timeout fetching data: {str(e)}"
-                    _logger.error(error_msg)
-                    return IndicatorDataResponse(data=None, error=error_msg)
-                except httpx.RequestError as e:
-                    error_msg = f"Request error fetching data for {indicator_id!r}: {str(e)}"
-                    _logger.error(error_msg)
-                    return IndicatorDataResponse(data=None, error=error_msg)
-                except Exception as e:
-                    error_msg = f"Unexpected error fetching data: {str(e)}"
+                    data_json = data_res.json()
+                except ValueError as e:
+                    error_msg = f"Failed to parse data JSON response: {str(e)}"
                     _logger.error(error_msg)
                     return IndicatorDataResponse(data=None, error=error_msg)
 
-        # Note: Time filtering is now done at the API level via timePeriodFrom/timePeriodTo
-        # This is more efficient than fetching all data and filtering in Python
-        
-        # Sort by TIME_PERIOD descending (most recent first)
-        all_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
-
-        # Smart Default Filtering
-        # If user didn't specify filters for standard dimensions, and 'Total' (_T) exists,
-        # filter to show ONLY Total to save tokens and reduce noise.
-        passed_filters = disaggregation_filters or {}
-        standard_dims = ["SEX", "AGE", "URBANISATION"]
-        
-        if all_data:
-            for dim in standard_dims:
-                # Skip if user explicitly filtered this dimension
-                if dim in passed_filters:
-                    continue
+                raw_data = data_json.get("value", [])
+                total_count = data_json.get("@odata.count")  # May be None
                 
-                # Check if dimension exists in data
-                if dim not in all_data[0]:
-                    continue
-                    
-                # Check if _T (Total) is available in the values
-                has_total = any(row.get(dim) == "_T" for row in all_data)
+                # Detect if there are more results
+                has_more = len(raw_data) > limit
+                if has_more:
+                    raw_data = raw_data[:limit]  # Trim to requested limit
                 
-                if has_total:
-                    # Keep only rows where dim == "_T"
-                    original_count = len(all_data)
-                    all_data = [row for row in all_data if row.get(dim) == "_T"]
-                    if len(all_data) < original_count:
-                        _logger.info(f"Smart filter: Restricted {dim} to '_T' ({original_count} -> {len(all_data)} rows)")
+                # Sort by TIME_PERIOD descending (most recent first)
+                raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
 
-        return IndicatorDataResponse(data=all_data, count=len(all_data), error=None)
+                # Smart Default Filtering for dimensions
+                # If user didn't specify filters for standard dimensions and 'Total' (_T) exists,
+                # filter to show ONLY Total to reduce noise
+                passed_filters = disaggregation_filters or {}
+                standard_dims = ["SEX", "AGE", "URBANISATION"]
+                
+                if raw_data:
+                    for dim in standard_dims:
+                        if dim in passed_filters:
+                            continue
+                        if dim not in raw_data[0]:
+                            continue
+                        has_total = any(row.get(dim) == "_T" for row in raw_data)
+                        if has_total:
+                            original_count = len(raw_data)
+                            raw_data = [row for row in raw_data if row.get(dim) == "_T"]
+                            if len(raw_data) < original_count:
+                                _logger.info(f"Smart filter: Restricted {dim} to '_T' ({original_count} -> {len(raw_data)} rows)")
+
+                return IndicatorDataResponse(
+                    data=raw_data,
+                    count=len(raw_data),
+                    total_count=total_count,
+                    offset=offset,
+                    has_more=has_more,
+                    next_offset=offset + len(raw_data) if has_more else None,
+                    error=None,
+                )
+
+            except httpx.HTTPStatusError as e:
+                error_msg = f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
+                _logger.error(error_msg)
+                return IndicatorDataResponse(data=None, error=error_msg)
+            except httpx.TimeoutException as e:
+                error_msg = f"Timeout fetching data: {str(e)}"
+                _logger.error(error_msg)
+                return IndicatorDataResponse(data=None, error=error_msg)
+            except httpx.RequestError as e:
+                error_msg = f"Request error fetching data for {indicator_id!r}: {str(e)}"
+                _logger.error(error_msg)
+                return IndicatorDataResponse(data=None, error=error_msg)
+            except Exception as e:
+                error_msg = f"Unexpected error fetching data: {str(e)}"
+                _logger.error(error_msg)
+                return IndicatorDataResponse(data=None, error=error_msg)
 
     except Exception as e:
         error_msg = f"Unexpected error fetching data: {str(e)}"
@@ -796,7 +804,7 @@ async def discover_indicators(
             "indicator_id": item.idno,
             "database_id": item.database_id,
             "name": item.name,
-            "definition_short": item.definition_long[:100] if item.definition_long else item.name,
+            "truncated_definition": item.definition_long[:100] if item.definition_long else item.name,
             "has_country": False,
             "country_code": country_code,
             "available_dimensions": [],

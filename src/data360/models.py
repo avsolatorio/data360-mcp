@@ -68,9 +68,8 @@ class SearchRequest(BaseModel):
     def set_filter_default(self) -> "SearchRequest":
         """Set default filter value when None is provided."""
         if self.filter is None:
-            # Default to None to allow strict searching without inferred types
-            # Previously: self.filter = "type eq 'indicator'"
-            pass
+            # Default to indicator
+            self.filter = "type eq 'indicator'"
         return self
 
 
@@ -112,7 +111,7 @@ class EnrichedIndicator(BaseModel):
     idno: str = Field(..., description="Indicator ID (e.g., WB_WDI_SL_UEM_TOTL_ZS)")
     database_id: str = Field(..., description="Database ID (e.g., WB_WDI)")
     name: str = Field(..., description="Indicator name")
-    definition_short: str = Field(..., description="Truncated definition (max 100 chars)")
+    truncated_definition: str = Field(..., description="Truncated definition (max 100 chars)")
     periodicity: str | None = Field(None, description="Data periodicity (Annual, Monthly)")
     latest_data: str | None = Field(None, description="Most recent year with data")
     time_period_range: str | None = Field(
@@ -126,18 +125,14 @@ class EnrichedIndicator(BaseModel):
     )
 
 
-class EnrichedSearchResponse(BaseModel):
+class EnrichedSearchResponse(MCPPagedResponse):
     """Response model for enriched search (LLM-optimized).
     
     Returns indicators sorted by country coverage and recency.
-    Pick the FIRST indicator - it's the best match.
     """
 
     indicators: list[EnrichedIndicator] = Field(
         default_factory=list, description="Enriched indicators sorted by relevance"
-    )
-    total_found: int | None = Field(
-        None, description="Total matching indicators in database"
     )
     required_country: str | None = Field(
         None, description="Resolved country code (e.g., KEN for Kenya)"
@@ -162,10 +157,7 @@ class MetadataRequest(BaseModel):
             raise ValueError(
                 f"Invalid database_id: '{self.database_id}'. It matches indicator_id."
             )
-        if len(self.database_id) > 20:
-             raise ValueError(
-                f"Invalid database_id: '{self.database_id}'. It is too long."
-            )
+
         return self
 
 
@@ -206,12 +198,7 @@ class IndicatorDataRequest(BaseModel):
                 "Database ID should be the short dataset code (e.g., 'WB_WDI', 'WB_HCP')."
             )
         
-        # 2. Check if database_id length is suspicious (likely an indicator ID passed as DB ID)
-        if len(self.database_id) > 20:
-             raise ValueError(
-                f"Invalid database_id: '{self.database_id}'. It is too long. "
-                "Database ID should be the short dataset code (e.g., 'WB_WDI')."
-            )
+
 
         return self
 
@@ -233,7 +220,7 @@ class DiscoveredIndicator(BaseModel):
     indicator_id: str = Field(..., description="Indicator ID")
     database_id: str = Field(..., description="Database identifier")
     name: str = Field(..., description="Indicator name")
-    definition_short: str = Field(..., description="Short definition (max 100 chars)")
+    truncated_definition: str = Field(..., description="Short definition (max 100 chars)")
     has_country: bool = Field(..., description="Whether data exists for the requested country")
     country_code: str | None = Field(default=None, description="Country code used for validation")
     available_dimensions: list[str] = Field(
