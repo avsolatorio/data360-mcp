@@ -614,7 +614,8 @@ async def get_data(
         "timePeriodTo": str(end_year),
         "skip": offset,
         # Request one extra to detect if there are more results
-        "$top": limit + 1,
+        # Note: API uses "top" not "$top" (OData style would be URL-encoded to %24top which API ignores)
+        "top": limit + 1,
     }
 
     # Add disaggregation filters to parameters if provided
@@ -639,10 +640,17 @@ async def get_data(
                 raw_data = data_json.get("value", [])
                 total_count = data_json.get("@odata.count")  # May be None
                 
-                # Detect if there are more results
-                has_more = len(raw_data) > limit
-                if has_more:
-                    raw_data = raw_data[:limit]  # Trim to requested limit
+                # Compute API-level pagination BEFORE any filtering
+                # This ensures next_offset correctly tracks position in the API result set
+                api_returned_count = len(raw_data)
+                has_more = api_returned_count > limit
+                
+                # Trim the extra detection row (we requested limit+1 to detect has_more)
+                if api_returned_count > limit:
+                    raw_data = raw_data[:limit]
+                
+                # Compute API-based next_offset - the true cursor position for next page
+                api_next_offset = offset + len(raw_data) if has_more else None
                 
                 # Sort by TIME_PERIOD descending (most recent first)
                 raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
@@ -666,13 +674,17 @@ async def get_data(
                             if len(raw_data) < original_count:
                                 _logger.info(f"Smart filter: Restricted {dim} to '_T' ({original_count} -> {len(raw_data)} rows)")
 
+                # Final limit enforcement after filtering (safety check)
+                if len(raw_data) > limit:
+                    raw_data = raw_data[:limit]
+
                 return IndicatorDataResponse(
                     data=raw_data,
                     count=len(raw_data),
                     total_count=total_count,
                     offset=offset,
                     has_more=has_more,
-                    next_offset=offset + len(raw_data) if has_more else None,
+                    next_offset=api_next_offset,
                     error=None,
                 )
 
