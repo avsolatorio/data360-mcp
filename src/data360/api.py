@@ -221,7 +221,6 @@ async def search(
     Args:
         query: Search query (e.g., "unemployment rate", "poverty")
         required_country: Country name or code (e.g., "Kenya" or "KEN")
-        required_country: Country name or code (e.g., "Kenya" or "KEN")
         limit: Max results (default 5)
         offset: Offset for pagination (default 0)
     
