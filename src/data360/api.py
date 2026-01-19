@@ -1,4 +1,6 @@
+import json
 import logging
+import zlib
 from typing import Any
 
 import dotenv
@@ -23,6 +25,11 @@ dotenv.load_dotenv()
 _logger = logging.getLogger(__name__)
 
 data360_config = get_data360_settings()
+
+
+def _short_hash(data: dict[str, Any]) -> str:
+    """PCN claim_id 8-character hash for data verification."""
+    return f"{zlib.crc32(json.dumps(data, sort_keys=True).encode()) & 0xFFFFFFFF:08x}"
 
 
 def _get_valid_disaggregations(
@@ -654,6 +661,14 @@ async def get_data(
                 
                 # Sort by TIME_PERIOD descending (most recent first)
                 raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
+
+                # Add claim_id for data verification
+                for row in raw_data:
+                    row["claim_id"] = _short_hash({
+                        "country": row.get("REF_AREA"),
+                        "date": row.get("TIME_PERIOD"),
+                        "value": row.get("OBS_VALUE"),
+                    })
 
                 # Smart Default Filtering for dimensions
                 # If user didn't specify filters for standard dimensions and 'Total' (_T) exists,
