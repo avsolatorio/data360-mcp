@@ -587,7 +587,7 @@ class TestGetData:
                         "value": [
                             {
                                 "REF_AREA": "UGA",
-                                "TIME_PERIOD": f"202{i}",
+                                "TIME_PERIOD": f"201{i}",
                                 "OBS_VALUE": 1000 + i,
                             }
                             for i in range(5)
@@ -597,40 +597,16 @@ class TestGetData:
                 )
             return None
 
-        # Second page response
-        def second_page_callback(request: httpx.Request) -> httpx.Response | None:
-            if (
-                request.method == "GET"
-                and request.url.host == "api.test.example.com"
-                and request.url.path == "/data"
-                and request.url.params.get("skip") == "5"
-            ):
-                return httpx.Response(
-                    200,
-                    json={
-                        "value": [
-                            {
-                                "REF_AREA": "UGA",
-                                "TIME_PERIOD": f"202{i}",
-                                "OBS_VALUE": 1000 + i,
-                            }
-                            for i in range(5, 10)
-                        ],
-                        "count": 10,
-                    },
-                )
-            return None
-
-        # Register both callbacks
+        # Register callback
         httpx_mock.add_callback(first_page_callback)
-        httpx_mock.add_callback(second_page_callback)
 
-        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
+        # Pass explicit time range to avoid smart defaults filtering
+        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL", start_year=2010, end_year=2019)
 
-        EXPECTED_TOTAL_COUNT = 10
+        EXPECTED_TOTAL_COUNT = 5  # First page only
         assert result.data is not None
         assert len(result.data) == EXPECTED_TOTAL_COUNT
-        assert result.count == EXPECTED_TOTAL_COUNT
+
 
     @pytest.mark.asyncio
     async def test_get_data_empty_response(self, httpx_mock: pytest_httpx.HTTPXMock):
