@@ -662,13 +662,7 @@ async def get_data(
                 # Sort by TIME_PERIOD descending (most recent first)
                 raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
 
-                # Add claim_id for data verification
-                for row in raw_data:
-                    row["claim_id"] = _short_hash({
-                        "country": row.get("REF_AREA"),
-                        "date": row.get("TIME_PERIOD"),
-                        "value": row.get("OBS_VALUE"),
-                    })
+
 
                 # Smart Default Filtering for dimensions
                 # If user didn't specify filters for standard dimensions and 'Total' (_T) exists,
@@ -692,6 +686,11 @@ async def get_data(
                 # Final limit enforcement after filtering (safety check)
                 if len(raw_data) > limit:
                     raw_data = raw_data[:limit]
+
+                # Add claim_id for data verification just before returning
+                # We hash the FULL row to avoid collisions on dimensions not in the specific set
+                for row in raw_data:
+                    row["claim_id"] = _short_hash(row)
 
                 return IndicatorDataResponse(
                     data=raw_data,
