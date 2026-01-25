@@ -15,6 +15,7 @@ from .models import (
     EnrichedSearchResponse,
     IndicatorDataRequest,
     IndicatorDataResponse,
+    MetadataRequest,
     MetadataResponse,
     SearchRequest,
     SearchResponse,
@@ -44,6 +45,44 @@ def _get_valid_disaggregations(
         else:
             valid.append(field)
     return valid
+
+
+def _build_disaggregation_params(
+    disaggregation_filters: dict[str, str | None] | None
+) -> dict[str, str]:
+    """Build effective disaggregation params with smart defaults.
+    
+    This is the single source of truth for disaggregation filtering logic.
+    Used by both get_data() and get_data_api_url().
+    
+    Args:
+        disaggregation_filters: User-provided filters. 
+            - None or {}: Use defaults (SEX=_T, AGE=_T, URBANISATION=_T)
+            - {"SEX": "F"}: Use F for SEX, defaults for others
+            - {"SEX": None}: Omit SEX filter (get all values), defaults for others
+        
+    Returns:
+        Dict of dimension -> value to add to API params.
+        Dimensions with None values are omitted (API returns all).
+    """
+    default_filters = {"SEX": "_T", "AGE": "_T", "URBANISATION": "_T"}
+    
+    if not disaggregation_filters:
+        return default_filters
+    
+    effective = {}
+    for dim, default_val in default_filters.items():
+        if dim in disaggregation_filters:
+            user_val = disaggregation_filters[dim]
+            if user_val is not None:
+                # User specified a value → use it
+                effective[dim] = user_val
+            # else: user passed None → omit dimension (get all values)
+        else:
+            # User didn't specify → use default
+            effective[dim] = default_val
+    
+    return effective
 
 
 def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescription]:
@@ -551,7 +590,7 @@ async def get_disaggregation(
 async def get_data(
     database_id: str,
     indicator_id: str,
-    disaggregation_filters: dict[str, str] | None = None,
+    disaggregation_filters: dict[str, str | None] | None = None,
     start_year: int | None = None,
     end_year: int | None = None,
     limit: int = 50,
@@ -598,7 +637,7 @@ async def get_data(
         from datetime import datetime
         current_year = datetime.now().year
         end_year = current_year
-        start_year = current_year - 4  # Last 5 years
+        start_year = current_year - 19  # Last 20 years
         _logger.info(f"Smart default: Applied time range {start_year}-{end_year}")
 
     # Validate arguments using Pydantic model
@@ -625,11 +664,16 @@ async def get_data(
         "top": limit + 1,
     }
 
-    # Add disaggregation filters to parameters if provided
+    # Apply smart disaggregation defaults using helper (single source of truth)
+    # This adds filters to the URL, not post-fetch filtering
+    effective_disagg = _build_disaggregation_params(disaggregation_filters)
+    params.update(effective_disagg)
+    
+    # Also include any non-standard filters passed by user (e.g., REF_AREA)
     if disaggregation_filters:
-        # Suppress FREQ parameter since indicators are single-frequency
-        filters_to_apply = {k: v for k, v in disaggregation_filters.items() if k != "FREQ"}
-        params.update(filters_to_apply)
+        for k, v in disaggregation_filters.items():
+            if k not in ["SEX", "AGE", "URBANISATION", "FREQ"] and v is not None:
+                params[k] = v
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -662,28 +706,10 @@ async def get_data(
                 # Sort by TIME_PERIOD descending (most recent first)
                 raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
 
-
-
-                # Smart Default Filtering for dimensions
-                # If user didn't specify filters for standard dimensions and 'Total' (_T) exists,
-                # filter to show ONLY Total to reduce noise
-                passed_filters = disaggregation_filters or {}
-                standard_dims = ["SEX", "AGE", "URBANISATION"]
+                # Note: Post-fetch filtering removed - filters now applied at URL level
+                # via _build_disaggregation_params() for consistency with get_data_api_url()
                 
-                if raw_data:
-                    for dim in standard_dims:
-                        if dim in passed_filters:
-                            continue
-                        if dim not in raw_data[0]:
-                            continue
-                        has_total = any(row.get(dim) == "_T" for row in raw_data)
-                        if has_total:
-                            original_count = len(raw_data)
-                            raw_data = [row for row in raw_data if row.get(dim) == "_T"]
-                            if len(raw_data) < original_count:
-                                _logger.info(f"Smart filter: Restricted {dim} to '_T' ({original_count} -> {len(raw_data)} rows)")
-
-                # Final limit enforcement after filtering (safety check)
+                # Final limit enforcement (safety check)
                 if len(raw_data) > limit:
                     raw_data = raw_data[:limit]
 
@@ -797,6 +823,74 @@ async def discover_indicators(
     )
     
     from data360.providers import find_reference_area
+    # ... existing implementation ...
+    
+# --- Visualization Workflow Tools ---
+
+async def get_data_api_url(
+    database_id: str,
+    indicator_id: str,
+    country_code: str | None = None,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    disaggregation_filters: dict[str, str | None] | None = None,
+) -> str:
+    """Generate a Data360 API URL for a dataset (without fetching).
+    
+    Use this to get the `data_url` for visualization generation.
+    
+    Args:
+        database_id: Database identifier (e.g., WB_HNP, WB_WDI)
+        indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL)
+        country_code: Optional country code (e.g., KEN, USA)
+        start_year: Optional start year
+        end_year: Optional end year
+        disaggregation_filters: Optional dict of dimension filters (e.g., {"SEX": "F"})
+            If not provided, defaults to totals (_T) for SEX, AGE, URBANISATION
+    
+    Returns:
+        Constructed API URL string
+    """
+    settings = get_data360_settings()
+    
+    # Fix double-slash: ensure base URL doesn't end with slash before appending /data
+    base_url = settings.api_url.rstrip('/')
+    base = f"{base_url}/data"
+    
+    # Construct query params
+    params = [
+        f"DATABASE_ID={database_id}",
+        f"INDICATOR={indicator_id}"
+    ]
+    
+    if country_code:
+        params.append(f"REF_AREA={country_code}")
+    
+    if start_year:
+        params.append(f"timePeriodFrom={start_year}")
+    
+    if end_year:
+        params.append(f"timePeriodTo={end_year}")
+    
+    # Use shared helper for disaggregation defaults (single source of truth)
+    # See _build_disaggregation_params() docstring for behavior
+    effective_filters = _build_disaggregation_params(disaggregation_filters)
+    
+    # Add dimension filters to params
+    for dim, val in effective_filters.items():
+        params.append(f"{dim}={val}")
+
+    # Also include any non-standard filters passed by user (e.g., UNIT_MEASURE)
+    if disaggregation_filters:
+        for k, v in disaggregation_filters.items():
+            if k not in effective_filters and k != "FREQ" and v is not None:
+                params.append(f"{k}={v}")
+        
+    # Default limit for viz
+    params.append("top=1000")
+        
+    return f"{base}?{'&'.join(params)}"
+
 
     # Step 1: Resolve country code if provided as name
     country_code: str | None = None
