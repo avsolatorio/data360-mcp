@@ -4,7 +4,7 @@ name = "data360-mcp"
 version = "0.1.2"
 description = "Data360 MCP Project"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
   "fastmcp>=2.12.4",
   "mcp>=1.18.0",
