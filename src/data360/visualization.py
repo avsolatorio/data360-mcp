@@ -15,6 +15,8 @@ from urllib.parse import urlparse, parse_qs
 import httpx
 import pandas as pd
 from draco import Draco, dict_to_facts, schema_from_dataframe, answer_set_to_dict
+from draco.renderer import AltairRenderer
+import altair as alt
 
 _logger = logging.getLogger(__name__)
 
@@ -99,86 +101,6 @@ async def _fetch_data_internal(url: str) -> pd.DataFrame:
     return df
 
 
-def _draco_spec_to_vegalite(draco_spec: dict, data_records: list[dict], title: str) -> dict:
-    """Transform Draco ASP output to a full Vega-Lite specification."""
-    try:
-        view = draco_spec['view'][0]
-        mark_entry = view.get('mark', [{'type': 'point'}])[0]
-        mark_type = mark_entry.get('type', 'point')
-        
-        encoding = {}
-        if 'encoding' in mark_entry:
-            for enc in mark_entry['encoding']:
-                channel = enc.get('channel')
-                field = enc.get('field')
-                aggregate = enc.get('aggregate')
-                binning = enc.get('binning')
-                # IMPORTANT: Extract 'type' if Draco output it
-                enc_type = enc.get('type')
-                
-                if channel:
-                    enc_def = {}
-                    if field:
-                        enc_def['field'] = field
-                        enc_def['title'] = field.replace('_', ' ').title()
-                        
-                        # Apply Type Inference if missing from Draco
-                        if not enc_type:
-                            if field == 'time_period' or 'date' in field:
-                                enc_type = 'temporal'
-                            elif field == 'obs_value' or 'value' in field or 'gdp' in field:
-                                enc_type = 'quantitative'
-                            else:
-                                enc_type = 'nominal'
-                    
-                    if enc_type:
-                        enc_def['type'] = enc_type
-                    
-                    if aggregate:
-                        enc_def['aggregate'] = aggregate
-                        
-                    if binning:
-                        enc_def['bin'] = True
-                        
-                    encoding[channel] = enc_def
-
-        # --- Task #7: Add Interactivity ---
-        # 1. Tooltips (if not already present via Draco)
-        if 'tooltip' not in encoding:
-             # Basic Tooltip with all encoded fields
-             tooltip_fields = []
-             for channel, dfn in encoding.items():
-                 if 'field' in dfn:
-                     tooltip_fields.append({"field": dfn['field'], "title": dfn.get('title', dfn['field']), "type": dfn.get('type')})
-             if tooltip_fields:
-                encoding['tooltip'] = tooltip_fields
-
-        spec = {
-            "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-            "title": title,
-            "data": {"values": data_records},
-            # Enable default tooltips on mark
-            "mark": {"type": mark_type, "tooltip": True}, 
-            "encoding": encoding,
-            # 2. Zoom/Pan
-            "params": [{
-                "name": "grid",
-                "select": "interval",
-                "bind": "scales"
-            }]
-        }
-        return spec
-        
-    except (KeyError, IndexError) as e:
-        _logger.error(f"Error parsing Draco spec: {e}")
-        # Fallback basic spec if parsing fails
-        return {
-            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-            "title": title,
-            "data": {"values": data_records},
-            "mark": "bar",
-            "encoding": {}
-        }
 
 
 
@@ -343,8 +265,6 @@ async def get_viz_spec(
              return f"Error: The following requested fields were not found in the data: {missing_fields}. Available columns: {list(data.columns)}"
 
         valid_cols = req_fields
-
-             
         viz_data = data[valid_cols].copy()
         # Ensure relevant_cols is defined for downstream logic
         relevant_cols = valid_cols
@@ -434,17 +354,37 @@ async def get_viz_spec(
         # Solve
         model = next(d.complete_spec(program))
         draco_spec = answer_set_to_dict(model.answer_set)
-        
-        # Safe data serialization: use pandas to_json to handle Timestamps/NumPy types, then load back
-        # Use iso format for dates so Vega-Lite can parse them
-        data_records = json.loads(viz_data.to_json(orient="records", date_format="iso"))
 
-        # Transform to Vega-Lite
-        vl_spec = _draco_spec_to_vegalite(
-            draco_spec, 
-            data_records, 
-            chart_title
-        )
+        # RENDER USING STANDARD DRACO RENDERER
+        
+        # Modify draco_spec to remove 'type' from encodings as it's forbidden by the renderer validation
+        # (It expects types to be inferred from the schema or handled differently)
+        if 'view' in draco_spec:
+            for view in draco_spec['view']:
+                if 'mark' in view:
+                    for mark in view['mark']:
+                        if 'encoding' in mark:
+                            for encoding in mark['encoding']:
+                                encoding.pop('type', None)
+
+        # Merge data schema (stats) with the view spec
+        full_spec = {**schema, **draco_spec}
+
+        renderer = AltairRenderer()
+        chart = renderer.render(spec=full_spec, data=viz_data)
+        
+        # Apply customizations 
+        
+        # 1. Custom Interactive + Title
+        chart = chart.properties(title=chart_title).interactive()
+        
+        # 2. Force Rich Tooltips
+        # The library renderer might not auto-populate complete tooltips.
+        # We add tooltips for all columns currently in the dataframe as a robust fallback/feature.
+        tooltip_cols = list(viz_data.columns)
+        chart = chart.encode(tooltip=tooltip_cols)
+        
+        vl_spec = chart.to_dict()
         
         # Save
         vega_url = save_specs_to_static(vl_spec)
