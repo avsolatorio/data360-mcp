@@ -24,16 +24,22 @@ Do not answer with guesses. Do not stop after describing a plan.
      - Explicitly state: "Selected Indicator: [ID] - [Name]" and "Why: [Reason]".
 2) If you need country/dimension codes -> call data360_find_codelist_value
    - Country: `codelist_type="REF_AREA"` (e.g. query="Kenya") -> "KEN"
+   - **Multi-Country**: You can pass "KEN,TZA" to compare countries. Resolve each name separately if needed.
    - Unit Measure: `codelist_type="UNIT_MEASURE"` (e.g. query="Current US") -> "CD"
    - Note: You must pass the resulting code (e.g. "USA") to get_data, not the name.
 3) If you need to confirm availability -> call data360_get_disaggregation
 4) If you need values -> call data360_get_data (default: last 20 years)
    - **CRITICAL**: You MUST pass `disaggregation_filters={"REF_AREA": "..."}` if a country was requested.
+   - For multiple countries, use comma-separated string: `{"REF_AREA": "KEN,TZA"}`.
    - Do not call `get_data` blindly without filters unless you want world/global data.
+   - Note: The response includes the indicator name and definition, so you don't need to fetch metadata separately just for that.
 5) If the result is time-series or comparison:
    - Call data360_get_supported_chart_types to see options and data requirements.
    - DECIDE: Does the data match the requirements? (e.g. have 'time_period' and 'obs_value'?)
-   - IF YES: Call data360_get_viz_spec. Explicitly pass `relevant_fields=["time_period", "obs_value", ...]` based on your decision.
+   - IF YES: Call data360_get_viz_spec. 
+     - Explicitly pass `relevant_fields=["time_period", "obs_value", ...]` based on your decision.
+     - IF user asked for a specific type (e.g. "bar chart"), pass `chart_type="bar"`.
+     - IF user gave specific rules (e.g. "sort descending"), you can use `custom_constraints`.
    - IF NO: Just present the data table.
 
 Then provide the final answer to the user.
@@ -96,6 +102,7 @@ def indicator_search(
 
 6. **Selection**:
    - Pick the SINGLE best indicator ID. Do not loop.
+   - Use the `database_id` exactly as returned in the search result (do not guess).
    - Ensure your `get_data` call will carry the specific filters you decided on.
 """
 
@@ -109,8 +116,8 @@ def indicator_details(
     """Guide LLM to get appropriate metadata based on user question.
     
     Args:
-        indicator_id: Indicator ID (e.g., "WB_WDI_SP_POP_TOTL")
-        database_id: Database ID (e.g., "WB_WDI")
+        indicator_id: Indicator ID (e.g., "WB_GS_NY_GDP_PCAP_KD")
+        database_id: Database ID (e.g., "WB_GS")
         question: Optional specific question to answer
     """
     return f"""To answer questions about indicator '{indicator_id}':
@@ -146,7 +153,7 @@ def country_data(
     
     Args:
         query: Indicator search query
-        country: Country name (e.g., "Kenya")
+        country: Country name or comma-separated list (e.g., "Kenya" or "Kenya, Uganda")
         start_year: Optional start year
         end_year: Optional end year
     """
@@ -154,18 +161,20 @@ def country_data(
 
 <thinking>
 1. Need to find the right indicator
-2. Need to convert country name to code
+2. Need to convert country name(s) to codes
 3. Need to validate data availability
-4. Then fetch the data
+4. Then fetch the data in ONE call
 </thinking>
 
 **Step 1: Resolve country code**
 data360_find_codelist_value(codelist_type="REF_AREA", query="{country}")
+# Returns list of codes, e.g. "KEN" or "KEN,UGA"
 
 **Step 2: Search for indicator**
 data360_search_indicators(
     query="{query}",
     limit=5,
+    required_country="{country}", # Pass the list string as-is
     select_fields=["idno", "name", "database_id", "definition_long", "periodicity"]
 )
 
@@ -173,25 +182,29 @@ data360_search_indicators(
 For chosen indicator, call:
 data360_get_disaggregation(database_id=<db_id>, indicator_id=<ind_id>)
 - Confirm country code is in REF_AREA
-- Check TIME_PERIOD for available years{f" (looking for {start_year}-{end_year})" if start_year and end_year else ""}
+- Check TIME_PERIOD
 - **CRITICAL**: Check for multiple values in other dimensions (e.g. UNIT_MEASURE).
-  - If found (e.g. `["KD", "CD"]`), pick ONE (e.g. "KD") to filter.
+  - If found, pick ONE.
+  - If you need ALL values for a dimension (e.g. SEX), pass `NULL` in the filter.
 
 **Step 4: Get data**
 data360_get_data(
     database_id=<db_id>,
     indicator_id=<ind_id>,
-    disaggregation_filters={{"REF_AREA": "<country_code>", "UNIT_MEASURE": "..."}},
+    disaggregation_filters={{"REF_AREA": "<country_code(s)>", "UNIT_MEASURE": "..."}},
     start_year={start_year if start_year else "None (Defaults to last 20 years)"},
     end_year={end_year if end_year else "None"}
 )
 
 **Step 5: Visualize**
-If data is suitable (time series), visualize directly:
+If data is suitable (time series), visualize directly. 
+For multi-country, the tool auto-handles color-coding.
 data360_get_viz_spec(
     database_id=<db_id>,
     indicator_id=<ind_id>,
-    country_code=<country_code>,
-    disaggregation_filters={{"SEX": "..."}}
+    country_code=<country_code(s)>,
+    # If explicit breakdown needed:
+    # disaggregation_filters={{"SEX": None}}, # Explicitly ask for all sexes
+    chart_type="line"
 )
 """

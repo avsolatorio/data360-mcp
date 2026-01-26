@@ -247,6 +247,18 @@ async def _resolve_country_code(country_query: str) -> str | None:
     
     if not country_query:
         return None
+        
+    # Handle multi-country
+    if "," in country_query:
+        parts = [p.strip() for p in country_query.split(",") if p.strip()]
+        resolved_codes = []
+        for part in parts:
+            code = await _resolve_country_code(part)
+            if code:
+                resolved_codes.append(code)
+        
+        return ",".join(resolved_codes) if resolved_codes else None
+
     # Already a 3-letter code
     if len(country_query) == 3 and country_query.isupper():
         return country_query
@@ -393,8 +405,8 @@ async def get_metadata(
     """Get metadata and disaggregation options for a Data360 indicator.
 
     Args:
-        database_id: Database identifier (e.g., IPC_IPC, WB_WDI)
-        indicator_id: Indicator ID (e.g., IPC_IPC_PHASE, WB_WDI_SP_POP_TOTL)
+        database_id: Database identifier (e.g., IPC_IPC, WB_GS)
+        indicator_id: Indicator ID (e.g., IPC_IPC_PHASE, WB_GS_NY_GDP_PCAP_KD)
         select_fields: Optional list of metadata fields to return (e.g., ["methodology", "statistical_concept"]).
             If None, returns all fields. Available fields include:
             methodology, statistical_concept, definition_long, limitation, relevance,
@@ -406,10 +418,10 @@ async def get_metadata(
 
     Example:
         # Get only methodology
-        await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL", select_fields=["methodology"])
+        await get_metadata("WB_GS", "WB_GS_NY_GDP_PCAP_KD", select_fields=["methodology"])
         
         # Get full metadata
-        await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
+        await get_metadata("WB_GS", "WB_GS_NY_GDP_PCAP_KD")
     """
     # Use provided function or default
     if get_valid_disaggregations_func is None:
@@ -543,8 +555,8 @@ async def get_disaggregation(
     and dimensions (SEX, AGE, URBANISATION).
 
     Args:
-        database_id: Database identifier (e.g., WB_WDI, WB_SSGD)
-        indicator_id: Indicator ID (e.g., WB_WDI_SP_POP_TOTL)
+        database_id: Database identifier (e.g., WB_GS, WB_SSGD)
+        indicator_id: Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD)
 
     Returns:
         Dict with dimensions, each containing field_name, label_name, and field_value list.
@@ -609,8 +621,8 @@ async def get_data(
     Fetch indicator data from Data360 API with LLM-friendly pagination.
 
     Args:
-        database_id: Database identifier (e.g., "IPC_IPC", "WB_WDI")
-        indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_WDI_SP_POP_TOTL")
+        database_id: Database identifier (e.g., "IPC_IPC", "WB_GS")
+        indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_GS_NY_GDP_PCAP_KD")
         disaggregation_filters: Optional dictionary of disaggregation filters
             (e.g., {"REF_AREA": "UGA" or "KEN,TZA", "UNIT_MEASURE": "PT"})
         start_year: Optional start year to filter data (inclusive). Defaults to last 5 years.
@@ -628,11 +640,11 @@ async def get_data(
     
     Example:
         # First page
-        result = get_data("WB_WDI", "WB_WDI_SP_POP_TOTL", 
+        result = get_data("WB_GS", "WB_GS_NY_GDP_PCAP_KD", 
                           disaggregation_filters={"REF_AREA": "KEN"})
         
         # If has_more=True, get next page:
-        result2 = get_data("WB_WDI", "WB_WDI_SP_POP_TOTL",
+        result2 = get_data("WB_GS", "WB_GS_NY_GDP_PCAP_KD",
                            disaggregation_filters={"REF_AREA": "KEN"}, 
                            offset=result.next_offset)
     """

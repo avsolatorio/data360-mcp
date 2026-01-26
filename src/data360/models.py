@@ -108,8 +108,8 @@ class EnrichedIndicator(BaseModel):
     Optimized for LLM consumption with compact, relevant fields.
     """
 
-    idno: str = Field(..., description="Indicator ID (e.g., WB_WDI_SL_UEM_TOTL_ZS)")
-    database_id: str = Field(..., description="Database ID (e.g., WB_WDI)")
+    idno: str = Field(..., description="Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD)")
+    database_id: str = Field(..., description="Database ID (e.g., WB_GS)")
     name: str = Field(..., description="Indicator name")
     truncated_definition: str = Field(..., description="Truncated definition (max 100 chars)")
     periodicity: str | None = Field(None, description="Data periodicity (Annual, Monthly)")
@@ -147,7 +147,7 @@ class MetadataRequest(BaseModel):
 
     indicator_id: str = Field(..., description="Series ID (idno) to retrieve metadata for")
     database_id: str = Field(
-        ..., description="Database identifier (e.g., IPC_IPC, WB_WDI)"
+        ..., description="Database identifier (e.g., IPC_IPC, WB_GS)"
     )
 
     @model_validator(mode="after")
@@ -180,10 +180,10 @@ class IndicatorDataRequest(BaseModel):
     """Request model for retrieving indicator data from Data360 API."""
 
     database_id: str = Field(
-        ..., description="Unique identifier for the database (e.g., WB_WDI)"
+        ..., description="Unique identifier for the database (e.g., WB_GS)"
     )
-    indicator_id: str = Field(..., description="Indicator ID (e.g., WB_WDI_SP_POP_TOTL)")
-    disaggregation_filters: dict[str, str] | None = Field(
+    indicator_id: str = Field(..., description="Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD)")
+    disaggregation_filters: dict[str, str | None] | None = Field(
         default=None,
         description="Dictionary of disaggregation filters (e.g., {'REF_AREA': 'UGA', 'UNIT_MEASURE': 'PT'})",
     )
@@ -195,7 +195,7 @@ class IndicatorDataRequest(BaseModel):
         if self.database_id == self.indicator_id:
             raise ValueError(
                 f"Invalid database_id: '{self.database_id}'. It matches indicator_id. "
-                "Database ID should be the short dataset code (e.g., 'WB_WDI', 'WB_HCP')."
+                "Database ID should be the short dataset code (e.g., 'WB_GS', 'WB_HCP')."
             )
         
 

@@ -153,6 +153,23 @@ class CodelistManager:
             List of matches with id, name, and score
         """
         codelist_type = codelist_type.upper()
+        
+        # Check for multi-value query (comma-separated)
+        if "," in query:
+            parts = [p.strip() for p in query.split(",") if p.strip()]
+            all_results = []
+            seen_ids = set()
+            
+            for part in parts:
+                part_lower = self._normalize_query(part)
+                # Recurse for single value
+                matches = await self.find_value(codelist_type, part, limit=1) # find top match for each
+                for m in matches:
+                    if m["id"] not in seen_ids:
+                        all_results.append(m)
+                        seen_ids.add(m["id"])
+            return all_results
+
         # Explicitly normalize using helper
         query_lower = self._normalize_query(query)
         

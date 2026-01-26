@@ -265,6 +265,19 @@ async def get_viz_spec(
              return f"Error: The following requested fields were not found in the data: {missing_fields}. Available columns: {list(data.columns)}"
 
         valid_cols = req_fields
+        
+        # Smart enrichment: If ref_area (country) is in the data but not requested, 
+        # check if it's needed to distinguish data points (multi-country) and keep it.
+        # Also check other breakdown dimensions.
+        potential_enrichments = ['ref_area', 'sex', 'age', 'urbanisation']
+        for dim in potential_enrichments:
+            if dim in data.columns and dim not in valid_cols:
+                # Check if this dimension has multiple values (or is not just "_T")
+                unique_vals = data[dim].unique()
+                if len(unique_vals) > 1 or (len(unique_vals) == 1 and unique_vals[0] != '_T'):
+                    valid_cols.append(dim)
+                    _logger.info(f"Auto-enriched relevant_fields with {dim}")
+
         viz_data = data[valid_cols].copy()
         # Ensure relevant_cols is defined for downstream logic
         relevant_cols = valid_cols

@@ -20,7 +20,7 @@ DATABASES = {
         {"id": "WB_SSGD", "name": "Social Sustainability Global Database"},
         {"id": "WB_POVERTY", "name": "Poverty and Inequality Platform"},
     ],
-    "note": "Use search to find indicators within these databases",
+    "note": "These are EXAMPLES only. Always use the 'database_id' returned by data360_search_indicators.",
 }
 
 
@@ -95,7 +95,7 @@ DATA_FILTERS = {
     "supported_filters": {
         "timePeriodFrom": {"description": "Start year", "example": "2020"},
         "timePeriodTo": {"description": "End year", "example": "2023"},
-        "REF_AREA": {"description": "Country code from disaggregation", "example": "KEN"},
+        "REF_AREA": {"description": "Country code(s). Use comma-separated for multiple.", "example": "KEN,TZA"},
         "SEX": {"values": ["F", "M", "_T"]},
         "AGE": {"values": ["Y15T24", "Y15T29", "Y30T59", "Y_GE25", "Y_GE60", "_T"]},
         "URBANISATION": {"values": ["URB", "RUR", "_T"]},
