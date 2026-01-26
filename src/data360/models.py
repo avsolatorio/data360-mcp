@@ -209,6 +209,9 @@ class IndicatorDataResponse(MCPPagedResponse):
     data: list[dict[str, Any]] | None = Field(
         default=None, description="List of indicator data points"
     )
+    metadata: dict[str, Any] | None = Field(
+        default=None, description="Basic metadata for the indicator (e.g., name, definition)"
+    )
     error: str | None = Field(
         default=None, description="Error message if data retrieval failed"
     )
