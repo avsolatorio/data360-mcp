@@ -61,3 +61,9 @@ get_viz_spec = mcp.tool(
     name="data360_get_viz_spec",
     description=data360_viz.get_viz_spec.__doc__,
 )
+
+get_supported_chart_types = mcp.tool(
+    data360_viz.get_supported_chart_types,
+    name="data360_get_supported_chart_types",
+    description=data360_viz.get_supported_chart_types.__doc__,
+)

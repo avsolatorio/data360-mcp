@@ -58,7 +58,8 @@ def _parse_chart_type_hint(chart_type: str | None) -> str:
     
     hint = chart_type.lower().strip()
     
-    # Map common terms to Vega-Lite mark types
+    # Map common terms to Vega-Lite mark types https://dig.cmu.edu/draco2/facts/mark.html
+    # rect and text are not supported as of now
     if any(x in hint for x in ['line', 'trend', 'time series']):
         return 'line'
     elif any(x in hint for x in ['bar', 'column', 'histogram']):
@@ -180,6 +181,51 @@ def _draco_spec_to_vegalite(draco_spec: dict, data_records: list[dict], title: s
         }
 
 
+
+def get_supported_chart_types() -> str:
+    """Return a list of supported chart types and their data requirements.
+    
+    Returns:
+        JSON string containing the list of supported chart types.
+    """
+    chart_types = {
+        "chart_types": [
+            {
+                "id": "line",
+                "description": "Line chart for showing trends over time.",
+                "when_to_use": "Use when you have a continuous time variable and a quantitative measure.",
+                "data_requirements": "Requires 'time_period' (or similar date field) and 'obs_value' (metric)."
+            },
+            {
+                "id": "bar",
+                "description": "Bar chart for comparing values across categories.",
+                "when_to_use": "Use for comparing metrics between discrete categories or time periods.",
+                "data_requirements": "Requires one categorical/ordinal field and 'obs_value'."
+            },
+            {
+                "id": "point",
+                "description": "Scatter plot (point chart) for correlation.",
+                "when_to_use": "Use to show the relationship between two quantitative variables.",
+                "data_requirements": "Requires two quantitative fields."
+            },
+            {
+                "id": "area",
+                "description": "Area chart for cumulative trends.",
+                "when_to_use": "Use to show volume or quantity over time.",
+                "data_requirements": "Similar to line chart: 'time_period' and 'obs_value'."
+            },
+            {
+                "id": "tick",
+                "description": "Tick plot for distribution.",
+                "when_to_use": "Use to show the distribution of values along an axis.",
+                "data_requirements": "Requires one quantitative field."
+            }
+        ],
+        "guidance": "Select the 'relevant_fields' from the available data that match the 'data_requirements' of the desired chart type."
+    }
+    return json.dumps(chart_types, indent=2)
+
+
 async def get_viz_spec(
     database_id: str,
     indicator_id: str,
@@ -188,6 +234,7 @@ async def get_viz_spec(
     end_year: int | None = None,
     disaggregation_filters: dict[str, str | None] | None = None,
     chart_type: str | None = None,
+    relevant_fields: list[str] | None = None,
     custom_constraints: list[str] | None = None,
     use_default_constraints: bool = True,
 ) -> str:
@@ -209,6 +256,8 @@ async def get_viz_spec(
         end_year: Optional end year
         disaggregation_filters: Optional dict of dimension filters (e.g., {"SEX": "F"})
         chart_type: Optional hint for chart type (e.g., "line chart", "bar chart").
+        relevant_fields: Optional list of column names to strictly use for visualization.
+                         The LLM should identify these based on the data structure.
         custom_constraints: Optional list of raw Draco ASP constraints.
         use_default_constraints: Use standard heuristics (default: True).
         
@@ -281,24 +330,43 @@ async def get_viz_spec(
     # 3. Use Draco2 to find optimal visualization
     d = Draco()
     
-    # We need to ensure Draco picks the right columns 
-    relevant_cols = []
-    if 'time_period' in data.columns: relevant_cols.append('time_period')
-    if 'obs_value' in data.columns: relevant_cols.append('obs_value')
-    if 'ref_area' in data.columns: relevant_cols.append('ref_area') 
-    
-    # Breakdowns
-    breakdown_dims = ['sex', 'age', 'urbanisation']
-    for dim in breakdown_dims:
-        if dim in data.columns:
-            unique_vals = data[dim].unique()
-            if len(unique_vals) > 1 or (len(unique_vals) == 1 and unique_vals[0] != '_T'):
-                relevant_cols.append(dim)
-    
-    if relevant_cols:
-        viz_data = data[relevant_cols].copy()
+    # Determine relevant columns
+    if relevant_fields:
+        # User/LLM explicitly asked for specific fields
+        # Filter to only those that exist in the dataframe
+        # Lowercase check
+        req_fields = [f.lower() for f in relevant_fields]
+        existing_cols = set(data.columns)
+        missing_fields = [f for f in req_fields if f not in existing_cols]
+        
+        if missing_fields:
+             return f"Error: The following requested fields were not found in the data: {missing_fields}. Available columns: {list(data.columns)}"
+
+        valid_cols = req_fields
+
+             
+        viz_data = data[valid_cols].copy()
+        # Ensure relevant_cols is defined for downstream logic
+        relevant_cols = valid_cols
     else:
-        viz_data = data.copy()
+        # Auto-selection logic
+        relevant_cols = []
+        if 'time_period' in data.columns: relevant_cols.append('time_period')
+        if 'obs_value' in data.columns: relevant_cols.append('obs_value')
+        if 'ref_area' in data.columns: relevant_cols.append('ref_area') 
+        
+        # Breakdowns
+        breakdown_dims = ['sex', 'age', 'urbanisation']
+        for dim in breakdown_dims:
+            if dim in data.columns:
+                unique_vals = data[dim].unique()
+                if len(unique_vals) > 1 or (len(unique_vals) == 1 and unique_vals[0] != '_T'):
+                    relevant_cols.append(dim)
+        
+        if relevant_cols:
+            viz_data = data[relevant_cols].copy()
+        else:
+            viz_data = data.copy()
         
     viz_data = viz_data.dropna()
     
