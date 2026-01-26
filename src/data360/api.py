@@ -888,7 +888,14 @@ async def get_data_api_url(
                 params.append(f"{k}={v}")
         
     # Default limit for viz
-    params.append("top=1000")
+    limit = 1000
+    if country_code:
+        # Increase limit based on number of countries requested (max ~60 years per country)
+        # Using 1000 as a safe multiplier to cover most time series data including higher frequency
+        n_countries = len(country_code.split(','))
+        limit = max(1000, n_countries * 1000)
+    
+    params.append(f"top={limit}")
         
     return f"{base}?{'&'.join(params)}"
 
