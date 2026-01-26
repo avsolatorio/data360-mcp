@@ -28,7 +28,7 @@ def save_specs_to_static(vl_spec: dict) -> str:
         URL for the saved spec
     """
     spec_id = str(uuid.uuid4())
-    specs_dir = os.path.join(os.getcwd(), "static", "specs")
+    specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
     os.makedirs(specs_dir, exist_ok=True)
     
     # Save Vega-Lite spec
