@@ -24,13 +24,13 @@ Do not answer with guesses. Do not stop after describing a plan.
      - Explicitly state: "Selected Indicator: [ID] - [Name]" and "Why: [Reason]".
 2) If you need country/dimension codes -> call data360_find_codelist_value
    - Country: `codelist_type="REF_AREA"` (e.g. query="Kenya") -> "KEN"
-   - **Multi-Country**: You can pass "KEN,TZA" to compare countries. Resolve each name separately if needed.
+   - **Multi-Country**: START by passing the comma-separated list (e.g. "Kenya, Uganda"). The tool supports batch lookup.
    - Unit Measure: `codelist_type="UNIT_MEASURE"` (e.g. query="Current US") -> "CD"
    - Note: You must pass the resulting code (e.g. "USA") to get_data, not the name.
 3) If you need to confirm availability -> call data360_get_disaggregation
 4) If you need values -> call data360_get_data (default: last 20 years)
    - **CRITICAL**: You MUST pass `disaggregation_filters={"REF_AREA": "..."}` if a country was requested.
-   - For multiple countries, use comma-separated string: `{"REF_AREA": "KEN,TZA"}`.
+   - For multiple countries, use comma-separated string: `{"REF_AREA": "KEN,TZA"}`. Perform ONE `get_data` call.
    - Do not call `get_data` blindly without filters unless you want world/global data.
    - Note: The response includes the indicator name and definition, so you don't need to fetch metadata separately just for that.
 5) If the result is time-series or comparison:

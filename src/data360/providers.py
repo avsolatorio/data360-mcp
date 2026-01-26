@@ -313,6 +313,28 @@ class CodelistManager:
 
         return (char_similarity * 0.4) + (prefix_ratio * 0.6)
 
+    async def get_codelist_mapping(self, codelist_type: str) -> dict[str, str]:
+        """Get a dictionary mapping codes to names (e.g., {'KEN': 'Kenya'})."""
+        codelist_type = codelist_type.upper()
+        
+        # Ensure loaded if global
+        if codelist_type in self.GLOBAL_CODELISTS:
+            await self._ensure_loaded(codelist_type)
+            items = self._cache.get(codelist_type, [])
+            return {item.get("Id", ""): item.get("Name", "") for item in items}
+            
+        # Static mappings (reverse the value->code mapping to code->name)
+        if codelist_type in self.STATIC_MAPPINGS:
+            # STATIC_MAPPINGS is Name -> Code. We want Code -> Name.
+            # Names in static mapping are lower case keys, we should capitalize for display.
+            mapping = {}
+            for name, code in self.STATIC_MAPPINGS[codelist_type].items():
+                if code not in mapping: # First win or preferred name logic could be added
+                    mapping[code] = name.capitalize()
+            return mapping
+            
+        return {}
+
 
 # Global instance
 _codelist_manager: CodelistManager | None = None
@@ -335,7 +357,7 @@ async def find_codelist_value(
     
     Args:
         codelist_type: Type of codelist (REF_AREA, FREQ, SEX, AGE, URBANISATION, UNIT_MEASURE)
-        query: Search query (e.g., "Kenya", "monthly", "female")
+        query: Search query (e.g., "Kenya" or "Kenya, Uganda")
         limit: Maximum number of results to return
         
     Returns:
@@ -345,14 +367,17 @@ async def find_codelist_value(
         >>> await find_codelist_value("REF_AREA", "Kenya")
         [{"id": "KEN", "name": "Kenya", "score": 100}]
         
-        >>> await find_codelist_value("FREQ", "monthly")
-        [{"id": "M", "name": "Monthly", "score": 100}]
-        
-        >>> await find_codelist_value("SEX", "women")
-        [{"id": "F", "name": "Female", "score": 100}]
+        >>> await find_codelist_value("REF_AREA", "Kenya, Tanzania")
+        [{"id": "KEN", "name": "Kenya", ...}, {"id": "TZA", "name": "Tanzania", ...}]
     """
     manager = get_codelist_manager()
     return await manager.find_value(codelist_type, query, limit)
+
+
+async def get_codelist_mapping(codelist_type: str) -> dict[str, str]:
+    """Get mapping of codes to names for a codelist."""
+    manager = get_codelist_manager()
+    return await manager.get_codelist_mapping(codelist_type)
 
 
 # Convenience functions for common codelists

@@ -301,7 +301,29 @@ async def get_viz_spec(
         else:
             viz_data = data.copy()
         
-    viz_data = viz_data.dropna()
+    # Create map for renaming (User friendly labels, but lowercase for Draco/ASP safety)
+    # Vega-Lite will auto-capitalize these for Axis titles (e.g. "year" -> "Year")
+    column_renames = {
+        'time_period': 'year', 
+        'obs_value': 'value',
+        'ref_area': 'country' 
+    }
+
+    # Task #9: Map REF_AREA codes to Names if present
+    if 'ref_area' in viz_data.columns:
+        try:
+            from data360.providers import get_codelist_mapping
+            country_map = await get_codelist_mapping("REF_AREA")
+            # Map codes to names, keep original if not found
+            viz_data['ref_area'] = viz_data['ref_area'].map(lambda x: country_map.get(x, x))
+        except Exception as e:
+            _logger.warning(f"Could not map country codes: {e}")
+
+    # Rename columns in dataframe
+    viz_data = viz_data.rename(columns=column_renames)
+    
+    # Update relevant_cols logic to match new names for Draco check
+    # Note: Draco/Altair is case sensitive.
     
     if viz_data.empty:
         return "Error: No data available for visualization after cleaning."
@@ -320,30 +342,30 @@ async def get_viz_spec(
     ]
     
     if use_default_constraints:
-        # --- EXPLICITLY DEFINE X/Y ROLES FOR DATA360 ---
-        if 'time_period' in viz_data.columns:
+        # --- EXPLICITLY DEFINE X/Y ROLES FOR DATA360 (UPDATED NAMES) ---
+        if 'year' in viz_data.columns:
             program_constraints.append("entity(encoding,m,e1).")
             program_constraints.append("attribute((encoding,channel),e1,x).")
-            program_constraints.append("attribute((encoding,field),e1,time_period).")
+            program_constraints.append("attribute((encoding,field),e1,year).")
             
-        if 'obs_value' in viz_data.columns:
+        if 'value' in viz_data.columns:
             program_constraints.append("entity(encoding,m,e2).")
             program_constraints.append("attribute((encoding,channel),e2,y).")
-            program_constraints.append("attribute((encoding,field),e2,obs_value).")
+            program_constraints.append("attribute((encoding,field),e2,value).")
 
         # Constraint for Color/Breakdown
         # We iterate through potential breakdown dims that we found relevant earlier
         # If any are present in viz_data (and not x/y), we map to color
-        # We prioritize ref_area > sex > others
+        # We prioritize Country (was ref_area) > sex > others
         color_dim = None
-        if 'ref_area' in viz_data.columns and 'ref_area' in relevant_cols:
-            color_dim = 'ref_area'
+        if 'country' in viz_data.columns: # Was ref_area
+            color_dim = 'country'
         elif 'sex' in viz_data.columns and 'sex' in relevant_cols:
             color_dim = 'sex'
         elif 'age' in viz_data.columns and 'age' in relevant_cols:
-             color_dim = 'age'
+            color_dim = 'age'
         elif 'urbanisation' in viz_data.columns and 'urbanisation' in relevant_cols:
-             color_dim = 'urbanisation'
+            color_dim = 'urbanisation'
              
         if color_dim:
             program_constraints.append("entity(encoding,m,e3).")
@@ -370,8 +392,6 @@ async def get_viz_spec(
 
         # RENDER USING STANDARD DRACO RENDERER
         
-        # Modify draco_spec to remove 'type' from encodings as it's forbidden by the renderer validation
-        # (It expects types to be inferred from the schema or handled differently)
         if 'view' in draco_spec:
             for view in draco_spec['view']:
                 if 'mark' in view:
@@ -392,20 +412,76 @@ async def get_viz_spec(
         chart = chart.properties(title=chart_title).interactive()
         
         # 2. Force Rich Tooltips
-        # The library renderer might not auto-populate complete tooltips.
-        # We add tooltips for all columns currently in the dataframe as a robust fallback/feature.
         tooltip_cols = list(viz_data.columns)
         chart = chart.encode(tooltip=tooltip_cols)
         
+        # 3. Force NOMINAL type for categorical channels (Color) if applicable
+        # Draco renderer might infer ordinal, but users prefer nominal for countries etc.
+        # We manually patch the encoding if the color field is categorical.
+        if color_dim:
+             # We can't easily modify the altair object's encoding type in place deeply?
+             # Easier to patch the dictionary.
+             pass
+
         vl_spec = chart.to_dict()
         
+        # Manual Patching of Types in the final Spec
+        if 'encoding' in vl_spec:
+            if 'color' in vl_spec['encoding']:
+                # If color is used, force nominal if it corresponds to our breakdown dims
+                # color_dim var holds the name of the column used for color
+                if color_dim in ['country', 'sex', 'urbanisation', 'ref_area']:
+                    vl_spec['encoding']['color']['type'] = 'nominal'
+
         # Save
         vega_url = save_specs_to_static(vl_spec)
         return vega_url
         
     except StopIteration:
-        _logger.warning("Draco failed to find a visualization spec.")
-        return "Error: Draco could not determine a suitable visualization for this data."
+        _logger.warning("Draco failed to find a visualization spec. Falling back to manual generation.")
+        _logger.debug(f"Failed Program:\n{program}")
+        
+        # Fallback: Manual Altair Generation
+        try:
+            fc = list(viz_data.columns)
+            base = alt.Chart(viz_data).mark_line().encode(
+                tooltip=fc
+            )
+            
+            # Map known columns
+            if 'year' in fc:
+                 x_enc = alt.X('year', title='Year')
+            elif 'time_period' in fc:
+                 x_enc = alt.X('time_period', title='Year')
+            else:
+                 # Last resort: first column
+                 x_enc = alt.X(fc[0])
+            
+            if 'value' in fc:
+                 y_enc = alt.Y('value', title='Value')
+            elif 'obs_value' in fc:
+                 y_enc = alt.Y('obs_value', title='Value')
+            else:
+                 y_enc = alt.Y(fc[1] if len(fc)>1 else fc[0])
+            
+            encoding = {'x': x_enc, 'y': y_enc}
+            
+            # Add color if breakdown found
+            if 'country' in fc:
+                encoding['color'] = alt.Color('country', type='nominal', title='Country')
+            elif 'sex' in fc:
+                encoding['color'] = alt.Color('sex', type='nominal', title='Sex')
+            elif 'age' in fc:
+                encoding['color'] = alt.Color('age', type='nominal', title='Age')
+                
+            chart = base.encode(**encoding).properties(title=chart_title).interactive()
+            vl_spec = chart.to_dict()
+            vega_url = save_specs_to_static(vl_spec)
+            return vega_url
+            
+        except Exception as fallback_err:
+             _logger.exception(f"Fallback generation failed: {fallback_err}")
+             return "Error: Draco could not determine a suitable visualization, and fallback failed."
     except Exception as e:
         _logger.exception(f"Draco execution error: {e}")
         return f"Error generating visualization: {e}"
