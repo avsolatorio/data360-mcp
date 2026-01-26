@@ -1,6 +1,7 @@
 import json
 import logging
 import zlib
+import asyncio
 from typing import Any
 
 import dotenv
@@ -387,6 +388,7 @@ async def get_metadata(
     indicator_id: str,
     select_fields: list[str] | None = None,
     get_valid_disaggregations_func: Any | None = None,
+    fetch_disaggregation: bool = True,
 ) -> MetadataResponse:
     """Get metadata and disaggregation options for a Data360 indicator.
 
@@ -452,6 +454,12 @@ async def get_metadata(
                     indicator_metadata = metadata_json["value"][0].get(
                         "series_description", {}
                     )
+                    # Force filtering if select_fields provided (API might return more)
+                    if select_fields and indicator_metadata:
+                        indicator_metadata = {
+                            k: v for k, v in indicator_metadata.items()
+                            if k in select_fields
+                        }
                 else:
                     error_msg = f"No metadata found for indicator ID '{indicator_id}'"
                     _logger.warning(error_msg)
@@ -477,41 +485,42 @@ async def get_metadata(
         errors.append(error_msg)
 
     # 2. Fetch Disaggregation
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            disagg_res = await client.get(
-                disaggregation_url,
-                params={"datasetId": database_id, "indicatorId": indicator_id},
-                headers=headers,
+    if fetch_disaggregation:
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                disagg_res = await client.get(
+                    disaggregation_url,
+                    params={"datasetId": database_id, "indicatorId": indicator_id},
+                    headers=headers,
+                )
+                disagg_res.raise_for_status()
+
+                try:
+                    raw_disaggregations = disagg_res.json()
+                    disaggregations = get_valid_disaggregations_func(raw_disaggregations)
+                except ValueError as e:
+                    error_msg = f"Failed to parse disaggregation JSON response: {str(e)}"
+                    _logger.error(error_msg)
+                    errors.append(error_msg)
+
+        except httpx.HTTPStatusError as e:
+            error_msg = f"HTTP error fetching disaggregations: {e.response.status_code} - {e.response.text}"
+            _logger.error(error_msg)
+            errors.append(error_msg)
+        except httpx.TimeoutException as e:
+            error_msg = f"Timeout fetching disaggregations: {str(e)}"
+            _logger.error(error_msg)
+            errors.append(error_msg)
+        except httpx.RequestError as e:
+            error_msg = (
+                f"Request error fetching disaggregations for {indicator_id!r}: {str(e)}"
             )
-            disagg_res.raise_for_status()
-
-            try:
-                raw_disaggregations = disagg_res.json()
-                disaggregations = get_valid_disaggregations_func(raw_disaggregations)
-            except ValueError as e:
-                error_msg = f"Failed to parse disaggregation JSON response: {str(e)}"
-                _logger.error(error_msg)
-                errors.append(error_msg)
-
-    except httpx.HTTPStatusError as e:
-        error_msg = f"HTTP error fetching disaggregations: {e.response.status_code} - {e.response.text}"
-        _logger.error(error_msg)
-        errors.append(error_msg)
-    except httpx.TimeoutException as e:
-        error_msg = f"Timeout fetching disaggregations: {str(e)}"
-        _logger.error(error_msg)
-        errors.append(error_msg)
-    except httpx.RequestError as e:
-        error_msg = (
-            f"Request error fetching disaggregations for {indicator_id!r}: {str(e)}"
-        )
-        _logger.error(error_msg)
-        errors.append(error_msg)
-    except Exception as e:
-        error_msg = f"Unexpected error fetching disaggregations: {str(e)}"
-        _logger.exception("Unexpected error in disaggregation fetch")
-        errors.append(error_msg)
+            _logger.error(error_msg)
+            errors.append(error_msg)
+        except Exception as e:
+            error_msg = f"Unexpected error fetching disaggregations: {str(e)}"
+            _logger.exception("Unexpected error in disaggregation fetch")
+            errors.append(error_msg)
 
     # 3. Combine and Return
     error_message = "; ".join(errors) if errors else None
@@ -675,6 +684,23 @@ async def get_data(
             if k not in ["SEX", "AGE", "URBANISATION", "FREQ"] and v is not None:
                 params[k] = v
 
+    # Fetch basic metadata in parallel
+    metadata_task = asyncio.create_task(
+        get_metadata(
+            database_id,
+            indicator_id,
+            select_fields=[
+                "idno",
+                "name",
+                "database_id",
+                "periodicity",
+                "measurement_unit",
+                "definition_short",
+            ],
+            fetch_disaggregation=False,
+        )
+    )
+
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             try:
@@ -718,8 +744,13 @@ async def get_data(
                 for row in raw_data:
                     row["claim_id"] = _short_hash(row)
 
+                # Await metadata
+                metadata_res = await metadata_task
+                api_metadata = metadata_res.indicator_metadata or {}
+
                 return IndicatorDataResponse(
                     data=raw_data,
+                    metadata=api_metadata,
                     count=len(raw_data),
                     total_count=total_count,
                     offset=offset,
