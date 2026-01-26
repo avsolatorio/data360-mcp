@@ -30,9 +30,11 @@ Do not answer with guesses. Do not stop after describing a plan.
 4) If you need values -> call data360_get_data (default: last 20 years)
    - **CRITICAL**: You MUST pass `disaggregation_filters={"REF_AREA": "..."}` if a country was requested.
    - Do not call `get_data` blindly without filters unless you want world/global data.
-5) If the result is time-series or comparison -> call:
-   - data360_get_data_api_url
-   - data360_get_viz_spec
+5) If the result is time-series or comparison:
+   - Call data360_get_supported_chart_types to see options and data requirements.
+   - DECIDE: Does the data match the requirements? (e.g. have 'time_period' and 'obs_value'?)
+   - IF YES: Call data360_get_viz_spec. Explicitly pass `relevant_fields=["time_period", "obs_value", ...]` based on your decision.
+   - IF NO: Just present the data table.
 
 Then provide the final answer to the user.
 

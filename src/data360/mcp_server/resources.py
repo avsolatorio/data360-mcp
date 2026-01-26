@@ -105,6 +105,24 @@ DATA_FILTERS = {
 }
 
 
+DATA_SCHEMA = {
+    "description": "Standard schema for Data360 API responses. Use these field names when requesting visualizations.",
+    "standard_columns": {
+        "time_period": "The date or year of the observation (e.g., '2020-01-01'). Always relevant for time series.",
+        "obs_value": "The numeric value of the indication. This is the primary metric to visualize.",
+        "ref_area": "Country or region code (e.g., 'KEN'). Use for geographical comparison.",
+        "indicator": "The indicator ID.",
+    },
+    "dimensions": {
+        "description": "Common dimensions that may appear based on the indicator. Check get_disaggregation to confirm availability.",
+        "sex": "Gender breakdown (e.g., 'F', 'M').",
+        "age": "Age group breakdown.",
+        "urbanisation": "Urban/Rural breakdown."
+    },
+    "visualization_guidance": "When calling get_viz_spec(relevant_fields=...), prioritize 'time_period' and 'obs_value'. Include 'ref_area' or dimensions like 'sex' only if you want to facilitate comparison/grouping in the chart."
+}
+
+
 SEARCH_USAGE = {
     "basic_search": {
         "example": "data360_search_indicators(query='poverty', limit=10)",
@@ -161,6 +179,12 @@ async def metadata_fields_resource() -> str:
 async def data_filters_resource() -> str:
     """Available data filters and usage guidance."""
     return json.dumps(DATA_FILTERS, indent=2)
+
+
+@mcp.resource("data360://data-schema")
+async def data_schema_resource() -> str:
+    """Standard data schema and column definitions for visualization."""
+    return json.dumps(DATA_SCHEMA, indent=2)
 
 
 @mcp.resource("data360://search-usage")
