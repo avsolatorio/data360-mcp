@@ -279,7 +279,8 @@ async def search(
     
     Args:
         query: Search query (e.g., "unemployment rate", "poverty")
-        required_country: Country name or code (e.g., "Kenya" or "KEN")
+        required_country: Country name or code (e.g., "Kenya", "KEN", or "China, USA")
+            Supports comma-separated lists to check coverage for multiple countries.
         limit: Max results (default 5)
         offset: Offset for pagination (default 0)
     
@@ -625,6 +626,8 @@ async def get_data(
         indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_GS_NY_GDP_PCAP_KD")
         disaggregation_filters: Optional dictionary of disaggregation filters
             (e.g., {"REF_AREA": "UGA" or "KEN,TZA", "UNIT_MEASURE": "PT"})
+            - Supports comma-separated values for REF_AREA (e.g. "KEN,TZA").
+            - Supports None to request all values for a dimension (e.g. {"SEX": None}).
         start_year: Optional start year to filter data (inclusive). Defaults to last 5 years.
         end_year: Optional end year to filter data (inclusive). Defaults to current year.
         limit: Maximum number of records to return (default 50, max 100)
