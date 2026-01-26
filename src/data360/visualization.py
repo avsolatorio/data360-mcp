@@ -181,27 +181,53 @@ def _draco_spec_to_vegalite(draco_spec: dict, data_records: list[dict], title: s
 
 
 async def get_viz_spec(
-    data_url: str,
+    database_id: str,
+    indicator_id: str,
+    country_code: str | None = None,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    disaggregation_filters: dict[str, str | None] | None = None,
     chart_type: str | None = None,
     custom_constraints: list[str] | None = None,
     use_default_constraints: bool = True,
 ) -> str:
-    """Generate a Vega-Lite visualization specification from a Data360 API URL.
+    """Generate a Vega-Lite visualization specification from Data360 API parameters.
     
     This function:
-    1. Fetches data from the provided URL
-    2. Cleans and prepares the data
-    3. Uses Draco2 to generate optimal chart configuration
-    4. Saves the Vega-Lite spec to static/specs/
-    5. Returns the URL to the spec
+    1. Generates the Data API URL internally
+    2. Fetches data from that URL
+    3. Cleans and prepares the data
+    4. Uses Draco2 to generate optimal chart configuration
+    5. Saves the Vega-Lite spec to static/specs/
+    6. Returns the URL to the spec
     
     Args:
-        data_url: A Data360 API URL (from get_data_api_url)
+        database_id: Database identifier (e.g., WB_HNP, WB_WDI)
+        indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL)
+        country_code: Optional country code (e.g., "KEN" or "CHN,USA")
+        start_year: Optional start year
+        end_year: Optional end year
+        disaggregation_filters: Optional dict of dimension filters (e.g., {"SEX": "F"})
         chart_type: Optional hint for chart type (e.g., "line chart", "bar chart").
+        custom_constraints: Optional list of raw Draco ASP constraints.
+        use_default_constraints: Use standard heuristics (default: True).
         
     Returns:
         URL to the generated Vega-Lite spec
     """
+    # 0. Generate URL internally
+    # Import locally to avoid circular top-level imports if any
+    from data360.api import get_data_api_url
+    
+    data_url = await get_data_api_url(
+        database_id=database_id,
+        indicator_id=indicator_id,
+        country_code=country_code,
+        start_year=start_year,
+        end_year=end_year,
+        disaggregation_filters=disaggregation_filters
+    )
+    
     # 1. Fetch data
     try:
         data = await _fetch_data_internal(data_url)
@@ -227,6 +253,7 @@ async def get_viz_spec(
              pass
 
     if 'obs_value' in data.columns:
+        # TODO: to confirm with viz team on how to populate null values from api
          data['obs_value'] = pd.to_numeric(data['obs_value'], errors='coerce').fillna(0)
     
     # --- Task #8: Fetch Indicator Name for Title ---

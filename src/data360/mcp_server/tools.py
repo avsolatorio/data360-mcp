@@ -53,7 +53,7 @@ from data360 import visualization as data360_viz
 get_data_api_url = mcp.tool(
     data360_api.get_data_api_url,
     name="data360_get_data_api_url",
-    description=data360_api.get_data_api_url.__doc__,
+    description="[LOW-LEVEL] " + data360_api.get_data_api_url.__doc__,
 )
 
 get_viz_spec = mcp.tool(

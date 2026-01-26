@@ -185,5 +185,11 @@ data360_get_data(
 )
 
 **Step 5: Visualize**
-If data is suitable (time series), generate a visualization URL using data360_get_viz_spec.
+If data is suitable (time series), visualize directly:
+data360_get_viz_spec(
+    database_id=<db_id>,
+    indicator_id=<ind_id>,
+    country_code=<country_code>,
+    disaggregation_filters={{"SEX": "..."}}
+)
 """
