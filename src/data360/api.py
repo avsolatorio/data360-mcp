@@ -603,7 +603,7 @@ async def get_data(
         database_id: Database identifier (e.g., "IPC_IPC", "WB_WDI")
         indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_WDI_SP_POP_TOTL")
         disaggregation_filters: Optional dictionary of disaggregation filters
-            (e.g., {"REF_AREA": "UGA", "UNIT_MEASURE": "PT"})
+            (e.g., {"REF_AREA": "UGA" or "KEN,TZA", "UNIT_MEASURE": "PT"})
         start_year: Optional start year to filter data (inclusive). Defaults to last 5 years.
         end_year: Optional end year to filter data (inclusive). Defaults to current year.
         limit: Maximum number of records to return (default 50, max 100)
@@ -842,7 +842,8 @@ async def get_data_api_url(
     Args:
         database_id: Database identifier (e.g., WB_HNP, WB_WDI)
         indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL)
-        country_code: Optional country code (e.g., KEN, USA)
+        country_code: Optional country code (e.g., "KEN" or "CHN,USA")
+            Can be a single 3-letter code or comma-separated list.
         start_year: Optional start year
         end_year: Optional end year
         disaggregation_filters: Optional dict of dimension filters (e.g., {"SEX": "F"})
