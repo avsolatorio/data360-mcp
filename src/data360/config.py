@@ -4,6 +4,21 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class MCPServerSettings(BaseSettings):
+    """Configuration settings for MCP server."""
+
+    port: int = Field(
+        default=8000,
+        description="Port for the MCP server",
+    )
+    transport: str = Field(
+        default="http",
+        description="Transport for the MCP server",
+    )
+
+    model_config = SettingsConfigDict(env_prefix="MCP_")
+
+
 class Data360Settings(BaseSettings):
     """Configuration settings for Data360 API integration."""
 
@@ -67,3 +82,9 @@ class Data360Settings(BaseSettings):
 def get_data360_settings() -> Data360Settings:
     """Get cached Data360 settings instance."""
     return Data360Settings()  # pyright: ignore[reportCallIssue]
+
+
+@ft.cache
+def get_mcp_server_settings() -> MCPServerSettings:
+    """Get cached MCP server settings instance."""
+    return MCPServerSettings()  # pyright: ignore[reportCallIssue]
