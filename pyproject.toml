@@ -14,7 +14,7 @@ dependencies = [
   "typer>=0.20.1",
   "gunicorn>=23.0.0",
   "langchain-openai>=1.1.7",
-  "altair>=6.0.0",
+  "draco @ git+https://github.com/avsolatorio/draco2.git@data360-mcp"
 ]
 
 [build-system]
