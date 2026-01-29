@@ -11,6 +11,8 @@ from data360.mcp_server import mcp
 mcp_settings = get_mcp_server_settings()
 setup_logging(log_file=mcp_settings.log_file, log_level=mcp_settings.log_level)
 
+mcp.settings.stateless_http = True
+
 # NOTE: import to be able to run the server with all definitions loaded
 mcp_app = mcp.http_app(path="/")
 
