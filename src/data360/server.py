@@ -1,6 +1,7 @@
 import os
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from data360.config import get_mcp_server_settings, setup_logging
@@ -21,6 +22,16 @@ app = FastAPI(
     # ],
     lifespan=mcp_app.lifespan,
 )  # pyright: ignore[reportUnusedExpression]
+
+
+@app.api_route(
+    "/mcp",
+    methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    include_in_schema=False,
+)
+def mcp_redirect():
+    # Make sure to add this before the mount of the mcp_app
+    return RedirectResponse(url="/mcp/", status_code=308)
 
 
 app.mount("/mcp", mcp_app)
