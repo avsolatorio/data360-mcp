@@ -3,20 +3,27 @@ import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from data360.config import get_mcp_server_settings, setup_logging
 from data360.mcp_server import mcp
 
+# Setup logging from configuration
+mcp_settings = get_mcp_server_settings()
+setup_logging(log_file=mcp_settings.log_file, log_level=mcp_settings.log_level)
+
 # NOTE: import to be able to run the server with all definitions loaded
-mcp_app = mcp.http_app(path="/mcp")
+mcp_app = mcp.http_app(path="/")
 
 # https://gofastmcp.com/deployment/http#asgi-application
 app = FastAPI(
     title="Data360 MCP Server",
-    routes=[
-        *mcp_app.routes,
-    ],
+    # routes=[
+    #     *mcp_app.routes,
+    # ],
     lifespan=mcp_app.lifespan,
 )  # pyright: ignore[reportUnusedExpression]
 
+
+app.mount("/mcp", mcp_app)
 # Mount static files
 static_dir = os.path.join(os.getcwd(), "static")
 os.makedirs(static_dir, exist_ok=True)
