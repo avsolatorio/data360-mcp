@@ -17,6 +17,8 @@ import pandas as pd
 from draco import Draco, answer_set_to_dict, dict_to_facts, schema_from_dataframe
 from draco.renderer import AltairRenderer
 
+from data360.config import get_mcp_server_settings
+
 _logger = logging.getLogger(__name__)
 
 
@@ -41,8 +43,10 @@ def save_specs_to_static(vl_spec: dict) -> str:
     # and host.docker.internal typically doesn't resolve in the browser on Mac/Windows without /etc/hosts hacks.
     # HOWEVER, since the user explicitly asked for Docker support, we will stick to localhost
     # because the browser (client-side) is what fetches this JSON, not the Docker container.
-    base_url = "http://localhost:8021/static/viz_specs"
-    return f"{base_url}/{spec_id}_vega.json"
+    base_url = os.environ.get(
+        "WEBSITE_HOSTNAME", f"http://localhost:{get_mcp_server_settings().port}"
+    )
+    return f"{base_url}/static/viz_specs/{spec_id}_vega.json"
 
 
 def _parse_chart_type_hint(chart_type: str | None) -> str:
