@@ -205,7 +205,7 @@ async def get_viz_spec(
     relevant_fields: list[str] | None = None,
     custom_constraints: list[str] | None = None,
     use_default_constraints: bool = True,
-) -> str:
+) -> dict[str, str | None]:
     """Generate a Vega-Lite visualization specification from Data360 API parameters.
 
     This function:
@@ -215,7 +215,7 @@ async def get_viz_spec(
     4. Uses Draco2 to generate optimal chart configuration
     5. Stores the Vega-Lite spec: if MCP_CHARTS_API_URL is set, POSTs to that API;
        otherwise saves to static/viz_specs/
-    6. Returns the URL to the spec (or the chart URL from the external API)
+    6. Returns a dict with "url" (chart URL on success) and "error" (message on failure).
 
     Args:
         database_id: Database identifier (e.g., WB_HNP, WB_WDI)
@@ -231,8 +231,16 @@ async def get_viz_spec(
         use_default_constraints: Use standard heuristics (default: True).
 
     Returns:
-        URL to the generated Vega-Lite spec
+        Dict with "url" (str or None) and "error" (str or None). On success url is set;
+        on failure error is set.
     """
+
+    def ok(u: str) -> dict[str, str | None]:
+        return {"url": u, "error": None}
+
+    def err(msg: str) -> dict[str, str | None]:
+        return {"url": None, "error": msg}
+
     # 0. Generate URL internally
     # Import locally to avoid circular top-level imports if any
     from data360.api import get_data_api_url
@@ -250,12 +258,12 @@ async def get_viz_spec(
     try:
         data = await _fetch_data_internal(data_url)
     except ValueError as e:
-        return f"Error: {e}"
+        return err(f"Error: {e}")
     except httpx.HTTPStatusError as e:
-        return f"Error fetching data: {e.response.status_code}"
+        return err(f"Error fetching data: {e.response.status_code}")
     except Exception as e:
         _logger.exception("Failed to fetch data")
-        return f"Error fetching data: {e}"
+        return err(f"Error fetching data: {e}")
 
     # 2. Clean data - standardize column names to lowercase
     data.columns = [c.lower() for c in data.columns]
@@ -310,7 +318,9 @@ async def get_viz_spec(
         missing_fields = [f for f in req_fields if f not in existing_cols]
 
         if missing_fields:
-            return f"Error: The following requested fields were not found in the data: {missing_fields}. Available columns: {list(data.columns)}"
+            return err(
+                f"Error: The following requested fields were not found in the data: {missing_fields}. Available columns: {list(data.columns)}"
+            )
 
         valid_cols = req_fields
 
@@ -384,14 +394,14 @@ async def get_viz_spec(
     # Note: Draco/Altair is case sensitive.
 
     if viz_data.empty:
-        return "Error: No data available for visualization after cleaning."
+        return err("Error: No data available for visualization after cleaning.")
 
     try:
         schema = schema_from_dataframe(viz_data)
         facts = dict_to_facts(schema)
     except Exception as e:
         _logger.exception(f"Error generating data schema: {e}")
-        return f"Error generating data schema: {e}"
+        return err(f"Error generating data schema: {e}")
 
     # Base constraints
     program_constraints = ["entity(view,root,view).", "entity(mark,view,m)."]
@@ -492,11 +502,10 @@ async def get_viz_spec(
         charts_url = get_mcp_server_settings().charts_api_url
         if charts_url:
             try:
-                return await post_spec_to_charts_api(vl_spec)
+                return ok(await post_spec_to_charts_api(vl_spec))
             except Exception as e:
                 _logger.warning(f"Charts API store failed, falling back to static: {e}")
-        vega_url = save_specs_to_static(vl_spec)
-        return vega_url
+        return ok(save_specs_to_static(vl_spec))
 
     except StopIteration:
         _logger.warning(
@@ -542,17 +551,18 @@ async def get_viz_spec(
             charts_url = get_mcp_server_settings().charts_api_url
             if charts_url:
                 try:
-                    return await post_spec_to_charts_api(vl_spec)
+                    return ok(await post_spec_to_charts_api(vl_spec))
                 except Exception as e:
                     _logger.warning(
                         f"Charts API store failed, falling back to static: {e}"
                     )
-            vega_url = save_specs_to_static(vl_spec)
-            return vega_url
+            return ok(save_specs_to_static(vl_spec))
 
         except Exception as fallback_err:
             _logger.exception(f"Fallback generation failed: {fallback_err}")
-            return "Error: Draco could not determine a suitable visualization, and fallback failed."
+            return err(
+                "Error: Draco could not determine a suitable visualization, and fallback failed."
+            )
     except Exception as e:
         _logger.exception(f"Draco execution error: {e}")
-        return f"Error generating visualization: {e}"
+        return err(f"Error generating visualization: {e}")
