@@ -49,6 +49,52 @@ def save_specs_to_static(vl_spec: dict) -> str:
     return f"{base_url}/static/viz_specs/{spec_id}_vega.json"
 
 
+async def post_spec_to_charts_api(vl_spec: dict) -> str:
+    """POST Vega-Lite spec to the external charts API.
+
+    Expects the API to accept JSON with Vega-Lite fields (title, $schema, data,
+    mark, encoding). Returns the chart URL from the response if present, otherwise
+    a fallback URL built from the API base and response id.
+
+    Returns:
+        URL of the stored chart, or an error message on failure.
+    """
+    settings = get_mcp_server_settings()
+    url = settings.charts_api_url
+    if not url:
+        raise ValueError("charts_api_url is not configured")
+
+    # Charts API requires a title in the payload
+    payload = dict(vl_spec)
+    payload.setdefault("title", vl_spec.get("title") or "Generated Visualization")
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.post(
+            url,
+            json=payload,
+            headers={"accept": "application/json", "Content-Type": "application/json"},
+        )
+        response.raise_for_status()
+
+    # Prefer Location header (e.g. 201 Created)
+    location = response.headers.get("Location")
+    if location:
+        return (
+            location
+            if location.startswith("http")
+            else f"{url.rsplit('/', 1)[0]}/{location.lstrip('/')}"
+        )
+
+    body = response.json() if response.content else {}
+    if isinstance(body, dict):
+        if body.get("url"):
+            return body["url"]
+        if body.get("id"):
+            # GET endpoint: /api/v1/charts/{chart_id}
+            return f"{url.rstrip('/')}/{body['id']}"
+    return url
+
+
 def _parse_chart_type_hint(chart_type: str | None) -> str:
     """Parse user's chart type hint into Vega-Lite mark type.
 
@@ -167,8 +213,9 @@ async def get_viz_spec(
     2. Fetches data from that URL
     3. Cleans and prepares the data
     4. Uses Draco2 to generate optimal chart configuration
-    5. Saves the Vega-Lite spec to static/specs/
-    6. Returns the URL to the spec
+    5. Stores the Vega-Lite spec: if MCP_CHARTS_API_URL is set, POSTs to that API;
+       otherwise saves to static/viz_specs/
+    6. Returns the URL to the spec (or the chart URL from the external API)
 
     Args:
         database_id: Database identifier (e.g., WB_HNP, WB_WDI)
@@ -441,7 +488,13 @@ async def get_viz_spec(
                 if color_dim in ["country", "sex", "urbanisation", "ref_area"]:
                     vl_spec["encoding"]["color"]["type"] = "nominal"
 
-        # Save
+        # Store: prefer external charts API when configured
+        charts_url = get_mcp_server_settings().charts_api_url
+        if charts_url:
+            try:
+                return await post_spec_to_charts_api(vl_spec)
+            except Exception as e:
+                _logger.warning(f"Charts API store failed, falling back to static: {e}")
         vega_url = save_specs_to_static(vl_spec)
         return vega_url
 
@@ -486,6 +539,14 @@ async def get_viz_spec(
 
             chart = base.encode(**encoding).properties(title=chart_title).interactive()
             vl_spec = chart.to_dict()
+            charts_url = get_mcp_server_settings().charts_api_url
+            if charts_url:
+                try:
+                    return await post_spec_to_charts_api(vl_spec)
+                except Exception as e:
+                    _logger.warning(
+                        f"Charts API store failed, falling back to static: {e}"
+                    )
             vega_url = save_specs_to_static(vl_spec)
             return vega_url
 

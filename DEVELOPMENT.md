@@ -25,7 +25,7 @@ The package lives under `src/data360`:
 ```
 src/data360/
 ├── api.py              # Async Data360 API client functions
-├── config.py           # pydantic-settings configuration
+├── config.py           # pydantic-settings configuration (MCP_CHARTS_API_URL for storing viz specs)
 ├── models.py           # Pydantic request/response models
 ├── providers.py        # Codelist management (REF_AREA, SEX, AGE, etc.)
 └── mcp_server/
@@ -66,28 +66,28 @@ from data360 import api as data360_api
 async def main():
     # Basic search
     result = await data360_api.search(query="unemployment", limit=5)
-    
+
     # Enriched search with specific fields
     result = await data360_api.search(
         query="poverty",
         limit=5,
         select_fields=["idno", "name", "database_id", "periodicity"]
     )
-    
+
     # Check available filters for an indicator
     disagg = await data360_api.get_disaggregation(
         database_id="WB_SSGD",
         indicator_id="WB_SSGD_UNEMPLOYMENT"
     )
     print(f"Available years: {disagg['dimensions']}")
-    
+
     # Get specific metadata fields
     metadata = await data360_api.get_metadata(
         database_id="WB_WDI",
         indicator_id="WB_WDI_SP_POP_TOTL",
         select_fields=["methodology", "statistical_concept"]
     )
-    
+
     # Fetch data with filters
     data = await data360_api.get_data(
         database_id="WB_WDI",
@@ -102,13 +102,13 @@ asyncio.run(main())
 
 ## Library API Reference
 
-| Function | Description |
-|----------|-------------|
-| `search(query, limit, select_fields)` | Search for indicators with optional field selection |
-| `get_metadata(database_id, indicator_id, select_fields)` | Get indicator metadata with optional field selection |
-| `get_disaggregation(database_id, indicator_id)` | Get available filter values (countries, years, dimensions) |
-| `get_data(database_id, indicator_id, filters, start_year, end_year)` | Fetch indicator data |
-| `get_indicators(database_id)` | List all indicators for a database |
+| Function                                                             | Description                                                |
+| -------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `search(query, limit, select_fields)`                                | Search for indicators with optional field selection        |
+| `get_metadata(database_id, indicator_id, select_fields)`             | Get indicator metadata with optional field selection       |
+| `get_disaggregation(database_id, indicator_id)`                      | Get available filter values (countries, years, dimensions) |
+| `get_data(database_id, indicator_id, filters, start_year, end_year)` | Fetch indicator data                                       |
+| `get_indicators(database_id)`                                        | List all indicators for a database                         |
 
 ### Key Parameters
 
@@ -133,6 +133,12 @@ When developing chatbot integrations, use the `data360://system-prompt` resource
 - Step-by-step workflow guidance
 - Best practices for tool usage
 
+## Optional: Charts API
+
+When generating visualizations (`data360_get_viz_spec`), the server can store Vega-Lite specs in an external charts API instead of saving to `static/viz_specs/`. Set:
+
+- **`MCP_CHARTS_API_URL`**: Full URL of the charts API endpoint (e.g. `https://dataexppythonapidev.aseqa.worldbank.org/api/v1/charts`). The server will POST the Vega-Lite spec as JSON. If unset, specs are saved locally under `static/viz_specs/`.
+
 ## Technical Findings & Limitations
 
 ### 1. OData Filtering Reliability
@@ -141,6 +147,6 @@ Native OData filters (specifically `contains` on text fields) often return incom
 - **Solution**: The `search` tool implements server-side logic to fetch broader results and enrich/rank them in application code.
 
 ### 2. Metadata vs. Data availability
-The `dimensions` field in search results/metadata indicates *potential* breakdowns (e.g., `SEX`), but does **not guarantee** data exists for all values. 
+The `dimensions` field in search results/metadata indicates *potential* breakdowns (e.g., `SEX`), but does **not guarantee** data exists for all values.
 - **Example**: An indicator might list `SEX` as a dimension but only contain data for `_T` (Total).
 - **Verification**: Use `get_disaggregation` to check *actual* available values for a specific indicator. It scans the data and returns only values present (e.g. `['F', '_T']` only, missing 'M').
