@@ -17,4 +17,4 @@ echo $PORT
 
 # uv run fastmcp run src/data360/server.py --transport "${TRANSPORT}" --port "${PORT}"
 
-uv run uvicorn data360.server:app --reload --host 0.0.0.0 --port "${PORT}"
+uv run uvicorn data360.server:app --host 0.0.0.0 --port "${PORT}" --workers 4
