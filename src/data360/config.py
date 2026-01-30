@@ -26,6 +26,10 @@ class MCPServerSettings(BaseSettings):
         default="INFO",
         description="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)",
     )
+    charts_api_url: str | None = Field(
+        default=None,
+        description="URL for external charts API to store Vega-Lite specs (e.g. https://.../api/v1/charts). When set, viz specs are POSTed here instead of saving to static.",
+    )
 
     model_config = SettingsConfigDict(env_prefix="MCP_")
 
