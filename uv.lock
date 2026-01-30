@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -527,6 +527,7 @@ dependencies = [
     { name = "langchain-mcp-adapters" },
     { name = "langchain-openai" },
     { name = "mcp" },
+    { name = "pydantic-settings" },
     { name = "typer" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -552,6 +553,7 @@ requires-dist = [
     { name = "langchain-mcp-adapters", specifier = ">=0.1.13" },
     { name = "langchain-openai", specifier = ">=1.1.7" },
     { name = "mcp", specifier = ">=1.18.0" },
+    { name = "pydantic-settings", specifier = ">=2.0.0" },
     { name = "typer", specifier = ">=0.20.1" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30.0" },
 ]

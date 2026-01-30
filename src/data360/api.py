@@ -1,7 +1,7 @@
+import asyncio
 import json
 import logging
 import zlib
-import asyncio
 from typing import Any
 
 import dotenv
@@ -10,8 +10,8 @@ from pydantic import ValidationError
 
 from .config import get_data360_settings
 from .models import (
-    DiscoveryResult,
     DiscoveredIndicator,
+    DiscoveryResult,
     EnrichedIndicator,
     EnrichedSearchResponse,
     IndicatorDataRequest,
@@ -49,28 +49,28 @@ def _get_valid_disaggregations(
 
 
 def _build_disaggregation_params(
-    disaggregation_filters: dict[str, str | None] | None
+    disaggregation_filters: dict[str, str | None] | None,
 ) -> dict[str, str]:
     """Build effective disaggregation params with smart defaults.
-    
+
     This is the single source of truth for disaggregation filtering logic.
     Used by both get_data() and get_data_api_url().
-    
+
     Args:
-        disaggregation_filters: User-provided filters. 
+        disaggregation_filters: User-provided filters.
             - None or {}: Use defaults (SEX=_T, AGE=_T, URBANISATION=_T)
             - {"SEX": "F"}: Use F for SEX, defaults for others
             - {"SEX": None}: Omit SEX filter (get all values), defaults for others
-        
+
     Returns:
         Dict of dimension -> value to add to API params.
         Dimensions with None values are omitted (API returns all).
     """
     default_filters = {"SEX": "_T", "AGE": "_T", "URBANISATION": "_T"}
-    
+
     if not disaggregation_filters:
         return default_filters
-    
+
     effective = {}
     for dim, default_val in default_filters.items():
         if dim in disaggregation_filters:
@@ -82,7 +82,7 @@ def _build_disaggregation_params(
         else:
             # User didn't specify → use default
             effective[dim] = default_val
-    
+
     return effective
 
 
@@ -157,7 +157,7 @@ async def _search_raw(
     odata_options: dict[str, str] | None = None,
 ) -> SearchResponse:
     """Internal: Raw search for data360 indicators using the World Bank Data360 API.
-    
+
     This is the low-level API. Use `search()` for the enriched LLM-friendly version.
 
     Args:
@@ -178,7 +178,6 @@ async def _search_raw(
     if select_fields is None and not (odata_options and odata_options.get("select")):
         select_fields = ["idno", "name", "database_id", "definition_long"]
 
-    
     if select_fields:
         select_val = ", ".join(f"series_description/{f}" for f in select_fields)
     elif odata_options and odata_options.get("select"):
@@ -244,10 +243,10 @@ async def _search_raw(
 async def _resolve_country_code(country_query: str) -> str | None:
     """Resolve country name to code using cached REF_AREA codelist."""
     from . import providers as data360_providers
-    
+
     if not country_query:
         return None
-        
+
     # Handle multi-country
     if "," in country_query:
         parts = [p.strip() for p in country_query.split(",") if p.strip()]
@@ -256,14 +255,16 @@ async def _resolve_country_code(country_query: str) -> str | None:
             code = await _resolve_country_code(part)
             if code:
                 resolved_codes.append(code)
-        
+
         return ",".join(resolved_codes) if resolved_codes else None
 
     # Already a 3-letter code
     if len(country_query) == 3 and country_query.isupper():
         return country_query
     # Look up in codelist
-    matches = await data360_providers.find_codelist_value("REF_AREA", country_query, limit=1)
+    matches = await data360_providers.find_codelist_value(
+        "REF_AREA", country_query, limit=1
+    )
     if matches and matches[0].get("score", 0) >= 70:
         return matches[0].get("id")
     return None
@@ -276,17 +277,17 @@ async def search(
     offset: int = 0,
 ) -> "EnrichedSearchResponse":
     """Search for Data360 indicators with enriched metadata for selection.
-    
+
     Args:
         query: Search query (e.g., "unemployment rate", "poverty")
         required_country: Country name or code (e.g., "Kenya", "KEN", or "China, USA")
             Supports comma-separated lists to check coverage for multiple countries.
         limit: Max results (default 5)
         offset: Offset for pagination (default 0)
-    
+
     Returns:
         EnrichedSearchResponse with:
-            - indicators: List of EnrichedIndicator (idno, database_id, name, 
+            - indicators: List of EnrichedIndicator (idno, database_id, name,
               truncated_definition, periodicity, latest_data, covers_country, dimensions)
             - count, total_count, offset, has_more, next_offset: Pagination fields
             - required_country: Resolved country code
@@ -298,29 +299,35 @@ async def search(
     country_code = None
     if required_country:
         country_code = await _resolve_country_code(required_country)
-    
+
     # Fetch all needed metadata in ONE search call
     search_result = await _search_raw(
         query=query,
         limit=limit,
         offset=offset,
         select_fields=[
-            "idno", "name", "database_id", "definition_long",
-            "periodicity", "time_periods", "ref_country", "dimensions"
-        ]
+            "idno",
+            "name",
+            "database_id",
+            "definition_long",
+            "periodicity",
+            "time_periods",
+            "ref_country",
+            "dimensions",
+        ],
     )
-    
+
     if search_result.error:
         return EnrichedSearchResponse(error=search_result.error)
-    
+
     if not search_result.items:
         return EnrichedSearchResponse(error=f"No indicators found for: '{query}'")
-    
+
     # Process each indicator
     indicators: list[EnrichedIndicator] = []
     for item in search_result.items:
         raw = item.model_dump()
-        
+
         # Extract latest_data and time_period_range
         time_periods = raw.get("time_periods", [])
         latest_data = None
@@ -332,29 +339,28 @@ async def search(
             end = tp.get("end")
             if start and end:
                 time_period_range = f"{start}-{end}"
-        
+
         # Check covers_country from ref_country
         covers_country = None
         ref_country = raw.get("ref_country", [])
         if country_code and ref_country and isinstance(ref_country, list):
             country_codes = [
-                c.get("code") if isinstance(c, dict) else c 
-                for c in ref_country
+                c.get("code") if isinstance(c, dict) else c for c in ref_country
             ]
             covers_country = country_code in country_codes
         elif country_code:
             covers_country = False
-        
+
         # Extract dimension names from series_description/dimensions
         dimensions = raw.get("dimensions", [])
         label_to_code = {
             "sex": "SEX",
-            "age": "AGE", 
+            "age": "AGE",
             "residential area": "URBANISATION",
             "urbanisation": "URBANISATION",
             "education": "EDUCATION",
         }
-        
+
         useful_dims: list[str] = []
         if dimensions and isinstance(dimensions, list):
             for dim in dimensions:
@@ -362,27 +368,31 @@ async def search(
                     label = (dim.get("label") or "").lower()
                     if label in label_to_code:
                         useful_dims.append(label_to_code[label])
-        
+
         # Build EnrichedIndicator
-        indicators.append(EnrichedIndicator(
-            idno=raw.get("idno", ""),
-            database_id=raw.get("database_id", ""),
-            name=raw.get("name", ""),
-            truncated_definition=(raw.get("definition_long") or "")[:100],
-            periodicity=raw.get("periodicity"),
-            latest_data=latest_data,
-            time_period_range=time_period_range,
-            covers_country=covers_country,
-            dimensions=useful_dims if useful_dims else None,
-        ))
-    
+        indicators.append(
+            EnrichedIndicator(
+                idno=raw.get("idno", ""),
+                database_id=raw.get("database_id", ""),
+                name=raw.get("name", ""),
+                truncated_definition=(raw.get("definition_long") or "")[:100],
+                periodicity=raw.get("periodicity"),
+                latest_data=latest_data,
+                time_period_range=time_period_range,
+                covers_country=covers_country,
+                dimensions=useful_dims if useful_dims else None,
+            )
+        )
+
     # Sort: covers_country=True first, then by latest_data descending
     if country_code:
-        indicators.sort(key=lambda x: (
-            not (x.covers_country or False),
-            -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0)
-        ))
-    
+        indicators.sort(
+            key=lambda x: (
+                not (x.covers_country or False),
+                -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0),
+            )
+        )
+
     return EnrichedSearchResponse(
         indicators=indicators,
         required_country=country_code,
@@ -420,7 +430,7 @@ async def get_metadata(
     Example:
         # Get only methodology
         await get_metadata("WB_GS", "WB_GS_NY_GDP_PCAP_KD", select_fields=["methodology"])
-        
+
         # Get full metadata
         await get_metadata("WB_GS", "WB_GS_NY_GDP_PCAP_KD")
     """
@@ -444,7 +454,7 @@ async def get_metadata(
     disaggregations: list[dict[str, Any]] = []
     errors: list[str] = []
     headers = {"accept": "*/*", "Content-Type": "application/json"}
-    
+
     # Build query with optional select clause
     query = f"series_description/idno eq '{indicator_id}'"
     if select_fields:
@@ -470,7 +480,8 @@ async def get_metadata(
                     # Force filtering if select_fields provided (API might return more)
                     if select_fields and indicator_metadata:
                         indicator_metadata = {
-                            k: v for k, v in indicator_metadata.items()
+                            k: v
+                            for k, v in indicator_metadata.items()
                             if k in select_fields
                         }
                 else:
@@ -510,9 +521,13 @@ async def get_metadata(
 
                 try:
                     raw_disaggregations = disagg_res.json()
-                    disaggregations = get_valid_disaggregations_func(raw_disaggregations)
+                    disaggregations = get_valid_disaggregations_func(
+                        raw_disaggregations
+                    )
                 except ValueError as e:
-                    error_msg = f"Failed to parse disaggregation JSON response: {str(e)}"
+                    error_msg = (
+                        f"Failed to parse disaggregation JSON response: {str(e)}"
+                    )
                     _logger.error(error_msg)
                     errors.append(error_msg)
 
@@ -550,7 +565,7 @@ async def get_disaggregation(
     indicator_id: str,
 ) -> dict[str, Any]:
     """Get disaggregation options for a Data360 indicator.
-    
+
     This is the primary tool for checking what filter values are available
     for an indicator, including actual years (TIME_PERIOD), countries (REF_AREA),
     and dimensions (SEX, AGE, URBANISATION).
@@ -573,7 +588,7 @@ async def get_disaggregation(
         #         {"field_name": "SEX", "field_value": ["F", "M", "_T"]},
         #     ]
         # }
-    
+
     Note:
         - TIME_PERIOD shows actual available years (may have gaps)
         - REF_AREA shows countries with data for this indicator
@@ -592,7 +607,7 @@ async def get_disaggregation(
                 headers=headers,
             )
             response.raise_for_status()
-            
+
             raw_data = response.json()
             # Filter out _Z values and format response
             valid_dimensions = _get_valid_disaggregations(raw_data)
@@ -640,25 +655,26 @@ async def get_data(
             - total_count: Total records available (if known)
             - has_more: True if more data is available
             - next_offset: Offset to use for next page (if has_more)
-    
+
     Example:
         # First page
-        result = get_data("WB_GS", "WB_GS_NY_GDP_PCAP_KD", 
+        result = get_data("WB_GS", "WB_GS_NY_GDP_PCAP_KD",
                           disaggregation_filters={"REF_AREA": "KEN"})
-        
+
         # If has_more=True, get next page:
         result2 = get_data("WB_GS", "WB_GS_NY_GDP_PCAP_KD",
-                           disaggregation_filters={"REF_AREA": "KEN"}, 
+                           disaggregation_filters={"REF_AREA": "KEN"},
                            offset=result.next_offset)
     """
     data_url = data360_config.data_url or f"{data360_config.api_url}/data"
-    
+
     # Cap limit to prevent token overflow
     limit = min(limit, 100)
-    
+
     # Smart time defaults: if no time range specified, default to last 5 years
     if start_year is None and end_year is None:
         from datetime import datetime
+
         current_year = datetime.now().year
         end_year = current_year
         start_year = current_year - 19  # Last 20 years
@@ -692,7 +708,7 @@ async def get_data(
     # This adds filters to the URL, not post-fetch filtering
     effective_disagg = _build_disaggregation_params(disaggregation_filters)
     params.update(effective_disagg)
-    
+
     # Also include any non-standard filters passed by user (e.g., REF_AREA)
     if disaggregation_filters:
         for k, v in disaggregation_filters.items():
@@ -719,6 +735,7 @@ async def get_data(
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             try:
+                print(f"Fetching data from {data_url} with params: {params}")
                 data_res = await client.get(data_url, params=params)
                 data_res.raise_for_status()
 
@@ -731,25 +748,25 @@ async def get_data(
 
                 raw_data = data_json.get("value", [])
                 total_count = data_json.get("@odata.count")  # May be None
-                
+
                 # Compute API-level pagination BEFORE any filtering
                 # This ensures next_offset correctly tracks position in the API result set
                 api_returned_count = len(raw_data)
                 has_more = api_returned_count > limit
-                
+
                 # Trim the extra detection row (we requested limit+1 to detect has_more)
                 if api_returned_count > limit:
                     raw_data = raw_data[:limit]
-                
+
                 # Compute API-based next_offset - the true cursor position for next page
                 api_next_offset = offset + len(raw_data) if has_more else None
-                
+
                 # Sort by TIME_PERIOD descending (most recent first)
                 raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
 
                 # Note: Post-fetch filtering removed - filters now applied at URL level
                 # via _build_disaggregation_params() for consistency with get_data_api_url()
-                
+
                 # Final limit enforcement (safety check)
                 if len(raw_data) > limit:
                     raw_data = raw_data[:limit]
@@ -783,7 +800,9 @@ async def get_data(
                 _logger.error(error_msg)
                 return IndicatorDataResponse(data=None, error=error_msg)
             except httpx.RequestError as e:
-                error_msg = f"Request error fetching data for {indicator_id!r}: {str(e)}"
+                error_msg = (
+                    f"Request error fetching data for {indicator_id!r}: {str(e)}"
+                )
                 _logger.error(error_msg)
                 return IndicatorDataResponse(data=None, error=error_msg)
             except Exception as e:
@@ -799,27 +818,27 @@ async def get_data(
 
 async def get_indicators(database_id: str) -> list[str]:
     """Get all indicator IDs for a specific database.
-    
+
     Args:
         database_id: The database ID to fetch indicators for (e.g., "WB_WDI")
-        
+
     Returns:
         List of indicator IDs
     """
     url = f"{data360_config.api_url}/indicators"
     params = {"datasetId": database_id}
-    
+
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.get(url, params=params)
             response.raise_for_status()
-            
+
             data = response.json()
             if isinstance(data, list):
                 # Data is a list of indicator ID strings
                 return data
             return []
-            
+
     except Exception as e:
         _logger.error(f"Failed to fetch indicators for {database_id}: {e}")
         raise
@@ -832,7 +851,7 @@ async def discover_indicators(
     limit: int = 5,
 ) -> DiscoveryResult:
     """Search for indicators and validate their capabilities.
-    
+
     .. deprecated::
         This function is deprecated. Use the following workflow instead:
         1. search() with select_fields for candidates
@@ -862,16 +881,18 @@ async def discover_indicators(
         )
     """
     import warnings
+
     warnings.warn(
         "discover_indicators is deprecated. Use search() + get_disaggregation() + get_metadata() instead.",
         DeprecationWarning,
         stacklevel=2,
     )
-    
-    from data360.providers import find_reference_area
+
     # ... existing implementation ...
-    
+
+
 # --- Visualization Workflow Tools ---
+
 
 async def get_data_api_url(
     database_id: str,
@@ -882,9 +903,9 @@ async def get_data_api_url(
     disaggregation_filters: dict[str, str | None] | None = None,
 ) -> str:
     """Generate a Data360 API URL for a dataset (without fetching).
-    
+
     Use this to get the `data_url` for visualization generation.
-    
+
     Args:
         database_id: Database identifier (e.g., WB_HNP, WB_WDI)
         indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL)
@@ -894,35 +915,32 @@ async def get_data_api_url(
         end_year: Optional end year
         disaggregation_filters: Optional dict of dimension filters (e.g., {"SEX": "F"})
             If not provided, defaults to totals (_T) for SEX, AGE, URBANISATION
-    
+
     Returns:
         Constructed API URL string
     """
     settings = get_data360_settings()
-    
+
     # Fix double-slash: ensure base URL doesn't end with slash before appending /data
-    base_url = settings.api_url.rstrip('/')
+    base_url = settings.api_url.rstrip("/")
     base = f"{base_url}/data"
-    
+
     # Construct query params
-    params = [
-        f"DATABASE_ID={database_id}",
-        f"INDICATOR={indicator_id}"
-    ]
-    
+    params = [f"DATABASE_ID={database_id}", f"INDICATOR={indicator_id}"]
+
     if country_code:
         params.append(f"REF_AREA={country_code}")
-    
+
     if start_year:
         params.append(f"timePeriodFrom={start_year}")
-    
+
     if end_year:
         params.append(f"timePeriodTo={end_year}")
-    
+
     # Use shared helper for disaggregation defaults (single source of truth)
     # See _build_disaggregation_params() docstring for behavior
     effective_filters = _build_disaggregation_params(disaggregation_filters)
-    
+
     # Add dimension filters to params
     for dim, val in effective_filters.items():
         params.append(f"{dim}={val}")
@@ -932,19 +950,18 @@ async def get_data_api_url(
         for k, v in disaggregation_filters.items():
             if k not in effective_filters and k != "FREQ" and v is not None:
                 params.append(f"{k}={v}")
-        
+
     # Default limit for viz
     limit = 1000
     if country_code:
         # Increase limit based on number of countries requested (max ~60 years per country)
         # Using 1000 as a safe multiplier to cover most time series data including higher frequency
-        n_countries = len(country_code.split(','))
+        n_countries = len(country_code.split(","))
         limit = max(1000, n_countries * 1000)
-    
-    params.append(f"top={limit}")
-        
-    return f"{base}?{'&'.join(params)}"
 
+    params.append(f"top={limit}")
+
+    return f"{base}?{'&'.join(params)}"
 
     # Step 1: Resolve country code if provided as name
     country_code: str | None = None
@@ -958,7 +975,9 @@ async def get_data_api_url(
             if matches and matches[0]["score"] >= 80:
                 country_code = matches[0]["id"]
             else:
-                return DiscoveryResult(error=f"Could not resolve country: '{required_country}'")
+                return DiscoveryResult(
+                    error=f"Could not resolve country: '{required_country}'"
+                )
 
     # Step 2: Search for indicators
     try:
@@ -977,7 +996,9 @@ async def get_data_api_url(
             "indicator_id": item.idno,
             "database_id": item.database_id,
             "name": item.name,
-            "truncated_definition": item.definition_long[:100] if item.definition_long else item.name,
+            "truncated_definition": item.definition_long[:100]
+            if item.definition_long
+            else item.name,
             "has_country": False,
             "country_code": country_code,
             "available_dimensions": [],
@@ -999,15 +1020,19 @@ async def get_data_api_url(
 
             # Extract time range and periodicity from metadata
             if metadata_result.indicator_metadata:
-                time_periods = metadata_result.indicator_metadata.get("time_periods", [])
+                time_periods = metadata_result.indicator_metadata.get(
+                    "time_periods", []
+                )
                 if time_periods:
                     base_info["time_range"] = {
                         "start": time_periods[0].get("start"),
                         "end": time_periods[0].get("end"),
                     }
-                
+
                 # Get periodicity (more human-readable than FREQ codes)
-                base_info["periodicity"] = metadata_result.indicator_metadata.get("periodicity")
+                base_info["periodicity"] = metadata_result.indicator_metadata.get(
+                    "periodicity"
+                )
 
                 # Check if required country is in ref_country
                 if country_code:
@@ -1020,21 +1045,23 @@ async def get_data_api_url(
             # Extract available dimensions and frequencies from disaggregation options
             available_dims: list[str] = []
             available_freqs: list[str] = []
-            #forces the LLM to only see dimensions that offer actual choices (like "Male/Female" or "Urban/Rural")
+            # forces the LLM to only see dimensions that offer actual choices (like "Male/Female" or "Urban/Rural")
             for dim in metadata_result.disaggregation_options:
                 field_name = dim.get("field_name", "")
                 field_values = dim.get("field_value", [])
-                
+
                 # Extract FREQ values
                 if field_name == "FREQ" and field_values:
                     available_freqs = field_values
 
                 # Only include if not just "_T" or "_Z" and not FREQ
-                if field_name != "FREQ" and field_values and not (
-                    len(field_values) == 1 and field_values[0] in ["_T", "_Z"]
+                if (
+                    field_name != "FREQ"
+                    and field_values
+                    and not (len(field_values) == 1 and field_values[0] in ["_T", "_Z"])
                 ):
                     available_dims.append(field_name)
-            
+
             base_info["available_frequencies"] = available_freqs
             base_info["available_dimensions"] = available_dims
 
@@ -1067,6 +1094,5 @@ async def get_data_api_url(
         return (-score, 0, 0)
 
     indicators_sorted = sorted(indicators, key=sort_key)
-    
-    return DiscoveryResult(indicators=indicators_sorted)
 
+    return DiscoveryResult(indicators=indicators_sorted)
