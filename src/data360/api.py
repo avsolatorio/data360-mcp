@@ -70,7 +70,17 @@ def _validate_user_filters(
         # If dimension exists in metadata, check value
         if dim in available_disaggregations:
             valid_values = available_disaggregations[dim]
-            if val not in valid_values:
+            
+            # Special handling for REF_AREA which supports comma-separated list
+            if dim == "REF_AREA" and "," in val:
+                parts = [p.strip() for p in val.split(",") if p.strip()]
+                for part in parts:
+                    if part not in valid_values:
+                        errors.append(
+                             f"Invalid value '{part}' in '{val}' for dimension '{dim}'. Available options: {valid_values}"
+                        )
+            # Standard single value check
+            elif val not in valid_values:
                 errors.append(
                     f"Invalid value '{val}' for dimension '{dim}'. Available options: {valid_values}"
                 )
@@ -795,13 +805,6 @@ async def get_data(
         available_disaggregations=available_disaggregations
     )
     params.update(effective_disagg)
-
-    # Also include any non-standard filters passed by user (e.g., REF_AREA)
-    if disaggregation_filters:
-        for k, v in disaggregation_filters.items():
-            if k not in ["SEX", "AGE", "URBANISATION", "FREQ"] and v is not None:
-                params[k] = v
-
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             try:
