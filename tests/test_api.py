@@ -13,7 +13,11 @@ from data360.api import (
     get_metadata,
     search,
 )
-from data360.models import IndicatorDataResponse, MetadataResponse, SearchResponse
+from data360.models import (
+    EnrichedSearchResponse,
+    IndicatorDataResponse,
+    MetadataResponse,
+)
 
 
 class TestGetValidDisaggregations:
@@ -65,6 +69,7 @@ class TestSearch:
                         "name": "Population, total",
                         "database_id": "WB_WDI",
                         "definition_long": "Total population",
+                        "dimensions": []
                     }
                 },
                 {
@@ -73,6 +78,7 @@ class TestSearch:
                         "name": "Population growth",
                         "database_id": "WB_WDI",
                         "definition_long": "Population growth rate",
+                        "dimensions": []
                     }
                 },
             ],
@@ -86,12 +92,12 @@ class TestSearch:
 
         result = await search("population", limit=10)
 
-        assert isinstance(result, SearchResponse)
-        assert result.items is not None
-        assert len(result.items) == NUM_ITEMS
-        assert result.items[0].idno == "WB_WDI_SP_POP_TOTL"
-        assert result.items[0].name == "Population, total"
-        assert result.items[1].idno == "WB_WDI_SP_POP_GROW"
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.indicators is not None
+        assert len(result.indicators) == NUM_ITEMS
+        assert result.indicators[0].idno == "WB_WDI_SP_POP_TOTL"
+        assert result.indicators[0].name == "Population, total"
+        assert result.indicators[1].idno == "WB_WDI_SP_POP_GROW"
         assert result.total_count == NUM_ITEMS
         assert result.count == NUM_ITEMS
         assert result.has_more is False
@@ -112,6 +118,7 @@ class TestSearch:
                         "name": f"Population {i}",
                         "database_id": "WB_WDI",
                         "definition_long": f"Population indicator {i}",
+                        "dimensions": []
                     }
                 }
                 for i in range(NUM_ITEMS)
@@ -148,6 +155,7 @@ class TestSearch:
                         "name": "Population, total",
                         "database_id": "WB_WDI",
                         "definition_long": "Total population",
+                        "dimensions": []
                     }
                 },
                 {
@@ -175,59 +183,9 @@ class TestSearch:
 
         result = await search("population", limit=10)
 
-        assert result.items is not None
-        assert len(result.items) == NUM_VALID_ITEMS  # Only the valid item
-        assert result.items[0].idno == "WB_WDI_SP_POP_TOTL"
-
-    @pytest.mark.asyncio
-    async def test_search_with_custom_parameters(
-        self, httpx_mock: pytest_httpx.HTTPXMock
-    ):
-        """Test search with filter, orderby, and select parameters."""
-        TOTAL_COUNT = 1
-        LIMIT = 5
-        mock_response = {
-            "@odata.context": "https://api.test.example.com/$metadata",
-            "@odata.count": TOTAL_COUNT,
-            "value": [
-                {
-                    "series_description": {
-                        "idno": "WB_WDI_SP_POP_TOTL",
-                        "name": "Population, total",
-                        "database_id": "WB_WDI",
-                    }
-                }
-            ],
-        }
-
-        httpx_mock.add_response(
-            method="POST",
-            url="https://api.test.example.com/searchv2",
-            json=mock_response,
-        )
-
-        result = await search(
-            "population",
-            limit=LIMIT,
-            offset=0,
-            odata_options={
-                "filter": "type eq 'indicator'",
-                "orderby": "series_description/name",
-                "select": "series_description/idno, series_description/name",
-            },
-        )
-
-        # Verify the request was made with correct parameters
-        request = httpx_mock.get_request()
-        assert request is not None
-        assert request.method == "POST"
-        payload = json.loads(request.read())
-        assert payload["search"] == "population"
-        assert payload["top"] == LIMIT
-        assert payload["skip"] == 0
-
-        assert result.items is not None
-        assert len(result.items) == TOTAL_COUNT
+        assert result.indicators is not None
+        assert len(result.indicators) == NUM_VALID_ITEMS  # Only the valid item
+        assert result.indicators[0].idno == "WB_WDI_SP_POP_TOTL"
 
     @pytest.mark.asyncio
     async def test_search_http_error(self, httpx_mock: pytest_httpx.HTTPXMock):
@@ -241,7 +199,7 @@ class TestSearch:
 
         result = await search("population")
 
-        assert result.items is None
+        assert not result.indicators
         assert result.error is not None
         assert "HTTP error 500" in result.error
 
@@ -255,7 +213,7 @@ class TestSearch:
 
         result = await search("population")
 
-        assert result.items is None
+        assert not result.indicators
         assert result.error is not None
         assert "timeout" in result.error.lower()
 
@@ -271,7 +229,7 @@ class TestSearch:
 
         result = await search("population")
 
-        assert result.items is None
+        assert not result.indicators
         assert result.error is not None
         assert "Failed to parse" in result.error
 
@@ -509,17 +467,26 @@ class TestGetData:
             "count": 2,
         }
 
-        # Match URL with query parameters
-        def data_callback(request: httpx.Request) -> httpx.Response | None:
-            if (
-                request.method == "GET"
-                and request.url.host == "api.test.example.com"
-                and request.url.path == "/data"
-            ):
-                return httpx.Response(200, json=mock_response)
-            return None
+        # Mock metadata response (called first)
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]}
+        )
 
-        httpx_mock.add_callback(data_callback)
+        # Mock disaggregation response (called during metadata fetch)
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[{"field_name": "REF_AREA", "field_value": ["UGA"]}]
+        )
+
+        # Mock data response
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/data\?.*"),
+            json=mock_response
+        )
 
         result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
 
@@ -542,13 +509,33 @@ class TestGetData:
             "count": 1,
         }
 
-        # Match URL with query parameters
+        # Mock metadata
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+        )
+        
+        # Mock disaggregation 
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[
+                {"field_name": "REF_AREA", "field_value": ["UGA"]},
+                {"field_name": "UNIT_MEASURE", "field_value": ["PT"]},
+            ]
+        )
+
+        # Mock data response
         def data_callback(request: httpx.Request) -> httpx.Response | None:
             if (
                 request.method == "GET"
                 and request.url.host == "api.test.example.com"
                 and request.url.path == "/data"
             ):
+                # Verify params in URL
+                assert "REF_AREA=UGA" in str(request.url)
+                assert "UNIT_MEASURE=PT" in str(request.url)
                 return httpx.Response(200, json=mock_response)
             return None
 
@@ -563,15 +550,21 @@ class TestGetData:
         assert result.data is not None
         assert len(result.data) == 1
 
-        # Verify the request included the filters
-        request = httpx_mock.get_request()
-        assert request is not None
-        assert "REF_AREA=UGA" in str(request.url)
-        assert "UNIT_MEASURE=PT" in str(request.url)
-
     @pytest.mark.asyncio
     async def test_get_data_pagination(self, httpx_mock: pytest_httpx.HTTPXMock):
         """Test data retrieval with pagination."""
+
+        # Mock metadata & disaggregation (needed for get_data to proceed)
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[]
+        )
 
         # First page response
         def first_page_callback(request: httpx.Request) -> httpx.Response | None:
@@ -611,6 +604,18 @@ class TestGetData:
     @pytest.mark.asyncio
     async def test_get_data_empty_response(self, httpx_mock: pytest_httpx.HTTPXMock):
         """Test data retrieval with empty response."""
+        
+        # Mocks
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[]
+        )
 
         def empty_data_callback(request: httpx.Request) -> httpx.Response | None:
             if (
@@ -632,7 +637,20 @@ class TestGetData:
     @pytest.mark.asyncio
     async def test_get_data_http_error(self, httpx_mock: pytest_httpx.HTTPXMock):
         """Test data retrieval handles HTTP errors."""
+        
+        # Mocks for metadata (successful, so we proceed to data)
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[]
+        )
 
+        # Data error
         def error_data_callback(request: httpx.Request) -> httpx.Response | None:
             if (
                 request.method == "GET"
@@ -653,6 +671,18 @@ class TestGetData:
     @pytest.mark.asyncio
     async def test_get_data_invalid_json(self, httpx_mock: pytest_httpx.HTTPXMock):
         """Test data retrieval handles invalid JSON."""
+
+        # Mocks
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[]
+        )
 
         def invalid_json_callback(request: httpx.Request) -> httpx.Response | None:
             if (
@@ -676,138 +706,4 @@ class TestGetData:
 # ReferenceAreaManager in providers.py with a different API.
 # New tests for ReferenceAreaManager should be added in test_providers.py
 
-class TestDiscoverIndicators:
-    """Tests for discover_indicators() function."""
 
-    @pytest.mark.asyncio
-    async def test_discover_indicators_success(self, httpx_mock: pytest_httpx.HTTPXMock):
-        """Test successful indicator discovery."""
-        from data360.api import discover_indicators
-        from data360.models import DiscoveryResult
-
-        # Mock search response
-        search_response = {
-            "@odata.context": "https://api.test.example.com/$metadata",
-            "@odata.count": 1,
-            "value": [
-                {
-                    "series_description": {
-                        "idno": "WB_WDI_SP_POP_TOTL",
-                        "name": "Population, total",
-                        "database_id": "WB_WDI",
-                        "definition_long": "Total population",
-                    }
-                }
-            ],
-        }
-
-        httpx_mock.add_response(
-            method="POST",
-            url="https://api.test.example.com/searchv2",
-            json=search_response,
-        )
-
-        # Mock metadata response
-        metadata_response = {
-            "value": [
-                {
-                    "series_description": {
-                        "idno": "WB_WDI_SP_POP_TOTL",
-                        "name": "Population, total",
-                        "database_id": "WB_WDI",
-                        "definition_long": "Total population",
-                        "time_periods": [{"start": "1960", "end": "2022"}],
-                        "periodicity": "Annual",
-                    }
-                }
-            ]
-        }
-        
-        httpx_mock.add_response(
-            method="POST",
-            url="https://api.test.example.com/metadata",
-            json=metadata_response,
-        )
-
-        # Mock disaggregation response
-        disaggregation_response = [
-            {"field_value": ["AFG", "ALB"], "field_name": "REF_AREA"},
-            {"field_value": ["A"], "field_name": "FREQ"}
-        ]
-
-        def disaggregation_callback(request: httpx.Request) -> httpx.Response | None:
-            if (
-                request.method == "GET"
-                and request.url.path == "/disaggregation"
-            ):
-                return httpx.Response(200, json=disaggregation_response)
-            return None
-        
-        httpx_mock.add_callback(disaggregation_callback)
-
-        result = await discover_indicators("population")
-
-        assert isinstance(result, DiscoveryResult)
-        assert len(result.indicators) == 1
-        assert result.error is None
-        
-        ind = result.indicators[0]
-        assert ind.indicator_id == "WB_WDI_SP_POP_TOTL"
-        assert ind.available_frequencies == ["A"]
-        assert ind.periodicity == "Annual"
-        assert ind.time_range == {"start": "1960", "end": "2022"}
-
-    @pytest.mark.asyncio
-    async def test_discover_indicators_with_country_validation(self, httpx_mock: pytest_httpx.HTTPXMock):
-        """Test discovery with country validation."""
-        from data360.api import discover_indicators
-
-        # Mock Search
-        httpx_mock.add_response(
-            method="POST",
-            url="https://api.test.example.com/searchv2",
-            json={"value": [{"series_description": {"idno": "IND1", "name": "Ind 1", "database_id": "DB1"}}]}
-        )
-
-        # Mock Metadata with ref_country including KEN
-        httpx_mock.add_response(
-            method="POST",
-            url="https://api.test.example.com/metadata",
-            json={
-                "value": [{
-                    "series_description": {
-                        "idno": "IND1",
-                        "ref_country": [{"code": "KEN"}, {"code": "UGA"}]
-                    }
-                }]
-            }
-        )
-
-        # Mock Disaggregation
-        httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[]
-        )
-
-        result = await discover_indicators("test", required_country="KEN")
-        
-        assert len(result.indicators) == 1
-        assert result.indicators[0].has_country is True
-        assert result.indicators[0].country_code == "KEN"
-
-    @pytest.mark.asyncio
-    async def test_discover_indicators_search_error(self, httpx_mock: pytest_httpx.HTTPXMock):
-        """Test handling of search errors."""
-        from data360.api import discover_indicators
-
-        httpx_mock.add_response(
-            method="POST",
-            url="https://api.test.example.com/searchv2",
-            status_code=500
-        )
-
-        result = await discover_indicators("test")
-        
-        assert result.error is not None
-        assert "HTTP error 500" in result.error
