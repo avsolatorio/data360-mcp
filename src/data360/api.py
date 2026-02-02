@@ -50,6 +50,7 @@ def _get_valid_disaggregations(
 
 def _build_disaggregation_params(
     disaggregation_filters: dict[str, str | None] | None,
+    available_disaggregations: dict[str, list[str]] | None = None,
 ) -> dict[str, str]:
     """Build effective disaggregation params with smart defaults.
 
@@ -61,28 +62,51 @@ def _build_disaggregation_params(
             - None or {}: Use defaults (SEX=_T, AGE=_T, URBANISATION=_T)
             - {"SEX": "F"}: Use F for SEX, defaults for others
             - {"SEX": None}: Omit SEX filter (get all values), defaults for others
+        available_disaggregations: Optional dict of {dimension: [values]} 
+            derived from indicator metadata. If provided, defaults (like _T)
+            are only applied if they exist in the available values.
 
     Returns:
         Dict of dimension -> value to add to API params.
         Dimensions with None values are omitted (API returns all).
     """
     default_filters = {"SEX": "_T", "AGE": "_T", "URBANISATION": "_T"}
-
-    if not disaggregation_filters:
-        return default_filters
-
     effective = {}
+    
+    # Process each dimension that has a default
     for dim, default_val in default_filters.items():
-        if dim in disaggregation_filters:
+        # Case 1: User explicitly provided a filter for this dimension
+        if disaggregation_filters and dim in disaggregation_filters:
             user_val = disaggregation_filters[dim]
             if user_val is not None:
-                # User specified a value → use it
+                # Clean value: remove spaces around commas for multi-value support
+                if isinstance(user_val, str) and "," in user_val:
+                    user_val = ",".join([p.strip() for p in user_val.split(",") if p.strip()])
                 effective[dim] = user_val
-            # else: user passed None → omit dimension (get all values)
+            # else: User passed None → omit dimension (get all values)
+            
+        # Case 2: User didn't specify, check if we should apply default
         else:
-            # User didn't specify → use default
-            effective[dim] = default_val
+            # Only apply default if it's valid (or if we don't know validity)
+            should_apply_default = True
+            
+            if available_disaggregations:
+                valid_values = available_disaggregations.get(dim)
+                # If we have info about this dimension, and default_val is NOT in it
+                if valid_values is not None and default_val not in valid_values:
+                    should_apply_default = False
+            
+            if should_apply_default:
+                effective[dim] = default_val
 
+    # Also handle any other user-provided filters (standard dimensions that don't have defaults)
+    if disaggregation_filters:
+        for dim, val in disaggregation_filters.items():
+            if dim not in default_filters and val is not None:
+                if isinstance(val, str) and "," in val:
+                    val = ",".join([p.strip() for p in val.split(",") if p.strip()])
+                effective[dim] = val
+    
     return effective
 
 
@@ -704,9 +728,36 @@ async def get_data(
         "top": limit + 1,
     }
 
+    # Fetch metadata and disaggregations FIRST to inform parameter building
+    # This ensures we don't apply invalid defaults (like AGE=_T) which cause empty results
+    metadata_res = await get_metadata(
+        database_id,
+        indicator_id,
+        select_fields=[
+            "idno",
+            "name",
+            "database_id",
+            "periodicity",
+            "measurement_unit",
+            "definition_short",
+        ],
+        fetch_disaggregation=True,  # Crucial: fetch valid options
+    )
+    
+    api_metadata = metadata_res.indicator_metadata or {}
+    
+    # Process valid disaggregations into {dim: [values]} format
+    available_disaggregations = {}
+    for d in metadata_res.disaggregation_options or []:
+        if d.get("field_name") and d.get("field_value"):
+            available_disaggregations[d["field_name"]] = d["field_value"]
+
     # Apply smart disaggregation defaults using helper (single source of truth)
     # This adds filters to the URL, not post-fetch filtering
-    effective_disagg = _build_disaggregation_params(disaggregation_filters)
+    effective_disagg = _build_disaggregation_params(
+        disaggregation_filters,
+        available_disaggregations=available_disaggregations
+    )
     params.update(effective_disagg)
 
     # Also include any non-standard filters passed by user (e.g., REF_AREA)
@@ -714,23 +765,6 @@ async def get_data(
         for k, v in disaggregation_filters.items():
             if k not in ["SEX", "AGE", "URBANISATION", "FREQ"] and v is not None:
                 params[k] = v
-
-    # Fetch basic metadata in parallel
-    metadata_task = asyncio.create_task(
-        get_metadata(
-            database_id,
-            indicator_id,
-            select_fields=[
-                "idno",
-                "name",
-                "database_id",
-                "periodicity",
-                "measurement_unit",
-                "definition_short",
-            ],
-            fetch_disaggregation=False,
-        )
-    )
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -775,10 +809,6 @@ async def get_data(
                 # We hash the FULL row to avoid collisions on dimensions not in the specific set
                 for row in raw_data:
                     row["claim_id"] = _short_hash(row)
-
-                # Await metadata
-                metadata_res = await metadata_task
-                api_metadata = metadata_res.indicator_metadata or {}
 
                 return IndicatorDataResponse(
                     data=raw_data,
@@ -962,137 +992,3 @@ async def get_data_api_url(
     params.append(f"top={limit}")
 
     return f"{base}?{'&'.join(params)}"
-
-    # Step 1: Resolve country code if provided as name
-    country_code: str | None = None
-    if required_country:
-        # Check if it's already a code (3 letters uppercase)
-        if len(required_country) == 3 and required_country.isupper():
-            country_code = required_country
-        else:
-            # Try to resolve the country name
-            matches = await find_reference_area(required_country, limit=1)
-            if matches and matches[0]["score"] >= 80:
-                country_code = matches[0]["id"]
-            else:
-                return DiscoveryResult(
-                    error=f"Could not resolve country: '{required_country}'"
-                )
-
-    # Step 2: Search for indicators
-    try:
-        search_result = await search(query=query, limit=limit)
-        if search_result.error:
-            return DiscoveryResult(error=search_result.error)
-        if not search_result.items:
-            return DiscoveryResult(error=f"No indicators found for query: '{query}'")
-    except Exception as e:
-        return DiscoveryResult(error=f"Search failed: {str(e)}")
-
-    # Step 3: Fetch metadata for all indicators in parallel
-    async def fetch_indicator_metadata(item: SeriesDescription) -> DiscoveredIndicator:
-        """Fetch and process metadata for a single indicator."""
-        base_info = {
-            "indicator_id": item.idno,
-            "database_id": item.database_id,
-            "name": item.name,
-            "truncated_definition": item.definition_long[:100]
-            if item.definition_long
-            else item.name,
-            "has_country": False,
-            "country_code": country_code,
-            "available_dimensions": [],
-            "available_frequencies": [],
-            "periodicity": None,
-            "has_required_dimensions": True,
-            "time_range": None,
-            "error": None,
-        }
-
-        try:
-            metadata_result = await get_metadata(
-                database_id=item.database_id, indicator_id=item.idno
-            )
-
-            if metadata_result.error:
-                base_info["error"] = metadata_result.error
-                return DiscoveredIndicator(**base_info)
-
-            # Extract time range and periodicity from metadata
-            if metadata_result.indicator_metadata:
-                time_periods = metadata_result.indicator_metadata.get(
-                    "time_periods", []
-                )
-                if time_periods:
-                    base_info["time_range"] = {
-                        "start": time_periods[0].get("start"),
-                        "end": time_periods[0].get("end"),
-                    }
-
-                # Get periodicity (more human-readable than FREQ codes)
-                base_info["periodicity"] = metadata_result.indicator_metadata.get(
-                    "periodicity"
-                )
-
-                # Check if required country is in ref_country
-                if country_code:
-                    ref_countries = metadata_result.indicator_metadata.get(
-                        "ref_country", []
-                    )
-                    country_codes = [c.get("code") for c in ref_countries]
-                    base_info["has_country"] = country_code in country_codes
-
-            # Extract available dimensions and frequencies from disaggregation options
-            available_dims: list[str] = []
-            available_freqs: list[str] = []
-            # forces the LLM to only see dimensions that offer actual choices (like "Male/Female" or "Urban/Rural")
-            for dim in metadata_result.disaggregation_options:
-                field_name = dim.get("field_name", "")
-                field_values = dim.get("field_value", [])
-
-                # Extract FREQ values
-                if field_name == "FREQ" and field_values:
-                    available_freqs = field_values
-
-                # Only include if not just "_T" or "_Z" and not FREQ
-                if (
-                    field_name != "FREQ"
-                    and field_values
-                    and not (len(field_values) == 1 and field_values[0] in ["_T", "_Z"])
-                ):
-                    available_dims.append(field_name)
-
-            base_info["available_frequencies"] = available_freqs
-            base_info["available_dimensions"] = available_dims
-
-            # Check if required dimensions are available
-            if required_dimensions:
-                missing_dims = set(required_dimensions) - set(available_dims)
-                base_info["has_required_dimensions"] = len(missing_dims) == 0
-
-        except Exception as e:
-            base_info["error"] = str(e)
-
-        return DiscoveredIndicator(**base_info)
-
-    # Fetch all metadata in parallel
-    import asyncio
-
-    tasks = [fetch_indicator_metadata(item) for item in search_result.items]
-    indicators = await asyncio.gather(*tasks)
-
-    # Step 4: Sort by relevance
-    # Priority: has_country + has_required_dimensions > has_country > everything else
-    def sort_key(ind: DiscoveredIndicator) -> tuple[int, int, int]:
-        score = 0
-        if ind.has_country:
-            score += 100
-        if ind.has_required_dimensions:
-            score += 50
-        if ind.error is None:
-            score += 10
-        return (-score, 0, 0)
-
-    indicators_sorted = sorted(indicators, key=sort_key)
-
-    return DiscoveryResult(indicators=indicators_sorted)
