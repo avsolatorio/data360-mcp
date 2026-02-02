@@ -966,11 +966,27 @@ async def get_data_api_url(
 
     if end_year:
         params.append(f"timePeriodTo={end_year}")
+    # Fetch metadata and disaggregations FIRST to inform parameter building
+    # This ensures we don't apply invalid defaults (like AGE=_T) which cause empty results
+    metadata_res = await get_metadata(
+        database_id,
+        indicator_id,
+        select_fields=[], # We only need disaggregation options, metadata fields not needed
+        fetch_disaggregation=True,
+    )
+    
+    # Process valid disaggregations into {dim: [values]} format
+    available_disaggregations = {}
+    for d in metadata_res.disaggregation_options or []:
+        if d.get("field_name") and d.get("field_value"):
+            available_disaggregations[d["field_name"]] = d["field_value"]
 
     # Use shared helper for disaggregation defaults (single source of truth)
     # See _build_disaggregation_params() docstring for behavior
-    effective_filters = _build_disaggregation_params(disaggregation_filters)
-
+    effective_filters = _build_disaggregation_params(
+        disaggregation_filters,
+        available_disaggregations=available_disaggregations
+    )
     # Add dimension filters to params
     for dim, val in effective_filters.items():
         params.append(f"{dim}={val}")
