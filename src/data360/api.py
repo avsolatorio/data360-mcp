@@ -48,6 +48,38 @@ def _get_valid_disaggregations(
     return valid
 
 
+def _validate_user_filters(
+    user_filters: dict[str, str | None] | None,
+    available_disaggregations: dict[str, list[str]],
+) -> str | None:
+    """Validate user filters against available options.
+    
+    Returns:
+        Error message string if invalid, None if valid.
+    """
+    if not user_filters:
+        return None
+        
+    errors = []
+    for dim, val in user_filters.items():
+        # Skip special 'None' filters (meaning "all") or known non-dims like REF_AREA if we don't have metadata for them
+        # Note: API metadata usually returns REF_AREA as a dimension too if valid.
+        if val is None:
+            continue
+            
+        # If dimension exists in metadata, check value
+        if dim in available_disaggregations:
+            valid_values = available_disaggregations[dim]
+            if val not in valid_values:
+                errors.append(
+                    f"Invalid value '{val}' for dimension '{dim}'. Available options: {valid_values}"
+                )
+    
+    if errors:
+        return "; ".join(errors)
+    return None
+
+
 def _build_disaggregation_params(
     disaggregation_filters: dict[str, str | None] | None,
     available_disaggregations: dict[str, list[str]] | None = None,
@@ -70,42 +102,39 @@ def _build_disaggregation_params(
         Dict of dimension -> value to add to API params.
         Dimensions with None values are omitted (API returns all).
     """
-    default_filters = {"SEX": "_T", "AGE": "_T", "URBANISATION": "_T"}
     effective = {}
     
-    # Process each dimension that has a default
-    for dim, default_val in default_filters.items():
-        # Case 1: User explicitly provided a filter for this dimension
-        if disaggregation_filters and dim in disaggregation_filters:
-            user_val = disaggregation_filters[dim]
-            if user_val is not None:
-                # Clean value: remove spaces around commas for multi-value support
-                if isinstance(user_val, str) and "," in user_val:
-                    user_val = ",".join([p.strip() for p in user_val.split(",") if p.strip()])
-                effective[dim] = user_val
-            # else: User passed None → omit dimension (get all values)
-            
-        # Case 2: User didn't specify, check if we should apply default
-        else:
-            # Only apply default if it's valid (or if we don't know validity)
-            should_apply_default = True
-            
-            if available_disaggregations:
-                valid_values = available_disaggregations.get(dim)
-                # If we have info about this dimension, and default_val is NOT in it
-                if valid_values is not None and default_val not in valid_values:
-                    should_apply_default = False
-            
-            if should_apply_default:
-                effective[dim] = default_val
-
-    # Also handle any other user-provided filters (standard dimensions that don't have defaults)
+    # 1. Start with user-provided filters
     if disaggregation_filters:
         for dim, val in disaggregation_filters.items():
-            if dim not in default_filters and val is not None:
+            if val is not None:
+                # Clean value: remove spaces around commas for multi-value support
                 if isinstance(val, str) and "," in val:
                     val = ",".join([p.strip() for p in val.split(",") if p.strip()])
                 effective[dim] = val
+    
+    # 2. Apply smart defaults for unspecified dimensions
+    if available_disaggregations:
+        for dim, values in available_disaggregations.items():
+            # Skip if user already specified/excluded this dimension
+            if disaggregation_filters and dim in disaggregation_filters:
+                continue
+                
+            # Check if this dimension has a "Total" option (_T)
+            if "_T" in values:
+                # Redundancy check: if _T is the ONLY option, don't force it
+                if len(values) == 1:
+                    continue
+                
+                # Otherwise, apply default
+                effective[dim] = "_T"
+    
+    else:
+        # Fallback for when metadata wasn't fetched or failed.
+        # We CANNOT safely apply defaults like AGE=_T because we don't know if they exist.
+        # It is better to return ALL data (no filter) than NONE (invalid filter).
+        # So we leave 'effective' as-is (containing only user provided filters).
+        pass
     
     return effective
 
@@ -752,6 +781,13 @@ async def get_data(
         if d.get("field_name") and d.get("field_value"):
             available_disaggregations[d["field_name"]] = d["field_value"]
 
+    # Validate user filters BEFORE applying defaults
+    # This gives hints for hallucinations like SEX=ALIEN
+    val_error = _validate_user_filters(disaggregation_filters, available_disaggregations)
+    if val_error:
+        _logger.warning(f"Validation error for {indicator_id}: {val_error}")
+        return IndicatorDataResponse(error=val_error)
+
     # Apply smart disaggregation defaults using helper (single source of truth)
     # This adds filters to the URL, not post-fetch filtering
     effective_disagg = _build_disaggregation_params(
@@ -981,7 +1017,13 @@ async def get_data_api_url(
         if d.get("field_name") and d.get("field_value"):
             available_disaggregations[d["field_name"]] = d["field_value"]
 
-    # Use shared helper for disaggregation defaults (single source of truth)
+        if d.get("field_name") and d.get("field_value"):
+            available_disaggregations[d["field_name"]] = d["field_value"]
+
+    # Validate user filters
+    val_error = _validate_user_filters(disaggregation_filters, available_disaggregations)
+    if val_error:
+         raise ValueError(val_error)
     # See _build_disaggregation_params() docstring for behavior
     effective_filters = _build_disaggregation_params(
         disaggregation_filters,
