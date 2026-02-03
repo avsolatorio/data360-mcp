@@ -1,4 +1,3 @@
-import asyncio
 import json
 import logging
 import zlib
@@ -10,7 +9,6 @@ from pydantic import ValidationError
 
 from .config import get_data360_settings
 from .models import (
-    DiscoveredIndicator,
     DiscoveryResult,
     EnrichedIndicator,
     EnrichedSearchResponse,
@@ -27,6 +25,11 @@ dotenv.load_dotenv()
 _logger = logging.getLogger(__name__)
 
 data360_config = get_data360_settings()
+
+# Constants for API logic
+COUNTRY_CODE_LENGTH = 3
+SCORE_THRESHOLD = 70
+MAX_RETURN_STATEMENTS = 6
 
 
 def _short_hash(data: dict[str, Any]) -> str:
@@ -53,38 +56,38 @@ def _validate_user_filters(
     available_disaggregations: dict[str, list[str]],
 ) -> str | None:
     """Validate user filters against available options.
-    
+
     Returns:
         Error message string if invalid, None if valid.
     """
     if not user_filters:
         return None
-        
+
     errors = []
     for dim, val in user_filters.items():
         # Skip special 'None' filters (meaning "all") or known non-dims like REF_AREA if we don't have metadata for them
         # Note: API metadata usually returns REF_AREA as a dimension too if valid.
         if val is None:
             continue
-            
+
         # If dimension exists in metadata, check value
         if dim in available_disaggregations:
             valid_values = available_disaggregations[dim]
-            
+
             # Special handling for REF_AREA which supports comma-separated list
             if dim == "REF_AREA" and "," in val:
                 parts = [p.strip() for p in val.split(",") if p.strip()]
                 for part in parts:
                     if part not in valid_values:
                         errors.append(
-                             f"Invalid value '{part}' in '{val}' for dimension '{dim}'. Available options: {valid_values}"
+                            f"Invalid value '{part}' in '{val}' for dimension '{dim}'. Available options: {valid_values}"
                         )
             # Standard single value check
             elif val not in valid_values:
                 errors.append(
                     f"Invalid value '{val}' for dimension '{dim}'. Available options: {valid_values}"
                 )
-    
+
     if errors:
         return "; ".join(errors)
     return None
@@ -104,7 +107,7 @@ def _build_disaggregation_params(
             - None or {}: Use defaults (SEX=_T, AGE=_T, URBANISATION=_T)
             - {"SEX": "F"}: Use F for SEX, defaults for others
             - {"SEX": None}: Omit SEX filter (get all values), defaults for others
-        available_disaggregations: Optional dict of {dimension: [values]} 
+        available_disaggregations: Optional dict of {dimension: [values]}
             derived from indicator metadata. If provided, defaults (like _T)
             are only applied if they exist in the available values.
 
@@ -113,39 +116,43 @@ def _build_disaggregation_params(
         Dimensions with None values are omitted (API returns all).
     """
     effective = {}
-    
+
     # 1. Start with user-provided filters
     if disaggregation_filters:
-        for dim, val in disaggregation_filters.items():
-            if val is not None:
+        for dim, raw_val in disaggregation_filters.items():
+            # Skip FREQ as it's not used for filtering in this API
+            if dim == "FREQ":
+                continue
+            if raw_val is not None:
                 # Clean value: remove spaces around commas for multi-value support
+                val = raw_val
                 if isinstance(val, str) and "," in val:
                     val = ",".join([p.strip() for p in val.split(",") if p.strip()])
                 effective[dim] = val
-    
+
     # 2. Apply smart defaults for unspecified dimensions
     if available_disaggregations:
         for dim, values in available_disaggregations.items():
             # Skip if user already specified/excluded this dimension
             if disaggregation_filters and dim in disaggregation_filters:
                 continue
-                
+
             # Check if this dimension has a "Total" option (_T)
             if "_T" in values:
                 # Redundancy check: if _T is the ONLY option, don't force it
                 if len(values) == 1:
                     continue
-                
+
                 # Otherwise, apply default
                 effective[dim] = "_T"
-    
+
     else:
         # Fallback for when metadata wasn't fetched or failed.
         # We CANNOT safely apply defaults like AGE=_T because we don't know if they exist.
         # It is better to return ALL data (no filter) than NONE (invalid filter).
         # So we leave 'effective' as-is (containing only user provided filters).
         pass
-    
+
     return effective
 
 
@@ -322,13 +329,13 @@ async def _resolve_country_code(country_query: str) -> str | None:
         return ",".join(resolved_codes) if resolved_codes else None
 
     # Already a 3-letter code
-    if len(country_query) == 3 and country_query.isupper():
+    if len(country_query) == COUNTRY_CODE_LENGTH and country_query.isupper():
         return country_query
     # Look up in codelist
     matches = await data360_providers.find_codelist_value(
         "REF_AREA", country_query, limit=1
     )
-    if matches and matches[0].get("score", 0) >= 70:
+    if matches and matches[0].get("score", 0) >= SCORE_THRESHOLD:
         return matches[0].get("id")
     return None
 
@@ -782,9 +789,9 @@ async def get_data(
         ],
         fetch_disaggregation=True,  # Crucial: fetch valid options
     )
-    
+
     api_metadata = metadata_res.indicator_metadata or {}
-    
+
     # Process valid disaggregations into {dim: [values]} format
     available_disaggregations = {}
     for d in metadata_res.disaggregation_options or []:
@@ -793,7 +800,9 @@ async def get_data(
 
     # Validate user filters BEFORE applying defaults
     # This gives hints for hallucinations like SEX=ALIEN
-    val_error = _validate_user_filters(disaggregation_filters, available_disaggregations)
+    val_error = _validate_user_filters(
+        disaggregation_filters, available_disaggregations
+    )
     if val_error:
         _logger.warning(f"Validation error for {indicator_id}: {val_error}")
         return IndicatorDataResponse(error=val_error)
@@ -801,88 +810,72 @@ async def get_data(
     # Apply smart disaggregation defaults using helper (single source of truth)
     # This adds filters to the URL, not post-fetch filtering
     effective_disagg = _build_disaggregation_params(
-        disaggregation_filters,
-        available_disaggregations=available_disaggregations
+        disaggregation_filters, available_disaggregations=available_disaggregations
     )
     params.update(effective_disagg)
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
+            print(f"Fetching data from {data_url} with params: {params}")
+            data_res = await client.get(data_url, params=params)
+            data_res.raise_for_status()
+
             try:
-                print(f"Fetching data from {data_url} with params: {params}")
-                data_res = await client.get(data_url, params=params)
-                data_res.raise_for_status()
-
-                try:
-                    data_json = data_res.json()
-                except ValueError as e:
-                    error_msg = f"Failed to parse data JSON response: {str(e)}"
-                    _logger.error(error_msg)
-                    return IndicatorDataResponse(data=None, error=error_msg)
-
-                raw_data = data_json.get("value", [])
-                total_count = data_json.get("@odata.count")  # May be None
-
-                # Compute API-level pagination BEFORE any filtering
-                # This ensures next_offset correctly tracks position in the API result set
-                api_returned_count = len(raw_data)
-                has_more = api_returned_count > limit
-
-                # Trim the extra detection row (we requested limit+1 to detect has_more)
-                if api_returned_count > limit:
-                    raw_data = raw_data[:limit]
-
-                # Compute API-based next_offset - the true cursor position for next page
-                api_next_offset = offset + len(raw_data) if has_more else None
-
-                # Sort by TIME_PERIOD descending (most recent first)
-                raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
-
-                # Note: Post-fetch filtering removed - filters now applied at URL level
-                # via _build_disaggregation_params() for consistency with get_data_api_url()
-
-                # Final limit enforcement (safety check)
-                if len(raw_data) > limit:
-                    raw_data = raw_data[:limit]
-
-                # Add claim_id for data verification just before returning
-                # We hash the FULL row to avoid collisions on dimensions not in the specific set
-                for row in raw_data:
-                    row["claim_id"] = _short_hash(row)
-
-                return IndicatorDataResponse(
-                    data=raw_data,
-                    metadata=api_metadata,
-                    count=len(raw_data),
-                    total_count=total_count,
-                    offset=offset,
-                    has_more=has_more,
-                    next_offset=api_next_offset,
-                    error=None,
-                )
-
-            except httpx.HTTPStatusError as e:
-                error_msg = f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
-                _logger.error(error_msg)
-                return IndicatorDataResponse(data=None, error=error_msg)
-            except httpx.TimeoutException as e:
-                error_msg = f"Timeout fetching data: {str(e)}"
-                _logger.error(error_msg)
-                return IndicatorDataResponse(data=None, error=error_msg)
-            except httpx.RequestError as e:
-                error_msg = (
-                    f"Request error fetching data for {indicator_id!r}: {str(e)}"
-                )
-                _logger.error(error_msg)
-                return IndicatorDataResponse(data=None, error=error_msg)
-            except Exception as e:
-                error_msg = f"Unexpected error fetching data: {str(e)}"
+                data_json = data_res.json()
+            except ValueError as e:
+                error_msg = f"Failed to parse data JSON response: {str(e)}"
                 _logger.error(error_msg)
                 return IndicatorDataResponse(data=None, error=error_msg)
 
+            raw_data = data_json.get("value", [])
+            total_count = data_json.get("@odata.count")  # May be None
+
+            # Compute API-level pagination BEFORE any filtering
+            # This ensures next_offset correctly tracks position in the API result set
+            api_returned_count = len(raw_data)
+            has_more = api_returned_count > limit
+
+            # Trim the extra detection row (we requested limit+1 to detect has_more)
+            if api_returned_count > limit:
+                raw_data = raw_data[:limit]
+
+            # Compute API-based next_offset - the true cursor position for next page
+            api_next_offset = offset + len(raw_data) if has_more else None
+
+            # Sort by TIME_PERIOD descending (most recent first)
+            raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
+
+            # Final limit enforcement (safety check)
+            if len(raw_data) > limit:
+                raw_data = raw_data[:limit]
+
+            # Add claim_id for data verification just before returning
+            for row in raw_data:
+                row["claim_id"] = _short_hash(row)
+
+            return IndicatorDataResponse(
+                data=raw_data,
+                metadata=api_metadata,
+                count=len(raw_data),
+                total_count=total_count,
+                offset=offset,
+                has_more=has_more,
+                next_offset=api_next_offset,
+                error=None,
+            )
+
+    except httpx.HTTPStatusError as e:
+        error_msg = (
+            f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
+        )
+    except httpx.TimeoutException as e:
+        error_msg = f"Timeout fetching data: {str(e)}"
+    except httpx.RequestError as e:
+        error_msg = f"Request error fetching data for {indicator_id!r}: {str(e)}"
     except Exception as e:
         error_msg = f"Unexpected error fetching data: {str(e)}"
-        _logger.exception("Unexpected error in data fetch")
-        return IndicatorDataResponse(data=None, error=error_msg)
+
+    _logger.error(error_msg)
+    return IndicatorDataResponse(data=None, error=error_msg)
 
 
 async def get_indicators(database_id: str) -> list[str]:
@@ -1010,37 +1003,31 @@ async def get_data_api_url(
     metadata_res = await get_metadata(
         database_id,
         indicator_id,
-        select_fields=[], # We only need disaggregation options, metadata fields not needed
+        select_fields=[],  # We only need disaggregation options, metadata fields not needed
         fetch_disaggregation=True,
     )
-    
+
     # Process valid disaggregations into {dim: [values]} format
     available_disaggregations = {}
     for d in metadata_res.disaggregation_options or []:
         if d.get("field_name") and d.get("field_value"):
             available_disaggregations[d["field_name"]] = d["field_value"]
 
-        if d.get("field_name") and d.get("field_value"):
-            available_disaggregations[d["field_name"]] = d["field_value"]
-
     # Validate user filters
-    val_error = _validate_user_filters(disaggregation_filters, available_disaggregations)
+    val_error = _validate_user_filters(
+        disaggregation_filters, available_disaggregations
+    )
     if val_error:
-         raise ValueError(val_error)
+        raise ValueError(val_error)
+
     # See _build_disaggregation_params() docstring for behavior
     effective_filters = _build_disaggregation_params(
-        disaggregation_filters,
-        available_disaggregations=available_disaggregations
+        disaggregation_filters, available_disaggregations=available_disaggregations
     )
+
     # Add dimension filters to params
     for dim, val in effective_filters.items():
         params.append(f"{dim}={val}")
-
-    # Also include any non-standard filters passed by user (e.g., UNIT_MEASURE)
-    if disaggregation_filters:
-        for k, v in disaggregation_filters.items():
-            if k not in effective_filters and k != "FREQ" and v is not None:
-                params.append(f"{k}={v}")
 
     # Default limit for viz
     limit = 1000
