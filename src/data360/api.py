@@ -790,6 +790,12 @@ async def get_data(
         fetch_disaggregation=True,  # Crucial: fetch valid options
     )
 
+    if metadata_res.error:
+        _logger.warning(
+            f"Metadata fetch error for {indicator_id}: {metadata_res.error}"
+        )
+        return IndicatorDataResponse(error=metadata_res.error)
+
     api_metadata = metadata_res.indicator_metadata or {}
 
     # Process valid disaggregations into {dim: [values]} format
@@ -1006,6 +1012,11 @@ async def get_data_api_url(
         select_fields=[],  # We only need disaggregation options, metadata fields not needed
         fetch_disaggregation=True,
     )
+
+    if metadata_res.error:
+        raise ValueError(
+            f"Indicator '{indicator_id}' not found or error fetching metadata: {metadata_res.error}"
+        )
 
     # Process valid disaggregations into {dim: [values]} format
     available_disaggregations = {}
