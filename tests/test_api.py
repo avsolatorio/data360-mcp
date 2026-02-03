@@ -1,12 +1,10 @@
 """Tests for data360.api module."""
 
-import json
 import re
 
 import httpx
 import pytest
 import pytest_httpx
-
 from data360.api import (
     _get_valid_disaggregations,
     get_data,
@@ -69,7 +67,7 @@ class TestSearch:
                         "name": "Population, total",
                         "database_id": "WB_WDI",
                         "definition_long": "Total population",
-                        "dimensions": []
+                        "dimensions": [],
                     }
                 },
                 {
@@ -78,7 +76,7 @@ class TestSearch:
                         "name": "Population growth",
                         "database_id": "WB_WDI",
                         "definition_long": "Population growth rate",
-                        "dimensions": []
+                        "dimensions": [],
                     }
                 },
             ],
@@ -118,7 +116,7 @@ class TestSearch:
                         "name": f"Population {i}",
                         "database_id": "WB_WDI",
                         "definition_long": f"Population indicator {i}",
-                        "dimensions": []
+                        "dimensions": [],
                     }
                 }
                 for i in range(NUM_ITEMS)
@@ -155,7 +153,7 @@ class TestSearch:
                         "name": "Population, total",
                         "database_id": "WB_WDI",
                         "definition_long": "Total population",
-                        "dimensions": []
+                        "dimensions": [],
                     }
                 },
                 {
@@ -471,21 +469,28 @@ class TestGetData:
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]}
+            json={
+                "value": [
+                    {
+                        "series_description": {
+                            "idno": "WB_WDI_SP_POP_TOTL",
+                            "name": "Pop",
+                        }
+                    }
+                ]
+            },
         )
 
         # Mock disaggregation response (called during metadata fetch)
         httpx_mock.add_response(
             method="GET",
             url=re.compile(r".*/disaggregation.*"),
-            json=[{"field_name": "REF_AREA", "field_value": ["UGA"]}]
+            json=[{"field_name": "REF_AREA", "field_value": ["UGA"]}],
         )
 
         # Mock data response
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/data\?.*"),
-            json=mock_response
+            method="GET", url=re.compile(r".*/data\?.*"), json=mock_response
         )
 
         result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
@@ -513,17 +518,17 @@ class TestGetData:
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
-        
-        # Mock disaggregation 
+
+        # Mock disaggregation
         httpx_mock.add_response(
             method="GET",
             url=re.compile(r".*/disaggregation.*"),
             json=[
                 {"field_name": "REF_AREA", "field_value": ["UGA"]},
                 {"field_name": "UNIT_MEASURE", "field_value": ["PT"]},
-            ]
+            ],
         )
 
         # Mock data response
@@ -558,12 +563,10 @@ class TestGetData:
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[]
+            method="GET", url=re.compile(r".*/disaggregation.*"), json=[]
         )
 
         # First page response
@@ -594,27 +597,26 @@ class TestGetData:
         httpx_mock.add_callback(first_page_callback)
 
         # Pass explicit time range to avoid smart defaults filtering
-        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL", start_year=2010, end_year=2019)
+        result = await get_data(
+            "WB_WDI", "WB_WDI_SP_POP_TOTL", start_year=2010, end_year=2019
+        )
 
         EXPECTED_TOTAL_COUNT = 5  # First page only
         assert result.data is not None
         assert len(result.data) == EXPECTED_TOTAL_COUNT
 
-
     @pytest.mark.asyncio
     async def test_get_data_empty_response(self, httpx_mock: pytest_httpx.HTTPXMock):
         """Test data retrieval with empty response."""
-        
+
         # Mocks
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[]
+            method="GET", url=re.compile(r".*/disaggregation.*"), json=[]
         )
 
         def empty_data_callback(request: httpx.Request) -> httpx.Response | None:
@@ -637,17 +639,15 @@ class TestGetData:
     @pytest.mark.asyncio
     async def test_get_data_http_error(self, httpx_mock: pytest_httpx.HTTPXMock):
         """Test data retrieval handles HTTP errors."""
-        
+
         # Mocks for metadata (successful, so we proceed to data)
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[]
+            method="GET", url=re.compile(r".*/disaggregation.*"), json=[]
         )
 
         # Data error
@@ -676,12 +676,10 @@ class TestGetData:
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]}
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[]
+            method="GET", url=re.compile(r".*/disaggregation.*"), json=[]
         )
 
         def invalid_json_callback(request: httpx.Request) -> httpx.Response | None:
@@ -705,5 +703,3 @@ class TestGetData:
 # NOTE: TestCodelistManager tests removed - CodelistManager was replaced with
 # ReferenceAreaManager in providers.py with a different API.
 # New tests for ReferenceAreaManager should be added in test_providers.py
-
-
