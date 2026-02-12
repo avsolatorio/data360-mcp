@@ -2,6 +2,7 @@ import json
 import logging
 import zlib
 from typing import Any
+from urllib.parse import urlencode
 
 import dotenv
 import httpx
@@ -351,17 +352,20 @@ async def search(
     Args:
         query: Search query (e.g., "unemployment rate", "poverty")
         required_country: Country name or code (e.g., "Kenya", "KEN", or "China, USA")
-            Supports comma-separated lists to check coverage for multiple countries.
+            **STRONGLY RECOMMENDED** to use comma-separated lists to check multiple countries in a single call.
         limit: Max results (default 5)
         offset: Offset for pagination (default 0)
 
     Returns:
         EnrichedSearchResponse with:
             - indicators: List of EnrichedIndicator (idno, database_id, name,
-              truncated_definition, periodicity, latest_data, covers_country, dimensions)
+              truncated_definition, unit, periodicity, latest_data, covers_country, dimensions)
             - count, total_count, offset, has_more, next_offset: Pagination fields
             - required_country: Resolved country code
             - error: Error message if failed
+
+    Note:
+        The `covers_country` field indicates data availability for the requested country.
     """
     # NOTE: This function is for MVP only, we should be testing the relevance and performance
     # of the retrieval process in the future.
@@ -384,6 +388,7 @@ async def search(
             "time_periods",
             "ref_country",
             "dimensions",
+            "measurement_unit",
         ],
     )
 
@@ -414,10 +419,12 @@ async def search(
         covers_country = None
         ref_country = raw.get("ref_country", [])
         if country_code and ref_country and isinstance(ref_country, list):
-            country_codes = [
+            country_codes = {
                 c.get("code") if isinstance(c, dict) else c for c in ref_country
-            ]
-            covers_country = country_code in country_codes
+            }
+            # Check overlap if multiple countries requested
+            requested_codes = set([c.strip() for c in country_code.split(",")])
+            covers_country = bool(country_codes & requested_codes)
         elif country_code:
             covers_country = False
 
@@ -446,6 +453,7 @@ async def search(
                 database_id=raw.get("database_id", ""),
                 name=raw.get("name", ""),
                 truncated_definition=(raw.get("definition_long") or "")[:100],
+                unit=raw.get("measurement_unit"),
                 periodicity=raw.get("periodicity"),
                 latest_data=latest_data,
                 time_period_range=time_period_range,
@@ -711,7 +719,7 @@ async def get_data(
         indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_GS_NY_GDP_PCAP_KD")
         disaggregation_filters: Optional dictionary of disaggregation filters
             (e.g., {"REF_AREA": "UGA" or "KEN,TZA", "UNIT_MEASURE": "PT"})
-            - Supports comma-separated values for REF_AREA (e.g. "KEN,TZA").
+            - **SUPPORTS MULTIPLE VALUES**: Pass comma-separated string for REF_AREA (e.g. "KEN,TZA,USA").
             - Supports None to request all values for a dimension (e.g. {"SEX": None}).
         start_year: Optional start year to filter data (inclusive). Defaults to last 5 years.
         end_year: Optional end year to filter data (inclusive). Defaults to current year.
@@ -978,7 +986,7 @@ async def get_data_api_url(
         database_id: Database identifier (e.g., WB_HNP, WB_WDI)
         indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL)
         country_code: Optional country code (e.g., "KEN" or "CHN,USA")
-            Can be a single 3-letter code or comma-separated list.
+            **SUPPORTS MULTIPLE COUNTRIES**: Can be a single 3-letter code or comma-separated list (e.g. "KEN,TZA,USA").
         start_year: Optional start year
         end_year: Optional end year
         disaggregation_filters: Optional dict of dimension filters (e.g., {"SEX": "F"})
@@ -994,16 +1002,19 @@ async def get_data_api_url(
     base = f"{base_url}/data"
 
     # Construct query params
-    params = [f"DATABASE_ID={database_id}", f"INDICATOR={indicator_id}"]
+    params = {
+        "DATABASE_ID": database_id,
+        "INDICATOR": indicator_id
+    }
 
     if country_code:
-        params.append(f"REF_AREA={country_code}")
+        params["REF_AREA"] = country_code
 
     if start_year:
-        params.append(f"timePeriodFrom={start_year}")
+        params["timePeriodFrom"] = start_year
 
     if end_year:
-        params.append(f"timePeriodTo={end_year}")
+        params["timePeriodTo"] = end_year
     # Fetch metadata and disaggregations FIRST to inform parameter building
     # This ensures we don't apply invalid defaults (like AGE=_T) which cause empty results
     metadata_res = await get_metadata(
@@ -1037,8 +1048,7 @@ async def get_data_api_url(
     )
 
     # Add dimension filters to params
-    for dim, val in effective_filters.items():
-        params.append(f"{dim}={val}")
+    params.update(effective_filters)
 
     # Default limit for viz
     limit = 1000
@@ -1048,6 +1058,7 @@ async def get_data_api_url(
         n_countries = len(country_code.split(","))
         limit = max(1000, n_countries * 1000)
 
-    params.append(f"top={limit}")
+    params["top"] = limit
 
-    return f"{base}?{'&'.join(params)}"
+    query_string = urlencode(params, safe=",")
+    return f"{base}?{query_string}"
