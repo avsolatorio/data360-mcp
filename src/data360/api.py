@@ -55,25 +55,28 @@ def _get_valid_disaggregations(
 def _validate_user_filters(
     user_filters: dict[str, str | None] | None,
     available_disaggregations: dict[str, list[str]],
-) -> str | None:
+) -> tuple[dict[str, str | None], list[str]]:
     """Validate user filters against available options.
 
     Returns:
-        Error message string if invalid, None if valid.
+        Tuple of (valid_filters_dict, error_messages_list).
     """
     if not user_filters:
-        return None
+        return {}, []
 
+    valid_filters = {}
     errors = []
     for dim, val in user_filters.items():
         # Skip special 'None' filters (meaning "all") or known non-dims like REF_AREA if we don't have metadata for them
         # Note: API metadata usually returns REF_AREA as a dimension too if valid.
         if val is None:
+            valid_filters[dim] = None
             continue
 
         # If dimension exists in metadata, check value
         if dim in available_disaggregations:
             valid_values = available_disaggregations[dim]
+            is_valid = True
 
             # Special handling for REF_AREA which supports comma-separated list
             if dim == "REF_AREA" and "," in val:
@@ -83,15 +86,23 @@ def _validate_user_filters(
                         errors.append(
                             f"Invalid value '{part}' in '{val}' for dimension '{dim}'. Available options: {valid_values}"
                         )
+                        is_valid = False
             # Standard single value check
             elif val not in valid_values:
                 errors.append(
                     f"Invalid value '{val}' for dimension '{dim}'. Available options: {valid_values}"
                 )
+                is_valid = False
 
-    if errors:
-        return "\n\n".join(errors)
-    return None
+            if is_valid:
+                valid_filters[dim] = val
+        else:
+            # If dimension is unknown, we treat it as valid/passthrough for now
+            # but we could also flag it. For consistency with previous behavior,
+            # we'll keep it as valid.
+            valid_filters[dim] = val
+
+    return valid_filters, errors
 
 
 def _build_disaggregation_params(
@@ -814,17 +825,15 @@ async def get_data(
 
     # Validate user filters BEFORE applying defaults
     # This gives hints for hallucinations like SEX=ALIEN
-    val_error = _validate_user_filters(
+    valid_filters, validation_errors = _validate_user_filters(
         disaggregation_filters, available_disaggregations
     )
-    if val_error:
-        _logger.warning(f"Validation error for {indicator_id}: {val_error}")
-        return IndicatorDataResponse(error=val_error)
+    if validation_errors:
+        _logger.warning(f"Validation errors for {indicator_id}: {validation_errors}")
 
-    # Apply smart disaggregation defaults using helper (single source of truth)
-    # This adds filters to the URL, not post-fetch filtering
+    # Use only valid filters for building params
     effective_disagg = _build_disaggregation_params(
-        disaggregation_filters, available_disaggregations=available_disaggregations
+        valid_filters, available_disaggregations=available_disaggregations
     )
     params.update(effective_disagg)
     try:
@@ -875,6 +884,7 @@ async def get_data(
                 has_more=has_more,
                 next_offset=api_next_offset,
                 error=None,
+                failed_validation=validation_errors if validation_errors else None,
             )
 
     except httpx.HTTPStatusError as e:
@@ -1036,15 +1046,17 @@ async def get_data_api_url(
             available_disaggregations[d["field_name"]] = d["field_value"]
 
     # Validate user filters
-    val_error = _validate_user_filters(
+    valid_filters, validation_errors = _validate_user_filters(
         disaggregation_filters, available_disaggregations
     )
-    if val_error:
-        raise ValueError(val_error)
+    if validation_errors:
+        # For URL generation, we might still want to raise if anything is invalid
+        # or we could just skip invalid ones. Raising is safer for URL consistency.
+        raise ValueError("\n\n".join(validation_errors))
 
     # See _build_disaggregation_params() docstring for behavior
     effective_filters = _build_disaggregation_params(
-        disaggregation_filters, available_disaggregations=available_disaggregations
+        valid_filters, available_disaggregations=available_disaggregations
     )
 
     # Add dimension filters to params
