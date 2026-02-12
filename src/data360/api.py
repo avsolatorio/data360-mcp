@@ -90,7 +90,7 @@ def _validate_user_filters(
                 )
 
     if errors:
-        return "; ".join(errors)
+        return "\n\n".join(errors)
     return None
 
 
