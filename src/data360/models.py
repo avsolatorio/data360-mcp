@@ -75,7 +75,7 @@ class SearchRequest(BaseModel):
 
 class SeriesDescription(BaseModel):
     """Model for series description in search results.
-    
+
     Fields available via select_fields in search:
     - idno, name, database_id, definition_long (core)
     - periodicity, time_periods, ref_country, dimensions (extended)
@@ -85,10 +85,18 @@ class SeriesDescription(BaseModel):
     name: str = Field(..., description="Series name")
     database_id: str = Field(..., description="Database identifier")
     definition_long: str | None = Field(None, description="Series definition")
-    periodicity: str | None = Field(None, description="Data periodicity (Annual, Monthly, etc)")
-    time_periods: list[dict[str, Any]] | None = Field(None, description="Time period coverage")
-    ref_country: list[dict[str, Any]] | None = Field(None, description="Countries with data")
-    dimensions: list[dict[str, Any]] | None = Field(None, description="Available disaggregations")
+    periodicity: str | None = Field(
+        None, description="Data periodicity (Annual, Monthly, etc)"
+    )
+    time_periods: list[dict[str, Any]] | None = Field(
+        None, description="Time period coverage"
+    )
+    ref_country: list[dict[str, Any]] | None = Field(
+        None, description="Countries with data"
+    )
+    dimensions: list[dict[str, Any]] | None = Field(
+        None, description="Available disaggregations"
+    )
 
 
 class SearchResponse(MCPPagedResponse):
@@ -104,15 +112,19 @@ class SearchResponse(MCPPagedResponse):
 
 class EnrichedIndicator(BaseModel):
     """Model for an enriched indicator in search results.
-    
+
     Optimized for LLM consumption with compact, relevant fields.
     """
 
     idno: str = Field(..., description="Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD)")
     database_id: str = Field(..., description="Database ID (e.g., WB_GS)")
     name: str = Field(..., description="Indicator name")
-    truncated_definition: str = Field(..., description="Truncated definition (max 100 chars)")
-    periodicity: str | None = Field(None, description="Data periodicity (Annual, Monthly)")
+    truncated_definition: str = Field(
+        ..., description="Truncated definition (max 100 chars)"
+    )
+    periodicity: str | None = Field(
+        None, description="Data periodicity (Annual, Monthly)"
+    )
     latest_data: str | None = Field(None, description="Most recent year with data")
     time_period_range: str | None = Field(
         None, description="Data availability range (e.g., '1990-2024')"
@@ -127,7 +139,7 @@ class EnrichedIndicator(BaseModel):
 
 class EnrichedSearchResponse(MCPPagedResponse):
     """Response model for enriched search (LLM-optimized).
-    
+
     Returns indicators sorted by country coverage and recency.
     """
 
@@ -137,15 +149,15 @@ class EnrichedSearchResponse(MCPPagedResponse):
     required_country: str | None = Field(
         None, description="Resolved country code (e.g., KEN for Kenya)"
     )
-    error: str | None = Field(
-        None, description="Error message if search failed"
-    )
+    error: str | None = Field(None, description="Error message if search failed")
 
 
 class MetadataRequest(BaseModel):
     """Request model for data 360 metadata retrieval."""
 
-    indicator_id: str = Field(..., description="Series ID (idno) to retrieve metadata for")
+    indicator_id: str = Field(
+        ..., description="Series ID (idno) to retrieve metadata for"
+    )
     database_id: str = Field(
         ..., description="Database identifier (e.g., IPC_IPC, WB_GS)"
     )
@@ -182,7 +194,9 @@ class IndicatorDataRequest(BaseModel):
     database_id: str = Field(
         ..., description="Unique identifier for the database (e.g., WB_GS)"
     )
-    indicator_id: str = Field(..., description="Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD)")
+    indicator_id: str = Field(
+        ..., description="Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD)"
+    )
     disaggregation_filters: dict[str, str | None] | None = Field(
         default=None,
         description="Dictionary of disaggregation filters (e.g., {'REF_AREA': 'UGA', 'UNIT_MEASURE': 'PT'})",
@@ -197,8 +211,6 @@ class IndicatorDataRequest(BaseModel):
                 f"Invalid database_id: '{self.database_id}'. It matches indicator_id. "
                 "Database ID should be the short dataset code (e.g., 'WB_GS', 'WB_HCP')."
             )
-        
-
 
         return self
 
@@ -210,10 +222,14 @@ class IndicatorDataResponse(MCPPagedResponse):
         default=None, description="List of indicator data points"
     )
     metadata: dict[str, Any] | None = Field(
-        default=None, description="Basic metadata for the indicator (e.g., name, definition)"
+        default=None,
+        description="Basic metadata for the indicator (e.g., name, definition)",
     )
     error: str | None = Field(
         default=None, description="Error message if data retrieval failed"
+    )
+    failed_validation: list[str] | None = Field(
+        default=None, description="List of filter validation errors"
     )
 
 
@@ -223,23 +239,33 @@ class DiscoveredIndicator(BaseModel):
     indicator_id: str = Field(..., description="Indicator ID")
     database_id: str = Field(..., description="Database identifier")
     name: str = Field(..., description="Indicator name")
-    truncated_definition: str = Field(..., description="Short definition (max 100 chars)")
-    has_country: bool = Field(..., description="Whether data exists for the requested country")
-    country_code: str | None = Field(default=None, description="Country code used for validation")
+    truncated_definition: str = Field(
+        ..., description="Short definition (max 100 chars)"
+    )
+    has_country: bool = Field(
+        ..., description="Whether data exists for the requested country"
+    )
+    country_code: str | None = Field(
+        default=None, description="Country code used for validation"
+    )
     available_dimensions: list[str] = Field(
         default_factory=list, description="List of available disaggregation dimensions"
     )
     available_frequencies: list[str] = Field(
         default_factory=list, description="List of available frequencies"
     )
-    periodicity: str | None = Field(default=None, description="Periodicity of the indicator")
+    periodicity: str | None = Field(
+        default=None, description="Periodicity of the indicator"
+    )
     has_required_dimensions: bool = Field(
         default=True, description="Whether the indicator has all required dimensions"
     )
     time_range: dict[str, str | None] | None = Field(
         default=None, description="Start and end years of data availability"
     )
-    error: str | None = Field(default=None, description="Error message if validation failed")
+    error: str | None = Field(
+        default=None, description="Error message if validation failed"
+    )
 
 
 class DiscoveryResult(BaseModel):
