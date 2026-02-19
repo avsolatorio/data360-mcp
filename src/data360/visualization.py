@@ -18,6 +18,7 @@ from draco import Draco, answer_set_to_dict, dict_to_facts, schema_from_datafram
 from draco.renderer import AltairRenderer
 
 from data360.config import get_mcp_server_settings
+from data360 import viz_config
 
 _logger = logging.getLogger(__name__)
 
@@ -95,34 +96,9 @@ async def post_spec_to_charts_api(vl_spec: dict) -> str:
     return url
 
 
-def _parse_chart_type_hint(chart_type: str | None) -> str:
-    """Parse user's chart type hint into Vega-Lite mark type.
+# Chart type parsing is now handled by viz_config module
+# (see viz_config.parse_chart_type_hint)
 
-    Args:
-        chart_type: User's hint like "line chart", "bar", "scatter", etc.
-
-    Returns:
-        Vega-Lite mark type, defaults to 'line' for time series data
-    """
-    if not chart_type:
-        return "line"  # Default to line for time series
-
-    hint = chart_type.lower().strip()
-
-    # Map common terms to Vega-Lite mark types https://dig.cmu.edu/draco2/facts/mark.html
-    # rect and text are not supported as of now
-    if any(x in hint for x in ["line", "trend", "time series"]):
-        return "line"
-    elif any(x in hint for x in ["bar", "column", "histogram"]):
-        return "bar"
-    elif any(x in hint for x in ["scatter", "point", "dot"]):
-        return "point"
-    elif any(x in hint for x in ["area", "filled"]):
-        return "area"
-    elif any(x in hint for x in ["tick"]):
-        return "tick"
-
-    return "line"  # Default
 
 
 async def _fetch_data_internal(url: str) -> pd.DataFrame:
@@ -268,24 +244,10 @@ async def get_viz_spec(
     # 2. Clean data - standardize column names to lowercase
     data.columns = [c.lower() for c in data.columns]
 
-    # Clean up dates and numerics
-    # Data360 convention: TIME_PERIOD, OBS_VALUE
-    if "time_period" in data.columns:
-        try:
-            # FORCE DATETIME for Draco Schema to see 'datetime'
-            # This assumes proper dates. If year-only '2019', to_datetime handles it (default Jan 1)
-            data["time_period"] = pd.to_datetime(data["time_period"])
-        except (ValueError, TypeError):
-            pass
-
-    if "obs_value" in data.columns:
-        # TODO: to confirm with viz team on how to populate null values from api
-        data["obs_value"] = pd.to_numeric(data["obs_value"], errors="coerce").fillna(0)
-
-    # --- Task #8: Fetch Indicator Name for Title ---
-    chart_title = "Generated Visualization"
+    # --- Detect frequency early for chart-aware data preparation ---
+    data_frequency = None  # Will store: 'A' (Annual), 'M' (Monthly), 'Q' (Quarterly)
     try:
-        # Extract params from URL
+        # Extract params from URL to get metadata
         parsed = urlparse(data_url)
         params = parse_qs(parsed.query)
         db_id = params.get("DATABASE_ID", [None])[0]
@@ -299,11 +261,85 @@ async def get_viz_spec(
             from data360.api import get_metadata
 
             meta = await get_metadata(db_id, ind_id_param)
+
+            # Extract frequency from disaggregation options (preferred) or metadata
+            if meta:
+                # First, try to get frequency from disaggregation options (most reliable)
+                if meta.disaggregation_options:
+                    for disagg in meta.disaggregation_options:
+                        if disagg.get("field_name") == "FREQ":
+                            freq_values = disagg.get("field_value", [])
+                            if freq_values:
+                                # Use the first frequency code (A, M, Q, etc.)
+                                data_frequency = freq_values[0]
+                                _logger.info(f"Detected frequency from FREQ dimension: {data_frequency}")
+                                break
+
+                # Fallback: infer from periodicity field
+                # Fallback: infer from periodicity field using config
+                if not data_frequency and meta.indicator_metadata:
+                    periodicity = meta.indicator_metadata.get("periodicity", "")
+                    data_frequency = viz_config.infer_frequency_from_periodicity(periodicity)
+
+                    if data_frequency:
+                        _logger.info(f"Inferred frequency from periodicity field: {data_frequency} (periodicity: {periodicity})")
+    except Exception as e:
+        _logger.warning(f"Could not detect frequency: {e}")
+
+    # --- Chart-aware temporal data preparation ---
+    # Prepare data based on chart type and frequency BEFORE Draco inference
+    # This allows Draco to correctly infer schema and choose optimal encoding
+    if "time_period" in data.columns:
+        try:
+            # Parse chart type hint to determine if it's a bar chart
+            user_mark_type = viz_config.parse_chart_type_hint(chart_type)
+            is_bar_chart = user_mark_type == "bar"
+
+            # Decision logic:
+            # - Bar charts with annual data: use year strings for discrete display
+            # - All other cases: use datetime for temporal encoding
+            if is_bar_chart and data_frequency == "A":
+                # Convert to year strings for discrete categorical display
+                # "2023", "2024" -> Draco will infer ordinal -> discrete bars
+                data["time_period"] = pd.to_datetime(data["time_period"]).dt.year.astype(str)
+                _logger.info("Prepared annual bar chart data as year strings for discrete display")
+            else:
+                # Convert to datetime for temporal encoding
+                # "2012-01-01T00:00:00" -> Draco will infer temporal -> continuous axis
+                data["time_period"] = pd.to_datetime(data["time_period"])
+                _logger.info("Prepared temporal data as datetime for continuous time axis")
+        except (ValueError, TypeError) as e:
+            _logger.warning(f"Error converting time_period: {e}")
+            pass
+
+    if "obs_value" in data.columns:
+        # TODO: to confirm with viz team on how to populate null values from api
+        data["obs_value"] = pd.to_numeric(data["obs_value"], errors="coerce").fillna(0)
+
+    # --- Fetch Indicator Name for Title ---
+    chart_title = "Generated Visualization"
+    try:
+        # Extract params from URL (reuse parsed values if available)
+        if not db_id or not ind_id_param:
+            parsed = urlparse(data_url)
+            params = parse_qs(parsed.query)
+            db_id = params.get("DATABASE_ID", [None])[0]
+            ind_id_param = (
+                params.get("indicatorId", [None])[0]
+                or params.get("INDICATOR", [None])[0]
+                or params.get("indicator", [None])[0]
+            )
+
+        if db_id and ind_id_param:
+            from data360.api import get_metadata
+
+            meta = await get_metadata(db_id, ind_id_param)
             # Fix: Access name from indicator_metadata dict if present
             if meta and meta.indicator_metadata and "name" in meta.indicator_metadata:
                 chart_title = meta.indicator_metadata["name"]
     except Exception as e:
         _logger.warning(f"Could not fetch metadata for title: {e}")
+
 
     # 3. Use Draco2 to find optimal visualization
     d = Draco()
@@ -408,15 +444,39 @@ async def get_viz_spec(
 
     if use_default_constraints:
         # --- EXPLICITLY DEFINE X/Y ROLES FOR DATA360 (UPDATED NAMES) ---
-        if "year" in viz_data.columns:
+        # Detect chart type early to determine encoding types
+        user_mark_type = viz_config.parse_chart_type_hint(chart_type)
+
+        # Smart x-axis selection: Use temporal (year) or categorical dimension?
+        # This enables cross-sectional comparisons while maintaining time-series support
+        use_temporal_x, categorical_x_field = viz_config.should_use_temporal_x_axis(
+            viz_data, chart_type, viz_data.columns.tolist()
+        )
+
+        if use_temporal_x and "year" in viz_data.columns:
+            # Multi-year time series → year on x-axis
             program_constraints.append("entity(encoding,m,e1).")
             program_constraints.append("attribute((encoding,channel),e1,x).")
             program_constraints.append("attribute((encoding,field),e1,year).")
+            _logger.info("Using temporal x-axis (year) for time-series visualization")
+        elif not use_temporal_x and categorical_x_field:
+            # Single year or chart type prefers categorical → use categorical dimension
+            program_constraints.append("entity(encoding,m,e1).")
+            program_constraints.append("attribute((encoding,channel),e1,x).")
+            program_constraints.append(f"attribute((encoding,field),e1,{categorical_x_field}).")
+            _logger.info(f"Using categorical x-axis ({categorical_x_field}) for cross-sectional comparison")
+        elif "year" in viz_data.columns:
+            # Fallback: year exists but no clear preference → use year
+            program_constraints.append("entity(encoding,m,e1).")
+            program_constraints.append("attribute((encoding,channel),e1,x).")
+            program_constraints.append("attribute((encoding,field),e1,year).")
+            _logger.info("Using temporal x-axis (year) as fallback")
 
         if "value" in viz_data.columns:
             program_constraints.append("entity(encoding,m,e2).")
             program_constraints.append("attribute((encoding,channel),e2,y).")
             program_constraints.append("attribute((encoding,field),e2,value).")
+
 
         # Constraint for Color/Breakdown
         # We iterate through potential breakdown dims that we found relevant earlier
@@ -438,8 +498,6 @@ async def get_viz_spec(
             program_constraints.append(f"attribute((encoding,field),e3,{color_dim}).")
 
         # Optional: Apply user chart type hint
-        user_mark_type = _parse_chart_type_hint(chart_type)
-
         if chart_type:
             program_constraints.append(f"attribute((mark,type),m,{user_mark_type}).")
 
@@ -497,6 +555,15 @@ async def get_viz_spec(
                 # color_dim var holds the name of the column used for color
                 if color_dim in ["country", "sex", "urbanisation", "ref_area"]:
                     vl_spec["encoding"]["color"]["type"] = "nominal"
+
+        # Apply post-processing rules from viz_config
+        # This is cleaner than hardcoding rules inline
+        for rule in viz_config.POST_PROCESSING_RULES:
+            vl_spec = rule.apply(vl_spec, data_frequency)
+            _logger.debug(f"Applied post-processing rule: {rule.name}")
+
+
+
 
         # Store: prefer external charts API when configured
         charts_url = get_mcp_server_settings().charts_api_url
