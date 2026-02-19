@@ -481,16 +481,26 @@ async def get_viz_spec(
         # Constraint for Color/Breakdown
         # We iterate through potential breakdown dims that we found relevant earlier
         # If any are present in viz_data (and not x/y), we map to color
-        # We prioritize Country (was ref_area) > sex > others
+        # We prioritize by cardinality (skip dims with only 1 unique value)
+        # Priority order: country > sex > age > urbanisation
         color_dim = None
-        if "country" in viz_data.columns:  # Was ref_area
-            color_dim = "country"
-        elif "sex" in viz_data.columns and "sex" in relevant_cols:
-            color_dim = "sex"
-        elif "age" in viz_data.columns and "age" in relevant_cols:
-            color_dim = "age"
-        elif "urbanisation" in viz_data.columns and "urbanisation" in relevant_cols:
-            color_dim = "urbanisation"
+        color_candidates = []
+        if "country" in viz_data.columns:
+            color_candidates.append(("country", viz_data["country"].nunique()))
+        if "sex" in viz_data.columns and "sex" in relevant_cols:
+            color_candidates.append(("sex", viz_data["sex"].nunique()))
+        if "age" in viz_data.columns and "age" in relevant_cols:
+            color_candidates.append(("age", viz_data["age"].nunique()))
+        if "urbanisation" in viz_data.columns and "urbanisation" in relevant_cols:
+            color_candidates.append(("urbanisation", viz_data["urbanisation"].nunique()))
+
+        # Pick the first candidate with cardinality > 1; if none, pick first with any data
+        for dim, card in color_candidates:
+            if card > 1:
+                color_dim = dim
+                break
+        if not color_dim and color_candidates:
+            color_dim = color_candidates[0][0]
 
         if color_dim:
             program_constraints.append("entity(encoding,m,e3).")
@@ -603,15 +613,22 @@ async def get_viz_spec(
 
             encoding = {"x": x_enc, "y": y_enc}
 
-            # Add color if breakdown found
-            if "country" in fc:
+            # Add color if breakdown found (prefer dimension with cardinality > 1)
+            color_field = None
+            for dim, title in [("country", "Country"), ("sex", "Sex"), ("age", "Age"), ("urbanisation", "Urbanisation")]:
+                if dim in fc and viz_data[dim].nunique() > 1:
+                    color_field = (dim, title)
+                    break
+            # Fallback: use first available even if single-value
+            if not color_field:
+                for dim, title in [("country", "Country"), ("sex", "Sex"), ("age", "Age"), ("urbanisation", "Urbanisation")]:
+                    if dim in fc:
+                        color_field = (dim, title)
+                        break
+            if color_field:
                 encoding["color"] = alt.Color(
-                    "country", type="nominal", title="Country"
+                    color_field[0], type="nominal", title=color_field[1]
                 )
-            elif "sex" in fc:
-                encoding["color"] = alt.Color("sex", type="nominal", title="Sex")
-            elif "age" in fc:
-                encoding["color"] = alt.Color("age", type="nominal", title="Age")
 
             chart = base.encode(**encoding).properties(title=chart_title).interactive()
             vl_spec = chart.to_dict()
