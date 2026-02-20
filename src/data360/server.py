@@ -1,7 +1,6 @@
 import os
 
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from data360.config import get_mcp_server_settings, setup_logging
@@ -14,29 +13,20 @@ setup_logging(log_file=mcp_settings.log_file, log_level=mcp_settings.log_level)
 mcp.settings.stateless_http = True
 
 # NOTE: import to be able to run the server with all definitions loaded
-mcp_app = mcp.http_app(path="/")
+# path="/mcp" means the MCP endpoint lives at /mcp (no trailing slash needed)
+mcp_app = mcp.http_app(path="/mcp")
 
 # https://gofastmcp.com/deployment/http#asgi-application
+# redirect_slashes=False prevents 308 redirects between /mcp and /mcp/
 app = FastAPI(
     title="Data360 MCP Server",
-    # routes=[
-    #     *mcp_app.routes,
-    # ],
     lifespan=mcp_app.lifespan,
+    redirect_slashes=False,
 )  # pyright: ignore[reportUnusedExpression]
 
 
-@app.api_route(
-    "/mcp",
-    methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    include_in_schema=False,
-)
-def mcp_redirect():
-    # Make sure to add this before the mount of the mcp_app
-    return RedirectResponse(url="/mcp/", status_code=308)
-
-
-app.mount("/mcp", mcp_app)
+# Mount MCP app at root — the path="/mcp" in http_app() handles the /mcp route
+app.mount("/", mcp_app)
 # Mount static files
 static_dir = os.path.join(os.getcwd(), "static")
 os.makedirs(static_dir, exist_ok=True)

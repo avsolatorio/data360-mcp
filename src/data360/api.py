@@ -357,6 +357,15 @@ async def search(
     required_country: str | None = None,
     limit: int = 5,
     offset: int = 0,
+    # The following parameters are accepted but ignored.
+    # LLM clients sometimes hallucinate these from the internal SearchRequest model.
+    count: bool = True,
+    n_results: int | None = None,
+    filter: str | None = None,
+    orderby: str | None = None,
+    select: str | None = None,
+    skip: int | None = None,
+    odata_options: dict[str, str] | None = None,
 ) -> "EnrichedSearchResponse":
     """Search for Data360 indicators with enriched metadata for selection.
 
@@ -380,6 +389,13 @@ async def search(
             count, total_count, offset, has_more, next_offset: Pagination fields.
             error: Error message string if the request failed; otherwise None.
     """
+    # Handle common parameter aliases sent by LLM clients
+    # TODO: Remove this once we have a better way to handle parameters.
+    if n_results is not None and limit == 5:
+        limit = n_results
+    if skip is not None and offset == 0:
+        offset = skip
+
     # NOTE: This function is for MVP only, we should be testing the relevance and performance
     # of the retrieval process in the future.
     # Resolve country code upfront using cached codelist
@@ -999,10 +1015,7 @@ async def get_data_api_url(
     base = f"{base_url}/data"
 
     # Construct query params
-    params = {
-        "DATABASE_ID": database_id,
-        "INDICATOR": indicator_id
-    }
+    params = {"DATABASE_ID": database_id, "INDICATOR": indicator_id}
 
     if country_code:
         params["REF_AREA"] = country_code
