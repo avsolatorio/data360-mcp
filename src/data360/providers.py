@@ -1,6 +1,5 @@
 """Providers for Data360 codelist and reference area data."""
 
-import asyncio
 import logging
 from typing import Any
 
@@ -15,14 +14,14 @@ _logger = logging.getLogger(__name__)
 
 class CodelistManager:
     """Unified manager for all Data360 codelists.
-    
+
     Handles both global codelists (fetched from API) and static codelists
     (hardcoded mappings for dimensions without global API endpoints).
-    
+
     Global codelists available via API:
     - REF_AREA: 284 countries/regions
     - UNIT_MEASURE: 42 measurement units
-    
+
     Static codelists (indicator-specific, using common patterns):
     - FREQ: Frequency codes (A=Annual, M=Monthly, Q=Quarterly)
     - SEX: Sex/gender codes (F=Female, M=Male, _T=Total)
@@ -32,7 +31,7 @@ class CodelistManager:
 
     # Codelists available via /codelist?type=X API
     GLOBAL_CODELISTS = ["REF_AREA", "UNIT_MEASURE"]
-    
+
     # Static mappings for codelists without global API endpoints
     # These are based on actual values from disaggregation responses
     # Reference: WB_SSGD_UNEMPLOYMENT_RATE_disaggregation.json
@@ -143,27 +142,29 @@ class CodelistManager:
         self, codelist_type: str, query: str, limit: int = 5
     ) -> list[dict[str, Any]]:
         """Find values in a codelist matching the query.
-        
+
         Args:
             codelist_type: Type of codelist (REF_AREA, FREQ, SEX, etc.)
             query: Search query (e.g., "Kenya", "monthly", "female")
             limit: Maximum number of results to return
-            
+
         Returns:
             List of matches with id, name, and score
         """
         codelist_type = codelist_type.upper()
-        
+
         # Check for multi-value query (comma-separated)
         if "," in query:
             parts = [p.strip() for p in query.split(",") if p.strip()]
             all_results = []
             seen_ids = set()
-            
+
             for part in parts:
                 part_lower = self._normalize_query(part)
                 # Recurse for single value
-                matches = await self.find_value(codelist_type, part, limit=1) # find top match for each
+                matches = await self.find_value(
+                    codelist_type, part, limit=1
+                )  # find top match for each
                 for m in matches:
                     if m["id"] not in seen_ids:
                         all_results.append(m)
@@ -172,16 +173,16 @@ class CodelistManager:
 
         # Explicitly normalize using helper
         query_lower = self._normalize_query(query)
-        
+
         # Handle global codelists (API-based)
         if codelist_type in self.GLOBAL_CODELISTS:
             await self._ensure_loaded(codelist_type)
             return self._search_global(codelist_type, query_lower, limit)
-        
+
         # Handle static codelists
         if codelist_type in self.STATIC_MAPPINGS:
             return self._search_static(codelist_type, query_lower, limit)
-        
+
         # Unknown codelist
         _logger.warning(f"Unknown codelist type: {codelist_type}")
         return []
@@ -192,7 +193,7 @@ class CodelistManager:
         """Search in a global (API-fetched) codelist."""
         items = self._cache.get(codelist_type, [])
         results: list[dict[str, Any]] = []
-        
+
         # Also search without spaces for cases like "Vietnam" vs "Viet Nam"
         query_no_spaces = query_lower.replace(" ", "")
 
@@ -203,7 +204,7 @@ class CodelistManager:
             name_no_spaces = name_lower.replace(" ", "")
 
             score = 0
-            
+
             # Exact ID match
             if query_lower == item_id.lower():
                 score = 100
@@ -232,11 +233,13 @@ class CodelistManager:
                     score = int(similarity * 100)
 
             if score > 0:
-                results.append({
-                    "id": item_id,
-                    "name": item_name,
-                    "score": score,
-                })
+                results.append(
+                    {
+                        "id": item_id,
+                        "name": item_name,
+                        "score": score,
+                    }
+                )
 
         results.sort(key=lambda x: (-x["score"], x["name"]))
         return results[:limit]
@@ -266,11 +269,13 @@ class CodelistManager:
                 score = 80
 
             if score > 0:
-                results.append({
-                    "id": code,
-                    "name": name.capitalize(),
-                    "score": score,
-                })
+                results.append(
+                    {
+                        "id": code,
+                        "name": name.capitalize(),
+                        "score": score,
+                    }
+                )
 
         # Deduplicate by id (keep highest score)
         seen: dict[str, dict[str, Any]] = {}
@@ -278,7 +283,7 @@ class CodelistManager:
             rid = r["id"]
             if rid not in seen or r["score"] > seen[rid]["score"]:
                 seen[rid] = r
-        
+
         deduped = list(seen.values())
         deduped.sort(key=lambda x: (-x["score"], x["name"]))
         return deduped[:limit]
@@ -316,23 +321,25 @@ class CodelistManager:
     async def get_codelist_mapping(self, codelist_type: str) -> dict[str, str]:
         """Get a dictionary mapping codes to names (e.g., {'KEN': 'Kenya'})."""
         codelist_type = codelist_type.upper()
-        
+
         # Ensure loaded if global
         if codelist_type in self.GLOBAL_CODELISTS:
             await self._ensure_loaded(codelist_type)
             items = self._cache.get(codelist_type, [])
             return {item.get("Id", ""): item.get("Name", "") for item in items}
-            
+
         # Static mappings (reverse the value->code mapping to code->name)
         if codelist_type in self.STATIC_MAPPINGS:
             # STATIC_MAPPINGS is Name -> Code. We want Code -> Name.
             # Names in static mapping are lower case keys, we should capitalize for display.
             mapping = {}
             for name, code in self.STATIC_MAPPINGS[codelist_type].items():
-                if code not in mapping: # First win or preferred name logic could be added
+                if (
+                    code not in mapping
+                ):  # First win or preferred name logic could be added
                     mapping[code] = name.capitalize()
             return mapping
-            
+
         return {}
 
 
@@ -351,24 +358,21 @@ def get_codelist_manager() -> CodelistManager:
 async def find_codelist_value(
     codelist_type: str, query: str, limit: int = 5
 ) -> list[dict[str, Any]]:
-    """Find values in a codelist matching the query.
-    
-    This is a convenience function that uses the global CodelistManager.
-    
+    """Find values in a Data360 codelist by name (e.g. country or dimension labels).
+
+    Use when you need to convert a user-friendly name to an API code. Helpful before
+    data360_search_indicators (required_country) or when building disaggregation_filters
+    for data360_get_data / data360_get_viz_spec. Not required if 3-letter codes are already known.
+
     Args:
-        codelist_type: Type of codelist (REF_AREA, FREQ, SEX, AGE, URBANISATION, UNIT_MEASURE)
-        query: Search query (e.g., "Kenya" or "Kenya, Uganda")
-        limit: Maximum number of results to return
-        
+        codelist_type: One of REF_AREA (countries/regions), FREQ, SEX, AGE, URBANISATION, UNIT_MEASURE.
+        query: Search term (e.g. "Kenya", "female", "annual"). Comma-separated for multiple
+            (e.g. "Kenya, Tanzania") returns one match per part.
+        limit: Maximum number of matches to return (default 5).
+
     Returns:
-        List of matches with id, name, and score
-        
-    Examples:
-        >>> await find_codelist_value("REF_AREA", "Kenya")
-        [{"id": "KEN", "name": "Kenya", "score": 100}]
-        
-        >>> await find_codelist_value("REF_AREA", "Kenya, Tanzania")
-        [{"id": "KEN", "name": "Kenya", ...}, {"id": "TZA", "name": "Tanzania", ...}]
+        List of dicts, each with: id (code, e.g. "KEN"), name (e.g. "Kenya"), score (relevance 0–100).
+        Sorted by score descending. Empty list if no matches or unknown codelist_type.
     """
     manager = get_codelist_manager()
     return await manager.find_value(codelist_type, query, limit)

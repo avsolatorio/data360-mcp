@@ -127,10 +127,15 @@ async def _fetch_data_internal(url: str) -> pd.DataFrame:
 
 
 def get_supported_chart_types() -> str:
-    """Return a list of supported chart types and their data requirements.
+    """Return supported chart types and their data requirements as JSON.
+
+    Call before data360_get_viz_spec to choose an appropriate chart_type and to verify the
+    indicator has the right fields (e.g. time_period and obs_value for line charts).
+    No other tools are required before this one.
 
     Returns:
-        JSON string containing the list of supported chart types.
+        JSON string with key "chart_types": list of dicts, each with id (e.g. "line", "bar"),
+        description, when_to_use, and data_requirements; and "guidance" for selecting relevant_fields.
     """
     chart_types = {
         "chart_types": [
@@ -182,33 +187,28 @@ async def get_viz_spec(
     custom_constraints: list[str] | None = None,
     use_default_constraints: bool = True,
 ) -> dict[str, str | None]:
-    """Generate a Vega-Lite visualization specification from Data360 API parameters.
+    """Generate a Vega-Lite chart from a Data360 indicator and return a URL to the chart.
 
-    This function:
-    1. Generates the Data API URL internally
-    2. Fetches data from that URL
-    3. Cleans and prepares the data
-    4. Uses Draco2 to generate optimal chart configuration
-    5. Stores the Vega-Lite spec: if MCP_CHARTS_API_URL is set, POSTs to that API;
-       otherwise saves to static/viz_specs/
-    6. Returns a dict with "url" (chart URL on success) and "error" (message on failure).
+    Use when the user wants a visualization (line, bar, area, etc.). You need database_id and
+    indicator_id from data360_search_indicators. Optionally call data360_get_supported_chart_types
+    for chart type guidance and data360_get_disaggregation to ensure filter values are valid.
+    The tool builds the data URL, fetches data, cleans it, runs Draco for encoding, and stores the spec.
 
     Args:
-        database_id: Database identifier (e.g., WB_HNP, WB_WDI)
-        indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL)
-        country_code: Optional country code (e.g., "KEN" or "CHN,USA")
-        start_year: Optional start year
-        end_year: Optional end year
-        disaggregation_filters: Optional dict of dimension filters (e.g., {"SEX": "F"})
-        chart_type: Optional hint for chart type (e.g., "line chart", "bar chart").
-        relevant_fields: Optional list of column names to strictly use for visualization.
-                         The LLM should identify these based on the data structure.
+        database_id: Database identifier (e.g., WB_HNP, WB_WDI).
+        indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL).
+        country_code: Optional 3-letter code or comma-separated list (e.g. "KEN" or "CHN,USA").
+        start_year: Optional start year (inclusive).
+        end_year: Optional end year (inclusive).
+        disaggregation_filters: Optional dict of dimension filters (e.g. {"SEX": "F"}).
+        chart_type: Optional hint (e.g. "line chart", "bar chart").
+        relevant_fields: Optional list of column names to use in the chart; infer from data structure.
         custom_constraints: Optional list of raw Draco ASP constraints.
-        use_default_constraints: Use standard heuristics (default: True).
+        use_default_constraints: If True (default), apply standard encoding heuristics.
 
     Returns:
-        Dict with "url" (str or None) and "error" (str or None). On success url is set;
-        on failure error is set.
+        Dict with "url" and "error". On success: url is the chart URL (string), error is None.
+        On failure: url is None, error is an error message string.
     """
 
     def ok(u: str) -> dict[str, str | None]:
