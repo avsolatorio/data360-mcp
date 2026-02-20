@@ -360,23 +360,25 @@ async def search(
 ) -> "EnrichedSearchResponse":
     """Search for Data360 indicators with enriched metadata for selection.
 
+    Use this first when the user asks for data on a topic (e.g. unemployment, poverty, GDP).
+    No other tools are required before this one. After picking an indicator, call
+    data360_get_metadata and/or data360_get_disaggregation before fetching data or generating a chart.
+
     Args:
-        query: Search query (e.g., "unemployment rate", "poverty")
-        required_country: Country name or code (e.g., "Kenya", "KEN", or "China, USA")
-            **STRONGLY RECOMMENDED** to use comma-separated lists to check multiple countries in a single call.
-        limit: Max results (default 5)
-        offset: Offset for pagination (default 0)
+        query: Search query (e.g., "unemployment rate", "poverty", "GDP per capita").
+        required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
+            Use comma-separated names or codes to check multiple countries in one call (e.g. "China, USA").
+        limit: Maximum number of indicators to return (default 5).
+        offset: Number of results to skip for pagination (default 0).
 
     Returns:
-        EnrichedSearchResponse with:
-            - indicators: List of EnrichedIndicator (idno, database_id, name,
-              truncated_definition, unit, periodicity, latest_data, covers_country, dimensions)
-            - count, total_count, offset, has_more, next_offset: Pagination fields
-            - required_country: Resolved country code
-            - error: Error message if failed
-
-    Note:
-        The `covers_country` field indicates data availability for the requested country.
+        EnrichedSearchResponse:
+            indicators: List of EnrichedIndicator, each with idno, database_id, name,
+                truncated_definition, unit, periodicity, latest_data, time_period_range,
+                covers_country (True/False if required_country was given), and dimensions (e.g. SEX, AGE).
+            required_country: Resolved country code(s) if required_country was provided.
+            count, total_count, offset, has_more, next_offset: Pagination fields.
+            error: Error message string if the request failed; otherwise None.
     """
     # NOTE: This function is for MVP only, we should be testing the relevance and performance
     # of the retrieval process in the future.
@@ -504,24 +506,24 @@ async def get_metadata(
 ) -> MetadataResponse:
     """Get metadata and disaggregation options for a Data360 indicator.
 
+    Call after data360_search_indicators when you have chosen an indicator (you need its
+    database_id and indicator_id). For valid filter values (years, country codes, SEX/AGE/URBANISATION),
+    prefer data360_get_disaggregation. data360_get_data and data360_get_viz_spec call get_metadata internally.
+
     Args:
-        database_id: Database identifier (e.g., IPC_IPC, WB_GS)
-        indicator_id: Indicator ID (e.g., IPC_IPC_PHASE, WB_GS_NY_GDP_PCAP_KD)
-        select_fields: Optional list of metadata fields to return (e.g., ["methodology", "statistical_concept"]).
-            If None, returns all fields. Available fields include:
-            methodology, statistical_concept, definition_long, limitation, relevance,
-            aggregation_method, periodicity, time_periods, ref_country, sources_note
-        get_valid_disaggregations_func: Function to get valid disaggregations (default is _get_valid_disaggregations)
+        database_id: Database identifier (e.g., IPC_IPC, WB_GS).
+        indicator_id: Indicator ID (e.g., IPC_IPC_PHASE, WB_GS_NY_GDP_PCAP_KD).
+        select_fields: Optional list of metadata fields to return. If None, returns all fields.
+            Available fields: methodology, statistical_concept, definition_long, limitation,
+            relevance, aggregation_method, periodicity, time_periods, ref_country, sources_note.
+        get_valid_disaggregations_func: Internal use; function to filter raw disaggregation response.
+        fetch_disaggregation: If True (default), also fetch disaggregation dimensions (field_name, field_value).
 
     Returns:
-        MetadataResponse with metadata and disaggregation options
-
-    Example:
-        # Get only methodology
-        await get_metadata("WB_GS", "WB_GS_NY_GDP_PCAP_KD", select_fields=["methodology"])
-
-        # Get full metadata
-        await get_metadata("WB_GS", "WB_GS_NY_GDP_PCAP_KD")
+        MetadataResponse:
+            indicator_metadata: Dict of requested metadata fields for the indicator, or None if not found.
+            disaggregation_options: List of dicts with field_name and field_value (list of valid codes).
+            error: Error message string if any request failed; otherwise None.
     """
     # Use provided function or default
     if get_valid_disaggregations_func is None:
@@ -653,35 +655,22 @@ async def get_disaggregation(
     database_id: str,
     indicator_id: str,
 ) -> dict[str, Any]:
-    """Get disaggregation options for a Data360 indicator.
+    """Get disaggregation options for a Data360 indicator (valid filter values).
 
-    This is the primary tool for checking what filter values are available
-    for an indicator, including actual years (TIME_PERIOD), countries (REF_AREA),
-    and dimensions (SEX, AGE, URBANISATION).
+    Call before data360_get_data or data360_get_viz_spec to see which filter values are available.
+    Typically call after data360_search_indicators when you need available years or breakdowns.
+    Use the returned values in disaggregation_filters; do not use FREQ for filtering (it breaks queries).
 
     Args:
-        database_id: Database identifier (e.g., WB_GS, WB_SSGD)
-        indicator_id: Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD)
+        database_id: Database identifier (e.g., WB_GS, WB_SSGD).
+        indicator_id: Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD).
 
     Returns:
-        Dict with dimensions, each containing field_name, label_name, and field_value list.
-        Returns {"error": "..."} on failure.
-
-    Example:
-        result = await get_disaggregation("WB_SSGD", "WB_SSGD_LF_PARTICIPATION_RATE")
-        # Returns:
-        # {
-        #     "dimensions": [
-        #         {"field_name": "TIME_PERIOD", "field_value": ["2015", "2018", "2020", "2022"]},
-        #         {"field_name": "REF_AREA", "field_value": ["KEN", "UGA", "TZA", ...]},
-        #         {"field_name": "SEX", "field_value": ["F", "M", "_T"]},
-        #     ]
-        # }
-
-    Note:
-        - TIME_PERIOD shows actual available years (may have gaps)
-        - REF_AREA shows countries with data for this indicator
-        - DO NOT use FREQ for filtering - it breaks queries
+        On success: dict with key "dimensions", a list of dicts each with:
+            field_name: Dimension name (e.g. TIME_PERIOD, REF_AREA, SEX, AGE, URBANISATION).
+            field_value: List of valid codes (e.g. years, country codes, F/M/_T).
+        On failure: dict with key "error" and an error message string.
+        TIME_PERIOD gives actual available years (may have gaps). REF_AREA lists countries with data.
     """
     disaggregation_url = (
         data360_config.disaggregation_url or f"{data360_config.api_url}/disaggregation"
@@ -722,38 +711,32 @@ async def get_data(
     limit: int = 50,
     offset: int = 0,
 ) -> IndicatorDataResponse:
-    """
-    Fetch indicator data from Data360 API with LLM-friendly pagination.
+    """Fetch indicator data from the Data360 API with pagination.
+
+    Call after you have database_id and indicator_id (from data360_search_indicators). Use
+    data360_get_disaggregation to get valid filter values; passing invalid values can yield empty results.
+    For charts, prefer data360_get_viz_spec, which fetches data internally.
 
     Args:
-        database_id: Database identifier (e.g., "IPC_IPC", "WB_GS")
-        indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_GS_NY_GDP_PCAP_KD")
-        disaggregation_filters: Optional dictionary of disaggregation filters
-            (e.g., {"REF_AREA": "UGA" or "KEN,TZA", "UNIT_MEASURE": "PT"})
-            - **SUPPORTS MULTIPLE VALUES**: Pass comma-separated string for REF_AREA (e.g. "KEN,TZA,USA").
-            - Supports None to request all values for a dimension (e.g. {"SEX": None}).
-        start_year: Optional start year to filter data (inclusive). Defaults to last 5 years.
-        end_year: Optional end year to filter data (inclusive). Defaults to current year.
-        limit: Maximum number of records to return (default 50, max 100)
-        offset: Number of records to skip for pagination (default 0)
+        database_id: Database identifier (e.g., "IPC_IPC", "WB_GS").
+        indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_GS_NY_GDP_PCAP_KD").
+        disaggregation_filters: Optional dict of dimension filters. Keys: REF_AREA, SEX, AGE,
+            URBANISATION, UNIT_MEASURE, etc. REF_AREA supports comma-separated codes (e.g. "KEN,TZA").
+            Use value None to request all values for a dimension (e.g. {"SEX": None}).
+        start_year: Optional start year (inclusive). Defaults to last 20 years if both start/end omitted.
+        end_year: Optional end year (inclusive). Defaults to current year if both start/end omitted.
+        limit: Maximum records per page (default 50, max 100).
+        offset: Number of records to skip for pagination (default 0).
 
     Returns:
-        IndicatorDataResponse with:
-            - data: List of data points for this page
-            - count: Number of records in this response
-            - total_count: Total records available (if known)
-            - has_more: True if more data is available
-            - next_offset: Offset to use for next page (if has_more)
-
-    Example:
-        # First page
-        result = get_data("WB_GS", "WB_GS_NY_GDP_PCAP_KD",
-                          disaggregation_filters={"REF_AREA": "KEN"})
-
-        # If has_more=True, get next page:
-        result2 = get_data("WB_GS", "WB_GS_NY_GDP_PCAP_KD",
-                           disaggregation_filters={"REF_AREA": "KEN"},
-                           offset=result.next_offset)
+        IndicatorDataResponse:
+            data: List of data point dicts (e.g. TIME_PERIOD, REF_AREA, OBS_VALUE, claim_id).
+            metadata: Indicator metadata dict if available.
+            count: Number of records in this response.
+            total_count: Total records available, or None.
+            offset, has_more, next_offset: Use next_offset for the next page when has_more is True.
+            error: Error message if the request failed; otherwise None.
+            failed_validation: Optional list of filter validation messages.
     """
     data_url = data360_config.data_url or f"{data360_config.api_url}/data"
 
@@ -905,11 +888,14 @@ async def get_data(
 async def get_indicators(database_id: str) -> list[str]:
     """Get all indicator IDs for a specific database.
 
+    Use when you need the full list of indicator IDs for a dataset. For discovery by topic,
+    use data360_search_indicators instead. You must know the database_id (e.g. from search or docs).
+
     Args:
-        database_id: The database ID to fetch indicators for (e.g., "WB_WDI")
+        database_id: The database identifier (e.g., "WB_WDI", "WB_GS").
 
     Returns:
-        List of indicator IDs
+        List of indicator ID strings for that database. Empty list on error or if none exist.
     """
     url = f"{data360_config.api_url}/indicators"
     params = {"datasetId": database_id}
@@ -988,22 +974,23 @@ async def get_data_api_url(
     end_year: int | None = None,
     disaggregation_filters: dict[str, str | None] | None = None,
 ) -> str:
-    """Generate a Data360 API URL for a dataset (without fetching).
+    """Generate a Data360 API URL for a dataset without fetching data.
 
-    Use this to get the `data_url` for visualization generation.
+    Low-level tool: use only when you need the raw data API URL (e.g. custom clients or debugging).
+    For charts, use data360_get_viz_spec instead; it builds the URL, fetches data, and generates the spec.
+    Use data360_get_disaggregation to obtain valid filter values.
 
     Args:
-        database_id: Database identifier (e.g., WB_HNP, WB_WDI)
-        indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL)
-        country_code: Optional country code (e.g., "KEN" or "CHN,USA")
-            **SUPPORTS MULTIPLE COUNTRIES**: Can be a single 3-letter code or comma-separated list (e.g. "KEN,TZA,USA").
-        start_year: Optional start year
-        end_year: Optional end year
-        disaggregation_filters: Optional dict of dimension filters (e.g., {"SEX": "F"})
-            If not provided, defaults to totals (_T) for SEX, AGE, URBANISATION
+        database_id: Database identifier (e.g., WB_HNP, WB_WDI).
+        indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL).
+        country_code: Optional 3-letter code or comma-separated list (e.g. "KEN" or "CHN,USA").
+        start_year: Optional start year (inclusive).
+        end_year: Optional end year (inclusive).
+        disaggregation_filters: Optional dict of dimension filters (e.g. {"SEX": "F"}).
+            If omitted, defaults to totals (_T) for SEX, AGE, URBANISATION where applicable.
 
     Returns:
-        Constructed API URL string
+        Full Data360 data API URL string (query parameters included).
     """
     settings = get_data360_settings()
 
