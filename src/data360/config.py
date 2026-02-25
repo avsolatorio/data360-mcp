@@ -12,7 +12,7 @@ class MCPServerSettings(BaseSettings):
 
     port: int = Field(
         default=8000,
-        description="Port for the MCP server",
+        description="Port for the MCP server (used for chart static URLs when WEBSITE_HOSTNAME is not set). Set MCP_PORT to match the port you run on.",
     )
     transport: str = Field(
         default="http",

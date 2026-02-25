@@ -5,16 +5,34 @@ All business logic and tool descriptions live in the docstrings of the
 underlying functions in api.py, providers.py, and visualization.py.
 """
 
+from fastmcp.server.apps import AppConfig
+
 from data360 import api as data360_api
 from data360 import providers as data360_providers
 from data360 import visualization as data360_viz
 
 from ._server_definition import mcp
+from .apps_resources import CHART_VIEW_URI, SEARCH_VIEW_URI
+
+# Wire format for MCP Apps: tool _meta must include ui.resourceUri so clients
+# (e.g. Claude) show the app iframe. We pass both app= and meta= so the tool
+# definition always includes this. Include legacy "ui/resourceUri" for older
+# hosts (see ext-apps examples e.g. say-server).
+_SEARCH_APP_META = {
+    "ui": {"resourceUri": SEARCH_VIEW_URI},
+    "ui/resourceUri": SEARCH_VIEW_URI,
+}
+_CHART_APP_META = {
+    "ui": {"resourceUri": CHART_VIEW_URI},
+    "ui/resourceUri": CHART_VIEW_URI,
+}
 
 search_indicators = mcp.tool(
     data360_api.search,
     name="data360_search_indicators",
     description=data360_api.search.__doc__,
+    app=AppConfig(resource_uri=SEARCH_VIEW_URI, visibility=["app", "model"]),
+    meta=_SEARCH_APP_META,
 )
 
 get_metadata = mcp.tool(
@@ -57,6 +75,8 @@ get_viz_spec = mcp.tool(
     data360_viz.get_viz_spec,
     name="data360_get_viz_spec",
     description=data360_viz.get_viz_spec.__doc__,
+    app=AppConfig(resource_uri=CHART_VIEW_URI),
+    meta=_CHART_APP_META,
 )
 
 get_supported_chart_types = mcp.tool(
