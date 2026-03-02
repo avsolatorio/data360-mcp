@@ -1,0 +1,132 @@
+<!--
+  QA-Pair Evaluation for data360 MCP Server
+  ==========================================
+  Tests END-TO-END ANSWER CORRECTNESS (outcome).
+  Complementary to DeepEval which tests TOOL SELECTION QUALITY (process).
+
+  Requirements:
+    - Answers must be STABLE (won't change with time)
+    - Answers verified via exact string comparison
+    - Questions require multi-step tool usage
+    - Questions do NOT test chatbot behavior, only MCP tool usability
+    - Questions must be clear, unambiguous, and specific
+
+  Run with:
+    uv run python evals/mcp_evals/qa_eval.py evals/mcp_evals/evaluation.xml -v
+-->
+
+<evaluation>
+
+  <!-- ═══ CODELIST (find_codelist_value) ══════════════════════════════ -->
+
+  <qa_pair>
+    <question>What is the 3-letter country code for Tanzania? Answer with just the code.</question>
+    <answer>TZA</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using the codelist lookup, what country name corresponds to the REF_AREA code "NGA"? Answer with the country name only.</question>
+    <answer>Nigeria</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>What is the 3-letter country code for Brazil? Answer with just the code.</question>
+    <answer>BRA</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using the codelist lookup, what country name corresponds to the REF_AREA code "DEU"? Answer with the country name only.</question>
+    <answer>Germany</answer>
+  </qa_pair>
+
+  <!-- ═══ SEARCH INDICATORS (search_indicators) ══════════════════════ -->
+
+  <qa_pair>
+    <question>Search for GDP per capita indicators available for Kenya. What is the database_id of the indicator named "GDP per capita, PPP" from the Sahel and Sub-Saharan Gender Database? Answer with the database ID only.</question>
+    <answer>WB_SSGD</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Search for "infant mortality rate" indicators that cover Brazil. What is the indicator ID (idno) of the result from the WB_HNP database? Answer with just the indicator ID.</question>
+    <answer>WB_HNP_SP_DYN_IMRT_IN</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Search for "access to electricity" indicators available for India. What is the name of the indicator from the WB_SE4ALL database? Answer with the exact indicator name.</question>
+    <answer>Access to electricity (% of population)</answer>
+  </qa_pair>
+
+  <!-- ═══ DATA RETRIEVAL (search + get_data) ═════════════════════════ -->
+
+  <qa_pair>
+    <question>What was the life expectancy at birth (total, in years) in Japan in the year 2020, according to the WB_WDI database (indicator WB_WDI_SP_DYN_LE00_IN)? Answer with the numeric value only.</question>
+    <answer>84.56</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>What was the infant mortality rate (per 1,000 live births) in Brazil in 2020, according to the WB_HNP database (indicator WB_HNP_SP_DYN_IMRT_IN)? Answer with the numeric value only.</question>
+    <answer>13</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>What was the access to electricity (% of population, total) in India in 2022, according to the WB_SE4ALL database (indicator WB_SE4ALL_EG_ACS_ELEC)? Answer with the numeric value only.</question>
+    <answer>99.2</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>What was the access to electricity (% of population) in rural areas of India in 2022, according to the WB_SE4ALL database (indicator WB_SE4ALL_EG_ACS_ELEC, URBANISATION filter set to "RUR")? Answer with the numeric value only.</question>
+    <answer>99.3</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>What was the life expectancy at birth (total, in years) in Brazil in the year 2020, according to the WB_WDI database (indicator WB_WDI_SP_DYN_LE00_IN)? Answer with the numeric value only.</question>
+    <answer>74.506</answer>
+  </qa_pair>
+
+  <!-- ═══ METADATA (search + get_metadata) ═══════════════════════════ -->
+
+  <qa_pair>
+    <question>What is the periodicity of the indicator "Mortality rate, infant (per 1,000 live births)" (WB_HNP_SP_DYN_IMRT_IN) in the WB_HNP database? Answer with one word.</question>
+    <answer>Annual</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>What is the UNIT_MEASURE code for the indicator "Life expectancy at birth, total (years)" (WB_WDI_SP_DYN_LE00_IN) in the WB_WDI database? Answer with just the code.</question>
+    <answer>YR</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>What is the UNIT_MEASURE code for the indicator "Access to electricity (% of population)" (WB_SE4ALL_EG_ACS_ELEC) in the WB_SE4ALL database? Answer with just the code.</question>
+    <answer>PT</answer>
+  </qa_pair>
+
+  <!-- ═══ DISAGGREGATION (search + get_disaggregation) ═══════════════ -->
+
+  <qa_pair>
+    <question>For the indicator "Life expectancy at birth (years)" in the WB_GS database (indicator ID: WB_GS_SP_DYN_LE00_IN), what SEX disaggregation codes are available? List all codes separated by commas with no spaces.</question>
+    <answer>_T,F,M</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>For the indicator "Access to electricity (% of population)" in the WB_SE4ALL database (indicator ID: WB_SE4ALL_EG_ACS_ELEC), what URBANISATION disaggregation codes are available? List them separated by commas in alphabetical order with no spaces.</question>
+    <answer>RUR,URB,_T</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>What is the earliest year available in the TIME_PERIOD dimension for the indicator WB_WDI_SP_DYN_LE00_IN in the WB_WDI database? Answer with just the year.</question>
+    <answer>1960</answer>
+  </qa_pair>
+
+  <!-- ═══ CHART TYPES (get_supported_chart_types) ════════════════════ -->
+
+  <qa_pair>
+    <question>How many chart types does the data360 visualization system support? Answer with a number.</question>
+    <answer>5</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Search for "GDP per capita, PPP" indicators for Kenya. Using the indicator WB_SSGD_GDP_CAPITA_PPP from the WB_SSGD database, what was the value in 2022? Round to 2 decimal places.</question>
+    <answer>4881.53</answer>
+  </qa_pair>
+
+</evaluation>
