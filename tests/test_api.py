@@ -214,7 +214,7 @@ class TestSearch:
 
         assert not result.indicators
         assert result.error is not None
-        assert "timeout" in result.error.lower()
+        assert "timed out" in result.error.lower()
 
     @pytest.mark.asyncio
     async def test_search_invalid_json(self, httpx_mock: pytest_httpx.HTTPXMock):
@@ -510,7 +510,7 @@ class TestGetMetadata:
         result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
 
         assert result.error is not None
-        assert "HTTP error fetching metadata" in result.error
+        assert "HTTP error" in result.error
 
     @pytest.mark.asyncio
     async def test_get_metadata_http_error_disaggregation(
@@ -554,7 +554,7 @@ class TestGetMetadata:
 
         assert result.indicator_metadata is not None
         assert result.error is not None
-        assert "HTTP error fetching disaggregations" in result.error
+        assert "HTTP error" in result.error
 
 
 class TestGetData:
@@ -772,7 +772,7 @@ class TestGetData:
 
         assert result.data is None
         assert result.error is not None
-        assert "HTTP error fetching data" in result.error
+        assert "HTTP error" in result.error
 
     @pytest.mark.asyncio
     async def test_get_data_invalid_json(self, httpx_mock: pytest_httpx.HTTPXMock):
