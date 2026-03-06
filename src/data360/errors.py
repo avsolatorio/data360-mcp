@@ -105,7 +105,7 @@ class APIError(Data360MCPError):
         )
 
 
-class TimeoutError(Data360MCPError):
+class Data360TimeoutError(Data360MCPError):
     """Timeout errors when calling the Data360 API."""
 
     def __init__(
@@ -197,10 +197,10 @@ class NotFoundError(Data360MCPError):
 
 
 # ---------------------------------------------------------------------------
-# Helper to convert httpx exceptions into Data360MCPError
+# Helper to convert exceptions into Data360MCPError
 # ---------------------------------------------------------------------------
-def from_httpx_error(exc: Exception, context: str) -> Data360MCPError:
-    """Convert an httpx exception into the appropriate Data360MCPError subclass.
+def classify_error(exc: Exception, context: str) -> Data360MCPError:
+    """Convert an exception into the appropriate Data360MCPError subclass.
 
     Args:
         exc: The original httpx exception.
@@ -219,7 +219,7 @@ def from_httpx_error(exc: Exception, context: str) -> Data360MCPError:
             original_error=exc,
         )
     elif isinstance(exc, httpx.TimeoutException):
-        return TimeoutError(context=context, original_error=exc)
+        return Data360TimeoutError(context=context, original_error=exc)
     elif isinstance(exc, httpx.RequestError):
         return RequestError(context=context, original_error=exc)
     else:
