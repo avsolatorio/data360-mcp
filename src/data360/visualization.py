@@ -585,6 +585,10 @@ async def get_viz_spec(
         return ok(save_specs_to_static(vl_spec))
 
     except StopIteration:
+        _FALLBACK_WARNING = (
+            "Draco could not determine an optimal encoding; "
+            "a default line chart was generated as fallback."
+        )
         _logger.warning(
             "Draco failed to find a visualization spec. Falling back to manual generation."
         )
@@ -635,12 +639,16 @@ async def get_viz_spec(
             charts_url = get_mcp_server_settings().charts_api_url
             if charts_url:
                 try:
-                    return ok(await post_spec_to_charts_api(vl_spec))
+                    result = ok(await post_spec_to_charts_api(vl_spec))
+                    result["warning"] = _FALLBACK_WARNING
+                    return result
                 except Exception as e:
                     _logger.warning(
                         f"Charts API store failed, falling back to static: {e}"
                     )
-            return ok(save_specs_to_static(vl_spec))
+            result = ok(save_specs_to_static(vl_spec))
+            result["warning"] = _FALLBACK_WARNING
+            return result
 
         except Exception as fallback_err:
             _logger.exception(f"Fallback generation failed: {fallback_err}")
