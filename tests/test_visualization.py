@@ -45,12 +45,18 @@ class TestGetVizSpecDracoFallbackWarning:
                 "data360.visualization.save_specs_to_static",
                 return_value="http://localhost:8021/static/viz_specs/test.json",
             ) as mock_save,
+            patch(
+                "data360.providers.get_codelist_mapping",
+                new_callable=AsyncMock,
+                return_value={},
+            ) as mock_codelist,
         ):
             yield {
                 "get_data_api_url": mock_url,
                 "fetch_data": mock_fetch,
                 "get_metadata": mock_meta,
                 "save_specs": mock_save,
+                "get_codelist_mapping": mock_codelist,
             }
 
     @pytest.mark.asyncio

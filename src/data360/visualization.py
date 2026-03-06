@@ -22,6 +22,11 @@ from data360 import viz_config
 
 _logger = logging.getLogger(__name__)
 
+_FALLBACK_WARNING = (
+    "Draco could not determine an optimal encoding; "
+    "a default line chart was generated as fallback."
+)
+
 
 def save_specs_to_static(vl_spec: dict) -> str:
     """Save Vega-Lite spec to static/viz_specs/ directory.
@@ -207,8 +212,10 @@ async def get_viz_spec(
         use_default_constraints: If True (default), apply standard encoding heuristics.
 
     Returns:
-        Dict with "url" and "error". On success: url is the chart URL (string), error is None.
+        Dict with "url", "error", and optionally "warning".
+        On success: url is the chart URL (string), error is None.
         On failure: url is None, error is an error message string.
+        If Draco failed and a fallback chart was generated, "warning" contains a message.
     """
 
     def ok(u: str) -> dict[str, str | None]:
@@ -585,10 +592,6 @@ async def get_viz_spec(
         return ok(save_specs_to_static(vl_spec))
 
     except StopIteration:
-        _FALLBACK_WARNING = (
-            "Draco could not determine an optimal encoding; "
-            "a default line chart was generated as fallback."
-        )
         _logger.warning(
             "Draco failed to find a visualization spec. Falling back to manual generation."
         )
