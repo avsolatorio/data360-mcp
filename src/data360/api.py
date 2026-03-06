@@ -13,7 +13,7 @@ from .errors import (
     Data360MCPError,
     NotFoundError,
     ParseError,
-    from_httpx_error,
+    classify_error,
 )
 from .errors import ValidationError as Data360ValidationError
 from .models import (
@@ -316,7 +316,7 @@ async def _search_raw(
                     )
 
     except Exception as e:
-        mcp_error = from_httpx_error(e, context="search")
+        mcp_error = classify_error(e, context="search")
         _logger.error(mcp_error.detail)
 
     if mcp_error:
@@ -631,7 +631,7 @@ async def get_metadata(
                 errors.append(mcp_err.detail)
 
     except Exception as e:
-        mcp_err = from_httpx_error(e, context="metadata")
+        mcp_err = classify_error(e, context="metadata")
         _logger.exception(mcp_err.detail)
         errors.append(mcp_err.detail)
 
@@ -657,7 +657,7 @@ async def get_metadata(
                     errors.append(mcp_err.detail)
 
         except Exception as e:
-            mcp_err = from_httpx_error(e, context="disaggregation")
+            mcp_err = classify_error(e, context="disaggregation")
             _logger.error(mcp_err.detail)
             errors.append(mcp_err.detail)
 
@@ -712,7 +712,7 @@ async def get_disaggregation(
             return {"dimensions": valid_dimensions}
 
     except Exception as e:
-        mcp_err = from_httpx_error(e, context="disaggregation")
+        mcp_err = classify_error(e, context="disaggregation")
         _logger.exception(mcp_err.detail)
         return {"error": mcp_err.detail}
 
@@ -890,7 +890,7 @@ async def get_data(
             )
 
     except Exception as e:
-        mcp_err = from_httpx_error(e, context="data")
+        mcp_err = classify_error(e, context="data")
         _logger.error(mcp_err.detail)
         return IndicatorDataResponse(data=None, error=mcp_err.detail)
 
