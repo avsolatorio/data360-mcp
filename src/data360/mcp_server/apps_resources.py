@@ -32,20 +32,41 @@ def _chart_view_html() -> str:
   <meta name="color-scheme" content="light dark">
   <title>Data360 Chart</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      padding: 12px;
+      padding: 0;
+      height: 100%;
       font-family: var(--font-sans, system-ui, sans-serif);
       background: var(--color-background-secondary, #f5f5f5);
       color: var(--color-text-primary, #111);
-      min-height: 120px;
+    }
+    body {
+      padding: 12px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    #root {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
     #chart-container {
+      flex: 1;
       width: 100%;
-      min-height: 280px;
+      min-height: 200px;
+      min-width: 0;
     }
     #chart-container.vega-embed {
       margin: 0;
+    }
+    #chart-container.vega-embed,
+    #chart-container.vega-embed > div {
+      max-width: 100%;
+      width: 100%;
+      box-sizing: border-box;
     }
     .error {
       color: var(--color-text-error, #b91c1c);
@@ -101,7 +122,12 @@ def _chart_view_html() -> str:
     (async function () {
       try {
         const { App } = await import("https://unpkg.com/@modelcontextprotocol/ext-apps@0.4.0/app-with-deps");
-        const { embed } = await import("https://unpkg.com/vega-embed@7");
+        // esm.sh provides proper ESM with default export; unpkg serves UMD (no default)
+        const vegaEmbedModule = await import("https://esm.sh/vega-embed@7");
+        const embed = typeof vegaEmbedModule.default === "function" ? vegaEmbedModule.default : vegaEmbedModule.embed;
+        if (typeof embed !== "function") {
+          throw new Error("vega-embed did not export an embed function");
+        }
 
         const container = document.getElementById("chart-container");
         const messageEl = document.getElementById("message");
@@ -122,17 +148,103 @@ def _chart_view_html() -> str:
           return null;
         }
 
-        async function renderChart(url) {
+        function applyThemeToSpec(spec, theme) {
+          if (!spec || !theme || typeof theme !== "object") return spec;
+          const mergedConfig = {
+            ...(typeof spec.config === "object" && spec.config !== null ? spec.config : {}),
+            ...theme,
+          };
+          return { ...spec, config: mergedConfig };
+        }
+
+        /** Apply autosize fit; width/height set from container in renderChart. */
+        function applyResponsiveSpec(spec, width, height) {
+          if (!spec || typeof spec !== "object") return spec;
+          const autosize = {
+            type: "fit",
+            resize: true,
+            ...(typeof spec.autosize === "object" && spec.autosize !== null ? spec.autosize : {}),
+          };
+          const out = { ...spec, autosize };
+          if (typeof width === "number" && width > 0) out.width = width;
+          if (typeof height === "number" && height > 0) out.height = height;
+          return out;
+        }
+
+        function getContainerSize(el, useViewportFallback) {
+          let w = 0, h = 0;
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            w = Math.round(rect.width) || el.clientWidth || 0;
+            h = Math.round(rect.height) || el.clientHeight || 0;
+          }
+          if (useViewportFallback && (w <= 0 || h <= 0 || w < 200)) {
+            const win = typeof window !== "undefined" ? window : null;
+            w = w > 0 ? w : (win ? win.innerWidth : 800);
+            h = h > 0 ? h : (win ? win.innerHeight : 450);
+          }
+          return { w: w || 0, h: h || 0 };
+        }
+
+        const DEFAULT_THEME_URL = "https://worldbank.github.io/data-visualization-style-guide/vega/wb-vega-theme.json";
+        const DEFAULT_CHART_WIDTH = 800;
+        const DEFAULT_CHART_HEIGHT = 450;
+        let resizeObserver = null;
+        let currentView = null;
+
+        function scheduleResize() {
+          if (!currentView || !container) return;
+          const { w, h } = getContainerSize(container, true);
+          const width = w > 0 ? w : DEFAULT_CHART_WIDTH;
+          const height = h > 0 ? h : DEFAULT_CHART_HEIGHT;
+          if (typeof currentView.width === "function" && typeof currentView.height === "function") {
+            currentView.width(width).height(height);
+            if (typeof currentView.runAsync === "function") {
+              currentView.runAsync();
+            }
+          }
+        }
+
+        async function renderChart(url, themeUrl) {
           clearChart();
+          currentView = null;
+          if (resizeObserver && container) {
+            try { resizeObserver.disconnect(); } catch (_e) {}
+            resizeObserver = null;
+          }
           setMessage("Loading chart…");
           try {
             const res = await fetch(url);
             if (!res.ok) throw new Error(res.statusText);
             const data = await res.json();
-            const spec = resolveSpec(data);
+            let spec = resolveSpec(data);
             if (spec) {
-              await embed(container, spec, { actions: false });
+              const themeSrc = themeUrl || DEFAULT_THEME_URL;
+              if (themeSrc) {
+                try {
+                  const themeRes = await fetch(themeSrc);
+                  if (themeRes.ok) {
+                    const theme = await themeRes.json();
+                    spec = applyThemeToSpec(spec, theme);
+                  }
+                } catch (_e) { /* use spec without theme */ }
+              }
+              const { w, h } = getContainerSize(container, true);
+              const width = w > 0 ? w : DEFAULT_CHART_WIDTH;
+              const height = h > 0 ? h : DEFAULT_CHART_HEIGHT;
+              spec = applyResponsiveSpec(spec, width, height);
+              const result = await embed(container, spec, { actions: false });
+              currentView = result && result.view ? result.view : null;
               setMessage("");
+              if (currentView && typeof ResizeObserver !== "undefined") {
+                resizeObserver = new ResizeObserver(function () {
+                  scheduleResize();
+                });
+                resizeObserver.observe(container);
+              }
+              [50, 150, 350, 600, 1000, 1500].forEach(function (delay) {
+                setTimeout(scheduleResize, delay);
+              });
             } else {
               const link = document.createElement("a");
               link.href = url;
@@ -149,7 +261,8 @@ def _chart_view_html() -> str:
 
         const app = new App({ name: "Data360 Chart View", version: "1.0.0" });
 
-        app.ontoolresult = ({ content }) => {
+        function processToolResult(payload) {
+          const content = payload && payload.content;
           const textPart = content && content.find(c => c.type === "text");
           if (!textPart || !textPart.text) return;
           try {
@@ -160,14 +273,22 @@ def _chart_view_html() -> str:
               return;
             }
             if (data.url) {
-              renderChart(data.url);
+              renderChart(data.url, data.themeUrl);
             } else {
               setMessage("No chart URL in result.", true);
             }
           } catch (_e) {
             setMessage("Invalid tool result.", true);
           }
-        };
+        }
+
+        try {
+          app.ontoolresult = processToolResult;
+        } catch (_e) {
+          if (typeof window.__showAppError === "function") {
+            window.__showAppError("Chart app could not register tool result handler.");
+          }
+        }
 
         app.onhostcontextchanged = (ctx) => {
           if (ctx.theme) document.documentElement.setAttribute("data-theme", ctx.theme);
@@ -196,7 +317,7 @@ def _chart_view_html() -> str:
 
 
 def _search_view_html() -> str:
-    """Return the search results app HTML (interactive table of indicators)."""
+    """Return the search results app HTML: card layout, horizontal scroll, and search input that calls MCP tool."""
     return """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -212,67 +333,134 @@ def _search_view_html() -> str:
       background: var(--color-background-secondary, #f5f5f5);
       color: var(--color-text-primary, #111);
       min-height: 120px;
+      max-width: 100%;
+      min-width: 0;
+      overflow-x: hidden;
+    }
+    #root {
+      max-width: 100%;
+      min-width: 0;
+      overflow-x: hidden;
     }
     .search-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
       margin-bottom: 12px;
-      font-size: var(--font-text-sm-size, 0.875rem);
-      color: var(--color-text-secondary, #666);
     }
-    .search-summary {
-      font-weight: 600;
-      color: var(--color-text-primary, #111);
-    }
-    .request-summary {
-      font-size: 0.8125rem;
-      color: var(--color-text-secondary, #666);
-      margin-bottom: 4px;
+    .search-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .search-results-title {
       font-size: 0.875rem;
       font-weight: 600;
-      margin-bottom: 8px;
     }
-    #search-input {
-      width: 100%;
-      max-width: 320px;
+    .search-form {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      min-width: 200px;
+      max-width: 400px;
+    }
+    #new-search-input {
+      flex: 1;
       padding: 8px 12px;
-      margin-bottom: 12px;
       border: 1px solid var(--color-border-primary, #ddd);
-      border-radius: var(--border-radius-md, 6px);
+      border-radius: 6px;
       font: inherit;
       background: var(--color-background-primary, #fff);
     }
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: var(--border-radius-md, 6px);
+    #new-search-btn {
+      padding: 8px 16px;
       border: 1px solid var(--color-border-primary, #ddd);
+      border-radius: 6px;
       background: var(--color-background-primary, #fff);
+      font: inherit;
+      cursor: pointer;
+      white-space: nowrap;
     }
-    table {
+    #new-search-btn:hover { background: var(--color-background-secondary, #eee); }
+    #new-search-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .summary {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary, #666);
+      margin-left: auto;
+    }
+    .cards-scroll {
       width: 100%;
-      border-collapse: collapse;
-      font-size: var(--font-text-sm-size, 0.875rem);
+      min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      scrollbar-gutter: stable;
     }
-    th, td {
-      padding: 10px 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--color-border-secondary, #eee);
+    .cards-scroll::-webkit-scrollbar { height: 8px; }
+    .cards-scroll::-webkit-scrollbar-track { background: var(--color-border-secondary, #eee); border-radius: 4px; }
+    .cards-scroll::-webkit-scrollbar-thumb { background: var(--color-text-secondary, #999); border-radius: 4px; }
+    .cards-scroll::-webkit-scrollbar-thumb:hover { background: var(--color-text-primary, #333); }
+    .cards-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 12px;
+      width: max-content;
+      min-height: 1px;
     }
-    th {
-      font-weight: 600;
-      background: var(--color-background-secondary, #f5f5f5);
-      position: sticky;
-      top: 0;
+    .card {
+      min-width: 320px;
+      max-width: 400px;
+      flex-shrink: 0;
+      border: 1px solid var(--color-border-primary, #ddd);
+      border-radius: 8px;
+      background: var(--color-background-primary, #fff);
+      padding: 12px;
+      transition: border-color 0.15s;
     }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--color-background-secondary, #f9f9f9); }
-    .name { font-weight: 500; }
-    .idno { font-family: var(--font-mono, monospace); font-size: 0.85em; color: var(--color-text-secondary, #666); }
-    .definition { max-width: 320px; white-space: normal; }
-    .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; background: var(--color-background-secondary, #eee); }
-    .error { color: var(--color-text-error, #b91c1c); padding: 8px 0; }
-    .loading { color: var(--color-text-secondary, #666); padding: 8px 0; }
-    .no-results { color: var(--color-text-secondary, #666); padding: 16px 0; }
+    .card:hover { border-color: var(--color-primary, #0066cc); }
+    .card-title {
+      font-weight: 500;
+      font-size: 0.875rem;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-meta {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary, #666);
+      margin-bottom: 8px;
+    }
+    .card-definition {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary, #666);
+      line-height: 1.4;
+      padding: 8px;
+      border: 1px solid var(--color-border-secondary, #eee);
+      border-radius: 4px;
+      background: var(--color-background-secondary, #f9f9f9);
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      font-size: 0.7rem;
+      color: var(--color-text-secondary, #666);
+    }
+    .card-grid span { font-weight: 500; }
+    .error { color: var(--color-text-error, #b91c1c); padding: 8px 0; font-size: 0.875rem; }
+    .loading { color: var(--color-text-secondary, #666); padding: 8px 0; font-size: 0.875rem; }
+    .no-results { color: var(--color-text-secondary, #666); padding: 16px 0; font-size: 0.875rem; }
     #app-error {
       display: none;
       margin-bottom: 12px;
@@ -291,24 +479,17 @@ def _search_view_html() -> str:
   <div id="app-error" role="alert" aria-live="assertive" aria-hidden="true"></div>
   <div id="root">
     <div class="search-header">
-      <div id="request-summary" class="request-summary" aria-live="polite"></div>
-      <div class="search-results-title" id="results-title">Search Results</div>
-      <div id="summary" class="search-summary" aria-live="polite"></div>
-      <input type="search" id="search-input" placeholder="Filter results…" aria-label="Filter results">
+      <div class="search-header-left">
+        <span class="search-results-title">Search Results</span>
+        <form class="search-form" id="new-search-form" role="search">
+          <input type="search" id="new-search-input" placeholder="Search indicators…" aria-label="Search indicators">
+          <button type="submit" id="new-search-btn">Search</button>
+        </form>
+      </div>
+      <div class="summary" id="summary" aria-live="polite"></div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">ID</th>
-            <th scope="col">Definition</th>
-            <th scope="col">Periodicity</th>
-            <th scope="col">Coverage</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
+    <div class="cards-scroll">
+      <div class="cards-row" id="cards-row"></div>
     </div>
     <div id="message" class="loading" aria-live="polite">Waiting for search results…</div>
   </div>
@@ -336,113 +517,126 @@ def _search_view_html() -> str:
       try {
         const { App } = await import("https://unpkg.com/@modelcontextprotocol/ext-apps@0.4.0/app-with-deps");
 
-        const requestSummaryEl = document.getElementById("request-summary");
-    const summaryEl = document.getElementById("summary");
-    const filterInput = document.getElementById("search-input");
-    const tbody = document.getElementById("tbody");
-    const messageEl = document.getElementById("message");
+        const summaryEl = document.getElementById("summary");
+        const cardsRow = document.getElementById("cards-row");
+        const messageEl = document.getElementById("message");
+        const newSearchForm = document.getElementById("new-search-form");
+        const newSearchInput = document.getElementById("new-search-input");
+        const newSearchBtn = document.getElementById("new-search-btn");
 
-    function setMessage(text, className = "loading") {
-      messageEl.textContent = text;
-      messageEl.className = className;
-    }
-
-    function escapeHtml(s) {
-      if (s == null) return "";
-      const div = document.createElement("div");
-      div.textContent = s;
-      return div.innerHTML;
-    }
-
-    function renderRow(ind) {
-      if (!ind || typeof ind !== "object") return null;
-      const tr = document.createElement("tr");
-      const periodicity = ind.periodicity != null ? String(ind.periodicity) : "—";
-      const range = ind.time_period_range != null ? String(ind.time_period_range) : (ind.latest_data != null ? String(ind.latest_data) : "—");
-      const coverage = range !== "—" ? range + (ind.covers_country === true ? " (country ✓)" : ind.covers_country === false ? " (country ✗)" : "") : "—";
-      tr.innerHTML =
-        "<td class='name'>" + escapeHtml(ind.name) + "</td>" +
-        "<td class='idno'>" + escapeHtml(ind.database_id) + " / " + escapeHtml(ind.idno) + "</td>" +
-        "<td class='definition'>" + escapeHtml(ind.truncated_definition || "") + "</td>" +
-        "<td>" + escapeHtml(periodicity) + "</td>" +
-        "<td>" + escapeHtml(coverage) + "</td>";
-      return tr;
-    }
-
-    function render(indicators, filterText, totalCount) {
-      const q = (filterText || "").toLowerCase().trim();
-      const filtered = q ? indicators.filter(function (i) {
-        return (i.name && i.name.toLowerCase().includes(q)) ||
-          (i.idno && i.idno.toLowerCase().includes(q)) ||
-          (i.database_id && i.database_id.toLowerCase().includes(q)) ||
-          (i.truncated_definition && i.truncated_definition.toLowerCase().includes(q));
-      }) : indicators;
-      const total = totalCount != null && Number.isFinite(totalCount) ? totalCount : indicators.length;
-      summaryEl.textContent = "Showing " + filtered.length + " of " + total.toLocaleString() + " indicator" + (total !== 1 ? "s" : "");
-      tbody.innerHTML = "";
-      for (let i = 0; i < filtered.length; i++) {
-        const row = renderRow(filtered[i]);
-        if (row) tbody.appendChild(row);
-      }
-      if (filtered.length === 0) setMessage("No indicators match the filter.", "no-results");
-      else setMessage("");
-    }
-
-    let lastIndicators = [];
-    let lastTotalCount = null;
-
-    const app = new App({ name: "Data360 Search Results", version: "1.0.0" });
-
-    app.ontoolinput = function (params) {
-      const args = params.arguments || {};
-      const parts = [];
-      if (args.query) parts.push('Query: "' + String(args.query) + '"');
-      if (args.required_country) parts.push("Country: " + String(args.required_country));
-      if (args.limit != null) parts.push("Limit: " + args.limit);
-      if (args.offset != null) parts.push("Offset: " + args.offset);
-      requestSummaryEl.textContent = parts.length ? parts.join(" · ") : "";
-    };
-
-    app.ontoolresult = ({ content }) => {
-      const textPart = content && content.find(function (c) { return c.type === "text"; });
-      if (!textPart || !textPart.text) return;
-      try {
-        const data = JSON.parse(textPart.text);
-        if (data.error) {
-          requestSummaryEl.textContent = "";
-          summaryEl.textContent = "";
-          tbody.innerHTML = "";
-          setMessage(data.error, "error");
-          return;
+        function setMessage(text, className) {
+          messageEl.textContent = text || "";
+          messageEl.className = className || "loading";
         }
-        const raw = data.indicators;
-        const indicators = Array.isArray(raw) ? raw : [];
-        lastIndicators = indicators;
-        lastTotalCount = data.total_count != null && Number.isFinite(data.total_count) ? data.total_count : null;
-        if (indicators.length === 0) {
-          requestSummaryEl.textContent = "";
-          summaryEl.textContent = "0 indicators";
-          tbody.innerHTML = "";
-          setMessage("No indicators found.", "no-results");
-          return;
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var div = document.createElement("div");
+          div.textContent = s;
+          return div.innerHTML;
         }
-        render(indicators, filterInput.value, lastTotalCount);
-      } catch (_e) {
-        setMessage("Invalid tool result.", "error");
-      }
-    };
 
-    filterInput.addEventListener("input", function () {
-      render(lastIndicators, filterInput.value, lastTotalCount);
-    });
+        function buildCard(ind) {
+          if (!ind || typeof ind !== "object") return null;
+          var periodicity = ind.periodicity != null ? String(ind.periodicity) : "—";
+          var latest = ind.latest_data != null ? String(ind.latest_data) : (ind.time_period_range != null ? String(ind.time_period_range) : "—");
+          var range = ind.time_period_range != null ? String(ind.time_period_range) : latest;
+          var dims = ind.dimensions && Array.isArray(ind.dimensions) ? ind.dimensions.join(", ") : "—";
+          var card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML =
+            "<div class='card-title'>" + escapeHtml(ind.name) + "</div>" +
+            "<div class='card-meta'><span>ID:</span> " + escapeHtml(ind.idno) + " · <span>DB:</span> " + escapeHtml(ind.database_id || "") + "</div>" +
+            (ind.truncated_definition ? "<div class='card-definition'>" + escapeHtml(ind.truncated_definition) + "</div>" : "") +
+            "<div class='card-grid'>" +
+            "<div><span>Periodicity:</span> " + escapeHtml(periodicity) + "</div>" +
+            "<div><span>Latest:</span> " + escapeHtml(latest) + "</div>" +
+            "<div style='grid-column:1/-1'><span>Range:</span> " + escapeHtml(range) + "</div>" +
+            (dims !== "—" ? "<div style='grid-column:1/-1'><span>Dimensions:</span> " + escapeHtml(dims) + "</div>" : "") +
+            "</div>";
+          return card;
+        }
 
-    app.onhostcontextchanged = function (ctx) {
-      if (ctx.theme) document.documentElement.setAttribute("data-theme", ctx.theme);
-      if (ctx.safeAreaInsets) {
-        var insets = ctx.safeAreaInsets;
-        document.body.style.padding = insets.top + "px " + insets.right + "px " + insets.bottom + "px " + insets.left + "px";
-      }
-    };
+        function renderCards(indicators, totalCount) {
+          cardsRow.innerHTML = "";
+          if (!indicators || indicators.length === 0) {
+            setMessage("No indicators found.", "no-results");
+            return;
+          }
+          var total = totalCount != null && Number.isFinite(totalCount) ? totalCount : indicators.length;
+          summaryEl.textContent = "Showing " + indicators.length + " of " + total.toLocaleString() + " indicator" + (total !== 1 ? "s" : "");
+          setMessage("");
+          for (var i = 0; i < indicators.length; i++) {
+            var card = buildCard(indicators[i]);
+            if (card) cardsRow.appendChild(card);
+          }
+        }
+
+        var lastIndicators = [];
+        var lastTotalCount = null;
+
+        var app = new App({ name: "Data360 Search Results", version: "1.0.0" });
+
+        function processToolResult(payload) {
+          var content = payload && payload.content;
+          var textPart = content && content.find(function (c) { return c.type === "text"; });
+          if (!textPart || !textPart.text) return;
+          try {
+            var data = JSON.parse(textPart.text);
+            if (data.error) {
+              summaryEl.textContent = "";
+              renderCards([]);
+              setMessage(data.error, "error");
+              return;
+            }
+            var raw = data.indicators;
+            var indicators = Array.isArray(raw) ? raw : [];
+            lastIndicators = indicators;
+            lastTotalCount = data.total_count != null && Number.isFinite(data.total_count) ? data.total_count : null;
+            renderCards(indicators, lastTotalCount);
+          } catch (_e) {
+            setMessage("Invalid tool result.", "error");
+          }
+        }
+
+        try {
+          app.ontoolresult = processToolResult;
+        } catch (_e) {
+          /* SDK may not expose ontoolresult in this version; new-search still works via processToolResult() */
+        }
+
+        newSearchForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          var query = (newSearchInput.value || "").trim();
+          if (!query) return;
+          newSearchBtn.disabled = true;
+          setMessage("Searching…", "loading");
+          try {
+            var result = await app.callServerTool({
+              name: "data360_search_indicators",
+              arguments: { query: query, limit: 20 }
+            });
+            if (result && result.content) {
+              processToolResult({ content: result.content });
+            } else {
+              setMessage("No results returned.", "no-results");
+            }
+          } catch (err) {
+            var msg = (err && err.message) || String(err);
+            setMessage("Search failed: " + msg, "error");
+            if (window.__showAppError) window.__showAppError(msg);
+          } finally {
+            newSearchBtn.disabled = false;
+          }
+        });
+
+        app.onhostcontextchanged = function (ctx) {
+          if (ctx && ctx.theme) document.documentElement.setAttribute("data-theme", ctx.theme);
+          if (ctx && ctx.safeAreaInsets) {
+            var insets = ctx.safeAreaInsets;
+            document.body.style.padding = insets.top + "px " + insets.right + "px " + insets.bottom + "px " + insets.left + "px";
+          }
+        };
 
         await app.connect();
       } catch (e) {
@@ -450,7 +644,7 @@ def _search_view_html() -> str:
         if (window.__showAppError) {
           window.__showAppError(
             msg.indexOf("Failed to fetch") !== -1 || msg.indexOf("import") !== -1 || msg.indexOf("Loading") !== -1
-              ? "App script failed to load. When running locally, the chat host may need to allow https://unpkg.com in the app iframe CSP. Details: " + msg
+              ? "App script failed to load. Check if the host allows https://unpkg.com in the iframe CSP. Details: " + msg
               : msg
           );
         }
