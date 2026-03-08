@@ -361,7 +361,7 @@ async def search(
     # LLM clients sometimes hallucinate these from the internal SearchRequest model.
     count: bool = True,
     n_results: int | None = None,
-    filter: str | None = None,
+    filter: str | None = None,  # noqa: A002 - name must match LLM-hallucinated param
     orderby: str | None = None,
     select: str | None = None,
     skip: int | None = None,
@@ -391,9 +391,21 @@ async def search(
     """
     # Handle common parameter aliases sent by LLM clients
     # TODO: Remove this once we have a better way to handle parameters.
-    if n_results is not None and limit == 5:
+    if n_results is not None:
+        if limit != 5 and limit != n_results:
+            _logger.warning(
+                "Both limit=%d and n_results=%d provided; using n_results",
+                limit,
+                n_results,
+            )
         limit = n_results
-    if skip is not None and offset == 0:
+    if skip is not None:
+        if offset != 0 and offset != skip:
+            _logger.warning(
+                "Both offset=%d and skip=%d provided; using skip",
+                offset,
+                skip,
+            )
         offset = skip
 
     # NOTE: This function is for MVP only, we should be testing the relevance and performance

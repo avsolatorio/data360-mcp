@@ -1,5 +1,6 @@
 """Tests for data360.api module."""
 
+import json
 import re
 
 import httpx
@@ -230,6 +231,111 @@ class TestSearch:
         assert not result.indicators
         assert result.error is not None
         assert "Failed to parse" in result.error
+
+    @pytest.mark.asyncio
+    async def test_search_n_results_alias_at_default_limit(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that n_results overrides the default limit."""
+        ALIAS_LIMIT = 3
+        captured_payloads: list[dict] = []
+
+        def capture_callback(request: httpx.Request) -> httpx.Response:
+            captured_payloads.append(json.loads(request.content))
+            return httpx.Response(
+                200,
+                json={
+                    "@odata.context": "https://api.test.example.com/$metadata",
+                    "@odata.count": 0,
+                    "value": [],
+                },
+            )
+
+        httpx_mock.add_callback(capture_callback, method="POST")
+
+        await search("population", n_results=ALIAS_LIMIT)
+
+        assert len(captured_payloads) == 1
+        assert captured_payloads[0]["top"] == ALIAS_LIMIT
+
+    @pytest.mark.asyncio
+    async def test_search_skip_alias_at_default_offset(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that skip overrides the default offset."""
+        ALIAS_OFFSET = 2
+        captured_payloads: list[dict] = []
+
+        def capture_callback(request: httpx.Request) -> httpx.Response:
+            captured_payloads.append(json.loads(request.content))
+            return httpx.Response(
+                200,
+                json={
+                    "@odata.context": "https://api.test.example.com/$metadata",
+                    "@odata.count": 0,
+                    "value": [],
+                },
+            )
+
+        httpx_mock.add_callback(capture_callback, method="POST")
+
+        await search("population", skip=ALIAS_OFFSET)
+
+        assert len(captured_payloads) == 1
+        assert captured_payloads[0]["skip"] == ALIAS_OFFSET
+
+    @pytest.mark.asyncio
+    async def test_search_alias_overrides_explicit_primary(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that n_results wins over an explicit limit when both differ."""
+        EXPLICIT_LIMIT = 10
+        ALIAS_LIMIT = 3
+        captured_payloads: list[dict] = []
+
+        def capture_callback(request: httpx.Request) -> httpx.Response:
+            captured_payloads.append(json.loads(request.content))
+            return httpx.Response(
+                200,
+                json={
+                    "@odata.context": "https://api.test.example.com/$metadata",
+                    "@odata.count": 0,
+                    "value": [],
+                },
+            )
+
+        httpx_mock.add_callback(capture_callback, method="POST")
+
+        await search("population", limit=EXPLICIT_LIMIT, n_results=ALIAS_LIMIT)
+
+        assert len(captured_payloads) == 1
+        assert captured_payloads[0]["top"] == ALIAS_LIMIT
+
+    @pytest.mark.asyncio
+    async def test_search_alias_agrees_with_primary(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that no issue arises when limit and n_results agree."""
+        AGREED_LIMIT = 3
+        captured_payloads: list[dict] = []
+
+        def capture_callback(request: httpx.Request) -> httpx.Response:
+            captured_payloads.append(json.loads(request.content))
+            return httpx.Response(
+                200,
+                json={
+                    "@odata.context": "https://api.test.example.com/$metadata",
+                    "@odata.count": 0,
+                    "value": [],
+                },
+            )
+
+        httpx_mock.add_callback(capture_callback, method="POST")
+
+        await search("population", limit=AGREED_LIMIT, n_results=AGREED_LIMIT)
+
+        assert len(captured_payloads) == 1
+        assert captured_payloads[0]["top"] == AGREED_LIMIT
 
 
 class TestGetMetadata:
