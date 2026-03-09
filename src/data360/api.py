@@ -83,7 +83,10 @@ def _strip_data_row(row: dict[str, Any]) -> dict[str, Any]:
     COMP_BREAKDOWN_1, COMP_BREAKDOWN_2) only when their value is non-trivial
     (i.e. not _T or _Z).
 
-    Based on a 16-database survey documented in payload_analysis.md.
+    Note: COMP_BREAKDOWN_3 is intentionally excluded -- it was observed as ``_Z``
+    across all 16 surveyed databases and never carries data.
+
+    Based on a 16-database survey documented in docs/payload_analysis.md.
     """
     filtered = {k: v for k, v in row.items() if k in _CORE_FIELDS}
     for field in _CONDITIONAL_FIELDS:
@@ -150,6 +153,21 @@ def _strip_disaggregation(
 
         result.append(entry)
     return result
+
+
+async def _resolve_queried_countries(
+    required_country: str | None,
+) -> list[str] | None:
+    """Resolve a required_country string into a list of 3-letter codes.
+
+    Returns None if required_country is falsy or resolution fails.
+    """
+    if not required_country:
+        return None
+    resolved = await _resolve_country_code(required_country)
+    if not resolved:
+        return None
+    return [c.strip() for c in resolved.split(",")]
 
 
 def _validate_user_filters(
@@ -654,6 +672,9 @@ async def get_metadata(
         MetadataResponse:
             indicator_metadata: Dict of requested metadata fields for the indicator, or None if not found.
             disaggregation_options: List of dicts with field_name and field_value (list of valid codes).
+                Dimensions with no disaggregation (INDICATOR, FREQ, single-_T SEX/AGE/URBANISATION)
+                are omitted. REF_AREA is summarized as {count, sample} or {count, queried}
+                instead of the full field_value list.
             error: Error message string if any request failed; otherwise None.
     """
     # Use provided function or default
@@ -661,11 +682,7 @@ async def get_metadata(
         get_valid_disaggregations_func = _get_valid_disaggregations
 
     # Resolve country codes if provided
-    queried_countries: list[str] | None = None
-    if required_country:
-        resolved = await _resolve_country_code(required_country)
-        if resolved:
-            queried_countries = [c.strip() for c in resolved.split(",")]
+    queried_countries = await _resolve_queried_countries(required_country)
 
     # Validate inputs
     try:
@@ -786,18 +803,17 @@ async def get_disaggregation(
             When provided, REF_AREA shows which queried countries have data for this indicator.
 
     Returns:
-        On success: dict with key "dimensions", a list of dicts each with:
-            field_name: Dimension name (e.g. TIME_PERIOD, REF_AREA, SEX, AGE, URBANISATION).
-            field_value: List of valid codes (e.g. years, country codes, F/M/_T).
+        On success: dict with key "dimensions", a list of dicts. Trivial dimensions
+            (INDICATOR, FREQ, single-_T SEX/AGE/URBANISATION) are omitted. Each dict has:
+            field_name: Dimension name (e.g. TIME_PERIOD, REF_AREA, SEX).
+            field_value: List of valid codes (for TIME_PERIOD sorted chronologically; for SEX/AGE etc.).
+            REF_AREA is special: returns {count, sample} (5 sorted codes) or, when
+            required_country is given, {count, queried: {code: bool}}.
         On failure: dict with key "error" and an error message string.
-        TIME_PERIOD gives actual available years (may have gaps). REF_AREA lists countries with data.
+        TIME_PERIOD gives actual available years (may have gaps).
     """
     # Resolve country codes if provided
-    queried_countries: list[str] | None = None
-    if required_country:
-        resolved = await _resolve_country_code(required_country)
-        if resolved:
-            queried_countries = [c.strip() for c in resolved.split(",")]
+    queried_countries = await _resolve_queried_countries(required_country)
 
     disaggregation_url = (
         data360_config.disaggregation_url or f"{data360_config.api_url}/disaggregation"
