@@ -16,11 +16,23 @@ from .prompts import SYSTEM_PROMPT
 DATABASES = {
     "databases": [
         {"id": "WB_WDI", "name": "World Development Indicators"},
-        {"id": "IPC_IPC", "name": "IPC Acute Food Insecurity"},
+        {"id": "WB_GS", "name": "Gender Statistics"},
+        {"id": "WB_HNP", "name": "Health, Nutrition & Population"},
+        {"id": "WB_HCP", "name": "Human Capital Project"},
         {"id": "WB_SSGD", "name": "Social Sustainability Global Database"},
-        {"id": "WB_POVERTY", "name": "Poverty and Inequality Platform"},
+        {"id": "WB_ESG", "name": "Environment, Social & Governance"},
+        {"id": "WB_SE4ALL", "name": "Sustainable Energy for All"},
+        {"id": "WB_RISE", "name": "RISE Regulatory Indicators"},
+        {"id": "WB_WITS", "name": "World Integrated Trade Solution"},
+        {"id": "IPC_IPC", "name": "IPC Acute Food Insecurity"},
+        {"id": "OECD_BROADBAND", "name": "OECD Broadband Statistics"},
+        {"id": "OECD_IDD", "name": "OECD Income Distribution"},
+        {"id": "ITU_DH", "name": "ITU Digital Development"},
+        {"id": "WJP_ROL", "name": "World Justice Project Rule of Law"},
+        {"id": "WEF_TTDI", "name": "WEF Travel & Tourism Development"},
+        {"id": "IMF_FAS", "name": "IMF Financial Access Survey"},
     ],
-    "note": "These are EXAMPLES only. Always use the 'database_id' returned by data360_search_indicators.",
+    "note": "Use 'database_id' returned by data360_search_indicators. Call data360_list_indicators(database_id) to see available indicators.",
 }
 
 
@@ -106,20 +118,23 @@ DATA_FILTERS = {
 
 
 DATA_SCHEMA = {
-    "description": "Standard schema for Data360 API responses. Use these field names when requesting visualizations.",
-    "standard_columns": {
-        "time_period": "The date or year of the observation (e.g., '2020-01-01'). Always relevant for time series.",
-        "obs_value": "The numeric value of the indication. This is the primary metric to visualize.",
-        "ref_area": "Country or region code (e.g., 'KEN'). Use for geographical comparison.",
-        "indicator": "The indicator ID.",
+    "description": "Data rows are prefiltered to only include relevant fields. Always present: 5 core fields. Conditionally present: disaggregation fields when their values are non-trivial.",
+    "core_fields": {
+        "obs_value": "The numeric data value.",
+        "time_period": "Date or year of the observation (e.g., '2023', '2024-07-01').",
+        "ref_area": "Country or region code (e.g., 'KEN').",
+        "unit_measure": "Unit of measurement (e.g., 'PT', 'USD_K_2015', 'PS').",
+        "claim_id": "Verification hash for data provenance.",
     },
-    "dimensions": {
-        "description": "Common dimensions that may appear based on the indicator. Check get_disaggregation to confirm availability.",
-        "sex": "Gender breakdown (e.g., 'F', 'M').",
-        "age": "Age group breakdown.",
-        "urbanisation": "Urban/Rural breakdown."
+    "conditional_fields": {
+        "description": "Included only when values carry real disaggregation (not _T total or _Z not-applicable).",
+        "sex": "Gender breakdown ('F', 'M'). Present in WB_HCP, WB_SSGD, WB_GS.",
+        "age": "Age group ('Y15T24', 'Y18T65', etc.). Present in WB_SSGD, OECD_IDD.",
+        "urbanisation": "Urban/Rural ('URB', 'RUR'). Present in WB_SSGD.",
+        "comp_breakdown_1": "Indicator subtype (e.g., IPC phase period, OECD indicator type, WEF rank/value/score).",
+        "comp_breakdown_2": "Secondary breakdown (e.g., IPC phase level, OECD income definition).",
     },
-    "visualization_guidance": "When calling get_viz_spec(relevant_fields=...), prioritize 'time_period' and 'obs_value'. Include 'ref_area' or dimensions like 'sex' only if you want to facilitate comparison/grouping in the chart."
+    "visualization_guidance": "When calling get_viz_spec(relevant_fields=...), prioritize 'time_period' and 'obs_value'. Include 'ref_area' or dimensions like 'sex' only for comparison/grouping."
 }
 
 
