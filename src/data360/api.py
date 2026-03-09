@@ -31,6 +31,7 @@ data360_config = get_data360_settings()
 COUNTRY_CODE_LENGTH = 3
 SCORE_THRESHOLD = 70
 MAX_RETURN_STATEMENTS = 6
+DEFAULT_SEARCH_LIMIT = 5
 
 
 def _short_hash(data: dict[str, Any]) -> str:
@@ -355,10 +356,12 @@ async def _resolve_country_code(country_query: str) -> str | None:
 async def search(
     query: str,
     required_country: str | None = None,
-    limit: int = 5,
+    limit: int = DEFAULT_SEARCH_LIMIT,
     offset: int = 0,
-    # The following parameters are accepted but ignored.
-    # LLM clients sometimes hallucinate these from the internal SearchRequest model.
+    # The following parameters are accepted for robustness; LLM clients sometimes
+    # hallucinate them from the internal SearchRequest model.
+    # n_results/skip are treated as aliases for limit/offset when the primary
+    # parameter is still at its default; the rest are silently ignored.
     count: bool = True,
     n_results: int | None = None,
     filter: str | None = None,  # noqa: A002 - name must match LLM-hallucinated param
@@ -389,24 +392,27 @@ async def search(
             count, total_count, offset, has_more, next_offset: Pagination fields.
             error: Error message string if the request failed; otherwise None.
     """
-    # Handle common parameter aliases sent by LLM clients
-    # TODO: Remove this once we have a better way to handle parameters.
+    # Handle common parameter aliases sent by LLM clients.
+    # Aliases only apply when the primary parameter is at its default value;
+    # an explicit limit/offset always takes precedence over n_results/skip.
     if n_results is not None:
-        if limit != 5 and limit != n_results:
+        if limit == DEFAULT_SEARCH_LIMIT:
+            limit = n_results
+        elif limit != n_results:
             _logger.warning(
-                "Both limit=%d and n_results=%d provided; using n_results",
+                "Both limit=%d and n_results=%d provided; using limit",
                 limit,
                 n_results,
             )
-        limit = n_results
     if skip is not None:
-        if offset != 0 and offset != skip:
+        if offset == 0:
+            offset = skip
+        elif offset != skip:
             _logger.warning(
-                "Both offset=%d and skip=%d provided; using skip",
+                "Both offset=%d and skip=%d provided; using offset",
                 offset,
                 skip,
             )
-        offset = skip
 
     # NOTE: This function is for MVP only, we should be testing the relevance and performance
     # of the retrieval process in the future.
