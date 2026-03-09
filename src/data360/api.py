@@ -40,6 +40,21 @@ SCORE_THRESHOLD = 70
 MAX_RETURN_STATEMENTS = 6
 DEFAULT_SEARCH_LIMIT = 5
 
+# Prefiltering constants for get_data output.
+# Based on a 16-database survey (see payload_analysis.md for full documentation).
+# Always-keep fields: the core data the LLM needs.
+_CORE_FIELDS = frozenset(
+    {"OBS_VALUE", "TIME_PERIOD", "REF_AREA", "UNIT_MEASURE", "claim_id"}
+)
+# Conditional fields: kept only when their value is non-trivial (not _T or _Z).
+# SEX/AGE/URBANISATION carry real disaggregation in WB_HCP, WB_SSGD, OECD_IDD.
+# COMP_BREAKDOWN_1/2 carry semantic data in IPC_IPC, OECD_BROADBAND, WB_SE4ALL, WEF_TTDI.
+_CONDITIONAL_FIELDS = frozenset(
+    {"SEX", "AGE", "URBANISATION", "COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2"}
+)
+# SDMX standard codes meaning "total" and "not applicable".
+_TRIVIAL_VALUES = frozenset({"_T", "_Z"})
+
 
 def _short_hash(data: dict[str, Any]) -> str:
     """PCN claim_id 8-character hash for data verification."""
@@ -58,6 +73,83 @@ def _get_valid_disaggregations(
         else:
             valid.append(field)
     return valid
+
+
+def _strip_data_row(row: dict[str, Any]) -> dict[str, Any]:
+    """Strip boilerplate fields from a data row for LLM token savings.
+
+    Keeps core fields (OBS_VALUE, TIME_PERIOD, REF_AREA, UNIT_MEASURE, claim_id)
+    and conditionally includes disaggregation fields (SEX, AGE, URBANISATION,
+    COMP_BREAKDOWN_1, COMP_BREAKDOWN_2) only when their value is non-trivial
+    (i.e. not _T or _Z).
+
+    Based on a 16-database survey documented in payload_analysis.md.
+    """
+    filtered = {k: v for k, v in row.items() if k in _CORE_FIELDS}
+    for field in _CONDITIONAL_FIELDS:
+        val = row.get(field)
+        if val and val not in _TRIVIAL_VALUES:
+            filtered[field] = val
+    return filtered
+
+
+# Dimensions to always strip from disaggregation output.
+_STRIP_DIMENSIONS = frozenset({"INDICATOR", "FREQ"})
+# Dimensions where a single _T value means "no disaggregation available".
+_TRIVIAL_SINGLE_DIMENSIONS = frozenset({"SEX", "AGE", "URBANISATION"})
+# Maximum number of REF_AREA codes to include in the sample.
+_REF_AREA_SAMPLE_SIZE = 5
+
+
+def _strip_disaggregation(
+    dimensions: list[dict[str, Any]],
+    queried_countries: list[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Strip bloat from disaggregation dimensions for LLM token savings.
+
+    Rules:
+    1. Remove INDICATOR and FREQ (always single-value, already known).
+    2. Remove SEX/AGE/URBANISATION if only value is _T (no disaggregation).
+    3. Sort TIME_PERIOD chronologically.
+    4. Summarize REF_AREA: total count + which queried countries have data.
+    """
+    result = []
+    for dim in dimensions:
+        name = dim.get("field_name", "")
+        values = dim.get("field_value", [])
+
+        # Rule 1: strip trivial dimensions
+        if name in _STRIP_DIMENSIONS:
+            continue
+
+        # Rule 2: strip single-value _T dimensions
+        if name in _TRIVIAL_SINGLE_DIMENSIONS and values == ["_T"]:
+            continue
+
+        entry: dict[str, Any] = {"field_name": name}
+
+        # Preserve label_name if present
+        if "label_name" in dim:
+            entry["label_name"] = dim["label_name"]
+
+        # Rule 3: sort TIME_PERIOD
+        if name == "TIME_PERIOD":
+            entry["field_value"] = sorted(values)
+        # Rule 4: summarize REF_AREA with country lookup
+        elif name == "REF_AREA":
+            entry["count"] = len(values)
+            if queried_countries:
+                ref_set = set(values)
+                entry["queried"] = {
+                    code: code in ref_set for code in queried_countries
+                }
+            else:
+                entry["sample"] = sorted(values)[:_REF_AREA_SAMPLE_SIZE]
+        else:
+            entry["field_value"] = values
+
+        result.append(entry)
+    return result
 
 
 def _validate_user_filters(
@@ -538,6 +630,7 @@ async def get_metadata(
     select_fields: list[str] | None = None,
     get_valid_disaggregations_func: Any | None = None,
     fetch_disaggregation: bool = True,
+    required_country: str | None = None,
 ) -> MetadataResponse:
     """Get metadata and disaggregation options for a Data360 indicator.
 
@@ -553,6 +646,9 @@ async def get_metadata(
             relevance, aggregation_method, periodicity, time_periods, ref_country, sources_note.
         get_valid_disaggregations_func: Internal use; function to filter raw disaggregation response.
         fetch_disaggregation: If True (default), also fetch disaggregation dimensions (field_name, field_value).
+        required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
+            Use comma-separated for multiple (e.g. "China, USA"). When provided,
+            REF_AREA in disaggregation shows which queried countries have data.
 
     Returns:
         MetadataResponse:
@@ -563,6 +659,13 @@ async def get_metadata(
     # Use provided function or default
     if get_valid_disaggregations_func is None:
         get_valid_disaggregations_func = _get_valid_disaggregations
+
+    # Resolve country codes if provided
+    queried_countries: list[str] | None = None
+    if required_country:
+        resolved = await _resolve_country_code(required_country)
+        if resolved:
+            queried_countries = [c.strip() for c in resolved.split(",")]
 
     # Validate inputs
     try:
@@ -642,8 +745,9 @@ async def get_metadata(
 
                 try:
                     raw_disaggregations = disagg_res.json()
-                    disaggregations = get_valid_disaggregations_func(
-                        raw_disaggregations
+                    disaggregations = _strip_disaggregation(
+                        get_valid_disaggregations_func(raw_disaggregations),
+                        queried_countries,
                     )
                 except ValueError as e:
                     mcp_err = ParseError(context="disaggregation", original_error=e)
@@ -666,6 +770,7 @@ async def get_metadata(
 async def get_disaggregation(
     database_id: str,
     indicator_id: str,
+    required_country: str | None = None,
 ) -> dict[str, Any]:
     """Get disaggregation options for a Data360 indicator (valid filter values).
 
@@ -676,6 +781,9 @@ async def get_disaggregation(
     Args:
         database_id: Database identifier (e.g., WB_GS, WB_SSGD).
         indicator_id: Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD).
+        required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
+            Use comma-separated names or codes to check multiple countries in one call (e.g. "China, USA").
+            When provided, REF_AREA shows which queried countries have data for this indicator.
 
     Returns:
         On success: dict with key "dimensions", a list of dicts each with:
@@ -684,6 +792,13 @@ async def get_disaggregation(
         On failure: dict with key "error" and an error message string.
         TIME_PERIOD gives actual available years (may have gaps). REF_AREA lists countries with data.
     """
+    # Resolve country codes if provided
+    queried_countries: list[str] | None = None
+    if required_country:
+        resolved = await _resolve_country_code(required_country)
+        if resolved:
+            queried_countries = [c.strip() for c in resolved.split(",")]
+
     disaggregation_url = (
         data360_config.disaggregation_url or f"{data360_config.api_url}/disaggregation"
     )
@@ -701,7 +816,7 @@ async def get_disaggregation(
             raw_data = response.json()
             # Filter out _Z values and format response
             valid_dimensions = _get_valid_disaggregations(raw_data)
-            return {"dimensions": valid_dimensions}
+            return {"dimensions": _strip_disaggregation(valid_dimensions, queried_countries)}
 
     except Exception as e:
         mcp_err = classify_error(e, context="disaggregation")
@@ -862,9 +977,21 @@ async def get_data(
             if len(raw_data) > limit:
                 raw_data = raw_data[:limit]
 
-            # Add claim_id for data verification just before returning
+            # Add claim_id for data verification (computed on raw row)
             for row in raw_data:
                 row["claim_id"] = _short_hash(row)
+
+            # Promote COMMENT_TS to metadata (repeats identically per row)
+            if raw_data and api_metadata is not None:
+                comment_ts = next(
+                    (r.get("COMMENT_TS") for r in raw_data if r.get("COMMENT_TS")),
+                    None,
+                )
+                if comment_ts:
+                    api_metadata["indicator_description"] = comment_ts
+
+            # Strip boilerplate fields for LLM token savings
+            raw_data = [_strip_data_row(row) for row in raw_data]
 
             return IndicatorDataResponse(
                 data=raw_data,
