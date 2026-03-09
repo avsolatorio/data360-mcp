@@ -285,10 +285,10 @@ class TestSearch:
         assert captured_payloads[0]["skip"] == ALIAS_OFFSET
 
     @pytest.mark.asyncio
-    async def test_search_alias_overrides_explicit_primary(
+    async def test_search_explicit_limit_takes_precedence_over_alias(
         self, httpx_mock: pytest_httpx.HTTPXMock
     ):
-        """Test that n_results wins over an explicit limit when both differ."""
+        """Test that an explicit limit takes precedence when n_results also provided."""
         EXPLICIT_LIMIT = 10
         ALIAS_LIMIT = 3
         captured_payloads: list[dict] = []
@@ -309,7 +309,7 @@ class TestSearch:
         await search("population", limit=EXPLICIT_LIMIT, n_results=ALIAS_LIMIT)
 
         assert len(captured_payloads) == 1
-        assert captured_payloads[0]["top"] == ALIAS_LIMIT
+        assert captured_payloads[0]["top"] == EXPLICIT_LIMIT
 
     @pytest.mark.asyncio
     async def test_search_alias_agrees_with_primary(
