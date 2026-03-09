@@ -343,3 +343,68 @@ class TestStripDisaggregation:
         assert ref["count"] == 8
         assert "sample" in ref
         assert "queried" not in ref
+
+    def test_empty_dimensions(self):
+        """Test that empty input returns empty output."""
+        from data360.api import _strip_disaggregation
+
+        result = _strip_disaggregation([])
+        assert result == []
+
+    def test_single_country_ref_area(self):
+        """Test REF_AREA with a single country still produces count + sample."""
+        from data360.api import _strip_disaggregation
+
+        dims = [{"field_name": "REF_AREA", "field_value": ["KEN"]}]
+        result = _strip_disaggregation(dims)
+        ref = next(d for d in result if d["field_name"] == "REF_AREA")
+        assert ref["count"] == 1
+        assert ref["sample"] == ["KEN"]
+        assert "field_value" not in ref
+
+
+class TestGetDataDisaggregationIndependence:
+    """Tests confirming get_data re-fetches disaggregation independently."""
+
+    @pytest.mark.asyncio
+    async def test_get_data_does_not_consume_stripped_disaggregation(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Confirm that get_data fetches raw disaggregation via the API,
+        not the stripped output from _strip_disaggregation.
+
+        This verifies that the REF_AREA shape change (count/sample instead
+        of field_value) in _strip_disaggregation does NOT break get_data's
+        internal _build_disaggregation_params which reads field_value.
+        """
+        mock_data_response = {
+            "value": [{
+                "OBS_VALUE": "100", "TIME_PERIOD": "2023", "REF_AREA": "KEN",
+                "UNIT_MEASURE": "PT", "SEX": "_T", "AGE": "_T",
+                "URBANISATION": "_T", "COMP_BREAKDOWN_1": "_Z",
+                "COMP_BREAKDOWN_2": "_Z", "COMP_BREAKDOWN_3": "_Z",
+                "DATABASE_ID": "WB_WDI", "INDICATOR": "WB_WDI_SP_POP_TOTL",
+                "FREQ": "A",
+            }],
+        }
+        httpx_mock.add_response(
+            method="POST", url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
+        )
+        httpx_mock.add_response(
+            method="GET", url=re.compile(r".*/disaggregation.*"),
+            json=[
+                {"field_name": "REF_AREA", "field_value": ["KEN", "USA", "GBR"]},
+                {"field_name": "SEX", "field_value": ["_T"]},
+            ],
+        )
+        httpx_mock.add_response(
+            method="GET", url=re.compile(r".*/data\\?.*"),
+            json=mock_data_response,
+        )
+        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
+        # Should succeed without errors -- confirms get_data uses raw
+        # disaggregation (with field_value) not the stripped version.
+        assert result.error is None
+        assert result.data is not None
+        assert len(result.data) == 1
