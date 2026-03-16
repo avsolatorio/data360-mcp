@@ -25,12 +25,13 @@ app = FastAPI(
 )  # pyright: ignore[reportUnusedExpression]
 
 
-# Mount MCP app at root — the path="/mcp" in http_app() handles the /mcp route
-app.mount("/", mcp_app)
-# Mount static files
+# Mount static files FIRST (more specific path must come before catch-all)
 static_dir = os.path.join(os.getcwd(), "static")
 os.makedirs(static_dir, exist_ok=True)
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
+# Mount MCP app at root — the path="/mcp" in http_app() handles the /mcp route
+app.mount("/", mcp_app)
+
 
 # Tools and other resources are automatically registered via imports in mcp_server/__init__.py
 # See src/data360/mcp_server/tools.py for tool definitions
