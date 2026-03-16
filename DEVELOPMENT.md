@@ -57,6 +57,14 @@ uv run ruff check .
 uv run pyright
 ```
 
+## Third-Party Licenses
+
+To regenerate `THIRD_PARTY_LICENSES.md`:
+
+```bash
+uv run poe licenses
+```
+
 ## Using the Python Library Directly
 
 ```python
