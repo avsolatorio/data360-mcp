@@ -1,0 +1,16 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+extends:
+  - ./authors.yml
+project:
+  id: b7e28366-ebcb-4504-b623-b9671d0ca7fc
+  title: "Data360 MCP Server Documentation"
+  description: "Documentation for the Data360 MCP Server, a MCP tool for analyzing data in the context of economic research and development."
+  keywords: ["data management", "economic research", "MCP Server", "Data360"]
+  github: https://github.com/worldbank/data360-mcp
+    
+site:
+  template: book-theme
+  options:
+    favicon: favicon.ico
+    logo: site_logo.png
