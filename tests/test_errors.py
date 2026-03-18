@@ -1,5 +1,7 @@
 """Tests for data360.errors module."""
 
+import logging
+
 import httpx
 import pytest
 
@@ -13,6 +15,13 @@ from data360.errors import (
     ValidationError,
     classify_error,
 )
+
+
+@pytest.fixture(autouse=True)
+def suppress_error_logs(caplog):
+    """Suppress data360.errors log output for all tests unless explicitly asserted."""
+    with caplog.at_level(logging.CRITICAL, logger="data360.errors"):
+        yield
 
 
 class TestData360MCPError:
@@ -154,3 +163,48 @@ class TestClassifyError:
             assert isinstance(err, Data360MCPError), (
                 f"{type(err).__name__} is not a Data360MCPError"
             )
+
+
+class TestLogging:
+    """Tests for the automatic logging behaviour in Data360MCPError.__init__."""
+
+    def test_logs_on_construction(self, caplog):
+        """Constructing any Data360MCPError should emit a log record."""
+        with caplog.at_level(logging.ERROR, logger="data360.errors"):
+            Data360MCPError(error_code="timeout:search")
+        assert len(caplog.records) == 1
+        record = caplog.records[0]
+        assert record.levelno == logging.ERROR
+        assert "timeout:search" in record.message
+
+    def test_not_found_logs_at_warning(self, caplog):
+        """NotFoundError should log at WARNING, not ERROR."""
+        with caplog.at_level(logging.WARNING, logger="data360.errors"):
+            NotFoundError(context="indicator")
+        assert len(caplog.records) == 1
+        assert caplog.records[0].levelno == logging.WARNING
+
+    def test_traceback_captured_for_raised_exception(self, caplog):
+        """When original_error was raised, exc_info should include a traceback."""
+        try:
+            raise ValueError("boom")
+        except ValueError as exc:
+            original = exc
+
+        with caplog.at_level(logging.ERROR, logger="data360.errors"):
+            Data360MCPError(
+                error_code="unexpected:test", original_error=original
+            )
+
+        assert len(caplog.records) == 1
+        record = caplog.records[0]
+        # exc_info is a (type, value, traceback) tuple; traceback must be non-None
+        assert record.exc_info is not None
+        assert record.exc_info[2] is not None, "Expected a real traceback"
+
+    def test_no_exc_info_without_original_error(self, caplog):
+        """When no original_error is provided, exc_info should be None."""
+        with caplog.at_level(logging.ERROR, logger="data360.errors"):
+            Data360MCPError(error_code="unexpected:test")
+        assert len(caplog.records) == 1
+        assert caplog.records[0].exc_info is None

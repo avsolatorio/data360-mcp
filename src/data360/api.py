@@ -302,13 +302,11 @@ async def _search_raw(
             try:
                 response_data = response.json()
             except ValueError as e:
-                _logger.error(f"Failed to parse JSON response: {e}")
                 mcp_error = ParseError(context="search", original_error=e)
             else:
                 try:
                     return _process_search_response(response_data, request)
                 except Exception as e:
-                    _logger.error(f"Failed to validate response data: {e}")
                     mcp_error = ParseError(
                         context="search",
                         detail=f"Failed to parse API response: {str(e)}",
@@ -317,7 +315,6 @@ async def _search_raw(
 
     except Exception as e:
         mcp_error = classify_error(e, context="search")
-        _logger.error(mcp_error.detail)
 
     if mcp_error:
         return SearchResponse(items=None, error=mcp_error.detail)
@@ -623,16 +620,13 @@ async def get_metadata(
                         context="metadata",
                         detail=f"No metadata found for indicator ID '{indicator_id}'",
                     )
-                    _logger.warning(mcp_err.detail)
                     errors.append(mcp_err.detail)
             except ValueError as e:
                 mcp_err = ParseError(context="metadata", original_error=e)
-                _logger.error(mcp_err.detail)
                 errors.append(mcp_err.detail)
 
     except Exception as e:
         mcp_err = classify_error(e, context="metadata")
-        _logger.exception(mcp_err.detail)
         errors.append(mcp_err.detail)
 
     # 2. Fetch Disaggregation
@@ -653,12 +647,10 @@ async def get_metadata(
                     )
                 except ValueError as e:
                     mcp_err = ParseError(context="disaggregation", original_error=e)
-                    _logger.error(mcp_err.detail)
                     errors.append(mcp_err.detail)
 
         except Exception as e:
             mcp_err = classify_error(e, context="disaggregation")
-            _logger.error(mcp_err.detail)
             errors.append(mcp_err.detail)
 
     # 3. Combine and Return
@@ -713,7 +705,6 @@ async def get_disaggregation(
 
     except Exception as e:
         mcp_err = classify_error(e, context="disaggregation")
-        _logger.exception(mcp_err.detail)
         return {"error": mcp_err.detail}
 
 
@@ -780,7 +771,6 @@ async def get_data(
             detail=f"Invalid arguments: {e}",
             original_error=e,
         )
-        _logger.error(mcp_err.detail)
         return IndicatorDataResponse(error=mcp_err.detail)
 
     # Prepare API parameters
@@ -848,7 +838,6 @@ async def get_data(
                 data_json = data_res.json()
             except ValueError as e:
                 mcp_err = ParseError(context="data", original_error=e)
-                _logger.error(mcp_err.detail)
                 return IndicatorDataResponse(data=None, error=mcp_err.detail)
 
             raw_data = data_json.get("value", [])
@@ -891,7 +880,6 @@ async def get_data(
 
     except Exception as e:
         mcp_err = classify_error(e, context="data")
-        _logger.error(mcp_err.detail)
         return IndicatorDataResponse(data=None, error=mcp_err.detail)
 
 
