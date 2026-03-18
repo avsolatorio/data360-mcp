@@ -6,7 +6,10 @@ Follows the pattern from https://github.com/avsolatorio/data-ai-chatbot/blob/dev
 Error codes follow the format: "<type>:<context>" (e.g. "http_error:search", "timeout:metadata").
 """
 
+import logging
 from typing import Any
+
+_logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -56,7 +59,11 @@ class Data360MCPError(Exception):
         error_code: Structured code like "http_error:search".
         detail: Human/LLM-readable error message.
         original_error: The original exception that caused this error, if any.
+        log_level: logging level used when this error is constructed. Subclasses
+            may override (e.g. NotFoundError uses WARNING).
     """
+
+    log_level: int = logging.ERROR
 
     def __init__(
         self,
@@ -68,6 +75,18 @@ class Data360MCPError(Exception):
         self.detail = detail or self._get_message(error_code)
         self.original_error = original_error
         super().__init__(self.detail)
+        exc_info = (
+            (type(original_error), original_error, original_error.__traceback__)
+            if original_error is not None
+            else None
+        )
+        _logger.log(
+            self.log_level,
+            "[%s] %s",
+            self.error_code,
+            self.detail,
+            exc_info=exc_info,
+        )
 
     def _get_message(self, error_code: str) -> str:
         return _ERROR_MESSAGES.get(
@@ -179,6 +198,8 @@ class ValidationError(Data360MCPError):
 
 class NotFoundError(Data360MCPError):
     """Resource not found errors."""
+
+    log_level: int = logging.WARNING
 
     def __init__(
         self,
