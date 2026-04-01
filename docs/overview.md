@@ -1,5 +1,7 @@
 # Data360 MCP Server
 
+> **Project site:** The marketing landing page for this repository is published at **[https://worldbank.github.io/data360-mcp](https://worldbank.github.io/data360-mcp)** (`docs/index.html`). This file is the markdown overview for readers browsing the repo on GitHub.
+
 A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gives LLM agents direct access to the World Bank's [Data360 Platform](https://data360.worldbank.org/).
 
 ## Overview

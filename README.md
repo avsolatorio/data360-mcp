@@ -126,7 +126,11 @@ For chatbot integration, copy `data360://system-prompt` into your system prompt.
 
 ## Documentation
 
-Full documentation is available at: **https://worldbank.github.io/data360-mcp**
+**Project site:** [worldbank.github.io/data360-mcp](https://worldbank.github.io/data360-mcp) — landing page with features, tools, and connection details.
+
+A markdown overview lives in [docs/overview.md](docs/overview.md). The site is deployed with [GitHub Actions](.github/workflows/pages.yml) on pushes to `main` or `dev`. In the repository **Settings → Pages**, set **Build and deployment** source to **GitHub Actions** (first-time setup).
+
+**Preview locally:** from the repository root, run `python -m http.server --directory docs` and open `http://127.0.0.1:8000/`.
 
 For developer setup, testing, and contribution instructions, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
