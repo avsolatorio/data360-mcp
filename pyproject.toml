@@ -2,7 +2,7 @@
 [project]
 name = "data360-mcp"
 version = "0.1.2"
-description = "Data360 MCP Project"
+description = "Model Context Protocol (MCP) server that gives LLM agents and chatbots direct access to the World Bank's Data360 Platform. Search, validate, and retrieve development indicators—from GDP and poverty to gender equality and climate—with structured metadata and time-series data, without hallucinating values."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -33,6 +33,7 @@ dev = [
   "pytest-httpx>=0.27.0",
   "pytest-cov>=4.1.0",
   "pip-licenses>=5.0.0",
+  "pip-audit>=2.10.0",
 ]
 
 [tool.ruff.lint]
