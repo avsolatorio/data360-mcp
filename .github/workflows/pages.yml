@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - dev
+      - feat/landing-page
   workflow_dispatch:
 
 permissions:
