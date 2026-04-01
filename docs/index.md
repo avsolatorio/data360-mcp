@@ -69,10 +69,9 @@ For local development setup, testing, and architecture details, see:
 
 ## Contact
 
-**Aivin V. Solatorio**
-World Bank — Data, Analytics & Data Science
-- Work: [asolatorio@worldbank.org](mailto:asolatorio@worldbank.org)
-- Personal: [avsolatorio@gmail.com](mailto:avsolatorio@gmail.com)
+**AI for Data - Data for AI Team** ([ai4data@worldbank.org](mailto:ai4data@worldbank.org))
+Development Data Group / Office of the World Bank Group Chief Statistician
+World Bank Group
 
 ## License
 

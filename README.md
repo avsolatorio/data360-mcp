@@ -134,10 +134,9 @@ For developer setup, testing, and contribution instructions, see [DEVELOPMENT.md
 
 ## Contact
 
-**Aivin V. Solatorio**
-World Bank — Development Data Group
-AI for Data - Data for AI
-- Work: [asolatorio@worldbank.org](mailto:asolatorio@worldbank.org)
+**AI for Data - Data for AI Team** ([ai4data@worldbank.org](mailto:ai4data@worldbank.org))
+Development Data Group / Office of the World Bank Group Chief Statistician
+World Bank Group
 
 ---
 
