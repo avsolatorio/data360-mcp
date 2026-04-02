@@ -6,6 +6,7 @@ on:
       - 'TODO/**.md'
     branches:
       - '**'
+  workflow_dispatch:
 
 jobs:
   sync:
