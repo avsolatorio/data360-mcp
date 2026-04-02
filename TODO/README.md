@@ -1,41 +1,34 @@
 # data360-mcp — task index
 
-Agent-oriented work items for visualization and MCP `SYSTEM_PROMPT` alignment with the Data AI Chatbot backlog.
+Agent-oriented work items. Each task is a standalone `.md` file with context, acceptance criteria, and dependency metadata. (5 active)
 
-**Sibling repo (same parent folder as this repo):** [vercel-ai-chatbot/TODO](../../vercel-ai-chatbot/TODO/README.md)
+**Sibling repos:** [data-ai-chatbot/TODO](../data-ai-chatbot/TODO/README.md)
 
 ## Task IDs
 
 | ID | File | Summary |
 |----|------|---------|
-| MCP-001 | [MCP-001-system-prompt-sync.md](./MCP-001-system-prompt-sync.md) | Mirror Writer/Planner-facing rules into `SYSTEM_PROMPT` (`src/data360/mcp_server/prompts.py`) |
-| MCP-002 | [MCP-002-vega-line-tooltips.md](./MCP-002-vega-line-tooltips.md) | Default Vega-Lite tooltips for line/area (and similar) in generated specs |
-| MCP-003 | [MCP-003-beeswarm-multi-country.md](./MCP-003-beeswarm-multi-country.md) | High series cardinality → strip/beeswarm (or facet) instead of unreadable line clutter |
-| MCP-004 | [MCP-004-viz-empty-data-guard.md](./MCP-004-viz-empty-data-guard.md) | Guard `generate_vega_spec()` against empty `data` list (KeyError crash) |
-| MCP-005 | [MCP-005-cache-configurable-ttl.md](./MCP-005-cache-configurable-ttl.md) | Make cache TTL configurable via `MCP_CACHE_TTL` env var (default 300 s) |
+| MCP-001 | [MCP-001-system-prompt-sync.md](./MCP-001-system-prompt-sync.md) | Reduce drift between MCP-only LLM clients and the Data AI Chatbot: update `SY... |
+| MCP-002 | [MCP-002-vega-line-tooltips.md](./MCP-002-vega-line-tooltips.md) | Line (and similar) charts emitted by `get_viz_spec` show hover tooltips by de... |
+| MCP-003 | [MCP-003-beeswarm-multi-country.md](./MCP-003-beeswarm-multi-country.md) | When many countries/series make line charts unreadable or data is truncated, ... |
+| MCP-004 | [MCP-004-viz-empty-data-guard.md](./MCP-004-viz-empty-data-guard.md) | Prevent `generate_vega_spec()` from crashing with a `KeyError` when `data` is... |
+| MCP-005 | [MCP-005-cache-configurable-ttl.md](./MCP-005-cache-configurable-ttl.md) | Replace the hardcoded 300-second TTL in the cache module with a value read fr... |
 
 ## Dependency graph (this repo)
 
 ```mermaid
 flowchart TB
-  MCP001[MCP-001 SYSTEM_PROMPT]
-  MCP002[MCP-002 tooltips]
-  MCP003[MCP-003 beeswarm]
-  MCP004[MCP-004 empty-data guard]
-  MCP005[MCP-005 configurable TTL]
-  MCP002 -.->|shared code| MCP003
-  MCP002 -.->|shared viz pipeline| MCP004
-  MCP003 -.->|shared viz pipeline| MCP004
+  MCP001["MCP-001 SYSTEM_PROMPT — align with cha"]
+  MCP002["MCP-002 Vega-Lite — default tooltips f"]
+  MCP003["MCP-003 Many countries — beeswarm/stri"]
+  MCP004["MCP-004 viz — guard against empty data"]
+  MCP005["MCP-005 cache — make TTL configurable "]
+  MCP002 -.-> MCP003
 ```
-
-**Note:** MCP-002 → MCP-003 is a **soft** ordering (shared viz pipeline); MCP-001 is independent of MCP-002/003 but should follow chatbot **BE-001** for content sync.
-
-## Cross-repo
-
-See [CROSS-REPO-GRAPH.md](./CROSS-REPO-GRAPH.md) (mirrors vercel-ai-chatbot’s graph for MCP edges).
 
 ## How to use
 
-1. Point an agent at this folder or a single `MCP-*.md`.
-2. **MCP-001** should be coordinated with `vercel-ai-chatbot/TODO/BE-001-writer-planner-prompts.md`.
-3. Update task `status` in frontmatter when done.
+1. Point an agent at `TODO/` or a specific task file.
+2. Check `depends_on` in the task frontmatter before starting — all hard deps must be `done`.
+3. Claim a task by setting `status: in_progress` and committing immediately.
+4. After completing a task, set `status: done`, tick acceptance criteria checkboxes, and check `blocks` for newly unblocked tasks.
