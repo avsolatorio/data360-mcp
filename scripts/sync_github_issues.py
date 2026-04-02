@@ -7,10 +7,11 @@ import re
 import subprocess
 import yaml
 from pathlib import Path
-from github import Github
+from github import Auth, Github
 
 REPO_SLUG = os.environ["GITHUB_REPOSITORY"]
 TOKEN = os.environ["GITHUB_TOKEN"]
+EVENT_NAME = os.environ.get("GITHUB_EVENT_NAME", "")
 
 STATUS_LABELS = {
     "pending": "status:pending",
@@ -122,7 +123,7 @@ def get_changed_task_files(todo_dir: Path) -> list[Path] | None:
 
 
 def main():
-    g = Github(TOKEN)
+    g = Github(auth=Auth.Token(TOKEN))
     repo = g.get_repo(REPO_SLUG)
     todo_dir = Path("TODO")
 
@@ -130,7 +131,11 @@ def main():
         print("No TODO directory found.")
         return
 
-    changed = get_changed_task_files(todo_dir)
+    # workflow_dispatch has no meaningful HEAD~1 diff — always do full sync
+    if EVENT_NAME == "workflow_dispatch":
+        changed = None
+    else:
+        changed = get_changed_task_files(todo_dir)
 
     if changed is None:
         task_files = [f for f in todo_dir.glob("*.md") if f.name not in SKIP_FILES]
