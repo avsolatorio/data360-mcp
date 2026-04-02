@@ -1,0 +1,41 @@
+name: Sync TODO tasks to GitHub Issues
+
+on:
+  push:
+    paths:
+      - 'TODO/**.md'
+    branches:
+      - '**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install PyYAML PyGithub
+
+      - name: Sync tasks to issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python scripts/sync_github_issues.py
+
+      - name: Commit issue numbers back to task files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet TODO/ || (git add TODO/ && git commit -m "ci: update github_issue refs [skip ci]")
+          git push
