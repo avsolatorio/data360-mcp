@@ -1,0 +1,8 @@
+{
+  "name": "data360-mcp",
+  "domains": ["MCP"],
+  "github_repo": "worldbank/data360-mcp",
+  "peers": {
+    "data-ai-chatbot": "${DATA_AI_CHATBOT_PATH}"
+  }
+}

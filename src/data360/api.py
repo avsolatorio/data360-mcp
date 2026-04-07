@@ -6,9 +6,16 @@ from urllib.parse import urlencode
 
 import dotenv
 import httpx
-from pydantic import ValidationError
+from pydantic import ValidationError as PydanticValidationError
 
 from .config import get_data360_settings
+from .errors import (
+    Data360MCPError,
+    NotFoundError,
+    ParseError,
+    classify_error,
+)
+from .errors import ValidationError as Data360ValidationError
 from .models import (
     DiscoveryResult,
     EnrichedIndicator,
@@ -33,6 +40,21 @@ SCORE_THRESHOLD = 70
 MAX_RETURN_STATEMENTS = 6
 DEFAULT_SEARCH_LIMIT = 5
 
+# Prefiltering constants for get_data output.
+# Based on a 16-database survey (see payload_analysis.md for full documentation).
+# Always-keep fields: the core data the LLM needs.
+_CORE_FIELDS = frozenset(
+    {"OBS_VALUE", "TIME_PERIOD", "REF_AREA", "UNIT_MEASURE", "claim_id"}
+)
+# Conditional fields: kept only when their value is non-trivial (not _T or _Z).
+# SEX/AGE/URBANISATION carry real disaggregation in WB_HCP, WB_SSGD, OECD_IDD.
+# COMP_BREAKDOWN_1/2 carry semantic data in IPC_IPC, OECD_BROADBAND, WB_SE4ALL, WEF_TTDI.
+_CONDITIONAL_FIELDS = frozenset(
+    {"SEX", "AGE", "URBANISATION", "COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2"}
+)
+# SDMX standard codes meaning "total" and "not applicable".
+_TRIVIAL_VALUES = frozenset({"_T", "_Z"})
+
 
 def _short_hash(data: dict[str, Any]) -> str:
     """PCN claim_id 8-character hash for data verification."""
@@ -51,6 +73,101 @@ def _get_valid_disaggregations(
         else:
             valid.append(field)
     return valid
+
+
+def _strip_data_row(row: dict[str, Any]) -> dict[str, Any]:
+    """Strip boilerplate fields from a data row for LLM token savings.
+
+    Keeps core fields (OBS_VALUE, TIME_PERIOD, REF_AREA, UNIT_MEASURE, claim_id)
+    and conditionally includes disaggregation fields (SEX, AGE, URBANISATION,
+    COMP_BREAKDOWN_1, COMP_BREAKDOWN_2) only when their value is non-trivial
+    (i.e. not _T or _Z).
+
+    Note: COMP_BREAKDOWN_3 is intentionally excluded -- it was observed as ``_Z``
+    across all 16 surveyed databases and never carries data.
+
+    Based on a 16-database survey documented in docs/payload_analysis.md.
+    """
+    filtered = {k: v for k, v in row.items() if k in _CORE_FIELDS}
+    for field in _CONDITIONAL_FIELDS:
+        val = row.get(field)
+        if val and val not in _TRIVIAL_VALUES:
+            filtered[field] = val
+    return filtered
+
+
+# Dimensions to always strip from disaggregation output.
+_STRIP_DIMENSIONS = frozenset({"INDICATOR", "FREQ"})
+# Dimensions where a single _T value means "no disaggregation available".
+_TRIVIAL_SINGLE_DIMENSIONS = frozenset({"SEX", "AGE", "URBANISATION"})
+# Maximum number of REF_AREA codes to include in the sample.
+_REF_AREA_SAMPLE_SIZE = 5
+
+
+def _strip_disaggregation(
+    dimensions: list[dict[str, Any]],
+    queried_countries: list[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Strip bloat from disaggregation dimensions for LLM token savings.
+
+    Rules:
+    1. Remove INDICATOR and FREQ (always single-value, already known).
+    2. Remove SEX/AGE/URBANISATION if only value is _T (no disaggregation).
+    3. Sort TIME_PERIOD chronologically.
+    4. Summarize REF_AREA: total count + which queried countries have data.
+    """
+    result = []
+    for dim in dimensions:
+        name = dim.get("field_name", "")
+        values = dim.get("field_value", [])
+
+        # Rule 1: strip trivial dimensions
+        if name in _STRIP_DIMENSIONS:
+            continue
+
+        # Rule 2: strip single-value _T dimensions
+        if name in _TRIVIAL_SINGLE_DIMENSIONS and values == ["_T"]:
+            continue
+
+        entry: dict[str, Any] = {"field_name": name}
+
+        # Preserve label_name if present
+        if "label_name" in dim:
+            entry["label_name"] = dim["label_name"]
+
+        # Rule 3: sort TIME_PERIOD
+        if name == "TIME_PERIOD":
+            entry["field_value"] = sorted(values)
+        # Rule 4: summarize REF_AREA with country lookup
+        elif name == "REF_AREA":
+            entry["count"] = len(values)
+            if queried_countries:
+                ref_set = set(values)
+                entry["queried"] = {
+                    code: code in ref_set for code in queried_countries
+                }
+            else:
+                entry["sample"] = sorted(values)[:_REF_AREA_SAMPLE_SIZE]
+        else:
+            entry["field_value"] = values
+
+        result.append(entry)
+    return result
+
+
+async def _resolve_queried_countries(
+    required_country: str | None,
+) -> list[str] | None:
+    """Resolve a required_country string into a list of 3-letter codes.
+
+    Returns None if required_country is falsy or resolution fails.
+    """
+    if not required_country:
+        return None
+    resolved = await _resolve_country_code(required_country)
+    if not resolved:
+        return None
+    return [c.strip() for c in resolved.split(",")]
 
 
 def _validate_user_filters(
@@ -286,7 +403,7 @@ async def _search_raw(
     url = data360_config.search_url or f"{data360_config.api_url}/searchv2"
     payload = _build_search_payload(request)
 
-    error_msg: str | None = None
+    mcp_error: Data360MCPError | None = None
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(url, json=payload)
@@ -295,28 +412,22 @@ async def _search_raw(
             try:
                 response_data = response.json()
             except ValueError as e:
-                _logger.error(f"Failed to parse JSON response: {e}")
-                error_msg = f"Failed to parse API response: {str(e)}"
+                mcp_error = ParseError(context="search", original_error=e)
             else:
                 try:
                     return _process_search_response(response_data, request)
                 except Exception as e:
-                    _logger.error(f"Failed to validate response data: {e}")
-                    error_msg = f"Failed to validate API response: {str(e)}"
+                    mcp_error = ParseError(
+                        context="search",
+                        detail=f"Failed to parse API response: {str(e)}",
+                        original_error=e,
+                    )
 
     except Exception as e:
-        if isinstance(e, httpx.HTTPStatusError):
-            error_msg = f"HTTP error {e.response.status_code}: {e.response.text}"
-        elif isinstance(e, httpx.TimeoutException):
-            error_msg = f"Request timeout: {str(e)}"
-        elif isinstance(e, httpx.RequestError):
-            error_msg = f"Request error: {str(e)}"
-        else:
-            error_msg = f"Unexpected error: {str(e)}"
-        _logger.error(error_msg)
+        mcp_error = classify_error(e, context="search")
 
-    if error_msg:
-        return SearchResponse(items=None, error=error_msg)
+    if mcp_error:
+        return SearchResponse(items=None, error=mcp_error.detail)
     # This should never be reached, but pyright needs it for type checking
     return SearchResponse(
         items=None, error="Unexpected error: no response and no error message"
@@ -537,6 +648,7 @@ async def get_metadata(
     select_fields: list[str] | None = None,
     get_valid_disaggregations_func: Any | None = None,
     fetch_disaggregation: bool = True,
+    required_country: str | None = None,
 ) -> MetadataResponse:
     """Get metadata and disaggregation options for a Data360 indicator.
 
@@ -552,22 +664,36 @@ async def get_metadata(
             relevance, aggregation_method, periodicity, time_periods, ref_country, sources_note.
         get_valid_disaggregations_func: Internal use; function to filter raw disaggregation response.
         fetch_disaggregation: If True (default), also fetch disaggregation dimensions (field_name, field_value).
+        required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
+            Use comma-separated for multiple (e.g. "China, USA"). When provided,
+            REF_AREA in disaggregation shows which queried countries have data.
 
     Returns:
         MetadataResponse:
             indicator_metadata: Dict of requested metadata fields for the indicator, or None if not found.
             disaggregation_options: List of dicts with field_name and field_value (list of valid codes).
+                Dimensions with no disaggregation (INDICATOR, FREQ, single-_T SEX/AGE/URBANISATION)
+                are omitted. REF_AREA is summarized as {count, sample} or {count, queried}
+                instead of the full field_value list.
             error: Error message string if any request failed; otherwise None.
     """
     # Use provided function or default
     if get_valid_disaggregations_func is None:
         get_valid_disaggregations_func = _get_valid_disaggregations
 
+    # Resolve country codes if provided
+    queried_countries = await _resolve_queried_countries(required_country)
+
     # Validate inputs
     try:
         MetadataRequest(database_id=database_id, indicator_id=indicator_id)
-    except ValidationError as e:
-        return MetadataResponse(error=f"Invalid arguments: {e}")
+    except PydanticValidationError as e:
+        mcp_err = Data360ValidationError(
+            context="metadata",
+            detail=f"Invalid arguments: {e}",
+            original_error=e,
+        )
+        return MetadataResponse(error=mcp_err.detail)
 
     # Determine URLs
     metadata_url = data360_config.metadata_url or f"{data360_config.api_url}/metadata"
@@ -610,28 +736,18 @@ async def get_metadata(
                             if k in select_fields
                         }
                 else:
-                    error_msg = f"No metadata found for indicator ID '{indicator_id}'"
-                    _logger.warning(error_msg)
-                    errors.append(error_msg)
+                    mcp_err = NotFoundError(
+                        context="metadata",
+                        detail=f"No metadata found for indicator ID '{indicator_id}'",
+                    )
+                    errors.append(mcp_err.detail)
             except ValueError as e:
-                error_msg = f"Failed to parse metadata JSON response: {str(e)}"
-                _logger.error(error_msg)
-                errors.append(error_msg)
+                mcp_err = ParseError(context="metadata", original_error=e)
+                errors.append(mcp_err.detail)
 
     except Exception as e:
-        error_msg: str
-        if isinstance(e, httpx.HTTPStatusError):
-            error_msg = f"HTTP error fetching metadata: {e.response.status_code} - {e.response.text}"
-        elif isinstance(e, httpx.TimeoutException):
-            error_msg = f"Timeout fetching metadata: {str(e)}"
-        elif isinstance(e, httpx.RequestError):
-            error_msg = (
-                f"Request error fetching metadata for {indicator_id!r}: {str(e)}"
-            )
-        else:
-            error_msg = f"Unexpected error fetching metadata: {str(e)}"
-        _logger.exception(error_msg)
-        errors.append(error_msg)
+        mcp_err = classify_error(e, context="metadata")
+        errors.append(mcp_err.detail)
 
     # 2. Fetch Disaggregation
     if fetch_disaggregation:
@@ -646,34 +762,17 @@ async def get_metadata(
 
                 try:
                     raw_disaggregations = disagg_res.json()
-                    disaggregations = get_valid_disaggregations_func(
-                        raw_disaggregations
+                    disaggregations = _strip_disaggregation(
+                        get_valid_disaggregations_func(raw_disaggregations),
+                        queried_countries,
                     )
                 except ValueError as e:
-                    error_msg = (
-                        f"Failed to parse disaggregation JSON response: {str(e)}"
-                    )
-                    _logger.error(error_msg)
-                    errors.append(error_msg)
+                    mcp_err = ParseError(context="disaggregation", original_error=e)
+                    errors.append(mcp_err.detail)
 
-        except httpx.HTTPStatusError as e:
-            error_msg = f"HTTP error fetching disaggregations: {e.response.status_code} - {e.response.text}"
-            _logger.error(error_msg)
-            errors.append(error_msg)
-        except httpx.TimeoutException as e:
-            error_msg = f"Timeout fetching disaggregations: {str(e)}"
-            _logger.error(error_msg)
-            errors.append(error_msg)
-        except httpx.RequestError as e:
-            error_msg = (
-                f"Request error fetching disaggregations for {indicator_id!r}: {str(e)}"
-            )
-            _logger.error(error_msg)
-            errors.append(error_msg)
         except Exception as e:
-            error_msg = f"Unexpected error fetching disaggregations: {str(e)}"
-            _logger.exception("Unexpected error in disaggregation fetch")
-            errors.append(error_msg)
+            mcp_err = classify_error(e, context="disaggregation")
+            errors.append(mcp_err.detail)
 
     # 3. Combine and Return
     error_message = "; ".join(errors) if errors else None
@@ -688,6 +787,7 @@ async def get_metadata(
 async def get_disaggregation(
     database_id: str,
     indicator_id: str,
+    required_country: str | None = None,
 ) -> dict[str, Any]:
     """Get disaggregation options for a Data360 indicator (valid filter values).
 
@@ -698,14 +798,23 @@ async def get_disaggregation(
     Args:
         database_id: Database identifier (e.g., WB_GS, WB_SSGD).
         indicator_id: Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD).
+        required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
+            Use comma-separated names or codes to check multiple countries in one call (e.g. "China, USA").
+            When provided, REF_AREA shows which queried countries have data for this indicator.
 
     Returns:
-        On success: dict with key "dimensions", a list of dicts each with:
-            field_name: Dimension name (e.g. TIME_PERIOD, REF_AREA, SEX, AGE, URBANISATION).
-            field_value: List of valid codes (e.g. years, country codes, F/M/_T).
+        On success: dict with key "dimensions", a list of dicts. Trivial dimensions
+            (INDICATOR, FREQ, single-_T SEX/AGE/URBANISATION) are omitted. Each dict has:
+            field_name: Dimension name (e.g. TIME_PERIOD, REF_AREA, SEX).
+            field_value: List of valid codes (for TIME_PERIOD sorted chronologically; for SEX/AGE etc.).
+            REF_AREA is special: returns {count, sample} (5 sorted codes) or, when
+            required_country is given, {count, queried: {code: bool}}.
         On failure: dict with key "error" and an error message string.
-        TIME_PERIOD gives actual available years (may have gaps). REF_AREA lists countries with data.
+        TIME_PERIOD gives actual available years (may have gaps).
     """
+    # Resolve country codes if provided
+    queried_countries = await _resolve_queried_countries(required_country)
+
     disaggregation_url = (
         data360_config.disaggregation_url or f"{data360_config.api_url}/disaggregation"
     )
@@ -723,17 +832,11 @@ async def get_disaggregation(
             raw_data = response.json()
             # Filter out _Z values and format response
             valid_dimensions = _get_valid_disaggregations(raw_data)
-            return {"dimensions": valid_dimensions}
+            return {"dimensions": _strip_disaggregation(valid_dimensions, queried_countries)}
 
-    except httpx.HTTPStatusError as e:
-        return {"error": f"HTTP error: {e.response.status_code} - {e.response.text}"}
-    except httpx.TimeoutException as e:
-        return {"error": f"Timeout: {str(e)}"}
-    except httpx.RequestError as e:
-        return {"error": f"Request error: {str(e)}"}
     except Exception as e:
-        _logger.exception("Unexpected error in get_disaggregation")
-        return {"error": f"Unexpected error: {str(e)}"}
+        mcp_err = classify_error(e, context="disaggregation")
+        return {"error": mcp_err.detail}
 
 
 async def get_data(
@@ -793,10 +896,13 @@ async def get_data(
             indicator_id=indicator_id,
             disaggregation_filters=disaggregation_filters,
         )
-    except ValidationError as e:
-        error_msg = f"Invalid arguments: {e}"
-        _logger.error(error_msg)
-        return IndicatorDataResponse(error=error_msg)
+    except PydanticValidationError as e:
+        mcp_err = Data360ValidationError(
+            context="data",
+            detail=f"Invalid arguments: {e}",
+            original_error=e,
+        )
+        return IndicatorDataResponse(error=mcp_err.detail)
 
     # Prepare API parameters
     params: dict[str, Any] = {
@@ -862,9 +968,8 @@ async def get_data(
             try:
                 data_json = data_res.json()
             except ValueError as e:
-                error_msg = f"Failed to parse data JSON response: {str(e)}"
-                _logger.error(error_msg)
-                return IndicatorDataResponse(data=None, error=error_msg)
+                mcp_err = ParseError(context="data", original_error=e)
+                return IndicatorDataResponse(data=None, error=mcp_err.detail)
 
             raw_data = data_json.get("value", [])
             total_count = data_json.get("@odata.count")  # May be None
@@ -888,9 +993,21 @@ async def get_data(
             if len(raw_data) > limit:
                 raw_data = raw_data[:limit]
 
-            # Add claim_id for data verification just before returning
+            # Add claim_id for data verification (computed on raw row)
             for row in raw_data:
                 row["claim_id"] = _short_hash(row)
+
+            # Promote COMMENT_TS to metadata (repeats identically per row)
+            if raw_data and api_metadata is not None:
+                comment_ts = next(
+                    (r.get("COMMENT_TS") for r in raw_data if r.get("COMMENT_TS")),
+                    None,
+                )
+                if comment_ts:
+                    api_metadata["indicator_description"] = comment_ts
+
+            # Strip boilerplate fields for LLM token savings
+            raw_data = [_strip_data_row(row) for row in raw_data]
 
             return IndicatorDataResponse(
                 data=raw_data,
@@ -904,19 +1021,9 @@ async def get_data(
                 failed_validation=validation_errors if validation_errors else None,
             )
 
-    except httpx.HTTPStatusError as e:
-        error_msg = (
-            f"HTTP error fetching data: {e.response.status_code} - {e.response.text}"
-        )
-    except httpx.TimeoutException as e:
-        error_msg = f"Timeout fetching data: {str(e)}"
-    except httpx.RequestError as e:
-        error_msg = f"Request error fetching data for {indicator_id!r}: {str(e)}"
     except Exception as e:
-        error_msg = f"Unexpected error fetching data: {str(e)}"
-
-    _logger.error(error_msg)
-    return IndicatorDataResponse(data=None, error=error_msg)
+        mcp_err = classify_error(e, context="data")
+        return IndicatorDataResponse(data=None, error=mcp_err.detail)
 
 
 async def get_indicators(database_id: str) -> list[str]:

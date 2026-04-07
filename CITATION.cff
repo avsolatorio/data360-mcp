@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Data360 MCP Server"
+abstract: "A Model Context Protocol (MCP) server that gives LLM agents direct access to the World Bank Data360 Platform, enabling agents to search, validate, and retrieve development indicators reliably."
+authors:
+  - family-names: "Macalaba"
+    given-names: "Rafael S."
+    affiliation: "World Bank"
+    email: "rmacalaba@worldbank.org"
+  - family-names: "Solatorio"
+    given-names: "Aivin V."
+    affiliation: "World Bank"
+    email: "asolatorio@worldbank.org"
+version: "0.1.2"
+date-released: "2026-04-01"
+license: MIT
+repository-code: "https://github.com/worldbank/data360-mcp"
+url: "https://worldbank.github.io/data360-mcp"
+keywords:
+  - "model context protocol"
+  - "mcp"
+  - "world bank"
+  - "data360"
+  - "open data"
+  - "llm"
+  - "ai4data"
+  - "ai agents"
+  - "development data"
+  - "wdi"

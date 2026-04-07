@@ -8,6 +8,7 @@ import pytest
 import pytest_httpx
 from data360.api import (
     _get_valid_disaggregations,
+    _strip_data_row,
     get_data,
     get_metadata,
     search,
@@ -214,7 +215,7 @@ class TestSearch:
 
         assert not result.indicators
         assert result.error is not None
-        assert "timeout" in result.error.lower()
+        assert "timed out" in result.error.lower()
 
     @pytest.mark.asyncio
     async def test_search_invalid_json(self, httpx_mock: pytest_httpx.HTTPXMock):
@@ -475,11 +476,15 @@ class TestGetMetadata:
 
         EXPECTED_FILTERED_COUNT = 2
         assert len(result.disaggregation_options) == EXPECTED_FILTERED_COUNT
-        # Verify _Z was filtered out
-        field_values = [opt["field_value"][0] for opt in result.disaggregation_options]
-        assert "_Z" not in field_values
-        assert "UGA" in field_values
-        assert "_T" in field_values
+        # Verify _Z was filtered out by _get_valid_disaggregations
+        field_names = [opt["field_name"] for opt in result.disaggregation_options]
+        # REF_AREA is summarized by _strip_disaggregation (count + sample)
+        ref_area = next(opt for opt in result.disaggregation_options if opt["field_name"] == "REF_AREA")
+        assert ref_area["count"] == 1
+        assert "UGA" in ref_area["sample"]
+        # UNIT_MEASURE is preserved as-is
+        unit = next(opt for opt in result.disaggregation_options if opt["field_name"] == "UNIT_MEASURE")
+        assert unit["field_value"] == ["_T"]
 
     @pytest.mark.asyncio
     async def test_get_metadata_http_error_metadata(
@@ -510,7 +515,7 @@ class TestGetMetadata:
         result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
 
         assert result.error is not None
-        assert "HTTP error fetching metadata" in result.error
+        assert "HTTP error" in result.error
 
     @pytest.mark.asyncio
     async def test_get_metadata_http_error_disaggregation(
@@ -554,7 +559,7 @@ class TestGetMetadata:
 
         assert result.indicator_metadata is not None
         assert result.error is not None
-        assert "HTTP error fetching disaggregations" in result.error
+        assert "HTTP error" in result.error
 
 
 class TestGetData:
@@ -772,7 +777,7 @@ class TestGetData:
 
         assert result.data is None
         assert result.error is not None
-        assert "HTTP error fetching data" in result.error
+        assert "HTTP error" in result.error
 
     @pytest.mark.asyncio
     async def test_get_data_invalid_json(self, httpx_mock: pytest_httpx.HTTPXMock):
