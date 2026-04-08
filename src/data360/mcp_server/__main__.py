@@ -17,7 +17,12 @@ def main(
 
     # Setup logging from configuration
     mcp_settings = get_mcp_server_settings()
-    setup_logging(log_file=mcp_settings.log_file, log_level=mcp_settings.log_level)
+    setup_logging(
+        log_file=mcp_settings.log_file,
+        log_level=mcp_settings.log_level,
+        env=mcp_settings.env,
+        azure_connection_string=mcp_settings.azure_connection_string,
+    )
 
     mcp.run(transport=transport, port=port)
 
