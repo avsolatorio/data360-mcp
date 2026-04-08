@@ -1,11 +1,21 @@
 """
 Visualization generation for Data360 data.
 
-Two public entry points:
-  get_viz_spec()              – single indicator (original, unchanged interface)
-  get_multi_indicator_viz_spec() – multi-indicator comparison (new)
+Fetches series via the Data360 API (``data360.api.get_data_api_url``), builds
+Vega-Lite specifications, then persists them either through the optional Charts API
+(``charts_api_url``) or as static JSON under ``static/viz_specs/``.
 
-Both return {"url": str, "error": str|None, "warning": str|None}.
+**Public tools**
+
+- ``get_viz_spec`` — one indicator. Uses Draco where appropriate and
+  ``data360.viz_config`` strategy dispatch for patterns Draco does not handle well.
+- ``get_multi_indicator_viz_spec`` — two to four indicators; merges frames and
+  dispatches multi-series strategies (scatter, layered lines, connected scatter, etc.).
+
+Return shape for both: ``{"url": str|None, "error": str|None, ...}``. Before any HTTP
+or ``json.dump``, specs are passed through ``_vega_spec_to_json_safe`` so
+``data.values`` never contains raw ``pandas.Timestamp`` / numpy scalars that would
+break JSON encoding.
 """
 
 from __future__ import annotations
@@ -46,6 +56,13 @@ VizResult = dict[str, str | None]
 
 
 def save_specs_to_static(vl_spec: dict) -> str:
+    """Persist ``vl_spec`` as JSON and return a URL the **browser** can fetch.
+
+    The frontend (or another client) loads this file over HTTP; it is not read
+    only inside Docker. ``WEBSITE_HOSTNAME`` should be a host:port the user's browser
+    can resolve; when unset we default to ``localhost`` and the MCP server port from
+    ``data360.config.get_mcp_server_settings()``.
+    """
     spec_id = str(uuid.uuid4())
     specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
     os.makedirs(specs_dir, exist_ok=True)
@@ -59,11 +76,19 @@ def save_specs_to_static(vl_spec: dict) -> str:
 
 
 async def post_spec_to_charts_api(vl_spec: dict) -> str:
+    """POST a Vega-Lite spec to the external Charts API (JSON body).
+
+    The service expects standard Vega-Lite keys (``$schema``, ``data``, ``mark``,
+    ``encoding``, …). Many deployments require a non-empty ``title``; we set a default
+    if missing. On success, returns a chart URL from ``Location``, response JSON
+    ``url`` / ``id``, or the configured API base as a last resort.
+    """
     settings = get_mcp_server_settings()
     url = settings.charts_api_url
     if not url:
         raise ValueError("charts_api_url is not configured")
     payload = dict(vl_spec)
+    # Charts API often rejects payloads without title
     payload.setdefault("title", vl_spec.get("title") or "Generated Visualization")
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
@@ -130,7 +155,11 @@ def _vega_spec_to_json_safe(obj: object) -> object:
 
 
 async def _store_spec(vl_spec: dict) -> str:
-    """Store spec: try charts API, fall back to static."""
+    """Persist a Vega-Lite dict: Charts API when configured, else static file.
+
+    Always runs ``_vega_spec_to_json_safe`` first so httpx ``json=`` and
+    ``json.dump`` cannot fail on non-JSON-native types in embedded data.
+    """
     safe = _vega_spec_to_json_safe(vl_spec)
     if not isinstance(safe, dict):
         raise TypeError("Vega spec must serialize to a JSON object")
@@ -524,7 +553,7 @@ async def get_viz_spec(
     except Exception as e:
         _logger.warning(f"Could not fetch metadata for title: {e}")
 
-    # 5. Clean data
+    # 5. Clean data — column selection, bar-vs-temporal time handling, renames (→ year/value/country)
     if "obs_value" in data.columns:
         data["obs_value"] = pd.to_numeric(data["obs_value"], errors="coerce")
 
