@@ -1,54 +1,57 @@
 """
 Visualization generation for Data360 data.
 
-This module fetches data from a Data360 API URL and generates
-Vega-Lite visualization specifications optimized for the data structure.
+Two public entry points:
+  get_viz_spec()              – single indicator (original, unchanged interface)
+  get_multi_indicator_viz_spec() – multi-indicator comparison (new)
+
+Both return {"url": str, "error": str|None, "warning": str|None}.
 """
 
+from __future__ import annotations
+
+import asyncio
 import json
 import logging
+import math
 import os
+import re
 import uuid
+from datetime import date, datetime
 from urllib.parse import parse_qs, urlparse
 
 import altair as alt
 import httpx
+import numpy as np
 import pandas as pd
 from draco import Draco, answer_set_to_dict, dict_to_facts, schema_from_dataframe
 from draco.renderer import AltairRenderer
 
-from data360.config import get_mcp_server_settings
 from data360 import viz_config
+from data360.config import get_mcp_server_settings
 
 _logger = logging.getLogger(__name__)
 
 _FALLBACK_WARNING = (
     "Draco could not determine an optimal encoding; "
-    "a default line chart was generated as fallback."
+    "a default chart was generated as fallback."
 )
+
+VizResult = dict[str, str | None]
+
+
+# ============================================================================
+# STORAGE HELPERS
+# ============================================================================
 
 
 def save_specs_to_static(vl_spec: dict) -> str:
-    """Save Vega-Lite spec to static/viz_specs/ directory.
-
-    Returns:
-        URL for the saved spec
-    """
     spec_id = str(uuid.uuid4())
     specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
     os.makedirs(specs_dir, exist_ok=True)
-
-    # Save Vega-Lite spec
     vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
     with open(vega_path, "w") as f:
         json.dump(vl_spec, f, indent=2)
-
-    # Return URL (assuming server runs on port 8021)
-    # Use host.docker.internal for Docker compatibility, or localhost if running natively
-    # For now, we default to localhost because the Frontend (browser) needs to access this,
-    # and host.docker.internal typically doesn't resolve in the browser on Mac/Windows without /etc/hosts hacks.
-    # HOWEVER, since the user explicitly asked for Docker support, we will stick to localhost
-    # because the browser (client-side) is what fetches this JSON, not the Docker container.
     base_url = os.environ.get(
         "WEBSITE_HOSTNAME", f"http://localhost:{get_mcp_server_settings().port}"
     )
@@ -56,24 +59,12 @@ def save_specs_to_static(vl_spec: dict) -> str:
 
 
 async def post_spec_to_charts_api(vl_spec: dict) -> str:
-    """POST Vega-Lite spec to the external charts API.
-
-    Expects the API to accept JSON with Vega-Lite fields (title, $schema, data,
-    mark, encoding). Returns the chart URL from the response if present, otherwise
-    a fallback URL built from the API base and response id.
-
-    Returns:
-        URL of the stored chart, or an error message on failure.
-    """
     settings = get_mcp_server_settings()
     url = settings.charts_api_url
     if not url:
         raise ValueError("charts_api_url is not configured")
-
-    # Charts API requires a title in the payload
     payload = dict(vl_spec)
     payload.setdefault("title", vl_spec.get("title") or "Generated Visualization")
-
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
             url,
@@ -81,8 +72,6 @@ async def post_spec_to_charts_api(vl_spec: dict) -> str:
             headers={"accept": "application/json", "Content-Type": "application/json"},
         )
         response.raise_for_status()
-
-    # Prefer Location header (e.g. 201 Created)
     location = response.headers.get("Location")
     if location:
         return (
@@ -90,94 +79,336 @@ async def post_spec_to_charts_api(vl_spec: dict) -> str:
             if location.startswith("http")
             else f"{url.rsplit('/', 1)[0]}/{location.lstrip('/')}"
         )
-
     body = response.json() if response.content else {}
     if isinstance(body, dict):
         if body.get("url"):
             return body["url"]
         if body.get("id"):
-            # GET endpoint: /api/v1/charts/{chart_id}
             return f"{url.rstrip('/')}/{body['id']}"
     return url
 
 
-# Chart type parsing is now handled by viz_config module
-# (see viz_config.parse_chart_type_hint)
+def _vega_spec_to_json_safe(obj: object) -> object:
+    """Recursively convert a Vega-Lite spec tree to JSON-serializable Python types.
 
+    Covers pandas/numpy scalars and datetimes that can appear in ``data.values`` or
+    elsewhere after ``DataFrame.to_dict`` (including merged dtypes and edge cases the
+    DataFrame-only sanitizer misses).
+    """
+    if obj is None:
+        return None
+    if isinstance(obj, (bool, str)):
+        return obj
+    if isinstance(obj, (int, float)) and not isinstance(obj, bool):
+        if isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
+            return None
+        return obj
+    if isinstance(obj, pd.Timestamp):
+        return obj.isoformat() if pd.notna(obj) else None
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    if isinstance(obj, np.datetime64):
+        return str(pd.Timestamp(obj))
+    if isinstance(obj, (np.integer, np.floating)):
+        if pd.isna(obj):
+            return None
+        return obj.item()
+    if isinstance(obj, np.bool_):
+        return bool(obj)
+    if isinstance(obj, dict):
+        return {k: _vega_spec_to_json_safe(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_vega_spec_to_json_safe(v) for v in obj]
+    if hasattr(obj, "item"):
+        try:
+            return _vega_spec_to_json_safe(obj.item())
+        except (ValueError, AttributeError, TypeError):
+            pass
+    raise TypeError(
+        f"Vega-Lite spec contains unsupported type for JSON: {type(obj).__name__}"
+    )
+
+
+async def _store_spec(vl_spec: dict) -> str:
+    """Store spec: try charts API, fall back to static."""
+    safe = _vega_spec_to_json_safe(vl_spec)
+    if not isinstance(safe, dict):
+        raise TypeError("Vega spec must serialize to a JSON object")
+    charts_url = get_mcp_server_settings().charts_api_url
+    if charts_url:
+        try:
+            return await post_spec_to_charts_api(safe)
+        except Exception as e:
+            _logger.warning(f"Charts API store failed, falling back to static: {e}")
+    return save_specs_to_static(safe)
+
+
+def _ok(url: str, warning: str | None = None) -> VizResult:
+    r: VizResult = {"url": url, "error": None}
+    if warning:
+        r["warning"] = warning
+    return r
+
+
+def _err(msg: str) -> VizResult:
+    return {"url": None, "error": msg}
+
+
+def _scalar_for_json(value: object) -> object:
+    """Coerce pandas/numpy scalars so stdlib json can encode them."""
+    if isinstance(value, pd.Timestamp):
+        return value.isoformat() if pd.notna(value) else None
+    return value
+
+
+def _sanitize_dataframe_for_json_records(df: pd.DataFrame) -> pd.DataFrame:
+    """Ensure ``DataFrame.to_dict(orient='records')`` is JSON-serializable (no Timestamp)."""
+    out = df.copy()
+    for col in out.columns:
+        if pd.api.types.is_datetime64_any_dtype(out[col]):
+            out[col] = out[col].map(
+                lambda x: x.isoformat() if pd.notna(x) else None
+            )
+        elif out[col].dtype == object:
+            out[col] = out[col].map(_scalar_for_json)
+    return out
+
+
+# ============================================================================
+# DATA FETCHING
+# ============================================================================
 
 
 async def _fetch_data_internal(url: str) -> pd.DataFrame:
-    """Fetch data from a Data360 API URL and return as DataFrame.
-
-    Args:
-        url: Data360 API URL
-
-    Returns:
-        pandas DataFrame with the data
-
-    Raises:
-        ValueError: If no data found or fetch fails
-    """
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.get(url)
         response.raise_for_status()
         data = response.json()
-
     raw_data = data.get("value", [])
     if not raw_data:
         raise ValueError("No data found at the provided URL.")
+    return pd.DataFrame(raw_data)
 
-    df = pd.DataFrame(raw_data)
-    return df
+
+async def _fetch_single_indicator(
+    database_id: str,
+    indicator_id: str,
+    country_code: str | None,
+    start_year: int | None,
+    end_year: int | None,
+    disaggregation_filters: dict | None,
+) -> tuple[pd.DataFrame, str | None, str | None]:
+    """Fetch one indicator and return (DataFrame, title, unit_label).
+
+    Returns (empty_df, None, None) on error — caller checks df.empty.
+    """
+    from data360.api import get_data_api_url, get_metadata
+
+    try:
+        data_url = await get_data_api_url(
+            database_id=database_id,
+            indicator_id=indicator_id,
+            country_code=country_code,
+            start_year=start_year,
+            end_year=end_year,
+            disaggregation_filters=disaggregation_filters,
+        )
+        df = await _fetch_data_internal(data_url)
+        df.columns = [c.lower() for c in df.columns]
+    except Exception as e:
+        _logger.error(f"Failed to fetch {indicator_id}: {e}")
+        return pd.DataFrame(), None, None
+
+    # Fetch title + unit from metadata
+    title, unit = None, None
+    try:
+        parsed = urlparse(data_url)
+        params = parse_qs(parsed.query)
+        db_id = params.get("DATABASE_ID", [database_id])[0]
+        ind_id = (
+            params.get("indicatorId", [None])[0]
+            or params.get("INDICATOR", [None])[0]
+            or indicator_id
+        )
+        meta = await get_metadata(db_id, ind_id)
+        if meta and meta.indicator_metadata:
+            title = meta.indicator_metadata.get("name")
+            unit = meta.indicator_metadata.get(
+                "measurement_unit"
+            ) or meta.indicator_metadata.get("unit_measure")
+    except Exception as e:
+        _logger.warning(f"Could not fetch metadata for {indicator_id}: {e}")
+
+    return df, title, unit
+
+
+# ============================================================================
+# DATA CLEANING HELPERS
+# ============================================================================
+
+
+def _clean_single_df(
+    data: pd.DataFrame,
+    relevant_fields: list[str] | None,
+    chart_type: str | None,
+    data_frequency: str | None,
+) -> tuple[pd.DataFrame, list[str]]:
+    """Clean + rename a single-indicator DataFrame for the Draco path."""
+    if relevant_fields:
+        req = [f.lower() for f in relevant_fields]
+        missing = [f for f in req if f not in data.columns]
+        if missing:
+            raise ValueError(
+                f"Requested fields not found: {missing}. Available: {list(data.columns)}"
+            )
+        valid_cols = req
+        for dim in ["ref_area", "sex", "age", "urbanisation"]:
+            if dim in data.columns and dim not in valid_cols:
+                uv = data[dim].unique()
+                if len(uv) > 1 or (len(uv) == 1 and uv[0] != "_T"):
+                    valid_cols.append(dim)
+        viz_data = data[valid_cols].copy()
+        relevant_cols = valid_cols
+    else:
+        relevant_cols = []
+        for col in ["time_period", "obs_value", "ref_area"]:
+            if col in data.columns:
+                relevant_cols.append(col)
+        for dim in ["sex", "age", "urbanisation"]:
+            if dim in data.columns:
+                uv = data[dim].unique()
+                if len(uv) > 1 or (len(uv) == 1 and uv[0] != "_T"):
+                    relevant_cols.append(dim)
+        viz_data = data[relevant_cols].copy() if relevant_cols else data.copy()
+
+    # Temporal preparation
+    if "time_period" in viz_data.columns:
+        try:
+            user_mark = viz_config.parse_chart_type_hint(chart_type)
+            action = viz_config.get_data_preparation_action(user_mark, data_frequency)
+            if action == "year_strings":
+                viz_data["time_period"] = pd.to_datetime(
+                    viz_data["time_period"]
+                ).dt.year.astype(str)
+            else:
+                viz_data["time_period"] = pd.to_datetime(viz_data["time_period"])
+        except Exception as e:
+            _logger.warning(f"time_period conversion failed: {e}")
+
+    if "obs_value" in viz_data.columns:
+        viz_data["obs_value"] = pd.to_numeric(viz_data["obs_value"], errors="coerce")
+
+    # Rename to friendly names
+    viz_data = viz_data.rename(
+        columns={"time_period": "year", "obs_value": "value", "ref_area": "country"}
+    )
+    relevant_cols = [
+        {"time_period": "year", "obs_value": "value", "ref_area": "country"}.get(c, c)
+        for c in relevant_cols
+    ]
+    return viz_data, relevant_cols
+
+
+async def _map_country_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
+    """Map REF_AREA / country codes to human-readable names."""
+    col = "country" if "country" in viz_data.columns else None
+    if col is None:
+        return viz_data
+    try:
+        from data360.providers import get_codelist_mapping
+
+        country_map = await get_codelist_mapping("REF_AREA")
+        viz_data[col] = viz_data[col].map(lambda x: country_map.get(x, x))
+    except Exception as e:
+        _logger.warning(f"Could not map country codes: {e}")
+    return viz_data
+
+
+def _slugify(name: str) -> str:
+    """Convert indicator name to a safe column name."""
+    s = name.lower().strip()
+    s = re.sub(r"[^a-z0-9]+", "_", s)
+    return s[:40].strip("_") or "indicator"
+
+
+def _make_unique_col(base: str, existing: set[str]) -> str:
+    col, n = base, 1
+    while col in existing:
+        col = f"{base}_{n}"
+        n += 1
+    return col
+
+
+# ============================================================================
+# TOOL: get_supported_chart_types
+# ============================================================================
 
 
 def get_supported_chart_types() -> str:
     """Return supported chart types and their data requirements as JSON.
 
-    Call before data360_get_viz_spec to choose an appropriate chart_type and to verify the
-    indicator has the right fields (e.g. time_period and obs_value for line charts).
-    No other tools are required before this one.
+    Call before data360_get_viz_spec or data360_get_multi_indicator_viz_spec
+    to choose the right chart_type for the data and user intent.
 
     Returns:
-        JSON string with key "chart_types": list of dicts, each with id (e.g. "line", "bar"),
-        description, when_to_use, and data_requirements; and "guidance" for selecting relevant_fields.
+        JSON string with chart_types list and strategy guidance.
     """
     chart_types = {
         "chart_types": [
             {
                 "id": "line",
-                "description": "Line chart for showing trends over time.",
-                "when_to_use": "Use when you have a continuous time variable and a quantitative measure.",
-                "data_requirements": "Requires 'time_period' (or similar date field) and 'obs_value' (metric).",
+                "description": "Line chart for temporal trends.",
+                "when_to_use": "Single indicator, 1+ countries, multiple years.",
+                "data_requirements": "time_period + obs_value. Color-codes countries automatically.",
             },
             {
                 "id": "bar",
-                "description": "Bar chart for comparing values across categories.",
-                "when_to_use": "Use for comparing metrics between discrete categories or time periods.",
-                "data_requirements": "Requires one categorical/ordinal field and 'obs_value'.",
+                "description": "Horizontal bar chart for ranking/comparison.",
+                "when_to_use": "Single indicator, multiple countries, typically one year.",
+                "data_requirements": "obs_value + country dimension.",
             },
             {
-                "id": "point",
-                "description": "Scatter plot (point chart) for correlation.",
-                "when_to_use": "Use to show the relationship between two quantitative variables.",
-                "data_requirements": "Requires two quantitative fields.",
+                "id": "scatter",
+                "description": "Scatterplot for correlation between two indicators.",
+                "when_to_use": "Exactly 2 indicator_ids, multiple countries, single year.",
+                "data_requirements": "Requires indicator_ids list with 2 entries in get_multi_indicator_viz_spec.",
             },
             {
-                "id": "area",
-                "description": "Area chart for cumulative trends.",
-                "when_to_use": "Use to show volume or quantity over time.",
-                "data_requirements": "Similar to line chart: 'time_period' and 'obs_value'.",
+                "id": "connected_scatter",
+                "description": "Connected scatterplot: 2 indicators over time.",
+                "when_to_use": "Exactly 2 indicator_ids, multiple countries, multiple years.",
+                "data_requirements": "Same as scatter but multi-year.",
             },
             {
-                "id": "tick",
-                "description": "Tick plot for distribution.",
-                "when_to_use": "Use to show the distribution of values along an axis.",
-                "data_requirements": "Requires one quantitative field.",
+                "id": "layered_lines",
+                "description": "Dual/multi-axis line chart for 2-3 indicators in one country.",
+                "when_to_use": "2-3 indicator_ids, typically 1 country, multi-year.",
+                "data_requirements": "Requires indicator_ids list in get_multi_indicator_viz_spec.",
+            },
+            {
+                "id": "small_multiples",
+                "description": "Faceted panel chart for breakdown × country comparisons.",
+                "when_to_use": "1 indicator, multiple breakdowns (sex/age) or many countries.",
+                "data_requirements": "Disaggregation dimensions with multiple values.",
+            },
+            {
+                "id": "strip",
+                "description": "Strip/beeswarm chart for cross-country distribution.",
+                "when_to_use": ">8 countries, single year.",
+                "data_requirements": "obs_value + many country values.",
             },
         ],
-        "guidance": "Select the 'relevant_fields' from the available data that match the 'data_requirements' of the desired chart type.",
+        "multi_indicator_note": (
+            "For scatter, connected_scatter, and layered_lines, use "
+            "data360_get_multi_indicator_viz_spec with an indicator_ids list."
+        ),
     }
     return json.dumps(chart_types, indent=2)
+
+
+# ============================================================================
+# TOOL: get_viz_spec (single indicator — original interface preserved)
+# ============================================================================
 
 
 async def get_viz_spec(
@@ -191,13 +422,11 @@ async def get_viz_spec(
     relevant_fields: list[str] | None = None,
     custom_constraints: list[str] | None = None,
     use_default_constraints: bool = True,
-) -> dict[str, str | None]:
-    """Generate a Vega-Lite chart from a Data360 indicator and return a URL to the chart.
+) -> VizResult:
+    """Generate a Vega-Lite chart from a single Data360 indicator.
 
-    Use when the user wants a visualization (line, bar, area, etc.). You need database_id and
-    indicator_id from data360_search_indicators. Optionally call data360_get_supported_chart_types
-    for chart type guidance and data360_get_disaggregation to ensure filter values are valid.
-    The tool builds the data URL, fetches data, cleans it, runs Draco for encoding, and stores the spec.
+    Use when the user wants a visualization for ONE indicator. For comparing multiple
+    indicators (scatter, dual-axis), use data360_get_multi_indicator_viz_spec instead.
 
     Args:
         database_id: Database identifier (e.g., WB_HNP, WB_WDI).
@@ -206,458 +435,462 @@ async def get_viz_spec(
         start_year: Optional start year (inclusive).
         end_year: Optional end year (inclusive).
         disaggregation_filters: Optional dict of dimension filters (e.g. {"SEX": "F"}).
-        chart_type: Optional hint (e.g. "line chart", "bar chart").
-        relevant_fields: Optional list of column names to use in the chart; infer from data structure.
+        chart_type: Optional hint — "line", "bar", "scatter", "strip", "small_multiples".
+        relevant_fields: Optional list of column names to include in the chart.
         custom_constraints: Optional list of raw Draco ASP constraints.
         use_default_constraints: If True (default), apply standard encoding heuristics.
 
     Returns:
-        Dict with "url", "error", and optionally "warning".
-        On success: url is the chart URL (string), error is None.
-        On failure: url is None, error is an error message string.
-        If Draco failed and a fallback chart was generated, "warning" contains a message.
+        Dict with "url" (chart URL on success), "error" (message on failure),
+        and optionally "warning" (if fallback was used).
     """
+    from data360.api import get_data_api_url, get_metadata
 
-    def ok(u: str) -> dict[str, str | None]:
-        return {"url": u, "error": None}
+    # 1. Build URL
+    try:
+        data_url = await get_data_api_url(
+            database_id=database_id,
+            indicator_id=indicator_id,
+            country_code=country_code,
+            start_year=start_year,
+            end_year=end_year,
+            disaggregation_filters=disaggregation_filters,
+        )
+    except ValueError as e:
+        return _err(f"Error: {e}")
 
-    def err(msg: str) -> dict[str, str | None]:
-        return {"url": None, "error": msg}
-
-    # 0. Generate URL internally
-    # Import locally to avoid circular top-level imports if any
-    from data360.api import get_data_api_url
-
-    data_url = await get_data_api_url(
-        database_id=database_id,
-        indicator_id=indicator_id,
-        country_code=country_code,
-        start_year=start_year,
-        end_year=end_year,
-        disaggregation_filters=disaggregation_filters,
-    )
-
-    # 1. Fetch data
+    # 2. Fetch data
     try:
         data = await _fetch_data_internal(data_url)
     except ValueError as e:
-        return err(f"Error: {e}")
+        return _err(f"Error: {e}")
     except httpx.HTTPStatusError as e:
-        return err(f"Error fetching data: {e.response.status_code}")
+        return _err(f"Error fetching data: {e.response.status_code}")
     except Exception as e:
         _logger.exception("Failed to fetch data")
-        return err(f"Error fetching data: {e}")
+        return _err(f"Error fetching data: {e}")
 
-    # 2. Clean data - standardize column names to lowercase
     data.columns = [c.lower() for c in data.columns]
 
-    # --- Detect frequency early for chart-aware data preparation ---
-    data_frequency = None  # Will store: 'A' (Annual), 'M' (Monthly), 'Q' (Quarterly)
+    # 3. Detect frequency
+    data_frequency = None
     try:
-        # Extract params from URL to get metadata
         parsed = urlparse(data_url)
         params = parse_qs(parsed.query)
-        db_id = params.get("DATABASE_ID", [None])[0]
+        db_id = params.get("DATABASE_ID", [database_id])[0]
         ind_id_param = (
             params.get("indicatorId", [None])[0]
             or params.get("INDICATOR", [None])[0]
-            or params.get("indicator", [None])[0]
+            or indicator_id
         )
-
         if db_id and ind_id_param:
-            from data360.api import get_metadata
-
             meta = await get_metadata(db_id, ind_id_param)
-
-            # Extract frequency from disaggregation options (preferred) or metadata
             if meta:
-                # First, try to get frequency from disaggregation options (most reliable)
                 if meta.disaggregation_options:
-                    for disagg in meta.disaggregation_options:
-                        if disagg.get("field_name") == "FREQ":
-                            freq_values = disagg.get("field_value", [])
-                            if freq_values:
-                                # Use the first frequency code (A, M, Q, etc.)
-                                data_frequency = freq_values[0]
-                                _logger.info(f"Detected frequency from FREQ dimension: {data_frequency}")
-                                break
-
-                # Fallback: infer from periodicity field
-                # Fallback: infer from periodicity field using config
+                    for d in meta.disaggregation_options:
+                        if d.get("field_name") == "FREQ" and d.get("field_value"):
+                            data_frequency = d["field_value"][0]
+                            break
                 if not data_frequency and meta.indicator_metadata:
-                    periodicity = meta.indicator_metadata.get("periodicity", "")
-                    data_frequency = viz_config.infer_frequency_from_periodicity(periodicity)
-
-                    if data_frequency:
-                        _logger.info(f"Inferred frequency from periodicity field: {data_frequency} (periodicity: {periodicity})")
+                    data_frequency = viz_config.infer_frequency_from_periodicity(
+                        meta.indicator_metadata.get("periodicity", "")
+                    )
     except Exception as e:
         _logger.warning(f"Could not detect frequency: {e}")
 
-    # --- Chart-aware temporal data preparation ---
-    # Prepare data based on chart type and frequency BEFORE Draco inference
-    # This allows Draco to correctly infer schema and choose optimal encoding
-    if "time_period" in data.columns:
-        try:
-            # Parse chart type hint to determine if it's a bar chart
-            user_mark_type = viz_config.parse_chart_type_hint(chart_type)
-            is_bar_chart = user_mark_type == "bar"
-
-            # Decision logic:
-            # - Bar charts with annual data: use year strings for discrete display
-            # - All other cases: use datetime for temporal encoding
-            if is_bar_chart and data_frequency == "A":
-                # Convert to year strings for discrete categorical display
-                # "2023", "2024" -> Draco will infer ordinal -> discrete bars
-                data["time_period"] = pd.to_datetime(data["time_period"]).dt.year.astype(str)
-                _logger.info("Prepared annual bar chart data as year strings for discrete display")
-            else:
-                # Convert to datetime for temporal encoding
-                # "2012-01-01T00:00:00" -> Draco will infer temporal -> continuous axis
-                data["time_period"] = pd.to_datetime(data["time_period"])
-                _logger.info("Prepared temporal data as datetime for continuous time axis")
-        except (ValueError, TypeError) as e:
-            _logger.warning(f"Error converting time_period: {e}")
-            pass
-
-    if "obs_value" in data.columns:
-        # TODO: to confirm with viz team on how to populate null values from api
-        data["obs_value"] = pd.to_numeric(data["obs_value"], errors="coerce").fillna(0)
-
-    # --- Fetch Indicator Name for Title ---
+    # 4. Fetch title and unit
     chart_title = "Generated Visualization"
+    unit_label = "Value"
     try:
-        # Extract params from URL (reuse parsed values if available)
-        if not db_id or not ind_id_param:
-            parsed = urlparse(data_url)
-            params = parse_qs(parsed.query)
-            db_id = params.get("DATABASE_ID", [None])[0]
-            ind_id_param = (
-                params.get("indicatorId", [None])[0]
-                or params.get("INDICATOR", [None])[0]
-                or params.get("indicator", [None])[0]
-            )
-
+        parsed = urlparse(data_url)
+        params = parse_qs(parsed.query)
+        db_id = params.get("DATABASE_ID", [database_id])[0]
+        ind_id_param = (
+            params.get("indicatorId", [None])[0]
+            or params.get("INDICATOR", [None])[0]
+            or indicator_id
+        )
         if db_id and ind_id_param:
-            from data360.api import get_metadata
-
             meta = await get_metadata(db_id, ind_id_param)
-            # Fix: Access name from indicator_metadata dict if present
-            if meta and meta.indicator_metadata and "name" in meta.indicator_metadata:
-                chart_title = meta.indicator_metadata["name"]
+            if meta and meta.indicator_metadata:
+                chart_title = meta.indicator_metadata.get("name", chart_title)
+                raw_unit = (
+                    meta.indicator_metadata.get("measurement_unit")
+                    or meta.indicator_metadata.get("unit_measure")
+                    or ""
+                )
+                if raw_unit:
+                    unit_label = f"{chart_title} ({raw_unit})"
     except Exception as e:
         _logger.warning(f"Could not fetch metadata for title: {e}")
 
+    # 5. Clean data
+    if "obs_value" in data.columns:
+        data["obs_value"] = pd.to_numeric(data["obs_value"], errors="coerce")
 
-    # 3. Use Draco2 to find optimal visualization
-    d = Draco()
-
-    # Determine relevant columns
-    if relevant_fields:
-        # User/LLM explicitly asked for specific fields
-        # Filter to only those that exist in the dataframe
-        # Lowercase check
-        req_fields = [f.lower() for f in relevant_fields]
-        existing_cols = set(data.columns)
-        missing_fields = [f for f in req_fields if f not in existing_cols]
-
-        if missing_fields:
-            return err(
-                f"Error: The following requested fields were not found in the data: {missing_fields}. Available columns: {list(data.columns)}"
-            )
-
-        valid_cols = req_fields
-
-        # Smart enrichment: If ref_area (country) is in the data but not requested,
-        # check if it's needed to distinguish data points (multi-country) and keep it.
-        # Also check other breakdown dimensions.
-        potential_enrichments = ["ref_area", "sex", "age", "urbanisation"]
-        for dim in potential_enrichments:
-            if dim in data.columns and dim not in valid_cols:
-                # Check if this dimension has multiple values (or is not just "_T")
-                unique_vals = data[dim].unique()
-                if len(unique_vals) > 1 or (
-                    len(unique_vals) == 1 and unique_vals[0] != "_T"
-                ):
-                    valid_cols.append(dim)
-                    _logger.info(f"Auto-enriched relevant_fields with {dim}")
-
-        viz_data = data[valid_cols].copy()
-        # Ensure relevant_cols is defined for downstream logic
-        relevant_cols = valid_cols
-    else:
-        # Auto-selection logic
-        relevant_cols = []
-        if "time_period" in data.columns:
-            relevant_cols.append("time_period")
-        if "obs_value" in data.columns:
-            relevant_cols.append("obs_value")
-        if "ref_area" in data.columns:
-            relevant_cols.append("ref_area")
-
-        # Breakdowns
-        breakdown_dims = ["sex", "age", "urbanisation"]
-        for dim in breakdown_dims:
-            if dim in data.columns:
-                unique_vals = data[dim].unique()
-                if len(unique_vals) > 1 or (
-                    len(unique_vals) == 1 and unique_vals[0] != "_T"
-                ):
-                    relevant_cols.append(dim)
-
-        if relevant_cols:
-            viz_data = data[relevant_cols].copy()
-        else:
-            viz_data = data.copy()
-
-    # Create map for renaming (User friendly labels, but lowercase for Draco/ASP safety)
-    # Vega-Lite will auto-capitalize these for Axis titles (e.g. "year" -> "Year")
-    column_renames = {
-        "time_period": "year",
-        "obs_value": "value",
-        "ref_area": "country",
-    }
-
-    # Task #9: Map REF_AREA codes to Names if present
-    if "ref_area" in viz_data.columns:
-        try:
-            from data360.providers import get_codelist_mapping
-
-            country_map = await get_codelist_mapping("REF_AREA")
-            # Map codes to names, keep original if not found
-            viz_data["ref_area"] = viz_data["ref_area"].map(
-                lambda x: country_map.get(x, x)
-            )
-        except Exception as e:
-            _logger.warning(f"Could not map country codes: {e}")
-
-    # Rename columns in dataframe
-    viz_data = viz_data.rename(columns=column_renames)
-
-    # Update relevant_cols logic to match new names for Draco check
-    # Note: Draco/Altair is case sensitive.
+    try:
+        viz_data, relevant_cols = _clean_single_df(
+            data, relevant_fields, chart_type, data_frequency
+        )
+    except ValueError as e:
+        return _err(str(e))
 
     if viz_data.empty:
-        return err("Error: No data available for visualization after cleaning.")
+        return _err("Error: No data available for visualization after cleaning.")
 
+    # 6. Map country codes
+    viz_data = await _map_country_codes(viz_data)
+
+    # 7. Determine strategy — route around Draco for complex patterns
+    n_indicators = 1
+    strategy_result = viz_config.select_strategy(
+        viz_data,
+        n_indicators=n_indicators,
+        chart_type_hint=chart_type,
+    )
+
+    _logger.info(
+        f"Chart strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
+    )
+
+    # Strategy-based direct spec (bypasses Draco for non-Draco-friendly patterns)
+    bypass_strategies = {
+        viz_config.ChartStrategy.DISTRIBUTION,
+        viz_config.ChartStrategy.CROSS_SECTIONAL,
+        viz_config.ChartStrategy.BREAKDOWN_COMPARISON,
+        viz_config.ChartStrategy.SMALL_MULTIPLES,
+    }
+
+    if strategy_result.strategy in bypass_strategies:
+        spec = viz_config.dispatch_spec(
+            strategy_result.strategy,
+            viz_data,
+            chart_title,
+            strategy_result,
+            y_label=unit_label,
+            x_label=unit_label,
+        )
+        return _ok(await _store_spec(spec))
+
+    # 8. Draco path (temporal_single, fallback)
     try:
         schema = schema_from_dataframe(viz_data)
         facts = dict_to_facts(schema)
     except Exception as e:
-        _logger.exception(f"Error generating data schema: {e}")
-        return err(f"Error generating data schema: {e}")
+        _logger.exception("Error generating schema")
+        return _err(f"Error generating data schema: {e}")
 
-    # Base constraints
+    d = Draco()
     program_constraints = ["entity(view,root,view).", "entity(mark,view,m)."]
 
     if use_default_constraints:
-        # --- EXPLICITLY DEFINE X/Y ROLES FOR DATA360 (UPDATED NAMES) ---
-        # Detect chart type early to determine encoding types
         user_mark_type = viz_config.parse_chart_type_hint(chart_type)
-
-        # Smart x-axis selection: Use temporal (year) or categorical dimension?
-        # This enables cross-sectional comparisons while maintaining time-series support
         use_temporal_x, categorical_x_field = viz_config.should_use_temporal_x_axis(
             viz_data, chart_type, viz_data.columns.tolist()
         )
 
         if use_temporal_x and "year" in viz_data.columns:
-            # Multi-year time series → year on x-axis
-            program_constraints.append("entity(encoding,m,e1).")
-            program_constraints.append("attribute((encoding,channel),e1,x).")
-            program_constraints.append("attribute((encoding,field),e1,year).")
-            _logger.info("Using temporal x-axis (year) for time-series visualization")
+            program_constraints += [
+                "entity(encoding,m,e1).",
+                "attribute((encoding,channel),e1,x).",
+                "attribute((encoding,field),e1,year).",
+            ]
         elif not use_temporal_x and categorical_x_field:
-            # Single year or chart type prefers categorical → use categorical dimension
-            program_constraints.append("entity(encoding,m,e1).")
-            program_constraints.append("attribute((encoding,channel),e1,x).")
-            program_constraints.append(f"attribute((encoding,field),e1,{categorical_x_field}).")
-            _logger.info(f"Using categorical x-axis ({categorical_x_field}) for cross-sectional comparison")
+            program_constraints += [
+                "entity(encoding,m,e1).",
+                "attribute((encoding,channel),e1,x).",
+                f"attribute((encoding,field),e1,{categorical_x_field}).",
+            ]
         elif "year" in viz_data.columns:
-            # Fallback: year exists but no clear preference → use year
-            program_constraints.append("entity(encoding,m,e1).")
-            program_constraints.append("attribute((encoding,channel),e1,x).")
-            program_constraints.append("attribute((encoding,field),e1,year).")
-            _logger.info("Using temporal x-axis (year) as fallback")
+            program_constraints += [
+                "entity(encoding,m,e1).",
+                "attribute((encoding,channel),e1,x).",
+                "attribute((encoding,field),e1,year).",
+            ]
 
         if "value" in viz_data.columns:
-            program_constraints.append("entity(encoding,m,e2).")
-            program_constraints.append("attribute((encoding,channel),e2,y).")
-            program_constraints.append("attribute((encoding,field),e2,value).")
+            program_constraints += [
+                "entity(encoding,m,e2).",
+                "attribute((encoding,channel),e2,y).",
+                "attribute((encoding,field),e2,value).",
+            ]
 
-
-        # Constraint for Color/Breakdown
-        # We iterate through potential breakdown dims that we found relevant earlier
-        # If any are present in viz_data (and not x/y), we map to color
-        # We prioritize by cardinality (skip dims with only 1 unique value)
-        # Priority order: country > sex > age > urbanisation
-        color_dim = None
-        color_candidates = []
-        if "country" in viz_data.columns:
-            color_candidates.append(("country", viz_data["country"].nunique()))
-        if "sex" in viz_data.columns and "sex" in relevant_cols:
-            color_candidates.append(("sex", viz_data["sex"].nunique()))
-        if "age" in viz_data.columns and "age" in relevant_cols:
-            color_candidates.append(("age", viz_data["age"].nunique()))
-        if "urbanisation" in viz_data.columns and "urbanisation" in relevant_cols:
-            color_candidates.append(("urbanisation", viz_data["urbanisation"].nunique()))
-
-        # Pick the first candidate with cardinality > 1; if none, pick first with any data
-        for dim, card in color_candidates:
-            if card > 1:
-                color_dim = dim
-                break
-        if not color_dim and color_candidates:
-            color_dim = color_candidates[0][0]
+        # Color dimension
+        color_dim = strategy_result.color_dim
+        if not color_dim:
+            for dim, _ in [("country", 0), ("sex", 0), ("age", 0), ("urbanisation", 0)]:
+                if dim in viz_data.columns and viz_data[dim].nunique() > 1:
+                    color_dim = dim
+                    break
 
         if color_dim:
-            program_constraints.append("entity(encoding,m,e3).")
-            program_constraints.append("attribute((encoding,channel),e3,color).")
-            program_constraints.append(f"attribute((encoding,field),e3,{color_dim}).")
+            program_constraints += [
+                "entity(encoding,m,e3).",
+                "attribute((encoding,channel),e3,color).",
+                f"attribute((encoding,field),e3,{color_dim}).",
+            ]
 
-        # Optional: Apply user chart type hint
         if chart_type:
             program_constraints.append(f"attribute((mark,type),m,{user_mark_type}).")
 
-    # Apply Custom Constraints from LLM/Developer
     if custom_constraints:
-        _logger.info(f"Applying custom Draco constraints: {custom_constraints}")
         program_constraints.extend(custom_constraints)
 
     program = "\n".join(facts) + "\n" + "\n".join(program_constraints)
 
     try:
-        # Solve
         model = next(d.complete_spec(program))
         draco_spec = answer_set_to_dict(model.answer_set)
-
-        # RENDER USING STANDARD DRACO RENDERER
 
         if "view" in draco_spec:
             for view in draco_spec["view"]:
                 if "mark" in view:
                     for mark in view["mark"]:
                         if "encoding" in mark:
-                            for encoding in mark["encoding"]:
-                                encoding.pop("type", None)
+                            for enc in mark["encoding"]:
+                                enc.pop("type", None)
 
-        # Merge data schema (stats) with the view spec
         full_spec = {**schema, **draco_spec}
-
         renderer = AltairRenderer()
         chart = renderer.render(spec=full_spec, data=viz_data)
-
-        # Apply customizations
-
-        # 1. Custom Interactive + Title
         chart = chart.properties(title=chart_title).interactive()
 
-        # 2. Force Rich Tooltips
-        tooltip_cols = list(viz_data.columns)
-        chart = chart.encode(tooltip=tooltip_cols)
-
-        # 3. Force NOMINAL type for categorical channels (Color) if applicable
-        # Draco renderer might infer ordinal, but users prefer nominal for countries etc.
-        # We manually patch the encoding if the color field is categorical.
-        if color_dim:
-            # We can't easily modify the altair object's encoding type in place deeply?
-            # Easier to patch the dictionary.
-            pass
+        # Structured tooltips
+        mark_type_for_tt = viz_config.parse_chart_type_hint(chart_type)
+        structured_tooltips = viz_config.build_structured_tooltips(
+            list(viz_data.columns), mark_type_for_tt
+        )
+        chart = chart.encode(tooltip=[alt.Tooltip(**t) for t in structured_tooltips])
 
         vl_spec = chart.to_dict()
 
-        # Manual Patching of Types in the final Spec
-        if "encoding" in vl_spec:
-            if "color" in vl_spec["encoding"]:
-                # If color is used, force nominal if it corresponds to our breakdown dims
-                # color_dim var holds the name of the column used for color
-                if color_dim in ["country", "sex", "urbanisation", "ref_area"]:
-                    vl_spec["encoding"]["color"]["type"] = "nominal"
+        # Patch color type
+        if "encoding" in vl_spec and "color" in vl_spec["encoding"]:
+            if color_dim in ["country", "sex", "urbanisation", "ref_area"]:
+                vl_spec["encoding"]["color"]["type"] = "nominal"
 
-        # Apply post-processing rules from viz_config
-        # This is cleaner than hardcoding rules inline
+        # Patch y-axis title
+        if "encoding" in vl_spec and "y" in vl_spec["encoding"]:
+            vl_spec["encoding"]["y"].setdefault("axis", {})["title"] = unit_label
+
+        # Post-processing rules
         for rule in viz_config.POST_PROCESSING_RULES:
             vl_spec = rule.apply(vl_spec, data_frequency)
-            _logger.debug(f"Applied post-processing rule: {rule.name}")
 
-
-
-
-        # Store: prefer external charts API when configured
-        charts_url = get_mcp_server_settings().charts_api_url
-        if charts_url:
-            try:
-                return ok(await post_spec_to_charts_api(vl_spec))
-            except Exception as e:
-                _logger.warning(f"Charts API store failed, falling back to static: {e}")
-        return ok(save_specs_to_static(vl_spec))
+        return _ok(await _store_spec(vl_spec))
 
     except StopIteration:
-        _logger.warning(
-            "Draco failed to find a visualization spec. Falling back to manual generation."
-        )
-        _logger.debug(f"Failed Program:\n{program}")
-
-        # Fallback: Manual Altair Generation
+        _logger.warning("Draco failed → fallback")
+        # Strategy-aware fallback
         try:
-            fc = list(viz_data.columns)
-            base = alt.Chart(viz_data).mark_line().encode(tooltip=fc)
-
-            # Map known columns
-            if "year" in fc:
-                x_enc = alt.X("year", title="Year")
-            elif "time_period" in fc:
-                x_enc = alt.X("time_period", title="Year")
-            else:
-                # Last resort: first column
-                x_enc = alt.X(fc[0])
-
-            if "value" in fc:
-                y_enc = alt.Y("value", title="Value")
-            elif "obs_value" in fc:
-                y_enc = alt.Y("obs_value", title="Value")
-            else:
-                y_enc = alt.Y(fc[1] if len(fc) > 1 else fc[0])
-
-            encoding = {"x": x_enc, "y": y_enc}
-
-            # Add color if breakdown found (prefer dimension with cardinality > 1)
-            color_field = None
-            for dim, title in [("country", "Country"), ("sex", "Sex"), ("age", "Age"), ("urbanisation", "Urbanisation")]:
-                if dim in fc and viz_data[dim].nunique() > 1:
-                    color_field = (dim, title)
-                    break
-            # Fallback: use first available even if single-value
-            if not color_field:
-                for dim, title in [("country", "Country"), ("sex", "Sex"), ("age", "Age"), ("urbanisation", "Urbanisation")]:
-                    if dim in fc:
-                        color_field = (dim, title)
-                        break
-            if color_field:
-                encoding["color"] = alt.Color(
-                    color_field[0], type="nominal", title=color_field[1]
-                )
-
-            chart = base.encode(**encoding).properties(title=chart_title).interactive()
-            vl_spec = chart.to_dict()
-            charts_url = get_mcp_server_settings().charts_api_url
-            if charts_url:
-                try:
-                    result = ok(await post_spec_to_charts_api(vl_spec))
-                    result["warning"] = _FALLBACK_WARNING
-                    return result
-                except Exception as e:
-                    _logger.warning(
-                        f"Charts API store failed, falling back to static: {e}"
-                    )
-            result = ok(save_specs_to_static(vl_spec))
-            result["warning"] = _FALLBACK_WARNING
-            return result
-
+            spec = viz_config.dispatch_spec(
+                viz_config.ChartStrategy.FALLBACK_LINE,
+                viz_data,
+                chart_title,
+                strategy_result,
+                y_label=unit_label,
+            )
+            return _ok(await _store_spec(spec), warning=_FALLBACK_WARNING)
         except Exception as fallback_err:
-            _logger.exception(f"Fallback generation failed: {fallback_err}")
-            return err(
+            _logger.exception(f"Fallback failed: {fallback_err}")
+            return _err(
                 "Error: Draco could not determine a suitable visualization, and fallback failed."
             )
+
     except Exception as e:
-        _logger.exception(f"Draco execution error: {e}")
-        return err(f"Error generating visualization: {e}")
+        _logger.exception(f"Draco error: {e}")
+        return _err(f"Error generating visualization: {e}")
+
+
+# ============================================================================
+# TOOL: get_multi_indicator_viz_spec (NEW)
+# ============================================================================
+
+
+async def get_multi_indicator_viz_spec(
+    indicator_ids: list[dict[str, str]] | None = None,
+    country_code: str | None = None,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    disaggregation_filters: dict[str, str | None] | None = None,
+    chart_type: str | None = None,
+) -> VizResult:
+    """Generate a Vega-Lite chart comparing multiple Data360 indicators.
+
+    REQUIRED for success: indicator_ids (2–4 entries). Call data360_search_indicators first,
+    then pass each series as {"database_id": "...", "indicator_id": "..."}. If you omit
+    indicator_ids or pass fewer than 2 entries, this tool returns {"error": "..."} — fix
+    the arguments and call again (do not rely on country_code alone).
+
+    Use for: scatterplots (2 indicators vs each other), layered/dual-axis line charts
+    (2-3 indicators over time in one country), connected scatter (trajectory charts).
+
+    Args:
+        indicator_ids: List of dicts, each with "database_id" and "indicator_id".
+            Example: [
+                {"database_id": "WB_WDI", "indicator_id": "WB_WDI_NY_GDP_PCAP_KD"},
+                {"database_id": "WB_WDI", "indicator_id": "WB_WDI_SP_DYN_LE00_IN"}
+            ]
+        country_code: Optional 3-letter code or comma-separated list.
+        start_year: Optional start year (inclusive).
+        end_year: Optional end year (inclusive).
+        disaggregation_filters: Optional dimension filters applied to ALL indicators.
+        chart_type: Optional hint — "scatter", "connected_scatter", "layered_lines",
+            "line", "bar". If omitted, auto-selected by data shape.
+
+    Returns:
+        Dict with "url" (chart URL on success), "error" (on failure),
+        "strategy" (which chart type was chosen), "warning" (if applicable).
+    """
+    if indicator_ids is None or len(indicator_ids) < 2:
+        return _err(
+            "indicator_ids is required: pass a JSON array of 2–4 objects, each "
+            '{"database_id":"<db>","indicator_id":"<id>"} from data360_search_indicators '
+            "(use idno + database_id). Example: "
+            '[{"database_id":"WB_WDI","indicator_id":"WB_WDI_NY_GDP_PCAP_KD"},'
+            '{"database_id":"WB_WDI","indicator_id":"WB_WDI_SP_DYN_LE00_IN"}]. '
+            "Then add country_code, start_year, end_year as needed. "
+            "Do not call this tool with only country_code or chart_type."
+        )
+    if len(indicator_ids) > 4:
+        return _err("Maximum 4 indicators supported in one chart.")
+
+    # 1. Fetch all indicators concurrently
+    tasks = [
+        _fetch_single_indicator(
+            ind["database_id"],
+            ind["indicator_id"],
+            country_code,
+            start_year,
+            end_year,
+            disaggregation_filters,
+        )
+        for ind in indicator_ids
+    ]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    dfs: list[pd.DataFrame] = []
+    titles: list[str] = []
+    units: list[str] = []
+    indicator_col_names: list[str] = []
+    used_cols: set[str] = set()
+
+    for i, (res, ind) in enumerate(zip(results, indicator_ids)):
+        if isinstance(res, Exception):
+            return _err(f"Failed to fetch indicator {ind['indicator_id']}: {res}")
+        df, title, unit = res
+        if df.empty:
+            return _err(f"No data returned for indicator {ind['indicator_id']}.")
+
+        ind_name = title or ind["indicator_id"]
+        col_base = _slugify(ind_name)
+        col = _make_unique_col(col_base, used_cols)
+        used_cols.add(col)
+
+        dfs.append(df)
+        titles.append(ind_name)
+        units.append(unit or "")
+        indicator_col_names.append(col)
+
+    # 2. Standardize each DataFrame
+    std_dfs: list[pd.DataFrame] = []
+    for df, col in zip(dfs, indicator_col_names):
+        # Lowercase columns
+        df.columns = [c.lower() for c in df.columns]
+
+        # Parse time
+        if "time_period" in df.columns:
+            try:
+                df["time_period"] = pd.to_datetime(df["time_period"])
+            except Exception:
+                pass
+
+        # Coerce obs_value
+        if "obs_value" in df.columns:
+            df["obs_value"] = pd.to_numeric(df["obs_value"], errors="coerce")
+
+        # Rename to standard
+        df = df.rename(
+            columns={"time_period": "year", "obs_value": col, "ref_area": "country"}
+        )
+
+        # Keep only join keys + value column
+        keep = [
+            c
+            for c in ["year", "country", "sex", "age", "urbanisation"]
+            if c in df.columns
+        ]
+        keep.append(col)
+        std_dfs.append(df[keep])
+
+    # 3. Map country codes (use first df's country column as reference)
+    try:
+        from data360.providers import get_codelist_mapping
+
+        country_map = await get_codelist_mapping("REF_AREA")
+        for df in std_dfs:
+            if "country" in df.columns:
+                df["country"] = df["country"].map(lambda x: country_map.get(x, x))
+    except Exception as e:
+        _logger.warning(f"Country code mapping failed: {e}")
+
+    # 4. Merge on common keys
+    join_keys = [
+        c
+        for c in ["year", "country", "sex", "age", "urbanisation"]
+        if all(c in df.columns for df in std_dfs)
+    ]
+
+    merged = std_dfs[0]
+    for df in std_dfs[1:]:
+        merged = pd.merge(merged, df, on=join_keys, how="outer")
+
+    if merged.empty:
+        return _err("No overlapping data found across indicators after merging.")
+
+    merged = _sanitize_dataframe_for_json_records(merged)
+
+    # 5. Build chart title
+    if len(titles) == 2:
+        chart_title = f"{titles[0]} vs. {titles[1]}"
+    else:
+        chart_title = " | ".join(titles)
+
+    # 6. Build indicator_labels for axis/tooltip
+    indicator_labels = {
+        col: f"{title} ({unit})" if unit else title
+        for col, title, unit in zip(indicator_col_names, titles, units)
+    }
+
+    # 7. Select strategy
+    strategy_result = viz_config.select_strategy(
+        merged,
+        n_indicators=len(indicator_ids),
+        chart_type_hint=chart_type,
+        indicator_cols=indicator_col_names,
+    )
+    _logger.info(
+        f"Multi-indicator strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
+    )
+
+    # 8. Build spec
+    try:
+        spec = viz_config.dispatch_spec(
+            strategy_result.strategy,
+            merged,
+            chart_title,
+            strategy_result,
+            indicator_labels=indicator_labels,
+            y_label=indicator_labels.get(indicator_col_names[1], "Value"),
+            x_label=indicator_labels.get(indicator_col_names[0], "Value"),
+        )
+    except Exception as e:
+        _logger.exception(f"Spec build failed: {e}")
+        return _err(f"Error building chart spec: {e}")
+
+    # 9. Store and return
+    url = await _store_spec(spec)
+    result = _ok(url)
+    result["strategy"] = strategy_result.strategy.value
+    result["reason"] = strategy_result.reason
+    return result

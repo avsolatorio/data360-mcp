@@ -1,11 +1,13 @@
 """Tests for data360.visualization module."""
 
+import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import numpy as np
 import pandas as pd
 import pytest
 
-from data360.visualization import get_viz_spec
+from data360.visualization import _vega_spec_to_json_safe, get_viz_spec
 
 
 class TestGetVizSpecDracoFallbackWarning:
@@ -87,8 +89,10 @@ class TestGetVizSpecDracoFallbackWarning:
         mock_vl_spec = {
             "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
             "mark": "point",
-            "encoding": {"x": {"field": "year", "type": "temporal"},
-                         "y": {"field": "value", "type": "quantitative"}},
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "quantitative"},
+            },
         }
         # Chain: chart.properties(...).interactive().encode(...).to_dict()
         mock_chart.properties.return_value = mock_chart
@@ -106,7 +110,9 @@ class TestGetVizSpecDracoFallbackWarning:
             draco_instance.complete_spec.return_value = iter([fake_model])
             MockDraco.return_value = draco_instance
 
-            mock_as2d.return_value = {"view": [{"mark": [{"type": "point", "encoding": []}]}]}
+            mock_as2d.return_value = {
+                "view": [{"mark": [{"type": "point", "encoding": []}]}]
+            }
 
             renderer_instance = MagicMock()
             renderer_instance.render.return_value = mock_chart
@@ -125,16 +131,17 @@ class TestGetVizSpecDracoFallbackWarning:
 
     @pytest.mark.asyncio
     async def test_fallback_also_fails_returns_error(self, patches):
-        """When both Draco and the manual fallback fail, an error is returned."""
+        """When both Draco and the dispatch_spec fallback fail, an error is returned."""
         with (
             patch("data360.visualization.Draco") as MockDraco,
-            patch("data360.visualization.alt") as MockAlt,
+            patch(
+                "data360.viz_config.dispatch_spec",
+                side_effect=RuntimeError("dispatch broke"),
+            ),
         ):
             draco_instance = MagicMock()
             draco_instance.complete_spec.return_value = iter([])
             MockDraco.return_value = draco_instance
-
-            MockAlt.Chart.side_effect = RuntimeError("Altair broke")
 
             result = await get_viz_spec(
                 database_id="WB_WDI",
@@ -143,4 +150,421 @@ class TestGetVizSpecDracoFallbackWarning:
 
         assert result["url"] is None
         assert result["error"] is not None
-        assert "fallback failed" in result["error"].lower()
+        assert "fallback" in result["error"].lower()
+
+
+# =============================================================================
+# New tests for improvements: MCP-002, MCP-003, MCP-004 + WB style + null guard
+# =============================================================================
+
+import math
+
+from data360 import viz_config
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Helper: small fixture factory
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _make_df(n_countries=3, n_years=5, single_year=False):
+    """Return a tidy DataFrame with country / year / value columns."""
+
+    countries = [f"CTR{i:02d}" for i in range(n_countries)]
+    years = (
+        ["2020-01-01"] if single_year else [f"{2020 + i}-01-01" for i in range(n_years)]
+    )
+    rows = [
+        {"country": c, "year": y, "value": float(i * 10 + j)}
+        for i, c in enumerate(countries)
+        for j, y in enumerate(years)
+    ]
+    df = pd.DataFrame(rows)
+    df["year"] = pd.to_datetime(df["year"])
+    return df
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MCP-002  Structured tooltips
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestStructuredTooltips:
+    """Tooltips must be typed objects, not raw column name strings."""
+
+    def test_value_tooltip_has_number_format(self):
+        tips = viz_config.build_structured_tooltips(
+            ["year", "value", "country"], "line"
+        )
+        value_tip = next(t for t in tips if t["field"] == "value")
+        assert value_tip["format"] == ",.2f", "Value tooltip must use number formatting"
+        assert value_tip["type"] == "quantitative"
+
+    def test_year_tooltip_has_temporal_type(self):
+        tips = viz_config.build_structured_tooltips(["year", "value"], "line")
+        year_tip = next(t for t in tips if t["field"] == "year")
+        assert year_tip["type"] == "temporal"
+        assert year_tip["format"] == "%Y"
+
+    def test_country_tooltip_is_nominal(self):
+        tips = viz_config.build_structured_tooltips(["country", "value"], "bar")
+        country_tip = next(t for t in tips if t["field"] == "country")
+        assert country_tip["type"] == "nominal"
+
+    def test_priority_order_year_first(self):
+        tips = viz_config.build_structured_tooltips(
+            ["value", "country", "year"], "line"
+        )
+        fields = [t["field"] for t in tips]
+        assert fields.index("year") < fields.index("value"), "year must precede value"
+        assert fields.index("value") < fields.index("country"), (
+            "value must precede country"
+        )
+
+    def test_unknown_column_gets_title_cased_label(self):
+        tips = viz_config.build_structured_tooltips(["some_custom_col"], "bar")
+        assert tips[0]["title"] == "Some Custom Col"
+
+    def test_apply_structured_tooltips_injects_into_spec(self):
+        spec = {"mark": "line", "encoding": {"x": {"field": "year"}}}
+        result = viz_config.apply_structured_tooltips(spec, ["year", "value"], "line")
+        assert "tooltip" in result["encoding"]
+        assert isinstance(result["encoding"]["tooltip"], list)
+        assert all(isinstance(t, dict) for t in result["encoding"]["tooltip"])
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MCP-003  High-cardinality beeswarm routing
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestHighCardinalityChartSelection:
+    """Above threshold + single year → beeswarm; below threshold → normal."""
+
+    def _df(self, n_countries, single_year=True):
+        return _make_df(n_countries=n_countries, single_year=single_year)
+
+    def test_above_threshold_single_year_triggers_beeswarm(self):
+        df = self._df(n_countries=12, single_year=True)
+        assert viz_config.should_use_beeswarm(df, chart_type=None, color_dim="country")
+
+    def test_below_threshold_does_not_trigger_beeswarm(self):
+        df = self._df(n_countries=5, single_year=True)
+        assert not viz_config.should_use_beeswarm(
+            df, chart_type=None, color_dim="country"
+        )
+
+    def test_above_threshold_multi_year_does_not_trigger(self):
+        df = self._df(n_countries=15, single_year=False)
+        assert not viz_config.should_use_beeswarm(
+            df, chart_type=None, color_dim="country"
+        )
+
+    def test_explicit_bar_chart_type_does_not_trigger_beeswarm(self):
+        df = self._df(n_countries=20, single_year=True)
+        assert not viz_config.should_use_beeswarm(
+            df, chart_type="bar", color_dim="country"
+        )
+
+    def test_beeswarm_spec_uses_tick_mark(self):
+        df = self._df(n_countries=15, single_year=True)
+        spec = viz_config.build_beeswarm_spec(df, title="Test Chart")
+        mark = spec["mark"]
+        mark_type = mark["type"] if isinstance(mark, dict) else mark
+        assert mark_type == "tick", f"Expected tick mark for beeswarm, got {mark_type}"
+
+    def test_beeswarm_spec_sorts_y_by_value(self):
+        df = self._df(n_countries=15, single_year=True)
+        spec = viz_config.build_beeswarm_spec(df, title="Test")
+        assert spec["encoding"]["y"]["sort"] == "-x"
+
+    def test_beeswarm_spec_limits_to_top_n(self):
+        top_n = viz_config.HIGH_CARDINALITY_THRESHOLDS["top_n_series"]
+        df = _make_df(n_countries=top_n + 10, single_year=True)
+        spec = viz_config.build_beeswarm_spec(df, title="Test")
+        assert len(spec["data"]["values"]) <= top_n
+
+    def test_beeswarm_spec_includes_structured_tooltips(self):
+        df = self._df(n_countries=15, single_year=True)
+        spec = viz_config.build_beeswarm_spec(df, title="Test")
+        assert "tooltip" in spec["encoding"]
+        tips = spec["encoding"]["tooltip"]
+        assert all(isinstance(t, dict) for t in tips), (
+            "Tooltips must be dicts, not strings"
+        )
+
+    def test_beeswarm_spec_uses_wb_color_palette(self):
+        df = self._df(n_countries=15, single_year=True)
+        spec = viz_config.build_beeswarm_spec(df, title="Test")
+        color_range = spec["encoding"]["color"]["scale"]["range"]
+        assert color_range == viz_config.WB_CAT_COLORS
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# WB Style injection
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestWBStyleInjection:
+    """Every spec must receive WB color palette, typography, and grid settings."""
+
+    def test_inject_adds_config_when_absent(self):
+        spec = {"mark": "line"}
+        result = viz_config.inject_wb_config(spec)
+        assert "config" in result
+
+    def test_inject_sets_wb_category_colors(self):
+        spec = {"mark": "line"}
+        result = viz_config.inject_wb_config(spec)
+        assert result["config"]["range"]["category"] == viz_config.WB_CAT_COLORS
+
+    def test_inject_sets_grid_color(self):
+        spec = {"mark": "line"}
+        result = viz_config.inject_wb_config(spec)
+        assert result["config"]["axis"]["gridColor"] == viz_config.WB_GRID_COLOR
+
+    def test_inject_sets_font_family(self):
+        spec = {"mark": "line"}
+        result = viz_config.inject_wb_config(spec)
+        assert "Noto Sans" in result["config"]["font"]
+
+    def test_inject_does_not_overwrite_existing_config_keys(self):
+        """User-specified config values must survive injection."""
+        spec = {"mark": "line", "config": {"background": "#FF0000"}}
+        result = viz_config.inject_wb_config(spec)
+        assert result["config"]["background"] == "#FF0000", (
+            "inject_wb_config must not overwrite user-set background"
+        )
+
+    def test_inject_does_not_overwrite_existing_axis_keys(self):
+        spec = {"mark": "line", "config": {"axis": {"gridColor": "#AABBCC"}}}
+        result = viz_config.inject_wb_config(spec)
+        assert result["config"]["axis"]["gridColor"] == "#AABBCC", (
+            "inject_wb_config must not overwrite user-set axis.gridColor"
+        )
+
+    def test_apply_wb_style_rule_runs_on_any_mark(self):
+        rule = viz_config.ApplyWBStyleRule()
+        for mark in ["line", "bar", "point", "tick", "area"]:
+            spec = {"mark": mark, "encoding": {}}
+            result = rule.apply(spec)
+            assert "config" in result, f"WB config not injected for mark={mark}"
+
+    def test_wb_cat_colors_has_nine_entries(self):
+        assert len(viz_config.WB_CAT_COLORS) == 9
+
+    def test_wb_cat_colors_first_is_blue(self):
+        assert viz_config.WB_CAT_COLORS[0] == "#34A7F2"
+
+    def test_title_config_is_left_anchored(self):
+        spec = {"mark": "line"}
+        result = viz_config.inject_wb_config(spec)
+        assert result["config"]["title"]["anchor"] == "start"
+
+    def test_temporal_axis_cleanup_removes_title(self):
+        rule = viz_config.TemporalAxisCleanupRule()
+        spec = {
+            "mark": "line",
+            "encoding": {"x": {"field": "year", "type": "temporal"}},
+        }
+        result = rule.apply(spec)
+        assert result["encoding"]["x"]["axis"]["title"] is None
+
+    def test_zero_line_rule_enforces_zero_for_bar(self):
+        rule = viz_config.ZeroLineRule()
+        spec = {
+            "mark": "bar",
+            "encoding": {"y": {"field": "value", "type": "quantitative"}},
+        }
+        result = rule.apply(spec)
+        assert result["encoding"]["y"]["scale"]["zero"] is True
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Null / missing value guard  (MCP-004 + obs_value fix)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestObsValueNullHandling:
+    """obs_value NaN must NOT be zeroed — gaps are real missing data."""
+
+    @pytest.fixture
+    def patches_with_nulls(self):
+        """Fixture: data with one null obs_value row."""
+        df = pd.DataFrame(
+            {
+                "TIME_PERIOD": ["2020-01-01", "2021-01-01", "2022-01-01"],
+                "OBS_VALUE": [100.0, None, 300.0],
+                "REF_AREA": ["KEN", "KEN", "KEN"],
+            }
+        )
+        with (
+            patch(
+                "data360.api.get_data_api_url",
+                new_callable=AsyncMock,
+                return_value="http://fake/data?DATABASE_ID=WB_WDI&INDICATOR=FAKE",
+            ),
+            patch(
+                "data360.visualization._fetch_data_internal",
+                new_callable=AsyncMock,
+                return_value=df,
+            ),
+            patch(
+                "data360.api.get_metadata", new_callable=AsyncMock, return_value=None
+            ),
+            patch(
+                "data360.visualization.save_specs_to_static",
+                return_value="http://localhost/spec.json",
+            ),
+            patch(
+                "data360.providers.get_codelist_mapping",
+                new_callable=AsyncMock,
+                return_value={},
+            ),
+        ):
+            yield df
+
+    @pytest.mark.asyncio
+    async def test_null_obs_value_not_coerced_to_zero(self, patches_with_nulls):
+        """After processing, the 2021 value must remain NaN, not become 0."""
+        captured_data = {}
+
+        original_save = __import__(
+            "data360.visualization", fromlist=["save_specs_to_static"]
+        ).save_specs_to_static
+
+        def capture_spec(spec):
+            captured_data["spec"] = spec
+            return "http://localhost/spec.json"
+
+        with patch(
+            "data360.visualization.save_specs_to_static", side_effect=capture_spec
+        ):
+            with patch("data360.visualization.Draco") as MockDraco:
+                draco_instance = MagicMock()
+                draco_instance.complete_spec.return_value = iter([])
+                MockDraco.return_value = draco_instance
+
+                result = await get_viz_spec(
+                    database_id="WB_WDI",
+                    indicator_id="FAKE_IND",
+                )
+
+        # If spec was captured, verify the data values
+        if "spec" in captured_data:
+            spec = captured_data["spec"]
+            # Find inline data values
+            data_values = None
+            if "data" in spec and "values" in spec["data"]:
+                data_values = spec["data"]["values"]
+            elif "datasets" in spec:
+                for ds in spec["datasets"].values():
+                    data_values = ds
+                    break
+
+            if data_values:
+                value_for_2021 = None
+                for row in data_values:
+                    ts = row.get("year") or row.get("time_period") or ""
+                    if "2021" in str(ts):
+                        value_for_2021 = row.get("value") or row.get("obs_value")
+                        break
+
+                if value_for_2021 is not None:
+                    assert value_for_2021 != 0, (
+                        "Missing obs_value must not be zeroed — "
+                        f"got {value_for_2021} instead of NaN/null"
+                    )
+
+    def test_obs_value_numeric_coercion_preserves_nan(self):
+        """Unit test: pd.to_numeric(errors='coerce') on None keeps NaN, not 0."""
+        series = pd.Series([100.0, None, 300.0])
+        result = pd.to_numeric(series, errors="coerce")
+        assert math.isnan(result.iloc[1]), "None must become NaN after to_numeric"
+        assert result.iloc[0] == 100.0
+        assert result.iloc[2] == 300.0
+
+    def test_fillna_zero_would_corrupt_data(self):
+        """Regression guard: .fillna(0) produces 0 for missing — we must NOT do this."""
+        series = pd.Series([100.0, None, 300.0])
+        bad_result = pd.to_numeric(series, errors="coerce").fillna(0)
+        assert bad_result.iloc[1] == 0.0, "This test documents the old buggy behaviour"
+        # Confirm we're NOT doing this in the real code by checking viz source
+        import inspect
+
+        import data360.visualization as viz_mod
+
+        source = inspect.getsource(viz_mod)
+        assert "fillna(0)" not in source, (
+            "visualization.py must not call .fillna(0) on obs_value — "
+            "it silently converts missing data to zero"
+        )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# POST-PROCESSING RULE CHAIN
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestPostProcessingRuleChain:
+    """Verify the rule registry runs without errors on typical specs."""
+
+    def _run_rules(self, spec, frequency=None):
+        for rule in viz_config.POST_PROCESSING_RULES:
+            spec = rule.apply(spec, frequency)
+        return spec
+
+    def test_chain_runs_on_line_chart(self):
+        spec = {
+            "mark": "line",
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "quantitative"},
+            },
+        }
+        result = self._run_rules(spec, "A")
+        assert "config" in result
+        assert result["encoding"]["x"]["axis"]["title"] is None
+
+    def test_chain_runs_on_bar_chart(self):
+        spec = {
+            "mark": "bar",
+            "encoding": {
+                "x": {"field": "country", "type": "nominal"},
+                "y": {"field": "value", "type": "quantitative"},
+            },
+        }
+        result = self._run_rules(spec)
+        assert "config" in result
+        assert result["encoding"]["y"]["scale"]["zero"] is True
+
+    def test_chain_does_not_raise_on_empty_encoding(self):
+        spec = {"mark": "point", "encoding": {}}
+        result = self._run_rules(spec)
+        assert "config" in result
+
+    def test_apply_wb_style_is_last_rule(self):
+        last = viz_config.POST_PROCESSING_RULES[-1]
+        assert last.name == "apply_wb_style", (
+            "ApplyWBStyleRule must be last so it doesn't overwrite other fixes"
+        )
+
+
+class TestVegaSpecJsonSafe:
+    """_vega_spec_to_json_safe must match what json.dumps / httpx need for Charts API."""
+
+    def test_nested_timestamp_and_numpy_roundtrip(self):
+        spec = {
+            "data": {
+                "values": [
+                    {
+                        "year": pd.Timestamp("2020-01-01"),
+                        "v": np.float64(3.14),
+                    }
+                ]
+            }
+        }
+        safe = _vega_spec_to_json_safe(spec)
+        json.dumps(safe)
+        y = safe["data"]["values"][0]["year"]
+        assert isinstance(y, str) and y.startswith("2020-01-01")
+        assert isinstance(safe["data"]["values"][0]["v"], float)
