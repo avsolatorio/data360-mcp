@@ -34,6 +34,7 @@ dev = [
   "pytest-cov>=4.1.0",
   "pip-licenses>=5.0.0",
   "pip-audit>=2.10.0",
+  "requests>=2.32.0",
 ]
 
 [tool.ruff.lint]
