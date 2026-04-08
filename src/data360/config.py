@@ -30,6 +30,14 @@ class MCPServerSettings(BaseSettings):
         default=None,
         description="URL for external charts API to store Vega-Lite specs (e.g. https://.../api/v1/charts). When set, viz specs are POSTed here instead of saving to static.",
     )
+    env: str | None = Field(
+        default=None,
+        description="Deployment environment (e.g. local, dev, staging, prod). Azure App Insights logging is disabled when set to 'local'.",
+    )
+    azure_connection_string: str | None = Field(
+        default=None,
+        description="Azure Application Insights connection string. If unset, falls back to APPLICATIONINSIGHTS_CONNECTION_STRING env var.",
+    )
 
     model_config = SettingsConfigDict(env_prefix="MCP_")
 
@@ -105,12 +113,20 @@ def get_mcp_server_settings() -> MCPServerSettings:
     return MCPServerSettings()  # pyright: ignore[reportCallIssue]
 
 
-def setup_logging(log_file: str | None = None, log_level: str = "INFO") -> None:
-    """Configure logging to write to a file and/or console.
+def setup_logging(
+    log_file: str | None = None,
+    log_level: str = "INFO",
+    env: str | None = None,
+    azure_connection_string: str | None = None,
+) -> None:
+    """Configure logging to write to a file and/or console, and optionally Azure App Insights.
 
     Args:
         log_file: Path to log file. If None, logs only go to stderr.
         log_level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+        env: Deployment environment. Azure handler is skipped when 'local'.
+        azure_connection_string: Azure App Insights connection string. Falls back to
+            APPLICATIONINSIGHTS_CONNECTION_STRING env var if not provided.
     """
     # Convert string level to logging constant
     numeric_level = getattr(logging, log_level.upper(), logging.INFO)
@@ -144,3 +160,28 @@ def setup_logging(log_file: str | None = None, log_level: str = "INFO") -> None:
         file_handler.setLevel(numeric_level)
         file_handler.setFormatter(formatter)
         root_logger.addHandler(file_handler)
+
+    # Azure App Insights handler (skipped for local environment or when no key is configured)
+    effective_connection_string = azure_connection_string or os.environ.get(
+        "APPLICATIONINSIGHTS_CONNECTION_STRING"
+    )
+    if env != "local" and effective_connection_string:
+        try:
+            from opencensus.ext.azure.log_exporter import (
+                AzureLogHandler,  # type: ignore[import-untyped]
+            )
+
+            def _callback(_):
+                return True
+
+            azure_handler = AzureLogHandler(
+                connection_string=effective_connection_string
+            )
+            azure_handler.setLevel(numeric_level)
+            azure_handler.add_telemetry_processor(_callback)
+            root_logger.addHandler(azure_handler)
+            root_logger.info("Azure App Insights logging enabled (env=%s).", env)
+        except ImportError:
+            root_logger.warning(
+                "opencensus-ext-azure not installed; skipping Azure App Insights handler."
+            )
