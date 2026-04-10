@@ -1,21 +1,26 @@
-# Deploy static site from docs/ to GitHub Pages (configure repo: Settings → Pages → Source: GitHub Actions)
-name: Deploy GitHub Pages
+
+name: Jupyter Book (via myst) GitHub Pages Deploy
 
 on:
   push:
-    branches:
-      - main
-      - dev
-      - feat/landing-page
+    branches: [$default-branch]
   workflow_dispatch:
 
+env:
+  # Repository name is used to construct the BASE_URL for Jupyter Book
+  # The site will be served at /<repo-name>/ with docs at /<repo-name>/docs/
+  REPOSITORY_NAME: ${{ github.event.repository.name }}
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: pages
+  group: 'pages'
   cancel-in-progress: false
 
 jobs:
@@ -26,15 +31,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v4
-
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - name: Install Jupyter Book
+        run: npm install -g jupyter-book
+      - name: Build and prepare documentation
+        run: bash ./scripts/build-docs.sh
+        env:
+          REPO_NAME: ${{ env.REPO_NAME }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
-
+          path: './.build/docs'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

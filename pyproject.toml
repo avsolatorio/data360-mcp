@@ -36,6 +36,10 @@ dev = [
   "pip-audit>=2.10.0",
 ]
 
+docs = [
+ "jupyter-book>=2.0.0",
+]
+
 [tool.ruff.lint]
 select = ['I', 'UP', 'PL', 'F401']
 
