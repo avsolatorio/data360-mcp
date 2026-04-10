@@ -1,4 +1,10 @@
-# Data360 MCP Server Documentation
+---
+title: Data360 MCP Server Documentation
+site:
+  hide_outline: true
+  hide_toc: false
+  hide_title_block: false
+---
 
 Welcome to the documentation for the **World Bank Data360 MCP Server**!
 

@@ -1,7 +1,5 @@
 # See docs at: https://mystmd.org/guide/frontmatter
 version: 1
-extends:
-  - ./authors.yml
 project:
   id: b7e28366-ebcb-4504-b623-b9671d0ca7fc
   title: "Data360 MCP Server Documentation"
@@ -27,12 +25,12 @@ project:
             - file: 2-guides/1-practitioners/searching-indicators.ipynb
         - title: For AI Developers
           children:
-            - file: 2-guides/2-developers/setup.md
             - file: 2-guides/2-developers/tools-reference.md
+            - file: 2-guides/2-developers/integration.ipynb
         - title: For Maintainers & Contributors
           children:
             - file: 2-guides/3-deployment/deployment-overview.md
-    
+
 site:
   template: book-theme
   options:
