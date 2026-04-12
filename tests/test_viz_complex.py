@@ -115,6 +115,23 @@ def _two_ind_ts_df():
     return pd.DataFrame(rows)
 
 
+def _four_ind_ts_df():
+    """Single country, four indicator columns, multi-year (for layered multi-axis)."""
+    rows = []
+    for y in range(2018, 2024):
+        rows.append(
+            {
+                "country": "CountryA",
+                "year": pd.Timestamp(f"{y}-01-01"),
+                "ind_a": float(hash((y, "a")) % 1000),
+                "ind_b": float(hash((y, "b")) % 1000),
+                "ind_c": float(hash((y, "c")) % 1000),
+                "ind_d": float(hash((y, "d")) % 1000),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Strategy Router
 # ─────────────────────────────────────────────────────────────────────────────
@@ -417,6 +434,20 @@ class TestSpecBuilders:
         colors = [layer["mark"]["color"] for layer in spec["layer"]]
         assert len(set(colors)) == 2  # distinct colors
 
+    def test_temporal_multi_indicator_staggered_y_axes_for_four_series(self):
+        df = _four_ind_ts_df()
+        ind_cols = ["ind_a", "ind_b", "ind_c", "ind_d"]
+        r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
+        spec = build_temporal_multi_indicator_spec(df, "Test", r)
+        assert len(spec["layer"]) == 4
+        assert spec["width"] == 680
+        axes = [layer["encoding"]["y"]["axis"] for layer in spec["layer"]]
+        assert axes[0]["orient"] == "left"
+        assert axes[1]["orient"] == "right"
+        assert "offset" not in axes[1]
+        assert axes[2]["orient"] == "right" and axes[2]["offset"] == 50
+        assert axes[3]["orient"] == "right" and axes[3]["offset"] == 100
+
     # fallback
     def test_fallback_produces_line(self):
         df = pd.DataFrame({"year": [pd.Timestamp("2020")], "value": [42.0]})
@@ -707,6 +738,27 @@ class TestGetMultiIndicatorVizSpec:
             f"Expected URL, got error: {result.get('error')}"
         )
         assert result["error"] is None
+
+    @pytest.mark.asyncio
+    async def test_disjoint_dimensions_returns_merge_error(self, patches):
+        """No shared merge keys (e.g. time-only vs geography-only) → clear error, no 500."""
+        _, mock_fetch = patches
+        df_time_only = pd.DataFrame(
+            [{"TIME_PERIOD": "2020-01-01", "OBS_VALUE": 10.0}]
+        )
+        df_geo_only = pd.DataFrame([{"REF_AREA": "KEN", "OBS_VALUE": 20.0}])
+        mock_fetch.side_effect = [df_time_only, df_geo_only]
+
+        result = await get_multi_indicator_viz_spec(
+            indicator_ids=[
+                {"database_id": "WB_WDI", "indicator_id": "IND_A"},
+                {"database_id": "WB_WDI", "indicator_id": "IND_B"},
+            ],
+        )
+        assert result.get("url") is None
+        assert result.get("error") is not None
+        err = (result["error"] or "").lower()
+        assert "no common dimensions" in err
 
     @pytest.mark.asyncio
     async def test_returns_strategy_in_result(self, patches):
