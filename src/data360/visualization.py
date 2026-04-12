@@ -870,6 +870,14 @@ async def get_multi_indicator_viz_spec(
         if all(c in df.columns for df in std_dfs)
     ]
 
+    if not join_keys:
+        return _err(
+            "Indicators could not be merged: no common dimensions (for example, one "
+            "series is time-only and another is geography-only). Choose indicators "
+            "that share at least one of: year, country, or the same disaggregation "
+            "columns."
+        )
+
     merged = std_dfs[0]
     for df in std_dfs[1:]:
         merged = pd.merge(merged, df, on=join_keys, how="outer")

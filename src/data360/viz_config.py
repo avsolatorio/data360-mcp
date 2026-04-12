@@ -242,7 +242,7 @@ class ChartStrategy(str, Enum):
 
     TEMPORAL_SINGLE = "temporal_single"  # 1 indicator, ≤8 countries, multi-year → lines
     TEMPORAL_MULTI_IND = (
-        "temporal_multi_indicator"  # 2-3 indicators, 1 country → layered lines
+        "temporal_multi_indicator"  # 2-4 indicators → layered lines (dual Y + offsets)
     )
     CORRELATION = "correlation"  # 2 indicators, multi-country, 1 year → scatter
     CORRELATION_TEMPORAL = "correlation_temporal"  # 2 indicators, multi-country, multi-year → connected scatter
@@ -821,10 +821,12 @@ def build_temporal_multi_indicator_spec(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
 ) -> dict:
-    """Layered dual-axis line chart: 2-3 indicators, 1 country, multi-year.
+    """Layered multi-axis line chart: 2-4 indicators, multi-year when applicable.
 
     Uses Vega-Lite layer + independent y-scale resolution.
-    Each indicator gets its own y-axis with the indicator name as the label.
+    Each indicator gets its own y-axis; left + right for the first two, staggered
+    offsets on the right for additional series (Vega-Lite only lays out two
+    independent Y-axes cleanly without offset).
     """
     ind_cols = result.indicator_cols
     if not ind_cols:
@@ -837,6 +839,14 @@ def build_temporal_multi_indicator_spec(
     for i, col in enumerate(ind_cols):
         color = WB_CAT_COLORS[i % len(WB_CAT_COLORS)]
         y_label = lab.get(col, col.replace("_", " ").title())
+        y_axis = {**_axis_style(y_label), "titleColor": color}
+        if i == 0:
+            y_axis["orient"] = "left"
+        elif i == 1:
+            y_axis["orient"] = "right"
+        else:
+            y_axis["orient"] = "right"
+            y_axis["offset"] = 50 * (i - 1)
         layer_enc: dict = {
             "x": {
                 "field": "year",
@@ -846,7 +856,7 @@ def build_temporal_multi_indicator_spec(
             "y": {
                 "field": col,
                 "type": "quantitative",
-                "axis": {**_axis_style(y_label), "titleColor": color},
+                "axis": y_axis,
                 "scale": {"zero": False},
             },
             "color": {"value": color},
@@ -870,7 +880,7 @@ def build_temporal_multi_indicator_spec(
         "data": {"values": rows},
         "layer": layers,
         "resolve": {"scale": {"y": "independent"}},
-        "width": 620,
+        "width": 680 if len(ind_cols) > 2 else 620,
         "height": 380,
     }
     return inject_wb_config(spec)
