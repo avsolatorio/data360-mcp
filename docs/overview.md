@@ -40,6 +40,7 @@ The server starts at `http://localhost:8000/mcp`.
 
 | Tool | What it does |
 |---|---|
+| `data360_analyze_development_topic` | Analyze vague topics using LLM query decomposition |
 | `data360_search_indicators` | Search indicators with country coverage check |
 | `data360_get_data` | Fetch time-series data with filters |
 | `data360_get_metadata` | Get indicator methodology and definitions |

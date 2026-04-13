@@ -1,8 +1,11 @@
 import json
 import logging
+import re
 import zlib
 from typing import Any
 from urllib.parse import urlencode
+
+from fastmcp.server.context import Context
 
 import dotenv
 import httpx
@@ -1262,6 +1265,349 @@ async def discover_indicators(
     )
 
     # ... existing implementation ...
+
+
+# --- Topic Analysis Helpers ---
+
+# Conjunctions and stopwords used for rule-based query decomposition
+_SPLIT_CONJUNCTIONS = re.compile(r"\band\b|\bor\b|\b&\b|,|;", re.IGNORECASE)
+_STOPWORDS = frozenset({
+    "what", "are", "the", "main", "is", "a", "an", "of", "for", "in",
+    "to", "how", "does", "do", "its", "their", "has", "been", "being",
+    "with", "on", "at", "by", "from", "about", "between", "which",
+    "facing", "challenges", "issues", "problems", "region", "country",
+    "makes", "great", "key", "major", "most", "important",
+})
+_DEFAULT_SUMMARY_YEARS = 5
+_SAMPLING_SYSTEM_PROMPT = (
+    "You are a development economist. Given the user's question about "
+    "development data or indicators, generate 3-5 specific, measurable "
+    "topics that can be searched in a statistical database (e.g. World "
+    "Bank indicators). Return ONLY a JSON array of short search strings. "
+    'Example: ["GDP per capita", "life expectancy at birth", "school enrollment rate"]\n'
+    "Do not include any other text."
+)
+
+
+def _decompose_query(query: str) -> list[str]:
+    """Split a vague query into searchable sub-queries using rule-based heuristics.
+
+    Splits on conjunctions (and, or, &, commas, semicolons), removes stopwords,
+    and returns non-empty fragments. Falls back to the original query if
+    decomposition produces nothing useful.
+    """
+    # Split on conjunctions
+    fragments = _SPLIT_CONJUNCTIONS.split(query)
+    sub_queries: list[str] = []
+    for frag in fragments:
+        # Remove stopwords and clean up
+        words = [
+            w for w in frag.strip().split()
+            if w.lower() not in _STOPWORDS and len(w) > 1
+        ]
+        cleaned = " ".join(words).strip()
+        if cleaned and len(cleaned) > 2:
+            sub_queries.append(cleaned)
+
+    # Deduplicate while preserving order
+    seen: set[str] = set()
+    unique: list[str] = []
+    for sq in sub_queries:
+        key = sq.lower()
+        if key not in seen:
+            seen.add(key)
+            unique.append(sq)
+
+    # If decomposition produced nothing useful, use the original query
+    if not unique:
+        return [query.strip()]
+
+    # Cap at 5 sub-queries to bound search cost
+    return unique[:5]
+
+
+def _score_indicator(
+    indicator: "EnrichedIndicator",
+    query_tokens: set[str],
+) -> float:
+    """Score an indicator for relevance to the original query.
+
+    Scoring factors:
+    - Country coverage: +2 if covers_country is True
+    - Data recency: +1 if latest_data is within the last 3 years
+    - Token overlap: proportion of query tokens found in indicator name + definition
+    """
+    score = 0.0
+
+    # Country coverage
+    if indicator.covers_country:
+        score += 2.0
+
+    # Data recency
+    try:
+        from datetime import datetime
+        latest = int(indicator.latest_data or "0")
+        current_year = datetime.now().year
+        if latest >= current_year - 3:
+            score += 1.0
+        elif latest >= current_year - 10:
+            score += 0.5
+    except (ValueError, TypeError):
+        pass
+
+    # Token overlap between query and indicator name + definition
+    indicator_text = f"{indicator.name} {indicator.truncated_definition}".lower()
+    indicator_tokens = set(indicator_text.split())
+    if query_tokens:
+        overlap = len(query_tokens & indicator_tokens)
+        score += overlap / max(len(query_tokens), 1)
+
+    return score
+
+
+async def analyze_development_topic(
+    query: str,
+    country: str | None = None,
+    max_indicators: int = 4,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    ctx: Context | None = None,
+) -> dict[str, Any]:
+    """Analyze a development topic by finding and fetching relevant indicators.
+
+    Use this tool when the user asks a broad or vague question about development
+    data that does not name a specific indicator — for example:
+    "What makes a country great?", "What are Ghana's economic challenges?",
+    "How is education performing in Sub-Saharan Africa?"
+
+    The tool decomposes the question into specific searchable topics (using the
+    connected LLM when sampling is available, or rule-based heuristics as
+    fallback), searches the Data360 catalog for each topic, scores and ranks
+    the results, and prefetches recent data for the top indicators.
+
+    Do NOT use this tool when the user already names a specific indicator or
+    metric (e.g. "GDP per capita for Kenya") — use data360_search_indicators
+    and data360_get_data directly instead.
+
+    Args:
+        query: The user's development-related question (can be vague/broad).
+        country: Optional country name or 3-letter code (e.g. "Ghana", "GHA").
+        max_indicators: Maximum number of indicators to return (default 4, max 6).
+        start_year: Optional start year for data snapshots. Defaults to last 5 years.
+        end_year: Optional end year for data snapshots. Defaults to current year.
+        ctx: MCP Context object (injected by FastMCP). Used for sampling when available.
+
+    Returns:
+        Dict with:
+            query: The original question.
+            country / country_code: Resolved country info (if provided).
+            sub_queries: The decomposed search terms (from LLM or rule-based).
+            decomposition_method: "sampling" or "rule_based".
+            selected_indicators: List of ranked indicator dicts, each with:
+                rank, indicator_id, database_id, name, definition, reason,
+                data_snapshot (list of recent data points), data_error (if fetch failed).
+            coverage_note: Summary of how many indicators were found.
+            error: Top-level error message if the entire operation failed.
+    """
+    import asyncio
+    from datetime import datetime
+
+    max_indicators = min(max_indicators, 6)
+    current_year = datetime.now().year
+    if end_year is None:
+        end_year = current_year
+    if start_year is None:
+        start_year = current_year - _DEFAULT_SUMMARY_YEARS + 1
+
+    # --- Step 1: Resolve country code ---
+    country_code = None
+    if country:
+        country_code = await _resolve_country_code(country)
+
+    # --- Step 2: Decompose query into sub-queries ---
+    sub_queries: list[str] = []
+    decomposition_method = "rule_based"
+    sampling_error = None
+
+    # Try sampling first (LLM-powered decomposition)
+    _logger.info(
+        "analyze_development_topic: ctx=%s, type=%s",
+        ctx is not None, type(ctx).__name__ if ctx is not None else "None",
+    )
+    if ctx is not None:
+        try:
+            sampling_result = await ctx.sample(
+                f"User question: {query}",
+                system_prompt=_SAMPLING_SYSTEM_PROMPT,
+                max_tokens=256,
+            )
+            # Parse the LLM response as a JSON array
+            raw_text = sampling_result.text or ""
+            # Strip markdown code fences if present
+            cleaned = raw_text.strip()
+            if cleaned.startswith("```"):
+                lines = cleaned.split("\n")
+                # Remove first and last lines (fences)
+                cleaned = "\n".join(lines[1:-1]).strip()
+            parsed = json.loads(cleaned)
+            if isinstance(parsed, list) and all(isinstance(s, str) for s in parsed):
+                sub_queries = [s.strip() for s in parsed if s.strip()][:5]
+                decomposition_method = "sampling"
+                _logger.info(
+                    "Sampling decomposition succeeded: %s", sub_queries
+                )
+        except (ValueError, json.JSONDecodeError) as e:
+            sampling_error = f"{type(e).__name__}: {e}"
+            _logger.warning(
+                "Sampling returned non-JSON response, falling back to rule-based: %s", e
+            )
+        except Exception as e:
+            sampling_error = f"{type(e).__name__}: {e}"
+            _logger.info(
+                "Sampling unavailable (client may not support it), "
+                "falling back to rule-based decomposition: %s (%s)",
+                type(e).__name__, e,
+            )
+
+    # Fall back to rule-based decomposition
+    if not sub_queries:
+        sub_queries = _decompose_query(query)
+        decomposition_method = "rule_based"
+
+    _logger.info(
+        "Analyzing topic with %d sub-queries (%s): %s",
+        len(sub_queries), decomposition_method, sub_queries,
+    )
+
+    # --- Step 3: Multi-search across sub-queries ---
+    search_tasks = [
+        search(
+            query=sq,
+            required_country=country_code or country,
+            limit=max_indicators,
+        )
+        for sq in sub_queries
+    ]
+    search_results = await asyncio.gather(*search_tasks, return_exceptions=True)
+
+    # Pool and deduplicate indicators by indicator ID
+    seen_ids: set[str] = set()
+    all_indicators: list[tuple[EnrichedIndicator, str]] = []  # (indicator, source_query)
+    total_candidates = 0
+
+    for sq, result in zip(sub_queries, search_results):
+        if isinstance(result, Exception):
+            _logger.warning("Search failed for sub-query '%s': %s", sq, result)
+            continue
+        if result.error:
+            _logger.warning("Search error for sub-query '%s': %s", sq, result.error)
+            continue
+        for ind in result.indicators:
+            total_candidates += 1
+            if ind.idno not in seen_ids:
+                seen_ids.add(ind.idno)
+                all_indicators.append((ind, sq))
+
+    if not all_indicators:
+        return {
+            "query": query,
+            "country": country,
+            "country_code": country_code,
+            "sub_queries": sub_queries,
+            "decomposition_method": decomposition_method,
+            "selected_indicators": [],
+            "coverage_note": f"No indicators found across {len(sub_queries)} sub-queries.",
+            "error": "No matching indicators found for this topic.",
+        }
+
+    # --- Step 4: Score and rank ---
+    query_tokens = {
+        w.lower() for w in query.split()
+        if w.lower() not in _STOPWORDS and len(w) > 1
+    }
+
+    scored: list[tuple[float, EnrichedIndicator, str]] = []
+    for ind, source_sq in all_indicators:
+        score = _score_indicator(ind, query_tokens)
+        scored.append((score, ind, source_sq))
+
+    # Sort descending by score
+    scored.sort(key=lambda x: x[0], reverse=True)
+    top = scored[:max_indicators]
+
+    # --- Step 5: Prefetch data for top indicators ---
+    async def _fetch_data_for_indicator(
+        ind: EnrichedIndicator,
+    ) -> dict[str, Any] | None:
+        """Fetch a small data snapshot for one indicator."""
+        try:
+            filters: dict[str, str | None] = {}
+            if country_code:
+                filters["REF_AREA"] = country_code
+
+            data_result = await get_data(
+                database_id=ind.database_id,
+                indicator_id=ind.idno,
+                disaggregation_filters=filters if filters else None,
+                start_year=start_year,
+                end_year=end_year,
+                limit=20,
+            )
+            if data_result.error:
+                return {"error": data_result.error}
+            return {
+                "data": data_result.data,
+                "metadata": data_result.metadata,
+                "count": data_result.count,
+            }
+        except Exception as e:
+            return {"error": str(e)}
+
+    data_tasks = [_fetch_data_for_indicator(ind) for _, ind, _ in top]
+    data_results = await asyncio.gather(*data_tasks, return_exceptions=True)
+
+    # --- Step 6: Build response ---
+    selected_indicators = []
+    for rank, ((score, ind, source_sq), data_res) in enumerate(
+        zip(top, data_results), start=1
+    ):
+        data_snapshot = None
+        data_error = None
+
+        if isinstance(data_res, Exception):
+            data_error = str(data_res)
+        elif data_res is not None and "error" in data_res:
+            data_error = data_res["error"]
+        elif data_res is not None:
+            data_snapshot = data_res
+
+        selected_indicators.append({
+            "rank": rank,
+            "indicator_id": ind.idno,
+            "database_id": ind.database_id,
+            "name": ind.name,
+            "definition": ind.truncated_definition,
+            "matched_sub_query": source_sq,
+            "score": round(score, 2),
+            "data_snapshot": data_snapshot,
+            "data_error": data_error,
+        })
+
+    result = {
+        "query": query,
+        "country": country,
+        "country_code": country_code,
+        "sub_queries": sub_queries,
+        "decomposition_method": decomposition_method,
+        "selected_indicators": selected_indicators,
+        "coverage_note": (
+            f"{len(selected_indicators)} indicators selected from "
+            f"{len(sub_queries)} sub-queries ({total_candidates} candidates)"
+        ),
+    }
+    if sampling_error:
+        result["sampling_error"] = sampling_error
+    return result
 
 
 # --- Visualization Workflow Tools ---

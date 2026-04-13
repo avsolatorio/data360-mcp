@@ -53,6 +53,7 @@ cp .env.example .env
 | `MCP_PORT` | Port for the MCP server | `8000` |
 | `MCP_TRANSPORT` | Transport protocol (`http` or `sse`) | `http` |
 | `MCP_CHARTS_API_URL` | Optional URL for an external chart rendering API | _(none)_ |
+| `OPENAI_API_KEY` | Optional API key for LLM sampling fallback (used by `data360_analyze_development_topic` if client lacks sampling support) | _(none)_ |
 
 ### Run the Server
 
@@ -90,6 +91,7 @@ DEBUG=true uv run scripts/llm_mcp_demo.py
 
 | Tool | Description |
 |---|---|
+| `data360_analyze_development_topic` | End-to-end multi-search and prefetching tool for analyzing vague/abstract topics (e.g. "What makes a country great?"). Decomposes the question using MCP sampling (with OpenAI fallback), evaluates candidates, and ranks indicators. |
 | `data360_search_indicators` | Search indicators with enriched metadata. Pass `required_country` for server-side coverage check. Returns `covers_country`, `latest_data`, `dimensions`. |
 | `data360_get_data` | Fetch data points with filters (country, time period, SEX, AGE, etc.). |
 | `data360_get_metadata` | Get indicator metadata. Use `select_fields` for specific fields. |
