@@ -70,3 +70,9 @@ get_supported_chart_types = mcp.tool(
     name="data360_get_supported_chart_types",
     description=data360_viz.get_supported_chart_types.__doc__,
 )
+
+analyze_development_topic = mcp.tool(
+    data360_api.analyze_development_topic,
+    name="data360_analyze_development_topic",
+    description=data360_api.analyze_development_topic.__doc__,
+)
