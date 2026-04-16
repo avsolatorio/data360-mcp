@@ -24,6 +24,8 @@ from .models import (
     IndicatorDataResponse,
     MetadataRequest,
     MetadataResponse,
+    MultiQuerySearchResponse,
+    QueryGroupResult,
     SearchRequest,
     SearchResponse,
     SeriesDescription,
@@ -465,11 +467,97 @@ async def _resolve_country_code(country_query: str) -> str | None:
     return None
 
 
+def _enrich_search_results(
+    search_result: "SearchResponse",
+    country_code: str | None,
+) -> list[EnrichedIndicator]:
+    """Convert raw SearchResponse items into a list of EnrichedIndicator objects.
+
+    Extracted to avoid duplicating enrichment logic between the single-query
+    and multi-query paths in search().
+
+    Args:
+        search_result: Raw response from _search_raw().
+        country_code: Resolved country code (or None). Used to compute covers_country.
+
+    Returns:
+        List of EnrichedIndicator objects. Empty if search_result.items is falsy.
+    """
+    if not search_result.items:
+        return []
+
+    _label_to_code = {
+        "sex": "SEX",
+        "age": "AGE",
+        "residential area": "URBANISATION",
+        "urbanisation": "URBANISATION",
+        "education": "EDUCATION",
+    }
+
+    indicators: list[EnrichedIndicator] = []
+    for item in search_result.items:
+        raw = item.model_dump()
+
+        # Extract latest_data and time_period_range
+        time_periods = raw.get("time_periods", [])
+        latest_data = None
+        time_period_range = None
+        if time_periods and isinstance(time_periods, list):
+            tp = time_periods[0] if isinstance(time_periods[0], dict) else {}
+            latest_data = tp.get("LATEST_DATA_POINT") or tp.get("end")
+            start = tp.get("start")
+            end = tp.get("end")
+            if start and end:
+                time_period_range = f"{start}-{end}"
+
+        # Check covers_country from ref_country
+        covers_country = None
+        ref_country = raw.get("ref_country", [])
+        if country_code and ref_country and isinstance(ref_country, list):
+            country_codes = {
+                c.get("code") if isinstance(c, dict) else c for c in ref_country
+            }
+            requested_codes = {c.strip() for c in country_code.split(",")}
+            covers_country = bool(country_codes & requested_codes)
+        elif country_code:
+            covers_country = False
+
+        # Extract dimension names
+        dimensions = raw.get("dimensions", [])
+        useful_dims: list[str] = []
+        if dimensions and isinstance(dimensions, list):
+            for dim in dimensions:
+                if isinstance(dim, dict):
+                    label = (dim.get("label") or "").lower()
+                    if label in _label_to_code:
+                        useful_dims.append(_label_to_code[label])
+
+        indicators.append(
+            EnrichedIndicator(
+                idno=raw.get("idno", ""),
+                database_id=raw.get("database_id", ""),
+                name=raw.get("name", ""),
+                truncated_definition=(raw.get("definition_long") or "")[:100],
+                periodicity=raw.get("periodicity"),
+                latest_data=latest_data,
+                time_period_range=time_period_range,
+                covers_country=covers_country,
+                dimensions=useful_dims if useful_dims else None,
+            )
+        )
+
+    return indicators
+
+
 async def search(
-    query: str,
+    query: str | None = None,
     required_country: str | None = None,
     limit: int = DEFAULT_SEARCH_LIMIT,
     offset: int = 0,
+    # New multi-query parameters
+    queries: list[str] | None = None,
+    result_layout: str = "merged",
+    dedupe: bool = True,
     # The following parameters are accepted for robustness; LLM clients sometimes
     # hallucinate them from the internal SearchRequest model.
     # n_results/skip are treated as aliases for limit/offset when the primary
@@ -481,29 +569,163 @@ async def search(
     select: str | None = None,
     skip: int | None = None,
     odata_options: dict[str, str] | None = None,
-) -> "EnrichedSearchResponse":
+) -> "EnrichedSearchResponse | MultiQuerySearchResponse":
     """Search for Data360 indicators with enriched metadata for selection.
 
     Use this first when the user asks for data on a topic (e.g. unemployment, poverty, GDP).
     No other tools are required before this one. After picking an indicator, call
     data360_get_metadata and/or data360_get_disaggregation before fetching data or generating a chart.
 
+    Use when the user already names a specific indicator or metric — for example:
+    "GDP per capita for Kenya", "unemployment rate in Morocco", "life expectancy in Sub-Saharan Africa".
+
+    For multiple topics in one call (e.g. "GDP, inflation, employment for Kenya"), pass them as
+    queries=["GDP growth", "inflation rate", "unemployment"] instead of making separate calls.
+
+    Do NOT use this tool when the user asks a broad or vague question that does not name a
+    specific indicator — for example: "What makes a country great?",
+    "What are Ghana's economic challenges?", "How is education performing in Africa?"
+    In those cases, use data360_analyze_development_topic instead, which decomposes
+    the question into specific sub-queries and searches for each one.
+
     Args:
-        query: Search query (e.g., "unemployment rate", "poverty", "GDP per capita").
+        query: Single search query (e.g., "unemployment rate", "poverty", "GDP per capita").
+            Mutually exclusive with queries.
+        queries: List of search terms for multi-topic search in one call (e.g.
+            ["GDP growth", "inflation rate", "unemployment"]). Mutually exclusive with query.
+            Requires at least 2 non-empty strings.
         required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
             Use comma-separated names or codes to check multiple countries in one call (e.g. "China, USA").
-        limit: Maximum number of indicators to return (default 5).
-        offset: Number of results to skip for pagination (default 0).
+            Shared across all queries — this tool is for multiple topics in the same geographic scope.
+            For different countries per query, make separate search() calls.
+
+            Open question: Whether to support per-query country codes (e.g., "GDP for Kenya AND
+            inflation for Morocco") is an open design decision. The current recommendation is to
+            make separate search() calls for that case, as mixing country scopes in a single call
+            complicates result interpretation and the enrichment pipeline.
+        limit: Maximum number of indicators per query (default 5).
+        offset: Number of results to skip per query for pagination (default 0).
+        result_layout: Only used with queries. "merged" (default) returns a flat deduped list.
+            "by_query" returns one group per input query. In both cases, dedupe=True performs
+            cross-group deduplication (first-seen wins).
+        dedupe: Only used with queries. When True (default), deduplicates by (database_id, idno)
+            across all query groups. First-seen order is preserved (queries processed in order).
 
     Returns:
-        EnrichedSearchResponse:
-            indicators: List of EnrichedIndicator, each with idno, database_id, name,
-                truncated_definition, unit, periodicity, latest_data, time_period_range,
-                covers_country (True/False if required_country was given), and dimensions (e.g. SEX, AGE).
-            required_country: Resolved country code(s) if required_country was provided.
-            count, total_count, offset, has_more, next_offset: Pagination fields.
-            error: Error message string if the request failed; otherwise None.
+        With query: EnrichedSearchResponse with indicators, required_country, pagination fields.
+        With queries: MultiQuerySearchResponse with indicators (merged) or results (by_query),
+            total_candidates, deduplicated_count, and per-group errors.
+        error: Error message string if the request failed; otherwise None.
     """
+    import asyncio
+
+    # --- Validation ---
+    if query is not None and queries is not None:
+        return EnrichedSearchResponse(
+            error="Provide either 'query' (single string) or 'queries' (list), not both."
+        )
+    if query is None and queries is None:
+        return EnrichedSearchResponse(error="Either 'query' or 'queries' must be provided.")
+
+    # --- Multi-query path ---
+    if queries is not None:
+        clean_queries = [q.strip() for q in queries if q and q.strip()]
+        if len(clean_queries) < 2:
+            return MultiQuerySearchResponse(
+                error="'queries' must contain at least 2 non-empty search strings.",
+                queries=queries or [],
+            )
+        if result_layout not in ("merged", "by_query"):
+            return MultiQuerySearchResponse(
+                error="result_layout must be 'merged' or 'by_query'.",
+                queries=clean_queries,
+            )
+
+        # Handle limit/offset aliases
+        if n_results is not None and limit == DEFAULT_SEARCH_LIMIT:
+            limit = n_results
+        if skip is not None and offset == 0:
+            offset = skip
+
+        # Resolve country once, shared across all sub-queries
+        country_code: str | None = None
+        if required_country:
+            country_code = await _resolve_country_code(required_country)
+
+        # Fan out concurrent _search_raw calls, one per query
+        _select_fields = [
+            "idno", "name", "database_id", "definition_long",
+            "periodicity", "time_periods", "ref_country", "dimensions", "measurement_unit",
+        ]
+        raw_tasks = [
+            _search_raw(query=q, limit=limit, offset=offset, select_fields=_select_fields)
+            for q in clean_queries
+        ]
+        raw_results = await asyncio.gather(*raw_tasks, return_exceptions=True)
+
+        # Enrich results per group; apply cross-group dedup when requested
+        seen_ids: set[tuple[str, str]] = set()
+        groups: list[QueryGroupResult] = []
+        total_candidates = 0
+        deduplicated_count = 0
+
+        for q, raw_result in zip(clean_queries, raw_results):
+            if isinstance(raw_result, Exception):
+                groups.append(QueryGroupResult(query=q, error=str(raw_result)))
+                continue
+            if raw_result.error or not raw_result.items:
+                groups.append(QueryGroupResult(
+                    query=q,
+                    error=raw_result.error or f"No indicators found for: '{q}'",
+                ))
+                continue
+
+            enriched = _enrich_search_results(raw_result, country_code)
+            total_candidates += len(enriched)
+
+            if dedupe:
+                deduped: list[EnrichedIndicator] = []
+                for ind in enriched:
+                    key = (ind.database_id, ind.idno)
+                    if key not in seen_ids:
+                        seen_ids.add(key)
+                        deduped.append(ind)
+                    else:
+                        deduplicated_count += 1
+                enriched = deduped
+
+            groups.append(QueryGroupResult(query=q, indicators=enriched, count=len(enriched)))
+
+        if result_layout == "merged":
+            merged_indicators: list[EnrichedIndicator] = [
+                ind for g in groups for ind in g.indicators
+            ]
+            if country_code:
+                merged_indicators.sort(
+                    key=lambda x: (
+                        not (x.covers_country or False),
+                        -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0),
+                    )
+                )
+            return MultiQuerySearchResponse(
+                indicators=merged_indicators,
+                result_layout="merged",
+                queries=clean_queries,
+                required_country=country_code,
+                total_candidates=total_candidates,
+                deduplicated_count=deduplicated_count if dedupe else None,
+            )
+        else:  # by_query
+            return MultiQuerySearchResponse(
+                results=groups,
+                result_layout="by_query",
+                queries=clean_queries,
+                required_country=country_code,
+                total_candidates=total_candidates,
+                deduplicated_count=deduplicated_count if dedupe else None,
+            )
+
+    # --- Single-query path (original behavior, fully preserved) ---
     # Handle common parameter aliases sent by LLM clients.
     # Aliases only apply when the primary parameter is at its default value;
     # an explicit limit/offset always takes precedence over n_results/skip.
@@ -535,7 +757,7 @@ async def search(
 
     # Fetch all needed metadata in ONE search call
     search_result = await _search_raw(
-        query=query,
+        query=query,  # type: ignore[arg-type]  # validated non-None above
         limit=limit,
         offset=offset,
         select_fields=[
@@ -557,73 +779,7 @@ async def search(
     if not search_result.items:
         return EnrichedSearchResponse(error=f"No indicators found for: '{query}'")
 
-    db_mapping = await get_database_mapping()
-
-    # Process each indicator
-    indicators: list[EnrichedIndicator] = []
-    for item in search_result.items:
-        raw = item.model_dump()
-
-        # Extract latest_data and time_period_range
-        time_periods = raw.get("time_periods", [])
-        latest_data = None
-        time_period_range = None
-        if time_periods and isinstance(time_periods, list):
-            tp = time_periods[0] if isinstance(time_periods[0], dict) else {}
-            latest_data = tp.get("LATEST_DATA_POINT") or tp.get("end")
-            start = tp.get("start")
-            end = tp.get("end")
-            if start and end:
-                time_period_range = f"{start}-{end}"
-
-        # Check covers_country from ref_country
-        covers_country = None
-        ref_country = raw.get("ref_country", [])
-        if country_code and ref_country and isinstance(ref_country, list):
-            country_codes = {
-                c.get("code") if isinstance(c, dict) else c for c in ref_country
-            }
-            # Check overlap if multiple countries requested
-            requested_codes = set([c.strip() for c in country_code.split(",")])
-            covers_country = bool(country_codes & requested_codes)
-        elif country_code:
-            covers_country = False
-
-        # Extract dimension names from series_description/dimensions
-        dimensions = raw.get("dimensions", [])
-        label_to_code = {
-            "sex": "SEX",
-            "age": "AGE",
-            "residential area": "URBANISATION",
-            "urbanisation": "URBANISATION",
-            "education": "EDUCATION",
-        }
-
-        useful_dims: list[str] = []
-        if dimensions and isinstance(dimensions, list):
-            for dim in dimensions:
-                if isinstance(dim, dict):
-                    label = (dim.get("label") or "").lower()
-                    if label in label_to_code:
-                        useful_dims.append(label_to_code[label])
-
-        # Build EnrichedIndicator
-        db_id = raw.get("database_id", "")
-        indicators.append(
-            EnrichedIndicator(
-                idno=raw.get("idno", ""),
-                database_id=db_id,
-                database_name=db_mapping.get(db_id),
-                name=raw.get("name", ""),
-                truncated_definition=(raw.get("definition_long") or "")[:100],
-                unit=raw.get("measurement_unit"),
-                periodicity=raw.get("periodicity"),
-                latest_data=latest_data,
-                time_period_range=time_period_range,
-                covers_country=covers_country,
-                dimensions=useful_dims if useful_dims else None,
-            )
-        )
+    indicators = _enrich_search_results(search_result, country_code)
 
     # Sort: covers_country=True first, then by latest_data descending
     if country_code:
