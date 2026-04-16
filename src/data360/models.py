@@ -158,6 +158,60 @@ class EnrichedSearchResponse(MCPPagedResponse):
     error: str | None = Field(None, description="Error message if search failed")
 
 
+class QueryGroupResult(BaseModel):
+    """Result group for a single query within a multi-query search.
+
+    Only returned when result_layout='by_query'.
+    """
+
+    query: str = Field(..., description="The search query that produced these results")
+    indicators: list[EnrichedIndicator] = Field(
+        default_factory=list, description="Indicators found for this query"
+    )
+    count: int = Field(default=0, description="Number of indicators in this group")
+    error: str | None = Field(
+        None, description="Error message if this sub-query failed"
+    )
+
+
+class MultiQuerySearchResponse(BaseModel):
+    """Response for multi-query search (when queries parameter is used).
+
+    result_layout='merged': indicators contains a flat, deduped list.
+    result_layout='by_query': results contains one group per input query.
+    dedupe=True with by_query means cross-group dedup — first group to
+    claim an indicator keeps it; later groups skip it.
+    """
+
+    indicators: list[EnrichedIndicator] = Field(
+        default_factory=list,
+        description="Merged, deduplicated indicators (result_layout='merged')",
+    )
+    results: list[QueryGroupResult] | None = Field(
+        None,
+        description="Per-query result groups (result_layout='by_query')",
+    )
+    result_layout: str = Field(
+        "merged", description="Layout mode used: 'merged' or 'by_query'"
+    )
+    queries: list[str] = Field(
+        default_factory=list, description="The input query strings"
+    )
+    required_country: str | None = Field(
+        None, description="Resolved country code(s) used for all sub-queries"
+    )
+    total_candidates: int = Field(
+        0,
+        description="Total indicators found before dedup (merged) or across all groups (by_query)",
+    )
+    deduplicated_count: int | None = Field(
+        None, description="Number of duplicates removed (merged layout only)"
+    )
+    error: str | None = Field(
+        None, description="Top-level error if the entire multi-query operation failed"
+    )
+
+
 class MetadataRequest(BaseModel):
     """Request model for data 360 metadata retrieval."""
 
