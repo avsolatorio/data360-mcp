@@ -76,3 +76,10 @@ analyze_development_topic = mcp.tool(
     name="data360_analyze_development_topic",
     description=data360_api.analyze_development_topic.__doc__,
 )
+
+# NOTE: Enabled for testing. Comment out before production deployment.
+generate_viz_gallery = mcp.tool(
+    data360_viz.generate_viz_gallery,
+    name="data360_generate_viz_gallery",
+    description=data360_viz.generate_viz_gallery.__doc__,
+)

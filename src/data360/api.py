@@ -1404,8 +1404,9 @@ async def analyze_development_topic(
             sub_queries: The decomposed search terms (from LLM or rule-based).
             decomposition_method: "sampling" or "rule_based".
             selected_indicators: List of ranked indicator dicts, each with:
-                rank, indicator_id, database_id, name, definition, reason,
-                data_snapshot (list of recent data points), data_error (if fetch failed).
+                rank, indicator_id, database_id, name, definition,
+                matched_sub_queries (dict with original_query and decomposed_sub_query),
+                score, data_snapshot (list of recent data points), data_error (if fetch failed).
             coverage_note: Summary of how many indicators were found.
             error: Top-level error message if the entire operation failed.
     """
@@ -1479,34 +1480,34 @@ async def analyze_development_topic(
         len(sub_queries), decomposition_method, sub_queries,
     )
 
-    # --- Step 3: Multi-search across sub-queries ---
-    search_tasks = [
-        search(
-            query=sq,
-            required_country=country_code or country,
-            limit=max_indicators,
-        )
-        for sq in sub_queries
-    ]
-    search_results = await asyncio.gather(*search_tasks, return_exceptions=True)
+    # --- Step 3: Multi-search via the new queries parameter ---
+    # Delegates fan-out, enrichment, and cross-query dedup to search().
+    # result_layout="by_query" preserves which sub-query each indicator came
+    # from — needed to populate matched_sub_queries in the response.
+    multi_result = await search(
+        queries=sub_queries,
+        required_country=country_code or country,
+        limit=max_indicators,
+        result_layout="by_query",
+        dedupe=True,
+    )
 
-    # Pool and deduplicate indicators by indicator ID
-    seen_ids: set[str] = set()
-    all_indicators: list[tuple[EnrichedIndicator, str]] = []  # (indicator, source_query)
+    # Build (indicator, source_query) tuples from grouped results
+    all_indicators: list[tuple[EnrichedIndicator, str]] = []
     total_candidates = 0
 
-    for sq, result in zip(sub_queries, search_results):
-        if isinstance(result, Exception):
-            _logger.warning("Search failed for sub-query '%s': %s", sq, result)
-            continue
-        if result.error:
-            _logger.warning("Search error for sub-query '%s': %s", sq, result.error)
-            continue
-        for ind in result.indicators:
-            total_candidates += 1
-            if ind.idno not in seen_ids:
-                seen_ids.add(ind.idno)
-                all_indicators.append((ind, sq))
+    if isinstance(multi_result, MultiQuerySearchResponse) and multi_result.results:
+        for group in multi_result.results:
+            if group.error:
+                _logger.warning(
+                    "Search error for sub-query '%s': %s", group.query, group.error
+                )
+                continue
+            for ind in group.indicators:
+                total_candidates += 1
+                all_indicators.append((ind, group.query))
+    elif multi_result.error:
+        _logger.warning("Multi-query search failed: %s", multi_result.error)
 
     if not all_indicators:
         return {
@@ -1587,7 +1588,10 @@ async def analyze_development_topic(
             "database_id": ind.database_id,
             "name": ind.name,
             "definition": ind.truncated_definition,
-            "matched_sub_query": source_sq,
+            "matched_sub_queries": {
+                "original_query": query,
+                "decomposed_sub_query": source_sq,
+            },
             "score": round(score, 2),
             "data_snapshot": data_snapshot,
             "data_error": data_error,

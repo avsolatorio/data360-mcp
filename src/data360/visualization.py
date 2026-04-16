@@ -931,3 +931,191 @@ async def get_multi_indicator_viz_spec(
     result["strategy"] = strategy_result.strategy.value
     result["reason"] = strategy_result.reason
     return result
+
+
+async def generate_viz_gallery(
+    indicators: list[dict],
+    country_code: str | None = None,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    chart_types: list[str] | None = None,
+) -> dict:
+    """Generate a gallery of charts for a set of indicators — singles and all pairwise combos.
+
+    Use this tool after data360_analyze_development_topic to batch-generate all useful
+    chart combinations from its selected_indicators output. The LLM then filters this
+    gallery and narrates the most relevant charts for the user's question.
+
+    Do NOT use this tool to generate a chart for a single known indicator — use
+    data360_get_viz_spec for that. This tool is specifically for exploring relationships
+    across a set of thematically related indicators.
+
+    Args:
+        indicators: List of indicator dicts, each with at minimum "database_id" and
+            "indicator_id". Typically pass the selected_indicators list from
+            data360_analyze_development_topic directly. Min 1, max 6.
+        country_code: Optional 3-letter code or comma-separated codes (e.g. "GHA" or "GHA,NGA").
+        start_year: Optional start year (inclusive). Defaults to last 5 years.
+        end_year: Optional end year (inclusive). Defaults to current year.
+        chart_types: Optional list to restrict chart types generated
+            (e.g. ["line", "scatter"]). If None, all applicable types are generated.
+
+    Returns:
+        Dict with:
+            gallery: List of chart dicts, each with chart_url, chart_type, indicators
+                (list of indicator names), indicator_ids (list of dicts with database_id
+                and indicator_id), description, and optionally error.
+            total_charts: Total number of chart slots attempted.
+            successful_charts: Number of charts successfully generated.
+            failed_charts: Number of charts that failed.
+            country_code: The country code used (if any).
+    """
+    import asyncio
+    import itertools
+
+    if not indicators:
+        return {
+            "gallery": [],
+            "total_charts": 0,
+            "successful_charts": 0,
+            "failed_charts": 0,
+            "country_code": country_code,
+            "error": "No indicators provided.",
+        }
+
+    # Cap at 6 to keep combinations manageable (6 singles + 15 pairs = 21 max)
+    capped = indicators[:6]
+
+    # Build chart tasks: (label, coroutine_factory)
+    tasks_meta: list[dict] = []
+
+    # --- Single-indicator charts ---
+    for ind in capped:
+        db_id = ind.get("database_id") or ind.get("database_id", "")
+        ind_id = ind.get("indicator_id") or ind.get("idno", "")
+        ind_name = ind.get("name", ind_id)
+
+        if not db_id or not ind_id:
+            continue
+
+        chart_type_hint = (chart_types[0] if chart_types and len(chart_types) == 1 else None)
+
+        tasks_meta.append({
+            "kind": "single",
+            "indicator_ids": [{"database_id": db_id, "indicator_id": ind_id}],
+            "indicator_names": [ind_name],
+            "db_id": db_id,
+            "ind_id": ind_id,
+            "chart_type_hint": chart_type_hint,
+        })
+
+    # --- Pairwise multi-indicator charts ---
+    for ind_a, ind_b in itertools.combinations(capped, 2):
+        db_a = ind_a.get("database_id", "")
+        id_a = ind_a.get("indicator_id") or ind_a.get("idno", "")
+        name_a = ind_a.get("name", id_a)
+
+        db_b = ind_b.get("database_id", "")
+        id_b = ind_b.get("indicator_id") or ind_b.get("idno", "")
+        name_b = ind_b.get("name", id_b)
+
+        if not (db_a and id_a and db_b and id_b):
+            continue
+
+        tasks_meta.append({
+            "kind": "pair",
+            "indicator_ids": [
+                {"database_id": db_a, "indicator_id": id_a},
+                {"database_id": db_b, "indicator_id": id_b},
+            ],
+            "indicator_names": [name_a, name_b],
+            "chart_type_hint": None,
+        })
+
+    total_charts = len(tasks_meta)
+    semaphore = asyncio.Semaphore(5)
+
+    async def _generate_one(meta: dict) -> dict:
+        async with semaphore:
+            try:
+                if meta["kind"] == "single":
+                    result = await get_viz_spec(
+                        database_id=meta["db_id"],
+                        indicator_id=meta["ind_id"],
+                        country_code=country_code,
+                        start_year=start_year,
+                        end_year=end_year,
+                        chart_type=meta.get("chart_type_hint"),
+                    )
+                    chart_type_used = result.get("strategy") or (
+                        chart_types[0] if chart_types else "line"
+                    )
+                else:
+                    result = await get_multi_indicator_viz_spec(
+                        indicator_ids=meta["indicator_ids"],
+                        country_code=country_code,
+                        start_year=start_year,
+                        end_year=end_year,
+                        chart_type=meta.get("chart_type_hint"),
+                    )
+                    chart_type_used = result.get("strategy", "scatter")
+
+                if result.get("error"):
+                    return {
+                        "chart_url": None,
+                        "chart_type": None,
+                        "indicators": meta["indicator_names"],
+                        "indicator_ids": meta["indicator_ids"],
+                        "description": _gallery_description(
+                            meta["indicator_names"], country_code, chart_type_used
+                        ),
+                        "error": result["error"],
+                    }
+
+                return {
+                    "chart_url": result.get("url"),
+                    "chart_type": chart_type_used,
+                    "indicators": meta["indicator_names"],
+                    "indicator_ids": meta["indicator_ids"],
+                    "description": _gallery_description(
+                        meta["indicator_names"], country_code, chart_type_used
+                    ),
+                }
+
+            except Exception as e:
+                return {
+                    "chart_url": None,
+                    "chart_type": None,
+                    "indicators": meta["indicator_names"],
+                    "indicator_ids": meta["indicator_ids"],
+                    "description": _gallery_description(
+                        meta["indicator_names"], country_code, None
+                    ),
+                    "error": str(e),
+                }
+
+    chart_results = await asyncio.gather(*[_generate_one(m) for m in tasks_meta])
+
+    successful = sum(1 for c in chart_results if c.get("chart_url") and not c.get("error"))
+    failed = total_charts - successful
+
+    return {
+        "gallery": list(chart_results),
+        "total_charts": total_charts,
+        "successful_charts": successful,
+        "failed_charts": failed,
+        "country_code": country_code,
+    }
+
+
+def _gallery_description(
+    indicator_names: list[str],
+    country_code: str | None,
+    chart_type: str | None,
+) -> str:
+    """Build a human-readable description for a gallery chart entry."""
+    country_str = f" for {country_code}" if country_code else ""
+    chart_str = f" ({chart_type})" if chart_type else ""
+    if len(indicator_names) == 1:
+        return f"{indicator_names[0]}{country_str}{chart_str}"
+    return f"{' vs '.join(indicator_names)}{country_str}{chart_str}"

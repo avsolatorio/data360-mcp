@@ -12,7 +12,11 @@ from data360.api import (
     _score_indicator,
     analyze_development_topic,
 )
-from data360.models import EnrichedIndicator, EnrichedSearchResponse
+from data360.models import (
+    EnrichedIndicator,
+    MultiQuerySearchResponse,
+    QueryGroupResult,
+)
 
 
 # --- Helpers ---
@@ -39,11 +43,17 @@ def _make_indicator(
 def _make_search_response(
     indicators: list[EnrichedIndicator] | None = None,
     error: str | None = None,
-) -> EnrichedSearchResponse:
-    return EnrichedSearchResponse(
-        indicators=indicators or [],
-        error=error,
-        count=len(indicators or []),
+    query: str = "test query",
+) -> MultiQuerySearchResponse:
+    """Build a MultiQuerySearchResponse with by_query layout for mocking search()."""
+    inds = indicators or []
+    group = QueryGroupResult(query=query, indicators=inds, count=len(inds), error=error)
+    return MultiQuerySearchResponse(
+        results=[group],
+        result_layout="by_query",
+        queries=[query],
+        total_candidates=len(inds),
+        error=None if inds else error,
     )
 
 
@@ -188,7 +198,7 @@ class TestAnalyzeDevelopmentTopic:
         mock_data_response.return_value.count = 1
 
         with (
-            patch("data360.api.search", return_value=mock_search_response) as mock_search,
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)) as mock_search,
             patch("data360.api.get_data", mock_data_response),
             patch("data360.api._resolve_country_code", return_value="GHA"),
         ):
@@ -224,7 +234,7 @@ class TestAnalyzeDevelopmentTopic:
         mock_data_response.return_value.count = 0
 
         with (
-            patch("data360.api.search", return_value=mock_search_response),
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)),
             patch("data360.api.get_data", mock_data_response),
         ):
             result = await analyze_development_topic(
@@ -252,7 +262,7 @@ class TestAnalyzeDevelopmentTopic:
         mock_data_response.return_value.count = 0
 
         with (
-            patch("data360.api.search", return_value=mock_search_response),
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)),
             patch("data360.api.get_data", mock_data_response),
         ):
             result = await analyze_development_topic(
@@ -268,7 +278,7 @@ class TestAnalyzeDevelopmentTopic:
         """When all searches return no indicators, returns error."""
         empty_response = _make_search_response(indicators=[])
 
-        with patch("data360.api.search", return_value=empty_response):
+        with patch("data360.api.search", new=AsyncMock(return_value=empty_response)):
             result = await analyze_development_topic(
                 query="nonexistent topic xyzzy",
             )
@@ -292,7 +302,7 @@ class TestAnalyzeDevelopmentTopic:
         mock_data_response.return_value.count = 0
 
         with (
-            patch("data360.api.search", return_value=mock_search_response),
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)),
             patch("data360.api.get_data", mock_data_response),
         ):
             result = await analyze_development_topic(
@@ -320,7 +330,7 @@ class TestAnalyzeDevelopmentTopic:
         mock_data_response.return_value.count = 0
 
         with (
-            patch("data360.api.search", return_value=mock_search_response),
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)),
             patch("data360.api.get_data", mock_data_response),
         ):
             result = await analyze_development_topic(
@@ -347,7 +357,7 @@ class TestAnalyzeDevelopmentTopic:
         mock_data_response.return_value.count = 0
 
         with (
-            patch("data360.api.search", return_value=mock_search_response),
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)),
             patch("data360.api.get_data", mock_data_response),
         ):
             result = await analyze_development_topic(
