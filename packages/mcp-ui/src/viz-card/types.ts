@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 // ─── Vega-Lite spec (minimal typed surface) ───────────────────────────────────
 
 export type MarkType = "line" | "bar" | "point" | "area" | "tick";
@@ -87,6 +89,12 @@ export interface VegaChartCardProps {
    * Receives the PNG data URL. Defaults to a file download if omitted.
    */
   onExport?: (dataUrl: string) => void;
+
+  /**
+   * Optional control at the top of the right rail (e.g. “expand” in chat).
+   * The PNG export stays at the bottom; when set, the rail uses vertical space-between.
+   */
+  railTopSlot?: ReactNode;
 
   /** Extra class name applied to the outer card div. */
   className?: string;

@@ -130,6 +130,7 @@ export default function VegaChartCard({
   chartHeight = 260,
   onDownload,
   onExport,
+  railTopSlot,
   className,
 }: VegaChartCardProps) {
   const chartRef    = useRef<HTMLDivElement>(null);
@@ -241,11 +242,22 @@ export default function VegaChartCard({
 
   const card: CSSProperties = {
     flex: 1,
+    minWidth: 0,
     background: "#ffffff",
     border: "0.5px solid rgba(0,0,0,0.12)",
     borderRadius: 12,
     padding: "20px 20px 14px",
     fontFamily: "Open Sans, Arial, sans-serif",
+  };
+
+  /** Right rail: optional top slot + PNG at bottom; space-between when both. */
+  const rightRailStyle: CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: railTopSlot ? "space-between" : "flex-end",
+    flexShrink: 0,
+    paddingTop: railTopSlot ? 6 : 0,
+    paddingBottom: 6,
   };
 
   const chartArea: CSSProperties = {
@@ -260,7 +272,10 @@ export default function VegaChartCard({
   // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }} className={className}>
+    <div
+      className={className}
+      style={{ display: "flex", gap: 10, alignItems: "stretch", width: "100%" }}
+    >
       <div style={card}>
 
         {/* Title + subtitle */}
@@ -271,7 +286,7 @@ export default function VegaChartCard({
           <p style={{ fontSize: 14, color: "#666666", marginTop: 4 }}>{subtitle}</p>
         )}
 
-        {/* Chart */}
+        {/* Chart (no overlay — PNG export is in the rail to the right) */}
         <div ref={chartRef} style={chartArea} />
 
         {/* Interactive legend */}
@@ -348,8 +363,8 @@ export default function VegaChartCard({
         </div>
       </div>
 
-      {/* Side icon buttons */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 4, paddingTop: 8 }}>
+      <div style={rightRailStyle}>
+        {railTopSlot}
         <IconButton title="Save as PNG" onClick={handleExport}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
             <rect x="1" y="1" width="12" height="12" rx="2" />
