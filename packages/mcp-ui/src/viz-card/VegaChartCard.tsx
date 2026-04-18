@@ -157,7 +157,9 @@ export default function VegaChartCard({
 
   // Re-render chart when spec, active groups, or height changes
   useEffect(() => {
-    if (!chartRef.current || activeGroups.size === 0) return;
+    if (!chartRef.current) return;
+    // Single-series specs have no color legend → distinctGroups and activeGroups stay empty; still embed.
+    if (parsed.distinctGroups.length > 0 && activeGroups.size === 0) return;
 
     // Dynamically import vega-embed (peer dep)
     import("vega-embed").then(({ default: embed }) => {

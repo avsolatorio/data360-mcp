@@ -38,6 +38,7 @@ function mergeConfig(
  *  1. Inline named dataset → data.values
  *  2. Responsive sizing (width: "container", configurable height)
  *  3. Suppress built-in legend (card renders its own)
+ *  3b. Remove top-level title (card header shows it; avoids duplicating Vega’s title)
  *  4. Strip zoom/pan params (conflicts with card controls)
  *  5. Normalize $schema v6 → v5 (vega-embed 6 compatibility)
  *  6. Merge WB theme into config
@@ -59,6 +60,9 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
   if (out.encoding?.color) {
     out.encoding.color.legend = null;
   }
+
+  // 3b. Title is displayed by VegaChartCard (prop / parseSpec); strip from the embedded spec
+  delete out.title;
 
   // 4. Strip zoom/pan params — conflicts with card controls
   delete out.params;
