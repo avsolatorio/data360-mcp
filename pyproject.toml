@@ -24,6 +24,12 @@ dependencies = [
 requires = ["setuptools>=42", 'setuptools-scm']
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+data360 = ["tool_contract_version.json"]
+
 [dependency-groups]
 dev = [
   "pre-commit>=4.5.0",

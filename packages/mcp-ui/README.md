@@ -1,0 +1,95 @@
+# @data360/mcp-ui
+
+React components for presenting [Data360 MCP](https://github.com/worldbank/data360-mcp) tool output with World Bank styling.
+
+## Install
+
+```bash
+npm install @data360/mcp-ui @data360/tool-types vega vega-lite vega-embed
+```
+
+`@data360/tool-types` is optional but recommended for parsing MCP JSON before rendering.
+
+## Viz chart card
+
+Import the Vega-Lite chart card (for `data360_get_viz_spec` and `data360_get_multi_indicator_viz_spec`):
+
+```tsx
+import { VegaChartCard } from "@data360/mcp-ui/viz-card";
+import {
+  parseData360VizToolResult,
+  isData360VizToolSuccess,
+} from "@data360/tool-types";
+
+const parsed = parseData360VizToolResult(toolResult);
+if (!parsed.success || !isData360VizToolSuccess(parsed.data)) {
+  return <p>{parsed.success ? parsed.data.error : "Invalid payload"}</p>;
+}
+
+const specResponse = await fetch(parsed.data.url);
+const spec = await specResponse.json();
+
+<VegaChartCard
+  spec={spec}
+  subtitle="Brazil, India · 2018–2022"
+  source="World Bank — WDI"
+  annotations={[
+    { id: 1, text: "Brazil leads with 83% renewable electricity in 2020." },
+  ]}
+/>;
+```
+
+### Compatibility
+
+| `@data360/mcp-ui` | Tool contract | Viz tools |
+|-------------------|---------------|-----------|
+| `0.1.0` | `1.0.0` | `data360_get_viz_spec`, `data360_get_multi_indicator_viz_spec` |
+
+When the MCP server changes the JSON shape of viz tool results or the Vega-Lite conventions stored at `url`, bump the **tool contract** (see `@data360/tool-types` README) and release matching `@data360/mcp-ui` / `@data360/tool-types` versions.
+
+### Peer dependencies
+
+| Package | Version |
+|---------|---------|
+| `react` | ≥ 18 |
+| `react-dom` | ≥ 18 |
+| `vega` | ≥ 5 |
+| `vega-lite` | ≥ 5 |
+| `vega-embed` | ≥ 6 |
+
+## Development
+
+From the `packages/mcp-ui` directory (or the repo root with npm workspaces):
+
+```bash
+npm install
+npm run dev
+npm run build
+```
+
+`npm run dev` serves the demo at `http://localhost:5173`.
+
+## What the chart card does to your spec
+
+The spec passes through an 8-guard pipeline (`prepareSpec`) before reaching vega-embed:
+
+1. Inline dataset — resolves `spec.datasets[spec.data.name]` → `spec.data.values`
+2. Responsive sizing — sets `width: "container"`, configurable height
+3. Suppress legend — sets `encoding.color.legend = null` (card renders its own)
+4. Strip params — removes zoom/pan `params` (conflicts with card controls)
+5. Normalize schema — rewrites `$schema` v6 → v5 for vega-embed compatibility
+6. WB theme — merges the World Bank Vega theme into `config`
+7. `scale.zero` — `false` for line/area/point/tick; `true` for bar
+8. x-axis format — applies `%Y` only when `encoding.x.type === "temporal"`
+
+## Low-level exports
+
+```ts
+import {
+  prepareSpec,
+  parseSpec,
+  getMark,
+  WB_THEME,
+  WB_PALETTE,
+} from "@data360/mcp-ui/viz-card";
+```
