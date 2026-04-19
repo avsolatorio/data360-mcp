@@ -814,3 +814,166 @@ class TestGetData:
 # NOTE: TestCodelistManager tests removed - CodelistManager was replaced with
 # ReferenceAreaManager in providers.py with a different API.
 # New tests for ReferenceAreaManager should be added in test_providers.py
+
+
+# ---------------------------------------------------------------------------
+# B1 — get_data() graceful degradation on disaggregation-only errors (Issue #59)
+# ---------------------------------------------------------------------------
+
+
+class TestGetDataResilience:
+    """Tests for Issue #59: get_data should not abort when only disaggregation fails."""
+
+    @pytest.mark.asyncio
+    async def test_get_data_proceeds_when_disaggregation_fails_but_metadata_valid(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """When indicator metadata is found but disaggregation errors, data fetch still proceeds."""
+        # Metadata succeeds
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
+        )
+        # Disaggregation fails with 500
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            status_code=500,
+            text="Internal Server Error",
+        )
+        # Data fetch succeeds
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/data\?.*"),
+            json={"value": [{"REF_AREA": "KEN", "TIME_PERIOD": "2020", "OBS_VALUE": 5000}]},
+        )
+
+        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
+
+        # Should have data despite disaggregation error
+        assert result.data is not None
+        assert len(result.data) >= 1
+        assert result.error is None
+
+    @pytest.mark.asyncio
+    async def test_get_data_aborts_when_indicator_metadata_missing(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """When indicator metadata is missing (indicator not found), abort with error."""
+        # Metadata returns empty (indicator not found)
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": []},
+        )
+        # Disaggregation returns 200 empty (doesn't matter)
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[],
+        )
+
+        result = await get_data("WB_WDI", "NONEXISTENT_INDICATOR")
+
+        # Should abort — indicator not found
+        assert result.data is None or result.data == []
+        assert result.error is not None
+
+    # ---------------------------------------------------------------------------
+    # C1 — country_code parameter on get_data()
+    # ---------------------------------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_get_data_country_code_param_sets_ref_area(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """country_code parameter should be passed as REF_AREA in the data request URL."""
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[],
+        )
+
+        captured_urls: list[str] = []
+
+        def data_callback(request: httpx.Request) -> httpx.Response | None:
+            if request.method == "GET" and request.url.path == "/data":
+                captured_urls.append(str(request.url))
+                return httpx.Response(
+                    200,
+                    json={"value": [
+                        {"REF_AREA": "KEN", "TIME_PERIOD": "2020", "OBS_VALUE": 100},
+                        {"REF_AREA": "MAR", "TIME_PERIOD": "2020", "OBS_VALUE": 200},
+                    ]},
+                )
+            return None
+
+        httpx_mock.add_callback(data_callback)
+
+        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL", country_code="KEN,MAR")
+
+        assert len(captured_urls) == 1
+        assert "REF_AREA=KEN%2CMAR" in captured_urls[0] or "REF_AREA=KEN,MAR" in captured_urls[0]
+        assert result.data is not None
+
+
+# ---------------------------------------------------------------------------
+# D1 — get_data_api_url() parity fix (same Issue #59 resilience)
+# ---------------------------------------------------------------------------
+
+
+class TestGetDataApiUrlResilience:
+    @pytest.mark.asyncio
+    async def test_get_data_api_url_proceeds_on_nonfatal_metadata_error(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """get_data_api_url should not raise when indicator metadata exists but disaggregation fails."""
+        from data360.api import get_data_api_url
+
+        # Metadata succeeds
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
+        )
+        # Disaggregation fails
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            status_code=500,
+            text="Internal Server Error",
+        )
+
+        # Should not raise — returns a URL string
+        url = await get_data_api_url("WB_WDI", "WB_WDI_SP_POP_TOTL")
+        assert isinstance(url, str)
+        assert "WB_WDI" in url
+        assert "WB_WDI_SP_POP_TOTL" in url
+
+    @pytest.mark.asyncio
+    async def test_get_data_api_url_raises_when_indicator_not_found(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """get_data_api_url should raise ValueError when indicator metadata is missing."""
+        from data360.api import get_data_api_url
+
+        # Metadata returns empty
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": []},
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[],
+        )
+
+        with pytest.raises(ValueError, match="not found"):
+            await get_data_api_url("WB_WDI", "NONEXISTENT_INDICATOR")

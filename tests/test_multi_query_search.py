@@ -1,13 +1,13 @@
-"""Tests for multi-query search (queries parameter) in data360_search_indicators."""
-
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from pydantic import ValidationError
 
 from data360.api import search
 from data360.models import (
     EnrichedSearchResponse,
     MultiQuerySearchResponse,
+    QueryGroup,
     QueryGroupResult,
     SearchResponse,
     SeriesDescription,
@@ -115,7 +115,7 @@ class TestSearchValidation:
         result = await search(query="GDP", queries=["GDP", "inflation"])
         assert isinstance(result, EnrichedSearchResponse)
         assert result.error is not None
-        assert "both" in result.error.lower()
+        assert "exactly one" in result.error.lower()
 
     @pytest.mark.asyncio
     async def test_neither_query_nor_queries_returns_error(self):
@@ -324,3 +324,328 @@ class TestSearchMultiQueryByQuery:
         crash_group = next(g for g in result.results if g.query == "crash")
         assert crash_group.error is not None
         assert "Network timeout" in crash_group.error
+
+
+# ---------------------------------------------------------------------------
+# A2 — _ENRICHMENT_SELECT_FIELDS constant used in both paths
+# ---------------------------------------------------------------------------
+
+
+class TestEnrichmentSelectFields:
+    def test_constant_exists_and_is_non_empty(self):
+        from data360.api import _ENRICHMENT_SELECT_FIELDS
+        assert isinstance(_ENRICHMENT_SELECT_FIELDS, list)
+        assert len(_ENRICHMENT_SELECT_FIELDS) > 0
+        assert "idno" in _ENRICHMENT_SELECT_FIELDS
+        assert "database_id" in _ENRICHMENT_SELECT_FIELDS
+
+    @pytest.mark.asyncio
+    async def test_single_query_path_uses_constant(self):
+        """_search_raw should receive the _ENRICHMENT_SELECT_FIELDS list."""
+        from data360.api import _ENRICHMENT_SELECT_FIELDS
+
+        mock_raw = AsyncMock(return_value=_make_search_response())
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value=None)),
+        ):
+            await search(query="GDP")
+
+        mock_raw.assert_awaited_once()
+        _, kwargs = mock_raw.call_args
+        assert kwargs.get("select_fields") == _ENRICHMENT_SELECT_FIELDS
+
+    @pytest.mark.asyncio
+    async def test_multi_query_path_uses_constant(self):
+        """Each _search_raw call in multi-query path should receive _ENRICHMENT_SELECT_FIELDS."""
+        from data360.api import _ENRICHMENT_SELECT_FIELDS
+
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value=None)),
+        ):
+            await search(queries=["GDP", "inflation"])
+
+        for call in mock_raw.call_args_list:
+            _, kwargs = call
+            assert kwargs.get("select_fields") == _ENRICHMENT_SELECT_FIELDS
+
+
+# ---------------------------------------------------------------------------
+# A3 — Alias conflict warnings in multi-query path
+# ---------------------------------------------------------------------------
+
+
+class TestAliasConflictWarnings:
+    @pytest.mark.asyncio
+    async def test_n_results_and_limit_conflict_logs_warning(self, caplog):
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value=None)),
+        ):
+            import logging
+            with caplog.at_level(logging.WARNING, logger="data360.api"):
+                await search(queries=["GDP", "inflation"], limit=10, n_results=3)
+
+        assert any("limit" in rec.message.lower() and "n_results" in rec.message.lower()
+                   for rec in caplog.records)
+
+    @pytest.mark.asyncio
+    async def test_skip_and_offset_conflict_logs_warning(self, caplog):
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value=None)),
+        ):
+            import logging
+            with caplog.at_level(logging.WARNING, logger="data360.api"):
+                await search(queries=["GDP", "inflation"], offset=5, skip=10)
+
+        assert any("offset" in rec.message.lower() and "skip" in rec.message.lower()
+                   for rec in caplog.records)
+
+
+# ---------------------------------------------------------------------------
+# A4 — Literal typing for result_layout
+# ---------------------------------------------------------------------------
+
+
+class TestLiteralResultLayout:
+    def test_invalid_result_layout_raises_validation_error(self):
+        with pytest.raises(ValidationError):
+            MultiQuerySearchResponse(
+                result_layout="flat",
+                queries=["a", "b"],
+            )
+
+    def test_valid_merged_layout_accepted(self):
+        resp = MultiQuerySearchResponse(result_layout="merged", queries=["a", "b"])
+        assert resp.result_layout == "merged"
+
+    def test_valid_by_query_layout_accepted(self):
+        resp = MultiQuerySearchResponse(result_layout="by_query", queries=["a", "b"])
+        assert resp.result_layout == "by_query"
+
+
+# ---------------------------------------------------------------------------
+# A5 — Log stripped empty queries
+# ---------------------------------------------------------------------------
+
+
+class TestStrippedQueryLogging:
+    @pytest.mark.asyncio
+    async def test_empty_entries_warning_logged(self, caplog):
+        result = await search(queries=["GDP", "  ", ""])
+        assert isinstance(result, MultiQuerySearchResponse)
+        # Should have logged warning (empty entries stripped leaving < 2)
+        # error returned because < 2 valid queries remain
+        assert result.error is not None
+
+    @pytest.mark.asyncio
+    async def test_partial_strip_still_logs_warning(self, caplog):
+        """3 queries, 1 empty — remaining 2 are valid, warning still emitted."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value=None)),
+        ):
+            import logging
+            with caplog.at_level(logging.WARNING, logger="data360.api"):
+                result = await search(queries=["GDP", "inflation", ""])
+
+        assert isinstance(result, MultiQuerySearchResponse)
+        assert result.error is None
+        assert any("stripped" in rec.message.lower() for rec in caplog.records)
+
+
+# ---------------------------------------------------------------------------
+# E1/E2 — QueryGroup per-group country
+# ---------------------------------------------------------------------------
+
+
+class TestQueryGroups:
+    @pytest.mark.asyncio
+    async def test_query_groups_by_query_layout(self):
+        """Each group should carry correct country_code; indicators have correct requested_country."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        gini_resp = _make_search_response(idno="WB_WDI_GINI", name="Gini")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, gini_resp])
+
+        async def _resolve(country):
+            return {"Kenya": "KEN", "Morocco": "MAR"}.get(country, None)
+
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(side_effect=_resolve)),
+        ):
+            result = await search(
+                query_groups=[
+                    QueryGroup(queries=["GDP per capita"], country="Kenya"),
+                    QueryGroup(queries=["Gini coefficient"], country="Morocco"),
+                ],
+                result_layout="by_query",
+            )
+
+        assert isinstance(result, MultiQuerySearchResponse)
+        assert result.result_layout == "by_query"
+        assert result.results is not None
+        assert len(result.results) == 2
+
+        gdp_group = result.results[0]
+        gini_group = result.results[1]
+
+        assert gdp_group.country_code == "KEN"
+        assert gini_group.country_code == "MAR"
+
+        # Each indicator should carry its per-group country
+        assert gdp_group.indicators[0].requested_country == "KEN"
+        assert gini_group.indicators[0].requested_country == "MAR"
+
+    @pytest.mark.asyncio
+    async def test_query_groups_merged_layout_carries_requested_country(self):
+        """Merged indicators must carry requested_country for LLM attribution."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        gini_resp = _make_search_response(idno="WB_WDI_GINI", name="Gini")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, gini_resp])
+
+        async def _resolve(country):
+            return {"Kenya": "KEN", "Morocco": "MAR"}.get(country, None)
+
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(side_effect=_resolve)),
+        ):
+            result = await search(
+                query_groups=[
+                    QueryGroup(queries=["GDP per capita"], country="Kenya"),
+                    QueryGroup(queries=["Gini coefficient"], country="Morocco"),
+                ],
+                result_layout="merged",
+            )
+
+        assert isinstance(result, MultiQuerySearchResponse)
+        assert len(result.indicators) == 2
+
+        by_id = {ind.idno: ind for ind in result.indicators}
+        assert by_id["WB_WDI_GDP"].requested_country == "KEN"
+        assert by_id["WB_WDI_GINI"].requested_country == "MAR"
+
+    @pytest.mark.asyncio
+    async def test_query_groups_mutually_exclusive_with_queries(self):
+        result = await search(
+            queries=["GDP", "inflation"],
+            query_groups=[QueryGroup(queries=["GDP"], country="Kenya")],
+        )
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.error is not None
+        assert "exactly one" in result.error.lower()
+
+    @pytest.mark.asyncio
+    async def test_query_groups_mutually_exclusive_with_query(self):
+        result = await search(
+            query="GDP",
+            query_groups=[QueryGroup(queries=["GDP", "inflation"], country="Kenya")],
+        )
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.error is not None
+        assert "exactly one" in result.error.lower()
+
+    @pytest.mark.asyncio
+    async def test_query_groups_minimum_two_queries_total(self):
+        """Single query across all groups triggers minimum-2 error."""
+        result = await search(
+            query_groups=[QueryGroup(queries=["GDP"], country="Kenya")],
+        )
+        assert isinstance(result, MultiQuerySearchResponse)
+        assert result.error is not None
+        assert "at least 2" in result.error.lower()
+
+    @pytest.mark.asyncio
+    async def test_query_groups_with_none_country(self):
+        """Groups without country still work; indicators have requested_country=None."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
+
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value=None)),
+        ):
+            result = await search(
+                query_groups=[
+                    QueryGroup(queries=["GDP"], country=None),
+                    QueryGroup(queries=["inflation"], country=None),
+                ],
+                result_layout="by_query",
+            )
+
+        assert isinstance(result, MultiQuerySearchResponse)
+        assert result.results is not None
+        for group in result.results:
+            assert group.country_code is None
+            for ind in group.indicators:
+                assert ind.requested_country is None
+
+    @pytest.mark.asyncio
+    async def test_query_groups_required_country_ignored_warning(self, caplog):
+        """required_country is ignored when query_groups is used; warning logged."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
+
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value="KEN")),
+        ):
+            import logging
+            with caplog.at_level(logging.WARNING, logger="data360.api"):
+                result = await search(
+                    query_groups=[
+                        QueryGroup(queries=["GDP"], country="Kenya"),
+                        QueryGroup(queries=["inflation"], country=None),
+                    ],
+                    required_country="Morocco",  # should be ignored
+                )
+
+        assert isinstance(result, MultiQuerySearchResponse)
+        assert any("ignored" in rec.message.lower() for rec in caplog.records)
+
+    @pytest.mark.asyncio
+    async def test_query_groups_concurrent_country_resolution(self):
+        """Unique countries are resolved concurrently; each resolved code is distinct."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+        gini_resp = _make_search_response(idno="WB_WDI_GINI", name="Gini")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp, gini_resp])
+
+        resolve_calls: list[str] = []
+
+        async def _track_resolve(country):
+            resolve_calls.append(country)
+            return {"Kenya": "KEN", "Morocco": "MAR"}.get(country)
+
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(side_effect=_track_resolve)),
+        ):
+            result = await search(
+                query_groups=[
+                    QueryGroup(queries=["GDP", "inflation"], country="Kenya"),
+                    QueryGroup(queries=["Gini"], country="Morocco"),
+                ],
+                result_layout="by_query",
+            )
+
+        assert isinstance(result, MultiQuerySearchResponse)
+        # Only 2 unique countries resolved despite 3 queries
+        assert set(resolve_calls) == {"Kenya", "Morocco"}

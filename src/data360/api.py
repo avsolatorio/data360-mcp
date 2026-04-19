@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import zlib
@@ -25,6 +26,7 @@ from .models import (
     MetadataRequest,
     MetadataResponse,
     MultiQuerySearchResponse,
+    QueryGroup,
     QueryGroupResult,
     SearchRequest,
     SearchResponse,
@@ -41,6 +43,20 @@ COUNTRY_CODE_LENGTH = 3
 SCORE_THRESHOLD = 70
 MAX_RETURN_STATEMENTS = 6
 DEFAULT_SEARCH_LIMIT = 5
+
+# Fields fetched by _search_raw for LLM-friendly enrichment.
+# Shared between single-query and multi-query paths to ensure consistency.
+_ENRICHMENT_SELECT_FIELDS = [
+    "idno",
+    "name",
+    "database_id",
+    "definition_long",
+    "periodicity",
+    "time_periods",
+    "ref_country",
+    "dimensions",
+    "measurement_unit",
+]
 
 # Prefiltering constants for get_data output.
 # Based on a 16-database survey (see payload_analysis.md for full documentation).
@@ -438,7 +454,7 @@ async def _search_raw(
 
 async def _resolve_country_code(country_query: str) -> str | None:
     """Resolve country name to code using cached REF_AREA codelist."""
-    from . import providers as data360_providers
+    from . import providers as data360_providers  # noqa: PLC0415
 
     if not country_query:
         return None
@@ -545,16 +561,21 @@ def _enrich_search_results(
             )
         )
 
+    # Set requested_country on all indicators
+    for ind in indicators:
+        ind.requested_country = country_code
+
     return indicators
 
 
-async def search(
+async def search(  # noqa: PLR0911
     query: str | None = None,
     required_country: str | None = None,
     limit: int = DEFAULT_SEARCH_LIMIT,
     offset: int = 0,
-    # New multi-query parameters
+    # Multi-query parameters
     queries: list[str] | None = None,
+    query_groups: list[QueryGroup] | None = None,
     result_layout: str = "merged",
     dedupe: bool = True,
     # The following parameters are accepted for robustness; LLM clients sometimes
@@ -589,47 +610,68 @@ async def search(
 
     Args:
         query: Single search query (e.g., "unemployment rate", "poverty", "GDP per capita").
-            Mutually exclusive with queries.
+            Mutually exclusive with queries and query_groups.
         queries: List of search terms for multi-topic search in one call (e.g.
-            ["GDP growth", "inflation rate", "unemployment"]). Mutually exclusive with query.
-            Requires at least 2 non-empty strings.
+            ["GDP growth", "inflation rate", "unemployment"]). Mutually exclusive with query
+            and query_groups. Requires at least 2 non-empty strings.
+        query_groups: List of QueryGroup objects, each binding one or more search terms to
+            an optional country scope. Use when different queries target different countries.
+            Use this instead of queries when each query targets a different country.
+            JSON schema for each group: {"queries": ["<term1>", "<term2>"], "country": "<name or 3-letter code>"}
+            Example: [
+                {"queries": ["GDP per capita", "inflation"], "country": "Kenya"},
+                {"queries": ["Gini coefficient"], "country": "Morocco"}
+            ]
+            Mutually exclusive with query and queries. Requires at least 2 non-empty queries
+            total across all groups. required_country is ignored when query_groups is used.
         required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
             Use comma-separated names or codes to check multiple countries in one call (e.g. "China, USA").
-            Shared across all queries — this tool is for multiple topics in the same geographic scope.
-            For different countries per query, make separate search() calls.
-
-            Open question: Whether to support per-query country codes (e.g., "GDP for Kenya AND
-            inflation for Morocco") is an open design decision. The current recommendation is to
-            make separate search() calls for that case, as mixing country scopes in a single call
-            complicates result interpretation and the enrichment pipeline.
+            Shared across all queries — only when all topics share the same geographic scope.
+            Ignored when query_groups is used (each group has its own country).
         limit: Maximum number of indicators per query (default 5).
         offset: Number of results to skip per query for pagination (default 0).
-        result_layout: Only used with queries. "merged" (default) returns a flat deduped list.
-            "by_query" returns one group per input query. In both cases, dedupe=True performs
-            cross-group deduplication (first-seen wins).
-        dedupe: Only used with queries. When True (default), deduplicates by (database_id, idno)
-            across all query groups. First-seen order is preserved (queries processed in order).
+        result_layout: Only used with queries/query_groups.
+            Use "merged" (default) when you want a single flat list to pick from.
+            Use "by_query" when you need to know which indicators came from which query —
+            e.g. to attribute country coverage per query or display grouped results.
+        dedupe: Only used with queries/query_groups. When True (default), deduplicates by
+            (database_id, idno) across all query groups. First-seen order is preserved.
 
     Returns:
         With query: EnrichedSearchResponse with indicators, required_country, pagination fields.
-        With queries: MultiQuerySearchResponse with indicators (merged) or results (by_query),
-            total_candidates, deduplicated_count, and per-group errors.
+            Each indicator has covers_country (bool) and requested_country (resolved code).
+        With queries/query_groups: MultiQuerySearchResponse with indicators (merged) or
+            results (by_query), total_candidates, deduplicated_count, and per-group errors.
+            Each indicator has requested_country showing which group's country it was evaluated against.
         error: Error message string if the request failed; otherwise None.
     """
-    import asyncio
-
     # --- Validation ---
-    if query is not None and queries is not None:
+    active_modes = sum([
+        query is not None,
+        queries is not None,
+        query_groups is not None,
+    ])
+    if active_modes > 1:
         return EnrichedSearchResponse(
-            error="Provide either 'query' (single string) or 'queries' (list), not both."
+            error="Provide exactly one of 'query', 'queries', or 'query_groups', not multiple."
         )
-    if query is None and queries is None:
-        return EnrichedSearchResponse(error="Either 'query' or 'queries' must be provided.")
+    if active_modes == 0:
+        return EnrichedSearchResponse(
+            error="One of 'query', 'queries', or 'query_groups' must be provided."
+        )
 
-    # --- Multi-query path ---
+    # --- Multi-query path (queries= flat list) ---
     if queries is not None:
         clean_queries = [q.strip() for q in queries if q and q.strip()]
-        if len(clean_queries) < 2:
+        if len(clean_queries) < len(queries):
+            _logger.warning(
+                "Stripped %d empty/whitespace-only entries from queries "
+                "(original: %d, kept: %d)",
+                len(queries) - len(clean_queries),
+                len(queries),
+                len(clean_queries),
+            )
+        if len(clean_queries) < 2:  # noqa: PLR2004
             return MultiQuerySearchResponse(
                 error="'queries' must contain at least 2 non-empty search strings.",
                 queries=queries or [],
@@ -640,89 +682,129 @@ async def search(
                 queries=clean_queries,
             )
 
-        # Handle limit/offset aliases
-        if n_results is not None and limit == DEFAULT_SEARCH_LIMIT:
-            limit = n_results
-        if skip is not None and offset == 0:
-            offset = skip
+        # Handle limit/offset aliases (mirror single-query path warnings)
+        if n_results is not None:
+            if limit == DEFAULT_SEARCH_LIMIT:
+                limit = n_results
+            elif limit != n_results:
+                _logger.warning(
+                    "Both limit=%d and n_results=%d provided; using limit",
+                    limit,
+                    n_results,
+                )
+        if skip is not None:
+            if offset == 0:
+                offset = skip
+            elif offset != skip:
+                _logger.warning(
+                    "Both offset=%d and skip=%d provided; using offset",
+                    offset,
+                    skip,
+                )
 
-        # Resolve country once, shared across all sub-queries
+        # Resolve shared country once for all sub-queries
         country_code: str | None = None
         if required_country:
             country_code = await _resolve_country_code(required_country)
 
+        # Each query gets the same country code
+        per_query_codes: list[str | None] = [country_code] * len(clean_queries)
+
         # Fan out concurrent _search_raw calls, one per query
-        _select_fields = [
-            "idno", "name", "database_id", "definition_long",
-            "periodicity", "time_periods", "ref_country", "dimensions", "measurement_unit",
-        ]
         raw_tasks = [
-            _search_raw(query=q, limit=limit, offset=offset, select_fields=_select_fields)
+            _search_raw(query=q, limit=limit, offset=offset, select_fields=_ENRICHMENT_SELECT_FIELDS)
             for q in clean_queries
         ]
         raw_results = await asyncio.gather(*raw_tasks, return_exceptions=True)
 
-        # Enrich results per group; apply cross-group dedup when requested
-        seen_ids: set[tuple[str, str]] = set()
-        groups: list[QueryGroupResult] = []
-        total_candidates = 0
-        deduplicated_count = 0
+        return await _build_multi_query_response(
+            clean_queries=clean_queries,
+            raw_results=raw_results,
+            per_query_codes=per_query_codes,
+            result_layout=result_layout,
+            dedupe=dedupe,
+        )
 
-        for q, raw_result in zip(clean_queries, raw_results):
-            if isinstance(raw_result, Exception):
-                groups.append(QueryGroupResult(query=q, error=str(raw_result)))
-                continue
-            if raw_result.error or not raw_result.items:
-                groups.append(QueryGroupResult(
-                    query=q,
-                    error=raw_result.error or f"No indicators found for: '{q}'",
-                ))
-                continue
+    # --- query_groups path ---
+    if query_groups is not None:
+        if required_country:
+            _logger.warning(
+                "required_country is ignored when query_groups is used; "
+                "set country per QueryGroup instead."
+            )
 
-            enriched = _enrich_search_results(raw_result, country_code)
-            total_candidates += len(enriched)
-
-            if dedupe:
-                deduped: list[EnrichedIndicator] = []
-                for ind in enriched:
-                    key = (ind.database_id, ind.idno)
-                    if key not in seen_ids:
-                        seen_ids.add(key)
-                        deduped.append(ind)
-                    else:
-                        deduplicated_count += 1
-                enriched = deduped
-
-            groups.append(QueryGroupResult(query=q, indicators=enriched, count=len(enriched)))
-
-        if result_layout == "merged":
-            merged_indicators: list[EnrichedIndicator] = [
-                ind for g in groups for ind in g.indicators
-            ]
-            if country_code:
-                merged_indicators.sort(
-                    key=lambda x: (
-                        not (x.covers_country or False),
-                        -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0),
+        # Flatten groups into (query, raw_country) pairs, stripping empty entries
+        flat_pairs: list[tuple[str, str | None]] = []
+        for group in query_groups:
+            for q in group.queries:
+                stripped = q.strip() if q else ""
+                if stripped:
+                    flat_pairs.append((stripped, group.country))
+                else:
+                    _logger.warning(
+                        "Empty/whitespace-only query stripped from query_groups."
                     )
+
+        if len(flat_pairs) < 2:  # noqa: PLR2004
+            return MultiQuerySearchResponse(
+                error="query_groups must produce at least 2 non-empty queries total.",
+                queries=[fp[0] for fp in flat_pairs],
+            )
+        if result_layout not in ("merged", "by_query"):
+            return MultiQuerySearchResponse(
+                error="result_layout must be 'merged' or 'by_query'.",
+                queries=[fp[0] for fp in flat_pairs],
+            )
+
+        # Handle limit/offset aliases
+        if n_results is not None:
+            if limit == DEFAULT_SEARCH_LIMIT:
+                limit = n_results
+            elif limit != n_results:
+                _logger.warning(
+                    "Both limit=%d and n_results=%d provided; using limit",
+                    limit,
+                    n_results,
                 )
-            return MultiQuerySearchResponse(
-                indicators=merged_indicators,
-                result_layout="merged",
-                queries=clean_queries,
-                required_country=country_code,
-                total_candidates=total_candidates,
-                deduplicated_count=deduplicated_count if dedupe else None,
+        if skip is not None:
+            if offset == 0:
+                offset = skip
+            elif offset != skip:
+                _logger.warning(
+                    "Both offset=%d and skip=%d provided; using offset",
+                    offset,
+                    skip,
+                )
+
+        # Resolve unique country values concurrently to avoid redundant codelist lookups
+        unique_countries = {c for _, c in flat_pairs if c}
+        resolved_map: dict[str, str | None] = {}
+        if unique_countries:
+            codes = await asyncio.gather(
+                *[_resolve_country_code(c) for c in unique_countries]
             )
-        else:  # by_query
-            return MultiQuerySearchResponse(
-                results=groups,
-                result_layout="by_query",
-                queries=clean_queries,
-                required_country=country_code,
-                total_candidates=total_candidates,
-                deduplicated_count=deduplicated_count if dedupe else None,
-            )
+            resolved_map = dict(zip(unique_countries, codes))
+
+        clean_queries = [q for q, _ in flat_pairs]
+        per_query_codes = [
+            resolved_map.get(c) if c else None
+            for _, c in flat_pairs
+        ]
+
+        # Fan out concurrent _search_raw calls, one per flattened query
+        raw_tasks = [
+            _search_raw(query=q, limit=limit, offset=offset, select_fields=_ENRICHMENT_SELECT_FIELDS)
+            for q in clean_queries
+        ]
+        raw_results = await asyncio.gather(*raw_tasks, return_exceptions=True)
+
+        return await _build_multi_query_response(
+            clean_queries=clean_queries,
+            raw_results=raw_results,
+            per_query_codes=per_query_codes,
+            result_layout=result_layout,
+            dedupe=dedupe,
+        )
 
     # --- Single-query path (original behavior, fully preserved) ---
     # Handle common parameter aliases sent by LLM clients.
@@ -759,17 +841,7 @@ async def search(
         query=query,  # type: ignore[arg-type]  # validated non-None above
         limit=limit,
         offset=offset,
-        select_fields=[
-            "idno",
-            "name",
-            "database_id",
-            "definition_long",
-            "periodicity",
-            "time_periods",
-            "ref_country",
-            "dimensions",
-            "measurement_unit",
-        ],
+        select_fields=_ENRICHMENT_SELECT_FIELDS,
     )
 
     if search_result.error:
@@ -801,6 +873,96 @@ async def search(
     )
 
 
+async def _build_multi_query_response(
+    clean_queries: list[str],
+    raw_results: list[Any],
+    per_query_codes: list[str | None],
+    result_layout: str,
+    dedupe: bool,
+) -> MultiQuerySearchResponse:
+    """Shared response builder for queries= and query_groups= paths.
+
+    Encapsulates enrichment, deduplication, and layout selection so both
+    paths stay in sync without code duplication.
+    """
+    seen_ids: set[tuple[str, str]] = set()
+    groups: list[QueryGroupResult] = []
+    total_candidates = 0
+    deduplicated_count = 0
+
+    for i, (q, raw_result) in enumerate(zip(clean_queries, raw_results)):
+        code_for_query = per_query_codes[i]
+        if isinstance(raw_result, Exception):
+            groups.append(QueryGroupResult(
+                query=q,
+                country_code=code_for_query,
+                error=str(raw_result),
+            ))
+            continue
+        if raw_result.error or not raw_result.items:
+            groups.append(QueryGroupResult(
+                query=q,
+                country_code=code_for_query,
+                error=raw_result.error or f"No indicators found for: '{q}'",
+            ))
+            continue
+
+        enriched = _enrich_search_results(raw_result, code_for_query)
+        total_candidates += len(enriched)
+
+        if dedupe:
+            deduped: list[EnrichedIndicator] = []
+            for ind in enriched:
+                key = (ind.database_id, ind.idno)
+                if key not in seen_ids:
+                    seen_ids.add(key)
+                    deduped.append(ind)
+                else:
+                    deduplicated_count += 1
+            enriched = deduped
+
+        groups.append(QueryGroupResult(
+            query=q,
+            country_code=code_for_query,
+            indicators=enriched,
+            count=len(enriched),
+        ))
+
+    # Compute response-level required_country: join all unique resolved codes
+    all_codes = sorted({c for c in per_query_codes if c})
+    response_country = ",".join(all_codes) if all_codes else None
+
+    if result_layout == "merged":
+        merged_indicators: list[EnrichedIndicator] = [
+            ind for g in groups for ind in g.indicators
+        ]
+        # Sort: covers_country=True first (per-indicator, already correct), then recency
+        if response_country:
+            merged_indicators.sort(
+                key=lambda x: (
+                    not (x.covers_country or False),
+                    -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0),
+                )
+            )
+        return MultiQuerySearchResponse(
+            indicators=merged_indicators,
+            result_layout="merged",
+            queries=clean_queries,
+            required_country=response_country,
+            total_candidates=total_candidates,
+            deduplicated_count=deduplicated_count if dedupe else None,
+        )
+    else:  # by_query
+        return MultiQuerySearchResponse(
+            results=groups,
+            result_layout="by_query",
+            queries=clean_queries,
+            required_country=response_country,
+            total_candidates=total_candidates,
+            deduplicated_count=deduplicated_count if dedupe else None,
+        )
+
+
 # ruff: noqa: PLR0913, PLR0912, PLR0915
 async def get_metadata(
     database_id: str,
@@ -822,7 +984,7 @@ async def get_metadata(
         select_fields: Optional list of metadata fields to return. If None, returns all fields.
             Available fields: methodology, statistical_concept, definition_long, limitation,
             relevance, aggregation_method, periodicity, time_periods, ref_country, sources_note.
-        get_valid_disaggregations_func: Internal use; function to filter raw disaggregation response.
+        get_valid_disaggregations_func: Internal parameter — do not pass this; leave it as None.
         fetch_disaggregation: If True (default), also fetch disaggregation dimensions (field_name, field_value).
         required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
             Use comma-separated for multiple (e.g. "China, USA"). When provided,
@@ -955,6 +1117,10 @@ async def get_disaggregation(
     Typically call after data360_search_indicators when you need available years or breakdowns.
     Use the returned values in disaggregation_filters; do not use FREQ for filtering (it breaks queries).
 
+    After calling this tool, use the returned field_value codes directly as disaggregation_filters
+    in data360_get_data or data360_get_viz_spec. For example, if SEX returns ["M", "F", "_T"],
+    pass {"SEX": "F"} to filter to female-only data.
+
     Args:
         database_id: Database identifier (e.g., WB_GS, WB_SSGD).
         indicator_id: Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD).
@@ -1002,6 +1168,7 @@ async def get_disaggregation(
 async def get_data(
     database_id: str,
     indicator_id: str,
+    country_code: str | None = None,
     disaggregation_filters: dict[str, str | None] | None = None,
     start_year: int | None = None,
     end_year: int | None = None,
@@ -1017,10 +1184,12 @@ async def get_data(
     Args:
         database_id: Database identifier (e.g., "IPC_IPC", "WB_GS").
         indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_GS_NY_GDP_PCAP_KD").
+        country_code: Optional 3-letter code or comma-separated list (e.g. "KEN" or "KEN,MAR").
+            Applied as REF_AREA filter. Takes precedence over REF_AREA in disaggregation_filters.
         disaggregation_filters: Optional dict of dimension filters. Keys: REF_AREA, SEX, AGE,
             URBANISATION, UNIT_MEASURE, etc. REF_AREA supports comma-separated codes (e.g. "KEN,TZA").
             Use value None to request all values for a dimension (e.g. {"SEX": None}).
-        start_year: Optional start year (inclusive). Defaults to last 20 years if both start/end omitted.
+        start_year: Optional start year (inclusive). Defaults to last 5 years if both start/end omitted.
         end_year: Optional end year (inclusive). Defaults to current year if both start/end omitted.
         limit: Maximum records per page (default 50, max 100).
         offset: Number of records to skip for pagination (default 0).
@@ -1033,7 +1202,8 @@ async def get_data(
             total_count: Total records available, or None.
             offset, has_more, next_offset: Use next_offset for the next page when has_more is True.
             error: Error message if the request failed; otherwise None.
-            failed_validation: Optional list of filter validation messages.
+            failed_validation: Optional list of filter validation messages. Non-empty means
+                some filters were invalid; data may still be returned with valid filters applied.
     """
     data_url = data360_config.data_url or f"{data360_config.api_url}/data"
 
@@ -1042,7 +1212,7 @@ async def get_data(
 
     # Smart time defaults: if no time range specified, default to last 5 years
     if start_year is None and end_year is None:
-        from datetime import datetime
+        from datetime import datetime  # noqa: PLC0415
 
         current_year = datetime.now().year
         end_year = current_year
@@ -1076,6 +1246,11 @@ async def get_data(
         "top": limit + 1,
     }
 
+    # Apply country_code if provided (supports comma-separated, e.g. "KEN,MAR")
+    # Takes precedence over REF_AREA in disaggregation_filters
+    if country_code:
+        params["REF_AREA"] = country_code
+
     # Fetch metadata and disaggregations FIRST to inform parameter building
     # This ensures we don't apply invalid defaults (like AGE=_T) which cause empty results
     metadata_res = await get_metadata(
@@ -1090,13 +1265,25 @@ async def get_data(
             "definition_short",
         ],
         fetch_disaggregation=True,  # Crucial: fetch valid options
+        required_country=country_code,  # Pass for REF_AREA validation
     )
 
     if metadata_res.error:
+        if metadata_res.indicator_metadata is None:
+            # Fatal: indicator not found or completely unavailable.
+            _logger.warning(
+                "Aborting get_data for %s: indicator metadata missing. Error: %s",
+                indicator_id,
+                metadata_res.error,
+            )
+            return IndicatorDataResponse(error=metadata_res.error)
+        # Non-fatal: disaggregation lookup failed but indicator metadata is valid.
+        # Proceed without validated disaggregation defaults.
         _logger.warning(
-            f"Metadata fetch error for {indicator_id}: {metadata_res.error}"
+            "Non-fatal metadata error for %s (proceeding without disaggregation defaults): %s",
+            indicator_id,
+            metadata_res.error,
         )
-        return IndicatorDataResponse(error=metadata_res.error)
 
     api_metadata = metadata_res.indicator_metadata or {}
 
@@ -1121,7 +1308,7 @@ async def get_data(
     params.update(effective_disagg)
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
-            print(f"Fetching data from {data_url} with params: {params}")
+            _logger.debug("Fetching data from %s with params: %s", data_url, params)
             data_res = await client.get(data_url, params=params)
             data_res.raise_for_status()
 
@@ -1253,7 +1440,7 @@ async def discover_indicators(
             required_dimensions=["SEX", "AGE"]
         )
     """
-    import warnings
+    import warnings  # noqa: PLC0415
 
     warnings.warn(
         "discover_indicators is deprecated. Use search() + get_disaggregation() + get_metadata() instead.",
@@ -1292,6 +1479,7 @@ async def get_data_api_url(
 
     Returns:
         Full Data360 data API URL string (query parameters included).
+        Raises ValueError if the indicator is not found in the specified database.
     """
     settings = get_data360_settings()
 
@@ -1320,8 +1508,14 @@ async def get_data_api_url(
     )
 
     if metadata_res.error:
-        raise ValueError(
-            f"Indicator '{indicator_id}' not found or error fetching metadata: {metadata_res.error}"
+        if metadata_res.indicator_metadata is None:
+            raise ValueError(
+                f"Indicator '{indicator_id}' not found: {metadata_res.error}"
+            )
+        _logger.warning(
+            "Non-fatal metadata error for %s in get_data_api_url (proceeding): %s",
+            indicator_id,
+            metadata_res.error,
         )
 
     # Process valid disaggregations into {dim: [values]} format
