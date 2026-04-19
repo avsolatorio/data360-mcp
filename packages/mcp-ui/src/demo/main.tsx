@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import type { VLSpec } from "../viz-card/types";
 import { VegaChartCard } from "../viz-card";
+import { SearchResultCard } from "../search-card";
+import type { EnrichedIndicator } from "../search-card";
+
+// ─── Viz demo data ─────────────────────────────────────────────────────────────
 
 const DEMO_SPEC = {
   $schema: "https://vega.github.io/schema/vega-lite/v6.1.0.json",
@@ -44,18 +48,138 @@ const DEMO_SPEC = {
   params: [{ name: "zoom", select: { type: "interval" }, bind: "scales" }],
 } satisfies VLSpec;
 
+// ─── Search demo data ──────────────────────────────────────────────────────────
+
+const MERGED_INDICATORS: EnrichedIndicator[] = [
+  {
+    idno: "WB_WDI_NY_GDP_PCAP_KD",
+    database_id: "WB_WDI",
+    name: "GDP per capita (constant 2015 US$)",
+    truncated_definition: "GDP per capita based on constant 2015 prices, in US dollars.",
+    periodicity: "Annual",
+    latest_data: "2023",
+    time_period_range: "1960–2023",
+    covers_country: true,
+    requested_country: "KEN",
+    dimensions: ["AGE"],
+  },
+  {
+    idno: "WB_WDI_FP_CPI_TOTL_ZG",
+    database_id: "WB_WDI",
+    name: "Inflation, consumer prices (annual %)",
+    truncated_definition: "Annual growth rate of the CPI for the average consumer.",
+    periodicity: "Annual",
+    latest_data: "2023",
+    time_period_range: "1960–2023",
+    covers_country: true,
+    requested_country: "KEN",
+  },
+  {
+    idno: "WB_WDI_SI_POV_GINI",
+    database_id: "WB_WDI",
+    name: "Gini index",
+    truncated_definition: "Gini index measures the extent to which the distribution of income deviates from a perfectly equal distribution.",
+    periodicity: "Annual",
+    latest_data: "2021",
+    time_period_range: "1967–2021",
+    covers_country: false,
+    requested_country: "MAR",
+  },
+];
+
+const BY_QUERY_GROUPS = [
+  {
+    query: "GDP per capita",
+    country_code: "KEN",
+    count: 2,
+    indicators: [
+      MERGED_INDICATORS[0],
+      {
+        idno: "WB_GS_NY_GDP_PCAP_KD",
+        database_id: "WB_GS",
+        name: "GDP per capita (Global Statistics)",
+        truncated_definition: "Alternative GDP per capita series from the Global Statistics database.",
+        periodicity: "Annual",
+        latest_data: "2022",
+        time_period_range: "1980–2022",
+        covers_country: true,
+        requested_country: "KEN",
+      },
+    ],
+  },
+  {
+    query: "Gini coefficient",
+    country_code: "MAR",
+    count: 1,
+    indicators: [MERGED_INDICATORS[2]],
+  },
+];
+
+// ─── Demo app ──────────────────────────────────────────────────────────────────
+
+function App() {
+  const [selected, setSelected] = useState<EnrichedIndicator | null>(null);
+
+  return (
+    <div style={{ padding: 32, maxWidth: 760, margin: "0 auto", display: "flex", flexDirection: "column", gap: 40 }}>
+
+      {/* Section label */}
+      <h1 style={{ fontFamily: "Open Sans, Arial, sans-serif", fontSize: 22, fontWeight: 700, margin: 0, color: "#111" }}>
+        @data360/mcp-ui — Component demo
+      </h1>
+
+      {/* VegaChartCard */}
+      <section>
+        <h2 style={{ fontFamily: "Open Sans, Arial, sans-serif", fontSize: 15, fontWeight: 600, color: "#666", margin: "0 0 12px" }}>
+          viz-card · VegaChartCard
+        </h2>
+        <VegaChartCard
+          spec={DEMO_SPEC}
+          subtitle="Brazil, Bangladesh, Germany, India, United States · 2018–2021"
+          source="World Bank — World Development Indicators (WDI)"
+          annotations={[
+            { id: 1, text: "Brazil consistently leads with over 77% renewable electricity, driven primarily by large-scale hydropower." },
+            { id: 2, text: "Germany grew from 35.6% in 2018 to 44.8% in 2020, reflecting accelerated wind and solar deployment." },
+          ]}
+        />
+      </section>
+
+      {/* SearchResultCard — merged */}
+      <section>
+        <h2 style={{ fontFamily: "Open Sans, Arial, sans-serif", fontSize: 15, fontWeight: 600, color: "#666", margin: "0 0 12px" }}>
+          search-card · SearchResultCard (merged layout)
+        </h2>
+        <SearchResultCard
+          indicators={MERGED_INDICATORS}
+          title="Search Results"
+          subtitle="GDP per capita · Kenya · Gini coefficient · Morocco"
+          onSelect={(ind) => setSelected(ind)}
+        />
+        {selected && (
+          <p style={{ fontFamily: "Open Sans, Arial, sans-serif", fontSize: 13, color: "#34A7F2", marginTop: 10 }}>
+            Selected: <strong>{selected.name}</strong> ({selected.idno})
+          </p>
+        )}
+      </section>
+
+      {/* SearchResultCard — by_query grouped */}
+      <section>
+        <h2 style={{ fontFamily: "Open Sans, Arial, sans-serif", fontSize: 15, fontWeight: 600, color: "#666", margin: "0 0 12px" }}>
+          search-card · SearchResultCard (by_query layout)
+        </h2>
+        <SearchResultCard
+          groups={BY_QUERY_GROUPS}
+          title="Search Results"
+          subtitle="query_groups: GDP per capita (Kenya) · Gini (Morocco)"
+        />
+      </section>
+
+    </div>
+  );
+}
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <div style={{ padding: 32, maxWidth: 760, margin: "0 auto" }}>
-      <VegaChartCard
-        spec={DEMO_SPEC}
-        subtitle="Brazil, Bangladesh, Germany, India, United States · 2018–2021"
-        source="World Bank — World Development Indicators (WDI)"
-        annotations={[
-          { id: 1, text: "Brazil consistently leads with over 77% renewable electricity, driven primarily by large-scale hydropower." },
-          { id: 2, text: "Germany grew from 35.6% in 2018 to 44.8% in 2020, reflecting accelerated wind and solar deployment." },
-        ]}
-      />
-    </div>
+    <App />
   </React.StrictMode>
 );

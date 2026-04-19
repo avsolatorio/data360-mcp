@@ -1,7 +1,7 @@
 {
   "name": "@data360/mcp-ui",
   "version": "0.0.1",
-  "description": "React UI for presenting Data360 MCP tool output (Vega-Lite chart card, and future surfaces).",
+  "description": "React UI for presenting Data360 MCP tool output (chart card, search results card, and future surfaces).",
   "type": "module",
   "files": [
     "dist"
@@ -11,6 +11,11 @@
       "types": "./dist/viz-card.d.ts",
       "import": "./dist/viz-card.js",
       "require": "./dist/viz-card.cjs"
+    },
+    "./search-card": {
+      "types": "./dist/search-card.d.ts",
+      "import": "./dist/search-card.js",
+      "require": "./dist/search-card.cjs"
     }
   },
   "scripts": {
@@ -37,7 +42,8 @@
     "data360",
     "mcp",
     "world-bank",
-    "vega-lite"
+    "vega-lite",
+    "search"
   ],
   "license": "MIT",
   "publishConfig": {
