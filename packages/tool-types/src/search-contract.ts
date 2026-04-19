@@ -143,12 +143,14 @@ export function parseData360MultiQuerySearchToolResult(
 
 /**
  * Type guard: returns true when a parsed single-query result is a success.
- * A success means no top-level error and at least one indicator was returned.
+ * A success means no top-level error is present. An empty indicators list is
+ * a valid success (the query returned no results) — callers should check
+ * `r.indicators.length` separately to decide whether to show a "no results" state.
  */
 export function isData360SearchToolSuccess(
   r: Data360SearchToolResult
 ): r is Data360SearchToolResult & { error: null | undefined } {
-  return !r.error && r.indicators.length > 0;
+  return !r.error;
 }
 
 /**

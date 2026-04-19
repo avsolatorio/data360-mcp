@@ -65,11 +65,13 @@ describe("Data360SearchToolResult", () => {
     }
   });
 
-  it("success guard returns false when indicators is empty", () => {
+  it("success guard returns true when indicators is empty and no error (valid \"no results\" state)", () => {
     const ok = parseData360SearchToolResult({ indicators: [] });
     expect(ok.success).toBe(true);
     if (ok.success) {
-      expect(isData360SearchToolSuccess(ok.data)).toBe(false);
+      // An empty result set without an error is a valid success — not a failure.
+      // Callers should check indicators.length to decide on the "no results" UI state.
+      expect(isData360SearchToolSuccess(ok.data)).toBe(true);
     }
   });
 
@@ -175,5 +177,19 @@ describe("Data360MultiQuerySearchToolResult", () => {
       total_candidates: 0,
     });
     expect(bad.success).toBe(false);
+  });
+
+  it("success guard returns true when merged result has zero indicators and no error", () => {
+    // A valid query that found nothing — should be treated as success, not failure.
+    const ok = parseData360MultiQuerySearchToolResult({
+      indicators: [],
+      result_layout: "merged",
+      queries: ["obscure topic no one has data for"],
+      total_candidates: 0,
+    });
+    expect(ok.success).toBe(true);
+    if (ok.success) {
+      expect(isData360MultiQuerySearchToolSuccess(ok.data)).toBe(true);
+    }
   });
 });

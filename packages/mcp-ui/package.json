@@ -24,6 +24,7 @@
     "preview": "vite preview"
   },
   "peerDependencies": {
+    "@data360/tool-types": ">=0.0.1",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
     "vega": ">=5.0.0",
