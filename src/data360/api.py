@@ -1202,6 +1202,11 @@ async def get_data(
             total_count: Total records available, or None.
             offset, has_more, next_offset: Use next_offset for the next page when has_more is True.
             error: Error message if the request failed; otherwise None.
+                If error contains "No metadata found", the indicator_id is invalid or stale.
+                Do NOT retry with the same ID. Instead, call data360_search_indicators with
+                the original topic/query to find the correct, current indicator ID, then retry.
+                If error is about a disaggregation or HTTP failure but data is still None,
+                the upstream API may be temporarily unavailable — retry once or report the error.
             failed_validation: Optional list of filter validation messages. Non-empty means
                 some filters were invalid; data may still be returned with valid filters applied.
     """
@@ -1480,6 +1485,8 @@ async def get_data_api_url(
     Returns:
         Full Data360 data API URL string (query parameters included).
         Raises ValueError if the indicator is not found in the specified database.
+            If this happens, the indicator_id is invalid or stale. Do NOT retry with the same ID.
+            Call data360_search_indicators with the original topic to find the correct indicator ID.
     """
     settings = get_data360_settings()
 
