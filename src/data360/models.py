@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -135,8 +135,14 @@ class EnrichedIndicator(BaseModel):
     time_period_range: str | None = Field(
         None, description="Data availability range (e.g., '1990-2024')"
     )
-    covers_country: bool | None = Field(
-        None, description="True if indicator has data for the requested country"
+    covers_country: dict[str, bool] | None = Field(
+        None, description="Per-country coverage map: True if indicator has data for the requested country code"
+    )
+    requested_country: str | None = Field(
+        None,
+        description="Resolved country code this indicator was evaluated against "
+        "(set when per-group countries are used via query_groups; also set for "
+        "single-query path when required_country is provided).",
     )
     dimensions: list[str] | None = Field(
         None, description="Available disaggregations (SEX, AGE, URBANISATION)"
@@ -158,6 +164,30 @@ class EnrichedSearchResponse(MCPPagedResponse):
     error: str | None = Field(None, description="Error message if search failed")
 
 
+class QueryGroup(BaseModel):
+    """A group of search queries scoped to an optional country.
+
+    Allows binding multiple search terms to a specific geographic scope
+    in a single search() call. Used with the query_groups parameter.
+
+    Example::
+
+        QueryGroup(queries=["GDP per capita", "inflation rate"], country="Kenya")
+    """
+
+    queries: list[str] = Field(
+        ...,
+        description="Search terms for this group (e.g., ['GDP per capita', 'inflation rate']). "
+        "At least one non-empty string required.",
+        min_length=1,
+    )
+    country: str | None = Field(
+        None,
+        description="Country name or 3-letter code for this group (e.g., 'Kenya' or 'KEN'). "
+        "If None, no country filtering is applied to indicators in this group.",
+    )
+
+
 class QueryGroupResult(BaseModel):
     """Result group for a single query within a multi-query search.
 
@@ -165,6 +195,11 @@ class QueryGroupResult(BaseModel):
     """
 
     query: str = Field(..., description="The search query that produced these results")
+    country_code: str | None = Field(
+        None,
+        description="Resolved country code for this query group (e.g., 'KEN'). "
+        "Set when query_groups is used and a country was specified for this group.",
+    )
     indicators: list[EnrichedIndicator] = Field(
         default_factory=list, description="Indicators found for this query"
     )
@@ -185,13 +220,14 @@ class MultiQuerySearchResponse(BaseModel):
 
     indicators: list[EnrichedIndicator] = Field(
         default_factory=list,
-        description="Merged, deduplicated indicators (result_layout='merged')",
+        description="Flat indicator list. Populated when result_layout='merged'; "
+        "empty when 'by_query' (see results field instead).",
     )
     results: list[QueryGroupResult] | None = Field(
         None,
         description="Per-query result groups (result_layout='by_query')",
     )
-    result_layout: str = Field(
+    result_layout: Literal["merged", "by_query"] = Field(
         "merged", description="Layout mode used: 'merged' or 'by_query'"
     )
     queries: list[str] = Field(
