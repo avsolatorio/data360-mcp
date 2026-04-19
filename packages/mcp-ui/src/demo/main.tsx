@@ -87,6 +87,38 @@ const MERGED_INDICATORS: EnrichedIndicator[] = [
   },
 ];
 
+// Single-query results: no country context, so covers_country is absent (badge hidden).
+const SINGLE_QUERY_INDICATORS: EnrichedIndicator[] = [
+  {
+    idno: "WB_WDI_NY_GDP_PCAP_KD",
+    database_id: "WB_WDI",
+    name: "GDP per capita (constant 2015 US$)",
+    truncated_definition: "GDP per capita based on constant 2015 prices, in US dollars.",
+    periodicity: "Annual",
+    latest_data: "2023",
+    time_period_range: "1960–2023",
+    // covers_country intentionally absent — simulates no required_country in search
+  },
+  {
+    idno: "WB_GS_NY_GDP_PCAP_KD",
+    database_id: "WB_GS",
+    name: "GDP per capita (Global Statistics)",
+    truncated_definition: "Alternative GDP per capita series from the Global Statistics database.",
+    periodicity: "Annual",
+    latest_data: "2022",
+    time_period_range: "1980–2022",
+  },
+  {
+    idno: "WB_WDI_NY_GNP_PCAP_KD",
+    database_id: "WB_WDI",
+    name: "GNI per capita (constant 2015 US$)",
+    truncated_definition: "Gross national income per capita in constant 2015 US dollars.",
+    periodicity: "Annual",
+    latest_data: "2023",
+    time_period_range: "1962–2023",
+  },
+];
+
 const BY_QUERY_GROUPS = [
   {
     query: "GDP per capita",
@@ -144,15 +176,15 @@ function App() {
         />
       </section>
 
-      {/* SearchResultCard — merged */}
+      {/* SearchResultCard — single query (no country context, no badge) */}
       <section>
         <h2 style={{ fontFamily: "Open Sans, Arial, sans-serif", fontSize: 15, fontWeight: 600, color: "#666", margin: "0 0 12px" }}>
-          search-card · SearchResultCard (merged layout)
+          search-card · SearchResultCard (single query, no country)
         </h2>
         <SearchResultCard
-          indicators={MERGED_INDICATORS}
+          indicators={SINGLE_QUERY_INDICATORS}
           title="Search Results"
-          subtitle="GDP per capita · Kenya · Gini coefficient · Morocco"
+          subtitle="query: GDP per capita"
           onSelect={(ind) => setSelected(ind)}
         />
         {selected && (
@@ -160,6 +192,19 @@ function App() {
             Selected: <strong>{selected.name}</strong> ({selected.idno})
           </p>
         )}
+      </section>
+
+      {/* SearchResultCard — merged (multi-query, with country coverage badges) */}
+      <section>
+        <h2 style={{ fontFamily: "Open Sans, Arial, sans-serif", fontSize: 15, fontWeight: 600, color: "#666", margin: "0 0 12px" }}>
+          search-card · SearchResultCard (merged layout, with country)
+        </h2>
+        <SearchResultCard
+          indicators={MERGED_INDICATORS}
+          title="Search Results"
+          subtitle="GDP per capita · Kenya · Gini coefficient · Morocco"
+          onSelect={(ind) => setSelected(ind)}
+        />
       </section>
 
       {/* SearchResultCard — by_query grouped */}
@@ -171,6 +216,7 @@ function App() {
           groups={BY_QUERY_GROUPS}
           title="Search Results"
           subtitle="query_groups: GDP per capita (Kenya) · Gini (Morocco)"
+          onSelect={(ind) => setSelected(ind)}
         />
       </section>
 
