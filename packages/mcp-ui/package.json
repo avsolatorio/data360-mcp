@@ -40,6 +40,9 @@
     "vega-lite"
   ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/worldbank/data360-mcp"
