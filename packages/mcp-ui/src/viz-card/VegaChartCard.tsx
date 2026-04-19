@@ -1,10 +1,12 @@
 import {
+  memo,
   useEffect,
   useRef,
   useState,
   useMemo,
   useCallback,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import type { VegaChartCardProps } from "./types";
 import { WB_PALETTE } from "./wb-theme";
@@ -93,31 +95,106 @@ function LegendButton({
   );
 }
 
-function IconButton({
-  title,
+/** World Bank rail accent (matches toggle / “Download data” reference). */
+const RAIL_ACCENT = "#34A7F2";
+
+/**
+ * Collapsed: 28px circle, grey icon.
+ * Hover: pill expands to the RIGHT (label after icon) — absolutely positioned with a fixed
+ * 28px slot so the rail does not shrink the chart (avoids Vega resize / layout stutter).
+ */
+const HoverRailIcon = memo(function HoverRailIcon({
+  label,
   onClick,
+  disabled,
   children,
 }: {
-  title: string;
-  onClick: () => void;
-  children: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  children: ReactNode;
 }) {
+  const [hover, setHover] = useState(false);
+  const expanded = Boolean(label) && hover;
+  const accent = expanded && !disabled;
+
   return (
-    <button
-      title={title}
-      onClick={onClick}
+    <div
       style={{
-        width: 28, height: 28, borderRadius: 8,
-        border: "0.5px solid rgba(0,0,0,0.12)",
-        background: "none", cursor: "pointer",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        color: "#666666",
+        position: "relative",
+        width: 28,
+        height: 28,
+        flexShrink: 0,
+        overflow: "visible",
+        zIndex: 2,
       }}
     >
-      {children}
-    </button>
+      <button
+        type="button"
+        aria-label={label}
+        disabled={disabled}
+        onClick={disabled ? undefined : onClick}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: expanded ? "flex-start" : "center",
+          boxSizing: "border-box",
+          height: 28,
+          minWidth: 28,
+          width: expanded ? "max-content" : 28,
+          maxWidth: expanded ? 280 : 28,
+          padding: expanded ? "5px 14px 5px 8px" : "0",
+          gap: expanded ? 8 : 0,
+          borderRadius: expanded ? 999 : "50%",
+          border: "0.5px solid rgba(0,0,0,0.12)",
+          background: "#ffffff",
+          color: accent ? RAIL_ACCENT : "#666666",
+          cursor: disabled ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.55 : 1,
+          transition:
+            "border-radius 0.18s ease, padding 0.18s ease, gap 0.18s ease, color 0.15s ease",
+          fontFamily: "Open Sans, Arial, sans-serif",
+          overflow: "visible",
+          boxShadow: expanded ? "0 1px 4px rgba(0,0,0,0.06)" : "none",
+        }}
+      >
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            lineHeight: 0,
+            width: expanded ? undefined : 28,
+            height: 28,
+            color: "inherit",
+          }}
+        >
+          {children}
+        </span>
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            maxWidth: expanded ? 240 : 0,
+            opacity: expanded ? 1 : 0,
+            transition: "max-width 0.18s ease, opacity 0.14s ease",
+            color: "inherit",
+          }}
+        >
+          {label}
+        </span>
+      </button>
+    </div>
   );
-}
+});
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -234,6 +311,14 @@ export default function VegaChartCard({
     });
   }, [onExport]);
 
+  const handleCopySpec = useCallback(() => {
+    try {
+      void navigator.clipboard.writeText(JSON.stringify(spec, null, 2));
+    } catch {
+      /* ignore */
+    }
+  }, [spec]);
+
   // ── Derived values ───────────────────────────────────────────────────────────
 
   const cardTitle = title ?? parsed.specTitle ?? "";
@@ -250,14 +335,28 @@ export default function VegaChartCard({
     fontFamily: "Open Sans, Arial, sans-serif",
   };
 
-  /** Right rail: optional top slot + PNG at bottom; space-between when both. */
-  const rightRailStyle: CSSProperties = {
+  /** Fixed 28px column width so hover pills don’t reflow the chart. Overflow visible for pills. */
+  const outerRailStyle: CSSProperties = {
     display: "flex",
     flexDirection: "column",
     justifyContent: railTopSlot ? "space-between" : "flex-end",
+    alignItems: "flex-start",
     flexShrink: 0,
+    width: 28,
+    minWidth: 28,
+    maxWidth: 28,
+    overflow: "visible",
     paddingTop: railTopSlot ? 6 : 0,
     paddingBottom: 6,
+  };
+
+  const railActionStackStyle: CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    alignItems: "flex-start",
+    width: 28,
+    overflow: "visible",
   };
 
   const chartArea: CSSProperties = {
@@ -337,41 +436,118 @@ export default function VegaChartCard({
 
         <Divider />
 
-        {/* Footer controls */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+        {/* Footer: annotations only — Download data lives in the right rail */}
+        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
           <ToggleSwitch
             checked={showAnnotations}
             onChange={setShowAnnotations}
             label="Show annotations"
           />
-          <button
-            onClick={handleDownload}
-            style={{
-              display: "flex", alignItems: "center", gap: 6,
-              fontSize: 13, fontWeight: 600, color: "#34A7F2",
-              background: "none", border: "none", cursor: "pointer", padding: 0,
-              fontFamily: "Open Sans, Arial, sans-serif",
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-              <rect x="1" y="1" width="12" height="12" rx="2" />
-              <line x1="7" y1="4" x2="7" y2="9" />
-              <polyline points="4.5,7 7,9.5 9.5,7" />
-            </svg>
-            Download data
-          </button>
         </div>
       </div>
 
-      <div style={rightRailStyle}>
-        {railTopSlot}
-        <IconButton title="Save as PNG" onClick={handleExport}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
-            <rect x="1" y="1" width="12" height="12" rx="2" />
-            <polyline points="1,10 5,6 8,9 10,7 13,10" />
-            <circle cx="4.5" cy="4.5" r="1" />
-          </svg>
-        </IconButton>
+      <div style={outerRailStyle}>
+        {railTopSlot ? (
+          <div
+            style={{
+              alignSelf: "flex-end",
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "100%",
+              flexShrink: 0,
+            }}
+          >
+            {railTopSlot}
+          </div>
+        ) : null}
+        <div style={railActionStackStyle}>
+          <HoverRailIcon label="Download data" onClick={handleDownload}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <rect
+                x="1.25"
+                y="1.25"
+                width="11.5"
+                height="11.5"
+                rx="1.25"
+                stroke="currentColor"
+                strokeWidth="1.1"
+              />
+              <line
+                x1="1.25"
+                y1="4.75"
+                x2="12.75"
+                y2="4.75"
+                stroke="currentColor"
+                strokeWidth="1.1"
+              />
+              <line
+                x1="7"
+                y1="4.75"
+                x2="7"
+                y2="12.75"
+                stroke="currentColor"
+                strokeWidth="1.1"
+              />
+              <line
+                x1="4"
+                y1="8"
+                x2="10"
+                y2="8"
+                stroke="currentColor"
+                strokeWidth="0.9"
+              />
+              <line
+                x1="4"
+                y1="10.25"
+                x2="10"
+                y2="10.25"
+                stroke="currentColor"
+                strokeWidth="0.9"
+              />
+            </svg>
+          </HoverRailIcon>
+          <HoverRailIcon label="Save as PNG" onClick={handleExport}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
+              <rect x="1" y="1" width="12" height="12" rx="2" />
+              <polyline points="1,10 5,6 8,9 10,7 13,10" />
+              <circle cx="4.5" cy="4.5" r="1" />
+            </svg>
+          </HoverRailIcon>
+          <HoverRailIcon disabled label="Export as PDF (soon)">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <path
+                d="M3 1.5h4.5L11 5v7.5H3z"
+                stroke="currentColor"
+                strokeWidth="1.1"
+                strokeLinejoin="round"
+              />
+              <text
+                fill="currentColor"
+                fontSize="4.2"
+                fontWeight="700"
+                x="3.8"
+                y="11.2"
+                style={{ fontFamily: "Open Sans, Arial, sans-serif" }}
+              >
+                PDF
+              </text>
+            </svg>
+          </HoverRailIcon>
+          <HoverRailIcon label="Copy Vega-Lite spec" onClick={handleCopySpec}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <text
+                fill="currentColor"
+                fontSize="7.5"
+                fontWeight="600"
+                x="1.5"
+                y="10.5"
+                style={{ fontFamily: "ui-monospace, monospace" }}
+              >
+                {`${"<"}/${">"}`}
+              </text>
+            </svg>
+          </HoverRailIcon>
+        </div>
       </div>
     </div>
   );
