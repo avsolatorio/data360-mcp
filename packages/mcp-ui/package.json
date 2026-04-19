@@ -1,6 +1,6 @@
 {
   "name": "@data360/mcp-ui",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "React UI for presenting Data360 MCP tool output (Vega-Lite chart card, and future surfaces).",
   "type": "module",
   "files": [
