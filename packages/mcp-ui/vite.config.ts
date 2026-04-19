@@ -7,25 +7,30 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      include: ["src/viz-card"],
+      include: ["src/viz-card", "src/search-card"],
       rollupTypes: true,
       tsconfigPath: "./tsconfig.json",
     }),
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, "src/viz-card/index.ts"),
-      name: "Data360McpUiVizCard",
+      // Multi-entry: each surface builds to its own output file
+      entry: {
+        "viz-card": resolve(__dirname, "src/viz-card/index.ts"),
+        "search-card": resolve(__dirname, "src/search-card/index.ts"),
+      },
       formats: ["es", "cjs"],
-      fileName: (format) => `viz-card.${format === "es" ? "js" : "cjs"}`,
+      fileName: (format, entryName) =>
+        `${entryName}.${format === "es" ? "js" : "cjs"}`,
     },
     rollupOptions: {
-      external: ["react", "react-dom", "vega", "vega-embed", "vega-lite"],
+      external: ["react", "react-dom", "vega", "vega-embed", "vega-lite", "@data360/tool-types"],
       output: {
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
           "vega-embed": "vegaEmbed",
+          "@data360/tool-types": "Data360ToolTypes",
         },
       },
     },
