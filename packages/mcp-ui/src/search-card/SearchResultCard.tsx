@@ -1,4 +1,4 @@
-import { memo, useState, useCallback, type CSSProperties } from "react";
+import { memo, useState, useCallback, useEffect, type CSSProperties } from "react";
 import type { EnrichedIndicator, QueryGroupResult, SearchResultCardProps } from "./types";
 
 // ─── Design tokens (WB palette, consistent with VegaChartCard) ───────────────
@@ -331,10 +331,17 @@ export default function SearchResultCard({
   onSelect,
   className,
 }: SearchResultCardProps) {
-  // Track which groups are expanded (all open by default)
+  // Track which groups are expanded (all open by default).
+  // Reset when the group array changes identity (e.g. parent re-renders with new groups).
   const [openGroups, setOpenGroups] = useState<Set<number>>(
     () => new Set(groups?.map((_, i) => i) ?? [])
   );
+
+  useEffect(() => {
+    setOpenGroups(new Set(groups?.map((_, i) => i) ?? []));
+    // Re-initialise only when the number of groups or their queries change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groups?.length, groups?.map((g) => g.query).join(",")]);
 
   const toggleGroup = useCallback((index: number) => {
     setOpenGroups((prev) => {
@@ -390,16 +397,16 @@ export default function SearchResultCard({
       {/* Body */}
       {isGrouped ? (
         // ── By-query grouped view ──
-        <div>
-          {groups.map((group, i) => (
-            <div key={`${group.query}-${i}`}>
+        <div role="list">
+          {groups.map((group) => (
+            <div key={group.query} role="listitem">
               <GroupHeader
                 group={group}
-                open={openGroups.has(i)}
-                onToggle={() => toggleGroup(i)}
+                open={openGroups.has(groups.indexOf(group))}
+                onToggle={() => toggleGroup(groups.indexOf(group))}
               />
-              {openGroups.has(i) && (
-                <div>
+              {openGroups.has(groups.indexOf(group)) && (
+                <div role="list">
                   {group.error ? (
                     <p
                       style={{
@@ -424,7 +431,7 @@ export default function SearchResultCard({
                     </p>
                   ) : (
                     group.indicators.map((ind: EnrichedIndicator, j: number) => (
-                      <div key={`${ind.idno}-${j}`}>
+                      <div key={ind.idno} role="listitem">
                         <IndicatorRow indicator={ind} onSelect={onSelect} />
                         {j < group.indicators.length - 1 && <Divider />}
                       </div>
@@ -438,7 +445,7 @@ export default function SearchResultCard({
         </div>
       ) : (
         // ── Merged flat view ──
-        <div>
+        <div role="list">
           {indicators.length === 0 ? (
             <p
               style={{
@@ -452,7 +459,7 @@ export default function SearchResultCard({
             </p>
           ) : (
             indicators.map((ind, i) => (
-              <div key={`${ind.idno}-${i}`}>
+              <div key={ind.idno} role="listitem">
                 <IndicatorRow indicator={ind} onSelect={onSelect} />
                 {i < indicators.length - 1 && <Divider />}
               </div>
