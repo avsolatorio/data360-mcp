@@ -646,11 +646,11 @@ async def search(  # noqa: PLR0911
         error: Error message string if the request failed; otherwise None.
     """
     # --- Validation ---
-    active_modes = sum([
+    active_modes = sum((
         query is not None,
         queries is not None,
         query_groups is not None,
-    ])
+    ))
     if active_modes > 1:
         return EnrichedSearchResponse(
             error="Provide exactly one of 'query', 'queries', or 'query_groups', not multiple."
@@ -777,7 +777,7 @@ async def search(  # noqa: PLR0911
                 )
 
         # Resolve unique country values concurrently to avoid redundant codelist lookups
-        unique_countries = {c for _, c in flat_pairs if c}
+        unique_countries = list({c for _, c in flat_pairs if c})
         resolved_map: dict[str, str | None] = {}
         if unique_countries:
             codes = await asyncio.gather(
