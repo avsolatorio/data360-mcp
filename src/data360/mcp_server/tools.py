@@ -77,14 +77,8 @@ analyze_development_topic = mcp.tool(
     description=data360_api.analyze_development_topic.__doc__,
 )
 
-# data360_generate_viz_gallery is gated behind an environment variable.
-# Set DATA360_ENABLE_GALLERY=true to register the tool (e.g. during local testing).
-# Do not set this flag in production deployments until the tool is production-ready.
-import os as _os  # noqa: E402
-
-if _os.environ.get("DATA360_ENABLE_GALLERY", "").lower() == "true":
-    generate_viz_gallery = mcp.tool(
-        data360_viz.generate_viz_gallery,
-        name="data360_generate_viz_gallery",
-        description=data360_viz.generate_viz_gallery.__doc__,
-    )
+generate_viz_gallery = mcp.tool(
+    data360_viz.generate_viz_gallery,
+    name="data360_generate_viz_gallery",
+    description=data360_viz.generate_viz_gallery.__doc__,
+)
