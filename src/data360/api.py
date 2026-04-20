@@ -1496,9 +1496,15 @@ _SAMPLING_SYSTEM_PROMPT = (
     "You are a development economist. Given the user's question about "
     "development data or indicators, generate 3-5 specific, measurable "
     "topics that can be searched in a statistical database (e.g. World "
-    "Bank indicators). Return ONLY a JSON array of short search strings. "
-    'Example: ["GDP per capita", "life expectancy at birth", "school enrollment rate"]\n'
-    "Do not include any other text."
+    "Bank indicators).\n\n"
+    "If the question mentions MULTIPLE countries with DIFFERENT topics per country, "
+    "return a JSON array of objects, each with 'queries' (list of search strings) "
+    "and 'country' (country name):\n"
+    '[{"queries": ["unemployment rate", "labor participation"], "country": "Morocco"}, '
+    '{"queries": ["manufacturing output"], "country": "Ethiopia"}]\n\n'
+    "Otherwise, return a flat JSON array of short search strings:\n"
+    '["GDP per capita", "life expectancy at birth", "school enrollment rate"]\n\n'
+    "Return ONLY the JSON. Do not include any other text."
 )
 
 
@@ -1605,6 +1611,7 @@ async def analyze_development_topic(
     Args:
         query: The user's development-related question (can be vague/broad).
         country: Optional country name or 3-letter code (e.g. "Ghana", "GHA").
+            Can also be comma-separated for multi-country comparisons (e.g. "Morocco, Ethiopia").
         max_indicators: Maximum number of indicators to return (default 4, max 6).
         start_year: Optional start year for data snapshots. Defaults to last 5 years.
         end_year: Optional end year for data snapshots. Defaults to current year.
@@ -1613,7 +1620,7 @@ async def analyze_development_topic(
     Returns:
         Dict with:
             query: The original question.
-            country / country_code: Resolved country info (if provided).
+            country / country_code: Resolved country info (if provided). May be comma-separated.
             sub_queries: The decomposed search terms (from LLM or rule-based).
             decomposition_method: "sampling" or "rule_based".
             selected_indicators: List of ranked indicator dicts, each with:
@@ -1640,6 +1647,7 @@ async def analyze_development_topic(
 
     # --- Step 2: Decompose query into sub-queries ---
     sub_queries: list[str] = []
+    query_groups_from_sampling: list[QueryGroup] | None = None
     decomposition_method = "rule_based"
     sampling_error = None
 
@@ -1664,12 +1672,34 @@ async def analyze_development_topic(
                 # Remove first and last lines (fences)
                 cleaned = "\n".join(lines[1:-1]).strip()
             parsed = json.loads(cleaned)
-            if isinstance(parsed, list) and all(isinstance(s, str) for s in parsed):
-                sub_queries = [s.strip() for s in parsed if s.strip()][:5]
-                decomposition_method = "sampling"
-                _logger.info(
-                    "Sampling decomposition succeeded: %s", sub_queries
-                )
+
+            if isinstance(parsed, list) and len(parsed) > 0:
+                # Case A: grouped format [{"queries": [...], "country": "..."}, ...]
+                if isinstance(parsed[0], dict) and "queries" in parsed[0]:
+                    query_groups_from_sampling = [
+                        QueryGroup(
+                            queries=[q.strip() for q in g["queries"] if q and q.strip()][:5],
+                            country=g.get("country"),
+                        )
+                        for g in parsed
+                        if isinstance(g, dict) and g.get("queries")
+                    ]
+                    if query_groups_from_sampling:
+                        decomposition_method = "sampling"
+                        # sub_queries for display/logging
+                        sub_queries = [q for g in query_groups_from_sampling for q in g.queries]
+                        _logger.info(
+                            "Sampling decomposition succeeded (grouped): %s", query_groups_from_sampling
+                        )
+
+                # Case B: flat format ["GDP per capita", "life expectancy", ...]
+                elif isinstance(parsed[0], str):
+                    sub_queries = [s.strip() for s in parsed if isinstance(s, str) and s.strip()][:5]
+                    if sub_queries:
+                        decomposition_method = "sampling"
+                        _logger.info(
+                            "Sampling decomposition succeeded (flat): %s", sub_queries
+                        )
         except (ValueError, json.JSONDecodeError) as e:
             sampling_error = f"{type(e).__name__}: {e}"
             _logger.warning(
@@ -1697,13 +1727,34 @@ async def analyze_development_topic(
     # Delegates fan-out, enrichment, and cross-query dedup to search().
     # result_layout="by_query" preserves which sub-query each indicator came
     # from — needed to populate matched_sub_queries in the response.
-    multi_result = await search(
-        queries=sub_queries,
-        required_country=country_code or country,
-        limit=max_indicators,
-        result_layout="by_query",
-        dedupe=True,
-    )
+    if query_groups_from_sampling:
+        multi_result = await search(
+            query_groups=query_groups_from_sampling,
+            limit=max_indicators,
+            result_layout="by_query",
+            dedupe=True,
+        )
+    elif country_code and "," in country_code:
+        # Cross-product fallback
+        codes = [c.strip() for c in country_code.split(",")]
+        groups = [
+            QueryGroup(queries=sub_queries, country=code)
+            for code in codes
+        ]
+        multi_result = await search(
+            query_groups=groups,
+            limit=max_indicators,
+            result_layout="by_query",
+            dedupe=True,
+        )
+    else:
+        multi_result = await search(
+            queries=sub_queries,
+            required_country=country_code or country,
+            limit=max_indicators,
+            result_layout="by_query",
+            dedupe=True,
+        )
 
     # Build (indicator, source_query) tuples from grouped results
     all_indicators: list[tuple[EnrichedIndicator, str]] = []

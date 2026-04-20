@@ -367,3 +367,126 @@ class TestAnalyzeDevelopmentTopic:
 
         assert result["decomposition_method"] == "rule_based"
         assert len(result["sub_queries"]) >= 2
+
+    @pytest.mark.asyncio
+    async def test_multi_country_sampling_returns_grouped(self):
+        """Sampling returns grouped structure for multi-country question."""
+        indicators = [
+            _make_indicator(idno="WB_WDI_1", name="Indicator 1")
+        ]
+        mock_search_response = _make_search_response(indicators)
+
+        ctx = FakeContext(
+            response_text=json.dumps([
+                {"queries": ["unemployment"], "country": "Morocco"},
+                {"queries": ["manufacturing"], "country": "Ethiopia"}
+            ])
+        )
+        mock_data_response = AsyncMock()
+        mock_data_response.return_value.data = []
+        mock_data_response.return_value.error = None
+        mock_data_response.return_value.count = 0
+
+        with (
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)) as mock_search,
+            patch("data360.api._resolve_country_code", return_value="MAR,ETH"),
+            patch("data360.api.get_data", mock_data_response),
+        ):
+            result = await analyze_development_topic(
+                query="Labor market Morocco vs manufacturing Ethiopia",
+                country="Morocco, Ethiopia",
+                ctx=ctx,
+            )
+
+        assert result["decomposition_method"] == "sampling"
+        assert result["country_code"] == "MAR,ETH"
+
+        # Verify search was called with query_groups properly scoped per country
+        mock_search.assert_called_once()
+        call_kwargs = mock_search.call_args.kwargs
+        assert "query_groups" in call_kwargs
+
+        groups = call_kwargs["query_groups"]
+        assert len(groups) == 2
+        assert groups[0].country == "Morocco"
+        assert groups[0].queries == ["unemployment"]
+        assert groups[1].country == "Ethiopia"
+        assert groups[1].queries == ["manufacturing"]
+
+    @pytest.mark.asyncio
+    async def test_multi_country_fallback_uses_cross_product(self):
+        """No sampling or invalid sampling with multi-country falls back to cross-product search."""
+        indicators = [
+            _make_indicator(idno="WB_WDI_1", name="Indicator 1")
+        ]
+        mock_search_response = _make_search_response(indicators)
+
+        mock_data_response = AsyncMock()
+        mock_data_response.return_value.data = []
+        mock_data_response.return_value.error = None
+        mock_data_response.return_value.count = 0
+
+        with (
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)) as mock_search,
+            patch("data360.api._resolve_country_code", return_value="MAR,ETH"),
+            patch("data360.api.get_data", mock_data_response),
+        ):
+            result = await analyze_development_topic(
+                # Use query that rule_based will split cleanly
+                query="labor market and manufacturing",
+                country="Morocco, Ethiopia",
+            )
+
+        assert result["decomposition_method"] == "rule_based"
+        assert result["country_code"] == "MAR,ETH"
+
+        # Verify search was called with query_groups configured for cross product
+        mock_search.assert_called_once()
+        call_kwargs = mock_search.call_args.kwargs
+        assert "query_groups" in call_kwargs
+
+        groups = call_kwargs["query_groups"]
+        assert len(groups) == 2
+        # MAR and ETH each get the SAME sub_queries (cross product)
+        assert groups[0].country == "MAR"
+        assert len(groups[0].queries) >= 2
+        assert groups[1].country == "ETH"
+        assert len(groups[1].queries) >= 2
+        assert groups[0].queries == groups[1].queries
+
+    @pytest.mark.asyncio
+    async def test_single_country_preserves_existing_behavior(self):
+        """Single country should still use `queries` param instead of `query_groups`."""
+        indicators = [
+            _make_indicator(idno="WB_WDI_1", name="Indicator 1")
+        ]
+        mock_search_response = _make_search_response(indicators)
+
+        ctx = FakeContext(
+            response_text=json.dumps(["GDP per capita", "inflation"])
+        )
+
+        mock_data_response = AsyncMock()
+        mock_data_response.return_value.data = []
+        mock_data_response.return_value.error = None
+        mock_data_response.return_value.count = 0
+
+        with (
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)) as mock_search,
+            patch("data360.api._resolve_country_code", return_value="GHA"),
+            patch("data360.api.get_data", mock_data_response),
+        ):
+            result = await analyze_development_topic(
+                query="Ghana economic status",
+                country="Ghana",
+                ctx=ctx,
+            )
+
+        assert result["decomposition_method"] == "sampling"
+
+        # Verify search was called with queries and required_country
+        mock_search.assert_called_once()
+        call_kwargs = mock_search.call_args.kwargs
+        assert "queries" in call_kwargs
+        assert call_kwargs["required_country"] == "GHA"
+        assert "query_groups" not in call_kwargs
