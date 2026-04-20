@@ -617,12 +617,19 @@ async def search(  # noqa: PLR0911
     In those cases, use data360_analyze_development_topic instead, which decomposes
     the question into specific sub-queries and searches for each one.
 
+    IMPORTANT — parameter selection: pass exactly ONE of query, queries, or query_groups.
+    Do NOT pass the others at all (not even as empty string "" or empty list []).
+    Sending query="" alongside query_groups, or queries=[] alongside query_groups,
+    is treated as a conflict and will be normalised, but it is better to simply omit unused params.
+
     Args:
         query: Single search query (e.g., "unemployment rate", "poverty", "GDP per capita").
-            Mutually exclusive with queries and query_groups.
+            Use this for ONE topic. If using this, do not pass queries or query_groups.
         queries: List of search terms for multi-topic search in one call (e.g.
-            ["GDP growth", "inflation rate", "unemployment"]). Mutually exclusive with query
-            and query_groups. Requires at least 2 non-empty strings.
+            ["GDP growth", "inflation rate", "unemployment"]).
+            Use this for MULTIPLE topics that share the same country scope.
+            Requires at least 2 non-empty strings.
+            If using this, do not pass query or query_groups.
         query_groups: List of QueryGroup objects, each binding one or more search terms to
             an optional country scope. Use when different queries target different countries.
             Use this instead of queries when each query targets a different country.
@@ -631,8 +638,8 @@ async def search(  # noqa: PLR0911
                 {"queries": ["GDP per capita", "inflation"], "country": "Kenya"},
                 {"queries": ["Gini coefficient"], "country": "Morocco"}
             ]
-            Mutually exclusive with query and queries. Requires at least 2 non-empty queries
-            total across all groups. required_country is ignored when query_groups is used.
+            Requires at least 2 non-empty queries total across all groups.
+            If using this, do not pass query or queries. required_country is ignored.
         required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
             Use comma-separated names or codes to check multiple countries in one call (e.g. "China, USA").
             Shared across all queries — only when all topics share the same geographic scope.
@@ -654,6 +661,7 @@ async def search(  # noqa: PLR0911
             Each indicator has requested_country showing which group's country it was evaluated against.
         error: Error message string if the request failed; otherwise None.
     """
+
     # --- Validation ---
     # Normalise LLM-hallucinated empty defaults before mode detection.
     # When a client sends query="" or queries=[] alongside the real parameter
