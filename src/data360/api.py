@@ -646,6 +646,16 @@ async def search(  # noqa: PLR0911
         error: Error message string if the request failed; otherwise None.
     """
     # --- Validation ---
+    # Normalise LLM-hallucinated empty defaults before mode detection.
+    # When a client sends query="" or queries=[] alongside the real parameter
+    # (e.g. query_groups), treat these as "not provided" — identical to None.
+    if query is not None and not query.strip():
+        _logger.debug("query='%s' normalised to None (empty/whitespace-only)", query)
+        query = None
+    if queries is not None and not any(q and q.strip() for q in queries):
+        _logger.debug("queries=%r normalised to None (all entries empty)", queries)
+        queries = None
+
     active_modes = sum((
         query is not None,
         queries is not None,
@@ -659,6 +669,7 @@ async def search(  # noqa: PLR0911
         return EnrichedSearchResponse(
             error="One of 'query', 'queries', or 'query_groups' must be provided."
         )
+
 
     # --- Multi-query path (queries= flat list) ---
     if queries is not None:
