@@ -144,6 +144,74 @@ class TestSearchValidation:
         assert result.error is not None
         assert "result_layout" in result.error.lower()
 
+    @pytest.mark.asyncio
+    async def test_empty_string_query_with_query_groups_does_not_error(self):
+        """LLM clients sometimes send query="" alongside query_groups.
+        Empty string should be normalised to None and not trigger the mutual
+        exclusion error — the query_groups path should be taken instead."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value="KEN")),
+        ):
+            result = await search(
+                query="",  # LLM-hallucinated empty default
+                query_groups=[
+                    QueryGroup(queries=["GDP per capita"], country="Kenya"),
+                    QueryGroup(queries=["inflation rate"], country="Kenya"),
+                ],
+            )
+
+        assert result.error is None or "exactly one" not in (result.error or "")
+        assert isinstance(result, MultiQuerySearchResponse)
+
+    @pytest.mark.asyncio
+    async def test_whitespace_query_with_query_groups_does_not_error(self):
+        """query='   ' (whitespace-only) should also be treated as absent."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value="KEN")),
+        ):
+            result = await search(
+                query="   ",
+                query_groups=[
+                    QueryGroup(queries=["GDP per capita"], country="Kenya"),
+                    QueryGroup(queries=["inflation rate"], country="Kenya"),
+                ],
+            )
+
+        assert result.error is None or "exactly one" not in (result.error or "")
+        assert isinstance(result, MultiQuerySearchResponse)
+
+    @pytest.mark.asyncio
+    async def test_empty_queries_list_with_query_groups_does_not_error(self):
+        """queries=[] sent alongside query_groups should be normalised to None."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
+
+        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value="KEN")),
+        ):
+            result = await search(
+                queries=[],  # LLM-hallucinated empty default
+                query_groups=[
+                    QueryGroup(queries=["GDP per capita"], country="Kenya"),
+                    QueryGroup(queries=["inflation rate"], country="Kenya"),
+                ],
+            )
+
+        assert result.error is None or "exactly one" not in (result.error or "")
+        assert isinstance(result, MultiQuerySearchResponse)
+
 
 # ---------------------------------------------------------------------------
 # Multi-query merged layout tests
