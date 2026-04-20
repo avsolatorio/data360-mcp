@@ -21,6 +21,7 @@ break JSON encoding.
 from __future__ import annotations
 
 import asyncio
+import itertools
 import json
 import logging
 import math
@@ -46,6 +47,10 @@ _FALLBACK_WARNING = (
     "Draco could not determine an optimal encoding; "
     "a default chart was generated as fallback."
 )
+
+# Maximum concurrent chart-generation calls inside generate_viz_gallery.
+# 6 indicators produce up to 21 chart tasks; this bounds API pressure.
+_MAX_CONCURRENT_GALLERY_CALLS = 5
 
 VizResult = dict[str, str | None]
 
@@ -970,8 +975,6 @@ async def generate_viz_gallery(
             failed_charts: Number of charts that failed.
             country_code: The country code used (if any).
     """
-    import asyncio
-    import itertools
 
     if not indicators:
         return {
@@ -991,7 +994,7 @@ async def generate_viz_gallery(
 
     # --- Single-indicator charts ---
     for ind in capped:
-        db_id = ind.get("database_id") or ind.get("database_id", "")
+        db_id = ind.get("database_id", "")
         ind_id = ind.get("indicator_id") or ind.get("idno", "")
         ind_name = ind.get("name", ind_id)
 
@@ -1033,7 +1036,7 @@ async def generate_viz_gallery(
         })
 
     total_charts = len(tasks_meta)
-    semaphore = asyncio.Semaphore(5)
+    semaphore = asyncio.Semaphore(_MAX_CONCURRENT_GALLERY_CALLS)
 
     async def _generate_one(meta: dict) -> dict:
         async with semaphore:
@@ -1047,9 +1050,9 @@ async def generate_viz_gallery(
                         end_year=end_year,
                         chart_type=meta.get("chart_type_hint"),
                     )
-                    chart_type_used = result.get("strategy") or (
-                        chart_types[0] if chart_types else "line"
-                    )
+                    # Use the strategy returned by the viz tool. Fall back to hint
+                    # or "line" only when strategy is absent (not merely empty).
+                    chart_type_used = result.get("strategy") or meta.get("chart_type_hint") or "line"
                 else:
                     result = await get_multi_indicator_viz_spec(
                         indicator_ids=meta["indicator_ids"],

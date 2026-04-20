@@ -1494,7 +1494,6 @@ async def analyze_development_topic(
 
     # Build (indicator, source_query) tuples from grouped results
     all_indicators: list[tuple[EnrichedIndicator, str]] = []
-    total_candidates = 0
 
     if isinstance(multi_result, MultiQuerySearchResponse) and multi_result.results:
         for group in multi_result.results:
@@ -1504,10 +1503,14 @@ async def analyze_development_topic(
                 )
                 continue
             for ind in group.indicators:
-                total_candidates += 1
                 all_indicators.append((ind, group.query))
     elif multi_result.error:
         _logger.warning("Multi-query search failed: %s", multi_result.error)
+
+    # Use the authoritative raw candidate count from the search response
+    # (multi_result.total_candidates reflects pre-dedup numbers, which is
+    # a more honest figure for the coverage_note than counting deduplicated results).
+    total_candidates = getattr(multi_result, "total_candidates", len(all_indicators))
 
     if not all_indicators:
         return {
