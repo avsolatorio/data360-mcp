@@ -1658,6 +1658,15 @@ async def analyze_development_topic(
     )
     if ctx is not None:
         try:
+            # Determine sampling tier before calling so we can report it accurately.
+            # Tier 1: client advertises native sampling support.
+            # Tier 2: client lacks sampling; FastMCP falls back to the server-side handler.
+            from mcp.types import ClientCapabilities, SamplingCapability  # noqa: PLC0415
+            _has_native_sampling = ctx.session.check_client_capability(
+                ClientCapabilities(sampling=SamplingCapability())
+            )
+            _sampling_tier = "sampling_client" if _has_native_sampling else "sampling_server"
+
             sampling_result = await ctx.sample(
                 f"User question: {query}",
                 system_prompt=_SAMPLING_SYSTEM_PROMPT,
@@ -1685,20 +1694,22 @@ async def analyze_development_topic(
                         if isinstance(g, dict) and g.get("queries")
                     ]
                     if query_groups_from_sampling:
-                        decomposition_method = "sampling"
+                        decomposition_method = _sampling_tier
                         # sub_queries for display/logging
                         sub_queries = [q for g in query_groups_from_sampling for q in g.queries]
                         _logger.info(
-                            "Sampling decomposition succeeded (grouped): %s", query_groups_from_sampling
+                            "Sampling decomposition succeeded (grouped, tier=%s): %s",
+                            decomposition_method, query_groups_from_sampling,
                         )
 
                 # Case B: flat format ["GDP per capita", "life expectancy", ...]
                 elif isinstance(parsed[0], str):
                     sub_queries = [s.strip() for s in parsed if isinstance(s, str) and s.strip()][:5]
                     if sub_queries:
-                        decomposition_method = "sampling"
+                        decomposition_method = _sampling_tier
                         _logger.info(
-                            "Sampling decomposition succeeded (flat): %s", sub_queries
+                            "Sampling decomposition succeeded (flat, tier=%s): %s",
+                            decomposition_method, sub_queries,
                         )
         except (ValueError, json.JSONDecodeError) as e:
             sampling_error = f"{type(e).__name__}: {e}"

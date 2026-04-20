@@ -63,12 +63,28 @@ class FakeSamplingResult:
     model: str = "fake-model"
 
 
+class FakeSession:
+    """Minimal session stub exposing check_client_capability."""
+
+    def __init__(self, native_sampling: bool = True):
+        self._native_sampling = native_sampling
+
+    def check_client_capability(self, capability) -> bool:  # noqa: ANN001
+        return self._native_sampling
+
+
 class FakeContext:
     """Fake MCP Context that simulates sampling."""
 
-    def __init__(self, response_text: str | None = None, should_raise: bool = False):
+    def __init__(
+        self,
+        response_text: str | None = None,
+        should_raise: bool = False,
+        native_sampling: bool = True,
+    ):
         self._response_text = response_text
         self._should_raise = should_raise
+        self.session = FakeSession(native_sampling=native_sampling)
 
     async def sample(self, messages, **kwargs) -> FakeSamplingResult:
         if self._should_raise:
@@ -208,7 +224,7 @@ class TestAnalyzeDevelopmentTopic:
                 ctx=ctx,
             )
 
-        assert result["decomposition_method"] == "sampling"
+        assert result["decomposition_method"] == "sampling_client"
         assert len(result["sub_queries"]) == 2
         assert result["country_code"] == "GHA"
         assert len(result["selected_indicators"]) > 0
@@ -398,7 +414,7 @@ class TestAnalyzeDevelopmentTopic:
                 ctx=ctx,
             )
 
-        assert result["decomposition_method"] == "sampling"
+        assert result["decomposition_method"] == "sampling_client"
         assert result["country_code"] == "MAR,ETH"
 
         # Verify search was called with query_groups properly scoped per country
@@ -482,7 +498,7 @@ class TestAnalyzeDevelopmentTopic:
                 ctx=ctx,
             )
 
-        assert result["decomposition_method"] == "sampling"
+        assert result["decomposition_method"] == "sampling_client"
 
         # Verify search was called with queries and required_country
         mock_search.assert_called_once()
