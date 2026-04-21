@@ -186,7 +186,7 @@ async def _resolve_queried_countries(
     resolved = await _resolve_country_code(required_country)
     if not resolved:
         return None
-    return [c.strip() for c in resolved.split(",")]
+    return [c.strip() for c in resolved.split(";") if c.strip()]
 
 
 def _validate_user_filters(
@@ -460,16 +460,17 @@ async def _resolve_country_code(country_query: str) -> str | None:
     if not country_query:
         return None
 
-    # Handle multi-country
-    if "," in country_query:
-        parts = [p.strip() for p in country_query.split(",") if p.strip()]
+    # Handle multi-country: semicolons are the user-facing delimiter because
+    # some country names contain commas (e.g. "Korea, Republic of").
+    if ";" in country_query:
+        parts = [p.strip() for p in country_query.split(";") if p.strip()]
         resolved_codes = []
         for part in parts:
             code = await _resolve_country_code(part)
             if code:
                 resolved_codes.append(code)
 
-        return ",".join(resolved_codes) if resolved_codes else None
+        return ";".join(resolved_codes) if resolved_codes else None
 
     # Already a 3-letter code
     if len(country_query) == COUNTRY_CODE_LENGTH and country_query.isupper():
@@ -641,7 +642,9 @@ async def search(  # noqa: PLR0911
             Requires at least 2 non-empty queries total across all groups.
             If using this, do not pass query or queries. required_country is ignored.
         required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
-            Use comma-separated names or codes to check multiple countries in one call (e.g. "China, USA").
+            Use semicolon-separated names or codes to check multiple countries in one call
+            (e.g. "China; USA"). Semicolons are used because some country names contain
+            commas (e.g. "Korea, Republic of").
             Shared across all queries — only when all topics share the same geographic scope.
             Ignored when query_groups is used (each group has its own country).
         limit: Maximum number of indicators per query (default 5).
@@ -655,7 +658,8 @@ async def search(  # noqa: PLR0911
 
     Returns:
         With query: EnrichedSearchResponse with indicators, required_country, pagination fields.
-            Each indicator has covers_country (bool) and requested_country (resolved code).
+            Each indicator has covers_country (dict[str, bool], e.g. {\"KEN\": True}) and
+            requested_country (resolved semicolon-separated code string).
         With queries/query_groups: MultiQuerySearchResponse with indicators (merged) or
             results (by_query), total_candidates, deduplicated_count, and per-group errors.
             Each indicator has requested_country showing which group's country it was evaluated against.
@@ -889,7 +893,7 @@ async def search(  # noqa: PLR0911
     if country_code:
         indicators.sort(
             key=lambda x: (
-                not (x.covers_country or False),
+                not any((x.covers_country or {}).values()),
                 -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0),
             )
         )
@@ -962,9 +966,9 @@ async def _build_multi_query_response(
             count=len(enriched),
         ))
 
-    # Compute response-level required_country: join all unique resolved codes
+    # Compute response-level required_country: join all unique resolved codes with ";"
     all_codes = sorted({c for c in per_query_codes if c})
-    response_country = ",".join(all_codes) if all_codes else None
+    response_country = ";".join(all_codes) if all_codes else None
 
     if result_layout == "merged":
         merged_indicators: list[EnrichedIndicator] = [
@@ -974,7 +978,7 @@ async def _build_multi_query_response(
         if response_country:
             merged_indicators.sort(
                 key=lambda x: (
-                    not (x.covers_country or False),
+                    not any((x.covers_country or {}).values()),
                     -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0),
                 )
             )
@@ -1021,7 +1025,7 @@ async def get_metadata(
         get_valid_disaggregations_func: Internal parameter — do not pass this; leave it as None.
         fetch_disaggregation: If True (default), also fetch disaggregation dimensions (field_name, field_value).
         required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
-            Use comma-separated for multiple (e.g. "China, USA"). When provided,
+            Use semicolon-separated for multiple (e.g. "China; USA"). When provided,
             REF_AREA in disaggregation shows which queried countries have data.
 
     Returns:
@@ -1167,7 +1171,7 @@ async def get_disaggregation(
         database_id: Database identifier (e.g., WB_GS, WB_SSGD).
         indicator_id: Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD).
         required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
-            Use comma-separated names or codes to check multiple countries in one call (e.g. "China, USA").
+            Use semicolon-separated names or codes to check multiple countries in one call (e.g. "China; USA").
             When provided, REF_AREA shows which queried countries have data for this indicator.
 
     Returns:
@@ -1226,7 +1230,7 @@ async def get_data(
     Args:
         database_id: Database identifier (e.g., "IPC_IPC", "WB_GS").
         indicator_id: Indicator ID (e.g., "IPC_IPC_PHASE", "WB_GS_NY_GDP_PCAP_KD").
-        country_code: Optional 3-letter code or comma-separated list (e.g. "KEN" or "KEN,MAR").
+        country_code: Optional 3-letter code or semicolon-separated list (e.g. "KEN" or "KEN;MAR").
             Applied as REF_AREA filter. Takes precedence over REF_AREA in disaggregation_filters.
         disaggregation_filters: Optional dict of dimension filters. Keys: REF_AREA, SEX, AGE,
             URBANISATION, UNIT_MEASURE, etc. REF_AREA supports comma-separated codes (e.g. "KEN,TZA").
@@ -1295,10 +1299,10 @@ async def get_data(
         "top": limit + 1,
     }
 
-    # Apply country_code if provided (supports comma-separated, e.g. "KEN,MAR")
-    # Takes precedence over REF_AREA in disaggregation_filters
+    # Convert semicolon-separated list into comma-separated list for Data API
     if country_code:
-        params["REF_AREA"] = country_code
+        # Takes precedence over REF_AREA in disaggregation_filters
+        params["REF_AREA"] = country_code.replace(";", ",")
 
     # Fetch metadata and disaggregations FIRST to inform parameter building
     # This ensures we don't apply invalid defaults (like AGE=_T) which cause empty results
@@ -1520,7 +1524,7 @@ async def get_data_api_url(
     Args:
         database_id: Database identifier (e.g., WB_HNP, WB_WDI).
         indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL).
-        country_code: Optional 3-letter code or comma-separated list (e.g. "KEN" or "CHN,USA").
+        country_code: Optional 3-letter code or semicolon-separated list (e.g. "KEN" or "CHN;USA").
         start_year: Optional start year (inclusive).
         end_year: Optional end year (inclusive).
         disaggregation_filters: Optional dict of dimension filters (e.g. {"SEX": "F"}).

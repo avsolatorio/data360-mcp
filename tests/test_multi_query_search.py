@@ -717,3 +717,272 @@ class TestQueryGroups:
         assert isinstance(result, MultiQuerySearchResponse)
         # Only 2 unique countries resolved despite 3 queries
         assert set(resolve_calls) == {"Kenya", "Morocco"}
+
+
+# ---------------------------------------------------------------------------
+# Semicolon delimiter + covers_country dict
+# ---------------------------------------------------------------------------
+
+
+def _make_series_with_countries(
+    idno: str,
+    name: str,
+    ref_country_codes: list[str],
+) -> SeriesDescription:
+    """Helper that builds a SeriesDescription with an explicit ref_country list."""
+    return SeriesDescription(
+        idno=idno,
+        name=name,
+        database_id="WB_WDI",
+        definition_long="Test indicator.",
+        periodicity="Annual",
+        time_periods=[{"start": "2000", "end": "2023", "LATEST_DATA_POINT": "2023"}],
+        ref_country=[{"code": c} for c in ref_country_codes],
+        dimensions=[],
+    )
+
+
+def _make_search_response_with_countries(
+    idno: str,
+    name: str,
+    ref_country_codes: list[str],
+) -> SearchResponse:
+    return SearchResponse(
+        items=[_make_series_with_countries(idno, name, ref_country_codes)],
+        count=1,
+        total_count=1,
+        offset=0,
+        has_more=False,
+        next_offset=None,
+    )
+
+
+class TestSemicolonDelimiterAndCoversCountry:
+    """Tests for the semicolon country delimiter and per-country covers_country dict."""
+
+    # -- covers_country shape --------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_single_country_covers_country_is_dict(self):
+        """With one country, covers_country must be a dict keyed by that country's code."""
+        resp = _make_search_response_with_countries("IND_1", "GDP", ["KEN"])
+        with (
+            patch("data360.api._search_raw", new=AsyncMock(return_value=resp)),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value="KEN")),
+        ):
+            result = await search(query="GDP", required_country="Kenya")
+
+        assert isinstance(result, EnrichedSearchResponse)
+        ind = result.indicators[0]
+        assert isinstance(ind.covers_country, dict)
+        assert ind.covers_country == {"KEN": True}
+
+    @pytest.mark.asyncio
+    async def test_single_country_not_covered_is_false_in_dict(self):
+        """When the indicator does not list the requested country, covers_country[code] is False."""
+        resp = _make_search_response_with_countries("IND_1", "GDP", ["USA"])
+        with (
+            patch("data360.api._search_raw", new=AsyncMock(return_value=resp)),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value="KEN")),
+        ):
+            result = await search(query="GDP", required_country="Kenya")
+
+        assert isinstance(result, EnrichedSearchResponse)
+        ind = result.indicators[0]
+        assert isinstance(ind.covers_country, dict)
+        assert ind.covers_country == {"KEN": False}
+
+    @pytest.mark.asyncio
+    async def test_no_country_covers_country_is_none(self):
+        """When no country is requested, covers_country must be None."""
+        resp = _make_search_response_with_countries("IND_1", "GDP", ["KEN"])
+        with (
+            patch("data360.api._search_raw", new=AsyncMock(return_value=resp)),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value=None)),
+        ):
+            result = await search(query="GDP")
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.indicators[0].covers_country is None
+
+    @pytest.mark.asyncio
+    async def test_empty_ref_country_with_requested_country_is_all_false(self):
+        """If ref_country list is empty but a country was requested, all codes map to False."""
+        resp = _make_search_response_with_countries("IND_1", "GDP", [])
+        with (
+            patch("data360.api._search_raw", new=AsyncMock(return_value=resp)),
+            patch("data360.api._resolve_country_code", new=AsyncMock(return_value="KEN")),
+        ):
+            result = await search(query="GDP", required_country="Kenya")
+
+        ind = result.indicators[0]
+        # ref_country is [] — falls into the elif country_code branch
+        assert isinstance(ind.covers_country, dict)
+        assert ind.covers_country == {"KEN": False}
+
+    # -- semicolon multi-country -----------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_multi_country_semicolon_resolves_both(self):
+        """Semicolon-separated required_country correctly splits and resolves each part.
+
+        We test this by calling _resolve_country_code directly (no mock on the
+        function itself) and mocking only the underlying codelist provider so the
+        recursive path executes.
+        """
+        from data360.api import _resolve_country_code
+
+        call_args: list[str] = []
+
+        async def _fake_find(codelist_type: str, query: str, limit: int = 1) -> list[dict]:
+            call_args.append(query)
+            mapping = {"Kenya": "KEN", "Ghana": "GHA"}
+            code = mapping.get(query)
+            return [{"id": code, "score": 90}] if code else []
+
+        with patch("data360.providers.find_codelist_value", new=AsyncMock(side_effect=_fake_find)):
+            result = await _resolve_country_code("Kenya; Ghana")
+
+        # Both parts should have been looked up
+        assert "Kenya" in call_args
+        assert "Ghana" in call_args
+        # Result is semicolon-joined resolved codes
+        assert result == "KEN;GHA"
+
+    @pytest.mark.asyncio
+    async def test_multi_country_covers_country_has_entry_per_code(self):
+        """covers_country dict has one key per requested country code."""
+        resp = _make_search_response_with_countries("IND_1", "GDP", ["KEN"])
+
+        async def _resolve(country: str) -> str | None:
+            mapping = {"KEN;GHA": None, "KEN": "KEN", "GHA": "GHA", "Kenya": "KEN", "Ghana": "GHA"}
+            return mapping.get(country)
+
+        with (
+            patch("data360.api._search_raw", new=AsyncMock(return_value=resp)),
+            patch(
+                "data360.api._resolve_country_code",
+                new=AsyncMock(side_effect=_resolve),
+            ),
+        ):
+            # Directly test _enrich_search_results with a pre-resolved multi-country code
+            from data360.api import _enrich_search_results
+
+            search_resp = _make_search_response_with_countries("IND_1", "GDP", ["KEN"])
+            indicators = _enrich_search_results(search_resp, "KEN;GHA")
+
+        ind = indicators[0]
+        assert isinstance(ind.covers_country, dict)
+        assert set(ind.covers_country.keys()) == {"KEN", "GHA"}
+        assert ind.covers_country["KEN"] is True
+        assert ind.covers_country["GHA"] is False
+
+    @pytest.mark.asyncio
+    async def test_multi_country_all_covered(self):
+        """When all requested countries are in ref_country, all values are True."""
+        from data360.api import _enrich_search_results
+
+        search_resp = _make_search_response_with_countries("IND_1", "GDP", ["KEN", "GHA"])
+        indicators = _enrich_search_results(search_resp, "KEN;GHA")
+
+        ind = indicators[0]
+        assert ind.covers_country == {"KEN": True, "GHA": True}
+
+    @pytest.mark.asyncio
+    async def test_multi_country_none_covered(self):
+        """When no requested country is in ref_country, all values are False."""
+        from data360.api import _enrich_search_results
+
+        search_resp = _make_search_response_with_countries("IND_1", "GDP", ["USA", "FRA"])
+        indicators = _enrich_search_results(search_resp, "KEN;GHA")
+
+        ind = indicators[0]
+        assert ind.covers_country == {"KEN": False, "GHA": False}
+
+    # -- comma-in-name safety --------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_comma_in_country_name_not_split(self):
+        """A country name containing a comma must NOT be split on that comma.
+
+        'Korea, Republic of' should be resolved as a single lookup, not two.
+        """
+        resolve_calls: list[str] = []
+
+        async def _track(country: str) -> str | None:
+            resolve_calls.append(country)
+            # Simulate no semicolon → falls through to codelist lookup returning KOR
+            return "KOR"
+
+        with (
+            patch("data360.api._search_raw", new=AsyncMock(return_value=_make_search_response())),
+            patch("data360.api._resolve_country_code", new=AsyncMock(side_effect=_track)),
+        ):
+            await search(query="GDP", required_country="Korea, Republic of")
+
+        # The country string should reach _resolve_country_code as-is (no splitting on comma)
+        assert "Korea, Republic of" in resolve_calls
+
+    # -- response-level required_country format --------------------------------
+
+    @pytest.mark.asyncio
+    async def test_required_country_in_response_uses_semicolon(self):
+        """EnrichedSearchResponse.required_country must use semicolons when multiple codes."""
+        resp1 = _make_search_response_with_countries("IND_1", "GDP", ["KEN"])
+        resp2 = _make_search_response_with_countries("IND_2", "Gini", ["GHA"])
+
+        async def _resolve(country: str) -> str | None:
+            return {"Kenya": "KEN", "Ghana": "GHA"}.get(country)
+
+        with (
+            patch("data360.api._search_raw", new=AsyncMock(side_effect=[resp1, resp2])),
+            patch("data360.api._resolve_country_code", new=AsyncMock(side_effect=_resolve)),
+        ):
+            result = await search(
+                query_groups=[
+                    QueryGroup(queries=["GDP"], country="Kenya"),
+                    QueryGroup(queries=["Gini"], country="Ghana"),
+                ],
+            )
+
+        assert isinstance(result, MultiQuerySearchResponse)
+        # Codes are sorted and joined with ";"
+        assert result.required_country == "GHA;KEN"
+        assert "," not in (result.required_country or "")
+
+    # -- sort ordering ---------------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_covered_indicator_sorts_before_uncovered(self):
+        """Indicator with covers_country having any True value sorts before all-False indicator."""
+        from data360.api import _enrich_search_results
+
+        # older indicator but covered
+        covered_resp = _make_search_response_with_countries("IND_COVERED", "GDP", ["KEN"])
+        covered_resp.items[0].time_periods = [{"start": "2000", "end": "2010", "LATEST_DATA_POINT": "2010"}]
+
+        # newer indicator but not covered
+        uncovered_resp = _make_search_response_with_countries("IND_UNCOVERED", "Inflation", ["USA"])
+        uncovered_resp.items[0].time_periods = [{"start": "2000", "end": "2023", "LATEST_DATA_POINT": "2023"}]
+
+        from data360.models import SearchResponse as SR
+
+        combined = SR(
+            items=[covered_resp.items[0], uncovered_resp.items[0]],
+            count=2,
+            total_count=2,
+            offset=0,
+            has_more=False,
+            next_offset=None,
+        )
+        indicators = _enrich_search_results(combined, "KEN")
+
+        indicators.sort(
+            key=lambda x: (
+                not any((x.covers_country or {}).values()),
+                -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0),
+            )
+        )
+
+        assert indicators[0].idno == "IND_COVERED"
+        assert indicators[1].idno == "IND_UNCOVERED"

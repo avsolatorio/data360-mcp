@@ -916,7 +916,7 @@ class TestGetDataResilience:
 
         httpx_mock.add_callback(data_callback)
 
-        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL", country_code="KEN,MAR")
+        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL", country_code="KEN;MAR")
 
         assert len(captured_urls) == 1
         assert "REF_AREA=KEN%2CMAR" in captured_urls[0] or "REF_AREA=KEN,MAR" in captured_urls[0]
