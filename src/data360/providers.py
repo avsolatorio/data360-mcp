@@ -18,60 +18,73 @@ from pathlib import Path
 class DatabaseManager:
     """Manages the list of databases dynamically fetched from the Data360 API.
 
-    Loads a complete JSON fallback at startup so the mapping is never empty at onset.
-    It then enforces a TTL to pull dynamically from the API and overwrite the map
-    to stay current.
+    On startup, loads a complete JSON fallback so the mapping is never empty.
+    All subsequent live refreshes happen in a background asyncio task, ensuring
+    that get_mapping() is always a sub-millisecond in-memory dict lookup with
+    no I/O or network cost on the hot path.
     """
 
     def __init__(self, ttl_seconds: float = 86400.0):
-        self._cache: dict[str, str] | None = None
+        self._cache: dict[str, str] = {}
         self._last_fetched: float = 0.0
         self._ttl = ttl_seconds
-        self._lock = asyncio.Lock()
+        self._bg_task: asyncio.Task | None = None
         self._load_fallback()
 
     def _load_fallback(self):
-        """Load the static fallback mapping to guarantee onset availability."""
+        """Load the bundled databases.json at startup to guarantee a non-empty cache."""
         fallback_path = Path(__file__).parent / "databases.json"
         try:
             with open(fallback_path, "r", encoding="utf-8") as f:
                 self._cache = json.load(f)
-                # By initializing last_fetched to 0.0, we guarantee it forces an API fetch
-                # on the next cycle that acquires the lock, because (now - 0.0) > ttl.
-                # However, since cache is populated, if the fetch fails, it gracefully keeps the fallback.
-                _logger.info("Successfully loaded fallback dataset mapping with %d items.", len(self._cache))
+            _logger.info(
+                "Loaded %d databases from fallback JSON.", len(self._cache)
+            )
         except Exception as e:
-            _logger.error("Failed to load fallback dataset mapping: %s", e)
+            _logger.error("Failed to load fallback database mapping: %s", e)
             self._cache = {}
 
+    # ------------------------------------------------------------------
+    # Public API — always a pure in-memory read, never blocks on network
+    # ------------------------------------------------------------------
+
     async def get_mapping(self) -> dict[str, str]:
-        """Get a mapping of database_id to database name (e.g. {'WB_GS': 'Gender Statistics'})."""
-        now = time.monotonic()
+        """Return the cached database_id→name mapping.
 
-        # Fast path if cache is completely fresh and not waiting on the lock
-        if self._cache and (now - self._last_fetched) < self._ttl:
-            return self._cache
+        Always returns immediately from in-memory cache. A background task
+        is responsible for keeping the cache fresh via periodic API fetches.
+        """
+        self._ensure_background_sync()
+        return self._cache
 
-        async with self._lock:
-            # Check again after acquiring lock in case another task fetched it
-            now = time.monotonic()
-            if self._cache and (now - self._last_fetched) < self._ttl:
-                return self._cache
+    # ------------------------------------------------------------------
+    # Background sync machinery
+    # ------------------------------------------------------------------
 
-            try:
-                mapping = await self._fetch_all()
-                if mapping:
-                    self._cache = mapping
-                    self._last_fetched = time.monotonic()
-                    return mapping
-            except Exception as e:
-                _logger.error("Failed to fetch database mapping dynamically: %s", e)
-                # Ensure we return our fallback cache if the network failed
-                if self._cache:
-                    return self._cache
-                return {}
+    def _ensure_background_sync(self) -> None:
+        """Spawn the background refresh loop if it is not already running."""
+        if self._bg_task is None or self._bg_task.done():
+            self._bg_task = asyncio.create_task(self._background_sync_loop())
 
-            return self._cache or {}
+    async def _background_sync_loop(self) -> None:
+        """Run forever, refreshing the cache from the API when the TTL expires."""
+        while True:
+            elapsed = time.monotonic() - self._last_fetched
+            if elapsed >= self._ttl:
+                try:
+                    mapping = await self._fetch_all()
+                    if mapping:
+                        self._cache = mapping
+                        self._last_fetched = time.monotonic()
+                        _logger.info(
+                            "Background refresh: updated %d databases.", len(mapping)
+                        )
+                except Exception as e:
+                    _logger.error("Background database fetch failed: %s", e)
+                    # Keep existing cache; retry after the next full TTL cycle.
+
+            sleep_for = max(0.0, self._ttl - (time.monotonic() - self._last_fetched))
+            await asyncio.sleep(sleep_for)
 
     async def _fetch_all(self) -> dict[str, str]:
         """Fetch all datasets from the search endpoint using pagination."""
@@ -109,11 +122,12 @@ class DatabaseManager:
 
                 skip += limit
 
-        _logger.info("Successfully fetched %d databases dynamically.", len(mapping))
         return mapping
+
 
 # Global instance
 _database_manager: DatabaseManager | None = None
+
 
 def get_database_manager() -> DatabaseManager:
     """Get the global DatabaseManager instance."""
@@ -121,6 +135,7 @@ def get_database_manager() -> DatabaseManager:
     if _database_manager is None:
         _database_manager = DatabaseManager()
     return _database_manager
+
 
 async def get_database_mapping() -> dict[str, str]:
     """Get mapping of database IDs to their actual names (e.g., {'WB_GS': 'Gender Statistics'})."""
