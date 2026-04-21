@@ -603,8 +603,11 @@ async def search(  # noqa: PLR0911
     """Search for Data360 indicators with enriched metadata for selection.
 
     Use this first when the user asks for data on a topic (e.g. unemployment, poverty, GDP).
-    No other tools are required before this one. After picking an indicator, call
-    data360_get_metadata and/or data360_get_disaggregation before fetching data or generating a chart.
+    No other tools are required before this one.
+
+    ENRICHED DATA VS. FETCHING DATA:
+    - For METADATA questions (e.g. "What is the definition of the unemployment rate indicator?", "How frequently is it updated?"): The enriched data returned by this search tool is often sufficient! You can directly use the `truncated_definition`, `name`, `periodicity`, `database_id`, and `latest_data` fields from the search results to answer the user WITHOUT needing to call `data360_get_metadata` or `data360_get_data`.
+    - For DATA questions (e.g. "What was Kenya's GDP in 2020?", "Show me the trend of poverty"): The enriched data does NOT contain actual data values (OBS_VALUE). You MUST proceed to call `data360_get_disaggregation` and then `data360_get_data` (or `data360_get_viz_spec` for charts) to retrieve real numbers.
 
     Use when the user already names a specific indicator or metric — for example:
     "GDP per capita for Kenya", "unemployment rate in Morocco", "life expectancy in Sub-Saharan Africa".
@@ -1012,9 +1015,9 @@ async def get_metadata(
 ) -> MetadataResponse:
     """Get metadata and disaggregation options for a Data360 indicator.
 
-    Call after data360_search_indicators when you have chosen an indicator (you need its
-    database_id and indicator_id). For valid filter values (years, country codes, SEX/AGE/URBANISATION),
-    prefer data360_get_disaggregation. data360_get_data and data360_get_viz_spec call get_metadata internally.
+    Call after data360_search_indicators only when you need deep metadata NOT included in the enriched search results (e.g. methodology, source notes). If the user asks a basic metadata question (like definition or periodicity), simply answer using the fields provided by data360_search_indicators.
+
+    For valid filter values (years, country codes, SEX/AGE/URBANISATION), prefer data360_get_disaggregation. data360_get_data and data360_get_viz_spec call get_metadata internally.
 
     Args:
         database_id: Database identifier (e.g., IPC_IPC, WB_GS).
