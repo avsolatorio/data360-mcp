@@ -10,6 +10,121 @@ from data360.config import get_data360_settings
 data360_config = get_data360_settings()
 
 _logger = logging.getLogger(__name__)
+import asyncio
+import json
+import time
+from pathlib import Path
+
+class DatabaseManager:
+    """Manages the list of databases dynamically fetched from the Data360 API.
+
+    Loads a complete JSON fallback at startup so the mapping is never empty at onset.
+    It then enforces a TTL to pull dynamically from the API and overwrite the map
+    to stay current.
+    """
+
+    def __init__(self, ttl_seconds: float = 86400.0):
+        self._cache: dict[str, str] | None = None
+        self._last_fetched: float = 0.0
+        self._ttl = ttl_seconds
+        self._lock = asyncio.Lock()
+        self._load_fallback()
+
+    def _load_fallback(self):
+        """Load the static fallback mapping to guarantee onset availability."""
+        fallback_path = Path(__file__).parent / "databases.json"
+        try:
+            with open(fallback_path, "r", encoding="utf-8") as f:
+                self._cache = json.load(f)
+                # By initializing last_fetched to 0.0, we guarantee it forces an API fetch
+                # on the next cycle that acquires the lock, because (now - 0.0) > ttl.
+                # However, since cache is populated, if the fetch fails, it gracefully keeps the fallback.
+                _logger.info("Successfully loaded fallback dataset mapping with %d items.", len(self._cache))
+        except Exception as e:
+            _logger.error("Failed to load fallback dataset mapping: %s", e)
+            self._cache = {}
+
+    async def get_mapping(self) -> dict[str, str]:
+        """Get a mapping of database_id to database name (e.g. {'WB_GS': 'Gender Statistics'})."""
+        now = time.monotonic()
+
+        # Fast path if cache is completely fresh and not waiting on the lock
+        if self._cache and (now - self._last_fetched) < self._ttl:
+            return self._cache
+
+        async with self._lock:
+            # Check again after acquiring lock in case another task fetched it
+            now = time.monotonic()
+            if self._cache and (now - self._last_fetched) < self._ttl:
+                return self._cache
+
+            try:
+                mapping = await self._fetch_all()
+                if mapping:
+                    self._cache = mapping
+                    self._last_fetched = time.monotonic()
+                    return mapping
+            except Exception as e:
+                _logger.error("Failed to fetch database mapping dynamically: %s", e)
+                # Ensure we return our fallback cache if the network failed
+                if self._cache:
+                    return self._cache
+                return {}
+
+            return self._cache or {}
+
+    async def _fetch_all(self) -> dict[str, str]:
+        """Fetch all datasets from the search endpoint using pagination."""
+        url = f"{data360_config.api_url}searchv2"
+        mapping: dict[str, str] = {}
+        skip = 0
+        limit = 50
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            while True:
+                response = await client.post(
+                    url,
+                    headers={"accept": "*/*", "Content-Type": "application/json"},
+                    json={
+                        "filter": "type eq 'dataset' and (is_active ne false or is_active eq null)",
+                        "orderby": "series_description/name",
+                        "select": "series_description/database_id, series_description/name",
+                        "skip": skip,
+                        "top": limit,
+                    },
+                )
+                response.raise_for_status()
+                data = response.json()
+                items = data.get("value", [])
+
+                if not items:
+                    break
+
+                for x in items:
+                    sd = x.get("series_description", {})
+                    db_id = sd.get("database_id")
+                    db_name = sd.get("name")
+                    if db_id and db_name and db_id not in mapping:
+                        mapping[db_id] = db_name
+
+                skip += limit
+
+        _logger.info("Successfully fetched %d databases dynamically.", len(mapping))
+        return mapping
+
+# Global instance
+_database_manager: DatabaseManager | None = None
+
+def get_database_manager() -> DatabaseManager:
+    """Get the global DatabaseManager instance."""
+    global _database_manager
+    if _database_manager is None:
+        _database_manager = DatabaseManager()
+    return _database_manager
+
+async def get_database_mapping() -> dict[str, str]:
+    """Get mapping of database IDs to their actual names (e.g., {'WB_GS': 'Gender Statistics'})."""
+    return await get_database_manager().get_mapping()
 
 
 class CodelistManager:

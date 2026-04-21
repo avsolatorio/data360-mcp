@@ -28,7 +28,7 @@ from .models import (
     SearchResponse,
     SeriesDescription,
 )
-from .constants import DB_NAME_LOOKUP as _DB_NAME_LOOKUP
+from .providers import get_database_mapping
 
 dotenv.load_dotenv()
 _logger = logging.getLogger(__name__)
@@ -557,6 +557,8 @@ async def search(
     if not search_result.items:
         return EnrichedSearchResponse(error=f"No indicators found for: '{query}'")
 
+    db_mapping = await get_database_mapping()
+
     # Process each indicator
     indicators: list[EnrichedIndicator] = []
     for item in search_result.items:
@@ -611,7 +613,7 @@ async def search(
             EnrichedIndicator(
                 idno=raw.get("idno", ""),
                 database_id=db_id,
-                database_name=_DB_NAME_LOOKUP.get(db_id),
+                database_name=db_mapping.get(db_id),
                 name=raw.get("name", ""),
                 truncated_definition=(raw.get("definition_long") or "")[:100],
                 unit=raw.get("measurement_unit"),
@@ -736,7 +738,8 @@ async def get_metadata(
                     # (e.g. WB_GS is "Gender Statistics", not "Global Statistics").
                     if indicator_metadata:
                         db_id = indicator_metadata.get("database_id", database_id)
-                        indicator_metadata["database_name"] = _DB_NAME_LOOKUP.get(db_id)
+                        db_mapping = await get_database_mapping()
+                        indicator_metadata["database_name"] = db_mapping.get(db_id)
                     # Force filtering if select_fields provided (API might return more).
                     # Always retain database_name regardless of select_fields.
                     if select_fields and indicator_metadata:

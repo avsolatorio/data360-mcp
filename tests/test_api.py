@@ -890,11 +890,12 @@ class TestDatabaseNameInSearch:
     async def test_all_known_databases_resolve_to_non_empty_name(
         self, httpx_mock: pytest_httpx.HTTPXMock
     ):
-        """Every database_id in the DATABASES registry must resolve to a non-empty name."""
-        from data360.api import _DB_NAME_LOOKUP
-        from data360.constants import DATABASES
+        """Every database_id dynamically fetched must resolve to a non-empty name."""
+        from data360.providers import get_database_mapping
 
-        registered_ids = [db["id"] for db in DATABASES["databases"]]
+        mapping = await get_database_mapping()
+        registered_ids = list(mapping.keys())
+
         value = [
             {
                 "series_description": {
@@ -918,9 +919,9 @@ class TestDatabaseNameInSearch:
         assert isinstance(result, EnrichedSearchResponse)
         for ind in result.indicators:
             assert ind.database_name is not None, (
-                f"database_id '{ind.database_id}' has no entry in _DB_NAME_LOOKUP"
+                f"Expected database_name for id '{ind.database_id}', got None"
             )
-            assert ind.database_name == _DB_NAME_LOOKUP[ind.database_id]
+            assert ind.database_name == mapping[ind.database_id]
 
 
 class TestDatabaseNameInMetadata:
