@@ -30,3 +30,11 @@ def patch_data360_config(mock_data360_settings):
         ):
             with patch("data360.api.data360_config", mock_data360_settings):
                 yield mock_data360_settings
+@pytest.fixture(autouse=True)
+def mock_database_mapping():
+    """Mock the dynamic database mapping fetch from search API so we don't break existing tests that mock the search endpoint."""
+    with patch(
+        "data360.providers.DatabaseManager.get_mapping",
+        return_value={"WB_WDI": "World Development Indicators", "WB_GS": "Gender Statistics"}
+    ) as mock:
+        yield mock

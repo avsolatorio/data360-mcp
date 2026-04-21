@@ -11,6 +11,103 @@ data360_config = get_data360_settings()
 
 _logger = logging.getLogger(__name__)
 
+import asyncio
+import time
+
+class DatabaseManager:
+    """Manages the list of databases dynamically fetched from the Data360 API.
+
+    Caches the list with a 24-hour TTL to ensure optimal performance while staying current.
+    """
+
+    def __init__(self, ttl_seconds: float = 86400.0):
+        self._cache: dict[str, str] | None = None
+        self._last_fetched: float = 0.0
+        self._ttl = ttl_seconds
+        self._lock = asyncio.Lock()
+
+    async def get_mapping(self) -> dict[str, str]:
+        """Get a mapping of database_id to database name (e.g. {'WB_GS': 'Gender Statistics'})."""
+        now = time.monotonic()
+
+        # Fast path if cache is valid and we're not waiting on the lock
+        if self._cache is not None and (now - self._last_fetched) < self._ttl:
+            return self._cache
+
+        async with self._lock:
+            # Check again after acquiring lock in case another task fetched it
+            now = time.monotonic()
+            if self._cache is not None and (now - self._last_fetched) < self._ttl:
+                return self._cache
+
+            try:
+                mapping = await self._fetch_all()
+                if mapping:
+                    self._cache = mapping
+                    self._last_fetched = time.monotonic()
+                    return mapping
+            except Exception as e:
+                _logger.error("Failed to fetch database mapping dynamically: %s", e)
+                # Fallback to stale cache if we have one
+                if self._cache is not None:
+                    return self._cache
+                return {}
+
+            return self._cache or {}
+
+    async def _fetch_all(self) -> dict[str, str]:
+        """Fetch all datasets from the search endpoint using pagination."""
+        url = f"{data360_config.api_url}searchv2"
+        mapping: dict[str, str] = {}
+        skip = 0
+        limit = 50
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            while True:
+                response = await client.post(
+                    url,
+                    headers={"accept": "*/*", "Content-Type": "application/json"},
+                    json={
+                        "filter": "type eq 'dataset' and (is_active ne false or is_active eq null)",
+                        "orderby": "series_description/name",
+                        "select": "series_description/database_id, series_description/name",
+                        "skip": skip,
+                        "top": limit,
+                    },
+                )
+                response.raise_for_status()
+                data = response.json()
+                items = data.get("value", [])
+
+                if not items:
+                    break
+
+                for x in items:
+                    sd = x.get("series_description", {})
+                    db_id = sd.get("database_id")
+                    db_name = sd.get("name")
+                    if db_id and db_name and db_id not in mapping:
+                        mapping[db_id] = db_name
+
+                skip += limit
+
+        _logger.info("Successfully fetched %d databases dynamically.", len(mapping))
+        return mapping
+
+# Global instance
+_database_manager: DatabaseManager | None = None
+
+def get_database_manager() -> DatabaseManager:
+    """Get the global DatabaseManager instance."""
+    global _database_manager
+    if _database_manager is None:
+        _database_manager = DatabaseManager()
+    return _database_manager
+
+async def get_database_mapping() -> dict[str, str]:
+    """Get mapping of database IDs to their actual names (e.g., {'WB_GS': 'Gender Statistics'})."""
+    return await get_database_manager().get_mapping()
+
 
 class CodelistManager:
     """Unified manager for all Data360 codelists.
