@@ -13,7 +13,7 @@ from ._server_definition import mcp
 from .prompts import SYSTEM_PROMPT
 
 
-from ..constants import DATABASES
+from data360.providers import get_database_mapping
 
 
 
@@ -156,7 +156,11 @@ async def context_resource() -> str:
 @mcp.resource("data360://databases")
 async def databases_resource() -> str:
     """List of available Data360 databases."""
-    return json.dumps(DATABASES, indent=2)
+    db_mapping = await get_database_mapping()
+    formatted = {
+        "databases": [{"id": k, "name": v} for k, v in db_mapping.items()]
+    }
+    return json.dumps(formatted, indent=2)
 
 
 @mcp.resource("data360://codelists")
