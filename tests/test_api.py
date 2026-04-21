@@ -814,3 +814,218 @@ class TestGetData:
 # NOTE: TestCodelistManager tests removed - CodelistManager was replaced with
 # ReferenceAreaManager in providers.py with a different API.
 # New tests for ReferenceAreaManager should be added in test_providers.py
+
+
+class TestDatabaseNameInSearch:
+    """Tests that search results carry the correct database_name for each indicator."""
+
+    @pytest.mark.asyncio
+    async def test_known_database_id_resolves_to_correct_name(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """WB_GS must resolve to 'Gender Statistics', not a guess."""
+        mock_response = {
+            "@odata.context": "https://api.test.example.com/$metadata",
+            "@odata.count": 1,
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "WB_GS_SP_POP_TOTL",
+                        "name": "Population, total",
+                        "database_id": "WB_GS",
+                        "definition_long": "Total population",
+                        "dimensions": [],
+                    }
+                }
+            ],
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/searchv2",
+            json=mock_response,
+        )
+
+        result = await search("population")
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert len(result.indicators) == 1
+        indicator = result.indicators[0]
+        assert indicator.database_id == "WB_GS"
+        assert indicator.database_name == "Gender Statistics"
+
+    @pytest.mark.asyncio
+    async def test_unknown_database_id_returns_none_not_hallucination(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """An unregistered database_id must yield database_name=None, not a guessed string."""
+        mock_response = {
+            "@odata.context": "https://api.test.example.com/$metadata",
+            "@odata.count": 1,
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "UNKNOWN_DB_INDICATOR",
+                        "name": "Some indicator",
+                        "database_id": "UNKNOWN_DB",
+                        "definition_long": "Definition",
+                        "dimensions": [],
+                    }
+                }
+            ],
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/searchv2",
+            json=mock_response,
+        )
+
+        result = await search("some indicator")
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert len(result.indicators) == 1
+        # Must be None — not an invented string
+        assert result.indicators[0].database_name is None
+
+    @pytest.mark.asyncio
+    async def test_all_known_databases_resolve_to_non_empty_name(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Every database_id in the DATABASES registry must resolve to a non-empty name."""
+        from data360.api import _DB_NAME_LOOKUP
+        from data360.constants import DATABASES
+
+        registered_ids = [db["id"] for db in DATABASES["databases"]]
+        value = [
+            {
+                "series_description": {
+                    "idno": f"{db_id}_INDICATOR",
+                    "name": f"Indicator for {db_id}",
+                    "database_id": db_id,
+                    "definition_long": "Definition",
+                    "dimensions": [],
+                }
+            }
+            for db_id in registered_ids
+        ]
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/searchv2",
+            json={"@odata.count": len(value), "value": value},
+        )
+
+        result = await search("indicator", limit=len(registered_ids))
+
+        assert isinstance(result, EnrichedSearchResponse)
+        for ind in result.indicators:
+            assert ind.database_name is not None, (
+                f"database_id '{ind.database_id}' has no entry in _DB_NAME_LOOKUP"
+            )
+            assert ind.database_name == _DB_NAME_LOOKUP[ind.database_id]
+
+
+class TestDatabaseNameInMetadata:
+    """Tests that get_metadata injects database_name into indicator_metadata."""
+
+    @pytest.mark.asyncio
+    async def test_get_metadata_injects_database_name(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """indicator_metadata must contain database_name resolved from database_id."""
+        metadata_response = {
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "WB_GS_INDICATOR",
+                        "name": "Some indicator",
+                        "database_id": "WB_GS",
+                        "definition_long": "Full definition",
+                    }
+                }
+            ]
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json=metadata_response,
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[],
+        )
+
+        result = await get_metadata("WB_GS", "WB_GS_INDICATOR")
+
+        assert result.indicator_metadata is not None
+        assert result.indicator_metadata.get("database_name") == "Gender Statistics"
+
+    @pytest.mark.asyncio
+    async def test_get_metadata_database_name_survives_select_fields_filter(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """database_name must be retained even when select_fields restricts other keys."""
+        metadata_response = {
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "WB_GS_INDICATOR",
+                        "name": "Some indicator",
+                        "database_id": "WB_GS",
+                        "definition_long": "Full definition",
+                        "periodicity": "Annual",
+                    }
+                }
+            ]
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json=metadata_response,
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[],
+        )
+
+        # Only request 'name' — database_name should still be included
+        result = await get_metadata(
+            "WB_GS", "WB_GS_INDICATOR", select_fields=["name"]
+        )
+
+        assert result.indicator_metadata is not None
+        assert "name" in result.indicator_metadata
+        assert "periodicity" not in result.indicator_metadata
+        assert result.indicator_metadata.get("database_name") == "Gender Statistics"
+
+    @pytest.mark.asyncio
+    async def test_get_metadata_unknown_database_id_gives_none(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """An unregistered database_id must yield database_name=None in metadata."""
+        metadata_response = {
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "UNKNOWN_DB_IND",
+                        "name": "Indicator",
+                        "database_id": "UNKNOWN_DB",
+                    }
+                }
+            ]
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json=metadata_response,
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[],
+        )
+
+        result = await get_metadata("UNKNOWN_DB", "UNKNOWN_DB_IND")
+
+        assert result.indicator_metadata is not None
+        assert result.indicator_metadata.get("database_name") is None

@@ -28,6 +28,7 @@ from .models import (
     SearchResponse,
     SeriesDescription,
 )
+from .constants import DB_NAME_LOOKUP as _DB_NAME_LOOKUP
 
 dotenv.load_dotenv()
 _logger = logging.getLogger(__name__)
@@ -605,10 +606,12 @@ async def search(
                         useful_dims.append(label_to_code[label])
 
         # Build EnrichedIndicator
+        db_id = raw.get("database_id", "")
         indicators.append(
             EnrichedIndicator(
                 idno=raw.get("idno", ""),
-                database_id=raw.get("database_id", ""),
+                database_id=db_id,
+                database_name=_DB_NAME_LOOKUP.get(db_id),
                 name=raw.get("name", ""),
                 truncated_definition=(raw.get("definition_long") or "")[:100],
                 unit=raw.get("measurement_unit"),
@@ -728,12 +731,19 @@ async def get_metadata(
                     indicator_metadata = metadata_json["value"][0].get(
                         "series_description", {}
                     )
-                    # Force filtering if select_fields provided (API might return more)
+                    # Inject database_name so clients always have the correct, grounded
+                    # label for the database_id — prevents LLMs from guessing
+                    # (e.g. WB_GS is "Gender Statistics", not "Global Statistics").
+                    if indicator_metadata:
+                        db_id = indicator_metadata.get("database_id", database_id)
+                        indicator_metadata["database_name"] = _DB_NAME_LOOKUP.get(db_id)
+                    # Force filtering if select_fields provided (API might return more).
+                    # Always retain database_name regardless of select_fields.
                     if select_fields and indicator_metadata:
                         indicator_metadata = {
                             k: v
                             for k, v in indicator_metadata.items()
-                            if k in select_fields
+                            if k in select_fields or k == "database_name"
                         }
                 else:
                     mcp_err = NotFoundError(
