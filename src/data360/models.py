@@ -118,6 +118,12 @@ class EnrichedIndicator(BaseModel):
 
     idno: str = Field(..., description="Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD)")
     database_id: str = Field(..., description="Database ID (e.g., WB_GS)")
+    database_name: str | None = Field(
+        None,
+        description="Human-readable dataset name for the database_id "
+        "(e.g., 'Gender Statistics' for WB_GS). "
+        "Use this when presenting data to users — never expand database_id by guessing.",
+    )
     name: str = Field(..., description="Indicator name")
     truncated_definition: str = Field(
         ..., description="Truncated definition (max 100 chars)"

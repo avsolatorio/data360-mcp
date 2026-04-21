@@ -13,27 +13,8 @@ from ._server_definition import mcp
 from .prompts import SYSTEM_PROMPT
 
 
-DATABASES = {
-    "databases": [
-        {"id": "WB_WDI", "name": "World Development Indicators"},
-        {"id": "WB_GS", "name": "Gender Statistics"},
-        {"id": "WB_HNP", "name": "Health, Nutrition & Population"},
-        {"id": "WB_HCP", "name": "Human Capital Project"},
-        {"id": "WB_SSGD", "name": "Social Sustainability Global Database"},
-        {"id": "WB_ESG", "name": "Environment, Social & Governance"},
-        {"id": "WB_SE4ALL", "name": "Sustainable Energy for All"},
-        {"id": "WB_RISE", "name": "RISE Regulatory Indicators"},
-        {"id": "WB_WITS", "name": "World Integrated Trade Solution"},
-        {"id": "IPC_IPC", "name": "IPC Acute Food Insecurity"},
-        {"id": "OECD_BROADBAND", "name": "OECD Broadband Statistics"},
-        {"id": "OECD_IDD", "name": "OECD Income Distribution"},
-        {"id": "ITU_DH", "name": "ITU Digital Development"},
-        {"id": "WJP_ROL", "name": "World Justice Project Rule of Law"},
-        {"id": "WEF_TTDI", "name": "WEF Travel & Tourism Development"},
-        {"id": "IMF_FAS", "name": "IMF Financial Access Survey"},
-    ],
-    "note": "Use 'database_id' returned by data360_search_indicators. Call data360_list_indicators(database_id) to see available indicators.",
-}
+from ..constants import DATABASES
+
 
 
 CODELISTS = {
