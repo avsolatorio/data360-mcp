@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*.ts", "src/**/*.html"],
+  "exclude": ["**/*.spec.ts"],
+  "angularCompilerOptions": {
+    "compilationMode": "partial",
+    "strictTemplates": true
+  }
+}

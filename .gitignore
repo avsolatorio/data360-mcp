@@ -15,6 +15,9 @@ downloads/
 eggs/
 .eggs/
 lib/
+# Angular library sources use src/lib/ (negate Python-style ignore of any path named lib/)
+!packages/mcp-ui-angular/src/lib/
+!packages/mcp-ui-angular/src/lib/**
 lib64/
 parts/
 sdist/

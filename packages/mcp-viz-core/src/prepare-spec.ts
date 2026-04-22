@@ -53,7 +53,7 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
   out = inlineDataset(out);
 
   // 2. Responsive sizing
-  out.width  = "container";
+  out.width = "container";
   out.height = chartHeight;
 
   // 3. Suppress built-in legend — card renders its own
@@ -76,7 +76,7 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
   // 7. scale.zero — bars must start at zero; everything else benefits from false
   if (out.encoding?.y) {
     if (!out.encoding.y.scale) out.encoding.y.scale = {};
-    (out.encoding.y.scale as Record<string, unknown>).zero = (markType === "bar");
+    (out.encoding.y.scale as Record<string, unknown>).zero = markType === "bar";
   }
 
   // 8. x-axis format — only apply %Y for temporal x
@@ -86,7 +86,7 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
     const axis = out.encoding.x.axis as Record<string, unknown>;
     if (xType === "temporal") {
       axis.format = "%Y";
-      axis.title  = null;
+      axis.title = null;
     } else {
       // ordinal / nominal (bar with year strings, tick with country on x)
       delete axis.format;
@@ -100,31 +100,29 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
 // ─── parseSpec ───────────────────────────────────────────────────────────────
 
 export interface ParsedSpec {
-  rows:            Record<string, unknown>[];
-  colorField:      string | null;
-  specTitle:       string | null;
-  distinctGroups:  string[];
-  colorMap:        Record<string, string>;
+  rows: Record<string, unknown>[];
+  colorField: string | null;
+  specTitle: string | null;
+  distinctGroups: string[];
+  colorMap: Record<string, string>;
 }
 
 /**
  * Extract legend metadata from a raw (un-prepared) spec.
  * Call this once on the original spec, not the prepared one.
  */
-export function parseSpec(
-  spec: VLSpec,
-  palette: string[]
-): ParsedSpec {
+export function parseSpec(spec: VLSpec, palette: string[]): ParsedSpec {
   const name = spec.data?.name;
   const rows: Record<string, unknown>[] =
-    (name && spec.datasets?.[name])
+    name && spec.datasets?.[name]
       ? spec.datasets[name]
-      : spec.data?.values ?? [];
+      : (spec.data?.values ?? []);
 
   const colorField = spec.encoding?.color?.field ?? null;
-  const specTitle  =
-    typeof spec.title === "string" ? spec.title :
-    (spec.title as { text?: string } | undefined)?.text ?? null;
+  const specTitle =
+    typeof spec.title === "string"
+      ? spec.title
+      : (spec.title as { text?: string } | undefined)?.text ?? null;
 
   const distinctGroups: string[] = colorField
     ? [...new Set(rows.map((r) => String(r[colorField])))]

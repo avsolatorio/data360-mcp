@@ -4,7 +4,7 @@ export const WB_THEME_URL =
 export const WB_THEME = {
   background: "#ffffff",
   view: { stroke: null },
-  arc:  { fill: "#34A7F2" },
+  arc: { fill: "#34A7F2" },
   area: { fill: "#34A7F2" },
   line: { stroke: "#34A7F2", strokeCap: "round", strokeJoin: "round" },
   rect: { fill: "#34A7F2" },

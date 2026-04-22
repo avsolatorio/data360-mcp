@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
-import type { VLSpec } from "../viz-card/types";
+import type { VLSpec } from "@data360/mcp-viz-core";
 import { VegaChartCard } from "../viz-card";
 import { SearchResultCard } from "../search-card";
 import type { EnrichedIndicator } from "../search-card";

@@ -24,12 +24,21 @@ export default defineConfig({
         `${entryName}.${format === "es" ? "js" : "cjs"}`,
     },
     rollupOptions: {
-      external: ["react", "react-dom", "vega", "vega-embed", "vega-lite", "@data360/tool-types"],
+      external: [
+        "@data360/mcp-viz-core",
+        "@data360/tool-types",
+        "react",
+        "react-dom",
+        "vega",
+        "vega-embed",
+        "vega-lite",
+      ],
       output: {
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
           "vega-embed": "vegaEmbed",
+          "@data360/mcp-viz-core": "Data360McpVizCore",
           "@data360/tool-types": "Data360ToolTypes",
         },
       },
