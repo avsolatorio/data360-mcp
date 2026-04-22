@@ -9,8 +9,8 @@ import {
   type ReactNode,
 } from "react";
 import type { VegaChartCardProps } from "./types";
-import { WB_PALETTE } from "./wb-theme";
-import { prepareSpec, parseSpec } from "./prepare-spec";
+import { WB_PALETTE } from "@data360/mcp-viz-core";
+import { prepareSpec, parseSpec } from "@data360/mcp-viz-core";
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 

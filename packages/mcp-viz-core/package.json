@@ -1,0 +1,37 @@
+{
+  "name": "@data360/mcp-viz-core",
+  "version": "0.0.1",
+  "description": "Framework-agnostic Vega-Lite prep and World Bank theme for Data360 MCP viz tools.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  },
+  "keywords": [
+    "data360",
+    "mcp",
+    "vega-lite",
+    "world-bank"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worldbank/data360-mcp"
+  }
+}

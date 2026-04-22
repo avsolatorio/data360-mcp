@@ -2,13 +2,15 @@
 
 React components for presenting [Data360 MCP](https://github.com/worldbank/data360-mcp) tool output with World Bank styling.
 
+Shared Vega-Lite logic (`prepareSpec`, `WB_THEME`, etc.) lives in **`@data360/mcp-viz-core`**, which this package depends on. For **Angular** apps, use [`@data360/mcp-ui-angular`](../mcp-ui-angular) instead.
+
 ## Install
 
 ```bash
 npm install @data360/mcp-ui @data360/tool-types vega vega-lite vega-embed
 ```
 
-`@data360/tool-types` is optional but recommended for parsing MCP JSON before rendering.
+`@data360/mcp-viz-core` is installed transitively with `@data360/mcp-ui`. `@data360/tool-types` is optional but recommended for parsing MCP JSON before rendering.
 
 ## Viz chart card
 
@@ -41,11 +43,11 @@ const spec = await specResponse.json();
 
 ### Compatibility
 
-| `@data360/mcp-ui` | Tool contract | Viz tools |
-|-------------------|---------------|-----------|
-| `0.1.0` | `1.0.0` | `data360_get_viz_spec`, `data360_get_multi_indicator_viz_spec` |
+| `@data360/mcp-ui` | `@data360/mcp-viz-core` | Tool contract | Viz tools |
+|-------------------|-------------------------|---------------|-----------|
+| `0.0.1` | `0.0.1` | `1.0.0` | `data360_get_viz_spec`, `data360_get_multi_indicator_viz_spec` |
 
-When the MCP server changes the JSON shape of viz tool results or the Vega-Lite conventions stored at `url`, bump the **tool contract** (see `@data360/tool-types` README) and release matching `@data360/mcp-ui` / `@data360/tool-types` versions.
+When the MCP server changes the JSON shape of viz tool results or the Vega-Lite conventions stored at `url`, bump the **tool contract** (see `@data360/tool-types` README) and release matching **`@data360/tool-types`**, **`@data360/mcp-viz-core`**, **`@data360/mcp-ui`**, and **`@data360/mcp-ui-angular`** versions together.
 
 ### Peer dependencies
 
@@ -84,6 +86,8 @@ The spec passes through an 8-guard pipeline (`prepareSpec`) before reaching vega
 
 ## Low-level exports
 
+These are re-exported from `@data360/mcp-viz-core` for convenience:
+
 ```ts
 import {
   prepareSpec,
@@ -93,3 +97,5 @@ import {
   WB_PALETTE,
 } from "@data360/mcp-ui/viz-card";
 ```
+
+You can also import them directly from `@data360/mcp-viz-core` in non-React code.

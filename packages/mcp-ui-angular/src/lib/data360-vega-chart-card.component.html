@@ -1,0 +1,256 @@
+<div [class]="className" class="d360-root">
+  <div class="d360-card">
+    <h2 class="d360-title">{{ cardTitle }}</h2>
+    @if (subtitle) {
+      <p class="d360-subtitle">{{ subtitle }}</p>
+    }
+
+    <div
+      #chartHost
+      class="d360-chart-area"
+      [style.minHeight.px]="chartHeight"
+    ></div>
+
+    @if (parsed.distinctGroups.length > 0) {
+      <div class="d360-legend-row">
+        @for (g of parsed.distinctGroups; track g) {
+          <button
+            type="button"
+            class="d360-legend-btn"
+            [class.d360-legend-btn--active]="activeGroups.has(g)"
+            [class.d360-legend-btn--inactive]="!activeGroups.has(g)"
+            (click)="toggleGroup(g)"
+          >
+            <span
+              class="d360-legend-swatch"
+              [style.background]="activeGroups.has(g) ? parsed.colorMap[g] : '#cccccc'"
+            ></span>
+            {{ g }}
+          </button>
+        }
+      </div>
+    }
+
+    @if (showAnnotations && annotations.length > 0) {
+      <hr class="d360-divider" />
+      <div class="d360-annotations">
+        @for (ann of annotations; track ann.id) {
+          <div class="d360-ann-row">
+            <div class="d360-ann-badge">{{ ann.id }}</div>
+            <p class="d360-ann-text">{{ ann.text }}</p>
+          </div>
+        }
+      </div>
+    }
+
+    @if (source) {
+      <p class="d360-source">
+        <strong>Source:</strong> {{ source }}
+      </p>
+    }
+
+    <hr class="d360-divider" />
+
+    <div class="d360-footer-row">
+      <button type="button" class="d360-toggle" (click)="showAnnotations = !showAnnotations">
+        <span
+          class="d360-toggle-track"
+          [class.d360-toggle-track--on]="showAnnotations"
+          [class.d360-toggle-track--off]="!showAnnotations"
+        >
+          <span
+            class="d360-toggle-knob"
+            [class.d360-toggle-knob--on]="showAnnotations"
+          ></span>
+        </span>
+        Show annotations
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="d360-rail"
+    [class.d360-rail--with-top]="railTopSlot"
+  >
+    @if (railTopSlot) {
+      <div class="d360-rail-top-wrap">
+        <ng-container [ngTemplateOutlet]="railTopSlot"></ng-container>
+      </div>
+    }
+    <div class="d360-rail-stack">
+      <!-- Download data -->
+      <div class="d360-hri-wrap">
+        <button
+          type="button"
+          class="d360-hri-btn"
+          [class.d360-hri-btn--expanded]="railHover === 'download'"
+          [class.d360-hri-btn--accent]="railHover === 'download'"
+          aria-label="Download data"
+          (mouseenter)="setRailHover('download')"
+          (mouseleave)="setRailHover(null)"
+          (click)="handleDownload()"
+        >
+          <span class="d360-hri-icon-slot">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <rect
+                x="1.25"
+                y="1.25"
+                width="11.5"
+                height="11.5"
+                rx="1.25"
+                stroke="currentColor"
+                stroke-width="1.1"
+              />
+              <line
+                x1="1.25"
+                y1="4.75"
+                x2="12.75"
+                y2="4.75"
+                stroke="currentColor"
+                stroke-width="1.1"
+              />
+              <line
+                x1="7"
+                y1="4.75"
+                x2="7"
+                y2="12.75"
+                stroke="currentColor"
+                stroke-width="1.1"
+              />
+              <line
+                x1="4"
+                y1="8"
+                x2="10"
+                y2="8"
+                stroke="currentColor"
+                stroke-width="0.9"
+              />
+              <line
+                x1="4"
+                y1="10.25"
+                x2="10"
+                y2="10.25"
+                stroke="currentColor"
+                stroke-width="0.9"
+              />
+            </svg>
+          </span>
+          <span
+            class="d360-hri-label"
+            [class.d360-hri-label--show]="railHover === 'download'"
+            >Download data</span
+          >
+        </button>
+      </div>
+
+      <!-- Save as PNG -->
+      <div class="d360-hri-wrap">
+        <button
+          type="button"
+          class="d360-hri-btn"
+          [class.d360-hri-btn--expanded]="railHover === 'png'"
+          [class.d360-hri-btn--accent]="railHover === 'png'"
+          aria-label="Save as PNG"
+          (mouseenter)="setRailHover('png')"
+          (mouseleave)="setRailHover(null)"
+          (click)="handleExport()"
+        >
+          <span class="d360-hri-icon-slot">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <rect x="1" y="1" width="12" height="12" rx="2" />
+              <polyline points="1,10 5,6 8,9 10,7 13,10" />
+              <circle cx="4.5" cy="4.5" r="1" />
+            </svg>
+          </span>
+          <span
+            class="d360-hri-label"
+            [class.d360-hri-label--show]="railHover === 'png'"
+            >Save as PNG</span
+          >
+        </button>
+      </div>
+
+      <!-- PDF (soon) -->
+      <div class="d360-hri-wrap">
+        <button
+          type="button"
+          class="d360-hri-btn"
+          [class.d360-hri-btn--expanded]="railHover === 'pdf'"
+          aria-label="Export as PDF (soon)"
+          disabled
+          (mouseenter)="setRailHover('pdf')"
+          (mouseleave)="setRailHover(null)"
+        >
+          <span class="d360-hri-icon-slot">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M3 1.5h4.5L11 5v7.5H3z"
+                stroke="currentColor"
+                stroke-width="1.1"
+                stroke-linejoin="round"
+              />
+              <text
+                fill="currentColor"
+                font-size="4.2"
+                font-weight="700"
+                x="3.8"
+                y="11.2"
+                style="font-family: 'Open Sans', Arial, sans-serif"
+              >
+                PDF
+              </text>
+            </svg>
+          </span>
+          <span
+            class="d360-hri-label"
+            [class.d360-hri-label--show]="railHover === 'pdf'"
+            >Export as PDF (soon)</span
+          >
+        </button>
+      </div>
+
+      <!-- Copy spec -->
+      <div class="d360-hri-wrap">
+        <button
+          type="button"
+          class="d360-hri-btn"
+          [class.d360-hri-btn--expanded]="railHover === 'copy'"
+          [class.d360-hri-btn--accent]="railHover === 'copy'"
+          aria-label="Copy Vega-Lite spec"
+          (mouseenter)="setRailHover('copy')"
+          (mouseleave)="setRailHover(null)"
+          (click)="handleCopySpec()"
+        >
+          <span class="d360-hri-icon-slot">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <text
+                fill="currentColor"
+                font-size="7.5"
+                font-weight="600"
+                x="1.5"
+                y="10.5"
+                style="font-family: ui-monospace, monospace"
+              >
+                {{ copySpecIconText }}
+              </text>
+            </svg>
+          </span>
+          <span
+            class="d360-hri-label"
+            [class.d360-hri-label--show]="railHover === 'copy'"
+            >Copy Vega-Lite spec</span
+          >
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
