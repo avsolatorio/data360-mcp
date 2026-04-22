@@ -38,6 +38,30 @@ Do not answer with guesses. Do not stop after describing a plan.
    - Unit: codelist_type="UNIT_MEASURE" (e.g. "Current US$") when you must disambiguate units.
    - Pass the **codes** (e.g. "KEN", "USA") into get_data filters, not display names.
 
+   #### Country Groups & Regional Aggregates
+   When data360_find_codelist_value returns a result with `is_group=true`:
+   - The code (e.g. "SAS", "LIC", "SSF") is a country **group**, not an individual country.
+   - Groups can be used directly in get_data for **aggregate/regional totals**.
+   - To work with **individual countries**, call data360_expand_country_group first.
+
+   **Decide based on the user's intent:**
+
+   | Intent | Example phrasing | Action |
+   |--------|-----------------|--------|
+   | Aggregate / regional view | "What is South Asia's GDP?" | Use group code directly → get_data(REF_AREA="SAS") |
+   | Country-level comparison | "Compare GDP across South Asian countries" | Expand → data360_expand_country_group("SAS") → use country_codes |
+   | Country-level comparison | "List poverty rates in low income countries" | Expand → data360_expand_country_group("LIC") → use country_codes |
+
+   If the group has >20 countries, prefer the aggregate unless the user explicitly asked for all countries.
+   Natural-language group phrases are recognized automatically:
+   - "South Asian countries" → SAS (8 countries)
+   - "Low income countries" → LIC (26 countries)
+   - "Sub-Saharan Africa" → SSF (48 countries)
+   - "Fragile states" → FCS
+   - "MENA" → MEA
+   - and many more via data360_find_codelist_value
+
+
 3) Confirm availability → call data360_get_disaggregation.
    - **CRITICAL**: if UNIT_MEASURE has multiple values (e.g. KD vs CD), pick **one** and filter.
 
