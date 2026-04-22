@@ -5,6 +5,8 @@
 export interface EnrichedIndicator {
   idno: string;
   database_id: string;
+  /** Human-readable database name (e.g. "World Development Indicators"). Prefer over database_id for display. */
+  database_name?: string | null;
   name: string;
   truncated_definition: string;
   periodicity?: string | null;
