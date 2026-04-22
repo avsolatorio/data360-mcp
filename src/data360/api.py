@@ -1661,7 +1661,6 @@ async def analyze_development_topic(
             coverage_note: Summary of how many indicators were found.
             error: Top-level error message if the entire operation failed.
     """
-    import asyncio
     from datetime import datetime
 
     max_indicators = min(max_indicators, 6)
@@ -1742,12 +1741,14 @@ async def analyze_development_topic(
                             "Sampling decomposition succeeded (flat, tier=%s): %s",
                             decomposition_method, sub_queries,
                         )
-        except (ValueError, json.JSONDecodeError) as e:
+        except (json.JSONDecodeError, TypeError) as e:
+            # The LLM returned non-JSON or malformed JSON — fall back to rule-based.
             sampling_error = f"{type(e).__name__}: {e}"
             _logger.warning(
                 "Sampling returned non-JSON response, falling back to rule-based: %s", e
             )
         except Exception as e:
+            # ctx.sample() itself raised (e.g., client does not support sampling).
             sampling_error = f"{type(e).__name__}: {e}"
             _logger.info(
                 "Sampling unavailable (client may not support it), "
@@ -1852,8 +1853,11 @@ async def analyze_development_topic(
         """Fetch a small data snapshot for one indicator."""
         try:
             filters: dict[str, str | None] = {}
-            if country_code:
-                filters["REF_AREA"] = country_code
+            # Prefer the per-indicator resolved scope (from query_groups);
+            # fall back to the top-level country_code only when absent.
+            requested_country = getattr(ind, "requested_country", None) or country_code
+            if requested_country:
+                filters["REF_AREA"] = requested_country
 
             data_result = await get_data(
                 database_id=ind.database_id,
@@ -1895,6 +1899,7 @@ async def analyze_development_topic(
             "rank": rank,
             "indicator_id": ind.idno,
             "database_id": ind.database_id,
+            "database_name": ind.database_name,
             "name": ind.name,
             "definition": ind.truncated_definition,
             "matched_sub_queries": {
