@@ -70,3 +70,9 @@ get_supported_chart_types = mcp.tool(
     name="data360_get_supported_chart_types",
     description=data360_viz.get_supported_chart_types.__doc__,
 )
+
+expand_country_group = mcp.tool(
+    data360_providers.expand_country_group,
+    name="data360_expand_country_group",
+    description=data360_providers.expand_country_group.__doc__,
+)
