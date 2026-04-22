@@ -1,0 +1,12 @@
+{
+  "name": "data360-mcp-monorepo",
+  "private": true,
+  "description": "Workspace root for @data360 npm packages (tool-types, mcp-ui).",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  }
+}

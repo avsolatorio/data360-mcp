@@ -1,0 +1,4 @@
+{
+  "version": "1.0.0",
+  "description": "Bump this and @data360/tool-types / UI packages when MCP tool JSON shapes change in a breaking way."
+}

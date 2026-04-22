@@ -118,6 +118,12 @@ class EnrichedIndicator(BaseModel):
 
     idno: str = Field(..., description="Indicator ID (e.g., WB_GS_NY_GDP_PCAP_KD)")
     database_id: str = Field(..., description="Database ID (e.g., WB_GS)")
+    database_name: str | None = Field(
+        None,
+        description="Human-readable dataset name for the database_id "
+        "(e.g., 'Gender Statistics' for WB_GS). "
+        "Use this when presenting data to users — never expand database_id by guessing.",
+    )
     name: str = Field(..., description="Indicator name")
     truncated_definition: str = Field(
         ..., description="Truncated definition (max 100 chars)"
@@ -129,8 +135,10 @@ class EnrichedIndicator(BaseModel):
     time_period_range: str | None = Field(
         None, description="Data availability range (e.g., '1990-2024')"
     )
-    covers_country: bool | None = Field(
-        None, description="True if indicator has data for the requested country"
+    covers_country: dict[str, bool] | None = Field(
+        None,
+        description="Per-country coverage map (e.g. {'KEN': True, 'GHA': False}). "
+        "Populated when required_country is provided. None when no country was requested.",
     )
     requested_country: str | None = Field(
         None,
@@ -153,7 +161,9 @@ class EnrichedSearchResponse(MCPPagedResponse):
         default_factory=list, description="Enriched indicators sorted by relevance"
     )
     required_country: str | None = Field(
-        None, description="Resolved country code (e.g., KEN for Kenya)"
+        None,
+        description="Resolved country code(s). Semicolon-separated for multiple countries "
+        "(e.g. 'KEN' or 'KEN;GHA').",
     )
     error: str | None = Field(None, description="Error message if search failed")
 
@@ -228,7 +238,9 @@ class MultiQuerySearchResponse(BaseModel):
         default_factory=list, description="The input query strings"
     )
     required_country: str | None = Field(
-        None, description="Resolved country code(s) used for all sub-queries"
+        None,
+        description="Resolved country code(s) used for all sub-queries. "
+        "Semicolon-separated for multiple countries (e.g. 'KEN;GHA').",
     )
     total_candidates: int = Field(
         0,

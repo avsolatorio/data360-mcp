@@ -30,12 +30,15 @@ def _make_indicator(
     covers_country: bool = True,
     latest_data: str = "2023",
 ) -> EnrichedIndicator:
+    # covers_country is now dict[str, bool] | None in the model.
+    # Convert bool helpers to a single-key dict so existing tests keep their semantics.
+    cc: dict[str, bool] | None = {"__": covers_country} if covers_country is not None else None
     return EnrichedIndicator(
         idno=idno,
         database_id=database_id,
         name=name,
         truncated_definition=definition[:100],
-        covers_country=covers_country,
+        covers_country=cc,
         latest_data=latest_data,
     )
 
