@@ -75,13 +75,14 @@ class DatabaseManager:
                     mapping = await self._fetch_all()
                     if mapping:
                         self._cache = mapping
-                        self._last_fetched = time.monotonic()
                         _logger.info(
                             "Background refresh: updated %d databases.", len(mapping)
                         )
                 except Exception as e:
                     _logger.error("Background database fetch failed: %s", e)
                     # Keep existing cache; retry after the next full TTL cycle.
+                finally:
+                    self._last_fetched = time.monotonic()
 
             sleep_for = max(0.0, self._ttl - (time.monotonic() - self._last_fetched))
             await asyncio.sleep(sleep_for)
@@ -95,20 +96,34 @@ class DatabaseManager:
 
         async with httpx.AsyncClient(timeout=30.0) as client:
             while True:
-                response = await client.post(
-                    url,
-                    headers={"accept": "*/*", "Content-Type": "application/json"},
-                    json={
-                        "filter": "type eq 'dataset' and (is_active ne false or is_active eq null)",
-                        "orderby": "series_description/name",
-                        "select": "series_description/database_id, series_description/name",
-                        "skip": skip,
-                        "top": limit,
-                    },
-                )
-                response.raise_for_status()
-                data = response.json()
-                items = data.get("value", [])
+                items = None
+                last_error = None
+                for attempt in range(3):
+                    try:
+                        response = await client.post(
+                            url,
+                            headers={"accept": "*/*", "Content-Type": "application/json"},
+                            json={
+                                "filter": "type eq 'dataset' and (is_active ne false or is_active eq null)",
+                                "orderby": "series_description/name",
+                                "select": "series_description/database_id, series_description/name",
+                                "skip": skip,
+                                "top": limit,
+                            },
+                        )
+                        response.raise_for_status()
+                        data = response.json()
+                        items = data.get("value", [])
+                        break  # Success
+                    except Exception as e:
+                        last_error = e
+                        _logger.warning("Fetch attempt %d failed for skip=%d: %s", attempt + 1, skip, e)
+                        if attempt < 2:
+                            await asyncio.sleep(2 ** attempt)  # Backoff: 1s, 2s
+
+                if items is None:
+                    # All attempts failed
+                    raise last_error if last_error else Exception("Unknown error during fetch")
 
                 if not items:
                     break
