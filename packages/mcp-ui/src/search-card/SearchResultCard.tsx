@@ -197,7 +197,9 @@ const IndicatorRow = memo(function IndicatorRow({
               fontFamily: "ui-monospace, monospace",
             }}
           >
-            {indicator.database_name ?? indicator.database_id} · {indicator.idno}
+            {indicator.database_name
+              ? `${indicator.database_name} (${indicator.database_id})`
+              : indicator.database_id} · {indicator.idno}
           </span>
           {indicator.dimensions?.map((d: string) => (
             <DimPill key={d} label={d} />
