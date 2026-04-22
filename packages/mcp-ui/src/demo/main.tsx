@@ -54,6 +54,7 @@ const MERGED_INDICATORS: EnrichedIndicator[] = [
   {
     idno: "WB_WDI_NY_GDP_PCAP_KD",
     database_id: "WB_WDI",
+    database_name: "World Development Indicators (WDI)",
     name: "GDP per capita (constant 2015 US$)",
     truncated_definition: "GDP per capita based on constant 2015 prices, in US dollars.",
     periodicity: "Annual",
@@ -66,6 +67,7 @@ const MERGED_INDICATORS: EnrichedIndicator[] = [
   {
     idno: "WB_WDI_FP_CPI_TOTL_ZG",
     database_id: "WB_WDI",
+    database_name: "World Development Indicators (WDI)",
     name: "Inflation, consumer prices (annual %)",
     truncated_definition: "Annual growth rate of the CPI for the average consumer.",
     periodicity: "Annual",
@@ -77,6 +79,7 @@ const MERGED_INDICATORS: EnrichedIndicator[] = [
   {
     idno: "WB_WDI_SI_POV_GINI",
     database_id: "WB_WDI",
+    database_name: "World Development Indicators (WDI)",
     name: "Gini index",
     truncated_definition: "Gini index measures the extent to which the distribution of income deviates from a perfectly equal distribution.",
     periodicity: "Annual",
@@ -92,6 +95,7 @@ const SINGLE_QUERY_INDICATORS: EnrichedIndicator[] = [
   {
     idno: "WB_WDI_NY_GDP_PCAP_KD",
     database_id: "WB_WDI",
+    database_name: "World Development Indicators (WDI)",
     name: "GDP per capita (constant 2015 US$)",
     truncated_definition: "GDP per capita based on constant 2015 prices, in US dollars.",
     periodicity: "Annual",
@@ -102,8 +106,9 @@ const SINGLE_QUERY_INDICATORS: EnrichedIndicator[] = [
   {
     idno: "WB_GS_NY_GDP_PCAP_KD",
     database_id: "WB_GS",
-    name: "GDP per capita (Global Statistics)",
-    truncated_definition: "Alternative GDP per capita series from the Global Statistics database.",
+    database_name: "Gender Statistics",
+    name: "GDP per capita (Gender Statistics)",
+    truncated_definition: "Alternative GDP per capita series from the Gender Statistics database.",
     periodicity: "Annual",
     latest_data: "2022",
     time_period_range: "1980–2022",
@@ -111,6 +116,7 @@ const SINGLE_QUERY_INDICATORS: EnrichedIndicator[] = [
   {
     idno: "WB_WDI_NY_GNP_PCAP_KD",
     database_id: "WB_WDI",
+    database_name: "World Development Indicators (WDI)",
     name: "GNI per capita (constant 2015 US$)",
     truncated_definition: "Gross national income per capita in constant 2015 US dollars.",
     periodicity: "Annual",
@@ -129,8 +135,9 @@ const BY_QUERY_GROUPS = [
       {
         idno: "WB_GS_NY_GDP_PCAP_KD",
         database_id: "WB_GS",
-        name: "GDP per capita (Global Statistics)",
-        truncated_definition: "Alternative GDP per capita series from the Global Statistics database.",
+        database_name: "Gender Statistics",
+        name: "GDP per capita (Gender Statistics)",
+        truncated_definition: "Alternative GDP per capita series from the Gender Statistics database.",
         periodicity: "Annual",
         latest_data: "2022",
         time_period_range: "1980–2022",

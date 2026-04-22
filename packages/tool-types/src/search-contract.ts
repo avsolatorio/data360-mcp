@@ -12,6 +12,11 @@ export const enrichedIndicatorSchema = z
     idno: z.string(),
     /** Database ID (e.g. "WB_WDI"). Required by get_data and get_viz_spec. */
     database_id: z.string(),
+    /**
+     * Human-readable name for the database_id (e.g. "World Development Indicators" for WB_WDI).
+     * Use this when presenting data to users — never expand database_id by guessing.
+     */
+    database_name: z.string().nullable().optional(),
     /** Human-readable indicator name. */
     name: z.string(),
     /** Truncated definition (max 100 chars). */

@@ -89,6 +89,47 @@ describe("Data360SearchToolResult", () => {
   });
 });
 
+// ─── database_name field ──────────────────────────────────────────────────────
+
+describe("EnrichedIndicator database_name field", () => {
+  const base = {
+    idno: "WB_WDI_NY_GDP_PCAP_KD",
+    database_id: "WB_WDI",
+    name: "GDP per capita",
+    truncated_definition: "GDP per capita based on constant 2015 US dollars.",
+  };
+
+  it("accepts a string database_name", () => {
+    const ok = parseData360SearchToolResult({
+      indicators: [{ ...base, database_name: "World Development Indicators" }],
+    });
+    expect(ok.success).toBe(true);
+    if (ok.success) {
+      expect(ok.data.indicators[0].database_name).toBe("World Development Indicators");
+    }
+  });
+
+  it("accepts null database_name (unknown database id)", () => {
+    const ok = parseData360SearchToolResult({
+      indicators: [{ ...base, database_id: "WB_UNKNOWN", database_name: null }],
+    });
+    expect(ok.success).toBe(true);
+    if (ok.success) {
+      expect(ok.data.indicators[0].database_name).toBeNull();
+    }
+  });
+
+  it("accepts absent database_name (optional field)", () => {
+    // Omitting the field entirely should still parse — backward compatible with
+    // responses from older server versions that do not include database_name.
+    const ok = parseData360SearchToolResult({ indicators: [base] });
+    expect(ok.success).toBe(true);
+    if (ok.success) {
+      expect(ok.data.indicators[0].database_name).toBeUndefined();
+    }
+  });
+});
+
 // ─── Multi-query ──────────────────────────────────────────────────────────────
 
 describe("Data360MultiQuerySearchToolResult", () => {
