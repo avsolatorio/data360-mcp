@@ -29,28 +29,29 @@ function Divider() {
   );
 }
 
-/** Green check or red dash for country coverage. */
+/** Explicit pill showing whether this indicator covers the requested country. */
 function CoverageBadge({ covers }: { covers: boolean | null | undefined }) {
   if (covers === null || covers === undefined) return null;
   return (
     <span
-      aria-label={covers ? "Has data for requested country" : "No data for requested country"}
-      title={covers ? "Has data for requested country" : "No data for requested country"}
+      aria-label={covers ? "Data available for requested country" : "No data for requested country"}
       style={{
         display: "inline-flex",
         alignItems: "center",
-        justifyContent: "center",
-        width: 18,
-        height: 18,
-        borderRadius: "50%",
-        background: covers ? "rgba(46,125,50,0.1)" : "rgba(183,28,28,0.1)",
+        gap: 3,
+        padding: "2px 7px",
+        borderRadius: 999,
+        background: covers ? "rgba(46,125,50,0.08)" : "rgba(183,28,28,0.08)",
         color: covers ? COLOR_SUCCESS : COLOR_MISSING,
-        fontSize: 11,
-        fontWeight: 700,
+        fontSize: 10,
+        fontWeight: 600,
+        whiteSpace: "nowrap",
         flexShrink: 0,
+        letterSpacing: "0.01em",
       }}
     >
-      {covers ? "✓" : "–"}
+      <span aria-hidden style={{ fontSize: 11 }}>{covers ? "✓" : "✕"}</span>
+      {covers ? "Data available" : "No data"}
     </span>
   );
 }
@@ -111,7 +112,7 @@ const IndicatorRow = memo(function IndicatorRow({
   const rowStyle: CSSProperties = {
     display: "flex",
     alignItems: "flex-start",
-    gap: 12,
+    gap: 10,
     padding: "12px 16px",
     cursor: clickable ? "pointer" : "default",
     background: hover && clickable ? COLOR_HOVER : COLOR_SURFACE,
@@ -232,10 +233,12 @@ function GroupHeader({
   group,
   open,
   onToggle,
+  countryName,
 }: {
   group: QueryGroupResult;
   open: boolean;
   onToggle: () => void;
+  countryName?: string;
 }) {
   const [hover, setHover] = useState(false);
 
@@ -292,8 +295,8 @@ function GroupHeader({
         {group.query}
       </span>
 
-      {/* Country badge */}
-      {group.country_code && (
+      {/* Country badge — show full name when available, fall back to code */}
+      {(countryName || group.country_code) && (
         <span
           style={{
             fontSize: 11,
@@ -305,7 +308,7 @@ function GroupHeader({
             flexShrink: 0,
           }}
         >
-          {group.country_code}
+          {countryName ?? group.country_code}
         </span>
       )}
 
@@ -400,14 +403,15 @@ export default function SearchResultCard({
       {isGrouped ? (
         // ── By-query grouped view ──
         <div role="list">
-          {groups.map((group) => (
+          {groups.map((group, idx) => (
             <div key={group.query} role="listitem">
               <GroupHeader
                 group={group}
-                open={openGroups.has(groups.indexOf(group))}
-                onToggle={() => toggleGroup(groups.indexOf(group))}
+                open={openGroups.has(idx)}
+                onToggle={() => toggleGroup(idx)}
+                countryName={(group as QueryGroupResult & { country_name?: string }).country_name}
               />
-              {openGroups.has(groups.indexOf(group)) && (
+              {openGroups.has(idx) && (
                 <div role="list">
                   {group.error ? (
                     <p
