@@ -12,8 +12,8 @@ const COLOR_SURFACE = "#ffffff";
 const COLOR_HOVER = "rgba(0,0,0,0.03)";
 const COLOR_SUCCESS = "#2E7D32";
 const COLOR_MISSING = "#B71C1C";
-const COLOR_ACCENT = "#34A7F2";
-const COLOR_BADGE_BG = "rgba(52,167,242,0.08)";
+const COLOR_ACCENT = "#0071bc"; // WB Primary Blue
+const COLOR_BADGE_BG = "rgba(0,113,188,0.08)";
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
@@ -122,6 +122,15 @@ function DimPill({ label }: { label: string }) {
   );
 }
 
+/** Formats a date range string to add spacing around the middle separator */
+function formatTimePeriod(range: string | undefined | null): string | null {
+  if (!range) return null;
+  const parts = range.split("-");
+  if (parts.length === 2) return `${parts[0]} - ${parts[1]}`;
+  if (parts.length === 4) return `${parts[0]}-${parts[1]} - ${parts[2]}-${parts[3]}`;
+  return range;
+}
+
 // ─── Single indicator row ──────────────────────────────────────────────────────
 
 const IndicatorRow = memo(function IndicatorRow({
@@ -214,7 +223,7 @@ const IndicatorRow = memo(function IndicatorRow({
             <span style={{ fontSize: 13, color: COLOR_TEXT_SECONDARY, fontWeight: 600 }}>Frequency:</span>
             {indicator.periodicity && <MetaPill>{indicator.periodicity}</MetaPill>}
             {indicator.periodicity && indicator.time_period_range && <span style={{ color: COLOR_TEXT_MUTED }}>·</span>}
-            {indicator.time_period_range && <MetaPill>{indicator.time_period_range}</MetaPill>}
+            {indicator.time_period_range && <MetaPill>{formatTimePeriod(indicator.time_period_range)}</MetaPill>}
           </div>
         )}
 
