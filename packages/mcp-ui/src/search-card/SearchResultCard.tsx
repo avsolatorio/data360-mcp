@@ -8,12 +8,14 @@ const COLOR_TEXT_PRIMARY = "#111111";
 const COLOR_TEXT_SECONDARY = "#666666";
 const COLOR_TEXT_MUTED = "#999999";
 const COLOR_BORDER = "rgba(0,0,0,0.12)";
-const COLOR_SURFACE = "#ffffff";
-const COLOR_HOVER = "rgba(0,0,0,0.03)";
+const COLOR_SURFACE = "transparent";
+const COLOR_HOVER = "rgba(74, 144, 226, 0.06)";
 const COLOR_SUCCESS = "#2E7D32";
 const COLOR_MISSING = "#B71C1C";
-const COLOR_ACCENT = "#34A7F2"; // WB Primary Blue (viz-0 theme)
-const COLOR_BADGE_BG = "rgba(52,167,242,0.08)";
+const COLOR_MISSING_BG = "rgba(183, 28, 28, 0.08)";
+const COLOR_ACCENT = "#4a90e2"; // WB light blue
+const COLOR_LABEL = "#4a90e2";
+const COLOR_BADGE_BG = "rgba(74, 144, 226, 0.08)";
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
@@ -66,7 +68,7 @@ function CoverageBadge({ covers }: { covers: boolean | null | undefined }) {
         gap: 3,
         padding: "2px 7px",
         borderRadius: 999,
-        background: "rgba(183,28,28,0.08)",
+        background: COLOR_MISSING_BG,
         color: COLOR_MISSING,
         fontSize: 10,
         fontWeight: 600,
@@ -75,7 +77,7 @@ function CoverageBadge({ covers }: { covers: boolean | null | undefined }) {
         letterSpacing: "0.01em",
       }}
     >
-      <span aria-hidden style={{ fontSize: 11 }}>✕</span>
+      <span aria-hidden style={{ fontSize: 11 }}>−</span>
       No data
     </span>
   );
@@ -236,9 +238,27 @@ const IndicatorRow = memo(function IndicatorRow({
               ? `${indicator.database_name} (${indicator.database_id})`
               : indicator.database_id} · {indicator.idno}
           </span>
-          {indicator.dimensions?.map((d: string) => (
-            <DimPill key={d} label={d} />
-          ))}
+          {indicator.dimensions && indicator.dimensions.length > 0 && (
+            <div style={{ marginTop: 4 }}>
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: COLOR_LABEL,
+                  display: "block",
+                  marginBottom: 3,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                Disaggregations:
+              </span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                {indicator.dimensions.map((d: string) => (
+                  <DimPill key={d} label={d} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
