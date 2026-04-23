@@ -12,8 +12,8 @@ const COLOR_SURFACE = "#ffffff";
 const COLOR_HOVER = "rgba(0,0,0,0.03)";
 const COLOR_SUCCESS = "#2E7D32";
 const COLOR_MISSING = "#B71C1C";
-const COLOR_ACCENT = "#0071bc"; // WB Primary Blue
-const COLOR_BADGE_BG = "rgba(0,113,188,0.08)";
+const COLOR_ACCENT = "#34A7F2"; // WB Primary Blue (viz-0 theme)
+const COLOR_BADGE_BG = "rgba(52,167,242,0.08)";
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
