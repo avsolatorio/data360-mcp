@@ -5,6 +5,9 @@ import os
 import uuid
 from datetime import UTC, datetime
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware

@@ -58,9 +58,8 @@ typeCheckingMode = "standard"
 
 [tool.poe.tasks.serve]
 help = "Run the Data360 MCP server"
-cmd = "uv run fastmcp run src/data360/server.py --transport ${transport} --port ${port}"
+cmd = "uv run uvicorn src.data360.server:app --host 0.0.0.0 --port ${port} --reload"
 args = [
-   {name = "transport", options = ["--transport", "-t"], default = "streamable-http"},
    {name = "port", options = ["--port", "-p"], default = "8021"},
 ]
 
