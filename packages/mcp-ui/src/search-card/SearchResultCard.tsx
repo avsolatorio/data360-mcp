@@ -3,7 +3,7 @@ import type { EnrichedIndicator, QueryGroupResult, SearchResultCardProps } from 
 
 // ─── Design tokens (WB palette, consistent with VegaChartCard) ───────────────
 
-const FONT = "Open Sans, Arial, sans-serif";
+const FONT = "var(--font-open-sans), Open Sans, Arial, sans-serif";
 const COLOR_TEXT_PRIMARY = "#111111";
 const COLOR_TEXT_SECONDARY = "#666666";
 const COLOR_TEXT_MUTED = "#999999";
