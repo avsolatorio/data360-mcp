@@ -183,6 +183,7 @@ const IndicatorRow = memo(function IndicatorRow({
             alignItems: "center",
             gap: 8,
             flexWrap: "wrap",
+            marginBottom: 6,
           }}
         >
           <span
@@ -196,36 +197,48 @@ const IndicatorRow = memo(function IndicatorRow({
           >
             {indicator.name}
           </span>
-          {indicator.periodicity && <MetaPill>{indicator.periodicity}</MetaPill>}
-          {indicator.time_period_range && (
-            <MetaPill>{indicator.time_period_range}</MetaPill>
-          )}
-        </div>
-
-        {/* Definition */}
-        <p
-          style={{
-            fontSize: 13,
-            color: COLOR_TEXT_SECONDARY,
-            lineHeight: 1.6,
-            margin: "3px 0 6px",
-          }}
-        >
-          {indicator.truncated_definition}
-        </p>
-
-        {/* Bottom meta row: ID + dims */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
           <span
             style={{
-              fontSize: 11,
-              color: COLOR_TEXT_MUTED,
+              fontSize: 13,
+              color: COLOR_TEXT_SECONDARY,
               fontFamily: "ui-monospace, monospace",
             }}
           >
-            {indicator.database_name
-              ? `${indicator.database_name} (${indicator.database_id})`
-              : indicator.database_id} · {indicator.idno}
+            · {indicator.idno}
+          </span>
+        </div>
+
+        {/* Frequency */}
+        {(indicator.periodicity || indicator.time_period_range) && (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 13, color: COLOR_TEXT_SECONDARY, fontWeight: 600 }}>Frequency:</span>
+            {indicator.periodicity && <MetaPill>{indicator.periodicity}</MetaPill>}
+            {indicator.periodicity && indicator.time_period_range && <span style={{ color: COLOR_TEXT_MUTED }}>·</span>}
+            {indicator.time_period_range && <MetaPill>{indicator.time_period_range}</MetaPill>}
+          </div>
+        )}
+
+        {/* Description */}
+        {indicator.truncated_definition && (
+          <p
+            style={{
+              fontSize: 13,
+              color: COLOR_TEXT_SECONDARY,
+              lineHeight: 1.6,
+              margin: "0 0 4px 0",
+            }}
+          >
+            <span style={{ fontWeight: 600, color: COLOR_TEXT_SECONDARY }}>Description:</span>{" "}
+            {indicator.truncated_definition}
+          </p>
+        )}
+
+        {/* Database */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 13, color: COLOR_TEXT_SECONDARY }}>
+            <span style={{ fontWeight: 600 }}>Database:</span>{" "}
+            {indicator.database_name ? `${indicator.database_name} · ` : ""}
+            <span style={{ fontFamily: "ui-monospace, monospace", color: COLOR_TEXT_MUTED }}>{indicator.database_id}</span>
           </span>
           {indicator.dimensions?.map((d: string) => (
             <DimPill key={d} label={d} />
