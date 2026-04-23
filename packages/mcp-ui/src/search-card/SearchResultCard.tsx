@@ -29,20 +29,45 @@ function Divider() {
   );
 }
 
-/** Explicit pill showing whether this indicator covers the requested country. */
+/** Coverage indicator: quiet ✓ when data exists, explicit pill when missing. */
 function CoverageBadge({ covers }: { covers: boolean | null | undefined }) {
   if (covers === null || covers === undefined) return null;
+
+  if (covers) {
+    return (
+      <span
+        aria-label="Data available for requested country"
+        title="Data available for requested country"
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 18,
+          height: 18,
+          borderRadius: "50%",
+          background: "rgba(46,125,50,0.1)",
+          color: COLOR_SUCCESS,
+          fontSize: 11,
+          fontWeight: 700,
+          flexShrink: 0,
+        }}
+      >
+        ✓
+      </span>
+    );
+  }
+
   return (
     <span
-      aria-label={covers ? "Data available for requested country" : "No data for requested country"}
+      aria-label="No data for requested country"
       style={{
         display: "inline-flex",
         alignItems: "center",
         gap: 3,
         padding: "2px 7px",
         borderRadius: 999,
-        background: covers ? "rgba(46,125,50,0.08)" : "rgba(183,28,28,0.08)",
-        color: covers ? COLOR_SUCCESS : COLOR_MISSING,
+        background: "rgba(183,28,28,0.08)",
+        color: COLOR_MISSING,
         fontSize: 10,
         fontWeight: 600,
         whiteSpace: "nowrap",
@@ -50,8 +75,8 @@ function CoverageBadge({ covers }: { covers: boolean | null | undefined }) {
         letterSpacing: "0.01em",
       }}
     >
-      <span aria-hidden style={{ fontSize: 11 }}>{covers ? "✓" : "✕"}</span>
-      {covers ? "Data available" : "No data"}
+      <span aria-hidden style={{ fontSize: 11 }}>✕</span>
+      No data
     </span>
   );
 }
