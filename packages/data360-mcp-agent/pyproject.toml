@@ -1,0 +1,27 @@
+[project]
+name = "data360-mcp-agent"
+version = "0.1.0"
+description = "LangChain and LangGraph client for the World Bank Data360 MCP server — connect to a running MCP endpoint and build agents or multi-agent graphs."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "langchain>=0.3.0",
+  "langchain-core>=1.0",
+  "langchain-mcp-adapters>=0.1.13",
+  "langchain-openai>=1.1.7",
+  "langgraph>=1.0",
+  "mcp>=1.18.0",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff.lint]
+select = ["I", "UP", "PL", "F401"]
+
+[tool.pyright]
+typeCheckingMode = "standard"

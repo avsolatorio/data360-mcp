@@ -10,15 +10,17 @@ dependencies = [
   "mcp>=1.18.0",
   "fastapi>=0.115.0",
   "uvicorn[standard]>=0.30.0",
-  "langchain-mcp-adapters>=0.1.13",
   "typer>=0.20.1",
   "gunicorn>=23.0.0",
-  "langchain-openai>=1.1.7",
   "pydantic-settings>=2.0.0",
   "draco @ git+https://github.com/avsolatorio/draco2.git@data360-mcp",
   "opencensus-ext-azure>=1.1.13",
   "azure-monitor-opentelemetry>=1.6.0",
 ]
+
+[project.optional-dependencies]
+# LangChain / LangGraph client (workspace package); use: uv sync --extra agent
+agent = ["data360-mcp-agent"]
 
 [build-system]
 requires = ["setuptools>=42", 'setuptools-scm']
@@ -30,8 +32,12 @@ where = ["src"]
 [tool.setuptools.package-data]
 data360 = ["tool_contract_version.json", "databases.json", "ref_area_groups.json"]
 
+[tool.uv.workspace]
+members = ["packages/data360-mcp-agent"]
+
 [dependency-groups]
 dev = [
+  "data360-mcp-agent",
   "pre-commit>=4.5.0",
   "pyright>=1.1.407",
   "ruff>=0.14.8",
@@ -53,8 +59,12 @@ name = "pypi"
 url = "https://pypi.org/simple"
 default = true
 
+[tool.uv.sources]
+data360-mcp-agent = { workspace = true }
+
 [tool.pyright]
 typeCheckingMode = "standard"
+extraPaths = ["packages/data360-mcp-agent/src"]
 
 [tool.poe.tasks.serve]
 help = "Run the Data360 MCP server"
