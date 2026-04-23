@@ -30,6 +30,8 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gi
 git clone https://github.com/worldbank/data360-mcp.git
 cd data360-mcp
 uv sync
+# LangChain / LangGraph client + examples + repo-root shim (data360_mcp_service.py):
+uv sync --extra agent --group dev
 ```
 
 **With pip:**
@@ -83,6 +85,10 @@ uv run scripts/llm_mcp_demo.py
 # DEBUG mode:
 DEBUG=true uv run scripts/llm_mcp_demo.py
 ```
+
+**Minimal external agent (one-shot):** [examples/agents/langchain-minimal/README.md](examples/agents/langchain-minimal/README.md) — copy-paste `run_once.py` that loads `data360://system-prompt` and tools, then calls the model.
+
+**Multi-agent / LangGraph:** [examples/agents/langchain-graph/README.md](examples/agents/langchain-graph/README.md) — register Data360 as a node (`create_data360_langgraph_node`) alongside supervisors and other specialists. Client library (publishable on PyPI): [`packages/data360-mcp-agent/`](packages/data360-mcp-agent/) (`pip install data360-mcp-agent`). The repo-root [`data360_mcp_service.py`](data360_mcp_service.py) shim re-exports `data360_mcp_agent` for older import paths.
 
 ---
 
