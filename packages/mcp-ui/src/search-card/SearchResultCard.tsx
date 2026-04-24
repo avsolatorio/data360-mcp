@@ -139,6 +139,18 @@ const IndicatorCard = memo(function IndicatorCard({
         {indicator.name}
       </div>
 
+      {/* Indicator ID */}
+      <div
+        style={{
+          fontSize: 10,
+          color: COLOR_TEXT_MUTED,
+          fontFamily: "ui-monospace, monospace",
+          marginTop: -2,
+        }}
+      >
+        {indicator.idno}
+      </div>
+
       {/* Definition — clamped to 2 lines */}
       {indicator.truncated_definition && (
         <div
@@ -151,6 +163,7 @@ const IndicatorCard = memo(function IndicatorCard({
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
             flex: 1,
+            marginTop: 2,
           }}
         >
           {indicator.truncated_definition}
@@ -163,7 +176,7 @@ const IndicatorCard = memo(function IndicatorCard({
         {indicator.time_period_range && <MetaPill>{indicator.time_period_range}</MetaPill>}
       </div>
 
-      {/* DB / ID footer */}
+      {/* DB footer */}
       <div
         style={{
           fontSize: 9,
@@ -175,8 +188,8 @@ const IndicatorCard = memo(function IndicatorCard({
         }}
       >
         {indicator.database_name
-          ? `${indicator.database_name} · ${indicator.idno}`
-          : `${indicator.database_id} · ${indicator.idno}`}
+          ? `${indicator.database_name} · ${indicator.database_id}`
+          : indicator.database_id}
       </div>
     </div>
   );
