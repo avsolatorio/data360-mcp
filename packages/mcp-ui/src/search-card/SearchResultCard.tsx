@@ -1,64 +1,54 @@
 import { memo, useState, useCallback, useEffect, type CSSProperties } from "react";
 import type { EnrichedIndicator, QueryGroupResult, SearchResultCardProps } from "./types";
 
-// ─── Design tokens (WB palette, consistent with VegaChartCard) ───────────────
+// ─── Design tokens (WB palette) ───────────────────────────────────────────────
 
 const FONT = "var(--font-open-sans), Open Sans, Arial, sans-serif";
 const COLOR_TEXT_PRIMARY = "#111111";
-const COLOR_TEXT_SECONDARY = "#666666";
+const COLOR_TEXT_SECONDARY = "#555555";
 const COLOR_TEXT_MUTED = "#999999";
-const COLOR_BORDER = "rgba(0,0,0,0.12)";
+const COLOR_BORDER = "rgba(0,0,0,0.10)";
 const COLOR_SURFACE = "transparent";
-const COLOR_HOVER = "rgba(74, 144, 226, 0.06)";
+const COLOR_CARD_BG = "#ffffff";
+const COLOR_CARD_HOVER_BORDER = "#4a90e2";
+const COLOR_CARD_HOVER_SHADOW = "0 4px 16px rgba(74,144,226,0.18)";
 const COLOR_SUCCESS = "#2E7D32";
 const COLOR_MISSING = "#B71C1C";
 const COLOR_MISSING_BG = "rgba(183, 28, 28, 0.08)";
-const COLOR_ACCENT = "#4a90e2"; // WB light blue
-const COLOR_LABEL = "#4a90e2";
+const COLOR_ACCENT = "#4a90e2";
 const COLOR_BADGE_BG = "rgba(74, 144, 226, 0.08)";
+const COLOR_GROUP_HEADER_BG = "rgba(74, 144, 226, 0.04)";
 
-// ─── Sub-components ────────────────────────────────────────────────────────────
-
-function Divider() {
-  return (
-    <hr
-      style={{
-        border: "none",
-        borderTop: `0.5px solid ${COLOR_BORDER}`,
-        margin: "0",
-      }}
-    />
-  );
-}
+// ─── Coverage badge ────────────────────────────────────────────────────────────
 
 /**
- * Coverage indicator: quiet ✓ when all requested countries have data,
- * explicit "No data" pill when any country is missing.
+ * Quiet ✓ (green) when all countries have data.
+ * Explicit "− No data for XX" pill when any are missing.
  * Accepts the per-country map e.g. { KEN: true, GHA: false }.
+ * Returns null when covers is absent (no country was requested).
  */
 function CoverageBadge({ covers }: { covers: Record<string, boolean> | null | undefined }) {
-  if (covers === null || covers === undefined) return null;
-
+  if (covers == null) return null;
   const entries = Object.entries(covers);
   if (entries.length === 0) return null;
-  
-  const missingCountries = entries.filter(([_, hasData]) => !hasData).map(([code]) => code);
 
-  if (missingCountries.length === 0) {
+  const missing = entries.filter(([, ok]) => !ok).map(([code]) => code);
+
+  if (missing.length === 0) {
     return (
       <span
-        aria-label="Data available for requested countries"
-        title="Data available for requested countries"
+        title="Data available for requested country"
+        aria-label="Data available"
         style={{
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          width: 18,
-          height: 18,
+          width: 20,
+          height: 20,
           borderRadius: "50%",
-          background: "rgba(46, 125, 50, 0.08)",
+          background: "rgba(46,125,50,0.10)",
           color: COLOR_SUCCESS,
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: 700,
           flexShrink: 0,
         }}
@@ -68,12 +58,11 @@ function CoverageBadge({ covers }: { covers: Record<string, boolean> | null | un
     );
   }
 
-  const label = entries.length === 1 ? "No data" : `No data for ${missingCountries.join(", ")}`;
-
+  const label = `− No data for ${missing.join(", ")}`;
   return (
     <span
-      aria-label={label}
       title={label}
+      aria-label={label}
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -89,13 +78,13 @@ function CoverageBadge({ covers }: { covers: Record<string, boolean> | null | un
         letterSpacing: "0.01em",
       }}
     >
-      <span aria-hidden style={{ fontSize: 11 }}>−</span>
       {label}
     </span>
   );
 }
 
-/** Small pill for periodicity, date range, etc. */
+// ─── Small pills ───────────────────────────────────────────────────────────────
+
 function MetaPill({ children }: { children: React.ReactNode }) {
   return (
     <span
@@ -105,7 +94,7 @@ function MetaPill({ children }: { children: React.ReactNode }) {
         borderRadius: 999,
         background: COLOR_BADGE_BG,
         color: COLOR_ACCENT,
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: 600,
         whiteSpace: "nowrap",
       }}
@@ -115,17 +104,16 @@ function MetaPill({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Small pill for each dimension (SEX, AGE, etc.). */
 function DimPill({ label }: { label: string }) {
   return (
     <span
       style={{
         display: "inline-block",
-        padding: "1px 7px",
+        padding: "1px 6px",
         borderRadius: 999,
         border: `0.5px solid ${COLOR_BORDER}`,
         color: COLOR_TEXT_SECONDARY,
-        fontSize: 10,
+        fontSize: 9,
         fontWeight: 600,
         letterSpacing: "0.04em",
         whiteSpace: "nowrap",
@@ -136,18 +124,24 @@ function DimPill({ label }: { label: string }) {
   );
 }
 
-/** Formats a date range string to add spacing around the middle separator */
-function formatTimePeriod(range: string | undefined | null): string | null {
-  if (!range) return null;
-  const parts = range.split("-");
-  if (parts.length === 2) return `${parts[0]} - ${parts[1]}`;
-  if (parts.length === 4) return `${parts[0]}-${parts[1]} - ${parts[2]}-${parts[3]}`;
-  return range;
+function Divider() {
+  return (
+    <hr
+      style={{
+        border: "none",
+        borderTop: `0.5px solid ${COLOR_BORDER}`,
+        margin: "0",
+      }}
+    />
+  );
 }
 
-// ─── Single indicator row ──────────────────────────────────────────────────────
+// ─── Indicator card (horizontal rail item) ─────────────────────────────────────
 
-const IndicatorRow = memo(function IndicatorRow({
+const CARD_WIDTH = 240;
+const CARD_MIN_HEIGHT = 170;
+
+const IndicatorCard = memo(function IndicatorCard({
   indicator,
   onSelect,
 }: {
@@ -157,20 +151,7 @@ const IndicatorRow = memo(function IndicatorRow({
   const [hover, setHover] = useState(false);
   const clickable = Boolean(onSelect);
 
-  const rowStyle: CSSProperties = {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: 10,
-    padding: "12px 16px",
-    cursor: clickable ? "pointer" : "default",
-    background: hover && clickable ? COLOR_HOVER : COLOR_SURFACE,
-    transition: "background 0.12s",
-  };
-
-  const handleClick = useCallback(() => {
-    onSelect?.(indicator);
-  }, [indicator, onSelect]);
-
+  const handleClick = useCallback(() => onSelect?.(indicator), [indicator, onSelect]);
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (clickable && (e.key === "Enter" || e.key === " ")) {
@@ -181,117 +162,172 @@ const IndicatorRow = memo(function IndicatorRow({
     [indicator, clickable, onSelect]
   );
 
+  const cardStyle: CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+    width: CARD_WIDTH,
+    minWidth: CARD_WIDTH,
+    minHeight: CARD_MIN_HEIGHT,
+    padding: "14px 14px 12px",
+    borderRadius: 10,
+    background: COLOR_CARD_BG,
+    border: `1px solid ${hover && clickable ? COLOR_CARD_HOVER_BORDER : COLOR_BORDER}`,
+    boxShadow: hover && clickable ? COLOR_CARD_HOVER_SHADOW : "0 1px 3px rgba(0,0,0,0.06)",
+    cursor: clickable ? "pointer" : "default",
+    transition: "border-color 0.14s, box-shadow 0.14s",
+    boxSizing: "border-box",
+    flexShrink: 0,
+  };
+
   return (
     <div
       role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : undefined}
-      aria-label={clickable ? `Select indicator: ${indicator.name}` : undefined}
-      style={rowStyle}
+      aria-label={clickable ? `Select: ${indicator.name}` : undefined}
+      style={cardStyle}
       onClick={clickable ? handleClick : undefined}
       onKeyDown={clickable ? handleKeyDown : undefined}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      {/* Coverage badge */}
-      <div style={{ paddingTop: 2, flexShrink: 0 }}>
+      {/* Top row: coverage badge */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", minHeight: 20 }}>
         <CoverageBadge covers={indicator.covers_country ?? null} />
       </div>
 
-      {/* Main content */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        {/* Name row */}
+      {/* Indicator name */}
+      <div
+        style={{
+          fontSize: 13,
+          fontWeight: 700,
+          color: hover && clickable ? COLOR_ACCENT : COLOR_TEXT_PRIMARY,
+          lineHeight: 1.4,
+          transition: "color 0.12s",
+          // clamp to 3 lines
+          display: "-webkit-box",
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+        }}
+      >
+        {indicator.name}
+      </div>
+
+      {/* Definition — clamped to 2 lines */}
+      {indicator.truncated_definition && (
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            flexWrap: "wrap",
-          }}
-        >
-          <span
-            style={{
-              fontSize: 16,
-              fontWeight: 600,
-              color: clickable && hover ? COLOR_ACCENT : COLOR_TEXT_PRIMARY,
-              transition: "color 0.12s",
-              lineHeight: 1.4,
-            }}
-          >
-            {indicator.name}
-          </span>
-          {indicator.periodicity && <MetaPill>{indicator.periodicity}</MetaPill>}
-          {indicator.time_period_range && (
-            <MetaPill>{formatTimePeriod(indicator.time_period_range)}</MetaPill>
-          )}
-        </div>
-
-        {/* Definition */}
-        <p
-          style={{
-            fontSize: 14,
+            fontSize: 11,
             color: COLOR_TEXT_SECONDARY,
-            lineHeight: 1.6,
-            margin: "3px 0 6px",
+            lineHeight: 1.5,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            flex: 1,
           }}
         >
           {indicator.truncated_definition}
-        </p>
-
-        {/* Bottom meta row: ID + dims */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <span
-            style={{
-              fontSize: 13,
-              color: COLOR_TEXT_MUTED,
-              fontFamily: "ui-monospace, monospace",
-            }}
-          >
-            {indicator.database_name
-              ? `${indicator.database_name} (${indicator.database_id})`
-              : indicator.database_id} · {indicator.idno}
-          </span>
-          {indicator.dimensions && indicator.dimensions.length > 0 && (
-            <div style={{ marginTop: 4 }}>
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: COLOR_LABEL,
-                  display: "block",
-                  marginBottom: 3,
-                  letterSpacing: "0.02em",
-                }}
-              >
-                Disaggregations:
-              </span>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                {indicator.dimensions.map((d: string) => (
-                  <DimPill key={d} label={d} />
-                ))}
-              </div>
-            </div>
-          )}
         </div>
+      )}
+
+      {/* Meta pills row */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: "auto" }}>
+        {indicator.periodicity && <MetaPill>{indicator.periodicity}</MetaPill>}
+        {indicator.time_period_range && <MetaPill>{indicator.time_period_range}</MetaPill>}
       </div>
 
-      {/* Chevron affordance when clickable */}
-      {clickable && (
-        <span
-          aria-hidden
-          style={{
-            color: hover ? COLOR_ACCENT : COLOR_BORDER,
-            fontSize: 16,
-            flexShrink: 0,
-            paddingTop: 1,
-            transition: "color 0.12s",
-          }}
-        >
-          ›
-        </span>
+      {/* Disaggregations */}
+      {indicator.dimensions && indicator.dimensions.length > 0 && (
+        <div>
+          <div
+            style={{
+              fontSize: 9,
+              fontWeight: 700,
+              color: COLOR_ACCENT,
+              marginBottom: 3,
+              letterSpacing: "0.04em",
+            }}
+          >
+            DISAGGREGATIONS
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+            {indicator.dimensions.map((d: string) => (
+              <DimPill key={d} label={d} />
+            ))}
+          </div>
+        </div>
       )}
+
+      {/* DB / ID footer */}
+      <div
+        style={{
+          fontSize: 9,
+          color: COLOR_TEXT_MUTED,
+          fontFamily: "ui-monospace, monospace",
+          marginTop: 2,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {indicator.database_name
+          ? `${indicator.database_name} · ${indicator.idno}`
+          : `${indicator.database_id} · ${indicator.idno}`}
+      </div>
     </div>
   );
 });
+
+// ─── Horizontal rail ───────────────────────────────────────────────────────────
+
+function IndicatorRail({
+  indicators,
+  onSelect,
+  emptyMessage = "No indicators found.",
+}: {
+  indicators: EnrichedIndicator[];
+  onSelect?: (i: EnrichedIndicator) => void;
+  emptyMessage?: string;
+}) {
+  if (indicators.length === 0) {
+    return (
+      <p
+        style={{
+          padding: "14px 16px",
+          fontSize: 13,
+          color: COLOR_TEXT_MUTED,
+          margin: 0,
+        }}
+      >
+        {emptyMessage}
+      </p>
+    );
+  }
+
+  return (
+    <div
+      role="list"
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        gap: 12,
+        padding: "14px 16px",
+        overflowX: "auto",
+        // subtle scrollbar styling
+        scrollbarWidth: "thin",
+        scrollbarColor: `${COLOR_BORDER} transparent`,
+      }}
+    >
+      {indicators.map((ind) => (
+        <div key={ind.idno} role="listitem">
+          <IndicatorCard indicator={ind} onSelect={onSelect} />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 // ─── Group accordion header ────────────────────────────────────────────────────
 
@@ -321,7 +357,7 @@ function GroupHeader({
         gap: 10,
         width: "100%",
         padding: "10px 16px",
-        background: hover ? COLOR_HOVER : "rgba(0,0,0,0.015)",
+        background: hover ? "rgba(74,144,226,0.08)" : COLOR_GROUP_HEADER_BG,
         border: "none",
         borderBottom: open ? `0.5px solid ${COLOR_BORDER}` : "none",
         cursor: "pointer",
@@ -330,7 +366,7 @@ function GroupHeader({
         transition: "background 0.12s",
       }}
     >
-      {/* Chevron */}
+      {/* Animated chevron */}
       <span
         aria-hidden
         style={{
@@ -361,24 +397,25 @@ function GroupHeader({
         {group.query}
       </span>
 
-      {/* Country badge — show full name when available, fall back to code */}
+      {/* Country pill */}
       {(countryName || group.country_code) && (
         <span
           style={{
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: 600,
             color: COLOR_ACCENT,
             background: COLOR_BADGE_BG,
             padding: "2px 8px",
             borderRadius: 999,
             flexShrink: 0,
+            whiteSpace: "nowrap",
           }}
         >
           {countryName ?? group.country_code}
         </span>
       )}
 
-      {/* Count badge */}
+      {/* Result count */}
       <span
         style={{
           fontSize: 11,
@@ -402,15 +439,13 @@ export default function SearchResultCard({
   onSelect,
   className,
 }: SearchResultCardProps) {
-  // Track which groups are expanded (all open by default).
-  // Reset when the group array changes identity (e.g. parent re-renders with new groups).
+  // All groups open by default; re-init when groups identity changes.
   const [openGroups, setOpenGroups] = useState<Set<number>>(
     () => new Set(groups?.map((_, i) => i) ?? [])
   );
 
   useEffect(() => {
     setOpenGroups(new Set(groups?.map((_, i) => i) ?? []));
-    // Re-initialise only when the number of groups or their queries change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groups?.length, groups?.map((g) => g.query).join(",")]);
 
@@ -423,6 +458,11 @@ export default function SearchResultCard({
     });
   }, []);
 
+  const isGrouped = Boolean(groups && groups.length > 0);
+  const totalCount = isGrouped
+    ? groups!.reduce((s, g) => s + g.count, 0)
+    : indicators.length;
+
   const card: CSSProperties = {
     background: COLOR_SURFACE,
     border: `0.5px solid ${COLOR_BORDER}`,
@@ -432,19 +472,14 @@ export default function SearchResultCard({
     width: "100%",
   };
 
-  const isGrouped = groups && groups.length > 0;
-  const totalCount = isGrouped
-    ? groups.reduce((s, g) => s + g.count, 0)
-    : indicators.length;
-
   return (
     <div className={className} style={card}>
-      {/* Card header */}
+      {/* ── Card header ─────────────────────────────────────────────── */}
       <div style={{ padding: "16px 16px 12px" }}>
         <h2
           style={{
-            fontSize: 18,
-            fontWeight: 600,
+            fontSize: 17,
+            fontWeight: 700,
             color: COLOR_TEXT_PRIMARY,
             margin: 0,
             lineHeight: 1.3,
@@ -453,24 +488,24 @@ export default function SearchResultCard({
           {title}
         </h2>
         {subtitle && (
-          <p style={{ fontSize: 14, color: COLOR_TEXT_SECONDARY, marginTop: 4, marginBottom: 0 }}>
+          <p style={{ fontSize: 13, color: COLOR_TEXT_SECONDARY, marginTop: 3, marginBottom: 0 }}>
             {subtitle}
           </p>
         )}
-        <p style={{ fontSize: 12, color: COLOR_TEXT_MUTED, marginTop: 6, marginBottom: 0 }}>
+        <p style={{ fontSize: 11, color: COLOR_TEXT_MUTED, marginTop: 5, marginBottom: 0 }}>
           {totalCount} indicator{totalCount !== 1 ? "s" : ""}
-          {onSelect ? " — click a row to select" : ""}
+          {onSelect ? " · click a card to select" : ""}
         </p>
       </div>
 
       <Divider />
 
-      {/* Body */}
+      {/* ── Body ────────────────────────────────────────────────────── */}
       {isGrouped ? (
-        // ── By-query grouped view ──
+        // by_query grouped view — accordion per query/country
         <div role="list">
-          {groups.map((group, idx) => (
-            <div key={group.query} role="listitem">
+          {groups!.map((group, idx) => (
+            <div key={`${group.query}-${group.country_code ?? idx}`} role="listitem">
               <GroupHeader
                 group={group}
                 open={openGroups.has(idx)}
@@ -478,7 +513,7 @@ export default function SearchResultCard({
                 countryName={(group as QueryGroupResult & { country_name?: string }).country_name}
               />
               {openGroups.has(idx) && (
-                <div role="list">
+                <>
                   {group.error ? (
                     <p
                       style={{
@@ -490,54 +525,18 @@ export default function SearchResultCard({
                     >
                       {group.error}
                     </p>
-                  ) : group.indicators.length === 0 ? (
-                    <p
-                      style={{
-                        padding: "10px 16px",
-                        fontSize: 13,
-                        color: COLOR_TEXT_MUTED,
-                        margin: 0,
-                      }}
-                    >
-                      No indicators found.
-                    </p>
                   ) : (
-                    group.indicators.map((ind: EnrichedIndicator, j: number) => (
-                      <div key={ind.idno} role="listitem">
-                        <IndicatorRow indicator={ind} onSelect={onSelect} />
-                        {j < group.indicators.length - 1 && <Divider />}
-                      </div>
-                    ))
+                    <IndicatorRail indicators={group.indicators} onSelect={onSelect} />
                   )}
-                </div>
+                </>
               )}
               <Divider />
             </div>
           ))}
         </div>
       ) : (
-        // ── Merged flat view ──
-        <div role="list">
-          {indicators.length === 0 ? (
-            <p
-              style={{
-                padding: "16px",
-                fontSize: 13,
-                color: COLOR_TEXT_MUTED,
-                margin: 0,
-              }}
-            >
-              No indicators found.
-            </p>
-          ) : (
-            indicators.map((ind, i) => (
-              <div key={ind.idno} role="listitem">
-                <IndicatorRow indicator={ind} onSelect={onSelect} />
-                {i < indicators.length - 1 && <Divider />}
-              </div>
-            ))
-          )}
-        </div>
+        // merged / single-query view — flat horizontal rail
+        <IndicatorRail indicators={indicators} onSelect={onSelect} />
       )}
     </div>
   );
