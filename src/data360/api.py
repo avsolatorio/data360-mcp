@@ -621,17 +621,26 @@ async def search(  # noqa: PLR0911
     In those cases, use data360_analyze_development_topic instead, which decomposes
     the question into specific sub-queries and searches for each one.
 
-    IMPORTANT — parameter selection: pass exactly ONE of query, queries, or query_groups.
-    Do NOT pass the others at all (not even as empty string "" or empty list []).
-    Sending query="" alongside query_groups, or queries=[] alongside query_groups,
-    is treated as a conflict and will be normalised, but it is better to simply omit unused params.
+    PARAMETER SELECTION — follow this decision tree strictly:
+    1. ONE topic, any number of countries → use `query` + `required_country`.
+    2. MULTIPLE topics, ALL in the SAME country → use `queries` + `required_country`.
+    3. Topics targeting DIFFERENT countries → MUST use `query_groups`. Do NOT use `queries`.
+       Example — "GDP for Japan and population for Philippines":
+         query_groups=[
+           {"queries": ["GDP per capita"], "country": "Japan"},
+           {"queries": ["population"], "country": "Philippines"}
+         ]
+       Using `queries` for cross-country requests will lose per-country coverage data.
+
+    Pass exactly ONE of query, queries, or query_groups. Omit the other two entirely.
 
     Args:
         query: Single search query (e.g., "unemployment rate", "poverty", "GDP per capita").
             Use this for ONE topic. If using this, do not pass queries or query_groups.
         queries: List of search terms for multi-topic search in one call (e.g.
             ["GDP growth", "inflation rate", "unemployment"]).
-            Use this for MULTIPLE topics that share the same country scope.
+            Use ONLY when ALL topics target the SAME country (set via required_country).
+            If topics span different countries, use query_groups instead.
             Requires at least 2 non-empty strings.
             If using this, do not pass query or query_groups.
         query_groups: List of QueryGroup objects, each binding one or more search terms to
