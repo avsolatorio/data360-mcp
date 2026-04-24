@@ -3,7 +3,7 @@ import type { EnrichedIndicator, QueryGroupResult, SearchResultCardProps } from 
 
 // ─── Design tokens (WB palette) ───────────────────────────────────────────────
 
-const FONT = "var(--font-open-sans), Open Sans, Arial, sans-serif";
+const FONT = "Open Sans, Arial, sans-serif";
 const COLOR_TEXT_PRIMARY = "#111111";
 const COLOR_TEXT_SECONDARY = "#555555";
 const COLOR_TEXT_MUTED = "#999999";
@@ -94,6 +94,7 @@ const IndicatorCard = memo(function IndicatorCard({
     transition: "border-color 0.14s, box-shadow 0.14s",
     boxSizing: "border-box",
     flexShrink: 0,
+    fontFamily: "Open Sans, Arial, sans-serif",
   };
 
   let prefix = null;
