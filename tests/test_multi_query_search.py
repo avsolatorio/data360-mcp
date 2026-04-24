@@ -334,8 +334,8 @@ class TestSearchMultiQueryByQuery:
         assert result.results[1].query == "inflation"
 
     @pytest.mark.asyncio
-    async def test_by_query_cross_group_dedup(self):
-        """Same indicator in both groups: second group should not include it."""
+    async def test_by_query_cross_group_dedup_disabled(self):
+        """Same indicator in both groups: by_query layout should retain it in both groups."""
         same_resp_1 = _make_search_response(idno="WB_WDI_GDP", name="GDP")
         same_resp_2 = _make_search_response(idno="WB_WDI_GDP", name="GDP")
 
@@ -352,7 +352,39 @@ class TestSearchMultiQueryByQuery:
 
         assert result.results is not None
         assert result.results[0].count == 1  # first group keeps it
-        assert result.results[1].count == 0  # second group loses it to dedup
+        assert result.results[1].count == 1  # second group also keeps it
+        assert result.deduplicated_count == 0
+
+    @pytest.mark.asyncio
+    async def test_merged_layout_merges_covers_country(self):
+        """When an indicator is in two groups, covers_country is merged and deduplicated."""
+        resp_1 = _make_search_response_with_countries("WB_WDI_GDP", "GDP", ["KEN"])
+        resp_2 = _make_search_response_with_countries("WB_WDI_GDP", "GDP", ["KEN"])
+
+        mock_raw = AsyncMock(side_effect=[resp_1, resp_2])
+
+        async def _resolve(c):
+            if c == "Kenya": return "KEN"
+            if c == "Morocco": return "MAR"
+            return None
+
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(side_effect=_resolve)),
+        ):
+            result = await search(
+                query_groups=[
+                    QueryGroup(queries=["GDP"], country="Kenya"),
+                    QueryGroup(queries=["GDP"], country="Morocco"),
+                ],
+                result_layout="merged",
+                dedupe=True,
+            )
+
+        assert isinstance(result, MultiQuerySearchResponse)
+        assert len(result.indicators) == 1
+        ind = result.indicators[0]
+        assert ind.covers_country == {"KEN": True, "MAR": False}
         assert result.deduplicated_count == 1
 
     @pytest.mark.asyncio

@@ -926,7 +926,7 @@ async def _build_multi_query_response(
     Encapsulates enrichment, deduplication, and layout selection so both
     paths stay in sync without code duplication.
     """
-    seen_ids: set[tuple[str, str]] = set()
+    seen_dict: dict[tuple[str, str], EnrichedIndicator] = {}
     groups: list[QueryGroupResult] = []
     total_candidates = 0
     deduplicated_count = 0
@@ -951,22 +951,40 @@ async def _build_multi_query_response(
         enriched = _enrich_search_results(raw_result, code_for_query, db_mapping)
         total_candidates += len(enriched)
 
-        if dedupe:
-            deduped: list[EnrichedIndicator] = []
-            for ind in enriched:
-                key = (ind.database_id, ind.idno)
-                if key not in seen_ids:
-                    seen_ids.add(key)
-                    deduped.append(ind)
-                else:
+        group_indicators: list[EnrichedIndicator] = []
+        group_seen: set[tuple[str, str]] = set()
+
+        for ind in enriched:
+            key = (ind.database_id, ind.idno)
+
+            if key in seen_dict:
+                existing_ind = seen_dict[key]
+
+                # Merge covers_country data across queries/groups
+                if existing_ind.covers_country is not None and ind.covers_country is not None:
+                    existing_ind.covers_country.update(ind.covers_country)
+
+                if dedupe and result_layout == "merged":
+                    # Global deduplication: discard from subsequent groups in merged layout
                     deduplicated_count += 1
-            enriched = deduped
+                else:
+                    # In by_query layout, or if dedupe=False, we keep the indicator.
+                    # But if dedupe=True, we still deduplicate WITHIN the same group.
+                    if dedupe and key in group_seen:
+                        deduplicated_count += 1
+                    else:
+                        group_seen.add(key)
+                        group_indicators.append(existing_ind)
+            else:
+                seen_dict[key] = ind
+                group_seen.add(key)
+                group_indicators.append(ind)
 
         groups.append(QueryGroupResult(
             query=q,
             country_code=code_for_query,
-            indicators=enriched,
-            count=len(enriched),
+            indicators=group_indicators,
+            count=len(group_indicators),
         ))
 
     # Compute response-level required_country: join all unique resolved codes with ";"
