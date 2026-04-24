@@ -12,7 +12,12 @@ export interface EnrichedIndicator {
   periodicity?: string | null;
   latest_data?: string | null;
   time_period_range?: string | null;
-  covers_country?: boolean | null;
+  /**
+   * Per-country availability map, e.g. { KEN: true, GHA: false }.
+   * Single-country requests produce a single-entry map, e.g. { KEN: true }.
+   * null when no country was requested.
+   */
+  covers_country?: Record<string, boolean> | null;
   requested_country?: string | null;
   dimensions?: string[] | null;
   [key: string]: unknown;

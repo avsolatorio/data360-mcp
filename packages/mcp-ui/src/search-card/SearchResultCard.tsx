@@ -31,15 +31,24 @@ function Divider() {
   );
 }
 
-/** Coverage indicator: quiet ✓ when data exists, explicit pill when missing. */
-function CoverageBadge({ covers }: { covers: boolean | null | undefined }) {
+/**
+ * Coverage indicator: quiet ✓ when all requested countries have data,
+ * explicit "No data" pill when any country is missing.
+ * Accepts the per-country map e.g. { KEN: true, GHA: false }.
+ */
+function CoverageBadge({ covers }: { covers: Record<string, boolean> | null | undefined }) {
   if (covers === null || covers === undefined) return null;
 
-  if (covers) {
+  const entries = Object.entries(covers);
+  if (entries.length === 0) return null;
+  
+  const missingCountries = entries.filter(([_, hasData]) => !hasData).map(([code]) => code);
+
+  if (missingCountries.length === 0) {
     return (
       <span
-        aria-label="Data available for requested country"
-        title="Data available for requested country"
+        aria-label="Data available for requested countries"
+        title="Data available for requested countries"
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -59,9 +68,12 @@ function CoverageBadge({ covers }: { covers: boolean | null | undefined }) {
     );
   }
 
+  const label = entries.length === 1 ? "No data" : `No data for ${missingCountries.join(", ")}`;
+
   return (
     <span
-      aria-label="No data for requested country"
+      aria-label={label}
+      title={label}
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -78,7 +90,7 @@ function CoverageBadge({ covers }: { covers: boolean | null | undefined }) {
       }}
     >
       <span aria-hidden style={{ fontSize: 11 }}>−</span>
-      No data
+      {label}
     </span>
   );
 }
@@ -182,7 +194,7 @@ const IndicatorRow = memo(function IndicatorRow({
     >
       {/* Coverage badge */}
       <div style={{ paddingTop: 2, flexShrink: 0 }}>
-        <CoverageBadge covers={indicator.covers_country} />
+        <CoverageBadge covers={indicator.covers_country ?? null} />
       </div>
 
       {/* Main content */}
