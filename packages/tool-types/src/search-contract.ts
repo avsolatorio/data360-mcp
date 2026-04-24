@@ -28,10 +28,11 @@ export const enrichedIndicatorSchema = z
     /** Data availability range (e.g. "1990–2024"). */
     time_period_range: z.string().nullable().optional(),
     /**
-     * True if this indicator has data for the requested country.
+     * Per-country availability map, e.g. { KEN: true, GHA: false }.
+     * Single-country requests produce a single-entry map, e.g. { KEN: true }.
      * null when no country was requested.
      */
-    covers_country: z.boolean().nullable().optional(),
+    covers_country: z.record(z.string(), z.boolean()).nullable().optional(),
     /**
      * Resolved 3-letter country code this indicator was evaluated against.
      * Set when query_groups is used or required_country was provided.
