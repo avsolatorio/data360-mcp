@@ -19,70 +19,6 @@ const COLOR_ACCENT = "#4a90e2";
 const COLOR_BADGE_BG = "rgba(74, 144, 226, 0.08)";
 const COLOR_GROUP_HEADER_BG = "rgba(74, 144, 226, 0.04)";
 
-// ─── Coverage badge ────────────────────────────────────────────────────────────
-
-/**
- * Quiet ✓ (green) when all countries have data.
- * Explicit "− No data for XX" pill when any are missing.
- * Accepts the per-country map e.g. { KEN: true, GHA: false }.
- * Returns null when covers is absent (no country was requested).
- */
-function CoverageBadge({ covers }: { covers: Record<string, boolean> | null | undefined }) {
-  if (covers == null) return null;
-  const entries = Object.entries(covers);
-  if (entries.length === 0) return null;
-
-  const missing = entries.filter(([, ok]) => !ok).map(([code]) => code);
-
-  if (missing.length === 0) {
-    return (
-      <span
-        title="Data available for requested country"
-        aria-label="Data available"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: 20,
-          height: 20,
-          borderRadius: "50%",
-          background: "rgba(46,125,50,0.10)",
-          color: COLOR_SUCCESS,
-          fontSize: 12,
-          fontWeight: 700,
-          flexShrink: 0,
-        }}
-      >
-        ✓
-      </span>
-    );
-  }
-
-  const label = `− No data for ${missing.join(", ")}`;
-  return (
-    <span
-      title={label}
-      aria-label={label}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 3,
-        padding: "2px 7px",
-        borderRadius: 999,
-        background: COLOR_MISSING_BG,
-        color: COLOR_MISSING,
-        fontSize: 10,
-        fontWeight: 600,
-        whiteSpace: "nowrap",
-        flexShrink: 0,
-        letterSpacing: "0.01em",
-      }}
-    >
-      {label}
-    </span>
-  );
-}
-
 // ─── Small pills ───────────────────────────────────────────────────────────────
 
 function MetaPill({ children }: { children: React.ReactNode }) {
@@ -180,6 +116,19 @@ const IndicatorCard = memo(function IndicatorCard({
     flexShrink: 0,
   };
 
+  let prefix = null;
+  if (indicator.covers_country != null) {
+    const entries = Object.entries(indicator.covers_country);
+    if (entries.length > 0) {
+      const allCovered = entries.every(([, ok]) => ok);
+      if (allCovered) {
+        prefix = <span style={{ color: COLOR_SUCCESS, marginRight: 4 }}>✓</span>;
+      } else {
+        prefix = <span style={{ color: COLOR_MISSING, marginRight: 4, fontWeight: 900 }}>−</span>;
+      }
+    }
+  }
+
   return (
     <div
       role={clickable ? "button" : undefined}
@@ -191,11 +140,6 @@ const IndicatorCard = memo(function IndicatorCard({
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      {/* Top row: coverage badge */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", minHeight: 20 }}>
-        <CoverageBadge covers={indicator.covers_country ?? null} />
-      </div>
-
       {/* Indicator name */}
       <div
         style={{
@@ -211,6 +155,7 @@ const IndicatorCard = memo(function IndicatorCard({
           overflow: "hidden",
         }}
       >
+        {prefix}
         {indicator.name}
       </div>
 
@@ -267,9 +212,8 @@ const IndicatorCard = memo(function IndicatorCard({
           color: COLOR_TEXT_MUTED,
           fontFamily: "ui-monospace, monospace",
           marginTop: 2,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
+          lineHeight: 1.3,
+          wordBreak: "break-word",
         }}
       >
         {indicator.database_name
