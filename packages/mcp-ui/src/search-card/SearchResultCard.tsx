@@ -40,26 +40,6 @@ function MetaPill({ children }: { children: React.ReactNode }) {
   );
 }
 
-function DimPill({ label }: { label: string }) {
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        padding: "1px 6px",
-        borderRadius: 999,
-        border: `0.5px solid ${COLOR_BORDER}`,
-        color: COLOR_TEXT_SECONDARY,
-        fontSize: 9,
-        fontWeight: 600,
-        letterSpacing: "0.04em",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {label}
-    </span>
-  );
-}
-
 function Divider() {
   return (
     <hr
@@ -182,28 +162,6 @@ const IndicatorCard = memo(function IndicatorCard({
         {indicator.periodicity && <MetaPill>{indicator.periodicity}</MetaPill>}
         {indicator.time_period_range && <MetaPill>{indicator.time_period_range}</MetaPill>}
       </div>
-
-      {/* Disaggregations */}
-      {indicator.dimensions && indicator.dimensions.length > 0 && (
-        <div>
-          <div
-            style={{
-              fontSize: 9,
-              fontWeight: 700,
-              color: COLOR_ACCENT,
-              marginBottom: 3,
-              letterSpacing: "0.04em",
-            }}
-          >
-            DISAGGREGATIONS
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-            {indicator.dimensions.map((d: string) => (
-              <DimPill key={d} label={d} />
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* DB / ID footer */}
       <div
@@ -422,8 +380,8 @@ export default function SearchResultCard({
       <div style={{ padding: "16px 16px 12px" }}>
         <h2
           style={{
-            fontSize: 17,
-            fontWeight: 700,
+            fontSize: 18,
+            fontWeight: 600,
             color: COLOR_TEXT_PRIMARY,
             margin: 0,
             lineHeight: 1.3,
@@ -432,7 +390,7 @@ export default function SearchResultCard({
           {title}
         </h2>
         {subtitle && (
-          <p style={{ fontSize: 13, color: COLOR_TEXT_SECONDARY, marginTop: 3, marginBottom: 0 }}>
+          <p style={{ fontSize: 14, color: COLOR_TEXT_SECONDARY, marginTop: 4, marginBottom: 0 }}>
             {subtitle}
           </p>
         )}
