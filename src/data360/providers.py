@@ -159,7 +159,19 @@ async def get_database_mapping() -> dict[str, str]:
 
 # ---------------------------------------------------------------------------
 # Natural-language aliases for group codes.
-# Keys are lower-cased phrases a user might type; values are FMR group codes.
+#
+# Codes and official names are grounded to CL_REF_GROUPINGS.json from the FMR
+# (e.g. "SAS" -> "South Asia", "LIC" -> "Low income"). The phrase variations
+# below (plurals, abbreviations, common shorthands like "mena", "fragile states")
+# are handcrafted to cover the most frequent natural-language inputs without
+# requiring a semantic embedding layer. Keys are lower-cased; values are FMR
+# group codes that must exist in ref_area_groups.json (enforced by
+# TestDataIntegrity.test_all_alias_values_exist_in_shipped_data).
+#
+# Future: if alias coverage proves insufficient, a lightweight embedding index
+# over all group names in ref_area_groups.json could supplement this map.
+# Candidate approach: build-time sentence-transformer embeddings stored beside
+# the JSON; cosine-similarity at query time as a fallback after alias miss.
 # ---------------------------------------------------------------------------
 _GROUP_ALIASES: dict[str, str] = {
     # South Asia
@@ -827,10 +839,12 @@ async def expand_country_group(
       3. Use the returned country_codes string directly in data360_get_data or
          data360_search_indicators disaggregation_filters for country-level queries.
 
-    Decision guidance:
-    - "Compare X across South Asian countries" -> expand SAS, query each country
-    - "What is South Asia's GDP?" -> use SAS directly with get_data (aggregate)
-    - If the group has >20 countries, consider using the aggregate code instead.
+    Decision guidance — check the returned `count` after calling this function:
+    - count <= 20: proceed with country-level data retrieval directly.
+    - count > 20: inform the user before fetching all countries. Say:
+      "This group contains N countries. Do you want individual country-level
+      data for all of them, or would you prefer the regional aggregate?"
+      Wait for their answer before proceeding.
 
     Covers groups sourced from FMR H_REF_AREA_GROUPS v38.0:
       REGION    - WB regional classifications (SAS, SSF, EAS, ECS, LCN, ...)

@@ -52,12 +52,17 @@ Do not answer with guesses. Do not stop after describing a plan.
    | Country-level comparison | "Compare GDP across South Asian countries" | Expand → data360_expand_country_group("SAS") → use country_codes |
    | Country-level comparison | "List poverty rates in low income countries" | Expand → data360_expand_country_group("LIC") → use country_codes |
 
-   If the group has >20 countries, prefer the aggregate unless the user explicitly asked for all countries.
+   When calling data360_expand_country_group, always check the returned `count` field:
+   - If count <= 20: proceed with country-level expansion without asking.
+   - If count > 20: **inform the user** before fetching. Say:
+     "This group contains N countries. Do you want individual country-level data
+     for all of them, or would you prefer the regional aggregate?"
+     Wait for confirmation before making N individual country calls.
    Natural-language group phrases are recognized automatically:
    - "South Asian countries" → SAS (6 countries)
    - "Low income countries" → LIC (26 countries)
    - "Sub-Saharan Africa" → SSF (48 countries)
-   - "Fragile states" → FCS
+   - "Fragile states" → FCS (39 countries)
    - "MENA" → MEA
    - and many more via data360_find_codelist_value
 
