@@ -19,7 +19,9 @@ from data360.providers import (
 # ---------------------------------------------------------------------------
 
 SAMPLE_GROUPS = {
-    "SAS": {"name": "South Asia", "type": "REGION", "countries": ["AFG", "BGD", "BTN", "IND", "LKA", "MDV", "NPL", "PAK"]},
+    # SAS reflects the actual FMR H_REF_AREA_GROUPS v38.0 membership.
+    # AFG and PAK are NOT in SAS; they are in MEA-family groups.
+    "SAS": {"name": "South Asia", "type": "REGION", "countries": ["BGD", "BTN", "IND", "LKA", "MDV", "NPL"]},
     "LIC": {"name": "Low income", "type": "INCOME", "countries": ["AFG", "BDI", "BFA", "CAF", "COD"]},
     "SSF": {"name": "Sub-Saharan Africa", "type": "REGION", "countries": ["AGO", "BDI", "BEN", "BFA", "BWA", "CAF"]},
     "FCS": {"name": "Fragile and conflict affected situations", "type": "OTHER", "countries": ["AFG", "BDI", "CAF", "COD"]},
@@ -34,12 +36,14 @@ SAMPLE_DATA = {
         "built_at": "2026-04-22",
         "hierarchy_version": "38.0",
         "total_groups": 7,
-        "total_countries": 15,
+        "total_countries": 14,
         "group_types": ["CONTINENT", "INCOME", "LENDING", "OTHER", "REGION", "REGION_UN"],
     },
     "groups": SAMPLE_GROUPS,
-    "all_countries": sorted({"AFG", "BGD", "BTN", "IND", "LKA", "MDV", "NPL", "PAK",
-                              "BDI", "BFA", "CAF", "COD", "AGO", "BEN", "BWA"}),
+    # all_countries is the union of all countries across all groups.
+    # AFG appears via LIC/FCS/IDA; BGD via IDA; SAS no longer contributes AFG or PAK.
+    "all_countries": sorted({"BGD", "BTN", "IND", "LKA", "MDV", "NPL",
+                              "AFG", "BDI", "BFA", "CAF", "COD", "AGO", "BEN", "BWA"}),
 }
 
 
@@ -100,7 +104,8 @@ class TestGroupHierarchyManager:
 
     def test_expand_group_sas(self, manager):
         countries = manager.expand_group("SAS")
-        assert sorted(countries) == ["AFG", "BGD", "BTN", "IND", "LKA", "MDV", "NPL", "PAK"]
+        # SAS in FMR v38.0 has 6 members; AFG and PAK are in MEA-family groups, not SAS.
+        assert sorted(countries) == ["BGD", "BTN", "IND", "LKA", "MDV", "NPL"]
 
     def test_expand_group_lic(self, manager):
         # LIC has 5 countries in the sample fixture
@@ -275,8 +280,8 @@ class TestExpandCountryGroup:
             with patch("data360.providers.get_group_hierarchy_manager", return_value=ghm):
                 with patch("data360.providers.get_codelist_manager") as mock_cl:
                     mock_cl.return_value.get_codelist_mapping = AsyncMock(return_value={
-                        "IND": "India", "PAK": "Pakistan", "BGD": "Bangladesh",
-                        "AFG": "Afghanistan", "BTN": "Bhutan", "LKA": "Sri Lanka",
+                        "IND": "India", "BGD": "Bangladesh",
+                        "BTN": "Bhutan", "LKA": "Sri Lanka",
                         "MDV": "Maldives", "NPL": "Nepal",
                     })
                     result = await expand_country_group("SAS")
@@ -284,10 +289,12 @@ class TestExpandCountryGroup:
         assert result["group_code"] == "SAS"
         assert result["group_name"] == "South Asia"
         assert result["group_type"] == "REGION"
-        sas_count = len(SAMPLE_GROUPS["SAS"]["countries"])
+        sas_count = len(SAMPLE_GROUPS["SAS"]["countries"])  # 6
         assert result["count"] == sas_count
         assert "IND" in result["country_codes"]
-        assert "PAK" in result["country_codes"]
+        # AFG and PAK are NOT members of SAS in the FMR hierarchy.
+        assert "AFG" not in result["country_codes"]
+        assert "PAK" not in result["country_codes"]
         assert result["hierarchy_version"] == "38.0"
         country_codes_list = result["country_codes"].split(",")
         assert len(country_codes_list) == sas_count
@@ -426,3 +433,48 @@ class TestRefAreaEnrichment:
 
         results = cm._search_global("UNIT_MEASURE", "usd", 5)
         assert "is_group" not in results[0]
+
+
+# ---------------------------------------------------------------------------
+# Data integrity: alias map and shipped data file are consistent
+# ---------------------------------------------------------------------------
+
+
+class TestDataIntegrity:
+    """Validate that the alias map and shipped ref_area_groups.json are consistent."""
+
+    def test_all_alias_values_exist_in_shipped_data(self):
+        """Every code in _GROUP_ALIASES must exist as a group in ref_area_groups.json.
+
+        This catches the case where an alias points to a code that was removed or
+        renamed in a new hierarchy version.
+        """
+        from data360.providers import GroupHierarchyManager
+
+        # Use the real shipped data file, not the test fixture.
+        ghm = GroupHierarchyManager()
+        missing = [
+            (phrase, code)
+            for phrase, code in _GROUP_ALIASES.items()
+            if not ghm.is_group(code)
+        ]
+        assert missing == [], (
+            f"These alias entries point to unknown group codes in ref_area_groups.json: "
+            f"{missing}. Either fix the alias or regenerate the data file."
+        )
+
+    def test_shipped_data_sas_excludes_afg_and_pak(self):
+        """Regression: SAS in the shipped data must NOT include AFG or PAK.
+
+        AFG and PAK belong to MEA-family groups in the FMR hierarchy v38.0.
+        This test ensures the build script and shipped file remain grounded
+        to the source and do not include erroneous entries.
+        """
+        from data360.providers import GroupHierarchyManager
+
+        ghm = GroupHierarchyManager()
+        sas_countries = ghm.expand_group("SAS")
+        assert "AFG" not in sas_countries, "AFG should not be in SAS per FMR v38.0"
+        assert "PAK" not in sas_countries, "PAK should not be in SAS per FMR v38.0"
+        assert "IND" in sas_countries, "IND must be in SAS"
+        assert "BGD" in sas_countries, "BGD must be in SAS"

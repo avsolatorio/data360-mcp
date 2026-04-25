@@ -735,6 +735,15 @@ async def find_codelist_value(
       - member_count (int): number of countries in the group
       - note (str): guidance on using data360_expand_country_group
 
+    Workflow for country groups (e.g. "South Asian countries", "low income countries"):
+      1. Call this function with codelist_type="REF_AREA" and the group name as query.
+      2. If the result has is_group=True, you have the group code (e.g. "SAS", "LIC").
+      3. To get individual country-level codes, call data360_expand_country_group with
+         that code. Use the returned country_codes string directly in data360_get_data
+         or data360_search_indicators disaggregation_filters.
+      4. To use the group as a regional aggregate instead, pass the group code directly
+         (e.g. REF_AREA="SAS") without expanding.
+
     Args:
         codelist_type: One of REF_AREA (countries/regions), FREQ, SEX, AGE, URBANISATION, UNIT_MEASURE.
         query: Search term (e.g. "Kenya", "female", "annual"). Comma-separated for multiple
@@ -810,6 +819,14 @@ async def expand_country_group(
     Use this when a user asks about a region, income group, or lending category
     and you need individual country-level data rather than the aggregate.
 
+    Workflow for group discovery and expansion:
+      1. If you only have a natural-language name (e.g. "South Asian countries"),
+         call data360_find_codelist_value(codelist_type="REF_AREA", query="<name>")
+         first to resolve it to a group code (e.g. "SAS").
+      2. Pass that code to this function to get the full country list.
+      3. Use the returned country_codes string directly in data360_get_data or
+         data360_search_indicators disaggregation_filters for country-level queries.
+
     Decision guidance:
     - "Compare X across South Asian countries" -> expand SAS, query each country
     - "What is South Asia's GDP?" -> use SAS directly with get_data (aggregate)
@@ -825,8 +842,9 @@ async def expand_country_group(
 
     Args:
         group_code: REF_AREA group code (e.g. "SAS", "LIC", "EAS", "FCS").
-            Case-insensitive. Use data360_find_codelist_value to resolve
-            natural-language names to codes first.
+            Case-insensitive. Natural-language names (e.g. "south asian countries")
+            are also accepted as a convenience; they are resolved via the alias map.
+            For reliable discovery, use data360_find_codelist_value first.
 
     Returns:
         Dict with:
@@ -866,8 +884,14 @@ async def expand_country_group(
     country_name_map: dict[str, str] = {}
     try:
         country_name_map = await cl_manager.get_codelist_mapping("REF_AREA")
-    except Exception:
-        pass  # Names are a convenience; codes are sufficient.
+    except Exception as e:
+        # Names are a convenience; codes are always returned even without them.
+        _logger.warning(
+            "expand_country_group: failed to fetch REF_AREA name mapping for '%s': %s. "
+            "Country names will fall back to code strings.",
+            code_upper,
+            e,
+        )
 
     countries = [
         {"code": c, "name": country_name_map.get(c, c)}
