@@ -78,11 +78,14 @@ class DatabaseManager:
                         _logger.info(
                             "Background refresh: updated %d databases.", len(mapping)
                         )
-                except Exception as e:
-                    _logger.error("Background database fetch failed: %s", e)
-                    # Keep existing cache; retry after the next full TTL cycle.
-                finally:
+                    # Update timestamp only on successful fetch
                     self._last_fetched = time.monotonic()
+                except Exception as e:
+                    _logger.error(
+                        "Background database fetch failed: %s. Retrying in 5 minutes.", e
+                    )
+                    # Artificially set last_fetched so the loop calculates sleep_for = 300s
+                    self._last_fetched = time.monotonic() - self._ttl + 300
 
             sleep_for = max(0.0, self._ttl - (time.monotonic() - self._last_fetched))
             await asyncio.sleep(sleep_for)
