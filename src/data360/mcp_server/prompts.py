@@ -54,7 +54,7 @@ Do not answer with guesses. Do not stop after describing a plan.
 
    If the group has >20 countries, prefer the aggregate unless the user explicitly asked for all countries.
    Natural-language group phrases are recognized automatically:
-   - "South Asian countries" → SAS (8 countries)
+   - "South Asian countries" → SAS (6 countries)
    - "Low income countries" → LIC (26 countries)
    - "Sub-Saharan Africa" → SSF (48 countries)
    - "Fragile states" → FCS
