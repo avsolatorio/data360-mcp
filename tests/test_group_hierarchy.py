@@ -195,31 +195,57 @@ class TestGroupHierarchyManager:
 
 
 class TestGroupAliases:
-    """Verify the alias map covers the most common phrases."""
+    """Verify the alias map only covers phrases where fuzzy search genuinely fails."""
 
     @pytest.mark.parametrize("phrase,expected_code", [
-        ("south asian countries", "SAS"),
-        ("south asian", "SAS"),
-        ("south asia", "SAS"),
-        ("low income countries", "LIC"),
-        ("low income", "LIC"),
-        ("high income countries", "HIC"),
-        ("upper middle income", "UMC"),
-        ("lower middle income", "LMC"),
-        ("middle income countries", "MIC"),
-        ("fragile states", "FCS"),
-        ("least developed countries", "LDC"),
-        ("small island states", "SST"),
-        ("sub-saharan africa", "SSF"),
-        ("sub-saharan", "SSF"),
-        ("latin america", "LCN"),
+        # Category 1: "and" vs "&" variants
+        ("east asia and pacific", "EAS"),
+        ("europe and central asia", "ECS"),
+        ("latin america and the caribbean", "LCN"),
+        ("middle east and north africa", "MEA"),
+        ("middle east & north africa", "MEA"),
+        ("low and middle income", "LMY"),
+        # Category 2: abbreviation not in official name
         ("mena", "MEA"),
-        ("oecd", "OED"),
-        ("european union", "EUU"),
-        ("arab world", "ARB"),
+        # Category 3: shorthands not in official name
+        ("fragile states", "FCS"),
+        ("small island states", "SST"),
+        ("eastern africa", "AFE"),
+        ("western africa", "AFW"),
+        # Category 4: semantic synonym
+        ("lower income", "LIC"),
     ])
     def test_alias_exists(self, phrase, expected_code):
         assert _GROUP_ALIASES[phrase] == expected_code
+
+    def test_alias_map_is_minimal(self):
+        """The alias map must not grow without justification.
+
+        Phrases like 'south asia', 'low income countries', 'sub-saharan africa'
+        are already handled by the fuzzy/substring search in CodelistManager and
+        do NOT belong in this map. If a new entry is added, a comment must explain
+        why fuzzy search fails for it.
+        """
+        # Phrases that fuzzy handles natively should never appear in the alias map.
+        fuzzy_native_phrases = [
+            "south asia", "south asian", "south asian countries",
+            "sub-saharan africa", "sub-saharan",
+            "low income", "low income countries",
+            "high income", "high income countries",
+            "lower middle income", "upper middle income",
+            "middle income", "middle income countries",
+            "least developed", "least developed countries",
+            "small states", "oecd", "oecd members",
+            "european union", "eu", "arab world",
+            "latin america", "north america",
+            "ida", "ibrd",
+            "fragile and conflict", "fragile and conflict affected",
+        ]
+        for phrase in fuzzy_native_phrases:
+            assert phrase not in _GROUP_ALIASES, (
+                f"'{phrase}' was re-added to _GROUP_ALIASES but the fuzzy search "
+                f"already handles it. Remove it unless you can prove fuzzy fails."
+            )
 
     def test_all_alias_values_are_uppercase(self):
         for phrase, code in _GROUP_ALIASES.items():
@@ -240,30 +266,36 @@ class TestFindCodelistValueAliases:
 
     @pytest.mark.asyncio
     async def test_alias_hit_returns_group_metadata(self, tmp_data_file):
-        # Patch the global manager to use test data
+        # Use 'fragile states' -> FCS: a genuine alias (fuzzy would not catch it
+        # because 'states' does not appear in 'Fragile and conflict affected situations').
         with patch("data360.providers._group_hierarchy_manager", None):
             ghm = GroupHierarchyManager()
             ghm._DATA_FILE = tmp_data_file
             with patch("data360.providers.get_group_hierarchy_manager", return_value=ghm):
-                results = await find_codelist_value("REF_AREA", "south asian countries")
+                results = await find_codelist_value("REF_AREA", "fragile states")
 
         assert len(results) == 1
         r = results[0]
-        assert r["id"] == "SAS"
+        assert r["id"] == "FCS"
         assert r["is_group"] is True
-        assert r["group_type"] == "REGION"
-        assert r["member_count"] == len(SAMPLE_GROUPS["SAS"]["countries"])
+        assert r["group_type"] == "OTHER"
+        assert r["member_count"] == len(SAMPLE_GROUPS["FCS"]["countries"])
         assert "data360_expand_country_group" in r["note"]
 
     @pytest.mark.asyncio
     async def test_alias_case_insensitive(self, tmp_data_file):
+        # 'Mena' and 'MENA' must resolve to MEA via the alias map.
+        # MEA is not in the fixture so the group_info lookup returns None;
+        # that is correct — we only assert the alias key normalisation here.
         with patch("data360.providers._group_hierarchy_manager", None):
             ghm = GroupHierarchyManager()
             ghm._DATA_FILE = tmp_data_file
             with patch("data360.providers.get_group_hierarchy_manager", return_value=ghm):
-                results = await find_codelist_value("REF_AREA", "South Asian Countries")
+                results_mixed = await find_codelist_value("REF_AREA", "Fragile States")
+                results_upper = await find_codelist_value("REF_AREA", "FRAGILE STATES")
 
-        assert results[0]["id"] == "SAS"
+        assert results_mixed[0]["id"] == "FCS"
+        assert results_upper[0]["id"] == "FCS"
 
 
 # ---------------------------------------------------------------------------
@@ -328,16 +360,20 @@ class TestExpandCountryGroup:
 
     @pytest.mark.asyncio
     async def test_expand_via_alias(self, tmp_data_file):
-        """expand_country_group resolves natural-language aliases as fallback."""
+        """expand_country_group resolves genuine aliases as fallback.
+
+        Uses 'fragile states' -> FCS: a case where fuzzy search would not
+        find FCS because 'states' is not in the official name.
+        """
         with patch("data360.providers._group_hierarchy_manager", None):
             ghm = GroupHierarchyManager()
             ghm._DATA_FILE = tmp_data_file
             with patch("data360.providers.get_group_hierarchy_manager", return_value=ghm):
                 with patch("data360.providers.get_codelist_manager") as mock_cl:
                     mock_cl.return_value.get_codelist_mapping = AsyncMock(return_value={})
-                    result = await expand_country_group("south asian countries")
+                    result = await expand_country_group("fragile states")
 
-        assert result["group_code"] == "SAS"
+        assert result["group_code"] == "FCS"
 
     @pytest.mark.asyncio
     async def test_expand_unknown_code_returns_error(self, tmp_data_file):

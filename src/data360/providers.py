@@ -160,77 +160,44 @@ async def get_database_mapping() -> dict[str, str]:
 # ---------------------------------------------------------------------------
 # Natural-language aliases for group codes.
 #
-# Codes and official names are grounded to CL_REF_GROUPINGS.json from the FMR
-# (e.g. "SAS" -> "South Asia", "LIC" -> "Low income"). The phrase variations
-# below (plurals, abbreviations, common shorthands like "mena", "fragile states")
-# are handcrafted to cover the most frequent natural-language inputs without
-# requiring a semantic embedding layer. Keys are lower-cased; values are FMR
-# group codes that must exist in ref_area_groups.json (enforced by
-# TestDataIntegrity.test_all_alias_values_exist_in_shipped_data).
+# This map is intentionally minimal: it contains ONLY phrases where the
+# existing fuzzy/substring search in CodelistManager._search_global would
+# genuinely fail to return the correct code. The LLM and the fuzzy layer
+# already handle most natural-language variations (e.g. "South Asia",
+# "low income countries", "sub-saharan africa") without help from this map.
 #
-# Future: if alias coverage proves insufficient, a lightweight embedding index
-# over all group names in ref_area_groups.json could supplement this map.
-# Candidate approach: build-time sentence-transformer embeddings stored beside
-# the JSON; cosine-similarity at query time as a fallback after alias miss.
+# Entries kept here fall into four categories:
+#   1. "and" vs "&" variants — substring check fails because the official
+#      codelist uses "&" but users type "and".
+#   2. Abbreviations not present in the official name (e.g. "mena").
+#   3. Common shorthands whose words don't appear in the official name
+#      (e.g. "fragile states" vs "Fragile and conflict affected situations").
+#   4. One semantic synonym where the variant word is absent from the
+#      official name ("lower income" vs "Low income").
+#
+# All values are FMR group codes that must exist in ref_area_groups.json.
+# Enforced by TestDataIntegrity.test_all_alias_values_exist_in_shipped_data.
+#
+# Future path if coverage proves insufficient: build-time sentence-transformer
+# embeddings over all group names, cosine-similarity fallback after alias miss.
 # ---------------------------------------------------------------------------
 _GROUP_ALIASES: dict[str, str] = {
-    # South Asia
-    "south asian countries": "SAS",
-    "south asian": "SAS",
-    "south asia": "SAS",
-    # Sub-Saharan Africa
-    "sub-saharan african countries": "SSF",
-    "sub-saharan africa": "SSF",
-    "sub-saharan": "SSF",
-    # East Asia & Pacific
-    "east asia and pacific": "EAS",
-    "east asia & pacific": "EAS",
-    "east asia pacific": "EAS",
-    # Europe & Central Asia
-    "europe and central asia": "ECS",
-    "europe & central asia": "ECS",
-    # Latin America & Caribbean
-    "latin america and the caribbean": "LCN",
-    "latin america & caribbean": "LCN",
-    "latin america": "LCN",
-    # Middle East & North Africa
-    "middle east and north africa": "MEA",
-    "middle east & north africa": "MEA",
-    "mena": "MEA",
-    # North America
-    "north america": "NAC",
-    # Income groups
-    "low income": "LIC",
-    "low income countries": "LIC",
+    # Category 1: "and" vs "&" — fuzzy fails because "&" != "and"
+    "east asia and pacific": "EAS",           # official: "East Asia & Pacific"
+    "europe and central asia": "ECS",          # official: "Europe & Central Asia"
+    "latin america and the caribbean": "LCN",  # official: "Latin America & Caribbean"
+    "middle east and north africa": "MEA",     # official: "Middle East, North Africa, Afghanistan & Pakistan"
+    "middle east & north africa": "MEA",       # same but omits "Afghanistan & Pakistan"
+    "low and middle income": "LMY",            # official: "Low & middle income"
+    # Category 2: abbreviation not in official name
+    "mena": "MEA",                             # common abbreviation for the region
+    # Category 3: shorthands whose words don't appear in the official name
+    "fragile states": "FCS",                   # official: "Fragile and conflict affected situations"
+    "small island states": "SST",              # official: "Small states"
+    "eastern africa": "AFE",                   # official: "Africa Eastern and Southern"
+    "western africa": "AFW",                   # official: "Africa Western and Central"
+    # Category 4: semantic synonym — "lower" absent from "Low income"
     "lower income": "LIC",
-    "high income": "HIC",
-    "high income countries": "HIC",
-    "upper middle income": "UMC",
-    "upper middle income countries": "UMC",
-    "lower middle income": "LMC",
-    "lower middle income countries": "LMC",
-    "low and middle income": "LMY",
-    "middle income": "MIC",
-    "middle income countries": "MIC",
-    # Special groupings
-    "fragile states": "FCS",
-    "fragile and conflict": "FCS",
-    "fragile and conflict affected": "FCS",
-    "least developed countries": "LDC",
-    "least developed": "LDC",
-    "small island states": "SST",
-    "small states": "SST",
-    "oecd members": "OED",
-    "oecd": "OED",
-    "european union": "EUU",
-    "eu": "EUU",
-    # Africa sub-regions
-    "eastern africa": "AFE",
-    "western africa": "AFW",
-    "arab world": "ARB",
-    # IDA/IBRD
-    "ida": "IDA",
-    "ibrd": "IBD",
 }
 
 
