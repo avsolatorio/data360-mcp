@@ -901,7 +901,7 @@ class TestSemicolonDelimiterAndCoversCountry:
             from data360.api import _enrich_search_results
 
             search_resp = _make_search_response_with_countries("IND_1", "GDP", ["KEN"])
-            indicators = _enrich_search_results(search_resp, "KEN;GHA")
+            indicators, _ = _enrich_search_results(search_resp, "KEN;GHA")
 
         ind = indicators[0]
         assert isinstance(ind.covers_country, dict)
@@ -915,7 +915,7 @@ class TestSemicolonDelimiterAndCoversCountry:
         from data360.api import _enrich_search_results
 
         search_resp = _make_search_response_with_countries("IND_1", "GDP", ["KEN", "GHA"])
-        indicators = _enrich_search_results(search_resp, "KEN;GHA")
+        indicators, _ = _enrich_search_results(search_resp, "KEN;GHA")
 
         ind = indicators[0]
         assert ind.covers_country == {"KEN": True, "GHA": True}
@@ -926,7 +926,7 @@ class TestSemicolonDelimiterAndCoversCountry:
         from data360.api import _enrich_search_results
 
         search_resp = _make_search_response_with_countries("IND_1", "GDP", ["USA", "FRA"])
-        indicators = _enrich_search_results(search_resp, "KEN;GHA")
+        indicators, _ = _enrich_search_results(search_resp, "KEN;GHA")
 
         ind = indicators[0]
         assert ind.covers_country == {"KEN": False, "GHA": False}
@@ -1007,7 +1007,7 @@ class TestSemicolonDelimiterAndCoversCountry:
             has_more=False,
             next_offset=None,
         )
-        indicators = _enrich_search_results(combined, "KEN")
+        indicators, _ = _enrich_search_results(combined, "KEN")
 
         indicators.sort(
             key=lambda x: (

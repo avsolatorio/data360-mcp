@@ -488,7 +488,7 @@ def _enrich_search_results(
     search_result: "SearchResponse",
     country_code: str | None,
     db_mapping: dict[str, str] | None = None,
-) -> list[EnrichedIndicator]:
+) -> tuple[list["EnrichedIndicator"], list["EnrichedIndicator"]]:
     """Convert raw SearchResponse items into a list of EnrichedIndicator objects.
 
     Extracted to avoid duplicating enrichment logic between the single-query
@@ -500,10 +500,13 @@ def _enrich_search_results(
         db_mapping: Optional dict mapping database_id -> human-readable name.
 
     Returns:
-        List of EnrichedIndicator objects. Empty if search_result.items is falsy.
+        Tuple of (indicators, indicators_to_verify).
+        indicators: Full list of EnrichedIndicator objects.
+        indicators_to_verify: Subset where covers_country has False entries that
+            may be wrong because the search API omits group codes from ref_country.
     """
     if not search_result.items:
-        return []
+        return [], []
 
     _db = db_mapping or {}
 
@@ -515,7 +518,20 @@ def _enrich_search_results(
         "education": "EDUCATION",
     }
 
+    # Determine upfront which requested codes are known groups/WLD — the search
+    # API's ref_country array omits these even when the data endpoint supports them.
+    from .providers import get_group_hierarchy_manager
+
+    _group_manager = get_group_hierarchy_manager()
+    _regional_codes: set[str] = set()
+    if country_code:
+        for c in country_code.split(";"):
+            c = c.strip()
+            if c and (c == "WLD" or _group_manager.is_group(c)):
+                _regional_codes.add(c)
+
     indicators: list[EnrichedIndicator] = []
+    indicators_to_verify: list[EnrichedIndicator] = []
     for item in search_result.items:
         raw = item.model_dump()
 
@@ -531,7 +547,10 @@ def _enrich_search_results(
             if start and end:
                 time_period_range = f"{start}-{end}"
 
-        # Check covers_country from ref_country — produce a per-country bool map
+        # Check covers_country from ref_country — produce a per-country bool map.
+        # Regional aggregate codes (like SAS, WLD) are often absent from ref_country
+        # even when the data endpoint supports them; those entries start as False
+        # and are verified asynchronously after this loop.
         covers_country: dict[str, bool] | None = None
         ref_country = raw.get("ref_country", [])
         if country_code and ref_country and isinstance(ref_country, list):
@@ -555,27 +574,34 @@ def _enrich_search_results(
                         useful_dims.append(_label_to_code[label])
 
         db_id = raw.get("database_id", "")
-        indicators.append(
-            EnrichedIndicator(
-                idno=raw.get("idno", ""),
-                database_id=db_id,
-                database_name=_db.get(db_id),
-                name=raw.get("name", ""),
-                truncated_definition=(raw.get("definition_long") or "")[:100],
-                unit=raw.get("measurement_unit"),
-                periodicity=raw.get("periodicity"),
-                latest_data=latest_data,
-                time_period_range=time_period_range,
-                covers_country=covers_country,
-                dimensions=useful_dims if useful_dims else None,
-            )
+        ind = EnrichedIndicator(
+            idno=raw.get("idno", ""),
+            database_id=db_id,
+            database_name=_db.get(db_id),
+            name=raw.get("name", ""),
+            truncated_definition=(raw.get("definition_long") or "")[:100],
+            unit=raw.get("measurement_unit"),
+            periodicity=raw.get("periodicity"),
+            latest_data=latest_data,
+            time_period_range=time_period_range,
+            covers_country=covers_country,
+            dimensions=useful_dims if useful_dims else None,
         )
+        indicators.append(ind)
+
+        # Flag for verification if any regional code is still marked False.
+        if (
+            _regional_codes
+            and covers_country is not None
+            and any(not covers_country.get(c, True) for c in _regional_codes)
+        ):
+            indicators_to_verify.append(ind)
 
     # Set requested_country on all indicators
     for ind in indicators:
         ind.requested_country = country_code
 
-    return indicators
+    return indicators, indicators_to_verify
 
 
 async def search(  # noqa: PLR0911
@@ -899,10 +925,41 @@ async def search(  # noqa: PLR0911
         return EnrichedSearchResponse(error=f"No indicators found for: '{query}'")
 
     db_mapping = await get_database_mapping()
-    indicators = _enrich_search_results(search_result, country_code, db_mapping)
+    indicators, indicators_to_verify = _enrich_search_results(
+        search_result, country_code, db_mapping
+    )
 
-    # Sort: covers_country=True first, then by latest_data descending
-    if country_code:
+    # Secondary verification pass: the search API's ref_country array omits group
+    # aggregate codes (SAS, WLD, etc.) even when the data endpoint supports them.
+    # For flagged indicators, concurrently query the disaggregation endpoint to
+    # determine the definitive True/False for each regional code.
+    if country_code and indicators_to_verify:
+        regional_codes = [
+            c.strip()
+            for c in country_code.split(";")
+            if c.strip()
+        ]
+
+        async def _verify_regional_coverage(ind: EnrichedIndicator) -> None:
+            try:
+                res = await get_disaggregation(
+                    ind.database_id, ind.idno, required_country=country_code
+                )
+                for dim in res.get("dimensions", []):
+                    if dim.get("field_name") == "REF_AREA":
+                        queried = dim.get("queried", {})
+                        if ind.covers_country is not None:
+                            for c in regional_codes:
+                                if c in ind.covers_country:
+                                    ind.covers_country[c] = queried.get(c, False)
+                        break
+            except Exception as e:
+                _logger.warning(
+                    f"Failed to verify regional coverage for {ind.idno}: {e}"
+                )
+
+        await asyncio.gather(*(_verify_regional_coverage(ind) for ind in indicators_to_verify))
+
         indicators.sort(
             key=lambda x: (
                 not any((x.covers_country or {}).values()),
@@ -957,7 +1014,7 @@ async def _build_multi_query_response(
             ))
             continue
 
-        enriched = _enrich_search_results(raw_result, code_for_query, db_mapping)
+        enriched, _ = _enrich_search_results(raw_result, code_for_query, db_mapping)
         total_candidates += len(enriched)
 
         group_indicators: list[EnrichedIndicator] = []
