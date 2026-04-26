@@ -84,8 +84,11 @@ class FakeSession:
 class FakeContext:
     """Fake MCP Context that simulates ctx.sample() with structured output.
 
-    Accepts a _DecompositionResult to return as result_type output,
-    or raises on demand to test the fallback path.
+    Supports three modes:
+    - Normal: returns FakeSamplingResult with result=_DecompositionResult (Phase A).
+    - phase_a_only_raise: Phase A raises (simulates VS Code rejecting result_type),
+      Phase B returns plain_text_response as text.
+    - should_raise: both phases raise unconditionally.
     """
 
     def __init__(
@@ -93,15 +96,28 @@ class FakeContext:
         result: _DecompositionResult | None = None,
         should_raise: bool = False,
         native_sampling: bool = True,
+        phase_a_only_raise: bool = False,
+        plain_text_response: str | None = None,
     ):
         self._result = result
         self._should_raise = should_raise
+        self._phase_a_only_raise = phase_a_only_raise
+        self._plain_text_response = plain_text_response
         self.session = FakeSession(native_sampling=native_sampling)
+        self._call_count = 0
 
     async def sample(self, messages, **kwargs) -> FakeSamplingResult:
+        self._call_count += 1
         if self._should_raise:
             raise ValueError("Client does not support sampling")
-        return FakeSamplingResult(result=self._result)
+        if self._phase_a_only_raise and "result_type" in kwargs:
+            # Phase A: client rejects result_type (e.g. VS Code)
+            raise ValueError("result_type not supported by this client")
+        # Phase B or normal: return plain text
+        return FakeSamplingResult(
+            result=self._result,
+            text=self._plain_text_response,
+        )
 
 
 # --- Unit tests for _score_indicator ---
@@ -261,7 +277,7 @@ class TestAnalyzeDevelopmentTopic:
 
     @pytest.mark.asyncio
     async def test_sampling_failure_proceeds_with_raw_query(self):
-        """When ctx.sample() raises, proceeds with raw query without propagating error."""
+        """When both Phase A and Phase B raise, proceeds with raw query."""
         indicators = [_make_indicator()]
         mock_search_response = _make_search_response(indicators)
 
@@ -282,9 +298,108 @@ class TestAnalyzeDevelopmentTopic:
                 ctx=ctx,
             )
 
-        # Must not raise; must fall back gracefully
+        # Must not raise; must proceed gracefully
         assert result["decomposition_method"] == "none"
         assert len(result["sub_queries"]) >= 1
+
+    @pytest.mark.asyncio
+    async def test_phase_a_fails_phase_b_succeeds_flat(self):
+        """VS Code path: Phase A (result_type) rejected, Phase B plain-text succeeds."""
+        indicators = [_make_indicator()]
+        mock_search_response = _make_search_response(indicators)
+
+        ctx = FakeContext(
+            phase_a_only_raise=True,
+            plain_text_response='{"sub_queries": ["GDP per capita", "poverty rate", "life expectancy"]}',
+        )
+
+        mock_data = AsyncMock()
+        mock_data.return_value.data = []
+        mock_data.return_value.error = None
+        mock_data.return_value.metadata = {}
+        mock_data.return_value.count = 0
+
+        with (
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)),
+            patch("data360.api.get_data", mock_data),
+        ):
+            result = await analyze_development_topic(
+                query="What makes a country a great place to live?",
+                ctx=ctx,
+            )
+
+        assert result["decomposition_method"] == "sampling_client"
+        assert "GDP per capita" in result["sub_queries"]
+        assert "poverty rate" in result["sub_queries"]
+        assert ctx._call_count == 2  # Phase A raised, Phase B succeeded
+
+    @pytest.mark.asyncio
+    async def test_phase_a_fails_phase_b_succeeds_grouped(self):
+        """VS Code path: Phase A rejected, Phase B returns grouped format."""
+        indicators = [_make_indicator()]
+        mock_search_response = _make_search_response(indicators)
+
+        grouped_json = (
+            '{"query_groups": '
+            '[{"queries": ["unemployment rate"], "country": "Morocco"}, '
+            '{"queries": ["manufacturing output"], "country": "Ethiopia"}]}'
+        )
+        ctx = FakeContext(
+            phase_a_only_raise=True,
+            plain_text_response=grouped_json,
+        )
+
+        mock_data = AsyncMock()
+        mock_data.return_value.data = []
+        mock_data.return_value.error = None
+        mock_data.return_value.count = 0
+
+        with (
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)) as mock_search,
+            patch("data360.api._resolve_country_code", return_value="MAR,ETH"),
+            patch("data360.api.get_data", mock_data),
+        ):
+            result = await analyze_development_topic(
+                query="Labor market Morocco vs Ethiopia",
+                country="Morocco, Ethiopia",
+                ctx=ctx,
+            )
+
+        assert result["decomposition_method"] == "sampling_client"
+        call_kwargs = mock_search.call_args.kwargs
+        groups = call_kwargs["query_groups"]
+        assert len(groups) == 2
+        assert groups[0].country == "Morocco"
+        assert groups[1].country == "Ethiopia"
+
+    @pytest.mark.asyncio
+    async def test_phase_a_fails_phase_b_non_json_proceeds_raw(self):
+        """VS Code path: Phase A rejected, Phase B returns non-JSON, proceeds with raw query."""
+        indicators = [_make_indicator()]
+        mock_search_response = _make_search_response(indicators)
+
+        ctx = FakeContext(
+            phase_a_only_raise=True,
+            plain_text_response="Sorry, I cannot help with that.",
+        )
+
+        mock_data = AsyncMock()
+        mock_data.return_value.data = []
+        mock_data.return_value.error = None
+        mock_data.return_value.metadata = {}
+        mock_data.return_value.count = 0
+
+        with (
+            patch("data360.api.search", new=AsyncMock(return_value=mock_search_response)),
+            patch("data360.api.get_data", mock_data),
+        ):
+            result = await analyze_development_topic(
+                query="What makes a country great?",
+                ctx=ctx,
+            )
+
+        assert result["decomposition_method"] == "none"
+        assert result["sub_queries"] == ["What makes a country great?"]
 
     @pytest.mark.asyncio
     async def test_sampling_empty_result_proceeds_with_raw_query(self):

@@ -1551,20 +1551,25 @@ _STOPWORDS = frozenset({
 })
 _DEFAULT_SUMMARY_YEARS = 5
 
-# System prompt for the sampling call. FastMCP automatically appends the
-# JSON schema of _DecompositionResult when result_type is provided, so the
-# prompt only needs to describe the intent and field semantics.
+# System prompt for the sampling call.
+#
+# When result_type=_DecompositionResult is used (Phase A), FastMCP automatically
+# appends the Pydantic JSON schema so the field descriptions below are sufficient.
+#
+# When the client rejects result_type and Phase B (plain-text) is used instead,
+# the explicit JSON examples at the end of this prompt ensure the model still
+# returns parseable output that our manual parser can handle.
 _SAMPLING_SYSTEM_PROMPT = (
     "You are a development economist. Given the user's question about "
     "development data or indicators, generate 3-5 specific, measurable "
     "topics that can be searched in a statistical database (e.g. World "
     "Bank indicators).\n\n"
-    "Respond using the provided JSON schema:\n"
-    "- If the question mentions MULTIPLE countries with DIFFERENT topics per country, "
-    "populate 'query_groups' with per-country search terms and leave 'sub_queries' null.\n"
-    "- Otherwise, populate 'sub_queries' with a flat list of short search strings "
-    "and leave 'query_groups' null.\n"
-    "Do not populate both fields simultaneously."
+    "Respond with valid JSON only (no markdown, no explanation):\n"
+    "- If the question covers a single country or no specific country, respond with:\n"
+    '  {"sub_queries": ["topic 1", "topic 2", ...]}\n'
+    "- If the question mentions MULTIPLE countries with DIFFERENT topics per country, respond with:\n"
+    '  {"query_groups": [{"queries": ["topic 1"], "country": "CountryName"}, ...]}\n'
+    "Populate exactly one field (sub_queries OR query_groups). Do not populate both."
 )
 
 
@@ -1685,10 +1690,20 @@ async def analyze_development_topic(
         country_code = await _resolve_country_code(country)
 
     # --- Step 2: Decompose query into sub-queries ---
-    # Attempt LLM-powered decomposition via MCP sampling (structured output).
-    # On any failure — client does not support sampling, LiteLLM call fails,
-    # or the response does not validate — log a warning and proceed with
-    # the raw query. No partial JSON fallback is attempted.
+    # Two-phase sampling strategy:
+    #
+    # Phase A — structured output (result_type=_DecompositionResult):
+    #   Works with FastMCP's server-side LiteLLM handler and any MCP client
+    #   that supports schema-constrained sampling. FastMCP enforces the Pydantic
+    #   schema and returns a validated _DecompositionResult object.
+    #
+    # Phase B — plain-text fallback:
+    #   If Phase A fails because the client rejects result_type (e.g. VS Code
+    #   Copilot, Claude Desktop), retry with a plain ctx.sample() call and parse
+    #   the text response as JSON manually. The system prompt already contains
+    #   explicit JSON format examples so the model reliably produces parseable output.
+    #
+    # If both phases fail, proceed with the raw user query (decomposition_method="none").
     sub_queries: list[str] = []
     query_groups_from_sampling: list[QueryGroup] | None = None
     decomposition_method = "none"
@@ -1700,16 +1715,15 @@ async def analyze_development_topic(
     )
 
     if ctx is not None:
-        try:
-            # Determine tier before calling so we can surface it in the response.
-            # Tier 1: client advertises native MCP sampling support.
-            # Tier 2: server-side LiteLLM handler acts as fallback.
-            from mcp.types import ClientCapabilities, SamplingCapability  # noqa: PLC0415
-            _has_native_sampling = ctx.session.check_client_capability(
-                ClientCapabilities(sampling=SamplingCapability())
-            )
-            _sampling_tier = "sampling_client" if _has_native_sampling else "sampling_server"
+        from mcp.types import ClientCapabilities, SamplingCapability  # noqa: PLC0415
+        _has_native_sampling = ctx.session.check_client_capability(
+            ClientCapabilities(sampling=SamplingCapability())
+        )
+        _sampling_tier = "sampling_client" if _has_native_sampling else "sampling_server"
 
+        # --- Phase A: structured output via result_type ---
+        _phase_a_failed = False
+        try:
             sampling_result = await ctx.sample(
                 f"User question: {query}",
                 system_prompt=_SAMPLING_SYSTEM_PROMPT,
@@ -1718,7 +1732,6 @@ async def analyze_development_topic(
             )
             decomposition: _DecompositionResult = sampling_result.result
 
-            # Case A: grouped format — different topics per country
             if decomposition.query_groups:
                 query_groups_from_sampling = [
                     QueryGroup(
@@ -1734,12 +1747,11 @@ async def analyze_development_topic(
                         q for g in query_groups_from_sampling for q in g.queries
                     ]
                     _logger.info(
-                        "Sampling decomposition succeeded (grouped, tier=%s): %s",
+                        "Phase A sampling succeeded (grouped, tier=%s): %s",
                         decomposition_method,
                         query_groups_from_sampling,
                     )
 
-            # Case B: flat format — same topics for all countries (or no country)
             elif decomposition.sub_queries:
                 sub_queries = [
                     s.strip() for s in decomposition.sub_queries
@@ -1748,18 +1760,97 @@ async def analyze_development_topic(
                 if sub_queries:
                     decomposition_method = _sampling_tier
                     _logger.info(
-                        "Sampling decomposition succeeded (flat, tier=%s): %s",
+                        "Phase A sampling succeeded (flat, tier=%s): %s",
                         decomposition_method,
                         sub_queries,
                     )
 
-        except Exception:
-            # Sampling unavailable (client does not support it) or the LiteLLM
-            # call failed. Log and proceed with the raw query.
-            _logger.warning(
-                "Sampling unavailable or failed; proceeding with raw query.",
-                exc_info=True,
+        except Exception as _phase_a_exc:
+            _phase_a_failed = True
+            _logger.info(
+                "Phase A (result_type) sampling failed (%s: %s); trying Phase B plain-text.",
+                type(_phase_a_exc).__name__,
+                _phase_a_exc,
             )
+
+        # --- Phase B: plain-text fallback (for clients that reject result_type) ---
+        if _phase_a_failed and not sub_queries:
+            try:
+                plain_result = await ctx.sample(
+                    f"User question: {query}",
+                    system_prompt=_SAMPLING_SYSTEM_PROMPT,
+                    max_tokens=512,
+                )
+                raw_text = (plain_result.text or "").strip()
+                # Strip markdown code fences if present
+                if raw_text.startswith("```"):
+                    lines = raw_text.split("\n")
+                    raw_text = "\n".join(lines[1:-1]).strip()
+
+                parsed = json.loads(raw_text)
+
+                if isinstance(parsed, dict):
+                    # Grouped format: {"query_groups": [{"queries": [...], "country": "..."}, ...]}
+                    if isinstance(parsed.get("query_groups"), list):
+                        raw_groups = parsed["query_groups"]
+                        query_groups_from_sampling = [
+                            QueryGroup(
+                                queries=[q.strip() for q in g["queries"] if q and q.strip()][:5],
+                                country=g.get("country", ""),
+                            )
+                            for g in raw_groups
+                            if isinstance(g, dict) and g.get("queries")
+                        ]
+                        if query_groups_from_sampling:
+                            decomposition_method = _sampling_tier
+                            sub_queries = [
+                                q for g in query_groups_from_sampling for q in g.queries
+                            ]
+                            _logger.info(
+                                "Phase B sampling succeeded (grouped, tier=%s): %s",
+                                decomposition_method,
+                                query_groups_from_sampling,
+                            )
+
+                    # Flat format: {"sub_queries": ["topic 1", "topic 2", ...]}
+                    elif isinstance(parsed.get("sub_queries"), list):
+                        sub_queries = [
+                            s.strip() for s in parsed["sub_queries"]
+                            if isinstance(s, str) and s.strip()
+                        ][:5]
+                        if sub_queries:
+                            decomposition_method = _sampling_tier
+                            _logger.info(
+                                "Phase B sampling succeeded (flat, tier=%s): %s",
+                                decomposition_method,
+                                sub_queries,
+                            )
+
+                    # Legacy flat list format: ["topic 1", "topic 2", ...]
+                    elif isinstance(parsed, list) and parsed and isinstance(parsed[0], str):
+                        sub_queries = [
+                            s.strip() for s in parsed
+                            if isinstance(s, str) and s.strip()
+                        ][:5]
+                        if sub_queries:
+                            decomposition_method = _sampling_tier
+                            _logger.info(
+                                "Phase B sampling succeeded (legacy flat list, tier=%s): %s",
+                                decomposition_method,
+                                sub_queries,
+                            )
+
+            except (json.JSONDecodeError, TypeError) as _parse_exc:
+                _logger.warning(
+                    "Phase B sampling returned non-JSON response; proceeding with raw query. error=%s",
+                    _parse_exc,
+                )
+            except Exception as _phase_b_exc:
+                _logger.warning(
+                    "Phase B sampling failed; proceeding with raw query. error=%s: %s",
+                    type(_phase_b_exc).__name__,
+                    _phase_b_exc,
+                )
 
     # Proceed with the raw query when sampling produced nothing
     if not sub_queries:
