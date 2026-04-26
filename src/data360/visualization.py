@@ -12,7 +12,9 @@ Vega-Lite specifications, then persists them either through the optional Charts 
 - ``get_multi_indicator_viz_spec`` — two to four indicators; merges frames and
   dispatches multi-series strategies (scatter, layered lines, connected scatter, etc.).
 
-Return shape for both: ``{"url": str|None, "error": str|None, ...}``. Before any HTTP
+Return shape for both: ``{"url": str|None, "error": str|None, ...}`` plus optional
+``database_id``, ``database_name``, ``indicator_id``, ``indicator_name`` for client
+source lines. Before any HTTP
 or ``json.dump``, specs are passed through ``_vega_spec_to_json_safe`` so
 ``data.values`` never contains raw ``pandas.Timestamp`` / numpy scalars that would
 break JSON encoding.
@@ -39,6 +41,7 @@ from draco.renderer import AltairRenderer
 
 from data360 import viz_config
 from data360.config import get_mcp_server_settings
+from data360.providers import get_database_mapping
 
 _logger = logging.getLogger(__name__)
 
@@ -90,11 +93,14 @@ async def post_spec_to_charts_api(vl_spec: dict) -> str:
     payload = dict(vl_spec)
     # Charts API often rejects payloads without title
     payload.setdefault("title", vl_spec.get("title") or "Generated Visualization")
+    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    if settings.charts_api_token:
+        headers["Authorization"] = f"Bearer {settings.charts_api_token}"
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
             url,
             json=payload,
-            headers={"accept": "application/json", "Content-Type": "application/json"},
+            headers=headers,
         )
         response.raise_for_status()
     location = response.headers.get("Location")
@@ -172,10 +178,19 @@ async def _store_spec(vl_spec: dict) -> str:
     return save_specs_to_static(safe)
 
 
-def _ok(url: str, warning: str | None = None) -> VizResult:
+def _ok(
+    url: str,
+    warning: str | None = None,
+    *,
+    source_attribution: dict[str, str] | None = None,
+) -> VizResult:
     r: VizResult = {"url": url, "error": None}
     if warning:
         r["warning"] = warning
+    if source_attribution:
+        for key, val in source_attribution.items():
+            if val:
+                r[key] = val
     return r
 
 
@@ -195,9 +210,7 @@ def _sanitize_dataframe_for_json_records(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
     for col in out.columns:
         if pd.api.types.is_datetime64_any_dtype(out[col]):
-            out[col] = out[col].map(
-                lambda x: x.isoformat() if pd.notna(x) else None
-            )
+            out[col] = out[col].map(lambda x: x.isoformat() if pd.notna(x) else None)
         elif out[col].dtype == object:
             out[col] = out[col].map(_scalar_for_json)
     return out
@@ -335,6 +348,8 @@ def _clean_single_df(
         {"time_period": "year", "obs_value": "value", "ref_area": "country"}.get(c, c)
         for c in relevant_cols
     ]
+    if "value" in viz_data.columns:
+        viz_data["value"] = pd.to_numeric(viz_data["value"], errors="coerce")
     return viz_data, relevant_cols
 
 
@@ -529,7 +544,7 @@ async def get_viz_spec(
 
     # 4. Fetch title and unit
     chart_title = "Generated Visualization"
-    unit_label = "Value"
+    raw_unit = ""
     try:
         parsed = urlparse(data_url)
         params = parse_qs(parsed.query)
@@ -548,10 +563,31 @@ async def get_viz_spec(
                     or meta.indicator_metadata.get("unit_measure")
                     or ""
                 )
-                if raw_unit:
-                    unit_label = f"{chart_title} ({raw_unit})"
     except Exception as e:
         _logger.warning(f"Could not fetch metadata for title: {e}")
+
+    try:
+        db_map = await get_database_mapping()
+    except Exception as e:
+        _logger.warning(f"Could not load database mapping for source attribution: {e}")
+        db_map = {}
+    database_display = db_map.get(database_id, database_id)
+    indicator_display = (
+        chart_title
+        if chart_title != "Generated Visualization"
+        else indicator_id
+    )
+    source_attribution: dict[str, str] = {
+        "database_id": database_id,
+        "database_name": database_display,
+        "indicator_id": indicator_id,
+        "indicator_name": indicator_display,
+    }
+
+    # Build Vega-Lite title: dict with subtitle when unit is available
+    chart_title_vl: str | dict = (
+        {"text": chart_title, "subtitle": raw_unit} if raw_unit else chart_title
+    )
 
     # 5. Clean data — column selection, bar-vs-temporal time handling, renames (→ year/value/country)
     if "obs_value" in data.columns:
@@ -594,12 +630,13 @@ async def get_viz_spec(
         spec = viz_config.dispatch_spec(
             strategy_result.strategy,
             viz_data,
-            chart_title,
+            chart_title_vl,
             strategy_result,
-            y_label=unit_label,
-            x_label=unit_label,
+            unit_measure=raw_unit,
         )
-        return _ok(await _store_spec(spec))
+        return _ok(
+            await _store_spec(spec), source_attribution=source_attribution
+        )
 
     # 8. Draco path (temporal_single, fallback)
     try:
@@ -682,7 +719,7 @@ async def get_viz_spec(
         full_spec = {**schema, **draco_spec}
         renderer = AltairRenderer()
         chart = renderer.render(spec=full_spec, data=viz_data)
-        chart = chart.properties(title=chart_title).interactive()
+        chart = chart.properties(title=chart_title_vl).interactive()
 
         # Structured tooltips
         mark_type_for_tt = viz_config.parse_chart_type_hint(chart_type)
@@ -698,15 +735,13 @@ async def get_viz_spec(
             if color_dim in ["country", "sex", "urbanisation", "ref_area"]:
                 vl_spec["encoding"]["color"]["type"] = "nominal"
 
-        # Patch y-axis title
-        if "encoding" in vl_spec and "y" in vl_spec["encoding"]:
-            vl_spec["encoding"]["y"].setdefault("axis", {})["title"] = unit_label
-
         # Post-processing rules
         for rule in viz_config.POST_PROCESSING_RULES:
             vl_spec = rule.apply(vl_spec, data_frequency)
 
-        return _ok(await _store_spec(vl_spec))
+        return _ok(
+            await _store_spec(vl_spec), source_attribution=source_attribution
+        )
 
     except StopIteration:
         _logger.warning("Draco failed → fallback")
@@ -715,11 +750,15 @@ async def get_viz_spec(
             spec = viz_config.dispatch_spec(
                 viz_config.ChartStrategy.FALLBACK_LINE,
                 viz_data,
-                chart_title,
+                chart_title_vl,
                 strategy_result,
-                y_label=unit_label,
+                unit_measure=raw_unit,
             )
-            return _ok(await _store_spec(spec), warning=_FALLBACK_WARNING)
+            return _ok(
+                await _store_spec(spec),
+                warning=_FALLBACK_WARNING,
+                source_attribution=source_attribution,
+            )
         except Exception as fallback_err:
             _logger.exception(f"Fallback failed: {fallback_err}")
             return _err(
@@ -887,11 +926,17 @@ async def get_multi_indicator_viz_spec(
 
     merged = _sanitize_dataframe_for_json_records(merged)
 
-    # 5. Build chart title
+    # 5. Build chart title (with subtitle when all indicators share the same unit)
     if len(titles) == 2:
         chart_title = f"{titles[0]} vs. {titles[1]}"
     else:
         chart_title = " | ".join(titles)
+
+    unique_units = list(dict.fromkeys(u for u in units if u))
+    shared_unit = unique_units[0] if len(unique_units) == 1 else ""
+    chart_title_vl: str | dict = (
+        {"text": chart_title, "subtitle": shared_unit} if shared_unit else chart_title
+    )
 
     # 6. Build indicator_labels for axis/tooltip
     indicator_labels = {
@@ -915,19 +960,47 @@ async def get_multi_indicator_viz_spec(
         spec = viz_config.dispatch_spec(
             strategy_result.strategy,
             merged,
-            chart_title,
+            chart_title_vl,
             strategy_result,
             indicator_labels=indicator_labels,
             y_label=indicator_labels.get(indicator_col_names[1], "Value"),
             x_label=indicator_labels.get(indicator_col_names[0], "Value"),
+            unit_measure=shared_unit or None,
         )
     except Exception as e:
         _logger.exception(f"Spec build failed: {e}")
         return _err(f"Error building chart spec: {e}")
 
     # 9. Store and return
+    try:
+        db_map_multi = await get_database_mapping()
+    except Exception as e:
+        _logger.warning(f"Could not load database mapping for source attribution: {e}")
+        db_map_multi = {}
+    db_displays = [
+        db_map_multi.get(ind["database_id"], ind["database_id"])
+        for ind in indicator_ids
+    ]
+    unique_db_displays = list(dict.fromkeys(db_displays))
+    database_display_multi = (
+        unique_db_displays[0]
+        if len(unique_db_displays) == 1
+        else " · ".join(unique_db_displays)
+    )
+    indicator_display_multi = " | ".join(titles)
+    ids_joined = " · ".join(ind["indicator_id"] for ind in indicator_ids)
+    dbs_ids_joined = " · ".join(
+        dict.fromkeys(ind["database_id"] for ind in indicator_ids)
+    )
+    source_attribution_multi: dict[str, str] = {
+        "database_id": dbs_ids_joined,
+        "database_name": database_display_multi,
+        "indicator_id": ids_joined,
+        "indicator_name": indicator_display_multi,
+    }
+
     url = await _store_spec(spec)
-    result = _ok(url)
+    result = _ok(url, source_attribution=source_attribution_multi)
     result["strategy"] = strategy_result.strategy.value
     result["reason"] = strategy_result.reason
     return result

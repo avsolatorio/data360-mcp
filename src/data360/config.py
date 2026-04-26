@@ -31,6 +31,10 @@ class MCPServerSettings(BaseSettings):
         default=None,
         description="URL for external charts API to store Vega-Lite specs (e.g. https://.../api/v1/charts). When set, viz specs are POSTed here instead of saving to static.",
     )
+    charts_api_token: str | None = Field(
+        default=None,
+        description="Optional bearer token for external charts API (Authorization header).",
+    )
     env: str | None = Field(
         default=None,
         description="Deployment environment (e.g. local, dev, staging, prod). Azure App Insights logging is disabled when set to 'local'.",

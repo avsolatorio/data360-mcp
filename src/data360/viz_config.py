@@ -104,6 +104,10 @@ def wb_altair_config() -> dict:
             "lineHeight": 1.2,
             "anchor": "start",
             "offset": 8,
+            "subtitleFontSize": 12,
+            "subtitleColor": WB_TEXT_SUBTLE,
+            "subtitleFontWeight": "normal",
+            "subtitlePadding": 4,
         },
         "axis": {
             "labelColor": WB_TEXT_SUBTLE,
@@ -192,11 +196,13 @@ def build_structured_tooltips(
     columns: list[str],
     mark_type: str,
     indicator_labels: dict[str, str] | None = None,
+    value_format: str = ",.2f",
 ) -> list[dict]:
     """Build typed, labelled tooltip list for a Vega-Lite encoding.
 
     indicator_labels: optional {col_name: human_label} for indicator value columns
     in multi-indicator charts (e.g. {"gdp_per_capita": "GDP per capita (USD)"}).
+    value_format: D3 format string for quantitative value fields.
     """
     ordered = [c for c in _TOOLTIP_PRIORITY if c in columns]
     ordered += [c for c in columns if c not in _TOOLTIP_PRIORITY]
@@ -207,14 +213,18 @@ def build_structured_tooltips(
             tip = {
                 "field": col,
                 "title": indicator_labels[col],
-                "format": ",.2f",
+                "format": value_format,
                 "type": "quantitative",
             }
         elif col in _TOOLTIP_SPECS:
             spec = _TOOLTIP_SPECS[col]
             tip = {"field": col, "title": spec["title"], "type": spec["type"]}
             if "format" in spec:
-                tip["format"] = spec["format"]
+                # Use value_format for quantitative value fields
+                if col in ("value", "obs_value"):
+                    tip["format"] = value_format
+                else:
+                    tip["format"] = spec["format"]
         else:
             tip = {"field": col, "title": col.replace("_", " ").title()}
         tooltips.append(tip)
@@ -433,47 +443,115 @@ def _axis_style(title: str | None = None, temporal: bool = False) -> dict:
     if temporal:
         ax["title"] = None
         ax["format"] = "%Y"
-        ax["tickCount"] = 6
+        ax["tickCount"] = 5
+        ax["labelAngle"] = 0
     elif title is not None:
         ax["title"] = title
     return ax
 
 
-def _color_encoding(field: str, domain: list | None = None) -> dict:
+def _value_label_expr(unit_measure: str | None = None) -> str:
+    """Vega expression for custom k/m/b/t axis label formatting."""
+    if unit_measure == "T":
+        tiers = [("1e12", "Gt"), ("1e9", "Mt"), ("1e6", "Kt")]
+    elif unit_measure == "W_POP":
+        tiers = [("1e12", "Gw"), ("1e9", "Mw"), ("1e6", "Kw")]
+    elif unit_measure in ("BITS", "BIT_S_IU"):
+        tiers = [("1e12", "Gb"), ("1e9", "Mb"), ("1e6", "Kb")]
+    else:
+        tiers = [("1e12", "t"), ("1e9", "b"), ("1e6", "m"), ("1e3", "k")]
+    parts = [
+        f"abs(datum.value)>={t} ? format(datum.value/{t},'.1f')+'{s}'" for t, s in tiers
+    ]
+    tail = (
+        " : abs(datum.value)>=10 ? format(datum.value,',.1f')"
+        " : abs(datum.value)>=1 ? format(datum.value,'.1f')"
+        " : format(datum.value,'.2f')"
+    )
+    return " : ".join(parts) + tail
+
+
+def _compute_tooltip_format(
+    max_abs: float | None = None, unit_measure: str | None = None
+) -> str:
+    """Returns D3 format string for tooltip quantitative fields."""
+    if unit_measure == "%":
+        return ".1f"
+    if unit_measure in ("$", "USD"):
+        return "$,.2f"
+    if max_abs is None or max_abs < 1:
+        return ".2f"
+    if max_abs < 10:
+        return ".1f"
+    if max_abs < 1000:
+        return ",.1f"
+    return ",.3~s"
+
+
+def _color_encoding(
+    field: str,
+    domain: list | None = None,
+    mark_type: str = "point",
+    n_items: int = 0,
+) -> dict:
     scale = {"range": WB_CAT_COLORS}
     if domain:
         scale["domain"] = domain
+    if n_items == 1:
+        legend = None
+    else:
+        legend: dict | None = {
+            "orient": "top",
+            "direction": "horizontal",
+            "labelLimit": 100,
+            "columns": 3,
+        }
+        if mark_type == "line":
+            legend["symbolType"] = "stroke"
     return {
         "field": field,
         "type": "nominal",
         "scale": scale,
-        "legend": {"orient": "top", "direction": "horizontal", "labelLimit": 200},
+        "legend": legend,
     }
 
 
 def build_temporal_single_spec(
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
+    unit_measure: str | None = None,
 ) -> dict:
     """Line chart: 1 indicator, multi-year, ≤8 countries."""
     rows = df.to_dict(orient="records")
+    max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
+    tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+    y_ax = {
+        **_axis_style(),
+        "title": None,
+        "labelExpr": _value_label_expr(unit_measure),
+    }
     encoding: dict = {
         "x": {"field": "year", "type": "temporal", "axis": _axis_style(temporal=True)},
         "y": {
             "field": "value",
             "type": "quantitative",
-            "axis": _axis_style(y_label),
+            "axis": y_ax,
             "scale": {"zero": False},
         },
         "tooltip": build_structured_tooltips(
-            list(df.columns), "line", indicator_labels
+            list(df.columns), "line", indicator_labels, value_format=tt_fmt
         ),
     }
     if result.color_dim:
-        encoding["color"] = _color_encoding(result.color_dim)
+        n_items = (
+            df[result.color_dim].nunique() if result.color_dim in df.columns else 0
+        )
+        encoding["color"] = _color_encoding(
+            result.color_dim, mark_type="line", n_items=n_items
+        )
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -494,21 +572,28 @@ def build_temporal_single_spec(
 
 def build_cross_sectional_spec(
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
     x_label: str = "Value",
+    unit_measure: str | None = None,
 ) -> dict:
     """Horizontal bar: 1 indicator, single year, ≤8 countries."""
-    # Sort by value descending
     sorted_df = df.sort_values("value", ascending=False)
     rows = sorted_df.to_dict(orient="records")
+    max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
+    tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
 
     color_enc = (
         _color_encoding(result.color_dim)
         if result.color_dim
         else {"value": WB_CAT_COLORS[0]}
     )
+    x_ax = {
+        **_axis_style(),
+        "title": None,
+        "labelExpr": _value_label_expr(unit_measure),
+    }
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -534,12 +619,12 @@ def build_cross_sectional_spec(
             "x": {
                 "field": "value",
                 "type": "quantitative",
-                "axis": _axis_style(x_label),
+                "axis": x_ax,
                 "scale": {"zero": True},
             },
             "color": color_enc,
             "tooltip": build_structured_tooltips(
-                list(df.columns), "bar", indicator_labels
+                list(df.columns), "bar", indicator_labels, value_format=tt_fmt
             ),
         },
         "width": 500,
@@ -550,15 +635,23 @@ def build_cross_sectional_spec(
 
 def build_distribution_spec(
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
     x_label: str = "Value",
+    unit_measure: str | None = None,
 ) -> dict:
     """Strip/beeswarm: 1 indicator, >8 countries, single year."""
     top_n = HIGH_CARDINALITY_THRESHOLDS["top_n_series"]
     sorted_df = df.sort_values("value", ascending=False).head(top_n)
     rows = sorted_df.to_dict(orient="records")
+    max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
+    tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+    x_ax = {
+        **_axis_style(),
+        "title": None,
+        "labelExpr": _value_label_expr(unit_measure),
+    }
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -569,7 +662,7 @@ def build_distribution_spec(
             "x": {
                 "field": "value",
                 "type": "quantitative",
-                "axis": _axis_style(x_label),
+                "axis": x_ax,
             },
             "y": {
                 "field": "country",
@@ -584,7 +677,7 @@ def build_distribution_spec(
             },
             "color": _color_encoding("country"),
             "tooltip": build_structured_tooltips(
-                list(sorted_df.columns), "tick", indicator_labels
+                list(sorted_df.columns), "tick", indicator_labels, value_format=tt_fmt
             ),
         },
         "width": 500,
@@ -595,16 +688,18 @@ def build_distribution_spec(
 
 def build_breakdown_comparison_spec(
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
+    unit_measure: str | None = None,
 ) -> dict:
     """Grouped bar: 1 indicator, 1 breakdown (sex/age/urban), 2-4 values, ≤4 countries."""
     rows = df.to_dict(orient="records")
     color_dim = result.color_dim or "sex"
+    max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
+    tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
 
-    # Use gender colors if sex breakdown
     if color_dim == "sex":
         domain = [k for k in WB_GENDER_COLORS if k in df[color_dim].unique()]
         color_range = [WB_GENDER_COLORS[k] for k in domain]
@@ -612,9 +707,13 @@ def build_breakdown_comparison_spec(
     else:
         color_scale = {"range": WB_CAT_COLORS}
 
-    # x-axis: country if multi-country, else year
     x_field = "country" if df.get("country", pd.Series()).nunique() > 1 else "year"
     x_type = "nominal" if x_field == "country" else "ordinal"
+    y_ax = {
+        **_axis_style(),
+        "title": None,
+        "labelExpr": _value_label_expr(unit_measure),
+    }
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -631,17 +730,22 @@ def build_breakdown_comparison_spec(
             "y": {
                 "field": "value",
                 "type": "quantitative",
-                "axis": _axis_style(y_label),
+                "axis": y_ax,
                 "scale": {"zero": True},
             },
             "color": {
                 "field": color_dim,
                 "type": "nominal",
                 "scale": color_scale,
-                "legend": {"orient": "top", "title": color_dim.title()},
+                "legend": {
+                    "orient": "top",
+                    "title": color_dim.title(),
+                    "labelLimit": 100,
+                    "columns": 3,
+                },
             },
             "tooltip": build_structured_tooltips(
-                list(df.columns), "bar", indicator_labels
+                list(df.columns), "bar", indicator_labels, value_format=tt_fmt
             ),
         },
         "width": max(300, df[x_field].nunique() * 80),
@@ -652,18 +756,26 @@ def build_breakdown_comparison_spec(
 
 def build_small_multiples_spec(
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
+    unit_measure: str | None = None,
 ) -> dict:
     """Faceted small multiples: 1 indicator, 2+ breakdowns or breakdown+many countries."""
     rows = df.to_dict(orient="records")
     facet_dim = result.facet_dim or "country"
     color_dim = result.color_dim
+    max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
+    tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
 
     n_facets = df[facet_dim].nunique() if facet_dim in df.columns else 1
     columns = min(3, n_facets)
+    y_ax = {
+        **_axis_style(),
+        "title": None,
+        "labelExpr": _value_label_expr(unit_measure),
+    }
 
     inner: dict = {
         "mark": {"type": "line", "strokeWidth": 2},
@@ -676,16 +788,16 @@ def build_small_multiples_spec(
             "y": {
                 "field": "value",
                 "type": "quantitative",
-                "axis": _axis_style(y_label),
+                "axis": y_ax,
                 "scale": {"zero": False},
             },
             "tooltip": build_structured_tooltips(
-                list(df.columns), "line", indicator_labels
+                list(df.columns), "line", indicator_labels, value_format=tt_fmt
             ),
         },
     }
     if color_dim and color_dim != facet_dim:
-        inner["encoding"]["color"] = _color_encoding(color_dim)
+        inner["encoding"]["color"] = _color_encoding(color_dim, mark_type="line")
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -708,7 +820,7 @@ def build_small_multiples_spec(
 
 def build_correlation_spec(
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
 ) -> dict:
@@ -758,7 +870,7 @@ def build_correlation_spec(
 
 def build_correlation_temporal_spec(
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
 ) -> dict:
@@ -816,10 +928,11 @@ def build_correlation_temporal_spec(
 
 def build_temporal_multi_indicator_spec(
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
+    unit_measure: str | None = None,
 ) -> dict:
     """Layered multi-axis line chart: 2-4 indicators, multi-year when applicable.
 
@@ -835,11 +948,18 @@ def build_temporal_multi_indicator_spec(
     lab = indicator_labels or {}
     rows = df.to_dict(orient="records")
 
+    label_expr = _value_label_expr(unit_measure)
     layers = []
     for i, col in enumerate(ind_cols):
         color = WB_CAT_COLORS[i % len(WB_CAT_COLORS)]
-        y_label = lab.get(col, col.replace("_", " ").title())
-        y_axis = {**_axis_style(y_label), "titleColor": color}
+        col_label = lab.get(col, col.replace("_", " ").title())
+        max_abs = float(df[col].abs().max()) if col in df.columns else None
+        tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+        y_axis = {
+            **_axis_style(col_label),
+            "titleColor": color,
+            "labelExpr": label_expr,
+        }
         if i == 0:
             y_axis["orient"] = "left"
         elif i == 1:
@@ -860,7 +980,9 @@ def build_temporal_multi_indicator_spec(
                 "scale": {"zero": False},
             },
             "color": {"value": color},
-            "tooltip": build_structured_tooltips(list(df.columns), "line", lab),
+            "tooltip": build_structured_tooltips(
+                list(df.columns), "line", lab, value_format=tt_fmt
+            ),
         }
         layers.append(
             {
@@ -888,10 +1010,11 @@ def build_temporal_multi_indicator_spec(
 
 def build_fallback_line_spec(
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
+    unit_measure: str | None = None,
 ) -> dict:
     """Fallback: best-effort line chart for unclassified data shapes."""
     cols = set(df.columns)
@@ -905,6 +1028,13 @@ def build_fallback_line_spec(
         if "value" in cols
         else ("obs_value" if "obs_value" in cols else df.columns[-1])
     )
+    max_abs = float(df[y_col].abs().max()) if y_col in df.columns else None
+    tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+    y_ax = {
+        **_axis_style(),
+        "title": None,
+        "labelExpr": _value_label_expr(unit_measure),
+    }
 
     encoding: dict = {
         "x": {
@@ -912,13 +1042,16 @@ def build_fallback_line_spec(
             "type": "temporal" if "year" in x_col else "ordinal",
             "axis": _axis_style(temporal=("year" in x_col)),
         },
-        "y": {"field": y_col, "type": "quantitative", "axis": _axis_style("Value")},
+        "y": {"field": y_col, "type": "quantitative", "axis": y_ax},
         "tooltip": build_structured_tooltips(
-            list(df.columns), "line", indicator_labels
+            list(df.columns), "line", indicator_labels, value_format=tt_fmt
         ),
     }
     if result.color_dim and result.color_dim in cols:
-        encoding["color"] = _color_encoding(result.color_dim)
+        n_items = df[result.color_dim].nunique()
+        encoding["color"] = _color_encoding(
+            result.color_dim, mark_type="line", n_items=n_items
+        )
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -949,15 +1082,15 @@ STRATEGY_BUILDERS: dict[ChartStrategy, callable] = {
 def dispatch_spec(
     strategy: ChartStrategy,
     df: pd.DataFrame,
-    title: str,
+    title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     x_label: str = "Value",
+    unit_measure: str | None = None,
 ) -> dict:
     """Call the right spec builder for the given strategy."""
     builder = STRATEGY_BUILDERS[strategy]
-    # Builders with x/y label parameters
     if strategy in (
         ChartStrategy.TEMPORAL_SINGLE,
         ChartStrategy.TEMPORAL_MULTI_IND,
@@ -965,9 +1098,9 @@ def dispatch_spec(
         ChartStrategy.SMALL_MULTIPLES,
         ChartStrategy.FALLBACK_LINE,
     ):
-        return builder(df, title, result, indicator_labels, y_label)
+        return builder(df, title, result, indicator_labels, y_label, unit_measure)
     elif strategy in (ChartStrategy.CROSS_SECTIONAL, ChartStrategy.DISTRIBUTION):
-        return builder(df, title, result, indicator_labels, x_label)
+        return builder(df, title, result, indicator_labels, x_label, unit_measure)
     else:
         return builder(df, title, result, indicator_labels)
 
@@ -1203,12 +1336,14 @@ class ApplyTimeUnitRule(PostProcessingRule):
         return spec
 
 
-class FixPointChartEncodingsRule(PostProcessingRule):
+class FixValueAxisEncodingRule(PostProcessingRule):
+    """Altair can infer ordinal for `value` after Draco strips types; fix for line/area/point."""
+
     def __init__(self):
         super().__init__(
-            "fix_point_chart_encodings",
-            ["point"],
-            "Fix ordinal y-axis and pointless size",
+            "fix_value_axis_encodings",
+            ["point", "line", "area"],
+            "Fix ordinal y on value for line/area/point; point-only size cleanup",
         )
 
     def should_apply(self, spec, data_frequency=None):
@@ -1217,20 +1352,26 @@ class FixPointChartEncodingsRule(PostProcessingRule):
             if isinstance(spec.get("mark"), dict)
             else spec.get("mark")
         )
-        return mark_type == "point"
+        return mark_type in self.applies_to_mark_types
 
     def apply(self, spec, data_frequency=None):
-        if not self.should_apply(spec):
+        if not self.should_apply(spec, data_frequency):
             return spec
         if "encoding" not in spec:
             return spec
+        mark_type = (
+            spec.get("mark", {}).get("type")
+            if isinstance(spec.get("mark"), dict)
+            else spec.get("mark")
+        )
         y = spec["encoding"].get("y", {})
         if y.get("type") == "ordinal" and y.get("field") == "value":
             y["type"] = "quantitative"
             y.setdefault("scale", {})["type"] = "linear"
-        sz = spec["encoding"].get("size", {})
-        if sz.get("aggregate") == "count" and "field" not in sz:
-            del spec["encoding"]["size"]
+        if mark_type == "point":
+            sz = spec["encoding"].get("size", {})
+            if sz.get("aggregate") == "count" and "field" not in sz:
+                del spec["encoding"]["size"]
         return spec
 
 
@@ -1258,8 +1399,9 @@ class TemporalAxisCleanupRule(PostProcessingRule):
         x = spec["encoding"]["x"]
         x.setdefault("axis", {})
         x["axis"]["title"] = None
+        x["axis"]["labelAngle"] = 0
         x["axis"].setdefault("format", "%Y")
-        x["axis"].setdefault("tickCount", 6)
+        x["axis"].setdefault("tickCount", 5)
         return spec
 
 
@@ -1307,7 +1449,7 @@ class ApplyWBStyleRule(PostProcessingRule):
 POST_PROCESSING_RULES: list[PostProcessingRule] = [
     OrdinalToTemporalRule(),
     ApplyTimeUnitRule(),
-    FixPointChartEncodingsRule(),
+    FixValueAxisEncodingRule(),
     TemporalAxisCleanupRule(),
     ZeroLineRule(),
     ApplyWBStyleRule(),
