@@ -7,7 +7,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from data360.visualization import _vega_spec_to_json_safe, get_viz_spec
+from data360.visualization import (
+    _clean_single_df,
+    _vega_spec_to_json_safe,
+    get_viz_spec,
+)
 
 
 class TestGetVizSpecDracoFallbackWarning:
@@ -52,6 +56,11 @@ class TestGetVizSpecDracoFallbackWarning:
                 new_callable=AsyncMock,
                 return_value={},
             ) as mock_codelist,
+            patch(
+                "data360.visualization.get_database_mapping",
+                new_callable=AsyncMock,
+                return_value={"WB_WDI": "World Development Indicators"},
+            ) as mock_dbmap,
         ):
             yield {
                 "get_data_api_url": mock_url,
@@ -59,6 +68,7 @@ class TestGetVizSpecDracoFallbackWarning:
                 "get_metadata": mock_meta,
                 "save_specs": mock_save,
                 "get_codelist_mapping": mock_codelist,
+                "get_database_mapping": mock_dbmap,
             }
 
     @pytest.mark.asyncio
@@ -76,6 +86,8 @@ class TestGetVizSpecDracoFallbackWarning:
 
         assert result["url"] is not None, "Expected a URL from fallback generation"
         assert result["error"] is None, "Expected no error from successful fallback"
+        assert result.get("database_name") == "World Development Indicators"
+        assert result.get("indicator_id") == "FAKE_IND"
         assert "warning" in result, "Expected a 'warning' key when Draco falls back"
         assert "fallback" in result["warning"].lower(), (
             f"Warning message should mention fallback, got: {result['warning']}"
@@ -420,6 +432,11 @@ class TestObsValueNullHandling:
                 new_callable=AsyncMock,
                 return_value={},
             ),
+            patch(
+                "data360.visualization.get_database_mapping",
+                new_callable=AsyncMock,
+                return_value={"WB_WDI": "World Development Indicators"},
+            ),
         ):
             yield df
 
@@ -501,6 +518,33 @@ class TestObsValueNullHandling:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# _clean_single_df: numeric value column
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestCleanSingleDfValueNumeric:
+    """`value` must be numeric for correct Altair inference after rename."""
+
+    def test_value_object_strings_coerced_after_rename(self):
+        data = pd.DataFrame(
+            {
+                "time_period": ["2020-01-01", "2021-01-01"],
+                "value": ["10.5", "20.25"],
+                "ref_area": ["KEN", "KEN"],
+            }
+        )
+        viz_data, _ = _clean_single_df(
+            data,
+            relevant_fields=["time_period", "value", "ref_area"],
+            chart_type=None,
+            data_frequency=None,
+        )
+        assert pd.api.types.is_numeric_dtype(viz_data["value"])
+        assert float(viz_data["value"].iloc[0]) == 10.5
+        assert float(viz_data["value"].iloc[1]) == 20.25
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # POST-PROCESSING RULE CHAIN
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -524,6 +568,30 @@ class TestPostProcessingRuleChain:
         result = self._run_rules(spec, "A")
         assert "config" in result
         assert result["encoding"]["x"]["axis"]["title"] is None
+
+    def test_line_chart_ordinal_value_y_becomes_quantitative(self):
+        """Altair sometimes emits ordinal y for value on line marks; post-process fixes it."""
+        spec = {
+            "mark": {"type": "line"},
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "ordinal"},
+            },
+        }
+        result = self._run_rules(spec, "A")
+        assert result["encoding"]["y"]["type"] == "quantitative"
+        assert result["encoding"]["y"].get("scale", {}).get("type") == "linear"
+
+    def test_area_chart_ordinal_value_y_becomes_quantitative(self):
+        spec = {
+            "mark": {"type": "area"},
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "ordinal"},
+            },
+        }
+        result = self._run_rules(spec, None)
+        assert result["encoding"]["y"]["type"] == "quantitative"
 
     def test_chain_runs_on_bar_chart(self):
         spec = {

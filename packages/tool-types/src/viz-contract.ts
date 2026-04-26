@@ -11,6 +11,11 @@ export const data360VizToolResultSchema = z
     warning: z.string().nullable().optional(),
     strategy: z.string().optional(),
     reason: z.string().optional(),
+    /** Human-readable database name(s) for chart source line */
+    database_name: z.string().optional(),
+    database_id: z.string().optional(),
+    indicator_name: z.string().optional(),
+    indicator_id: z.string().optional(),
   })
   .passthrough();
 
