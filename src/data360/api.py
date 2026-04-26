@@ -1541,7 +1541,7 @@ async def discover_indicators(
 # --- Topic Analysis Helpers ---
 
 # Conjunctions and stopwords used for rule-based query decomposition.
-_SPLIT_CONJUNCTIONS = re.compile(r"\band\b|\bor\b|\b&\b|,|;", re.IGNORECASE)
+# Conjunctions and stopwords used for rule-based query decomposition.
 _STOPWORDS = frozenset({
     "what", "are", "the", "main", "is", "a", "an", "of", "for", "in",
     "to", "how", "does", "do", "its", "their", "has", "been", "being",
@@ -1586,40 +1586,6 @@ class _DecompositionResult(BaseModel):
 
     sub_queries: list[str] | None = None
     query_groups: list[_SampledQueryGroup] | None = None
-
-
-def _decompose_query(query: str) -> list[str]:
-    """Split a vague query into searchable sub-queries using rule-based heuristics.
-
-    Splits on conjunctions (and, or, &, commas, semicolons), removes stopwords,
-    and returns non-empty fragments. Falls back to the original query if
-    decomposition produces nothing useful.
-    """
-    fragments = _SPLIT_CONJUNCTIONS.split(query)
-    sub_queries: list[str] = []
-    for frag in fragments:
-        words = [
-            w for w in frag.strip().split()
-            if w.lower() not in _STOPWORDS and len(w) > 1
-        ]
-        cleaned = " ".join(words).strip()
-        if cleaned and len(cleaned) > 2:
-            sub_queries.append(cleaned)
-
-    # Deduplicate while preserving order
-    seen: set[str] = set()
-    unique: list[str] = []
-    for sq in sub_queries:
-        key = sq.lower()
-        if key not in seen:
-            seen.add(key)
-            unique.append(sq)
-
-    if not unique:
-        return [query.strip()]
-
-    # Cap at 5 sub-queries to bound search cost
-    return unique[:5]
 
 
 def _score_indicator(
@@ -1673,9 +1639,9 @@ async def analyze_development_topic(
     "What makes a country great?", "What are Ghana's economic challenges?",
     "How is education performing in Sub-Saharan Africa?"
 
-    The tool decomposes the question into specific searchable topics (using the
-    connected LLM when sampling is available, or rule-based heuristics as
-    fallback), searches the Data360 catalog for each topic, scores and ranks
+    The tool decomposes the question into specific searchable topics using the
+    connected LLM (when sampling is available). If sampling fails, it proceeds
+    with the raw query. It searches the Data360 catalog for each topic, scores and ranks
     the results, and prefetches recent data for the top indicators.
 
     Do NOT use this tool when the user already names a specific indicator or
@@ -1696,7 +1662,7 @@ async def analyze_development_topic(
             query: The original question.
             country / country_code: Resolved country info (if provided). May be comma-separated.
             sub_queries: The decomposed search terms (from LLM or rule-based).
-            decomposition_method: "sampling_client", "sampling_server", or "rule_based".
+            decomposition_method: "sampling_client", "sampling_server", or "none".
             selected_indicators: List of ranked indicator dicts, each with:
                 rank, indicator_id, database_id, database_name, name, definition,
                 matched_sub_queries (dict with original_query and decomposed_sub_query),
@@ -1721,11 +1687,11 @@ async def analyze_development_topic(
     # --- Step 2: Decompose query into sub-queries ---
     # Attempt LLM-powered decomposition via MCP sampling (structured output).
     # On any failure — client does not support sampling, LiteLLM call fails,
-    # or the response does not validate — log a warning and fall through to
-    # rule-based decomposition. No partial JSON fallback is attempted.
+    # or the response does not validate — log a warning and proceed with
+    # the raw query. No partial JSON fallback is attempted.
     sub_queries: list[str] = []
     query_groups_from_sampling: list[QueryGroup] | None = None
-    decomposition_method = "rule_based"
+    decomposition_method = "none"
 
     _logger.info(
         "analyze_development_topic: ctx=%s, type=%s",
@@ -1789,16 +1755,16 @@ async def analyze_development_topic(
 
         except Exception:
             # Sampling unavailable (client does not support it) or the LiteLLM
-            # call failed. Log and proceed to rule-based decomposition.
+            # call failed. Log and proceed with the raw query.
             _logger.warning(
-                "Sampling unavailable or failed; falling back to rule-based decomposition.",
+                "Sampling unavailable or failed; proceeding with raw query.",
                 exc_info=True,
             )
 
-    # Fall back to rule-based decomposition when sampling produced nothing
+    # Proceed with the raw query when sampling produced nothing
     if not sub_queries:
-        sub_queries = _decompose_query(query)
-        decomposition_method = "rule_based"
+        sub_queries = [query.strip()]
+        decomposition_method = "none"
 
     _logger.info(
         "Decomposed into %d sub-queries (%s): %s",

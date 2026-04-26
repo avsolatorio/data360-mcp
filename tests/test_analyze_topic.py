@@ -9,7 +9,6 @@ import pytest
 from data360.api import (
     _DecompositionResult,
     _SampledQueryGroup,
-    _decompose_query,
     _score_indicator,
     analyze_development_topic,
 )
@@ -105,54 +104,6 @@ class FakeContext:
         return FakeSamplingResult(result=self._result)
 
 
-# --- Unit tests for _decompose_query ---
-
-
-class TestDecomposeQuery:
-    """Tests for rule-based query decomposition."""
-
-    def test_splits_on_and(self):
-        result = _decompose_query("economic growth and public spending")
-        assert len(result) == 2
-        assert any("economic" in sq.lower() or "growth" in sq.lower() for sq in result)
-        assert any("public" in sq.lower() or "spending" in sq.lower() for sq in result)
-
-    def test_splits_on_comma(self):
-        result = _decompose_query("GDP, poverty, education")
-        assert len(result) == 3
-
-    def test_splits_on_semicolon(self):
-        result = _decompose_query("health outcomes; education access")
-        assert len(result) == 2
-
-    def test_removes_stopwords(self):
-        result = _decompose_query("What are the main challenges facing economic growth")
-        # Should have cleaned fragments, not contain stopwords as standalone terms
-        for sq in result:
-            words = sq.lower().split()
-            assert "what" not in words
-            assert "are" not in words
-            assert "the" not in words
-
-    def test_falls_back_to_original_on_single_topic(self):
-        result = _decompose_query("unemployment")
-        assert result == ["unemployment"]
-
-    def test_handles_empty_fragments(self):
-        result = _decompose_query("GDP, , education")
-        assert "" not in result
-        assert len(result) >= 1
-
-    def test_deduplicates(self):
-        result = _decompose_query("GDP and GDP")
-        assert len(result) == 1
-
-    def test_caps_at_five(self):
-        result = _decompose_query("a, b, c, d, e, f, g")
-        # stopword-stripped fragments, capped at 5
-        assert len(result) <= 5
-
-
 # --- Unit tests for _score_indicator ---
 
 
@@ -214,8 +165,8 @@ class TestAnalyzeDevelopmentTopic:
     """Integration tests using mocked search/get_data."""
 
     @pytest.mark.asyncio
-    async def test_no_context_uses_rule_based(self):
-        """Without ctx, falls back to rule-based decomposition."""
+    async def test_no_context_proceeds_with_raw_query(self):
+        """Without ctx, proceeds with raw query."""
         indicators = [_make_indicator()]
         mock_search_response = _make_search_response(indicators)
 
@@ -231,7 +182,7 @@ class TestAnalyzeDevelopmentTopic:
         ):
             result = await analyze_development_topic(query="What are Ghana's economic challenges?")
 
-        assert result["decomposition_method"] == "rule_based"
+        assert result["decomposition_method"] == "none"
         assert len(result["sub_queries"]) >= 1
         assert len(result["selected_indicators"]) == 1
 
@@ -309,8 +260,8 @@ class TestAnalyzeDevelopmentTopic:
         assert groups[1].queries == ["manufacturing output"]
 
     @pytest.mark.asyncio
-    async def test_sampling_failure_falls_back_to_rule_based(self):
-        """When ctx.sample() raises, falls back to rule-based without propagating error."""
+    async def test_sampling_failure_proceeds_with_raw_query(self):
+        """When ctx.sample() raises, proceeds with raw query without propagating error."""
         indicators = [_make_indicator()]
         mock_search_response = _make_search_response(indicators)
 
@@ -332,12 +283,12 @@ class TestAnalyzeDevelopmentTopic:
             )
 
         # Must not raise; must fall back gracefully
-        assert result["decomposition_method"] == "rule_based"
+        assert result["decomposition_method"] == "none"
         assert len(result["sub_queries"]) >= 1
 
     @pytest.mark.asyncio
-    async def test_sampling_empty_result_falls_back_to_rule_based(self):
-        """When sampling returns empty DecompositionResult, falls back to rule-based."""
+    async def test_sampling_empty_result_proceeds_with_raw_query(self):
+        """When sampling returns empty DecompositionResult, proceeds with raw query."""
         indicators = [_make_indicator()]
         mock_search_response = _make_search_response(indicators)
 
@@ -358,7 +309,7 @@ class TestAnalyzeDevelopmentTopic:
                 ctx=ctx,
             )
 
-        assert result["decomposition_method"] == "rule_based"
+        assert result["decomposition_method"] == "none"
         assert len(result["sub_queries"]) >= 1
 
     @pytest.mark.asyncio
@@ -490,7 +441,7 @@ class TestAnalyzeDevelopmentTopic:
                 country="Morocco, Ethiopia",
             )
 
-        assert result["decomposition_method"] == "rule_based"
+        assert result["decomposition_method"] == "none"
         assert result["country_code"] == "MAR,ETH"
 
         call_kwargs = mock_search.call_args.kwargs
