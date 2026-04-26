@@ -218,14 +218,23 @@ class GroupHierarchyManager:
     """Manages REF_AREA group-to-country mappings from the FMR hierarchy.
 
     Startup behaviour (zero-latency):
-      Loads the bundled src/data360/data/ref_area_groups.json immediately so
-      the tool is usable without any network I/O on the hot path.
+      Loads the bundled src/data360/ref_area_groups.json immediately on first
+      access so the tool is usable without any network I/O on the hot path.
+      Re-generate that file with::
 
-    Background sync:
-      A long-lived asyncio task refreshes the in-memory data from the FMR
-      endpoints every 7 days (TTL).  FMR is a VPN-restricted resource, so
-      failures are expected in non-VPN environments; they are logged at
-      WARNING level and the existing in-memory state is kept intact.
+          uv run python scripts/build_ref_area_groups.py
+
+    Background sync (TTL = 7 days):
+      The first public method call from within an async context spawns a
+      long-lived asyncio task that wakes once every 7 days and re-fetches
+      the FMR hierarchy and codelist endpoints.  On a successful fetch the
+      in-memory state is atomically replaced.
+
+      FMR (https://fmr.worldbank.org) is a VPN-restricted resource.  A
+      failed fetch is logged at WARNING level and the existing in-memory
+      state is kept intact.  The loop then sleeps another full TTL cycle
+      before trying again — non-VPN deployments therefore produce at most
+      one warning per week and never retry aggressively.
 
     Covers all 147 group codes across 6 group types:
       REGION, INCOME, LENDING, OTHER, REGION_UN, CONTINENT.
@@ -384,11 +393,17 @@ class GroupHierarchyManager:
             self._bg_task = asyncio.create_task(self._background_sync_loop())
 
     async def _background_sync_loop(self) -> None:
-        """Run forever, refreshing from FMR when the TTL expires.
+        """Run forever, waking every TTL seconds to refresh from FMR.
 
-        FMR is VPN-restricted.  Failures are logged at WARNING level and the
-        existing in-memory state is preserved.  On failure, the loop retries
-        after _FAILURE_BACKOFF seconds instead of waiting the full TTL.
+        TTL policy:
+          - Success: in-memory state is replaced; next wake is _TTL seconds later.
+          - Failure: existing state is kept; _last_fetched is still advanced by
+            _TTL so the next wake is also _TTL seconds later.  This means a
+            non-VPN deployment gets at most one WARNING log per week rather than
+            retrying aggressively.
+
+        The loop is safe to cancel: cancellation propagates through
+        asyncio.sleep and exits cleanly.
         """
         while True:
             elapsed = time.monotonic() - self._last_fetched
