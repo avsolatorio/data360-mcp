@@ -5,6 +5,9 @@ purpose-built JSON to src/data360/data/ref_area_groups.json that is shipped
 as package data. The output contains all 147 group codes with their country
 memberships, drawn from the H_REF_AREA_GROUPS hierarchy.
 
+Parsing logic lives in GroupHierarchyManager (providers.py) so it is shared
+between this build-time script and the background sync that runs at runtime.
+
 Usage:
     uv run python scripts/build_ref_area_groups.py
 
@@ -35,18 +38,21 @@ Excluded:
 
 import argparse
 import json
+import sys
 import urllib.request
 from datetime import UTC, datetime
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).parent.parent
+# Allow importing from the package when run directly via `uv run python scripts/...`
+_REPO_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(_REPO_ROOT / "src"))
+
+from data360.providers import GroupHierarchyManager  # noqa: E402
+
+REPO_ROOT = _REPO_ROOT
 HIERARCHY_FILE = REPO_ROOT / "examples" / "H_AREA_GROUPS38.json"
 CODELIST_FILE = REPO_ROOT / "examples" / "CL_REF_GROUPINGS.json"
 OUTPUT_FILE = REPO_ROOT / "src" / "data360" / "data" / "ref_area_groups.json"
-
-# Group types whose entries are all leaf countries -- not expandable groups.
-# Exclude them from the output entirely.
-LEAF_ONLY_TYPES = {"WLD", "_T"}
 
 
 def fetch_fmr_data(url: str, output_path: Path) -> None:
@@ -66,75 +72,20 @@ def fetch_fmr_data(url: str, output_path: Path) -> None:
         raise
 
 
-def load_name_map(codelist_path: Path) -> dict[str, str]:
-    """Build a {code: name} map from CL_REF_GROUPINGS."""
-    with open(codelist_path, encoding="utf-8") as f:
-        data = json.load(f)
-    codes = data["data"]["codelists"][0]["codes"]
-    return {c["id"]: c["name"] for c in codes}
-
-
-def extract_groups(
-    hierarchy_path: Path,
-    name_map: dict[str, str],
-) -> tuple[dict[str, dict], set[str], str]:
-    """Parse the FMR hierarchy and return (groups, all_countries, version).
-
-    groups format:
-        {
-            "SAS": {"name": "South Asia", "type": "REGION", "countries": [...]},
-            ...
-        }
-    all_countries: set of all individual country codes appearing in any group.
-    """
-    with open(hierarchy_path, encoding="utf-8") as f:
-        data = json.load(f)
-
-    hcl = data["data"]["hierarchicalCodelists"][0]
-    version = hcl["version"]
-    hierarchy = hcl["hierarchies"][0]
-    top_level = hierarchy["hierarchicalCodes"]
-
-    groups: dict[str, dict] = {}
-    all_countries: set[str] = set()
-
-    for type_node in top_level:
-        group_type = type_node["id"]
-        if group_type in LEAF_ONLY_TYPES:
-            continue
-
-        for group_node in type_node.get("hierarchicalCodes", []):
-            group_id = group_node["id"]
-            country_nodes = group_node.get("hierarchicalCodes", [])
-            if not country_nodes:
-                # This group has no children in the hierarchy -- skip.
-                continue
-
-            countries = sorted(c["id"] for c in country_nodes)
-            all_countries.update(countries)
-
-            # Strip UTF-8 mojibake that appears in some FMR source names
-            # (e.g. 9WN: "Western Asia\u00c2\u00a0 and ..." — UTF-8 NBSP bytes
-            # decoded as Latin-1 produce the two-character sequence \u00c2\u00a0).
-            raw_name = name_map.get(group_id, group_id)
-            clean_name = " ".join(raw_name.replace("\u00c2\u00a0", " ").split())
-
-            groups[group_id] = {
-                "name": clean_name,
-                "type": group_type,
-                "countries": countries,
-            }
-
-    return groups, all_countries, version
-
-
 def build(hierarchy_path: Path, codelist_path: Path, output_path: Path) -> None:
     """Build and write the ref_area_groups.json output file."""
     print(f"Reading hierarchy: {hierarchy_path}")
     print(f"Reading codelist:  {codelist_path}")
 
-    name_map = load_name_map(codelist_path)
-    groups, all_countries, version = extract_groups(hierarchy_path, name_map)
+    with open(hierarchy_path, encoding="utf-8") as f:
+        hierarchy_data = json.load(f)
+    with open(codelist_path, encoding="utf-8") as f:
+        codelist_data = json.load(f)
+
+    name_map = GroupHierarchyManager.parse_name_map(codelist_data)
+    groups, all_countries, version = GroupHierarchyManager.parse_hierarchy(
+        hierarchy_data, name_map
+    )
 
     group_types = sorted({v["type"] for v in groups.values()})
 
@@ -173,7 +124,10 @@ def main():
     parser.add_argument(
         "--fetch",
         action="store_true",
-        help="Fetch the latest (or specified version) JSON files from FMR (VPN required) and overwrite local examples.",
+        help=(
+            "Fetch the latest (or specified version) JSON files from FMR "
+            "(VPN required) and overwrite local examples."
+        ),
     )
     parser.add_argument(
         "--hierarchy-version",
@@ -191,14 +145,18 @@ def main():
     args = parser.parse_args()
 
     if args.fetch:
-        hierarchy_url = "https://fmr.worldbank.org/FMR/sdmx/v2/structure/hierarchy/WB/H_REF_AREA_GROUPS/"
+        hierarchy_url = (
+            "https://fmr.worldbank.org/FMR/sdmx/v2/structure/hierarchy/WB/H_REF_AREA_GROUPS/"
+        )
         if args.hierarchy_version:
-            hierarchy_url += f"{args.hierarchy_version}"
+            hierarchy_url += args.hierarchy_version
         hierarchy_url += "?format=sdmx-json"
 
-        codelist_url = "https://fmr.worldbank.org/FMR/sdmx/v2/structure/codelist/WB/CL_REF_GROUPINGS/"
+        codelist_url = (
+            "https://fmr.worldbank.org/FMR/sdmx/v2/structure/codelist/WB/CL_REF_GROUPINGS/"
+        )
         if args.codelist_version:
-            codelist_url += f"{args.codelist_version}"
+            codelist_url += args.codelist_version
         codelist_url += "?format=sdmx-json"
 
         print("--- Fetching source data from FMR ---")
