@@ -90,8 +90,14 @@ def extract_groups(
             countries = sorted(c["id"] for c in country_nodes)
             all_countries.update(countries)
 
+            # Strip UTF-8 mojibake that appears in some FMR source names
+            # (e.g. 9WN: "Western Asia\u00c2\u00a0 and ..." — UTF-8 NBSP bytes
+            # decoded as Latin-1 produce the two-character sequence \u00c2\u00a0).
+            raw_name = name_map.get(group_id, group_id)
+            clean_name = " ".join(raw_name.replace("\u00c2\u00a0", " ").split())
+
             groups[group_id] = {
-                "name": name_map.get(group_id, group_id),
+                "name": clean_name,
                 "type": group_type,
                 "countries": countries,
             }
