@@ -15,6 +15,7 @@ dependencies = [
   "gunicorn>=23.0.0",
   "langchain-openai>=1.1.7",
   "pydantic-settings>=2.0.0",
+  "litellm>=1.40.0",
   "draco @ git+https://github.com/avsolatorio/draco2.git@data360-mcp",
   "opencensus-ext-azure>=1.1.13",
   "azure-monitor-opentelemetry>=1.6.0",

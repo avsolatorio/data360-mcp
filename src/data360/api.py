@@ -1,9 +1,13 @@
 import asyncio
 import json
 import logging
+import re
 import zlib
 from typing import Any
 from urllib.parse import urlencode
+
+from fastmcp import Context
+from pydantic import BaseModel
 
 import dotenv
 import httpx
@@ -1532,6 +1536,487 @@ async def discover_indicators(
     )
 
     # ... existing implementation ...
+
+
+# --- Topic Analysis Helpers ---
+
+# Conjunctions and stopwords used for rule-based query decomposition.
+# Conjunctions and stopwords used for rule-based query decomposition.
+_STOPWORDS = frozenset({
+    "what", "are", "the", "main", "is", "a", "an", "of", "for", "in",
+    "to", "how", "does", "do", "its", "their", "has", "been", "being",
+    "with", "on", "at", "by", "from", "about", "between", "which",
+    "facing", "challenges", "issues", "problems", "region", "country",
+    "makes", "great", "key", "major", "most", "important",
+})
+_DEFAULT_SUMMARY_YEARS = 5
+
+# System prompt for the sampling call.
+#
+# When result_type=_DecompositionResult is used (Phase A), FastMCP automatically
+# appends the Pydantic JSON schema so the field descriptions below are sufficient.
+#
+# When the client rejects result_type and Phase B (plain-text) is used instead,
+# the explicit JSON examples at the end of this prompt ensure the model still
+# returns parseable output that our manual parser can handle.
+_SAMPLING_SYSTEM_PROMPT = (
+    "You are a development economist. Given the user's question about "
+    "development data or indicators, generate 3-5 specific, measurable "
+    "topics that can be searched in a statistical database (e.g. World "
+    "Bank indicators).\n\n"
+    "Respond with valid JSON only (no markdown, no explanation):\n"
+    "- If the question covers a single country or no specific country, respond with:\n"
+    '  {"sub_queries": ["topic 1", "topic 2", ...]}\n'
+    "- If the question mentions MULTIPLE countries with DIFFERENT topics per country, respond with:\n"
+    '  {"query_groups": [{"queries": ["topic 1"], "country": "CountryName"}, ...]}\n'
+    "Populate exactly one field (sub_queries OR query_groups). Do not populate both."
+)
+
+
+class _SampledQueryGroup(BaseModel):
+    """A set of search queries scoped to a specific country (from structured sampling output)."""
+
+    queries: list[str]
+    country: str
+
+
+class _DecompositionResult(BaseModel):
+    """Structured sampling output for topic decomposition.
+
+    FastMCP enforces this schema on the LLM response, eliminating the need
+    for manual JSON parsing or regex extraction.
+
+    Exactly one of sub_queries or query_groups should be populated.
+    """
+
+    sub_queries: list[str] | None = None
+    query_groups: list[_SampledQueryGroup] | None = None
+
+
+def _score_indicator(
+    indicator: "EnrichedIndicator",
+    query_tokens: set[str],
+) -> float:
+    """Score an indicator for relevance to the original query.
+
+    Scoring factors:
+    - Country coverage: +2 if covers_country has any True entry
+    - Data recency: +1 if latest_data is within the last 3 years, +0.5 within 10 years
+    - Token overlap: proportion of query tokens found in indicator name + definition
+    """
+    score = 0.0
+
+    if indicator.covers_country and any(indicator.covers_country.values()):
+        score += 2.0
+
+    try:
+        from datetime import datetime  # noqa: PLC0415
+        latest = int(indicator.latest_data or "0")
+        current_year = datetime.now().year
+        if latest >= current_year - 3:
+            score += 1.0
+        elif latest >= current_year - 10:
+            score += 0.5
+    except (ValueError, TypeError):
+        pass
+
+    indicator_text = f"{indicator.name} {indicator.truncated_definition}".lower()
+    indicator_tokens = set(indicator_text.split())
+    if query_tokens:
+        overlap = len(query_tokens & indicator_tokens)
+        score += overlap / max(len(query_tokens), 1)
+
+    return score
+
+
+async def analyze_development_topic(
+    query: str,
+    country: str | None = None,
+    max_indicators: int = 4,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    ctx: Context | None = None,
+) -> dict[str, Any]:
+    """Analyze a development topic by finding and fetching relevant indicators.
+
+    Use this tool when the user asks a broad or vague question about development
+    data that does not name a specific indicator — for example:
+    "What makes a country great?", "What are Ghana's economic challenges?",
+    "How is education performing in Sub-Saharan Africa?"
+
+    The tool decomposes the question into specific searchable topics using the
+    connected LLM (when sampling is available). If sampling fails, it proceeds
+    with the raw query. It searches the Data360 catalog for each topic, scores and ranks
+    the results, and prefetches recent data for the top indicators.
+
+    Do NOT use this tool when the user already names a specific indicator or
+    metric (e.g. "GDP per capita for Kenya") — use data360_search_indicators
+    and data360_get_data directly instead.
+
+    Args:
+        query: The user's development-related question (can be vague/broad).
+        country: Optional country name or 3-letter code (e.g. "Ghana", "GHA").
+            Can also be comma-separated for multi-country comparisons (e.g. "Morocco, Ethiopia").
+        max_indicators: Maximum number of indicators to return (default 4, max 6).
+        start_year: Optional start year for data snapshots. Defaults to last 5 years.
+        end_year: Optional end year for data snapshots. Defaults to current year.
+        ctx: MCP Context object (injected by FastMCP). Used for sampling when available.
+
+    Returns:
+        Dict with:
+            query: The original question.
+            country / country_code: Resolved country info (if provided). May be comma-separated.
+            sub_queries: The decomposed search terms (from LLM or rule-based).
+            decomposition_method: "sampling_client", "sampling_server", or "none".
+            selected_indicators: List of ranked indicator dicts, each with:
+                rank, indicator_id, database_id, database_name, name, definition,
+                matched_sub_queries (dict with original_query and decomposed_sub_query),
+                score, data_snapshot (list of recent data points), data_error (if fetch failed).
+            coverage_note: Summary of how many indicators were found.
+            error: Top-level error message if the entire operation failed.
+    """
+    from datetime import datetime  # noqa: PLC0415
+
+    max_indicators = min(max_indicators, 6)
+    current_year = datetime.now().year
+    if end_year is None:
+        end_year = current_year
+    if start_year is None:
+        start_year = current_year - _DEFAULT_SUMMARY_YEARS + 1
+
+    # --- Step 1: Resolve country code ---
+    country_code = None
+    if country:
+        country_code = await _resolve_country_code(country)
+
+    # --- Step 2: Decompose query into sub-queries ---
+    # Two-phase sampling strategy:
+    #
+    # Phase A — structured output (result_type=_DecompositionResult):
+    #   Works with FastMCP's server-side LiteLLM handler and any MCP client
+    #   that supports schema-constrained sampling. FastMCP enforces the Pydantic
+    #   schema and returns a validated _DecompositionResult object.
+    #
+    # Phase B — plain-text fallback:
+    #   If Phase A fails because the client rejects result_type (e.g. VS Code
+    #   Copilot, Claude Desktop), retry with a plain ctx.sample() call and parse
+    #   the text response as JSON manually. The system prompt already contains
+    #   explicit JSON format examples so the model reliably produces parseable output.
+    #
+    # If both phases fail, proceed with the raw user query (decomposition_method="none").
+    sub_queries: list[str] = []
+    query_groups_from_sampling: list[QueryGroup] | None = None
+    decomposition_method = "none"
+
+    _logger.info(
+        "analyze_development_topic: ctx=%s, type=%s",
+        ctx is not None,
+        type(ctx).__name__ if ctx is not None else "None",
+    )
+
+    if ctx is not None:
+        from mcp.types import ClientCapabilities, SamplingCapability  # noqa: PLC0415
+        _has_native_sampling = ctx.session.check_client_capability(
+            ClientCapabilities(sampling=SamplingCapability())
+        )
+        _sampling_tier = "sampling_client" if _has_native_sampling else "sampling_server"
+
+        # --- Phase A: structured output via result_type ---
+        _phase_a_failed = False
+        try:
+            sampling_result = await ctx.sample(
+                f"User question: {query}",
+                system_prompt=_SAMPLING_SYSTEM_PROMPT,
+                result_type=_DecompositionResult,
+                max_tokens=512,
+            )
+            decomposition: _DecompositionResult = sampling_result.result
+
+            if decomposition.query_groups:
+                query_groups_from_sampling = [
+                    QueryGroup(
+                        queries=[q.strip() for q in g.queries if q and q.strip()][:5],
+                        country=g.country,
+                    )
+                    for g in decomposition.query_groups
+                    if g.queries
+                ]
+                if query_groups_from_sampling:
+                    decomposition_method = _sampling_tier
+                    sub_queries = [
+                        q for g in query_groups_from_sampling for q in g.queries
+                    ]
+                    _logger.info(
+                        "Phase A sampling succeeded (grouped, tier=%s): %s",
+                        decomposition_method,
+                        query_groups_from_sampling,
+                    )
+
+            elif decomposition.sub_queries:
+                sub_queries = [
+                    s.strip() for s in decomposition.sub_queries
+                    if s and s.strip()
+                ][:5]
+                if sub_queries:
+                    decomposition_method = _sampling_tier
+                    _logger.info(
+                        "Phase A sampling succeeded (flat, tier=%s): %s",
+                        decomposition_method,
+                        sub_queries,
+                    )
+
+        except Exception as _phase_a_exc:
+            _phase_a_failed = True
+            _logger.info(
+                "Phase A (result_type) sampling failed (%s: %s); trying Phase B plain-text.",
+                type(_phase_a_exc).__name__,
+                _phase_a_exc,
+            )
+
+        # --- Phase B: plain-text fallback (for clients that reject result_type) ---
+        if _phase_a_failed and not sub_queries:
+            try:
+                plain_result = await ctx.sample(
+                    f"User question: {query}",
+                    system_prompt=_SAMPLING_SYSTEM_PROMPT,
+                    max_tokens=512,
+                )
+                raw_text = (plain_result.text or "").strip()
+                # Strip markdown code fences if present
+                if raw_text.startswith("```"):
+                    lines = raw_text.split("\n")
+                    raw_text = "\n".join(lines[1:-1]).strip()
+
+                parsed = json.loads(raw_text)
+
+                if isinstance(parsed, dict):
+                    # Grouped format: {"query_groups": [{"queries": [...], "country": "..."}, ...]}
+                    if isinstance(parsed.get("query_groups"), list):
+                        raw_groups = parsed["query_groups"]
+                        query_groups_from_sampling = [
+                            QueryGroup(
+                                queries=[q.strip() for q in g["queries"] if q and q.strip()][:5],
+                                country=g.get("country", ""),
+                            )
+                            for g in raw_groups
+                            if isinstance(g, dict) and g.get("queries")
+                        ]
+                        if query_groups_from_sampling:
+                            decomposition_method = _sampling_tier
+                            sub_queries = [
+                                q for g in query_groups_from_sampling for q in g.queries
+                            ]
+                            _logger.info(
+                                "Phase B sampling succeeded (grouped, tier=%s): %s",
+                                decomposition_method,
+                                query_groups_from_sampling,
+                            )
+
+                    # Flat format: {"sub_queries": ["topic 1", "topic 2", ...]}
+                    elif isinstance(parsed.get("sub_queries"), list):
+                        sub_queries = [
+                            s.strip() for s in parsed["sub_queries"]
+                            if isinstance(s, str) and s.strip()
+                        ][:5]
+                        if sub_queries:
+                            decomposition_method = _sampling_tier
+                            _logger.info(
+                                "Phase B sampling succeeded (flat, tier=%s): %s",
+                                decomposition_method,
+                                sub_queries,
+                            )
+
+                    # Legacy flat list format: ["topic 1", "topic 2", ...]
+                    elif isinstance(parsed, list) and parsed and isinstance(parsed[0], str):
+                        sub_queries = [
+                            s.strip() for s in parsed
+                            if isinstance(s, str) and s.strip()
+                        ][:5]
+                        if sub_queries:
+                            decomposition_method = _sampling_tier
+                            _logger.info(
+                                "Phase B sampling succeeded (legacy flat list, tier=%s): %s",
+                                decomposition_method,
+                                sub_queries,
+                            )
+
+            except (json.JSONDecodeError, TypeError) as _parse_exc:
+                _logger.warning(
+                    "Phase B sampling returned non-JSON response; proceeding with raw query. error=%s",
+                    _parse_exc,
+                )
+            except Exception as _phase_b_exc:
+                _logger.warning(
+                    "Phase B sampling failed; proceeding with raw query. error=%s: %s",
+                    type(_phase_b_exc).__name__,
+                    _phase_b_exc,
+                )
+
+    # Proceed with the raw query when sampling produced nothing
+    if not sub_queries:
+        sub_queries = [query.strip()]
+        decomposition_method = "none"
+
+    _logger.info(
+        "Decomposed into %d sub-queries (%s): %s",
+        len(sub_queries),
+        decomposition_method,
+        sub_queries,
+    )
+
+    # --- Step 3: Search for indicators ---
+    # Route to one of three paths based on the decomposition output:
+    # Path A — sampling returned grouped structure: use query_groups directly
+    # Path B — flat sub-queries + multiple countries detected: build cross-product query_groups
+    # Path C — single country or no country: use queries= + required_country=
+    all_indicators: list[tuple[EnrichedIndicator, str]] = []
+    total_candidates = 0
+
+    # Detect multi-country input for Path B
+    multi_country_codes: list[str] = []
+    if country_code and "," in country_code:
+        multi_country_codes = [c.strip() for c in country_code.split(",") if c.strip()]
+
+    if query_groups_from_sampling:
+        # Path A
+        search_res = await search(
+            query_groups=query_groups_from_sampling,
+            result_layout="by_query",
+            dedupe=True,
+        )
+    elif multi_country_codes:
+        # Path B: build cross-product — each sub-query × each country
+        groups = [
+            QueryGroup(queries=sub_queries, country=code)
+            for code in multi_country_codes
+        ]
+        search_res = await search(
+            query_groups=groups,
+            result_layout="by_query",
+            dedupe=True,
+        )
+    else:
+        # Path C
+        search_res = await search(
+            queries=sub_queries,
+            required_country=country_code,
+            result_layout="by_query",
+            dedupe=True,
+        )
+
+    if isinstance(search_res, MultiQuerySearchResponse) and search_res.results:
+        for group in search_res.results:
+            for ind in group.indicators:
+                all_indicators.append((ind, group.query))
+            total_candidates += group.count
+    elif hasattr(search_res, "indicators") and search_res.indicators:
+        for ind in search_res.indicators:
+            all_indicators.append((ind, query))
+        total_candidates = len(search_res.indicators)
+
+    if not all_indicators:
+        return {
+            "query": query,
+            "country": country,
+            "country_code": country_code,
+            "sub_queries": sub_queries,
+            "decomposition_method": decomposition_method,
+            "selected_indicators": [],
+            "coverage_note": f"No indicators found across {len(sub_queries)} sub-queries.",
+            "error": "No matching indicators found for this topic.",
+        }
+
+    # --- Step 4: Score and rank ---
+    query_tokens = {
+        w.lower() for w in query.split()
+        if w.lower() not in _STOPWORDS and len(w) > 1
+    }
+
+    scored: list[tuple[float, EnrichedIndicator, str]] = []
+    for ind, source_sq in all_indicators:
+        score = _score_indicator(ind, query_tokens)
+        scored.append((score, ind, source_sq))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    top = scored[:max_indicators]
+
+    # --- Step 5: Prefetch data for top indicators ---
+    async def _fetch_data_for_indicator(
+        ind: EnrichedIndicator,
+    ) -> dict[str, Any] | None:
+        """Fetch a small data snapshot for one indicator."""
+        try:
+            filters: dict[str, str | None] = {}
+            # Prefer the per-indicator resolved scope (from query_groups);
+            # fall back to the top-level country_code only when absent.
+            requested_country = getattr(ind, "requested_country", None) or country_code
+            if requested_country:
+                filters["REF_AREA"] = requested_country
+
+            data_result = await get_data(
+                database_id=ind.database_id,
+                indicator_id=ind.idno,
+                disaggregation_filters=filters if filters else None,
+                start_year=start_year,
+                end_year=end_year,
+                limit=20,
+            )
+            if data_result.error:
+                return {"error": data_result.error}
+            return {
+                "data": data_result.data,
+                "metadata": data_result.metadata,
+                "count": data_result.count,
+            }
+        except Exception as e:
+            return {"error": str(e)}
+
+    data_tasks = [_fetch_data_for_indicator(ind) for _, ind, _ in top]
+    data_results = await asyncio.gather(*data_tasks, return_exceptions=True)
+
+    # --- Step 6: Build response ---
+    selected_indicators = []
+    for rank, ((score, ind, source_sq), data_res) in enumerate(
+        zip(top, data_results), start=1
+    ):
+        data_snapshot = None
+        data_error = None
+
+        if isinstance(data_res, Exception):
+            data_error = str(data_res)
+        elif data_res is not None and "error" in data_res:
+            data_error = data_res["error"]
+        elif data_res is not None:
+            data_snapshot = data_res
+
+        selected_indicators.append({
+            "rank": rank,
+            "indicator_id": ind.idno,
+            "database_id": ind.database_id,
+            "database_name": ind.database_name,
+            "name": ind.name,
+            "definition": ind.truncated_definition,
+            "matched_sub_queries": {
+                "original_query": query,
+                "decomposed_sub_query": source_sq,
+            },
+            "score": round(score, 2),
+            "data_snapshot": data_snapshot,
+            "data_error": data_error,
+        })
+
+    return {
+        "query": query,
+        "country": country,
+        "country_code": country_code,
+        "sub_queries": sub_queries,
+        "decomposition_method": decomposition_method,
+        "selected_indicators": selected_indicators,
+        "coverage_note": (
+            f"{len(selected_indicators)} indicators selected from "
+            f"{len(sub_queries)} sub-queries ({total_candidates} candidates)"
+        ),
+    }
 
 
 # --- Visualization Workflow Tools ---
