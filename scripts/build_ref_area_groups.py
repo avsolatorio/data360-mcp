@@ -1,7 +1,7 @@
 """Transform FMR hierarchy + codelist into a compact lookup for runtime use.
 
 Reads the official FMR SDMX files committed under examples/ and writes a
-purpose-built JSON to src/data360/data/ref_area_groups.json that is shipped
+purpose-built JSON to src/data360/ref_area_groups.json that is shipped
 as package data. The output contains all 147 group codes with their country
 memberships, drawn from the H_REF_AREA_GROUPS hierarchy.
 
@@ -52,7 +52,7 @@ from data360.providers import GroupHierarchyManager  # noqa: E402
 REPO_ROOT = _REPO_ROOT
 HIERARCHY_FILE = REPO_ROOT / "examples" / "H_AREA_GROUPS38.json"
 CODELIST_FILE = REPO_ROOT / "examples" / "CL_REF_GROUPINGS.json"
-OUTPUT_FILE = REPO_ROOT / "src" / "data360" / "data" / "ref_area_groups.json"
+OUTPUT_FILE = REPO_ROOT / "src" / "data360" / "ref_area_groups.json"
 
 
 def fetch_fmr_data(url: str, output_path: Path) -> None:

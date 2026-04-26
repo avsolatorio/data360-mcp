@@ -28,7 +28,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-data360 = ["tool_contract_version.json", "databases.json", "data/*.json"]
+data360 = ["tool_contract_version.json", "databases.json", "ref_area_groups.json"]
 
 [dependency-groups]
 dev = [
