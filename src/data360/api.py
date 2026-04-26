@@ -955,7 +955,7 @@ async def search(  # noqa: PLR0911
                         break
             except Exception as e:
                 _logger.warning(
-                    f"Failed to verify regional coverage for {ind.idno}: {e}"
+                    "Failed to verify regional coverage for %s: %s", ind.idno, e
                 )
 
         await asyncio.gather(*(_verify_regional_coverage(ind) for ind in indicators_to_verify))
@@ -1014,6 +1014,8 @@ async def _build_multi_query_response(
             ))
             continue
 
+        # Multi-query uses sovereign country codes per group; regional aggregate
+        # verification is only needed for the single-query path. Discard it.
         enriched, _ = _enrich_search_results(raw_result, code_for_query, db_mapping)
         total_candidates += len(enriched)
 

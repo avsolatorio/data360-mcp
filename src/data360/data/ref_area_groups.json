@@ -1,7 +1,7 @@
 {
   "_meta": {
     "source": "FMR H_REF_AREA_GROUPS v38.0 + CL_REF_GROUPINGS",
-    "built_at": "2026-04-22",
+    "built_at": "2026-04-26",
     "hierarchy_version": "38.0",
     "total_groups": 147,
     "total_countries": 251,
@@ -1485,7 +1485,7 @@
       ]
     },
     "9CS": {
-      "name": "UN M49 Central Asia  and Southern Asia (MDG=M49)",
+      "name": "UN M49 Central Asia and Southern Asia (MDG=M49)",
       "type": "REGION_UN",
       "countries": [
         "AFG",
@@ -1562,7 +1562,7 @@
       ]
     },
     "9ES": {
-      "name": "UN M49 Eastern Asia  and South-eastern Asia (MDG=M49)",
+      "name": "UN M49 Eastern Asia and South-eastern Asia (MDG=M49)",
       "type": "REGION_UN",
       "countries": [
         "BRN",
@@ -1741,7 +1741,7 @@
       ]
     },
     "9NE": {
-      "name": "UN M49 Northern America  and Europe",
+      "name": "UN M49 Northern America and Europe",
       "type": "REGION_UN",
       "countries": [
         "ALA",
@@ -1884,7 +1884,7 @@
       ]
     },
     "9OX": {
-      "name": "UN M49 Oceania  excluding Australia and New Zealand",
+      "name": "UN M49 Oceania excluding Australia and New Zealand",
       "type": "REGION_UN",
       "countries": [
         "ASM",
@@ -2390,7 +2390,7 @@
       ]
     },
     "9WN": {
-      "name": "UN M49 Western AsiaÂ  and Northern Africa",
+      "name": "UN M49 Western Asia and Northern Africa",
       "type": "REGION_UN",
       "countries": [
         "ARE",

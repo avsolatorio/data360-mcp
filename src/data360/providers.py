@@ -332,6 +332,16 @@ def get_group_hierarchy_manager() -> GroupHierarchyManager:
     return _group_hierarchy_manager
 
 
+def _make_group_note(group_code: str, info: dict) -> str:
+    """Build the standard guidance note for a REF_AREA group result."""
+    return (
+        f"This is a {info['type'].lower()} group with "
+        f"{len(info['countries'])} member countries. "
+        f"Use data360_expand_country_group('{group_code}') "
+        "to get individual country codes."
+    )
+
+
 class CodelistManager:
     """Unified manager for all Data360 codelists.
 
@@ -577,12 +587,7 @@ class CodelistManager:
                     match["is_group"] = True
                     match["group_type"] = info["type"]
                     match["member_count"] = len(info["countries"])
-                    match["note"] = (
-                        f"This is a {info['type'].lower()} group with "
-                        f"{len(info['countries'])} member countries. "
-                        f"Use data360_expand_country_group('{match['id']}') "
-                        "to get individual country codes."
-                    )
+                    match["note"] = _make_group_note(match["id"], info)
                 else:
                     match["is_group"] = False
 
@@ -750,12 +755,7 @@ async def find_codelist_value(
                     "is_group": True,
                     "group_type": info["type"],
                     "member_count": len(info["countries"]),
-                    "note": (
-                        f"This is a {info['type'].lower()} group with "
-                        f"{len(info['countries'])} member countries. "
-                        f"Use data360_expand_country_group('{group_code}') "
-                        "to get individual country codes."
-                    ),
+                    "note": _make_group_note(group_code, info),
                 }
                 return [result]
 
