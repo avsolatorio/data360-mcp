@@ -233,11 +233,8 @@ class GroupHierarchyManager:
 
     # 7-day TTL: income group compositions change at most once a year (July 1).
     _TTL: float = 7 * 24 * 3600.0
-    # On complete fetch failure, retry after 5 minutes instead of waiting a
-    # full TTL cycle (mirrors DatabaseManager's backoff strategy).
-    _FAILURE_BACKOFF: float = 300.0
 
-    _DATA_FILE = Path(__file__).parent / "data" / "ref_area_groups.json"
+    _DATA_FILE = Path(__file__).parent / "ref_area_groups.json"
 
     def __init__(self, include_types: set[str] | None = None) -> None:
         """Initialize and load the bundled JSON fallback synchronously.
@@ -419,13 +416,13 @@ class GroupHierarchyManager:
                 except Exception as e:
                     _logger.warning(
                         "GroupHierarchyManager: background FMR fetch failed (%s). "
-                        "FMR may require VPN access. Retrying in %.0f seconds.",
+                        "FMR may require VPN access. Next attempt in %.0f days.",
                         e,
-                        self._FAILURE_BACKOFF,
+                        self._TTL / 86400,
                     )
-                    # Offset _last_fetched so the next sleep is _FAILURE_BACKOFF,
-                    # not a full TTL cycle — same strategy as DatabaseManager.
-                    self._last_fetched = time.monotonic() - self._TTL + self._FAILURE_BACKOFF
+                    # Wait a full TTL cycle before retrying. FMR is VPN-restricted
+                    # and non-VPN deployments should not produce repeated warnings.
+                    self._last_fetched = time.monotonic()
 
             sleep_for = max(0.0, self._TTL - (time.monotonic() - self._last_fetched))
             await asyncio.sleep(sleep_for)
