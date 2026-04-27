@@ -18,4 +18,11 @@ export interface VegaChartCardProps extends VegaChartCardBaseProps {
    * The PNG export stays at the bottom; when set, the rail uses vertical space-between.
    */
   railTopSlot?: ReactNode;
+
+  /**
+   * Pixel ratio for “Save as PNG” (full-card raster via html-to-image and Vega chart-only fallback).
+   * Higher values yield sharper images and larger files. Typical range: 2–4.
+   * @default 4
+   */
+  pngExportPixelRatio?: number;
 }

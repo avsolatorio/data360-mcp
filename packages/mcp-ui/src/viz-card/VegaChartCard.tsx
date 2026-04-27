@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import type { VegaChartCardProps } from "./types";
+import { toPng } from "html-to-image";
 import { WB_PALETTE } from "@data360/mcp-viz-core";
 import { prepareSpec, parseSpec } from "@data360/mcp-viz-core";
 
@@ -207,9 +208,11 @@ export default function VegaChartCard({
   chartHeight = 260,
   onDownload,
   onExport,
+  pngExportPixelRatio = 4,
   railTopSlot,
   className,
 }: VegaChartCardProps) {
+  const cardRef     = useRef<HTMLDivElement>(null);
   const chartRef    = useRef<HTMLDivElement>(null);
   const vegaViewRef = useRef<{ finalize(): void; toImageURL(fmt: string, scale: number): Promise<string> } | null>(null);
 
@@ -300,16 +303,38 @@ export default function VegaChartCard({
   }, [parsed, activeGroups, onDownload]);
 
   const handleExport = useCallback(() => {
-    if (!vegaViewRef.current) return;
-    vegaViewRef.current.toImageURL("png", 2).then((url) => {
+    const deliver = (url: string) => {
       if (onExport) {
         onExport(url);
         return;
       }
       const a = document.createElement("a");
-      a.href = url; a.download = "chart.png"; a.click();
-    });
-  }, [onExport]);
+      a.href = url;
+      a.download = "chart.png";
+      a.click();
+    };
+
+    const fromVegaOnly = () => {
+      if (!vegaViewRef.current) return;
+      void vegaViewRef.current.toImageURL("png", pngExportPixelRatio).then(deliver);
+    };
+
+    const node = cardRef.current;
+    if (!node) {
+      fromVegaOnly();
+      return;
+    }
+
+    void toPng(node, {
+      pixelRatio: pngExportPixelRatio,
+      backgroundColor: "#ffffff",
+      cacheBust: true,
+      filter: (domNode) =>
+        !(domNode instanceof HTMLElement && domNode.hasAttribute("data-chart-card-export-skip")),
+    })
+      .then(deliver)
+      .catch(fromVegaOnly);
+  }, [onExport, pngExportPixelRatio]);
 
   const handleCopySpec = useCallback(() => {
     try {
@@ -375,7 +400,7 @@ export default function VegaChartCard({
       className={className}
       style={{ display: "flex", gap: 10, alignItems: "stretch", width: "100%" }}
     >
-      <div style={card}>
+      <div ref={cardRef} style={card}>
 
         {/* Title + subtitle */}
         <h2 style={{ fontSize: 18, fontWeight: 600, lineHeight: 1.3, color: "#111111", margin: 0 }}>
@@ -385,7 +410,7 @@ export default function VegaChartCard({
           <p style={{ fontSize: 14, color: "#666666", marginTop: 4 }}>{subtitle}</p>
         )}
 
-        {/* Chart (no overlay — PNG export is in the rail to the right) */}
+        {/* Chart (PNG export captures this whole card via html-to-image) */}
         <div ref={chartRef} style={chartArea} />
 
         {/* Interactive legend */}
@@ -434,15 +459,16 @@ export default function VegaChartCard({
           </p>
         )}
 
-        <Divider />
-
-        {/* Footer: annotations only — Download data lives in the right rail */}
-        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-          <ToggleSwitch
-            checked={showAnnotations}
-            onChange={setShowAnnotations}
-            label="Show annotations"
-          />
+        {/* Omitted from PNG export (toggle is UI chrome, not chart content) */}
+        <div data-chart-card-export-skip="">
+          <Divider />
+          <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+            <ToggleSwitch
+              checked={showAnnotations}
+              onChange={setShowAnnotations}
+              label="Show annotations"
+            />
+          </div>
         </div>
       </div>
 
