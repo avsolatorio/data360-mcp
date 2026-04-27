@@ -326,6 +326,14 @@ class TestSpecBuilders:
         leg = spec["encoding"]["color"]["legend"]
         assert leg is not None
 
+    def test_temporal_single_line_has_hover_points(self):
+        df = _ts_df()
+        r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
+        spec = build_temporal_single_spec(df, "Test", r)
+        pt = spec["mark"]["point"]
+        assert isinstance(pt, dict)
+        assert pt.get("size", 0) >= 40
+
     # cross_sectional
     def test_cross_sectional_mark_is_bar(self):
         df = _cs_df()
@@ -345,6 +353,14 @@ class TestSpecBuilders:
         r = self._result(ChartStrategy.CROSS_SECTIONAL)
         spec = build_cross_sectional_spec(df, "Test", r)
         assert spec["encoding"]["y"]["sort"] == "-x"
+
+    def test_cross_sectional_x_label_sets_axis_title_when_not_default(self):
+        df = _cs_df()
+        r = self._result(ChartStrategy.CROSS_SECTIONAL, color_dim="country")
+        spec = build_cross_sectional_spec(
+            df, "Test", r, x_label="GDP (current US$)"
+        )
+        assert spec["encoding"]["x"]["axis"]["title"] == "GDP (current US$)"
 
     # distribution
     def test_distribution_mark_is_tick(self):
@@ -495,6 +511,21 @@ class TestSpecBuilders:
         spec = build_temporal_multi_indicator_spec(df, "Test", r)
         colors = [layer["mark"]["color"] for layer in spec["layer"]]
         assert len(set(colors)) == 2  # distinct colors
+
+    def test_temporal_multi_indicator_tooltip_one_value_field_per_layer(self):
+        df = _two_ind_ts_df()[lambda x: x["country"] == "CountryA"]
+        ind_cols = ["gdp_per_capita", "life_expectancy"]
+        r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
+        lab = {"gdp_per_capita": "GDP (USD)", "life_expectancy": "Life exp"}
+        spec = build_temporal_multi_indicator_spec(df, "Test", r, indicator_labels=lab)
+        tips0 = spec["layer"][0]["encoding"]["tooltip"]
+        tips1 = spec["layer"][1]["encoding"]["tooltip"]
+        fields0 = {t["field"] for t in tips0}
+        fields1 = {t["field"] for t in tips1}
+        assert "gdp_per_capita" in fields0
+        assert "life_expectancy" not in fields0
+        assert "life_expectancy" in fields1
+        assert "gdp_per_capita" not in fields1
 
     def test_temporal_multi_indicator_staggered_y_axes_for_four_series(self):
         df = _four_ind_ts_df()

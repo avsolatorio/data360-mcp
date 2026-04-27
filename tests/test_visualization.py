@@ -142,6 +142,66 @@ class TestGetVizSpecDracoFallbackWarning:
         )
 
     @pytest.mark.asyncio
+    async def test_draco_line_spec_gets_hover_points_in_postprocess(self, patches):
+        """Draco line outputs should get mark.point injected for easier tooltip hover."""
+        mock_chart = MagicMock()
+        mock_vl_spec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "mark": "line",
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "quantitative"},
+            },
+        }
+        mock_chart.properties.return_value = mock_chart
+        mock_chart.interactive.return_value = mock_chart
+        mock_chart.encode.return_value = mock_chart
+        mock_chart.to_dict.return_value = mock_vl_spec
+
+        captured_spec: dict[str, object] = {}
+
+        async def _capture_spec(spec):
+            captured_spec.clear()
+            captured_spec.update(spec)
+            return "http://localhost:8021/static/viz_specs/test-line.json"
+
+        with (
+            patch("data360.visualization.Draco") as MockDraco,
+            patch("data360.visualization.answer_set_to_dict") as mock_as2d,
+            patch("data360.visualization.AltairRenderer") as MockRenderer,
+            patch(
+                "data360.visualization._store_spec",
+                side_effect=_capture_spec,
+            ),
+        ):
+            fake_model = MagicMock()
+            draco_instance = MagicMock()
+            draco_instance.complete_spec.return_value = iter([fake_model])
+            MockDraco.return_value = draco_instance
+            mock_as2d.return_value = {
+                "view": [{"mark": [{"type": "line", "encoding": []}]}]
+            }
+
+            renderer_instance = MagicMock()
+            renderer_instance.render.return_value = mock_chart
+            MockRenderer.return_value = renderer_instance
+
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+            )
+
+        assert result["error"] is None
+        mark = captured_spec.get("mark")
+        if isinstance(mark, str):
+            pytest.fail("Expected post-processing to normalize line mark into dict")
+        assert isinstance(mark, dict)
+        assert mark.get("type") == "line"
+        point = mark.get("point")
+        assert isinstance(point, dict)
+        assert point.get("size", 0) >= 40
+
+    @pytest.mark.asyncio
     async def test_fallback_also_fails_returns_error(self, patches):
         """When both Draco and the dispatch_spec fallback fail, an error is returned."""
         with (
@@ -607,6 +667,21 @@ class TestPostProcessingRuleChain:
             spec = rule.apply(spec, "A", "current US$")
         expr = spec["encoding"]["y"]["axis"]["labelExpr"]
         assert "'$'+format" in expr
+
+    def test_line_chart_string_mark_gets_hover_points_after_chain(self):
+        spec = {
+            "mark": "line",
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "quantitative"},
+            },
+        }
+        result = self._run_rules(spec, "A")
+        m = result["mark"]
+        assert isinstance(m, dict)
+        assert m.get("type") == "line"
+        assert isinstance(m.get("point"), dict)
+        assert m["point"].get("size", 0) >= 40
 
     def test_area_chart_ordinal_value_y_becomes_quantitative(self):
         spec = {

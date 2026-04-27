@@ -255,6 +255,33 @@ def build_chart_title_with_context(
     return {"text": main_title, "subtitle": " · ".join(subtitle_parts)}
 
 
+# Shared dimensions for multi-indicator line layers: one value column per layer’s tooltip.
+_MULTI_IND_TOOLTIP_DIMS: tuple[str, ...] = (
+    "year",
+    "time_period",
+    "country",
+    "ref_area",
+    "region",
+    "sex",
+    "age",
+    "urbanisation",
+)
+
+# Visible points widen the Vega hit target for line tooltips without a spec API change.
+_LINE_HOVER_POINT: dict[str, object] = {"filled": True, "size": 56}
+
+
+def _multi_indicator_tooltip_columns(df_columns: list[str], value_col: str) -> list[str]:
+    colset = set(df_columns)
+    out: list[str] = []
+    for c in _MULTI_IND_TOOLTIP_DIMS:
+        if c in colset:
+            out.append(c)
+    if value_col in colset and value_col not in out:
+        out.append(value_col)
+    return out
+
+
 def build_structured_tooltips(
     columns: list[str],
     mark_type: str,
@@ -635,7 +662,7 @@ def build_temporal_single_spec(
             "type": "line",
             "strokeWidth": 3,
             "strokeCap": "round",
-            "point": False,
+            "point": _LINE_HOVER_POINT,
         },
         "encoding": encoding,
         "width": 600,
@@ -663,9 +690,10 @@ def build_cross_sectional_spec(
         if result.color_dim
         else {"value": WB_CAT_COLORS[0]}
     )
+    x_title = None if x_label == "Value" else x_label
     x_ax = {
         **_axis_style(),
-        "title": None,
+        "title": x_title,
         "labelExpr": _value_label_expr(unit_measure),
     }
 
@@ -1041,6 +1069,7 @@ def build_temporal_multi_indicator_spec(
         else:
             y_axis["orient"] = "right"
             y_axis["offset"] = 50 * (i - 1)
+        tooltip_cols = _multi_indicator_tooltip_columns(list(df.columns), col)
         layer_enc: dict = {
             "x": {
                 "field": "year",
@@ -1055,7 +1084,7 @@ def build_temporal_multi_indicator_spec(
             },
             "color": {"value": color},
             "tooltip": build_structured_tooltips(
-                list(df.columns), "line", lab, value_format=tt_fmt
+                tooltip_cols, "line", lab, value_format=tt_fmt
             ),
         }
         layers.append(
@@ -1065,6 +1094,7 @@ def build_temporal_multi_indicator_spec(
                     "strokeWidth": 3,
                     "strokeCap": "round",
                     "color": color,
+                    "point": _LINE_HOVER_POINT,
                 },
                 "encoding": layer_enc,
             }
@@ -1131,7 +1161,12 @@ def build_fallback_line_spec(
         "$schema": _vl_schema(),
         "title": title,
         "data": {"values": df.to_dict(orient="records")},
-        "mark": {"type": "line", "strokeWidth": 3, "strokeCap": "round"},
+        "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": _LINE_HOVER_POINT,
+        },
         "encoding": encoding,
         "width": 600,
         "height": 350,
@@ -1515,6 +1550,44 @@ class ValueAxisLabelFormatRule(PostProcessingRule):
         return spec
 
 
+class LineChartPointHoverRule(PostProcessingRule):
+    """Add / enlarge line points so tooltips are easier to trigger (thin line geometry)."""
+
+    def __init__(self):
+        super().__init__(
+            "line_chart_point_hover",
+            ["line"],
+            "Widen line tooltip hit target with point marks",
+        )
+
+    def should_apply(self, spec, data_frequency=None, unit_measure=None):
+        m = spec.get("mark")
+        if isinstance(m, str):
+            return m == "line"
+        if isinstance(m, dict):
+            return m.get("type") == "line"
+        return False
+
+    def apply(self, spec, data_frequency=None, unit_measure=None):
+        if not self.should_apply(spec):
+            return spec
+        m = spec["mark"]
+        if isinstance(m, str):
+            spec["mark"] = {
+                "type": "line",
+                "point": _LINE_HOVER_POINT,
+            }
+            return spec
+        pt = m.get("point")
+        if pt is False or pt is None or pt is True:
+            m["point"] = dict(_LINE_HOVER_POINT)
+        elif isinstance(pt, dict):
+            sz = pt.get("size", 0)
+            if not isinstance(sz, (int, float)) or sz < 40:
+                m["point"] = {**pt, **_LINE_HOVER_POINT}
+        return spec
+
+
 class ZeroLineRule(PostProcessingRule):
     def __init__(self):
         super().__init__(
@@ -1562,6 +1635,7 @@ POST_PROCESSING_RULES: list[PostProcessingRule] = [
     FixValueAxisEncodingRule(),
     TemporalAxisCleanupRule(),
     ValueAxisLabelFormatRule(),
+    LineChartPointHoverRule(),
     ZeroLineRule(),
     ApplyWBStyleRule(),
 ]
