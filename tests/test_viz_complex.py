@@ -22,6 +22,7 @@ from data360.viz_config import (
     ChartStrategy,
     StrategyResult,
     build_breakdown_comparison_spec,
+    build_chart_title_with_context,
     build_correlation_spec,
     build_correlation_temporal_spec,
     build_cross_sectional_spec,
@@ -32,6 +33,7 @@ from data360.viz_config import (
     build_temporal_multi_indicator_spec,
     build_temporal_single_spec,
     dispatch_spec,
+    format_chart_context_subtitle,
     select_strategy,
 )
 
@@ -148,6 +150,12 @@ class TestStrategyRouter:
         r = select_strategy(df)
         assert r.color_dim == "country"
 
+    def test_temporal_single_one_country_still_colors_by_country(self):
+        df = _ts_df(n_countries=1, n_years=5)
+        r = select_strategy(df)
+        assert r.strategy == ChartStrategy.TEMPORAL_SINGLE
+        assert r.color_dim == "country"
+
     def test_cross_sectional_single_year_few_countries(self):
         df = _cs_df(n_countries=5)
         r = select_strategy(df)
@@ -207,6 +215,37 @@ class TestStrategyRouter:
         assert r.strategy == ChartStrategy.FALLBACK_LINE
 
 
+class TestChartTitleContext:
+    def test_format_chart_context_subtitle_countries_and_year_range(self):
+        df = pd.DataFrame(
+            {
+                "country": ["Philippines", "Belgium", "World"],
+                "year": pd.to_datetime(["1990-01-01", "2000-01-01", "2024-01-01"]),
+                "value": [1.0, 2.0, 3.0],
+            }
+        )
+        s = format_chart_context_subtitle(df)
+        assert "1990-2024" in s
+        assert "Belgium" in s
+        assert "Philippines" in s
+        assert "World" in s
+
+    def test_build_chart_title_with_context_merges_unit(self):
+        df = pd.DataFrame(
+            {
+                "country": ["Kenya", "Kenya"],
+                "year": [2020, 2021],
+                "value": [1.0, 2.0],
+            }
+        )
+        t = build_chart_title_with_context("My indicator", "current US$", df)
+        assert isinstance(t, dict)
+        assert t["text"] == "My indicator"
+        assert "Kenya" in t["subtitle"]
+        assert "2020-2021" in t["subtitle"]
+        assert "current US$" in t["subtitle"]
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Spec Builders — structure and WB style
 # ─────────────────────────────────────────────────────────────────────────────
@@ -257,12 +296,35 @@ class TestSpecBuilders:
         spec = build_temporal_single_spec(df, "Test", r, y_label="GDP (USD)")
         assert spec["encoding"]["y"]["axis"]["title"] == "GDP (USD)"
 
+    def test_temporal_single_currency_axis_labels_have_dollar_prefix(self):
+        df = _ts_df()
+        r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
+        spec = build_temporal_single_spec(df, "Test", r, unit_measure="current US$")
+        expr = spec["encoding"]["y"]["axis"]["labelExpr"]
+        assert "'$'+format" in expr
+
+    def test_temporal_single_currency_tooltip_accepts_current_usd_unit(self):
+        df = _ts_df()
+        r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
+        spec = build_temporal_single_spec(df, "Test", r, unit_measure="current US$")
+        value_tip = next(
+            tip for tip in spec["encoding"]["tooltip"] if tip.get("field") == "value"
+        )
+        assert value_tip["format"] == "$,.2f"
+
     def test_temporal_single_color_encoding_present(self):
         df = _ts_df(n_countries=3)
         r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
         spec = build_temporal_single_spec(df, "Test", r)
         assert "color" in spec["encoding"]
         assert spec["encoding"]["color"]["field"] == "country"
+
+    def test_temporal_single_one_country_keeps_legend(self):
+        df = _ts_df(n_countries=1, n_years=4)
+        r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
+        spec = build_temporal_single_spec(df, "Test", r)
+        leg = spec["encoding"]["color"]["legend"]
+        assert leg is not None
 
     # cross_sectional
     def test_cross_sectional_mark_is_bar(self):

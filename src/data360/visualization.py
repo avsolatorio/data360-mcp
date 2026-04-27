@@ -584,11 +584,6 @@ async def get_viz_spec(
         "indicator_name": indicator_display,
     }
 
-    # Build Vega-Lite title: dict with subtitle when unit is available
-    chart_title_vl: str | dict = (
-        {"text": chart_title, "subtitle": raw_unit} if raw_unit else chart_title
-    )
-
     # 5. Clean data — column selection, bar-vs-temporal time handling, renames (→ year/value/country)
     if "obs_value" in data.columns:
         data["obs_value"] = pd.to_numeric(data["obs_value"], errors="coerce")
@@ -605,6 +600,11 @@ async def get_viz_spec(
 
     # 6. Map country codes
     viz_data = await _map_country_codes(viz_data)
+
+    # Vega-Lite title + subtitle (geography, year range, unit) after data is cleaned
+    chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
+        chart_title, raw_unit or None, viz_data
+    )
 
     # 7. Determine strategy — route around Draco for complex patterns
     n_indicators = 1
@@ -737,7 +737,7 @@ async def get_viz_spec(
 
         # Post-processing rules
         for rule in viz_config.POST_PROCESSING_RULES:
-            vl_spec = rule.apply(vl_spec, data_frequency)
+            vl_spec = rule.apply(vl_spec, data_frequency, raw_unit or None)
 
         return _ok(
             await _store_spec(vl_spec), source_attribution=source_attribution
@@ -934,8 +934,8 @@ async def get_multi_indicator_viz_spec(
 
     unique_units = list(dict.fromkeys(u for u in units if u))
     shared_unit = unique_units[0] if len(unique_units) == 1 else ""
-    chart_title_vl: str | dict = (
-        {"text": chart_title, "subtitle": shared_unit} if shared_unit else chart_title
+    chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
+        chart_title, shared_unit or None, merged
     )
 
     # 6. Build indicator_labels for axis/tooltip
