@@ -44,6 +44,11 @@ export class Data360VegaChartCardComponent
   @Input() source?: string;
   @Input() annotations: Annotation[] = [];
   @Input() chartHeight = 260;
+  /**
+   * Pixel ratio for Save as PNG (full-card raster via html-to-image and Vega chart-only fallback).
+   * @default 4
+   */
+  @Input() pngExportPixelRatio = 4;
   @Input() className?: string;
 
   /** Optional CSV / custom download handler (same contract as React). */
@@ -56,6 +61,10 @@ export class Data360VegaChartCardComponent
 
   @ViewChild("chartHost", { static: false })
   chartHost?: ElementRef<HTMLDivElement>;
+
+  /** White card shell (title, chart, legend, annotations, source) — target for full-card PNG. */
+  @ViewChild("cardRoot", { static: false })
+  cardRoot?: ElementRef<HTMLDivElement>;
 
   parsed: ParsedSpec = {
     rows: [],
@@ -131,8 +140,11 @@ export class Data360VegaChartCardComponent
   }
 
   handleExport(): void {
-    if (!this.vegaView) return;
-    void this.vegaView.toImageURL("png", 2).then((url) => {
+    void this.runPngExport();
+  }
+
+  private async runPngExport(): Promise<void> {
+    const deliver = (url: string) => {
       if (this.onExport) {
         this.onExport(url);
         return;
@@ -141,7 +153,37 @@ export class Data360VegaChartCardComponent
       a.href = url;
       a.download = "chart.png";
       a.click();
-    });
+    };
+
+    const fromVegaOnly = () => {
+      if (!this.vegaView) return;
+      void this.vegaView
+        .toImageURL("png", this.pngExportPixelRatio)
+        .then(deliver);
+    };
+
+    const cardEl = this.cardRoot?.nativeElement;
+    if (!cardEl) {
+      fromVegaOnly();
+      return;
+    }
+
+    try {
+      const { toPng } = await import("html-to-image");
+      const url = await toPng(cardEl, {
+        pixelRatio: this.pngExportPixelRatio,
+        backgroundColor: "#ffffff",
+        cacheBust: true,
+        filter: (domNode) =>
+          !(
+            domNode instanceof HTMLElement &&
+            domNode.hasAttribute("data-chart-card-export-skip")
+          ),
+      });
+      deliver(url);
+    } catch {
+      fromVegaOnly();
+    }
   }
 
   handleCopySpec(): void {

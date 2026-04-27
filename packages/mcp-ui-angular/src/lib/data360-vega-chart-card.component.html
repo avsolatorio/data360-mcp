@@ -1,5 +1,5 @@
 <div [class]="className" class="d360-root">
-  <div class="d360-card">
+  <div #cardRoot class="d360-card">
     <h2 class="d360-title">{{ cardTitle }}</h2>
     @if (subtitle) {
       <p class="d360-subtitle">{{ subtitle }}</p>
@@ -49,22 +49,25 @@
       </p>
     }
 
-    <hr class="d360-divider" />
+    <!-- Omitted from PNG export (toggle is UI chrome, same as React VegaChartCard). -->
+    <div data-chart-card-export-skip="">
+      <hr class="d360-divider" />
 
-    <div class="d360-footer-row">
-      <button type="button" class="d360-toggle" (click)="showAnnotations = !showAnnotations">
-        <span
-          class="d360-toggle-track"
-          [class.d360-toggle-track--on]="showAnnotations"
-          [class.d360-toggle-track--off]="!showAnnotations"
-        >
+      <div class="d360-footer-row">
+        <button type="button" class="d360-toggle" (click)="showAnnotations = !showAnnotations">
           <span
-            class="d360-toggle-knob"
-            [class.d360-toggle-knob--on]="showAnnotations"
-          ></span>
-        </span>
-        Show annotations
-      </button>
+            class="d360-toggle-track"
+            [class.d360-toggle-track--on]="showAnnotations"
+            [class.d360-toggle-track--off]="!showAnnotations"
+          >
+            <span
+              class="d360-toggle-knob"
+              [class.d360-toggle-knob--on]="showAnnotations"
+            ></span>
+          </span>
+          Show annotations
+        </button>
+      </div>
     </div>
   </div>
 

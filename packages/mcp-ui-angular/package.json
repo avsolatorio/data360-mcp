@@ -9,6 +9,9 @@
   "scripts": {
     "build": "ng-packagr -p ng-package.json"
   },
+  "dependencies": {
+    "html-to-image": "^1.11.13"
+  },
   "peerDependencies": {
     "@angular/common": ">=18.0.0 <21.0.0",
     "@angular/core": ">=18.0.0 <21.0.0",
