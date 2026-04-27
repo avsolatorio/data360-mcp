@@ -582,6 +582,32 @@ class TestPostProcessingRuleChain:
         assert result["encoding"]["y"]["type"] == "quantitative"
         assert result["encoding"]["y"].get("scale", {}).get("type") == "linear"
 
+    def test_line_chart_y_axis_gets_compact_label_expr(self):
+        spec = {
+            "mark": {"type": "line"},
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "quantitative"},
+            },
+        }
+        result = self._run_rules(spec, "A")
+        expr = result["encoding"]["y"]["axis"]["labelExpr"]
+        assert "datum.value" in expr
+        assert "1e9" in expr
+
+    def test_line_chart_y_axis_currency_expr_for_current_usd(self):
+        spec = {
+            "mark": {"type": "line"},
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "quantitative"},
+            },
+        }
+        for rule in viz_config.POST_PROCESSING_RULES:
+            spec = rule.apply(spec, "A", "current US$")
+        expr = spec["encoding"]["y"]["axis"]["labelExpr"]
+        assert "'$'+format" in expr
+
     def test_area_chart_ordinal_value_y_becomes_quantitative(self):
         spec = {
             "mark": {"type": "area"},

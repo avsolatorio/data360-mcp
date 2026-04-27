@@ -192,6 +192,69 @@ _TOOLTIP_PRIORITY = [
 ]
 
 
+def _year_range_label(year_series: pd.Series) -> str | None:
+    """Min–max year label, e.g. ``1990-2024`` or ``2020`` when only one year."""
+    if year_series.empty:
+        return None
+    try:
+        if pd.api.types.is_datetime64_any_dtype(year_series):
+            ynum = year_series.dt.year
+        else:
+            ynum = pd.to_numeric(year_series, errors="coerce")
+        yvalid = ynum.dropna()
+        if yvalid.empty:
+            return None
+        y0, y1 = int(yvalid.min()), int(yvalid.max())
+        return f"{y0}-{y1}" if y0 != y1 else str(y0)
+    except (TypeError, ValueError):
+        return None
+
+
+def format_chart_context_subtitle(df: pd.DataFrame) -> str | None:
+    """Build geography list + year range for chart subtitle (product-style).
+
+    Example: ``\"Philippines, Belgium, 1990-2024\"``. Long geography lists are truncated.
+    """
+    parts: list[str] = []
+    if "country" in df.columns:
+        vals = sorted(
+            {str(v).strip() for v in df["country"].dropna() if str(v).strip()},
+            key=str.casefold,
+        )
+        if vals:
+            cap = 12
+            if len(vals) > cap:
+                shown = ", ".join(vals[:10])
+                parts.append(f"{shown}, … (+{len(vals) - 10} more)")
+            else:
+                parts.append(", ".join(vals))
+    year_lbl = None
+    if "year" in df.columns:
+        year_lbl = _year_range_label(df["year"])
+    if year_lbl:
+        parts.append(year_lbl)
+    if not parts:
+        return None
+    return ", ".join(parts)
+
+
+def build_chart_title_with_context(
+    main_title: str,
+    unit_subtitle: str | None,
+    df: pd.DataFrame,
+) -> str | dict:
+    """Vega-Lite title: main text plus subtitle (geography + years · unit when present)."""
+    ctx = format_chart_context_subtitle(df)
+    subtitle_parts: list[str] = []
+    if ctx:
+        subtitle_parts.append(ctx)
+    if unit_subtitle and str(unit_subtitle).strip():
+        subtitle_parts.append(str(unit_subtitle).strip())
+    if not subtitle_parts:
+        return main_title
+    return {"text": main_title, "subtitle": " · ".join(subtitle_parts)}
+
+
 def build_structured_tooltips(
     columns: list[str],
     mark_type: str,
@@ -326,13 +389,13 @@ def select_strategy(
                 ChartStrategy.CORRELATION_TEMPORAL,
                 "User requested scatter; 2 indicators, multi-year → connected scatter",
                 indicator_cols=ind_cols,
-                color_dim="country" if country_count > 1 else None,
+                color_dim="country" if country_count > 0 else None,
             )
         return StrategyResult(
             ChartStrategy.CORRELATION,
             "User requested scatter; 2 indicators, single year → scatterplot",
             indicator_cols=ind_cols,
-            color_dim="country" if country_count > 1 else None,
+            color_dim="country" if country_count > 0 else None,
         )
 
     # ── Multi-indicator: 2-3 indicators ──
@@ -408,7 +471,7 @@ def select_strategy(
         return StrategyResult(
             ChartStrategy.CROSS_SECTIONAL,
             f"{country_count} countries, single year → horizontal bar",
-            color_dim="country" if country_count > 1 else None,
+            color_dim="country",
         )
 
     # Multi-year time series
@@ -416,10 +479,14 @@ def select_strategy(
         return StrategyResult(
             ChartStrategy.TEMPORAL_SINGLE,
             f"Single indicator, {year_count} years, {country_count} countries → line chart",
-            color_dim="country" if country_count > 1 else None,
+            color_dim="country" if country_count > 0 else None,
         )
 
-    return StrategyResult(ChartStrategy.FALLBACK_LINE, "Default fallback → line chart")
+    return StrategyResult(
+        ChartStrategy.FALLBACK_LINE,
+        "Default fallback → line chart",
+        color_dim="country" if country_count > 0 else None,
+    )
 
 
 # ============================================================================
@@ -452,6 +519,9 @@ def _axis_style(title: str | None = None, temporal: bool = False) -> dict:
 
 def _value_label_expr(unit_measure: str | None = None) -> str:
     """Vega expression for custom k/m/b/t axis label formatting."""
+    normalized = (unit_measure or "").upper().strip()
+    is_currency = "$" in normalized or "USD" in normalized
+    prefix = "$" if is_currency else ""
     if unit_measure == "T":
         tiers = [("1e12", "Gt"), ("1e9", "Mt"), ("1e6", "Kt")]
     elif unit_measure == "W_POP":
@@ -461,12 +531,13 @@ def _value_label_expr(unit_measure: str | None = None) -> str:
     else:
         tiers = [("1e12", "t"), ("1e9", "b"), ("1e6", "m"), ("1e3", "k")]
     parts = [
-        f"abs(datum.value)>={t} ? format(datum.value/{t},'.1f')+'{s}'" for t, s in tiers
+        f"abs(datum.value)>={t} ? '{prefix}'+format(datum.value/{t},'.1f')+'{s}'"
+        for t, s in tiers
     ]
     tail = (
-        " : abs(datum.value)>=10 ? format(datum.value,',.1f')"
-        " : abs(datum.value)>=1 ? format(datum.value,'.1f')"
-        " : format(datum.value,'.2f')"
+        f" : abs(datum.value)>=10 ? '{prefix}'+format(datum.value,',.1f')"
+        f" : abs(datum.value)>=1 ? '{prefix}'+format(datum.value,'.1f')"
+        f" : '{prefix}'+format(datum.value,'.2f')"
     )
     return " : ".join(parts) + tail
 
@@ -475,9 +546,10 @@ def _compute_tooltip_format(
     max_abs: float | None = None, unit_measure: str | None = None
 ) -> str:
     """Returns D3 format string for tooltip quantitative fields."""
+    normalized = (unit_measure or "").upper().strip()
     if unit_measure == "%":
         return ".1f"
-    if unit_measure in ("$", "USD"):
+    if "$" in normalized or "USD" in normalized:
         return "$,.2f"
     if max_abs is None or max_abs < 1:
         return ".2f"
@@ -497,7 +569,8 @@ def _color_encoding(
     scale = {"range": WB_CAT_COLORS}
     if domain:
         scale["domain"] = domain
-    if n_items == 1:
+    # Keep a legend for geography even with one series (product expectation).
+    if n_items == 1 and field != "country":
         legend = None
     else:
         legend: dict | None = {
@@ -528,9 +601,10 @@ def build_temporal_single_spec(
     rows = df.to_dict(orient="records")
     max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
     tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+    y_title = None if y_label == "Value" else y_label
     y_ax = {
         **_axis_style(),
-        "title": None,
+        "title": y_title,
         "labelExpr": _value_label_expr(unit_measure),
     }
     encoding: dict = {
@@ -1274,7 +1348,12 @@ class PostProcessingRule:
     def should_apply(self, mark_type: str, encoding: dict, data: dict) -> bool:
         raise NotImplementedError
 
-    def apply(self, spec: dict, data_frequency: str | None = None) -> dict:
+    def apply(
+        self,
+        spec: dict,
+        data_frequency: str | None = None,
+        unit_measure: str | None = None,
+    ) -> dict:
         raise NotImplementedError
 
 
@@ -1298,7 +1377,7 @@ class OrdinalToTemporalRule(PostProcessingRule):
             return isinstance(dataset[0][x_field], str) and "T" in dataset[0][x_field]
         return False
 
-    def apply(self, spec, data_frequency=None):
+    def apply(self, spec, data_frequency=None, unit_measure=None):
         mark_type = (
             spec.get("mark", {}).get("type")
             if isinstance(spec.get("mark"), dict)
@@ -1327,7 +1406,7 @@ class ApplyTimeUnitRule(PostProcessingRule):
     def should_apply(self, x_enc, freq):
         return freq in FREQUENCY_TO_TIMEUNIT and x_enc.get("type") == "temporal"
 
-    def apply(self, spec, data_frequency=None):
+    def apply(self, spec, data_frequency=None, unit_measure=None):
         if "encoding" not in spec or "x" not in spec["encoding"]:
             return spec
         x_enc = spec["encoding"]["x"]
@@ -1354,7 +1433,7 @@ class FixValueAxisEncodingRule(PostProcessingRule):
         )
         return mark_type in self.applies_to_mark_types
 
-    def apply(self, spec, data_frequency=None):
+    def apply(self, spec, data_frequency=None, unit_measure=None):
         if not self.should_apply(spec, data_frequency):
             return spec
         if "encoding" not in spec:
@@ -1393,7 +1472,7 @@ class TemporalAxisCleanupRule(PostProcessingRule):
             return False
         return spec.get("encoding", {}).get("x", {}).get("type") == "temporal"
 
-    def apply(self, spec, data_frequency=None):
+    def apply(self, spec, data_frequency=None, unit_measure=None):
         if not self.should_apply(spec):
             return spec
         x = spec["encoding"]["x"]
@@ -1402,6 +1481,37 @@ class TemporalAxisCleanupRule(PostProcessingRule):
         x["axis"]["labelAngle"] = 0
         x["axis"].setdefault("format", "%Y")
         x["axis"].setdefault("tickCount", 5)
+        return spec
+
+
+class ValueAxisLabelFormatRule(PostProcessingRule):
+    def __init__(self):
+        super().__init__(
+            "value_axis_label_format",
+            ["bar", "line", "area", "point", "tick"],
+            "Apply compact/value-aware y-axis label formatting",
+        )
+
+    def should_apply(self, spec, data_frequency=None):
+        mark_type = (
+            spec.get("mark", {}).get("type")
+            if isinstance(spec.get("mark"), dict)
+            else spec.get("mark")
+        )
+        if mark_type not in self.applies_to_mark_types:
+            return False
+        y = spec.get("encoding", {}).get("y", {})
+        return y.get("type") == "quantitative" and y.get("field") in {
+            "value",
+            "obs_value",
+        }
+
+    def apply(self, spec, data_frequency=None, unit_measure=None):
+        if not self.should_apply(spec, data_frequency):
+            return spec
+        y = spec["encoding"]["y"]
+        y.setdefault("axis", {})
+        y["axis"]["labelExpr"] = _value_label_expr(unit_measure)
         return spec
 
 
@@ -1419,7 +1529,7 @@ class ZeroLineRule(PostProcessingRule):
         )
         return mark_type in self.applies_to_mark_types
 
-    def apply(self, spec, data_frequency=None):
+    def apply(self, spec, data_frequency=None, unit_measure=None):
         if not self.should_apply(spec):
             return spec
         y = spec.get("encoding", {}).get("y", {})
@@ -1442,7 +1552,7 @@ class ApplyWBStyleRule(PostProcessingRule):
     def should_apply(self, spec, data_frequency=None):
         return True
 
-    def apply(self, spec, data_frequency=None):
+    def apply(self, spec, data_frequency=None, unit_measure=None):
         return inject_wb_config(spec)
 
 
@@ -1451,6 +1561,7 @@ POST_PROCESSING_RULES: list[PostProcessingRule] = [
     ApplyTimeUnitRule(),
     FixValueAxisEncodingRule(),
     TemporalAxisCleanupRule(),
+    ValueAxisLabelFormatRule(),
     ZeroLineRule(),
     ApplyWBStyleRule(),
 ]
