@@ -231,7 +231,7 @@ _SOURCE_FALLBACK = "World Bank — Data360"
 
 
 def _format_source_line_from_attribution(attrib: dict[str, str]) -> str:
-    """One-line \"Source\" string; matches client `formatData360VizChartSource`."""
+    """One-line \"Source\" string; matches client `formatData360VizSourceLine`."""
     db = (attrib.get("database_name") or attrib.get("database_id") or "").strip()
     ind = (attrib.get("indicator_name") or attrib.get("indicator_id") or "").strip()
     if db and ind:
