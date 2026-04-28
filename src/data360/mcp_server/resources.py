@@ -1,21 +1,19 @@
 """Resources for the Data360 MCP Server.
 
 These resources provide static context to help LLMs understand the Data360 system.
+Includes ``data360://agent-recipe`` for host integrators (LangGraph / data360-mcp-agent).
 """
 
 import json
 from datetime import datetime
 
-from ._server_definition import mcp
+from data360.providers import get_database_mapping
 
+from ._server_definition import mcp
+from .agent_recipe import AGENT_RECIPE_MARKDOWN
 
 # System prompt with chain-of-thought guidance for chatbot integration
 from .prompts import SYSTEM_PROMPT
-
-
-from data360.providers import get_database_mapping
-
-
 
 CODELISTS = {
     "global_codelists": {
@@ -88,7 +86,10 @@ DATA_FILTERS = {
     "supported_filters": {
         "timePeriodFrom": {"description": "Start year", "example": "2020"},
         "timePeriodTo": {"description": "End year", "example": "2023"},
-        "REF_AREA": {"description": "Country code(s). Use comma-separated for multiple.", "example": "KEN,TZA"},
+        "REF_AREA": {
+            "description": "Country code(s). Use comma-separated for multiple.",
+            "example": "KEN,TZA",
+        },
         "SEX": {"values": ["F", "M", "_T"]},
         "AGE": {"values": ["Y15T24", "Y15T29", "Y30T59", "Y_GE25", "Y_GE60", "_T"]},
         "URBANISATION": {"values": ["URB", "RUR", "_T"]},
@@ -115,7 +116,7 @@ DATA_SCHEMA = {
         "comp_breakdown_1": "Indicator subtype (e.g., IPC phase period, OECD indicator type, WEF rank/value/score).",
         "comp_breakdown_2": "Secondary breakdown (e.g., IPC phase level, OECD income definition).",
     },
-    "visualization_guidance": "When calling get_viz_spec(relevant_fields=...), prioritize 'time_period' and 'obs_value'. Include 'ref_area' or dimensions like 'sex' only for comparison/grouping."
+    "visualization_guidance": "When calling get_viz_spec(relevant_fields=...), prioritize 'time_period' and 'obs_value'. Include 'ref_area' or dimensions like 'sex' only for comparison/grouping.",
 }
 
 
@@ -143,23 +144,30 @@ async def system_prompt_resource() -> str:
     return SYSTEM_PROMPT
 
 
+@mcp.resource("data360://agent-recipe")
+async def agent_recipe_resource() -> str:
+    """How to compose MCP resources + named prompts for LangGraph / ``data360-mcp-agent``."""
+    return AGENT_RECIPE_MARKDOWN
+
+
 @mcp.resource("data360://context")
 async def context_resource() -> str:
     """Runtime context including current date. Read this to know today's date."""
-    return json.dumps({
-        "current_date": datetime.now().strftime("%Y-%m-%d"),
-        "current_year": datetime.now().year,
-        "note": "Use current_year to calculate 'last N years' queries"
-    }, indent=2)
+    return json.dumps(
+        {
+            "current_date": datetime.now().strftime("%Y-%m-%d"),
+            "current_year": datetime.now().year,
+            "note": "Use current_year to calculate 'last N years' queries",
+        },
+        indent=2,
+    )
 
 
 @mcp.resource("data360://databases")
 async def databases_resource() -> str:
     """List of available Data360 databases."""
     db_mapping = await get_database_mapping()
-    formatted = {
-        "databases": [{"id": k, "name": v} for k, v in db_mapping.items()]
-    }
+    formatted = {"databases": [{"id": k, "name": v} for k, v in db_mapping.items()]}
     return json.dumps(formatted, indent=2)
 
 

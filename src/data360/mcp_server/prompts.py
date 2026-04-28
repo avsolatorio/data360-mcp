@@ -6,12 +6,18 @@ Exposes:
   disaggregation → data → visualization), including single-indicator
   (``data360_get_viz_spec``) and multi-indicator
   (``data360_get_multi_indicator_viz_spec``) paths.
+- ``GATE_CLASSIFIER_PROMPT`` / thematic reform text: shared wording for hosts
+  and for ``data360-mcp-agent`` gated flows (keep in sync with that package's
+  ``gate.py`` defaults).
 - ``@mcp.prompt()`` functions: reusable templates (indicator search, metadata,
-  country series) that clients can invoke by name.
+  country series, gate/reform for LangGraph hosts) that clients invoke by name.
 
 The system prompt intentionally keeps both **operational detail** (filters, batch
 codes, when to chart vs table) and the **ASCII tool-choice summary** so models
 do not drop ``relevant_fields`` / ``indicator_ids`` when calling viz tools.
+
+Integration overview: MCP resource ``data360://agent-recipe`` describes how to
+compose resources + these prompts for ``data360-mcp-agent`` or custom clients.
 """
 
 from ._server_definition import mcp
@@ -128,6 +134,59 @@ Then provide the final answer to the user (after tools complete).
 - When presenting a chart, always describe what the visualization shows in 1-2 sentences.
 """
 
+# Mirrors ``data360_mcp_agent.gate.GATE_SYSTEM_PROMPT`` — update both when changing rules.
+GATE_CLASSIFIER_PROMPT = """You are a classifier for a Data360 / World Bank data assistant.
+
+Decide if the user's latest message should engage the Data360 MCP tool-using agent.
+
+**In scope (relevant = true)** — include ALL of:
+1. Direct data questions: indicators, countries/economies, years, comparisons, charts.
+2. Development economics and World Bank–aligned operations questions where World Bank / Data360-style **data** can illuminate the answer — macro, fiscal/public spending, poverty, inequality, labor markets, human capital, trade, investment climate, climate-related **development** metrics, etc. — even if the user did not name an indicator code.
+3. Country or regional **policy-relevant themes** that can be grounded in measurable series or country metadata (e.g. "main challenges facing Ghana's growth and public spending", "structural labor market challenges in Morocco", "climate change and economic development in Bangladesh").
+
+**Out of scope (relevant = false)**:
+- Pure chit-chat, unrelated trivia, entertainment.
+- Homework or tasks with no plausible path through WB-style data.
+- Medical, legal, or personal advice.
+- Questions with no link to development data (e.g. street-level weather, sports scores, generic coding help unrelated to this data assistant).
+
+**Bias**: When the topic is clearly development- or WB-adjacent and data could support an evidence-based answer, choose **relevant = true**.
+
+When relevant is false, set refusal_text to one short, polite sentence explaining the assistant focuses on WB/Data360 data (optional; a default may be used). When relevant is true, leave refusal_text null or empty."""
+
+# Mirrors ``data360_mcp_agent.gate.REFORM_SYSTEM_PROMPT`` — update both when changing.
+THEMATIC_REFORM_SYSTEM = """You rewrite user questions into **one** concrete orchestration prompt for a Data360 MCP agent that will search indicators, fetch series, and build charts.
+
+Given the user's message (often thematic or knowledge-style), output:
+- data_question: A single clear instruction naming **economy/ies** (ISO codes or standard country names), **indicator themes or concrete search terms**, a **reasonable year range**, and **peer or benchmark** comparisons when useful (e.g. regional peers, world, income group).
+- search_hints: Short bullet-style strings the agent can use when searching tools (e.g. "GDP growth annual", "general government final consumption", "labor force participation", "youth unemployment", "ND-GAIN" or other WB-relevant climate vulnerability metrics if applicable).
+
+Do not answer the question yourself; only produce the reformulated task. Stay within evidence the World Bank / Data360 tools could retrieve."""
+
+
+@mcp.prompt()
+def gate_classifier() -> str:
+    """In/out-of-scope classifier instructions for Data360 (for hosts that fetch prompts from MCP).
+
+    Pair with a structured-output LLM call or with ``data360-mcp-agent``'s gated node,
+    which embeds the same rules locally by default.
+    """
+    return GATE_CLASSIFIER_PROMPT
+
+
+@mcp.prompt()
+def thematic_to_data(user_message: str) -> str:
+    """Rewrite a thematic development question into a concrete indicator/data task.
+
+    Hosts often follow this with ``data360://system-prompt`` and the tool loop.
+    """
+    return f"""{THEMATIC_REFORM_SYSTEM}
+
+---
+User message to reformulate:
+{user_message}
+"""
+
 
 @mcp.prompt()
 def indicator_search(
@@ -159,7 +218,7 @@ def indicator_search(
    - Check available dimensions{f" - need: {dims_list}" if dims_list else ""}
    - **Check UNIT_MEASURE**: If multiple units exist (e.g. constant/current/LCU), you MUST pick ONE and filter for it.
 
-4. **Dimension Analysis (CRITICAL)**:
+3. **Dimension Analysis (CRITICAL)**:
    - Look at the `dimensions` list from step 2 (or call available_dimensions).
    - **Identify Ambiguity**: Are there dimensions with multiple values (besides TIME_PERIOD and REF_AREA)?
      - Example: `UNIT_MEASURE: ["KD", "CD"]` (Constant vs Current).
@@ -167,12 +226,12 @@ def indicator_search(
    - **Make a Choice**: You MUST pick ONE specific value that best fits the user's intent to avoid duplicate data.
    - **Report**: Note your choice and alternatives (e.g. "Selecting Constant US$ (KD) for trend analysis. Current US$ (CD) also available.").
 
-5. **Validation Check**:
+4. **Validation Check**:
    - If the user asked for a specific country (e.g. Kenya), do NOT call `get_data` without `disaggregation_filters={"REF_AREA": ["KEN"]}` and your selected dimension filters.
    - Example Filters: `{"REF_AREA": "KEN", "UNIT_MEASURE": "KD"}`
    - Asking for `disaggregation_filters=null` returns global aggregates AND all unit variants, which ruins charts.
 
-6. **Selection**:
+5. **Selection**:
    - Pick the SINGLE best indicator ID. Do not loop.
    - Use the `database_id` exactly as returned in the search result (do not guess).
    - Ensure your `get_data` call will carry the specific filters you decided on.

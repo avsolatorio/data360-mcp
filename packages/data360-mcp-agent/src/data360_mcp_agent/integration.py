@@ -2,7 +2,8 @@
 
 This package is **separate** from the MCP server implementation. Point it at any
 Data360 MCP HTTP endpoint via ``DATA360_MCP_URL``. System instructions load from
-MCP resources (``data360://system-prompt``, ``data360://context``).
+MCP resources (``data360://system-prompt``, ``data360://context``; optional
+``data360://agent-recipe``, alias ``AGENT_RECIPE_URI`` in this package).
 
 Use :func:`create_data360_mcp_agent` for a compiled graph, or :mod:`data360_mcp_agent.plugin`
 for a LangGraph ``add_node``-friendly callable.
@@ -16,6 +17,7 @@ import json
 import logging
 import os
 import time
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, cast
 
@@ -34,6 +36,7 @@ logger = logging.getLogger(__name__)
 SERVER_NAME = "data360"
 SYSTEM_PROMPT_URI = "data360://system-prompt"
 CONTEXT_URI = "data360://context"
+AGENT_RECIPE_URI = "data360://agent-recipe"
 DEFAULT_RECURSION_LIMIT = 50
 _TOOL_DESC_PREVIEW_LEN = 280
 
@@ -45,6 +48,10 @@ class _McpCacheState:
     tools: list | None = None
     resource_body: str | None = None
     fetched_at_monotonic: float = 0.0
+    #: Text from MCP ``prompts/get`` ``gate_classifier`` when MCP prompts are enabled.
+    mcp_gate_system_prompt: str | None = None
+    #: Set by :func:`create_data360_gated_langgraph_node` when using MCP prompts without env.
+    fetch_mcp_gate_prompt_requested: bool = False
 
 
 _cache = _McpCacheState()
@@ -130,9 +137,72 @@ def _extra_resource_uris() -> list[str]:
     return [u.strip() for u in raw.split(",") if u.strip()]
 
 
+def _use_mcp_gate_reform_prompts() -> bool:
+    """When true, gate/reform use MCP ``gate_classifier`` / ``thematic_to_data`` (see README)."""
+    raw = os.getenv("DATA360_AGENT_USE_MCP_PROMPTS", "").strip().lower()
+    return raw in ("1", "true", "yes", "on")
+
+
+def _message_content_as_text(message: Any) -> str:
+    content = getattr(message, "content", None)
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        chunks: list[str] = []
+        for block in content:
+            if isinstance(block, dict) and block.get("type") == "text":
+                chunks.append(str(block.get("text", "")))
+            else:
+                chunks.append(str(block))
+        return "".join(chunks).strip()
+    return str(content or "").strip()
+
+
+def _join_prompt_messages(messages: Sequence[Any]) -> str:
+    parts = [_message_content_as_text(m) for m in messages]
+    return "\n\n".join(p for p in parts if p)
+
+
+async def _cache_gate_classifier_prompt(client: Any) -> None:
+    fetch_gate = (
+        _use_mcp_gate_reform_prompts() or _cache.fetch_mcp_gate_prompt_requested
+    )
+    if not fetch_gate:
+        return
+    try:
+        gate_msgs = await client.get_prompt(SERVER_NAME, "gate_classifier", {})
+        joined = _join_prompt_messages(gate_msgs)
+        if joined:
+            _cache.mcp_gate_system_prompt = joined
+            logger.info(
+                "[%s] Cached MCP gate_classifier prompt (%d chars)",
+                SERVER_NAME,
+                len(joined),
+            )
+        else:
+            logger.warning(
+                "[%s] gate_classifier prompt returned empty; using embedded gate text",
+                SERVER_NAME,
+            )
+    except BaseException as exc:
+        logger.warning(
+            "[%s] Could not fetch gate_classifier MCP prompt (%s); using embedded gate text",
+            SERVER_NAME,
+            exc,
+        )
+
+
 def _include_tool_catalog() -> bool:
     flag = os.getenv("DATA360_AGENT_INCLUDE_TOOL_CATALOG", "1").strip().lower()
     return flag not in ("0", "false", "no", "off")
+
+
+def _default_llm_streaming(explicit: bool | None) -> bool:
+    """Resolve streaming flag: explicit arg wins, then ``DATA360_AGENT_LLM_STREAMING``."""
+    if explicit is not None:
+        return explicit
+    raw = os.getenv("DATA360_AGENT_LLM_STREAMING", "").strip().lower()
+    return raw in ("1", "true", "yes", "on")
 
 
 def _streamable_connection_config() -> dict[str, Any]:
@@ -224,6 +294,9 @@ async def _refresh_cache_locked() -> None:
     body = "\n\n".join(parts)
     _cache.tools = tools
     _cache.resource_body = body
+    _cache.mcp_gate_system_prompt = None
+    await _cache_gate_classifier_prompt(client)
+
     _cache.fetched_at_monotonic = time.monotonic()
     logger.info(
         "[%s] Refreshed cache — %d tool(s), resource body length=%d chars",
@@ -267,6 +340,8 @@ def _compose_system_prompt(tools: list, resource_body: str) -> str:
 def _resolve_llm(
     model_name: str | None,
     llm: BaseChatModel | None,
+    *,
+    llm_streaming: bool | None = None,
 ) -> BaseChatModel:
     if llm is not None:
         return llm
@@ -285,7 +360,8 @@ def _resolve_llm(
         )
         raise RuntimeError(msg)
     model = model_name or os.getenv("DATA360_AGENT_MODEL", "gpt-4.1-mini")
-    return ChatOpenAI(model=model, temperature=0)
+    stream = _default_llm_streaming(llm_streaming)
+    return ChatOpenAI(model=model, temperature=0, streaming=stream)
 
 
 def _extract_tool_result(msg: ToolMessage) -> Any:
@@ -402,11 +478,17 @@ async def fetch_mcp_prompt_messages(
 async def create_data360_mcp_agent(
     llm: BaseChatModel | None = None,
     model_name: str | None = None,
+    *,
+    llm_streaming: bool | None = None,
 ) -> CompiledStateGraph:
     """Compile the Data360 MCP-backed agent once.
 
     Reuse with ``await agent.ainvoke({"messages": [...]}, config=...)``. Plug the same
     graph into LangGraph as a subgraph node, or call it from a supervisor/router.
+
+    For **token-level** events from :func:`langgraph.graph.state.CompiledStateGraph.astream_events`,
+    pass ``llm_streaming=True`` (or set env ``DATA360_AGENT_LLM_STREAMING``) when using the
+    default ``ChatOpenAI``. Inject your own ``llm`` with ``streaming=True`` for other providers.
 
     Raises:
         RuntimeError: If MCP URL is missing, tools are unavailable, or no LLM can be resolved.
@@ -415,7 +497,7 @@ async def create_data360_mcp_agent(
     if not tools:
         msg = "No tools available from MCP server."
         raise RuntimeError(msg)
-    llm_resolved = _resolve_llm(model_name, llm)
+    llm_resolved = _resolve_llm(model_name, llm, llm_streaming=llm_streaming)
     system_prompt = _compose_system_prompt(tools, resource_body)
     return create_agent(llm_resolved, tools, system_prompt=system_prompt)
 
@@ -475,7 +557,32 @@ async def run_agent_query(
     }
 
 
+def use_mcp_prompts_from_env() -> bool:
+    """True when ``DATA360_AGENT_USE_MCP_PROMPTS`` requests MCP gate/reform prompt text."""
+    return _use_mcp_gate_reform_prompts()
+
+
+async def prepare_cache_for_mcp_gate_prompts(enabled: bool) -> None:
+    """Before :func:`create_data360_mcp_agent` in a gated factory: request gate prefetch and optionally expire cache TTL."""
+    async with _cache_lock:
+        _cache.fetch_mcp_gate_prompt_requested = enabled
+        if enabled:
+            _cache.fetched_at_monotonic = 0.0
+
+
+async def release_mcp_gate_prompt_preparation() -> None:
+    """Clear the gated-node gate-prefetch flag after the agent graph is compiled."""
+    async with _cache_lock:
+        _cache.fetch_mcp_gate_prompt_requested = False
+
+
+def get_cached_mcp_gate_system_prompt() -> str | None:
+    """Last fetched ``gate_classifier`` body from MCP (after cache refresh)."""
+    return _cache.mcp_gate_system_prompt
+
+
 __all__ = [
+    "AGENT_RECIPE_URI",
     "CONTEXT_URI",
     "SERVER_NAME",
     "SYSTEM_PROMPT_URI",
@@ -484,4 +591,8 @@ __all__ = [
     "get_agent_recursion_limit",
     "list_mcp_tools",
     "run_agent_query",
+    "use_mcp_prompts_from_env",
+    "prepare_cache_for_mcp_gate_prompts",
+    "release_mcp_gate_prompt_preparation",
+    "get_cached_mcp_gate_system_prompt",
 ]

@@ -13,6 +13,7 @@ dependencies = [
   "typer>=0.20.1",
   "gunicorn>=23.0.0",
   "pydantic-settings>=2.0.0",
+  "python-dotenv>=1.0.0",
   "draco @ git+https://github.com/avsolatorio/draco2.git@data360-mcp",
   "opencensus-ext-azure>=1.1.13",
   "azure-monitor-opentelemetry>=1.6.0",
