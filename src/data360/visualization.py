@@ -248,7 +248,7 @@ def _format_subtitle_line(
     strategy: str | None,
     reason: str | None,
 ) -> str | None:
-    """Optional subtitle under chart title; matches chat `message.tsx` viz branch."""
+    """Optional subtitle under chart title; matches client `formatData360VizSubtitleLine`."""
     parts: list[str] = []
     if warning:
         parts.append(warning)
