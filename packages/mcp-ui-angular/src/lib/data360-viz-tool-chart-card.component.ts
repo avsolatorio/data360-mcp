@@ -3,6 +3,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   SimpleChanges,
   TemplateRef,
 } from "@angular/core";
@@ -58,7 +59,9 @@ import { Data360VegaChartCardComponent } from "./data360-vega-chart-card.compone
     `,
   ],
 })
-export class Data360VizToolChartCardComponent implements OnChanges {
+export class Data360VizToolChartCardComponent
+  implements OnChanges, OnDestroy
+{
   /**
    * Parsed viz tool payload from {@link parseData360VizToolResult}
    * (must include `url` when successful).
@@ -78,6 +81,8 @@ export class Data360VizToolChartCardComponent implements OnChanges {
   source = "";
   loadError: string | null = null;
   isLoading = false;
+  private loadRequestId = 0;
+  private loadAbortController: AbortController | null = null;
 
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
@@ -87,6 +92,11 @@ export class Data360VizToolChartCardComponent implements OnChanges {
     }
   }
 
+  ngOnDestroy(): void {
+    this.loadAbortController?.abort();
+    this.loadAbortController = null;
+  }
+
   /** Same semantics as {@link isData360VizToolSuccess} without a narrowing type that breaks ng-packagr. */
   hasChartUrl(): boolean {
     const tr = this.toolResult;
@@ -94,6 +104,11 @@ export class Data360VizToolChartCardComponent implements OnChanges {
   }
 
   private async load(): Promise<void> {
+    const requestId = ++this.loadRequestId;
+    this.loadAbortController?.abort();
+    const abortController = new AbortController();
+    this.loadAbortController = abortController;
+
     this.loadError = null;
     this.spec = null;
     this.isLoading = false;
@@ -114,11 +129,14 @@ export class Data360VizToolChartCardComponent implements OnChanges {
     this.cdr.markForCheck();
 
     try {
-      const res = await fetch(fetchUrl);
+      const res = await fetch(fetchUrl, { signal: abortController.signal });
       if (!res.ok) {
         throw new Error(`Failed to load chart: ${res.status}`);
       }
       const data: unknown = await res.json();
+      if (requestId !== this.loadRequestId) {
+        return;
+      }
       const normalized = normalizeChartPayloadFromJson(data);
       this.spec = normalized.spec as VLSpec;
       this.title = normalized.title;
@@ -126,11 +144,23 @@ export class Data360VizToolChartCardComponent implements OnChanges {
         normalized.subtitle ?? formatData360VizSubtitleLine(tr);
       this.loadError = null;
     } catch (e: unknown) {
+      if (requestId !== this.loadRequestId) {
+        return;
+      }
+      if (e instanceof DOMException && e.name === "AbortError") {
+        return;
+      }
       this.spec = null;
       this.loadError =
         e instanceof Error ? e.message : "Failed to load chart";
     } finally {
+      if (requestId !== this.loadRequestId) {
+        return;
+      }
       this.isLoading = false;
+      if (this.loadAbortController === abortController) {
+        this.loadAbortController = null;
+      }
       this.cdr.markForCheck();
     }
   }

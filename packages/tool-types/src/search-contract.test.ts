@@ -37,7 +37,7 @@ describe("Data360SearchToolResult", () => {
           periodicity: "Annual",
           latest_data: "2023",
           time_period_range: "1990–2023",
-          covers_country: true,
+          covers_country: { KEN: true },
           requested_country: "KEN",
           dimensions: ["SEX", "AGE"],
         },
@@ -49,7 +49,7 @@ describe("Data360SearchToolResult", () => {
     });
     expect(ok.success).toBe(true);
     if (ok.success) {
-      expect(ok.data.indicators[0].covers_country).toBe(true);
+      expect(ok.data.indicators[0].covers_country).toEqual({ KEN: true });
       expect(ok.data.indicators[0].requested_country).toBe("KEN");
     }
   });
