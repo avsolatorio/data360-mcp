@@ -1,5 +1,9 @@
 export { default as VegaChartCard } from "./VegaChartCard";
 export {
+  Data360ChartFromVizTool,
+  type Data360ChartFromVizToolProps,
+} from "./Data360ChartFromVizTool";
+export {
   getMark,
   parseSpec,
   prepareSpec,

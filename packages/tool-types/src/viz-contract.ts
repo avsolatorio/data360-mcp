@@ -16,6 +16,10 @@ export const data360VizToolResultSchema = z
     database_id: z.string().optional(),
     indicator_name: z.string().optional(),
     indicator_id: z.string().optional(),
+    /** Preformatted one-line footer (preferred over computing from attribution fields). */
+    source_line: z.string().optional(),
+    /** Preformatted subtitle under the chart title (warning · strategy — reason). */
+    subtitle_line: z.string().optional(),
   })
   .passthrough();
 

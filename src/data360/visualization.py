@@ -13,8 +13,9 @@ Vega-Lite specifications, then persists them either through the optional Charts 
   dispatches multi-series strategies (scatter, layered lines, connected scatter, etc.).
 
 Return shape for both: ``{"url": str|None, "error": str|None, ...}`` plus optional
-``database_id``, ``database_name``, ``indicator_id``, ``indicator_name`` for client
-source lines. Before any HTTP
+``database_id``, ``database_name``, ``indicator_id``, ``indicator_name``, optional
+``strategy`` / ``reason``, and optional preformatted ``source_line`` /
+``subtitle_line`` for clients that only render strings. Before any HTTP
 or ``json.dump``, specs are passed through ``_vega_spec_to_json_safe`` so
 ``data.values`` never contains raw ``pandas.Timestamp`` / numpy scalars that would
 break JSON encoding.
@@ -183,6 +184,8 @@ def _ok(
     warning: str | None = None,
     *,
     source_attribution: dict[str, str] | None = None,
+    strategy: str | None = None,
+    reason: str | None = None,
 ) -> VizResult:
     r: VizResult = {"url": url, "error": None}
     if warning:
@@ -191,11 +194,71 @@ def _ok(
         for key, val in source_attribution.items():
             if val:
                 r[key] = val
+    if strategy:
+        r["strategy"] = strategy
+    if reason:
+        r["reason"] = reason
+    attrib_for_line = {
+        k: str(v)
+        for k, v in r.items()
+        if k
+        in (
+            "database_id",
+            "database_name",
+            "indicator_id",
+            "indicator_name",
+        )
+        and v
+    }
+    r["source_line"] = _format_source_line_from_attribution(attrib_for_line)
+    strat_v = r.get("strategy")
+    reas_v = r.get("reason")
+    sub = _format_subtitle_line(
+        warning,
+        strat_v if isinstance(strat_v, str) else None,
+        reas_v if isinstance(reas_v, str) else None,
+    )
+    if sub:
+        r["subtitle_line"] = sub
     return r
 
 
 def _err(msg: str) -> VizResult:
     return {"url": None, "error": msg}
+
+
+_SOURCE_FALLBACK = "World Bank — Data360"
+
+
+def _format_source_line_from_attribution(attrib: dict[str, str]) -> str:
+    """One-line \"Source\" string; matches client `formatData360VizChartSource`."""
+    db = (attrib.get("database_name") or attrib.get("database_id") or "").strip()
+    ind = (attrib.get("indicator_name") or attrib.get("indicator_id") or "").strip()
+    if db and ind:
+        return f"World Bank — {db} — {ind}"
+    if ind:
+        return f"World Bank — {ind}"
+    if db:
+        return f"World Bank — {db}"
+    return _SOURCE_FALLBACK
+
+
+def _format_subtitle_line(
+    warning: str | None,
+    strategy: str | None,
+    reason: str | None,
+) -> str | None:
+    """Optional subtitle under chart title; matches chat `message.tsx` viz branch."""
+    parts: list[str] = []
+    if warning:
+        parts.append(warning)
+    if strategy or reason:
+        parts.append(
+            " — ".join(x for x in (strategy or "", reason or "") if x)
+        )
+    if not parts:
+        return None
+    return " · ".join(parts)
 
 
 def _scalar_for_json(value: object) -> object:
@@ -635,7 +698,10 @@ async def get_viz_spec(
             unit_measure=raw_unit,
         )
         return _ok(
-            await _store_spec(spec), source_attribution=source_attribution
+            await _store_spec(spec),
+            source_attribution=source_attribution,
+            strategy=strategy_result.strategy.value,
+            reason=strategy_result.reason,
         )
 
     # 8. Draco path (temporal_single, fallback)
@@ -740,7 +806,10 @@ async def get_viz_spec(
             vl_spec = rule.apply(vl_spec, data_frequency, raw_unit or None)
 
         return _ok(
-            await _store_spec(vl_spec), source_attribution=source_attribution
+            await _store_spec(vl_spec),
+            source_attribution=source_attribution,
+            strategy=strategy_result.strategy.value,
+            reason=strategy_result.reason,
         )
 
     except StopIteration:
@@ -758,6 +827,8 @@ async def get_viz_spec(
                 await _store_spec(spec),
                 warning=_FALLBACK_WARNING,
                 source_attribution=source_attribution,
+                strategy=strategy_result.strategy.value,
+                reason=strategy_result.reason,
             )
         except Exception as fallback_err:
             _logger.exception(f"Fallback failed: {fallback_err}")
@@ -1000,7 +1071,9 @@ async def get_multi_indicator_viz_spec(
     }
 
     url = await _store_spec(spec)
-    result = _ok(url, source_attribution=source_attribution_multi)
-    result["strategy"] = strategy_result.strategy.value
-    result["reason"] = strategy_result.reason
-    return result
+    return _ok(
+        url,
+        source_attribution=source_attribution_multi,
+        strategy=strategy_result.strategy.value,
+        reason=strategy_result.reason,
+    )

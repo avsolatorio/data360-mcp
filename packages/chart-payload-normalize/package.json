@@ -1,13 +1,12 @@
 {
-  "name": "@data360/tool-types",
-  "version": "0.0.4",
-  "description": "TypeScript types and runtime guards for Data360 MCP tool JSON payloads.",
+  "name": "@data360/chart-payload-normalize",
+  "version": "0.0.1",
+  "description": "Normalize Charts API envelopes and raw Vega-Lite JSON into spec + title for Data360 charts.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "schemas"
+    "dist"
   ],
   "exports": {
     ".": {
@@ -16,20 +15,15 @@
     }
   },
   "scripts": {
-    "build": "tsc",
-    "test": "vitest run"
-  },
-  "dependencies": {
-    "zod": "^3.23.8"
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "typescript": "^5.5.0",
-    "vitest": "^2.1.0"
+    "typescript": "^5.5.0"
   },
   "keywords": [
     "data360",
-    "mcp",
+    "vega-lite",
     "world-bank"
   ],
   "license": "MIT",

@@ -25,6 +25,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        "@data360/chart-payload-normalize",
         "@data360/mcp-viz-core",
         "@data360/tool-types",
         "react",
