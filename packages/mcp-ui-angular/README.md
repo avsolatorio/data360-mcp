@@ -92,7 +92,7 @@ Output is written to `dist/` (FESM bundles and typings for publishing).
 
 ### Live demo app
 
-A runnable sample app lives in [`packages/mcp-ui-angular-demo`](../mcp-ui-angular-demo). From that folder: `npm run build:libs`, then `npm install`, then `npm start` (see its README).
+A runnable sample app lives in **`packages/mcp-ui-angular-demo`** in this repo ([browse on GitHub](https://github.com/worldbank/data360-mcp/tree/main/packages/mcp-ui-angular-demo)). Clone the monorepo, then from `packages/mcp-ui-angular-demo`: `npm run build:libs`, then `npm install`, then `npm start` (see [that folder’s README](https://github.com/worldbank/data360-mcp/blob/main/packages/mcp-ui-angular-demo/README.md)).
 
 ## Version coupling
 

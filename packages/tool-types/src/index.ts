@@ -5,6 +5,11 @@ export {
   isData360VizToolSuccess,
 } from "./viz-contract";
 export type { Data360VizToolResult } from "./viz-contract";
+export {
+  DATA360_CHART_SOURCE_FALLBACK,
+  formatData360VizSourceLine,
+  formatData360VizSubtitleLine,
+} from "./viz-display-format";
 
 export {
   enrichedIndicatorSchema,
