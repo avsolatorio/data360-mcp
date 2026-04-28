@@ -681,6 +681,7 @@ dependencies = [
     { name = "mcp" },
     { name = "opencensus-ext-azure" },
     { name = "pydantic-settings" },
+    { name = "python-dotenv" },
     { name = "typer" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -717,6 +718,7 @@ requires-dist = [
     { name = "mcp", specifier = ">=1.18.0" },
     { name = "opencensus-ext-azure", specifier = ">=1.1.13" },
     { name = "pydantic-settings", specifier = ">=2.0.0" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "typer", specifier = ">=0.20.1" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30.0" },
 ]
