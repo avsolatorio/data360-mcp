@@ -128,6 +128,11 @@ type StageEvent = {
   details?: Record<string, unknown>;
 };
 
+type NarrativeChunkEvent = {
+  type: "narrative_chunk";
+  chunk: string;
+};
+
 function stageEventKey(evt: StageEvent): string {
   if (evt.stage === "tool_call") {
     const toolName = evt.details?.tool_name;
@@ -414,6 +419,8 @@ function App() {
   const [vizMeta, setVizMeta] = useState<VizCardMeta>({});
   const [stageEvents, setStageEvents] = useState<StageEvent[]>([]);
   const [showToolDetails, setShowToolDetails] = useState(false);
+  const [narrativeStreaming, setNarrativeStreaming] = useState(true);
+  const [liveNarrative, setLiveNarrative] = useState("");
   const apiBase = useMemo(
     () =>
       (
@@ -431,11 +438,16 @@ function App() {
     setVizSpec(null);
     setVizMeta({});
     setStageEvents([]);
+    setLiveNarrative("");
     try {
       const res = await fetch(`${apiBase}/api/k360-query/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: text, show_tool_details: showToolDetails }),
+        body: JSON.stringify({
+          query: text,
+          show_tool_details: showToolDetails,
+          narrative_streaming: narrativeStreaming,
+        }),
       });
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}: ${await res.text()}`);
@@ -463,6 +475,7 @@ function App() {
           if (raw === "[DONE]") continue;
           const parsed = JSON.parse(raw) as
             | StageEvent
+            | NarrativeChunkEvent
             | { type: "final"; payload: K360Envelope }
             | { type: "error"; message: string };
           if (parsed.type === "stage") {
@@ -478,6 +491,9 @@ function App() {
               updated[existingIndex] = mergeStageEvent(updated[existingIndex], parsed);
               return updated;
             });
+          }
+          if (parsed.type === "narrative_chunk") {
+            setLiveNarrative((prev) => `${prev}${parsed.chunk}`);
           }
           if (parsed.type === "final") {
             finalPayload = parsed.payload;
@@ -566,6 +582,23 @@ function App() {
             onChange={(e) => setShowToolDetails(e.target.checked)}
           />
           Show tool input/output details (default: off)
+        </label>
+        <label
+          style={{
+            display: "flex",
+            gap: 8,
+            alignItems: "center",
+            marginTop: 8,
+            fontSize: 13,
+            color: "#274767",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={narrativeStreaming}
+            onChange={(e) => setNarrativeStreaming(e.target.checked)}
+          />
+          Stream narrative output (default: on)
         </label>
         {loading ? (
           <div
@@ -766,6 +799,13 @@ function App() {
           </div>
         </div>
       )}
+
+      {loading && liveNarrative.trim().length > 0 ? (
+        <div style={{ ...PANEL, marginTop: 16 }}>
+          <h3 style={{ marginTop: 0 }}>Narrative (streaming)</h3>
+          <ResponseMarkdown content={liveNarrative} />
+        </div>
+      ) : null}
 
       {vizSpec && (
         <div style={{ ...PANEL, marginTop: 16 }}>
