@@ -71,6 +71,28 @@ npm run build
 
 `npm run dev` serves the demo at `http://localhost:5173`.
 
+### K360 interactive demo mode
+
+The demo app can call the staged K360 backend endpoint from
+`examples/agents/langchain-graph/demo_web/server.py` (`POST /api/k360-query`).
+
+1. Start the backend demo API:
+
+```bash
+uv run uvicorn demo_web.server:app --app-dir examples/agents/langchain-graph --host 127.0.0.1 --port 8844
+```
+
+2. Start the React demo and point it to that API:
+
+```bash
+VITE_K360_API_BASE=http://127.0.0.1:8844 npm run dev
+```
+
+The UI renders:
+- narrative markdown (sectioned style similar to the chatbot renderer),
+- content packet inspector (`gate`, `rewrite`, packet fields),
+- charts through `VegaChartCard` when viz tool output includes a spec URL.
+
 ## What the chart card does to your spec
 
 The spec passes through an 8-guard pipeline (`prepareSpec`) before reaching vega-embed:

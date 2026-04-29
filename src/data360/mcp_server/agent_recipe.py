@@ -18,6 +18,7 @@ and optional **MCP prompts** before the user message.
 |-----|------|------|
 | `data360://system-prompt` | **Required** | Search → codes → disaggregation → `get_data` → viz decision tree. |
 | `data360://context` | **Recommended** | JSON: `current_date`, `current_year` (for “last N years”). |
+| `data360://k360-narrative-style` | Optional | Markdown response contract for staged K360 narrative renderers. |
 | `data360://agent-recipe` | Optional | This page; wire-up only (no extra tool semantics). |
 
 **On-demand reference** (larger): `metadata-fields`, `data-schema`, `data-filters`, `search-usage`, `codelists`, `databases`.
@@ -34,6 +35,8 @@ to the conversation as a **system** or **user** block (your host convention).
 | `country_data` | `query`, `country`, optional `start_year`, `end_year` | One country (or small list) + indicator theme → data + chart. |
 | `gate_classifier` | _(none)_ | Decide in/out of scope for WB/Data360 **before** tool loop (mirrors gated agent). |
 | `thematic_to_data` | `user_message` | Turn a broad development-economics question into economies, terms, years, peers. |
+| `k360_research_compiler` | `user_question`, optional `data_question`, `tool_calls_json` | Build a stable JSON content packet from tool trace. |
+| `k360_narrative` | `user_question`, `content_packet_json`, optional `raw_tool_results_json`, `include_claim_tags` | Convert packet + evidence into polished narrative markdown. |
 
 **Typical composed turn (thematic question):**
 
@@ -59,6 +62,15 @@ to the conversation as a **system** or **user** block (your host convention).
 2. **Optional prompt blocks:** from `prompts/get` (`country_data`, `thematic_to_data`, …).
 3. **User:** current user message (optionally rewritten using `thematic_to_data` output).
 4. **Assistant:** tool calls until done, then natural-language answer.
+
+### Staged K360 flow
+
+`Gate -> Rewriter -> Compile -> Narrative`
+
+1. `gate_classifier` decides relevance.
+2. `thematic_to_data` rewrites broad questions to data tasks.
+3. Run tool loop (`system-prompt`) and collect tool trace + packet (`k360_research_compiler` optional).
+4. Render final markdown with `k360_narrative` (+ optional `data360://k360-narrative-style`).
 
 ## 5. Design note
 

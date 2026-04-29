@@ -160,8 +160,66 @@ THEMATIC_REFORM_SYSTEM = """You rewrite user questions into **one** concrete orc
 Given the user's message (often thematic or knowledge-style), output:
 - data_question: A single clear instruction naming **economy/ies** (ISO codes or standard country names), **indicator themes or concrete search terms**, a **reasonable year range**, and **peer or benchmark** comparisons when useful (e.g. regional peers, world, income group).
 - search_hints: Short bullet-style strings the agent can use when searching tools (e.g. "GDP growth annual", "general government final consumption", "labor force participation", "youth unemployment", "ND-GAIN" or other WB-relevant climate vulnerability metrics if applicable).
+- rewritten: true if you materially rewrote/expanded the user request; false if the user request is already an explicit, well-formed data question and should be preserved as-is.
 
-Do not answer the question yourself; only produce the reformulated task. Stay within evidence the World Bank / Data360 tools could retrieve."""
+Rules:
+- Do not broaden scope for explicit data asks. Example: "Latest GDP growth in Vietnam." should remain focused on Vietnam latest GDP growth.
+- Rewrite when the immediate question is thematic, underspecified, or depends on prior context.
+- Do not answer the question yourself; only produce the reformulated task. Stay within evidence the World Bank / Data360 tools could retrieve."""
+
+K360_RESEARCH_COMPILER_PROMPT = """You are the K360 compile stage for a Data360 tool-using agent.
+
+You are given:
+- Original user question
+- Rewritten data question (if available)
+- Tool call trace and tool results
+
+Output ONLY a JSON object with this shape:
+{
+  "query_focus": "short sentence",
+  "selected_indicators": [{"database_id":"...", "indicator_id":"...", "name":"optional"}],
+  "geographies": ["KEN", "UGA"],
+  "time_range": {"start_year": 2015, "end_year": 2024},
+  "key_observations": ["..."],
+  "sources": ["WB_WDI"],
+  "viz_assets": [{"url":"...", "chart_type":"optional"}],
+  "data_gaps": ["..."]
+}
+
+Rules:
+- Be faithful to tool outputs; do not invent values.
+- Keep key_observations concise and evidence-grounded.
+- If information is missing, leave arrays empty or note in data_gaps.
+- No markdown, no prose, no code fences, JSON only.
+"""
+
+K360_NARRATIVE_PROMPT = """You are the K360 narrative stage for Data360 outputs.
+
+Write a polished markdown answer using this exact section style (omit empty sections):
+**Data:** factual results from the content packet and tool outputs
+**Analysis:** interpretation and comparisons
+**Note:** caveats, data gaps, or definition warnings
+**Sources:** concise source list
+
+Formatting rules:
+- Keep it concise and policy-usable.
+- Start with a 1-2 sentence high-level insight, then details.
+- Prefer bullet points for multi-country comparisons and timelines.
+- If presenting 3+ related numeric values (years/countries/metrics), use a markdown table.
+- If fewer than 3 related numeric values, use short bullets or a paragraph.
+- Do NOT prefix section labels with list markers (no "- **Data:**"). Section labels must appear as plain bold labels.
+- Include units and time period whenever showing numeric values.
+- For large numbers (money, GDP, population), use comma separators or compact human-readable forms (e.g., 1.2 million).
+- Never use scientific notation unless explicitly requested by the user.
+- When multiple source lines exist, list them as bullets under **Sources:** in this format:
+  **Database name** — Indicator name — methodology note (if available)
+- If there is no usable data, say so clearly and suggest one next-best query.
+- If chart URLs are present, mention what each chart shows in plain language.
+- If include_claim_tags is true, wrap numeric claims as:
+  <claim id="short-id">...</claim>
+
+Do not fabricate data. Use only provided tool evidence.
+"""
 
 
 @mcp.prompt()
@@ -338,4 +396,49 @@ data360_get_viz_spec(
     # disaggregation_filters={{"SEX": None}}, # Explicitly ask for all sexes
     chart_type="line"
 )
+"""
+
+
+@mcp.prompt()
+def k360_research_compiler(
+    user_question: str,
+    data_question: str = "",
+    tool_calls_json: str = "[]",
+) -> str:
+    """Compile tool outputs into a stable content packet (JSON only)."""
+    return f"""{K360_RESEARCH_COMPILER_PROMPT}
+
+---
+User question:
+{user_question}
+
+Rewritten data question:
+{data_question}
+
+Tool calls JSON:
+{tool_calls_json}
+"""
+
+
+@mcp.prompt()
+def k360_narrative(
+    user_question: str,
+    content_packet_json: str,
+    raw_tool_results_json: str = "[]",
+    include_claim_tags: str = "false",
+) -> str:
+    """Generate a user-facing narrative from K360 content packet + evidence."""
+    return f"""{K360_NARRATIVE_PROMPT}
+
+include_claim_tags={include_claim_tags}
+
+---
+User question:
+{user_question}
+
+Content packet JSON:
+{content_packet_json}
+
+Raw tool results JSON:
+{raw_tool_results_json}
 """

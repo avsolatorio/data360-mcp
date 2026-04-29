@@ -30,6 +30,7 @@ from data360_mcp_agent.integration import (
     run_agent_query,
     use_mcp_prompts_from_env,
 )
+from data360_mcp_agent.k360_graph import create_k360_graph, run_k360_query
 from data360_mcp_agent.plugin import (
     MessagesState,
     create_data360_gated_langgraph_node,
@@ -47,10 +48,12 @@ __all__ = [
     "create_data360_gated_langgraph_node",
     "create_data360_langgraph_node",
     "create_data360_mcp_agent",
+    "create_k360_graph",
     "fetch_mcp_prompt_messages",
     "get_agent_recursion_limit",
     "get_cached_mcp_gate_system_prompt",
     "list_mcp_tools",
     "run_agent_query",
+    "run_k360_query",
     "use_mcp_prompts_from_env",
 ]
