@@ -163,6 +163,39 @@ def _join_prompt_messages(messages: Sequence[Any]) -> str:
     return "\n\n".join(p for p in parts if p)
 
 
+async def _client_get_prompt_messages(
+    client: Any,
+    name: str,
+    arguments: dict[str, Any] | None = None,
+) -> list[Any]:
+    """Compat wrapper for ``MultiServerMCPClient.get_prompt`` signature drift.
+
+    Some adapter versions expect:
+    - ``get_prompt(server_name, name, arguments=...)``
+    Others expect:
+    - ``get_prompt(name, arguments=...)``
+    """
+    args = arguments or {}
+    call_patterns = (
+        lambda: client.get_prompt(server_name=SERVER_NAME, prompt_name=name, arguments=args),
+        lambda: client.get_prompt(server_name=SERVER_NAME, name=name, arguments=args),
+        lambda: client.get_prompt(SERVER_NAME, name, arguments=args),
+        lambda: client.get_prompt(SERVER_NAME, name, args),
+        lambda: client.get_prompt(name, arguments=args),
+        lambda: client.get_prompt(name, args),
+    )
+    last_error: TypeError | None = None
+    for call in call_patterns:
+        try:
+            return await call()
+        except TypeError as exc:
+            last_error = exc
+    if last_error is not None:
+        raise last_error
+    msg = "Could not fetch MCP prompt messages"
+    raise RuntimeError(msg)
+
+
 async def _cache_gate_classifier_prompt(client: Any) -> None:
     fetch_gate = (
         _use_mcp_gate_reform_prompts() or _cache.fetch_mcp_gate_prompt_requested
@@ -170,7 +203,7 @@ async def _cache_gate_classifier_prompt(client: Any) -> None:
     if not fetch_gate:
         return
     try:
-        gate_msgs = await client.get_prompt(SERVER_NAME, "gate_classifier", {})
+        gate_msgs = await _client_get_prompt_messages(client, "gate_classifier", {})
         joined = _join_prompt_messages(gate_msgs)
         if joined:
             _cache.mcp_gate_system_prompt = joined
@@ -472,7 +505,7 @@ async def fetch_mcp_prompt_messages(
 ) -> list[Any]:
     """Return LangChain messages from a Data360 MCP prompt (e.g. ``country_data``)."""
     client = _make_client()
-    return await client.get_prompt(SERVER_NAME, name, arguments=arguments)
+    return await _client_get_prompt_messages(client, name, arguments)
 
 
 async def create_data360_mcp_agent(

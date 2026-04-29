@@ -1,316 +1,783 @@
-import React, { useState } from "react";
+import React, { type CSSProperties, useMemo, useState } from "react";
 import ReactDOM from "react-dom/client";
+
 import type { VLSpec } from "@data360/mcp-viz-core";
 import { VegaChartCard } from "../viz-card";
-import { SearchResultCard } from "../search-card";
-import type { EnrichedIndicator } from "../search-card";
 
-// ─── Viz demo data ─────────────────────────────────────────────────────────────
-
-const DEMO_SPEC = {
-  $schema: "https://vega.github.io/schema/vega-lite/v6.1.0.json",
-  title: "Renewable electricity output (% of total electricity output)",
-  data: { name: "data-demo" },
-  datasets: {
-    "data-demo": [
-      { year: "2019-01-01T00:00:00", value: 81.43, country: "Brazil" },
-      { year: "2019-01-01T00:00:00", value: 1.42,  country: "Bangladesh" },
-      { year: "2018-01-01T00:00:00", value: 1.58,  country: "Bangladesh" },
-      { year: "2020-01-01T00:00:00", value: 1.47,  country: "Bangladesh" },
-      { year: "2021-01-01T00:00:00", value: 39.83, country: "Germany" },
-      { year: "2020-01-01T00:00:00", value: 19.76, country: "India" },
-      { year: "2018-01-01T00:00:00", value: 81.57, country: "Brazil" },
-      { year: "2019-01-01T00:00:00", value: 40.58, country: "Germany" },
-      { year: "2021-01-01T00:00:00", value: 19.13, country: "India" },
-      { year: "2021-01-01T00:00:00", value: 1.50,  country: "Bangladesh" },
-      { year: "2018-01-01T00:00:00", value: 15.01, country: "India" },
-      { year: "2019-01-01T00:00:00", value: 17.94, country: "United States" },
-      { year: "2021-01-01T00:00:00", value: 20.27, country: "United States" },
-      { year: "2018-01-01T00:00:00", value: 17.16, country: "United States" },
-      { year: "2020-01-01T00:00:00", value: 44.84, country: "Germany" },
-      { year: "2020-01-01T00:00:00", value: 19.92, country: "United States" },
-      { year: "2018-01-01T00:00:00", value: 35.64, country: "Germany" },
-      { year: "2021-01-01T00:00:00", value: 77.38, country: "Brazil" },
-      { year: "2020-01-01T00:00:00", value: 83.18, country: "Brazil" },
-    ],
-  },
-  mark: { type: "line" as const },
-  encoding: {
-    x: { field: "year", type: "temporal", timeUnit: "year" },
-    y: { field: "value", type: "quantitative", scale: { zero: true } },
-    color: { field: "country", type: "nominal" },
-    tooltip: [
-      { field: "year",    type: "temporal" },
-      { field: "value",   type: "quantitative" },
-      { field: "country", type: "nominal" },
-    ],
-  },
-  params: [{ name: "zoom", select: { type: "interval" }, bind: "scales" }],
-} satisfies VLSpec;
-
-// ─── Search demo data ──────────────────────────────────────────────────────────
-
-// ── Demo 1: query — single topic, one country ──────────────────────────────────
-// Simulates: data360_search_indicators(query="poverty headcount ratio", required_country="Philippines")
-const DEMO_QUERY_SINGLE: EnrichedIndicator[] = [
-  {
-    idno: "WB_WDI_SI_POV_NAHC",
-    database_id: "WB_WDI",
-    database_name: "World Development Indicators (WDI)",
-    name: "Poverty headcount ratio at national poverty lines (% of population)",
-    truncated_definition: "National poverty headcount ratio is the percentage of the population living below the national poverty lines.",
-    periodicity: "Annual",
-    latest_data: "2021",
-    time_period_range: "2000–2021",
-    covers_country: { PHL: true },
-    requested_country: "PHL",
-  },
-  {
-    idno: "WB_WDI_SI_POV_DDAY",
-    database_id: "WB_WDI",
-    database_name: "World Development Indicators (WDI)",
-    name: "Poverty headcount ratio at $2.15 a day (2017 PPP) (% of population)",
-    truncated_definition: "Percentage of the population living on less than $2.15 a day at 2017 international prices.",
-    periodicity: "Annual",
-    latest_data: "2021",
-    time_period_range: "2000–2021",
-    covers_country: { PHL: true },
-    requested_country: "PHL",
-  },
-  {
-    idno: "WB_WDI_SI_POV_URHC",
-    database_id: "WB_WDI",
-    database_name: "World Development Indicators (WDI)",
-    name: "Urban poverty headcount ratio at national poverty lines (% of urban population)",
-    truncated_definition: "Urban poverty headcount ratio is the percentage of the urban population living below the national urban poverty line.",
-    periodicity: "Annual",
-    latest_data: "2021",
-    time_period_range: "2000–2021",
-    covers_country: { PHL: true },
-    requested_country: "PHL",
-    dimensions: ["URBANISATION"],
-  },
-];
-
-// ── Demo 2: queries — multiple topics, shared country list ─────────────────────
-// Simulates: data360_search_indicators(
-//   queries=["GDP per capita","inflation","GNI per capita","Gini"],
-//   required_country="Philippines;Japan"
-// )
-const DEMO_QUERIES_MULTI: EnrichedIndicator[] = [
-  {
-    idno: "WB_WDI_NY_GDP_PCAP_KD",
-    database_id: "WB_WDI",
-    database_name: "World Development Indicators (WDI)",
-    name: "GDP per capita (constant 2015 US$)",
-    truncated_definition: "GDP per capita based on constant 2015 prices, in US dollars.",
-    periodicity: "Annual",
-    latest_data: "2023",
-    time_period_range: "1960–2023",
-    covers_country: { PHL: true, JPN: true },
-    requested_country: "PHL;JPN",
-  },
-  {
-    idno: "WB_WDI_FP_CPI_TOTL_ZG",
-    database_id: "WB_WDI",
-    database_name: "World Development Indicators (WDI)",
-    name: "Inflation, consumer prices (annual %)",
-    truncated_definition: "Annual growth rate of the CPI for the average consumer.",
-    periodicity: "Annual",
-    latest_data: "2023",
-    time_period_range: "1960–2023",
-    covers_country: { PHL: true, JPN: true },
-    requested_country: "PHL;JPN",
-  },
-  {
-    idno: "WB_WDI_NY_GNP_PCAP_KD",
-    database_id: "WB_WDI",
-    database_name: "World Development Indicators (WDI)",
-    name: "GNI per capita (constant 2015 US$)",
-    truncated_definition: "Gross national income per capita in constant 2015 US dollars.",
-    periodicity: "Annual",
-    latest_data: "2023",
-    time_period_range: "1962–2023",
-    covers_country: { PHL: true, JPN: true },
-    requested_country: "PHL;JPN",
-  },
-  {
-    idno: "WB_WDI_SI_POV_GINI",
-    database_id: "WB_WDI",
-    database_name: "World Development Indicators (WDI)",
-    name: "Gini index",
-    truncated_definition: "Gini index measures the extent to which the distribution of income deviates from a perfectly equal distribution.",
-    periodicity: "Annual",
-    latest_data: "2021",
-    time_period_range: "1967–2021",
-    // Japan has no Gini data — shows "− No data for JPN"
-    covers_country: { PHL: true, JPN: false },
-    requested_country: "PHL;JPN",
-  },
-];
-
-// ── Demo 3: query_groups — different topics per country ────────────────────────
-// Simulates: data360_search_indicators(query_groups=[
-//   { queries: ["GDP per capita", "inflation"], country: "Japan" },
-//   { queries: ["population"],                 country: "Philippines" }
-// ])
-const DEMO_QUERY_GROUPS = [
-  {
-    query: "GDP per capita, inflation",
-    country_code: "JPN",
-    country_name: "Japan",
-    count: 2,
-    indicators: [
-      {
-        idno: "WB_WDI_NY_GDP_PCAP_KD",
-        database_id: "WB_WDI",
-        database_name: "World Development Indicators (WDI)",
-        name: "GDP per capita (constant 2015 US$)",
-        truncated_definition: "GDP per capita based on constant 2015 prices, in US dollars.",
-        periodicity: "Annual",
-        latest_data: "2023",
-        time_period_range: "1960–2023",
-        covers_country: { JPN: true },
-        requested_country: "JPN",
-      },
-      {
-        idno: "WB_WDI_FP_CPI_TOTL_ZG",
-        database_id: "WB_WDI",
-        database_name: "World Development Indicators (WDI)",
-        name: "Inflation, consumer prices (annual %)",
-        truncated_definition: "Annual growth rate of the CPI for the average consumer.",
-        periodicity: "Annual",
-        latest_data: "2023",
-        time_period_range: "1960–2023",
-        covers_country: { JPN: true },
-        requested_country: "JPN",
-      },
-    ],
-  },
-  {
-    query: "population",
-    country_code: "PHL",
-    country_name: "Philippines",
-    count: 2,
-    indicators: [
-      {
-        idno: "WB_WDI_SP_POP_TOTL",
-        database_id: "WB_WDI",
-        database_name: "World Development Indicators (WDI)",
-        name: "Population, total",
-        truncated_definition: "Total population based on the de facto definition, counting all residents regardless of legal status or citizenship.",
-        periodicity: "Annual",
-        latest_data: "2023",
-        time_period_range: "1960–2023",
-        covers_country: { PHL: true },
-        requested_country: "PHL",
-      },
-      {
-        idno: "WB_WDI_SP_POP_GROW",
-        database_id: "WB_WDI",
-        database_name: "World Development Indicators (WDI)",
-        name: "Population growth (annual %)",
-        truncated_definition: "Annual population growth rate for year t is the exponential rate of growth of midyear population from year t-1 to t.",
-        periodicity: "Annual",
-        latest_data: "2023",
-        time_period_range: "1961–2023",
-        covers_country: { PHL: true },
-        requested_country: "PHL",
-      },
-    ],
-  },
-];
-
-// ─── Demo app ──────────────────────────────────────────────────────────────────
-
-const SECTION_LABEL: React.CSSProperties = {
-  fontFamily: "Open Sans, Arial, sans-serif",
-  fontSize: 12,
-  fontWeight: 700,
-  color: "#888",
-  margin: "0 0 3px",
-  textTransform: "uppercase",
-  letterSpacing: "0.07em",
+type ToolCall = {
+  tool_name: string;
+  tool_args: Record<string, unknown>;
+  tool_result: unknown;
 };
 
-const SECTION_DESC: React.CSSProperties = {
-  fontFamily: "ui-monospace, monospace",
-  fontSize: 11,
-  color: "#aaa",
-  margin: "0 0 10px",
+type VizCardMeta = {
+  subtitle?: string;
+  source?: string;
+  annotations?: Array<{ id: number; text: string }>;
 };
 
-function App() {
-  const [selected, setSelected] = useState<EnrichedIndicator | null>(null);
+const DATA360_CHART_SOURCE_FALLBACK = "World Bank Data360";
+
+function firstNonEmptyString(values: unknown[]): string | undefined {
+  for (const value of values) {
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+  }
+  return undefined;
+}
+
+function formatData360VizSourceLine(raw: Record<string, unknown>): string {
+  const serverLine = firstNonEmptyString([raw.source_line, raw.source]);
+  if (serverLine) {
+    return serverLine;
+  }
+
+  const database = firstNonEmptyString([raw.database_name, raw.database_id]);
+  const indicator = firstNonEmptyString([raw.indicator_name, raw.indicator_id]);
+  const parts = ["World Bank"];
+  if (database) {
+    parts.push(database);
+  }
+  if (indicator) {
+    parts.push(indicator);
+  }
+  return parts.length > 1 ? parts.join(" — ") : DATA360_CHART_SOURCE_FALLBACK;
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+  return value as Record<string, unknown>;
+}
+
+function flattenCandidateRecords(value: unknown): Record<string, unknown>[] {
+  const direct = asRecord(value);
+  if (direct) {
+    const nested = [
+      direct.data,
+      direct.result,
+      direct.output,
+      direct.payload,
+      direct.response,
+    ];
+    return [direct, ...nested.flatMap((item) => flattenCandidateRecords(item))];
+  }
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => flattenCandidateRecords(item));
+  }
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value) as unknown;
+      return flattenCandidateRecords(parsed);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
+function findVizResultRecord(call: ToolCall): Record<string, unknown> | null {
+  const candidates = flattenCandidateRecords(call.tool_result);
+  const withUrl = candidates.find((rec) => {
+    const maybeUrl = rec.url;
+    return typeof maybeUrl === "string" && maybeUrl.includes("_vega.json");
+  });
+  if (withUrl) {
+    return withUrl;
+  }
+  return candidates[0] ?? null;
+}
+
+function formatData360VizSubtitleLine(
+  raw: Record<string, unknown>
+): string | undefined {
+  const serverLine = firstNonEmptyString([raw.subtitle_line, raw.subtitle]);
+  if (serverLine) {
+    return serverLine;
+  }
+  const warning = firstNonEmptyString([raw.warning]);
+  const strategy = firstNonEmptyString([raw.strategy]);
+  const reason = firstNonEmptyString([raw.reason]);
+  if (!warning && !strategy && !reason) {
+    return undefined;
+  }
+  const lead = [warning, strategy].filter(Boolean).join(" · ");
+  return reason ? `${lead} — ${reason}` : lead;
+}
+
+type K360Envelope = {
+  gate: Record<string, unknown>;
+  rewrite: Record<string, unknown>;
+  tool_calls: ToolCall[];
+  content_packet: Record<string, unknown>;
+  narrative: string;
+  error?: string | null;
+  error_type?: string | null;
+  error_details?: string | null;
+};
+
+type StageEvent = {
+  type: "stage";
+  stage: string;
+  status: string;
+  details?: Record<string, unknown>;
+};
+
+function stageEventKey(evt: StageEvent): string {
+  if (evt.stage === "tool_call") {
+    const toolName = evt.details?.tool_name;
+    if (typeof toolName === "string" && toolName.trim().length > 0) {
+      return `tool_call:${toolName}`;
+    }
+  }
+  return evt.stage;
+}
+
+function mergeStageEvent(prev: StageEvent, next: StageEvent): StageEvent {
+  return {
+    ...prev,
+    ...next,
+    details: {
+      ...(prev.details ?? {}),
+      ...(next.details ?? {}),
+    },
+  };
+}
+
+const STAGE_LABELS: Record<string, string> = {
+  gate: "Gate",
+  rewrite: "Rewrite",
+  compile: "Compile",
+  narrative: "Narrative",
+  tool_call: "Tool Call",
+};
+
+const SAMPLE_PROMPTS = [
+  "Latest GDP growth in Vietnam.",
+  "Compare GDP per capita in Kenya, Tanzania, and Uganda.",
+  "How has maternal mortality in Rwanda changed from 2000 to 2020?",
+  "What are the main challenges facing Ghana's economic growth and public spending?",
+];
+
+const PANEL: CSSProperties = {
+  background: "#fff",
+  border: "1px solid #d9e0ea",
+  borderRadius: 12,
+  padding: 16,
+  boxShadow: "0 4px 10px rgba(20, 32, 51, 0.04)",
+};
+
+function extractVizUrl(toolCalls: ToolCall[]): string | null {
+  for (const call of toolCalls) {
+    const raw = call.tool_result;
+    if (raw && typeof raw === "object" && "url" in raw) {
+      const maybe = (raw as { url?: unknown }).url;
+      if (typeof maybe === "string" && maybe.includes("_vega.json")) {
+        return maybe;
+      }
+    }
+  }
+  return null;
+}
+
+function extractVizMeta(toolCalls: ToolCall[]): VizCardMeta {
+  for (const call of toolCalls) {
+    const isVizTool =
+      call.tool_name === "data360_get_viz_spec" ||
+      call.tool_name === "data360_get_multi_indicator_viz_spec";
+    const obj = findVizResultRecord(call);
+    if (!obj) continue;
+    const maybeUrl = obj.url;
+    const hasVizUrl =
+      typeof maybeUrl === "string" && maybeUrl.includes("_vega.json");
+    if (!isVizTool && !hasVizUrl) {
+      continue;
+    }
+    const mergedForAttribution: Record<string, unknown> = {
+      ...call.tool_args,
+      ...obj,
+    };
+    const subtitle = formatData360VizSubtitleLine(mergedForAttribution);
+    const source = formatData360VizSourceLine(mergedForAttribution);
+    const annotationsRaw = obj.annotations;
+    const annotations = Array.isArray(annotationsRaw)
+      ? annotationsRaw
+          .map((item, idx) => {
+            if (!item || typeof item !== "object") return null;
+            const rec = item as Record<string, unknown>;
+            const text = typeof rec.text === "string" ? rec.text : undefined;
+            if (!text) return null;
+            const idVal = rec.id;
+            const id =
+              typeof idVal === "number" && Number.isFinite(idVal)
+                ? idVal
+                : idx + 1;
+            return { id, text };
+          })
+          .filter((v): v is { id: number; text: string } => v !== null)
+      : undefined;
+    if (subtitle || source || (annotations && annotations.length > 0)) {
+      return { subtitle, source, annotations };
+    }
+  }
+  return {};
+}
+
+function extractSubtitleFromSpec(spec: VLSpec): string | undefined {
+  const rawTitle = spec.title;
+  if (!rawTitle || typeof rawTitle === "string") {
+    return undefined;
+  }
+  const subtitle = (rawTitle as { subtitle?: unknown }).subtitle;
+  if (typeof subtitle === "string") {
+    const trimmed = subtitle.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  }
+  if (Array.isArray(subtitle)) {
+    const parts = subtitle
+      .map((item) => (typeof item === "string" ? item.trim() : ""))
+      .filter((item) => item.length > 0);
+    if (parts.length > 0) {
+      return parts.join(" · ");
+    }
+  }
+  return undefined;
+}
+
+function ResponseMarkdown({ content }: { content: string }) {
+  const html = useMemo(() => {
+    const escapeHtml = (text: string) =>
+      text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    const fmtInline = (text: string) =>
+      escapeHtml(text)
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*(.*?)\*/g, "<em>$1</em>")
+        .replace(
+          /\[(.*?)\]\((.*?)\)/g,
+          '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#1d4ed8">$1</a>',
+        );
+
+    const lines = content.split("\n");
+    const out: string[] = [];
+    let inList = false;
+    let inTable = false;
+
+    const closeList = () => {
+      if (inList) {
+        out.push("</ul>");
+        inList = false;
+      }
+    };
+
+    const closeTable = () => {
+      if (inTable) {
+        out.push("</tbody></table></div>");
+        inTable = false;
+      }
+    };
+
+    const parseTableCells = (line: string) =>
+      line
+        .trim()
+        .replace(/^\|/, "")
+        .replace(/\|$/, "")
+        .split("|")
+        .map((cell) => cell.trim());
+
+    const isTableDivider = (line: string) => /^\|?(\s*:?-{3,}:?\s*\|)+\s*$/.test(line.trim());
+
+    let index = 0;
+    while (index < lines.length) {
+      const rawLine = lines[index] ?? "";
+      const line = rawLine.trim();
+
+      if (!line) {
+        closeList();
+        closeTable();
+        out.push("<p>&nbsp;</p>");
+        index += 1;
+        continue;
+      }
+
+      if (line.includes("|") && index + 1 < lines.length && isTableDivider(lines[index + 1] ?? "")) {
+        closeList();
+        closeTable();
+        const headerCells = parseTableCells(line);
+        out.push(
+          '<div style="overflow-x:auto;margin:10px 0;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr>',
+        );
+        for (const cell of headerCells) {
+          out.push(
+            `<th style="border:1px solid #d9e0ea;background:#f8fbff;text-align:left;padding:6px 8px;font-weight:700;">${fmtInline(cell)}</th>`,
+          );
+        }
+        out.push("</tr></thead><tbody>");
+        inTable = true;
+        index += 2;
+
+        while (index < lines.length) {
+          const rowRaw = (lines[index] ?? "").trim();
+          if (!rowRaw || !rowRaw.includes("|")) {
+            break;
+          }
+          const rowCells = parseTableCells(rowRaw);
+          out.push("<tr>");
+          for (const cell of rowCells) {
+            out.push(
+              `<td style="border:1px solid #d9e0ea;padding:6px 8px;vertical-align:top;">${fmtInline(cell)}</td>`,
+            );
+          }
+          out.push("</tr>");
+          index += 1;
+        }
+        continue;
+      }
+
+      const safe = fmtInline(line);
+      if (safe.startsWith("### ")) {
+        closeList();
+        closeTable();
+        out.push(`<h3 style="margin:8px 0 4px;font-size:16px;">${safe.slice(4)}</h3>`);
+        index += 1;
+        continue;
+      }
+      if (safe.startsWith("## ")) {
+        closeList();
+        closeTable();
+        out.push(`<h2 style="margin:10px 0 6px;font-size:20px;">${safe.slice(3)}</h2>`);
+        index += 1;
+        continue;
+      }
+      if (safe.startsWith("# ")) {
+        closeList();
+        closeTable();
+        out.push(`<h1 style="margin:10px 0 6px;font-size:22px;">${safe.slice(2)}</h1>`);
+        index += 1;
+        continue;
+      }
+      if (
+        safe.startsWith("- <strong>Data:</strong>") ||
+        safe.startsWith("- <strong>Analysis:</strong>") ||
+        safe.startsWith("- <strong>Note:</strong>") ||
+        safe.startsWith("- <strong>Sources:</strong>")
+      ) {
+        closeList();
+        closeTable();
+        out.push(`<h3 style="margin:8px 0 4px;font-size:16px;">${safe.slice(2)}</h3>`);
+        index += 1;
+        continue;
+      }
+      if (safe.startsWith("- ")) {
+        closeTable();
+        if (!inList) {
+          out.push("<ul style='margin:6px 0;padding-left:22px;'>");
+          inList = true;
+        }
+        out.push(`<li style="margin:2px 0;">${safe.slice(2)}</li>`);
+        index += 1;
+        continue;
+      }
+
+      closeList();
+      closeTable();
+      out.push(`<p style="margin:6px 0;">${safe}</p>`);
+      index += 1;
+    }
+
+    closeList();
+    closeTable();
+    return out.join("");
+  }, [content]);
 
   return (
-    <div style={{ padding: 32, maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", gap: 40 }}>
+    <div
+      style={{ lineHeight: 1.6, color: "#183047" }}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
 
-      <h1 style={{ fontFamily: "Open Sans, Arial, sans-serif", fontSize: 22, fontWeight: 700, margin: 0, color: "#111" }}>
-        @data360/mcp-ui — Component demo
-      </h1>
+function App() {
+  const [query, setQuery] = useState(SAMPLE_PROMPTS[0]);
+  const [loading, setLoading] = useState(false);
+  const [envelope, setEnvelope] = useState<K360Envelope | null>(null);
+  const [vizSpec, setVizSpec] = useState<VLSpec | null>(null);
+  const [vizMeta, setVizMeta] = useState<VizCardMeta>({});
+  const [stageEvents, setStageEvents] = useState<StageEvent[]>([]);
+  const [showToolDetails, setShowToolDetails] = useState(false);
+  const apiBase = useMemo(
+    () =>
+      (
+        (globalThis as { __K360_API_BASE__?: string }).__K360_API_BASE__ ??
+        "http://127.0.0.1:8844"
+      ),
+    []
+  );
 
-      {/* VegaChartCard */}
-      <section>
-        <p style={SECTION_LABEL}>viz-card · VegaChartCard</p>
-        <VegaChartCard
-          spec={DEMO_SPEC}
-          subtitle="Brazil, Bangladesh, Germany, India, United States · 2018–2021"
-          source="World Bank — World Development Indicators (WDI)"
-          annotations={[
-            { id: 1, text: "Brazil consistently leads with over 77% renewable electricity, driven primarily by large-scale hydropower." },
-            { id: 2, text: "Germany grew from 35.6% in 2018 to 44.8% in 2020, reflecting accelerated wind and solar deployment." },
-          ]}
+  const run = async () => {
+    const text = query.trim();
+    if (!text) return;
+    setLoading(true);
+    setEnvelope(null);
+    setVizSpec(null);
+    setVizMeta({});
+    setStageEvents([]);
+    try {
+      const res = await fetch(`${apiBase}/api/k360-query/stream`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: text, show_tool_details: showToolDetails }),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+      }
+      const reader = res.body?.getReader();
+      if (!reader) {
+        throw new Error("No stream body received");
+      }
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let finalPayload: K360Envelope | null = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() ?? "";
+        for (const part of parts) {
+          const line = part
+            .split("\n")
+            .find((l) => l.startsWith("data: "));
+          if (!line) continue;
+          const raw = line.slice(6).trim();
+          if (raw === "[DONE]") continue;
+          const parsed = JSON.parse(raw) as
+            | StageEvent
+            | { type: "final"; payload: K360Envelope }
+            | { type: "error"; message: string };
+          if (parsed.type === "stage") {
+            setStageEvents((prev) => {
+              const nextKey = stageEventKey(parsed);
+              const existingIndex = prev.findIndex(
+                (evt) => stageEventKey(evt) === nextKey
+              );
+              if (existingIndex === -1) {
+                return [...prev, parsed];
+              }
+              const updated = [...prev];
+              updated[existingIndex] = mergeStageEvent(updated[existingIndex], parsed);
+              return updated;
+            });
+          }
+          if (parsed.type === "final") {
+            finalPayload = parsed.payload;
+          }
+          if (parsed.type === "error") {
+            throw new Error(parsed.message);
+          }
+        }
+      }
+      const out = finalPayload;
+      if (!out) {
+        throw new Error("Missing final payload from stream");
+      }
+      setEnvelope(out);
+      const vizUrl = extractVizUrl(out.tool_calls ?? []);
+      setVizMeta(extractVizMeta(out.tool_calls ?? []));
+      if (vizUrl) {
+        const specRes = await fetch(
+          `${apiBase}/api/fetch-viz-spec?url=${encodeURIComponent(vizUrl)}`
+        );
+        if (specRes.ok) {
+          const fetchedSpec = (await specRes.json()) as VLSpec;
+          const specSubtitle = extractSubtitleFromSpec(fetchedSpec);
+          if (specSubtitle) {
+            setVizMeta((prev) => ({ ...prev, subtitle: prev.subtitle ?? specSubtitle }));
+          }
+          setVizSpec(fetchedSpec);
+        }
+      }
+    } catch (err) {
+      setEnvelope({
+        gate: { relevant: false },
+        rewrite: {},
+        tool_calls: [],
+        content_packet: {},
+        narrative: "",
+        error: String(err),
+      });
+      setVizMeta({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ maxWidth: 1200, margin: "0 auto", padding: 24, fontFamily: "Open Sans, Arial, sans-serif", color: "#142033" }}>
+      <h1 style={{ margin: "0 0 8px" }}>K360 Data360 Interactive Demo</h1>
+      <p style={{ marginTop: 0, color: "#4f647a" }}>
+        Staged flow: Gate → Rewriter → Compile → Narrative
+      </p>
+
+      <div style={{ ...PANEL, marginBottom: 16 }}>
+        <textarea
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{ width: "100%", minHeight: 88, borderRadius: 8, border: "1px solid #cad3df", padding: 10, fontSize: 14 }}
         />
-      </section>
+        <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+          <button type="button" onClick={run} disabled={loading} style={{ background: "#2f6feb", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px" }}>
+            {loading ? "Running..." : "Run K360 Query"}
+          </button>
+          {SAMPLE_PROMPTS.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setQuery(item)}
+              style={{ background: "#eef3ff", color: "#1d3a63", border: "1px solid #d3dffc", borderRadius: 8, padding: "6px 10px" }}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+        <label
+          style={{
+            display: "flex",
+            gap: 8,
+            alignItems: "center",
+            marginTop: 10,
+            fontSize: 13,
+            color: "#274767",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={showToolDetails}
+            onChange={(e) => setShowToolDetails(e.target.checked)}
+          />
+          Show tool input/output details (default: off)
+        </label>
+        {loading ? (
+          <div
+            style={{
+              marginTop: 12,
+              border: "1px solid #d9e0ea",
+              borderRadius: 8,
+              padding: 10,
+              background: "#f8fbff",
+            }}
+          >
+            <p style={{ margin: 0, fontWeight: 700, color: "#1d3a63" }}>
+              Running agent stages...
+            </p>
+            <div style={{ marginTop: 8 }}>
+              {stageEvents
+                .filter((evt) => evt.stage !== "tool_call")
+                .map((evt) => {
+                const stageLabel = STAGE_LABELS[evt.stage] ?? evt.stage;
+                const isComplete = evt.status === "completed";
+                const badgeColor = isComplete ? "#166534" : "#92400e";
+                const badgeBg = isComplete ? "#dcfce7" : "#fef3c7";
+                return (
+                  <div
+                    key={stageEventKey(evt)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      border: "1px solid #d9e0ea",
+                      borderRadius: 8,
+                      padding: "8px 10px",
+                      marginBottom: 6,
+                      background: "#fff",
+                    }}
+                  >
+                    <p style={{ margin: 0, fontSize: 13, color: "#1d3a63", fontWeight: 600 }}>
+                      {stageLabel}
+                      {evt.details?.tool_name ? ` · ${String(evt.details.tool_name)}` : ""}
+                    </p>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: badgeColor,
+                        background: badgeBg,
+                        borderRadius: 999,
+                        padding: "2px 8px",
+                      }}
+                    >
+                      {evt.status}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            {stageEvents.some((e) => e.stage === "tool_call") ? (
+              <div style={{ marginTop: 10 }}>
+                <p style={{ margin: "0 0 6px", fontWeight: 700, color: "#1d3a63" }}>
+                  Tool Progress
+                </p>
+                {stageEvents
+                  .filter((e) => e.stage === "tool_call")
+                  .map((evt) => (
+                    <div
+                      key={stageEventKey(evt)}
+                      style={{
+                        border: "1px solid #d9e0ea",
+                        borderRadius: 8,
+                        padding: 8,
+                        marginBottom: 6,
+                        background: "#fff",
+                      }}
+                    >
+                      <p style={{ margin: 0, fontSize: 12, fontWeight: 700 }}>
+                        {String(evt.details?.tool_name ?? "tool")} — {evt.status}
+                      </p>
+                      {showToolDetails && evt.details?.tool_input ? (
+                        <>
+                          <p style={{ margin: "4px 0", fontSize: 11, color: "#3b556f" }}>
+                            Input
+                          </p>
+                          <pre style={{ margin: 0, fontSize: 11, whiteSpace: "pre-wrap" }}>
+                            {JSON.stringify(evt.details.tool_input, null, 2)}
+                          </pre>
+                        </>
+                      ) : null}
+                      {showToolDetails && evt.details?.tool_output ? (
+                        <>
+                          <p style={{ margin: "4px 0", fontSize: 11, color: "#3b556f" }}>
+                            Output
+                          </p>
+                          <pre style={{ margin: 0, fontSize: 11, whiteSpace: "pre-wrap" }}>
+                            {JSON.stringify(evt.details.tool_output, null, 2)}
+                          </pre>
+                        </>
+                      ) : null}
+                    </div>
+                  ))}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
 
-      {/* ── Demo 1: query ──────────────────────────────────────────────────── */}
-      <section>
-        <p style={SECTION_LABEL}>search-card · query — one topic, one country</p>
-        <p style={SECTION_DESC}>
-          data360_search_indicators(query="poverty headcount ratio", required_country="Philippines")
-        </p>
-        <SearchResultCard
-          indicators={DEMO_QUERY_SINGLE}
-          title="Indicator Search"
-          subtitle="Poverty headcount ratio — Philippines"
-          onSelect={(ind) => setSelected(ind)}
-        />
-        {selected && (
-          <p style={{ fontFamily: "Open Sans, Arial, sans-serif", fontSize: 12, color: "#34A7F2", marginTop: 8 }}>
-            Selected: <strong>{selected.name}</strong> ({selected.idno})
-          </p>
-        )}
-      </section>
+      {envelope && (
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, alignItems: "start" }}>
+          <div style={PANEL}>
+            <h3 style={{ marginTop: 0 }}>Narrative</h3>
+            {envelope.error ? (
+              <div
+                style={{
+                  border: "1px solid #f5c2c7",
+                  background: "#fff1f2",
+                  borderRadius: 8,
+                  padding: 12,
+                }}
+              >
+                <p style={{ margin: 0, color: "#7a1021", fontWeight: 700 }}>
+                  K360 Request Failed
+                </p>
+                <p style={{ margin: "6px 0 0", color: "#991b1b" }}>
+                  {envelope.error_type ? `${envelope.error_type}: ` : ""}
+                  {envelope.error}
+                </p>
+                {envelope.error_details ? (
+                  <pre
+                    style={{
+                      marginTop: 10,
+                      fontSize: 12,
+                      whiteSpace: "pre-wrap",
+                      color: "#7f1d1d",
+                      background: "#fff",
+                      border: "1px solid #fecdd3",
+                      borderRadius: 6,
+                      padding: 10,
+                    }}
+                  >
+                    {envelope.error_details}
+                  </pre>
+                ) : null}
+                <p style={{ margin: "8px 0 0", color: "#7f1d1d", fontSize: 12 }}>
+                  Check backend logs on <code>/api/k360-query</code>. Common causes:
+                  OpenAI proxy/network errors or missing API credentials.
+                </p>
+              </div>
+            ) : (
+              <ResponseMarkdown content={envelope.narrative || "_No narrative generated._"} />
+            )}
+          </div>
+          <div style={{ ...PANEL, overflow: "auto", maxHeight: 680 }}>
+            <h3 style={{ marginTop: 0 }}>Content Packet</h3>
+            <pre style={{ fontSize: 12, whiteSpace: "pre-wrap", margin: 0 }}>
+              {JSON.stringify(
+                {
+                  gate: envelope.gate,
+                  rewrite: envelope.rewrite,
+                  content_packet: envelope.content_packet,
+                  tool_calls_count: envelope.tool_calls?.length ?? 0,
+                },
+                null,
+                2
+              )}
+            </pre>
+            {(envelope.tool_calls?.length ?? 0) > 0 ? (
+              <div style={{ marginTop: 12 }}>
+                <h4 style={{ margin: "0 0 8px" }}>Tool Input / Output</h4>
+                {envelope.tool_calls.map((call, idx) => (
+                  <div
+                    key={`${call.tool_name}-${idx}`}
+                    style={{
+                      border: "1px solid #d9e0ea",
+                      borderRadius: 8,
+                      padding: 10,
+                      marginBottom: 8,
+                      background: "#fafcff",
+                    }}
+                  >
+                    <p style={{ margin: 0, fontWeight: 700, color: "#0f2743" }}>
+                      {idx + 1}. {call.tool_name}
+                    </p>
+                    <p style={{ margin: "8px 0 4px", fontSize: 12, color: "#3b556f" }}>
+                      Input
+                    </p>
+                    <pre style={{ fontSize: 11, whiteSpace: "pre-wrap", margin: 0 }}>
+                      {JSON.stringify(call.tool_args ?? {}, null, 2)}
+                    </pre>
+                    <p style={{ margin: "8px 0 4px", fontSize: 12, color: "#3b556f" }}>
+                      Output
+                    </p>
+                    <pre style={{ fontSize: 11, whiteSpace: "pre-wrap", margin: 0 }}>
+                      {JSON.stringify(call.tool_result ?? null, null, 2)}
+                    </pre>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
 
-      {/* ── Demo 2: queries ─────────────────────────────────────────────────── */}
-      <section>
-        <p style={SECTION_LABEL}>search-card · queries — multiple topics, shared countries</p>
-        <p style={SECTION_DESC}>
-          data360_search_indicators(queries=["GDP per capita","inflation","GNI per capita","Gini"], required_country="Philippines;Japan")
-        </p>
-        <SearchResultCard
-          indicators={DEMO_QUERIES_MULTI}
-          title="Indicator Search"
-          subtitle="GDP per capita · Inflation · GNI · Gini — Philippines, Japan"
-          onSelect={(ind) => setSelected(ind)}
-        />
-      </section>
-
-      {/* ── Demo 3: query_groups ────────────────────────────────────────────── */}
-      <section>
-        <p style={SECTION_LABEL}>search-card · query_groups — different topics per country</p>
-        <p style={SECTION_DESC}>
-          {'data360_search_indicators(query_groups=[{queries:["GDP per capita","inflation"], country:"Japan"}, {queries:["population"], country:"Philippines"}])'}
-        </p>
-        <SearchResultCard
-          groups={DEMO_QUERY_GROUPS}
-          title="Indicator Search"
-          subtitle="Japan: GDP per capita, Inflation · Philippines: Population"
-          onSelect={(ind) => setSelected(ind)}
-        />
-      </section>
-
+      {vizSpec && (
+        <div style={{ ...PANEL, marginTop: 16 }}>
+          <h3 style={{ marginTop: 0 }}>Visualization</h3>
+          <VegaChartCard
+            spec={vizSpec}
+            subtitle={vizMeta.subtitle}
+            source={vizMeta.source ?? "Data360 MCP tool output"}
+            annotations={vizMeta.annotations ?? []}
+          />
+        </div>
+      )}
     </div>
   );
 }

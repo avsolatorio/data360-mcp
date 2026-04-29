@@ -137,6 +137,20 @@ SEARCH_USAGE = {
     "warning": "DO NOT use odata_options - it is deprecated",
 }
 
+K360_NARRATIVE_STYLE = {
+    "sections": ["Data", "Analysis", "Note", "Sources"],
+    "required_behavior": [
+        "Ground every statement in tool evidence or content packet fields.",
+        "Use concise markdown suitable for analyst and policy audiences.",
+        "When chart outputs exist, describe what each chart conveys in 1-2 sentences.",
+        "If no data is available, clearly state the gap and suggest a narrower follow-up query.",
+    ],
+    "optional_claim_tags": {
+        "enabled_by": "include_claim_tags=true",
+        "format": "<claim id=\"short-id\">numeric statement</claim>",
+    },
+}
+
 
 @mcp.resource("data360://system-prompt")
 async def system_prompt_resource() -> str:
@@ -199,3 +213,9 @@ async def data_schema_resource() -> str:
 async def search_usage_resource() -> str:
     """Search tool usage guidance."""
     return json.dumps(SEARCH_USAGE, indent=2)
+
+
+@mcp.resource("data360://k360-narrative-style")
+async def k360_narrative_style_resource() -> str:
+    """Narrative formatting contract for K360 staged agent hosts."""
+    return json.dumps(K360_NARRATIVE_STYLE, indent=2)

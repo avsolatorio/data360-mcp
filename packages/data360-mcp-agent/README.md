@@ -112,11 +112,26 @@ The helper `create_data360_langgraph_node` still uses **`ainvoke`** — it updat
 ## API highlights
 
 - `run_agent_query` — one-shot ReAct loop with MCP tools and server resources.
+- `run_k360_query` — staged K360 envelope:
+  `gate -> rewrite -> compile(tool loop) -> narrative`.
 - `create_data360_mcp_agent` — compiled graph for custom orchestration.
+- `create_k360_graph` — compiled LangGraph implementation of staged K360 flow.
 - `aiter_data360_mcp_agent_events` — async iterator over `astream_events` for tokens + tools.
 - `create_data360_langgraph_node` — async node factory for `StateGraph.add_node`.
 - `create_data360_gated_langgraph_node` — same, with relevance gate + optional knowledge→data reformulation.
 - `fetch_mcp_prompt_messages` — optional MCP prompt templates from the server.
+
+### K360 stage mapping
+
+| Stage | Component | Output |
+|------|-----------|--------|
+| Gate | `classify_data360_relevance` (optionally MCP `gate_classifier`) | `gate` |
+| Rewriter | `reformulate_for_data360` (optionally MCP `thematic_to_data`) | `rewrite` |
+| Compile content | Data360 ReAct agent (`create_data360_mcp_agent`) + tool trace extraction | `tool_calls`, `content_packet` |
+| Narrative | MCP `k360_narrative` prompt rendered by LLM | `narrative` |
+
+Out-of-scope queries return an empty payload envelope:
+`tool_calls: []`, `content_packet: {}`, `narrative: ""`.
 
 ## Troubleshooting
 

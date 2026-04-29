@@ -70,6 +70,16 @@ uv run uvicorn demo_web.server:app --app-dir examples/agents/langchain-graph --h
 # open http://127.0.0.1:8844/
 ```
 
+### K360 interactive UI with `@data360/mcp-ui`
+
+The FastAPI demo server now exposes `POST /api/k360-query` for the staged flow
+(`Gate -> Rewriter -> Compile -> Narrative`). The React demo in
+`packages/mcp-ui/src/demo/main.tsx` can call that endpoint and render:
+
+- narrative markdown,
+- content packet inspector (`gate`, `rewrite`, `content_packet`),
+- chart cards via `VegaChartCard` when viz specs are available.
+
 ## Troubleshooting
 
 - **`McpError: Session terminated` on connect:** With the MCP streamable-HTTP client this usually means the MCP URL returned **HTTP 404** (wrong path, server not mounted, proxy). Check `DATA360_MCP_URL` matches your server’s MCP route (e.g. `/mcp`). **Stateless** server mode is fine; see [`packages/data360-mcp-agent/README.md`](../../packages/data360-mcp-agent/README.md) troubleshooting.
