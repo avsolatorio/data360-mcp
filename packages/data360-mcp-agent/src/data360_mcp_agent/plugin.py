@@ -38,6 +38,7 @@ from data360_mcp_agent.gate import (
     reformulate_for_data360,
 )
 from data360_mcp_agent.integration import (
+    _resolve_llm,
     create_data360_mcp_agent,
     fetch_mcp_prompt_messages,
     get_agent_recursion_limit,
@@ -45,8 +46,8 @@ from data360_mcp_agent.integration import (
     prepare_cache_for_mcp_gate_prompts,
     release_mcp_gate_prompt_preparation,
     use_mcp_prompts_from_env,
-    _resolve_llm,
 )
+from data360_mcp_agent.k360_graph import run_k360_query
 
 if TYPE_CHECKING:
     from langchain_core.language_models.chat_models import BaseChatModel
@@ -56,6 +57,16 @@ class MessagesState(TypedDict, total=False):
     """Minimal shared state for multi-agent graphs using message reducers."""
 
     messages: Annotated[list[BaseMessage], add_messages]
+
+
+class Data360AgentState(MessagesState, total=False):
+    """State shape for K360 node helper.
+
+    ``context`` is optional prior-turn text used by K360 rewrite when the latest
+    user turn is context-dependent.
+    """
+
+    context: list[str]
 
 
 async def create_data360_langgraph_node(
@@ -94,6 +105,52 @@ async def create_data360_langgraph_node(
         return {"messages": delta}
 
     return data360_node
+
+
+async def create_data360_agent_langgraph_node(  # noqa: PLR0913
+    *,
+    llm: BaseChatModel | None = None,
+    model_name: str | None = None,
+    llm_streaming: bool | None = None,
+    use_mcp_prompts: bool = True,
+    emit_tool_details: bool = False,
+    narrative_streaming: bool = True,
+    output_key: str = "data360",
+    append_narrative_message: bool = False,
+):
+    """Build a LangGraph node that runs the staged K360 flow and stores its envelope.
+
+    The returned node reads the latest user text from ``state["messages"]``, runs
+    :func:`data360_mcp_agent.k360_graph.run_k360_query`, then returns
+    ``{output_key: <k360-envelope>}``. Optionally, it can append the generated
+    narrative as an ``AIMessage`` for transcript-style parent graphs.
+    """
+    base_llm = _resolve_llm(model_name, llm, llm_streaming=llm_streaming)
+
+    async def data360_agent_node(state: Data360AgentState) -> dict[str, Any]:
+        prior = state.get("messages") or []
+        user_text = last_user_text(prior)
+        if not user_text:
+            return {output_key: {"error": "No user message found in state.messages"}}
+
+        raw_context = state.get("context")
+        context = raw_context if isinstance(raw_context, list) else []
+
+        out = await run_k360_query(
+            user_text,
+            llm=base_llm,
+            llm_streaming=llm_streaming,
+            context=context,
+            use_mcp_prompts=use_mcp_prompts,
+            emit_tool_details=emit_tool_details,
+            narrative_streaming=narrative_streaming,
+        )
+        node_out: dict[str, Any] = {output_key: out}
+        if append_narrative_message and out.get("narrative"):
+            node_out["messages"] = [AIMessage(content=str(out["narrative"]))]
+        return node_out
+
+    return data360_agent_node
 
 
 def _effective_skip_mode(
