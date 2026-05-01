@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Data360 MCP agent demo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #0f1419;
+        --panel: #1a2332;
+        --text: #e7ecf3;
+        --muted: #8b9cb3;
+        --accent: #3d8bfd;
+        --border: #2d3d52;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f4f6fa;
+          --panel: #fff;
+          --text: #1a2332;
+          --muted: #5c6d84;
+          --accent: #0b57d0;
+          --border: #d8dee9;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.45;
+        min-height: 100vh;
+      }
+      main {
+        max-width: 52rem;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 3rem;
+      }
+      h1 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin: 0 0 0.35rem;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin: 0 0 1.25rem;
+      }
+      label {
+        display: block;
+        font-size: 0.85rem;
+        margin-bottom: 0.35rem;
+        color: var(--muted);
+      }
+      textarea {
+        width: 100%;
+        min-height: 5rem;
+        padding: 0.65rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        color: var(--text);
+        font-size: 0.95rem;
+        resize: vertical;
+      }
+      .actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      button {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1.1rem;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      button[type="button"].ghost {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      #out {
+        margin-top: 1.25rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+        font-family: ui-monospace, "Cascadia Code", monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+        min-height: 12rem;
+        max-height: 60vh;
+        overflow: auto;
+      }
+      .line {
+        margin: 0.15rem 0;
+        padding-bottom: 0.25rem;
+        border-bottom: 1px dashed var(--border);
+      }
+      .line:last-child {
+        border-bottom: none;
+      }
+      .err {
+        color: #f87171;
+      }
+      #viz-wrap {
+        margin-top: 1.25rem;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+      #viz-wrap h2 {
+        font-size: 1rem;
+        margin: 0 0 0.75rem;
+        font-weight: 600;
+      }
+      #viz-caption {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin: 0 0 0.5rem;
+        word-break: break-all;
+      }
+      #vega-mount {
+        min-height: 260px;
+      }
+      #answer-wrap {
+        margin-top: 1.25rem;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+      #answer-wrap h2 {
+        font-size: 1rem;
+        margin: 0 0 0.75rem;
+        font-weight: 600;
+      }
+      #final-answer {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Data360 MCP agent (stream)</h1>
+      <p class="sub">
+        LangGraph v2 events over SSE — model chunks and tool lifecycle. The
+        <strong>Answer</strong> panel shows the last assistant turn without tool calls
+        (final narrative). When the agent calls <code>data360_get_viz_spec</code> (or
+        multi-indicator viz), the chart renders via Vega-Lite. Requires
+        <code>DATA360_MCP_URL</code>, <code>OPENAI_API_KEY</code>, and a running MCP
+        server — align <code>WEBSITE_HOSTNAME</code> with your browser when needed (see README).
+      </p>
+      <label for="q">Query</label>
+      <textarea
+        id="q"
+        rows="4"
+      >Population of Kenya for the last 5 years (use tools).</textarea>
+      <div class="actions">
+        <button type="button" id="go">Stream</button>
+        <button type="button" class="ghost" id="clear">Clear log</button>
+      </div>
+      <section id="viz-wrap" hidden>
+        <h2>Chart (Vega-Lite)</h2>
+        <p id="viz-caption"></p>
+        <div id="vega-mount"></div>
+      </section>
+      <section id="answer-wrap" hidden>
+        <h2>Answer</h2>
+        <p id="final-answer"></p>
+      </section>
+      <div id="out" aria-live="polite"></div>
+    </main>
+    <script type="module">
+      const q = document.getElementById("q");
+      const out = document.getElementById("out");
+      const go = document.getElementById("go");
+      const clearBtn = document.getElementById("clear");
+      const vizWrap = document.getElementById("viz-wrap");
+      const vizCaption = document.getElementById("viz-caption");
+      const vegaMount = document.getElementById("vega-mount");
+      const answerWrap = document.getElementById("answer-wrap");
+      const finalAnswerEl = document.getElementById("final-answer");
+
+      /** @type {Promise<void> | null} */
+      let vegaLoadPromise = null;
+
+      /** Last ``on_chat_model_end`` text (fallback if no no-tool-call turn). */
+      let lastChatEndPlainText = "";
+
+      function loadScript(src) {
+        return new Promise((resolve, reject) => {
+          const s = document.createElement("script");
+          s.src = src;
+          s.onload = () => resolve(undefined);
+          s.onerror = () => reject(new Error(`Failed to load ${src}`));
+          document.head.appendChild(s);
+        });
+      }
+
+      async function ensureVegaEmbed() {
+        if (globalThis.vegaEmbed) {
+          return;
+        }
+        if (!vegaLoadPromise) {
+          const base = "https://cdn.jsdelivr.net/npm";
+          vegaLoadPromise = (async () => {
+            await loadScript(`${base}/vega@5.30.0/build/vega.min.js`);
+            await loadScript(`${base}/vega-lite@5.21.0/build/vega-lite.min.js`);
+            await loadScript(`${base}/vega-embed@6.26.0/build/vega-embed.min.js`);
+          })();
+        }
+        await vegaLoadPromise;
+        if (!globalThis.vegaEmbed) {
+          throw new Error("vegaEmbed global missing after load");
+        }
+      }
+
+      function extractUrlFromToolOutput(out) {
+        if (out == null) {
+          return null;
+        }
+        if (typeof out === "string") {
+          try {
+            return extractUrlFromToolOutput(JSON.parse(out));
+          } catch {
+            return null;
+          }
+        }
+        if (typeof out === "object") {
+          if (
+            typeof out.url === "string" &&
+            out.url.includes("viz_specs") &&
+            out.url.includes("_vega.json")
+          ) {
+            return out.url;
+          }
+          if (Array.isArray(out.content)) {
+            for (const block of out.content) {
+              if (block?.type === "text" && typeof block.text === "string") {
+                try {
+                  const inner = JSON.parse(block.text);
+                  if (
+                    typeof inner?.url === "string" &&
+                    inner.url.includes("viz_specs")
+                  ) {
+                    return inner.url;
+                  }
+                } catch {
+                  /* ignore */
+                }
+              }
+            }
+          }
+        }
+        return null;
+      }
+
+      function extractVizSpecUrl(ev) {
+        if (!ev || ev.event !== "on_tool_end") {
+          return null;
+        }
+        /** Any tool may return ``{ url: ".../viz_specs/..." }`` — do not rely on ``name``. */
+        return extractUrlFromToolOutput(ev.data?.output);
+      }
+
+      function handleChatModelEnd(ev) {
+        if (!ev || ev.event !== "on_chat_model_end") {
+          return;
+        }
+        const out = ev.data?.output;
+        if (!out || typeof out !== "object") {
+          return;
+        }
+        const text = String(out.content || "").trim();
+        if (text) {
+          lastChatEndPlainText = out.content;
+        }
+        if (!out.has_tool_calls && text) {
+          finalAnswerEl.textContent = out.content;
+          answerWrap.hidden = false;
+        }
+      }
+
+      function finalizeAnswerIfNeeded() {
+        if (!finalAnswerEl.textContent.trim() && lastChatEndPlainText) {
+          finalAnswerEl.textContent = lastChatEndPlainText;
+          answerWrap.hidden = false;
+        }
+      }
+
+      async function renderChartFromSpecUrl(remoteUrl) {
+        await ensureVegaEmbed();
+        const res = await fetch(
+          `/api/fetch-viz-spec?url=${encodeURIComponent(remoteUrl)}`
+        );
+        if (!res.ok) {
+          const t = await res.text();
+          throw new Error(`fetch-viz-spec ${res.status}: ${t}`);
+        }
+        const spec = await res.json();
+        vegaMount.innerHTML = "";
+        vizCaption.textContent = remoteUrl;
+        vizWrap.hidden = false;
+        await globalThis.vegaEmbed(vegaMount, spec, {
+          actions: { export: true, source: false, compiled: false, editor: false },
+        });
+      }
+
+      function appendLine(html) {
+        const div = document.createElement("div");
+        div.className = "line";
+        div.innerHTML = html;
+        out.appendChild(div);
+        out.scrollTop = out.scrollHeight;
+      }
+
+      function parseSseBlocks(buffer) {
+        const events = [];
+        let rest = buffer;
+        let idx;
+        while ((idx = rest.indexOf("\n\n")) !== -1) {
+          const block = rest.slice(0, idx);
+          rest = rest.slice(idx + 2);
+          const lines = block.split("\n");
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              events.push(line.slice(6));
+            }
+          }
+        }
+        return { events, rest };
+      }
+
+      clearBtn.addEventListener("click", () => {
+        out.textContent = "";
+        answerWrap.hidden = true;
+        finalAnswerEl.textContent = "";
+        lastChatEndPlainText = "";
+      });
+
+      go.addEventListener("click", async () => {
+        const query = q.value.trim();
+        if (!query) {
+          return;
+        }
+        go.disabled = true;
+        vizWrap.hidden = true;
+        vegaMount.innerHTML = "";
+        vizCaption.textContent = "";
+        answerWrap.hidden = true;
+        finalAnswerEl.textContent = "";
+        lastChatEndPlainText = "";
+        appendLine(
+          '<span class="err">→</span> POST /api/stream …'
+        );
+
+        try {
+          const res = await fetch("/api/stream", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query }),
+          });
+          if (!res.ok) {
+            const detail = await res.text();
+            appendLine(
+              `<span class="err">HTTP ${res.status}</span> ${detail}`
+            );
+            go.disabled = false;
+            return;
+          }
+          const reader = res.body?.getReader();
+          if (!reader) {
+            appendLine('<span class="err">No response body</span>');
+            go.disabled = false;
+            return;
+          }
+          const decoder = new TextDecoder();
+          let buf = "";
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              break;
+            }
+            buf += decoder.decode(value, { stream: true });
+            const parsed = parseSseBlocks(buf);
+            buf = parsed.rest;
+            for (const raw of parsed.events) {
+              if (raw === "[DONE]") {
+                appendLine("<strong>Done.</strong>");
+                finalizeAnswerIfNeeded();
+                continue;
+              }
+              try {
+                const obj = JSON.parse(raw);
+                if (obj.error) {
+                  appendLine(
+                    `<span class="err">${obj.message ?? JSON.stringify(obj)}</span>`
+                  );
+                } else {
+                  appendLine(JSON.stringify(obj, null, 2));
+                  handleChatModelEnd(obj);
+                  const specUrl = extractVizSpecUrl(obj);
+                  if (specUrl) {
+                    renderChartFromSpecUrl(specUrl).catch((err) => {
+                      appendLine(
+                        `<span class="err">Chart: ${String(err)}</span>`
+                      );
+                    });
+                  }
+                }
+              } catch {
+                appendLine(raw);
+              }
+            }
+          }
+          finalizeAnswerIfNeeded();
+        } catch (e) {
+          appendLine(`<span class="err">${String(e)}</span>`);
+        }
+        go.disabled = false;
+      });
+    </script>
+  </body>
+</html>
