@@ -4,6 +4,11 @@ import os
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if it exists
+load_dotenv()
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
