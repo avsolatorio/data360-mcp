@@ -2128,17 +2128,28 @@ async def rank_countries(
             error: Error message if request failed; otherwise None.
                 Falls back to data360_get_data if this tool encounters an error.
     """
-    from .providers import expand_country_group  # noqa: PLC0415
+    from .providers import expand_country_group, get_group_hierarchy_manager  # noqa: PLC0415
 
     # Resolve country codes
     resolved_codes: list[str] = []
     if country_codes:
         resolved_codes = [c.strip() for c in country_codes.replace(";", ",").split(",") if c.strip()]
     elif country_group:
+        # Gate on is_group() before attempting expansion — this prevents silent
+        # failures where an unrecognised code reaches the API and returns 0 rows.
+        ghm = get_group_hierarchy_manager()
+        if not ghm.is_group(country_group):
+            return RankingResponse(
+                error=(
+                    f"'{country_group}' is not a recognised country group. "
+                    "Use data360_find_codelist_value('REF_AREA', '<name>') to find "
+                    "the correct group code (e.g. 'SSF', 'SAS', 'LIC')."
+                )
+            )
         try:
             expand_result = await expand_country_group(country_group)
             if isinstance(expand_result, dict) and expand_result.get("country_codes"):
-                resolved_codes = expand_result["country_codes"]
+                resolved_codes = [c.strip() for c in expand_result["country_codes"].split(",") if c.strip()]
             elif isinstance(expand_result, dict) and expand_result.get("error"):
                 return RankingResponse(error=expand_result["error"])
             else:
@@ -2153,13 +2164,37 @@ async def rank_countries(
 
     total_requested = len(resolved_codes)
 
+    # Auto-detect UNIT_MEASURE for this indicator using one sample country.
+    # When querying 48+ countries in a single batched call, get_data's internal
+    # metadata pre-fetch cannot reliably auto-default UNIT_MEASURE, which causes
+    # empty results. We resolve this here so _fetch_all_pages always has a pinned
+    # unit filter. If the caller already provided UNIT_MEASURE, honour it.
+    effective_filters: dict[str, str | None] = dict(disaggregation_filters or {})
+    if "UNIT_MEASURE" not in effective_filters:
+        try:
+            sample_country = resolved_codes[0] if resolved_codes else None
+            disagg_res = await get_disaggregation(
+                database_id=database_id,
+                indicator_id=indicator_id,
+                required_country=sample_country,
+            )
+            if disagg_res and not disagg_res.get("error"):
+                for dim in disagg_res.get("dimensions", []):
+                    if dim.get("field_name") == "UNIT_MEASURE":
+                        values = dim.get("field_value", [])
+                        if len(values) == 1:
+                            effective_filters["UNIT_MEASURE"] = values[0]
+                        break
+        except Exception:
+            pass  # Non-fatal — proceed without the filter
+
     # Fetch all pages for all countries in one batched call
     try:
         data_response = await _fetch_all_pages(
             database_id=database_id,
             indicator_id=indicator_id,
             country_code=";".join(resolved_codes),
-            disaggregation_filters=disaggregation_filters,
+            disaggregation_filters=effective_filters or None,
             start_year=year - 2 if year else None,
             end_year=year + 1 if year else None,
         )
