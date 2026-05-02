@@ -76,3 +76,43 @@ expand_country_group = mcp.tool(
     name="data360_expand_country_group",
     description=data360_providers.expand_country_group.__doc__,
 )
+
+# ---------------------------------------------------------------------------
+# Data Aggregation Tools
+# ---------------------------------------------------------------------------
+
+summarize_data = mcp.tool(
+    data360_api.summarize_data,
+    name="data360_summarize_data",
+    description=data360_api.summarize_data.__doc__,
+)
+
+rank_countries = mcp.tool(
+    data360_api.rank_countries,
+    name="data360_rank_countries",
+    description=data360_api.rank_countries.__doc__,
+)
+
+compare_countries = mcp.tool(
+    data360_api.compare_countries,
+    name="data360_compare_countries",
+    description=data360_api.compare_countries.__doc__,
+)
+
+compute_derived = mcp.tool(
+    data360_api.compute_derived,
+    name="data360_compute_derived",
+    description=data360_api.compute_derived.__doc__,
+)
+
+pivot_table = mcp.tool(
+    data360_api.pivot_table,
+    name="data360_pivot_table",
+    description=data360_api.pivot_table.__doc__,
+)
+
+diagnostic_summary = mcp.tool(
+    data360_api.diagnostic_summary,
+    name="data360_diagnostic_summary",
+    description=data360_api.diagnostic_summary.__doc__,
+)

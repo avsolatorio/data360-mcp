@@ -341,6 +341,273 @@ class IndicatorDataResponse(MCPPagedResponse):
     )
 
 
+
+# ---------------------------------------------------------------------------
+# Data Aggregation Tool Models (Tier 1 — full implementation)
+# ---------------------------------------------------------------------------
+
+
+class GroupSummary(BaseModel):
+    """Summary statistics for a single group in a summarize_data response."""
+
+    group_key: dict[str, str] = Field(
+        ...,
+        description="Dimension values defining this group "
+        '(e.g. {"ref_area": "KEN"} or {"ref_area": "KEN", "sex": "F"})',
+    )
+    count: int = Field(..., description="Number of observations in this group")
+    latest_value: float | None = Field(
+        None, description="Most recent obs_value"
+    )
+    latest_year: str | None = Field(None, description="Year of latest_value")
+    earliest_value: float | None = Field(
+        None, description="Oldest obs_value in range"
+    )
+    earliest_year: str | None = Field(
+        None, description="Year of earliest_value"
+    )
+    min: float | None = Field(None, description="Minimum obs_value")
+    max: float | None = Field(None, description="Maximum obs_value")
+    mean: float | None = Field(None, description="Arithmetic mean of obs_values")
+    median: float | None = Field(None, description="Median obs_value")
+    total_change: float | None = Field(
+        None, description="latest - earliest (absolute change)"
+    )
+    pct_change: float | None = Field(
+        None,
+        description="((latest - earliest) / |earliest|) * 100. "
+        "None if earliest is zero or missing.",
+    )
+    trend_direction: str | None = Field(
+        None,
+        description="'increasing', 'decreasing', 'stable', or 'volatile'. "
+        "Based on linear regression slope and R² over the series.",
+    )
+    time_range: str | None = Field(
+        None, description="Actual data range (e.g. '2005-2023')"
+    )
+    claim_ids: list[str] = Field(
+        default_factory=list,
+        description="Source claim_ids from underlying raw observations",
+    )
+
+
+class DataSummaryResponse(BaseModel):
+    """Response model for data360_summarize_data."""
+
+    groups: list[GroupSummary] = Field(
+        default_factory=list, description="Per-group summary statistics"
+    )
+    metadata: dict[str, Any] | None = Field(
+        None, description="Indicator metadata (name, definition, database_name)"
+    )
+    unit_measure: str | None = Field(
+        None, description="Unit of measurement for interpreting values"
+    )
+    error: str | None = Field(
+        None, description="Error message if request failed; otherwise None"
+    )
+
+
+class RankedCountry(BaseModel):
+    """A single country entry in a ranking result."""
+
+    rank: int = Field(..., description="Ordinal rank (ties share the same rank)")
+    ref_area: str = Field(..., description="Country/region code (e.g. 'KEN')")
+    country_name: str | None = Field(None, description="Human-readable country name")
+    obs_value: float = Field(..., description="The indicator value for ranking year")
+    percentile: float | None = Field(
+        None,
+        description="Percentile position (0-100) within the ranked set",
+    )
+    claim_id: str | None = Field(
+        None, description="Claim ID from the source observation"
+    )
+
+
+class ExcludedCountry(BaseModel):
+    """A country excluded from ranking due to missing data."""
+
+    ref_area: str = Field(..., description="Country/region code")
+    country_name: str | None = Field(None, description="Human-readable country name")
+    reason: str = Field(..., description="Why the country was excluded")
+
+
+class RankingResponse(BaseModel):
+    """Response model for data360_rank_countries."""
+
+    year: str | None = Field(
+        None, description="The year used for ranking"
+    )
+    year_selection_note: str | None = Field(
+        None,
+        description="Explains how the ranking year was chosen. "
+        "E.g. 'Latest year with broadest coverage (2022, 18/20 countries)' "
+        "or 'Most recent year (2023, 12/20 countries)'.",
+    )
+    order: str = Field(
+        "desc", description="'desc' (highest first) or 'asc' (lowest first)"
+    )
+    total_with_data: int = Field(
+        0, description="Number of countries that had data"
+    )
+    total_requested: int = Field(
+        0, description="Number of countries attempted"
+    )
+    rankings: list[RankedCountry] = Field(
+        default_factory=list, description="Ranked list of countries"
+    )
+    excluded: list[ExcludedCountry] = Field(
+        default_factory=list, description="Countries with no data for ranking year"
+    )
+    metadata: dict[str, Any] | None = Field(
+        None, description="Indicator metadata"
+    )
+    unit_measure: str | None = Field(None, description="Unit of measurement")
+    error: str | None = Field(None, description="Error message if request failed")
+
+
+class ComparisonSnapshot(BaseModel):
+    """Single-year comparison snapshot across countries."""
+
+    year: str = Field(..., description="The comparison year")
+    rankings: list[RankedCountry] = Field(
+        default_factory=list,
+        description="Countries sorted by obs_value with rank and gap_to_leader",
+    )
+    spread: dict[str, float | None] = Field(
+        default_factory=dict,
+        description="Spread statistics: min, max, range, coefficient_of_variation",
+    )
+
+
+class ComparisonTimeSeries(BaseModel):
+    """Time-series comparison across countries."""
+
+    aligned_years: list[str] = Field(
+        default_factory=list,
+        description="Years where ALL compared countries have data",
+    )
+    series: dict[str, list[dict[str, Any]]] = Field(
+        default_factory=dict,
+        description="Per-country time series: {ref_area: [{time_period, obs_value, claim_id}]}",
+    )
+    convergence: str | None = Field(
+        None,
+        description="'converging', 'diverging', or 'parallel'. "
+        "Based on coefficient of variation trend across aligned years.",
+    )
+    cagr: dict[str, float | None] = Field(
+        default_factory=dict,
+        description="Compound annual growth rate per country over aligned period",
+    )
+
+
+class CountryComparisonResponse(BaseModel):
+    """Response model for data360_compare_countries."""
+
+    snapshot: ComparisonSnapshot | None = Field(
+        None, description="Single-year ranked comparison"
+    )
+    time_series: ComparisonTimeSeries | None = Field(
+        None, description="Aligned time-series comparison (when include_time_series=True)"
+    )
+    metadata: dict[str, Any] | None = Field(None, description="Indicator metadata")
+    unit_measure: str | None = Field(None, description="Unit of measurement")
+    error: str | None = Field(None, description="Error message if request failed")
+
+
+# ---------------------------------------------------------------------------
+# Data Aggregation Tool Models (Tier 2 — stubs for future implementation)
+# ---------------------------------------------------------------------------
+
+
+class DerivedDataResponse(BaseModel):
+    """Response model for data360_compute_derived (stub — not yet implemented).
+
+    Will contain derived/transformed values (growth rates, CAGR, moving averages,
+    index rebasing) computed from raw indicator data.
+    """
+
+    computation: str | None = Field(None, description="Computation type applied")
+    data: list[dict[str, Any]] = Field(
+        default_factory=list, description="Computed values"
+    )
+    summary: str | None = Field(
+        None, description="Human-readable one-line summary"
+    )
+    metadata: dict[str, Any] | None = Field(None, description="Indicator metadata")
+    unit_measure: str | None = Field(None, description="Original unit")
+    derived_unit: str | None = Field(
+        None, description="Unit for derived values (e.g. '%' for growth_rate)"
+    )
+    error: str | None = Field(None, description="Error message if request failed")
+
+
+class PivotTableResponse(BaseModel):
+    """Response model for data360_pivot_table (stub — not yet implemented).
+
+    Will contain a cross-tabulation of multiple indicators and/or countries,
+    organized as a structured table with row/column dimensions.
+    """
+
+    table: list[dict[str, Any]] = Field(
+        default_factory=list, description="Table rows"
+    )
+    column_metadata: list[dict[str, Any]] = Field(
+        default_factory=list, description="Per-column metadata"
+    )
+    claim_map: dict[str, str] = Field(
+        default_factory=dict,
+        description="Mapping of cell keys to source claim_ids",
+    )
+    missing_cells: list[dict[str, str]] = Field(
+        default_factory=list,
+        description="Cells with no data: [{row, column, reason}]",
+    )
+    error: str | None = Field(None, description="Error message if request failed")
+
+
+class DiagnosticIndicatorSummary(BaseModel):
+    """Per-indicator summary within a diagnostic summary response (stub)."""
+
+    indicator_id: str = Field(..., description="Indicator ID")
+    database_id: str = Field(..., description="Database ID")
+    name: str = Field(..., description="Indicator name")
+    latest_value: float | None = Field(None, description="Most recent value")
+    latest_year: str | None = Field(None, description="Year of latest value")
+    trend_direction: str | None = Field(
+        None, description="'increasing', 'decreasing', 'stable', 'volatile'"
+    )
+    pct_change: float | None = Field(None, description="Percent change over period")
+    time_range: str | None = Field(None, description="Actual data range")
+    claim_ids: list[str] = Field(default_factory=list, description="Source claim_ids")
+    coverage_note: str | None = Field(None, description="Gaps or caveats")
+
+
+class DiagnosticSummaryResponse(BaseModel):
+    """Response model for data360_diagnostic_summary (stub — not yet implemented).
+
+    Will contain a multi-indicator diagnostic summary for a topic and country,
+    with per-indicator trend analysis and cross-indicator notes.
+    """
+
+    topic: str | None = Field(None, description="Diagnostic category used")
+    country_code: str | None = Field(None, description="Resolved country code(s)")
+    indicators: list[DiagnosticIndicatorSummary] = Field(
+        default_factory=list, description="Per-indicator summaries"
+    )
+    gaps: list[str] = Field(
+        default_factory=list,
+        description="Topics searched but no indicator found",
+    )
+    metadata_sources: list[dict[str, str]] = Field(
+        default_factory=list,
+        description="List of {database_id, database_name} used",
+    )
+    error: str | None = Field(None, description="Error message if request failed")
+
+
 class DiscoveredIndicator(BaseModel):
     """Model for a discovered and validated indicator."""
 
