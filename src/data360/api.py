@@ -7,6 +7,7 @@ from urllib.parse import urlencode
 
 import dotenv
 import httpx
+import pandas as pd
 from pydantic import ValidationError as PydanticValidationError
 
 from .config import get_data360_settings
@@ -18,16 +19,27 @@ from .errors import (
 )
 from .errors import ValidationError as Data360ValidationError
 from .models import (
+    CountryComparisonResponse,
+    ComparisonSnapshot,
+    ComparisonTimeSeries,
+    DataSummaryResponse,
+    DerivedDataResponse,
+    DiagnosticSummaryResponse,
     DiscoveryResult,
     EnrichedIndicator,
     EnrichedSearchResponse,
+    ExcludedCountry,
+    GroupSummary,
     IndicatorDataRequest,
     IndicatorDataResponse,
     MetadataRequest,
     MetadataResponse,
     MultiQuerySearchResponse,
+    PivotTableResponse,
     QueryGroup,
     QueryGroupResult,
+    RankedCountry,
+    RankingResponse,
     SearchRequest,
     SearchResponse,
     SeriesDescription,
@@ -1341,6 +1353,11 @@ async def get_data(
             count: Number of records in this response.
             total_count: Total records available, or None.
             offset, has_more, next_offset: Use next_offset for the next page when has_more is True.
+                PAGINATION NOTE: This tool returns ONE page. When has_more=True, call again with
+                next_offset to retrieve more rows. For queries involving large country groups
+                (e.g. from data360_expand_country_group with 20+ countries), prefer calling
+                data360_rank_countries or data360_summarize_data instead — those tools paginate
+                internally and return complete aggregated results without requiring manual looping.
             error: Error message if the request failed; otherwise None.
                 If error contains "No metadata found", the indicator_id is invalid or stale.
                 Do NOT retry with the same ID and do NOT call data360_search_indicators again.
@@ -1707,3 +1724,867 @@ async def get_data_api_url(
 
     query_string = urlencode(params, safe=",")
     return f"{base}?{query_string}"
+
+
+# ---------------------------------------------------------------------------
+# Data Aggregation Tools (Tier 1 — full implementation)
+# ---------------------------------------------------------------------------
+
+_PAGE_SIZE = 100  # rows per page for aggregation fetches
+
+
+async def _fetch_all_pages(
+    database_id: str,
+    indicator_id: str,
+    country_code: str | None,
+    disaggregation_filters: dict[str, str | None] | None,
+    start_year: int | None,
+    end_year: int | None,
+) -> IndicatorDataResponse:
+    """SERVER-SIDE pagination consumer for aggregation tools. Not an MCP tool.
+
+    Design rationale — get_data vs _fetch_all_pages:
+
+    data360_get_data (MCP tool, LLM-facing):
+        Returns ONE page (limit rows) and exposes has_more + next_offset for the
+        LLM to drive pagination. Correct for PATH A (point lookups) and any case
+        where the LLM presents data directly to the user. The LLM sees and controls
+        the cursor.
+
+    _fetch_all_pages (internal, server-side):
+        Loops get_data until has_more=False and merges ALL rows into one response.
+        Required for aggregation tools (summarize_data, rank_countries,
+        compare_countries) because statistics computed on a partial dataset are
+        silently wrong — you cannot rank 48 Sub-Saharan African countries if you
+        only have the first 100 rows of a 240-row response.
+
+        This distinction becomes critical when data360_expand_country_group is
+        used upstream: a group like SSF (48 countries) × 20 years = 960 rows
+        requires 10 pages. Without this helper, any aggregation on large country
+        groups would silently truncate at page 1.
+
+    Rule: the LLM should NEVER call this directly. It is satisfied by the
+    aggregation MCP tools (data360_summarize_data, data360_rank_countries,
+    data360_compare_countries) which call it internally.
+
+    Error handling: first-page errors propagate immediately. Mid-pagination errors
+    log a warning and return the rows collected so far (partial > nothing).
+    """
+    all_rows: list[dict[str, Any]] = []
+    metadata = None
+    offset = 0
+
+    while True:
+        page = await get_data(
+            database_id=database_id,
+            indicator_id=indicator_id,
+            country_code=country_code,
+            disaggregation_filters=disaggregation_filters,
+            start_year=start_year,
+            end_year=end_year,
+            limit=_PAGE_SIZE,
+            offset=offset,
+        )
+
+        if page.error:
+            # Propagate first-page errors; for later pages keep what we have
+            if offset == 0:
+                return page
+            _logger.warning(
+                "Pagination error at offset %d for %s/%s: %s",
+                offset, database_id, indicator_id, page.error,
+            )
+            break
+
+        if page.metadata and metadata is None:
+            metadata = page.metadata
+
+        if page.data:
+            all_rows.extend(page.data)
+
+        if not page.has_more:
+            break
+
+        offset = page.next_offset or (offset + _PAGE_SIZE)
+
+    return IndicatorDataResponse(
+        data=all_rows,
+        metadata=metadata,
+        count=len(all_rows),
+        total_count=len(all_rows),
+        offset=0,
+        has_more=False,
+        next_offset=None,
+    )
+
+
+async def _resolve_country_names(codes: list[str]) -> dict[str, str]:
+    """Batch-resolve country codes to display names in a single codelist call.
+
+    Uses find_codelist_value's native comma-separated query support to resolve
+    all codes in one call. Silently returns an empty dict on any error since
+    country names are optional enrichment — the codes themselves are always valid.
+    """
+    from .providers import find_codelist_value  # noqa: PLC0415
+
+    if not codes:
+        return {}
+    try:
+        batch_query = ",".join(codes)
+        results = await find_codelist_value("REF_AREA", batch_query, limit=1)
+        # find_value returns one best match per comma-separated part
+        return {r["id"]: r.get("name", r["id"]) for r in results}
+    except Exception:
+        return {}
+
+
+def _compute_trend_direction(values: list[float]) -> str:
+    """Determine trend direction from a time-ordered list of values.
+
+    Uses simple linear regression slope + R² to classify:
+    - R² < 0.3 → "volatile" (no clear trend)
+    - |slope| < 1% of mean per step → "stable"
+    - slope > 0 → "increasing"
+    - slope < 0 → "decreasing"
+    """
+    n = len(values)
+    if n < 2:
+        return "stable"
+
+    # Simple linear regression: y = a + b*x
+    x_mean = (n - 1) / 2.0
+    y_mean = sum(values) / n
+    numerator = sum((i - x_mean) * (v - y_mean) for i, v in enumerate(values))
+    denominator = sum((i - x_mean) ** 2 for i in range(n))
+
+    if denominator == 0:
+        return "stable"
+
+    slope = numerator / denominator
+
+    # R² calculation
+    ss_res = sum((v - (y_mean + slope * (i - x_mean))) ** 2 for i, v in enumerate(values))
+    ss_tot = sum((v - y_mean) ** 2 for v in values)
+    r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+
+    if r_squared < 0.3:
+        return "volatile"
+
+    # Check if slope is meaningful relative to the mean
+    if y_mean != 0 and abs(slope / y_mean) < 0.01:
+        return "stable"
+
+    return "increasing" if slope > 0 else "decreasing"
+
+
+def _build_group_summary(
+    group_key: dict[str, str],
+    rows: list[dict[str, Any]],
+) -> GroupSummary:
+    """Build a GroupSummary from a list of data rows sharing the same group key.
+
+    Uses pandas for type-safe numeric coercion and descriptive statistics.
+    pd.to_numeric with errors='coerce' handles mixed-type OBS_VALUE values
+    from the API (strings, None, empty string) without raising exceptions.
+    Duplicate TIME_PERIOD rows (from un-filtered disaggregations) are resolved
+    by keeping the last observation per period after sorting.
+    """
+    df = pd.DataFrame(rows)
+
+    # Preserve claim_ids before any filtering
+    claim_ids: list[str] = (
+        df["claim_id"].dropna().tolist() if "claim_id" in df.columns else []
+    )
+
+    # Coerce OBS_VALUE — handles strings, None, empty strings from API
+    df["OBS_VALUE"] = pd.to_numeric(
+        df["OBS_VALUE"] if "OBS_VALUE" in df.columns else pd.Series(dtype=float),
+        errors="coerce",
+    )
+    if "TIME_PERIOD" not in df.columns:
+        df["TIME_PERIOD"] = ""
+    df["TIME_PERIOD"] = df["TIME_PERIOD"].astype(str)
+
+    # Sort ascending, drop missing values, deduplicate periods (keep last)
+    df = (
+        df.sort_values("TIME_PERIOD")
+        .dropna(subset=["OBS_VALUE"])
+        .drop_duplicates(subset=["TIME_PERIOD"], keep="last")
+        .reset_index(drop=True)
+    )
+
+    if df.empty:
+        return GroupSummary(group_key=group_key, count=0, claim_ids=claim_ids)
+
+    values_s = df["OBS_VALUE"]
+    years = df["TIME_PERIOD"].tolist()
+
+    earliest_val = float(values_s.iloc[0])
+    latest_val = float(values_s.iloc[-1])
+    earliest_yr: str = years[0]
+    latest_yr: str = years[-1]
+
+    total_change = latest_val - earliest_val
+    pct_change = (
+        round((total_change / abs(earliest_val)) * 100, 2)
+        if earliest_val != 0
+        else None
+    )
+    time_range = (
+        f"{earliest_yr}-{latest_yr}" if earliest_yr != latest_yr else earliest_yr
+    )
+
+    return GroupSummary(
+        group_key=group_key,
+        count=len(df),
+        latest_value=round(latest_val, 4),
+        latest_year=latest_yr,
+        earliest_value=round(earliest_val, 4),
+        earliest_year=earliest_yr,
+        min=round(float(values_s.min()), 4),
+        max=round(float(values_s.max()), 4),
+        mean=round(float(values_s.mean()), 4),
+        median=round(float(values_s.median()), 4),
+        total_change=round(total_change, 4),
+        pct_change=pct_change,
+        trend_direction=_compute_trend_direction(values_s.tolist()),
+        time_range=time_range,
+        claim_ids=claim_ids,
+    )
+
+
+# Mapping from lowercase group_by column names to raw API field names.
+_GROUPBY_FIELD_MAP: dict[str, str] = {
+    "ref_area": "REF_AREA",
+    "time_period": "TIME_PERIOD",
+    "sex": "SEX",
+    "age": "AGE",
+    "urbanisation": "URBANISATION",
+    "unit_measure": "UNIT_MEASURE",
+    "comp_breakdown_1": "COMP_BREAKDOWN_1",
+    "comp_breakdown_2": "COMP_BREAKDOWN_2",
+}
+
+
+async def summarize_data(
+    database_id: str,
+    indicator_id: str,
+    country_code: str | None = None,
+    disaggregation_filters: dict[str, str | None] | None = None,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    group_by: list[str] | None = None,
+) -> DataSummaryResponse:
+    """Compute summary statistics for indicator data, grouped by one or more dimensions.
+
+    Call instead of data360_get_data when the user asks about trends, changes over time,
+    or general patterns — not specific year values. Particularly useful for PATH C (trend)
+    questions like "How has X changed?" or "What is the trend of Y?". The primary grouping
+    dimensions are time_period (temporal) and ref_area (geographic) since most Data360
+    indicators are time-bound and geography-scoped. The LLM should pick group_by columns
+    based on the question's analytical intent.
+
+    Do NOT call this when the user wants a specific data point for a specific year — use
+    data360_get_data for that (PATH A). Do NOT call this for visualization — use
+    data360_get_viz_spec which fetches data internally.
+
+    Args:
+        database_id: Database identifier (e.g., "WB_WDI", "WB_GS").
+        indicator_id: Indicator ID (e.g., "WB_WDI_NY_GDP_PCAP_KD").
+        country_code: Optional 3-letter code or semicolon-separated list (e.g. "KEN;NGA").
+        disaggregation_filters: Optional dimension filters (e.g. {"UNIT_MEASURE": "KD"}).
+        start_year: Optional start year. Defaults to last 20 years.
+        end_year: Optional end year. Defaults to current year.
+        group_by: Dimensions to group by. Default ["ref_area"]. Supports multiple columns
+            for cross-dimensional summaries (e.g. ["ref_area", "sex"] for per-country,
+            per-gender summaries). Valid columns: ref_area, time_period, sex, age,
+            urbanisation, unit_measure, comp_breakdown_1, comp_breakdown_2.
+
+    Returns:
+        DataSummaryResponse:
+            groups: List of per-group summaries with count, latest/earliest values,
+                min/max/mean/median, total_change, pct_change, trend_direction,
+                and source claim_ids.
+            metadata: Indicator metadata (name, definition, database_name).
+            unit_measure: The unit for interpreting values.
+            error: Error message if request failed; otherwise None.
+                Falls back to data360_get_data if this tool encounters an error.
+    """
+    if group_by is None:
+        group_by = ["ref_area"]
+
+    # Validate group_by columns
+    invalid_cols = [c for c in group_by if c.lower() not in _GROUPBY_FIELD_MAP]
+    if invalid_cols:
+        return DataSummaryResponse(
+            error=f"Invalid group_by columns: {invalid_cols}. "
+            f"Valid options: {list(_GROUPBY_FIELD_MAP.keys())}"
+        )
+
+    # Fetch all pages — paginate automatically until has_more=False
+    try:
+        data_response = await _fetch_all_pages(
+            database_id=database_id,
+            indicator_id=indicator_id,
+            country_code=country_code,
+            disaggregation_filters=disaggregation_filters,
+            start_year=start_year,
+            end_year=end_year,
+        )
+    except Exception as e:
+        mcp_err = classify_error(e, context="summarize")
+        return DataSummaryResponse(error=mcp_err.detail)
+
+    if data_response.error:
+        return DataSummaryResponse(error=data_response.error)
+
+    if not data_response.data:
+        return DataSummaryResponse(
+            error="No data returned for the specified parameters. "
+            "Fall back to data360_get_data with broader filters.",
+            metadata=data_response.metadata,
+        )
+
+    # Extract unit_measure from first row
+    unit_measure = None
+    if data_response.data:
+        unit_measure = data_response.data[0].get("UNIT_MEASURE")
+
+    # Group rows by the specified dimensions
+    raw_field_names = [_GROUPBY_FIELD_MAP[c.lower()] for c in group_by]
+    groups_dict: dict[tuple[str, ...], list[dict[str, Any]]] = {}
+
+    for row in data_response.data:
+        key = tuple(str(row.get(f, "_MISSING")) for f in raw_field_names)
+        groups_dict.setdefault(key, []).append(row)
+
+    # Build summaries
+    group_summaries = []
+    for key_tuple, rows in groups_dict.items():
+        group_key = {col: val for col, val in zip(group_by, key_tuple)}
+        group_summaries.append(_build_group_summary(group_key, rows))
+
+    # Sort by latest_year descending, then by group_key
+    group_summaries.sort(
+        key=lambda g: (g.latest_year or "", str(g.group_key)),
+        reverse=True,
+    )
+
+    return DataSummaryResponse(
+        groups=group_summaries,
+        metadata=data_response.metadata,
+        unit_measure=unit_measure,
+    )
+
+
+async def rank_countries(
+    database_id: str,
+    indicator_id: str,
+    country_group: str | None = None,
+    country_codes: str | None = None,
+    year: int | None = None,
+    order: str = "desc",
+    top_n: int = 10,
+    disaggregation_filters: dict[str, str | None] | None = None,
+) -> RankingResponse:
+    """Rank countries by indicator value for a specific year.
+
+    Call for PATH B questions involving large country sets: "Top 10 countries by GDP",
+    "Which South Asian country has the lowest poverty rate?", "Rank Sub-Saharan African
+    countries by life expectancy". Handles ties, missing data, and group expansion internally
+    (calls data360_expand_country_group when country_group is provided).
+
+    When year is None, the tool selects the ranking year automatically. It considers both
+    the latest available year and the year with broadest country coverage, and reports which
+    strategy was used in year_selection_note. Both approaches are valid — the LLM should
+    evaluate which is more appropriate for the user's question.
+
+    Do NOT call for 2-3 country comparisons — use data360_compare_countries instead.
+    Do NOT call for time series or trend analysis — use data360_summarize_data instead.
+
+    Args:
+        database_id: Database identifier.
+        indicator_id: Indicator ID.
+        country_group: Group code to rank within (e.g. "SAS", "LIC", "SSF").
+            Expanded internally via data360_expand_country_group.
+        country_codes: Semicolon-separated codes. Overrides country_group if both given.
+        year: Ranking year. None = auto-select (see year_selection_note in response).
+        order: "desc" (highest first) or "asc" (lowest first).
+        top_n: Number of top results to return (default 10).
+        disaggregation_filters: Optional dimension filters.
+
+    Returns:
+        RankingResponse:
+            year: The ranking year used.
+            year_selection_note: How the year was chosen (coverage vs recency).
+            order: "desc" or "asc".
+            total_with_data: Countries that had data.
+            total_requested: Countries attempted.
+            rankings: Ranked list with rank, ref_area, country_name, obs_value,
+                percentile, claim_id. Ties share the same rank.
+            excluded: Countries with no data and reason.
+            metadata: Indicator metadata.
+            unit_measure: Unit string.
+            error: Error message if request failed; otherwise None.
+                Falls back to data360_get_data if this tool encounters an error.
+    """
+    from .providers import expand_country_group  # noqa: PLC0415
+
+    # Resolve country codes
+    resolved_codes: list[str] = []
+    if country_codes:
+        resolved_codes = [c.strip() for c in country_codes.replace(";", ",").split(",") if c.strip()]
+    elif country_group:
+        try:
+            expand_result = await expand_country_group(country_group)
+            if isinstance(expand_result, dict) and expand_result.get("country_codes"):
+                resolved_codes = expand_result["country_codes"]
+            elif isinstance(expand_result, dict) and expand_result.get("error"):
+                return RankingResponse(error=expand_result["error"])
+            else:
+                return RankingResponse(error=f"Could not expand country group '{country_group}'.")
+        except Exception as e:
+            return RankingResponse(error=f"Failed to expand country group: {e}")
+
+    if not resolved_codes:
+        return RankingResponse(
+            error="No countries specified. Provide country_codes or country_group."
+        )
+
+    total_requested = len(resolved_codes)
+
+    # Fetch all pages for all countries in one batched call
+    try:
+        data_response = await _fetch_all_pages(
+            database_id=database_id,
+            indicator_id=indicator_id,
+            country_code=";".join(resolved_codes),
+            disaggregation_filters=disaggregation_filters,
+            start_year=year - 2 if year else None,
+            end_year=year + 1 if year else None,
+        )
+    except Exception as e:
+        mcp_err = classify_error(e, context="rank")
+        return RankingResponse(error=mcp_err.detail)
+
+    if data_response.error:
+        return RankingResponse(error=data_response.error)
+
+    if not data_response.data:
+        return RankingResponse(
+            error="No data returned. Fall back to data360_get_data with broader filters.",
+            metadata=data_response.metadata,
+            total_requested=total_requested,
+        )
+
+    # Build {year: {country: (value, claim_id)}} index
+    year_country_map: dict[str, dict[str, tuple[float, str]]] = {}
+    for row in data_response.data:
+        tp = str(row.get("TIME_PERIOD", ""))
+        ra = str(row.get("REF_AREA", ""))
+        val = row.get("OBS_VALUE")
+        cid = row.get("claim_id", "")
+        if tp and ra and val is not None:
+            year_country_map.setdefault(tp, {})[ra] = (float(val), cid)
+
+    # Select ranking year
+    year_selection_note = None
+    if year:
+        ranking_year = str(year)
+        year_selection_note = f"User-specified year: {year}"
+        # If exact year not available, try closest
+        if ranking_year not in year_country_map:
+            available = sorted(year_country_map.keys())
+            closest = min(available, key=lambda y: abs(int(y) - year)) if available else None
+            if closest:
+                ranking_year = closest
+                year_selection_note = f"Requested {year}, closest available: {closest}"
+            else:
+                return RankingResponse(
+                    error=f"No data available near year {year}.",
+                    metadata=data_response.metadata,
+                    total_requested=total_requested,
+                )
+    else:
+        # Auto-select: find the year with broadest coverage, tie-break by recency
+        best_year = max(
+            year_country_map.keys(),
+            key=lambda y: (len(year_country_map[y]), y),
+        )
+        latest_year = max(year_country_map.keys())
+        ranking_year = best_year
+        if best_year == latest_year:
+            year_selection_note = (
+                f"Latest year with broadest coverage ({best_year}, "
+                f"{len(year_country_map[best_year])}/{total_requested} countries)"
+            )
+        else:
+            year_selection_note = (
+                f"Year with broadest coverage: {best_year} "
+                f"({len(year_country_map[best_year])}/{total_requested} countries). "
+                f"Most recent year {latest_year} has "
+                f"{len(year_country_map.get(latest_year, {}))}/{total_requested} countries."
+            )
+
+    # Build ranking from selected year
+    year_data = year_country_map.get(ranking_year, {})
+    unit_measure = None
+    if data_response.data:
+        unit_measure = data_response.data[0].get("UNIT_MEASURE")
+
+    # Batch-resolve country names in a single call
+    name_map = await _resolve_country_names(resolved_codes)
+
+    # Sort and rank
+    entries = [(code, val, cid) for code, (val, cid) in year_data.items()]
+    reverse = order.lower() != "asc"
+    entries.sort(key=lambda x: x[1], reverse=reverse)
+
+    # Assign ranks with tie handling
+    rankings: list[RankedCountry] = []
+    n_ranked = len(entries)
+    for i, (code, val, cid) in enumerate(entries[:top_n]):
+        # Dense ranking: ties share rank, next rank skips
+        rank = 1
+        for j in range(i):
+            if entries[j][1] != val:
+                rank = j + 1
+            else:
+                rank = rankings[j].rank
+                break
+        else:
+            rank = i + 1
+
+        percentile = round(((n_ranked - i) / n_ranked) * 100, 1) if n_ranked > 0 else None
+
+        rankings.append(RankedCountry(
+            rank=rank,
+            ref_area=code,
+            country_name=name_map.get(code),
+            obs_value=round(val, 4),
+            percentile=percentile,
+            claim_id=cid,
+        ))
+
+    # Build excluded list
+    excluded = []
+    countries_with_data = set(year_data.keys())
+    for code in resolved_codes:
+        if code not in countries_with_data:
+            excluded.append(ExcludedCountry(
+                ref_area=code,
+                country_name=name_map.get(code),
+                reason=f"No data for {ranking_year}",
+            ))
+
+    return RankingResponse(
+        year=ranking_year,
+        year_selection_note=year_selection_note,
+        order=order,
+        total_with_data=len(year_data),
+        total_requested=total_requested,
+        rankings=rankings,
+        excluded=excluded,
+        metadata=data_response.metadata,
+        unit_measure=unit_measure,
+    )
+
+
+async def compare_countries(
+    database_id: str,
+    indicator_id: str,
+    country_codes: str,
+    year: int | None = None,
+    include_time_series: bool = False,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    disaggregation_filters: dict[str, str | None] | None = None,
+) -> CountryComparisonResponse:
+    """Compare an indicator across multiple countries with ranking and gap analysis.
+
+    Call for PATH B (comparison) questions like "Compare GDP between Kenya and Nigeria"
+    or "How does Brazil compare to its neighbors on poverty?". Returns a pre-ranked
+    snapshot and optional aligned time series with convergence analysis.
+
+    The snapshot includes a year_selection_note explaining how the comparison year was
+    chosen — either the user-specified year, or the latest year where all compared
+    countries have data. Both recency-based and coverage-based year selection are valid
+    strategies depending on the analytical intent.
+
+    Do NOT call this for single-country queries — use data360_get_data or
+    data360_summarize_data. Do NOT call this for ranking within a large group
+    (>8 countries) — use data360_rank_countries instead.
+
+    Args:
+        database_id: Database identifier (e.g., "WB_WDI").
+        indicator_id: Indicator ID (e.g., "WB_WDI_NY_GDP_PCAP_KD").
+        country_codes: Semicolon-separated country codes (e.g. "KEN;NGA;ZAF").
+            Supports 2-8 countries.
+        year: Comparison year. None = latest year where all countries have data.
+        include_time_series: If True, include aligned time series + convergence.
+        start_year: For time series mode. Defaults to last 20 years.
+        end_year: For time series mode. Defaults to current year.
+        disaggregation_filters: Optional dimension filters.
+
+    Returns:
+        CountryComparisonResponse:
+            snapshot: Single-year ranked comparison with spread statistics.
+            time_series: Aligned series + convergence (when include_time_series=True).
+            metadata: Indicator metadata.
+            unit_measure: Unit string.
+            error: Error message if request failed; otherwise None.
+                Falls back to data360_get_data if this tool encounters an error.
+    """
+    codes = [c.strip() for c in country_codes.replace(";", ",").split(",") if c.strip()]
+    if len(codes) < 2:
+        return CountryComparisonResponse(
+            error="At least 2 country codes required for comparison."
+        )
+
+    # Fetch all pages for all countries in one batched call
+    try:
+        data_response = await _fetch_all_pages(
+            database_id=database_id,
+            indicator_id=indicator_id,
+            country_code=";".join(codes),
+            disaggregation_filters=disaggregation_filters,
+            start_year=start_year or (year - 10 if year else None),
+            end_year=end_year or (year + 1 if year else None),
+        )
+    except Exception as e:
+        mcp_err = classify_error(e, context="compare")
+        return CountryComparisonResponse(error=mcp_err.detail)
+
+    if data_response.error:
+        return CountryComparisonResponse(error=data_response.error)
+    if not data_response.data:
+        return CountryComparisonResponse(
+            error="No data returned. Fall back to data360_get_data with broader filters.",
+            metadata=data_response.metadata,
+        )
+
+    # Index: {country: {year: (value, claim_id)}}
+    country_year_map: dict[str, dict[str, tuple[float, str]]] = {}
+    for row in data_response.data:
+        ra = str(row.get("REF_AREA", ""))
+        tp = str(row.get("TIME_PERIOD", ""))
+        val = row.get("OBS_VALUE")
+        cid = row.get("claim_id", "")
+        if ra and tp and val is not None:
+            country_year_map.setdefault(ra, {})[tp] = (float(val), cid)
+
+    # Batch-resolve country names in a single call
+    name_map = await _resolve_country_names(codes)
+
+    unit_measure = data_response.data[0].get("UNIT_MEASURE") if data_response.data else None
+
+    # Determine snapshot year
+    all_years = set()
+    for yrs in country_year_map.values():
+        all_years.update(yrs.keys())
+    common_years = sorted(all_years)
+    for c in codes:
+        if c in country_year_map:
+            common_years = [y for y in common_years if y in country_year_map[c]]
+
+    if year:
+        snap_year = str(year)
+    elif common_years:
+        snap_year = common_years[-1]  # Latest common year
+    else:
+        # Fallback: latest year from any country
+        snap_year = max(all_years) if all_years else None
+
+    # Build snapshot
+    snapshot = None
+    if snap_year:
+        snap_entries = []
+        for code in codes:
+            entry = country_year_map.get(code, {}).get(snap_year)
+            if entry:
+                snap_entries.append((code, entry[0], entry[1]))
+
+        snap_entries.sort(key=lambda x: x[1], reverse=True)
+        leader_val = snap_entries[0][1] if snap_entries else 0
+
+        ranked = []
+        for i, (code, val, cid) in enumerate(snap_entries):
+            gap = round(((val - leader_val) / leader_val) * 100, 2) if leader_val != 0 else 0
+            ranked.append(RankedCountry(
+                rank=i + 1,
+                ref_area=code,
+                country_name=name_map.get(code),
+                obs_value=round(val, 4),
+                percentile=None,
+                claim_id=cid,
+            ))
+
+        vals_s = pd.Series([e[1] for e in snap_entries], dtype=float)
+        spread: dict[str, float | None] = {}
+        if not vals_s.empty:
+            spread = {
+                "min": round(float(vals_s.min()), 4),
+                "max": round(float(vals_s.max()), 4),
+                "range": round(float(vals_s.max() - vals_s.min()), 4),
+                "coefficient_of_variation": (
+                    round(float(vals_s.std() / vals_s.mean()), 4)
+                    if len(vals_s) > 1 and vals_s.mean() != 0
+                    else None
+                ),
+            }
+
+        snapshot = ComparisonSnapshot(
+            year=snap_year, rankings=ranked, spread=spread,
+        )
+
+    # Build time series (if requested) using pandas for alignment, CAGR, convergence
+    ts_response = None
+    if include_time_series and common_years:
+        # Build a value pivot: rows=TIME_PERIOD, columns=REF_AREA
+        # Use country_year_map (already built) to construct the pivot cleanly
+        val_records = [
+            {"TIME_PERIOD": y, "REF_AREA": c, "OBS_VALUE": v, "claim_id": cid}
+            for c, yr_map in country_year_map.items()
+            for y, (v, cid) in yr_map.items()
+        ]
+        ts_df = pd.DataFrame(val_records)
+        ts_df["OBS_VALUE"] = pd.to_numeric(ts_df["OBS_VALUE"], errors="coerce")
+
+        # Pivot: rows=TIME_PERIOD, columns=REF_AREA — NaN where country has no data
+        val_pivot = ts_df.pivot_table(
+            index="TIME_PERIOD", columns="REF_AREA", values="OBS_VALUE", aggfunc="last"
+        )
+        # Common years = rows where ALL requested countries have data
+        aligned_pivot = val_pivot[codes].dropna(axis=0)
+        aligned_years = sorted(aligned_pivot.index.tolist())
+
+        # Build series output (with claim_ids from country_year_map)
+        series: dict[str, list[dict[str, Any]]] = {}
+        for code in codes:
+            code_data = country_year_map.get(code, {})
+            series[code] = [
+                {"time_period": y, "obs_value": code_data[y][0], "claim_id": code_data[y][1]}
+                for y in aligned_years
+                if y in code_data
+            ]
+
+        # CAGR: vectorized over aligned pivot
+        cagr: dict[str, float | None] = {}
+        if len(aligned_years) >= 2:
+            first_y, last_y = aligned_years[0], aligned_years[-1]
+            n_years = int(last_y) - int(first_y)
+            for code in codes:
+                if code in aligned_pivot.columns and n_years > 0:
+                    v0 = aligned_pivot.loc[first_y, code]
+                    v1 = aligned_pivot.loc[last_y, code]
+                    cagr[code] = (
+                        round(float(((v1 / v0) ** (1 / n_years) - 1) * 100), 2)
+                        if pd.notna(v0) and pd.notna(v1) and v0 > 0
+                        else None
+                    )
+                else:
+                    cagr[code] = None
+        else:
+            cagr = {code: None for code in codes}
+
+        # Convergence: classify trend in coefficient of variation across aligned years
+        convergence = None
+        if len(aligned_years) >= 3 and len(codes) > 1:
+            row_means = aligned_pivot[codes].mean(axis=1)
+            row_stds = aligned_pivot[codes].std(axis=1, ddof=1)
+            # CV per year — only where mean != 0
+            cvs_s = (row_stds / row_means).replace([float("inf"), float("-inf")], pd.NA).dropna()
+            if len(cvs_s) >= 3:
+                cv_trend = _compute_trend_direction(cvs_s.tolist())
+                convergence = {
+                    "decreasing": "converging",
+                    "increasing": "diverging",
+                }.get(cv_trend, "parallel")
+
+        ts_response = ComparisonTimeSeries(
+            aligned_years=aligned_years,
+            series=series,
+            convergence=convergence,
+            cagr=cagr,
+        )
+
+    return CountryComparisonResponse(
+        snapshot=snapshot,
+        time_series=ts_response,
+        metadata=data_response.metadata,
+        unit_measure=unit_measure,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Data Aggregation Tools (Tier 2 — stubs for future implementation)
+# ---------------------------------------------------------------------------
+
+_TIER2_STUB_MSG = (
+    "This tool is not yet implemented. "
+    "Fall back to data360_get_data for raw data retrieval, "
+    "then use data360_summarize_data or data360_rank_countries for analysis."
+)
+
+
+async def compute_derived(
+    database_id: str,
+    indicator_id: str,
+    country_code: str | None = None,
+    computation: str = "growth_rate",
+    window: int = 5,
+    base_year: int | None = None,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    disaggregation_filters: dict[str, str | None] | None = None,
+) -> DerivedDataResponse:
+    """Compute derived/transformed values from raw indicator data (not yet implemented).
+
+    Will support: growth_rate (YoY %), cagr (compound annual), moving_average,
+    period_average, period_change (absolute + %), index (rebase to base_year=100).
+    Useful for PATH C (trend) questions requiring arithmetic.
+
+    Current status: stub. Falls back with recoverable error directing the LLM
+    to use data360_get_data + data360_summarize_data as alternatives.
+    """
+    return DerivedDataResponse(error=_TIER2_STUB_MSG)
+
+
+async def pivot_table(
+    entries: list[dict[str, str]],
+    country_codes: str,
+    year: int | None = None,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    rows: str = "ref_area",
+    columns: str = "indicator",
+    value_agg: str = "latest",
+) -> PivotTableResponse:
+    """Build a cross-tabulation table from multiple indicators (not yet implemented).
+
+    Will create a country-by-indicator matrix for PATH D (analytical) questions
+    where multiple diagnostic indicators need to be organized into a single table.
+
+    Current status: stub. Falls back with recoverable error directing the LLM
+    to call data360_get_data separately per indicator.
+    """
+    return PivotTableResponse(error=_TIER2_STUB_MSG)
+
+
+async def diagnostic_summary(
+    topic: str,
+    country_code: str,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    max_indicators: int = 5,
+) -> DiagnosticSummaryResponse:
+    """Produce a multi-indicator diagnostic summary for a topic (not yet implemented).
+
+    Will map CONCEPT VOCABULARY categories to search queries, fetch data for the
+    most diagnostic indicators, and return structured per-indicator trend analysis.
+    Useful for PATH D (analytical) and PATH E (policy bridge) questions.
+
+    Current status: stub. Falls back with recoverable error directing the LLM
+    to decompose the question manually using data360_search_indicators + data360_get_data.
+    """
+    return DiagnosticSummaryResponse(error=_TIER2_STUB_MSG)

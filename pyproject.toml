@@ -17,6 +17,7 @@ dependencies = [
   "draco @ git+https://github.com/avsolatorio/draco2.git@data360-mcp",
   "opencensus-ext-azure>=1.1.13",
   "azure-monitor-opentelemetry>=1.6.0",
+  "pandas>=3.0.0",
 ]
 
 [project.optional-dependencies]

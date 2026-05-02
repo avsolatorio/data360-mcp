@@ -76,11 +76,44 @@ Do not answer with guesses. Do not stop after describing a plan.
 3) Confirm availability → call data360_get_disaggregation.
    - **CRITICAL**: if UNIT_MEASURE has multiple values (e.g. KD vs CD), pick **one** and filter.
 
-4) If you need raw data values → call data360_get_data (default: last 20 years).
+4) If you need raw data values for a **specific point lookup or small dataset** → call data360_get_data.
    - **CRITICAL**: pass disaggregation_filters={"REF_AREA": "..."} when the user asked for a geography.
    - Multiple countries: {"REF_AREA": "KEN,TZA"} in **one** call — not one call per country.
    - Do not call get_data with no REF_AREA filter unless you intentionally want global/world aggregates.
    - The response already includes indicator name/definition in many cases; you may not need a separate metadata call only for the title.
+   - **PAGINATION**: get_data returns ONE page. When has_more=True, call again with next_offset.
+     EXCEPTION: If the query involves 20+ countries (e.g. from data360_expand_country_group), do NOT
+     manually paginate get_data — use the aggregation tools in step 4b instead. They paginate
+     internally and return complete results without requiring you to loop.
+
+4b) If the user needs **analysis or the dataset is large** → use aggregation tools (these paginate
+    internally — you never need to call get_data in a loop when using them):
+
+   ┌─ WHEN TO USE AGGREGATION TOOLS (not get_data) ────────────────────────────┐
+   │  • Country group was expanded via data360_expand_country_group (20+ codes) │
+   │  • User asks for a ranking, trend, summary, or comparison — not a lookup   │
+   │  • You would otherwise need to loop get_data across multiple pages          │
+   └───────────────────────────────────────────────────────────────────────────┘
+
+   ┌─ COMPARISON (2-8 countries)? ──────────────────────────────────────────┐
+   │  "Compare X across countries" / "How does A compare to B on Y?"       │
+   │  → data360_compare_countries(country_codes="KEN;NGA;ZAF")             │
+   │  Returns ranked snapshot + optional aligned time series + CAGR.       │
+   └───────────────────────────────────────────────────────────────────────┘
+
+   ┌─ RANKING (large group / top-N)? ──────────────────────────────────────┐
+   │  "Top 10 countries by X" / "Which country has the highest/lowest?"    │
+   │  → data360_rank_countries(country_group="SAS", top_n=10)              │
+   │  Returns ordered list with percentiles + excluded countries.          │
+   │  For expanded groups (SSF=48, HIC=83), this handles all pagination.  │
+   └───────────────────────────────────────────────────────────────────────┘
+
+   ┌─ TREND / SUMMARY? ───────────────────────────────────────────────────┐
+   │  "How has X changed?" / "What is the trend of Y?" / "Summarize Z"    │
+   │  → data360_summarize_data(country_code="KEN")                        │
+   │  Returns min/max/mean/trend_direction + percent change.              │
+   │  group_by supports multiple columns (e.g. ["ref_area", "sex"]).      │
+   └───────────────────────────────────────────────────────────────────────┘
 
 5) Visualization — choose the right tool:
 
