@@ -6,8 +6,14 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Load environment variables from .env file if it exists
-load_dotenv()
+# Load environment variables from .env file at import time, but only when not
+# running under pytest.  Test sessions set env vars explicitly via conftest/fixtures;
+# unconditional load_dotenv() would stomp on those values with whatever is in a
+# local .env file, making tests environment-dependent.
+import os as _os
+if not _os.environ.get("PYTEST_CURRENT_TEST"):
+    load_dotenv()
+del _os
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict

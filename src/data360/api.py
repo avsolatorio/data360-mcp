@@ -1769,12 +1769,26 @@ async def _fetch_all_pages(
 
     Error handling: first-page errors propagate immediately. Mid-pagination errors
     log a warning and return the rows collected so far (partial > nothing).
+
+    Safety: stops after _MAX_PAGES pages to guard against runaway loops if the API
+    incorrectly signals has_more=True indefinitely.
     """
+    _MAX_PAGES = 50  # 50 * 100 = 5 000 rows — generous ceiling for any real indicator
     all_rows: list[dict[str, Any]] = []
     metadata = None
     offset = 0
+    page_count = 0
 
     while True:
+        page_count += 1
+        if page_count > _MAX_PAGES:
+            _logger.warning(
+                "_fetch_all_pages: hit safety page limit (%d) for %s/%s after %d rows. "
+                "Returning partial results.",
+                _MAX_PAGES, database_id, indicator_id, len(all_rows),
+            )
+            break
+
         page = await get_data(
             database_id=database_id,
             indicator_id=indicator_id,
@@ -2275,19 +2289,20 @@ async def rank_countries(
     reverse = order.lower() != "asc"
     entries.sort(key=lambda x: x[1], reverse=reverse)
 
-    # Assign ranks with tie handling
+    # Assign ranks with tie handling.
+    # Uses standard competition ranking (1,2,2,4): tied items share the same rank
+    # and the next rank skips the number of tied items.  This matches the most
+    # common convention for leaderboard rankings.
     rankings: list[RankedCountry] = []
     n_ranked = len(entries)
     for i, (code, val, cid) in enumerate(entries[:top_n]):
-        # Dense ranking: ties share rank, next rank skips
-        rank = 1
-        for j in range(i):
-            if entries[j][1] != val:
-                rank = j + 1
-            else:
-                rank = rankings[j].rank
-                break
+        if i == 0:
+            rank = 1
+        elif entries[i - 1][1] == val:
+            # Same value as previous — share its rank
+            rank = rankings[-1].rank
         else:
+            # Different value — rank is one past the previous entry's position
             rank = i + 1
 
         percentile = round(((n_ranked - i) / n_ranked) * 100, 1) if n_ranked > 0 else None
@@ -2376,13 +2391,35 @@ async def compare_countries(
             error="At least 2 country codes required for comparison."
         )
 
+    # Auto-detect UNIT_MEASURE using the same strategy as rank_countries.
+    # Batched multi-country fetches can return 0 results when UNIT_MEASURE is
+    # not pinned, because get_data's internal metadata pre-fetch may not reliably
+    # auto-default it for multi-country calls.  Honour any caller-provided filter.
+    effective_filters: dict[str, str | None] = dict(disaggregation_filters or {})
+    if "UNIT_MEASURE" not in effective_filters:
+        try:
+            disagg_res = await get_disaggregation(
+                database_id=database_id,
+                indicator_id=indicator_id,
+                required_country=codes[0],
+            )
+            if disagg_res and not disagg_res.get("error"):
+                for dim in disagg_res.get("dimensions", []):
+                    if dim.get("field_name") == "UNIT_MEASURE":
+                        values = dim.get("field_value", [])
+                        if len(values) == 1:
+                            effective_filters["UNIT_MEASURE"] = values[0]
+                        break
+        except Exception:
+            pass  # Non-fatal — proceed without the filter
+
     # Fetch all pages for all countries in one batched call
     try:
         data_response = await _fetch_all_pages(
             database_id=database_id,
             indicator_id=indicator_id,
             country_code=";".join(codes),
-            disaggregation_filters=disaggregation_filters,
+            disaggregation_filters=effective_filters or None,
             start_year=start_year or (year - 10 if year else None),
             end_year=end_year or (year + 1 if year else None),
         )
@@ -2512,9 +2549,12 @@ async def compare_countries(
                 if code in aligned_pivot.columns and n_years > 0:
                     v0 = aligned_pivot.loc[first_y, code]
                     v1 = aligned_pivot.loc[last_y, code]
+                    # CAGR requires a positive base and a non-negative end value.
+                    # Raising a negative ratio to a fractional power raises ValueError,
+                    # so guard against both v0 <= 0 and v1 < 0.
                     cagr[code] = (
                         round(float(((v1 / v0) ** (1 / n_years) - 1) * 100), 2)
-                        if pd.notna(v0) and pd.notna(v1) and v0 > 0
+                        if pd.notna(v0) and pd.notna(v1) and v0 > 0 and v1 >= 0
                         else None
                     )
                 else:
