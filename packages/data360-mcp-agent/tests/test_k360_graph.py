@@ -84,7 +84,7 @@ def test_content_packet_geographies_from_country_code():
     assert packet["geographies"] == ["KEN", "TZA"]
 
 
-def test_content_packet_geographies_ref_area_list_and_semicolon_country_code():
+def test_content_packet_geographies_ref_area_comma_and_semicolon_country_code():
     packet = k360_graph._content_packet_from_tool_calls(
         "q",
         None,
@@ -94,7 +94,7 @@ def test_content_packet_geographies_ref_area_list_and_semicolon_country_code():
                 "tool_args": {
                     "database_id": "WB_WDI",
                     "indicator_id": "X",
-                    "disaggregation_filters": {"REF_AREA": ["KEN", "MAR"]},
+                    "disaggregation_filters": {"REF_AREA": "KEN,MAR"},
                     "country_code": "UGA;GHA",
                 },
             }

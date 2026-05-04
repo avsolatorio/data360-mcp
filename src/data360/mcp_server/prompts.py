@@ -285,8 +285,9 @@ def indicator_search(
    - **Report**: Note your choice and alternatives (e.g. "Selecting Constant US$ (KD) for trend analysis. Current US$ (CD) also available.").
 
 4. **Validation Check**:
-   - If the user asked for a specific country (e.g. Kenya), do NOT call `get_data` without `disaggregation_filters={"REF_AREA": ["KEN"]}` and your selected dimension filters.
-   - Example Filters: `{"REF_AREA": "KEN", "UNIT_MEASURE": "KD"}`
+   - If the user asked for a specific country (e.g. Kenya), do NOT call `get_data` without `disaggregation_filters={"REF_AREA": "KEN"}` (plus your selected dimension filters). Values must be strings or null per dimension — not JSON arrays.
+   - Multiple ISO codes in one filter: comma-separated string, e.g. `{"REF_AREA": "KEN,TZA", "UNIT_MEASURE": "KD"}`. Prefer commas in `disaggregation_filters`; the server also normalizes semicolons in REF_AREA to commas. The top-level `country_code` argument uses semicolons for multiple codes (e.g. `KEN;TZA`).
+   - Use `null` only for a **specific** dimension when you want every value of that dimension (e.g. all sexes), not to skip geography when the user named a country.
    - Asking for `disaggregation_filters=null` returns global aggregates AND all unit variants, which ruins charts.
 
 5. **Selection**:
@@ -380,10 +381,11 @@ data360_get_disaggregation(database_id=<db_id>, indicator_id=<ind_id>)
 data360_get_data(
     database_id=<db_id>,
     indicator_id=<ind_id>,
-    disaggregation_filters={{"REF_AREA": "<country_code(s)>", "UNIT_MEASURE": "..."}},
+    disaggregation_filters={{"REF_AREA": "<ISO comma-separated, e.g. KEN or KEN,TZA>", "UNIT_MEASURE": "..."}},
     start_year={start_year if start_year else "None (Defaults to last 20 years)"},
     end_year={end_year if end_year else "None"}
 )
+# Or omit REF_AREA in disaggregation_filters and use top-level country_code="KEN" or "KEN;MAR".
 
 **Step 5: Visualize**
 If data is suitable (time series), visualize directly.
@@ -391,7 +393,7 @@ For multi-country, the tool auto-handles color-coding.
 data360_get_viz_spec(
     database_id=<db_id>,
     indicator_id=<ind_id>,
-    country_code=<country_code(s)>,
+    country_code="<ISO: one code, or several with semicolons e.g. KEN;UGA>",
     # If explicit breakdown needed:
     # disaggregation_filters={{"SEX": None}}, # Explicitly ask for all sexes
     chart_type="line"

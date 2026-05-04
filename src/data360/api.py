@@ -210,6 +210,10 @@ def _validate_user_filters(
             valid_filters[dim] = None
             continue
 
+        # Align with country_code convention: semicolons in REF_AREA become commas for the Data API.
+        if dim == "REF_AREA" and isinstance(val, str) and ";" in val:
+            val = ",".join(p.strip() for p in val.split(";") if p.strip())
+
         # If dimension exists in metadata, check value
         if dim in available_disaggregations:
             valid_values = available_disaggregations[dim]
@@ -1322,7 +1326,8 @@ async def get_data(
         country_code: Optional 3-letter code or semicolon-separated list (e.g. "KEN" or "KEN;MAR").
             Applied as REF_AREA filter. Takes precedence over REF_AREA in disaggregation_filters.
         disaggregation_filters: Optional dict of dimension filters. Keys: REF_AREA, SEX, AGE,
-            URBANISATION, UNIT_MEASURE, etc. REF_AREA supports comma-separated codes (e.g. "KEN,TZA").
+            URBANISATION, UNIT_MEASURE, etc. Values are str or None (not lists). REF_AREA supports
+            comma-separated ISO codes (e.g. "KEN,TZA"); semicolons are normalized to commas.
             Use value None to request all values for a dimension (e.g. {"SEX": None}).
         start_year: Optional start year (inclusive). Defaults to last 5 years if both start/end omitted.
         end_year: Optional end year (inclusive). Defaults to current year if both start/end omitted.
@@ -1617,6 +1622,7 @@ async def get_data_api_url(
         start_year: Optional start year (inclusive).
         end_year: Optional end year (inclusive).
         disaggregation_filters: Optional dict of dimension filters (e.g. {"SEX": "F"}).
+            Values are str or None. REF_AREA: comma-separated ISO codes; semicolons normalized.
             If omitted, defaults to totals (_T) for SEX, AGE, URBANISATION where applicable.
 
     Returns:
@@ -1637,7 +1643,8 @@ async def get_data_api_url(
     params = {"DATABASE_ID": database_id, "INDICATOR": indicator_id}
 
     if country_code:
-        params["REF_AREA"] = country_code
+        # Same as get_data(): Data API expects comma-separated REF_AREA; allow semicolons in tool args.
+        params["REF_AREA"] = country_code.replace(";", ",")
 
     if start_year:
         params["timePeriodFrom"] = start_year
@@ -1692,7 +1699,8 @@ async def get_data_api_url(
     if country_code:
         # Increase limit based on number of countries requested (max ~60 years per country)
         # Using 1000 as a safe multiplier to cover most time series data including higher frequency
-        n_countries = len(country_code.split(","))
+        ref_area_param = country_code.replace(";", ",")
+        n_countries = max(1, len([p for p in ref_area_param.split(",") if p.strip()]))
         limit = max(1000, n_countries * 1000)
 
     params["top"] = limit
