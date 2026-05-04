@@ -1905,6 +1905,101 @@ async def _resolve_country_names(codes: list[str]) -> dict[str, str]:
         return {}
 
 
+# Disaggregation dimensions that may carry meaningful sub-categories.
+# UNIT_MEASURE is handled via a separate branch in the helper below.
+_DISAGG_DIMS_TO_DETECT: tuple[str, ...] = (
+    "SEX", "AGE", "URBANISATION", "COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2",
+)
+
+
+async def _auto_detect_disagg_dimensions(
+    database_id: str,
+    indicator_id: str,
+    sample_country: str | None,
+    existing_filters: dict[str, str | None],
+    *,
+    expand_non_trivial: bool,
+) -> tuple[dict[str, str | None], list[str]]:
+    """Detect disaggregation dimensions and build effective filters.
+
+    Calls get_disaggregation once and inspects SEX, AGE, URBANISATION,
+    COMP_BREAKDOWN_1/2, and UNIT_MEASURE for each indicator.
+
+    Two modes, controlled by `expand_non_trivial`:
+
+    expand_non_trivial=True  (summarize_data path):
+        For each dim that has values beyond _T and is not already in
+        existing_filters, set the filter to None (fetch all values) and
+        record it in auto_expanded_dims so the caller can add it to group_by.
+
+    expand_non_trivial=False (rank_countries / compare_countries path):
+        For each such dim, pin to _T when available, otherwise to the first
+        non-total value, to prevent duplicate rows per country per year which
+        would corrupt ranking and comparison statistics.
+
+    UNIT_MEASURE is always pinned to its sole value when exactly one exists
+    (regardless of mode), matching the prior behaviour.
+
+    Caller's existing_filters always take precedence — this function never
+    overwrites a filter already set by the caller.
+
+    Returns:
+        (effective_filters, auto_expanded_dims)
+        effective_filters: copy of existing_filters with auto-detected values.
+        auto_expanded_dims: lowercase dim names that were expanded into None
+            (non-empty only when expand_non_trivial=True).
+    """
+    effective_filters: dict[str, str | None] = dict(existing_filters)
+    auto_expanded_dims: list[str] = []
+
+    try:
+        disagg_res = await get_disaggregation(
+            database_id=database_id,
+            indicator_id=indicator_id,
+            required_country=sample_country,
+        )
+    except Exception:
+        return effective_filters, auto_expanded_dims
+
+    if not disagg_res or disagg_res.get("error"):
+        return effective_filters, auto_expanded_dims
+
+    for dim in disagg_res.get("dimensions", []):
+        field_name: str = dim.get("field_name", "")
+        values: list[str] = dim.get("field_value", [])
+
+        if not values or field_name in ("REF_AREA", "TIME_PERIOD"):
+            continue
+
+        # Honour the caller's explicit filter for this dimension.
+        if field_name in effective_filters:
+            continue
+
+        # UNIT_MEASURE: always pin to its single value when unambiguous.
+        if field_name == "UNIT_MEASURE":
+            if len(values) == 1:
+                effective_filters["UNIT_MEASURE"] = values[0]
+            continue
+
+        if field_name not in _DISAGG_DIMS_TO_DETECT:
+            continue
+
+        # Only act on dimensions that carry values beyond the aggregate total.
+        non_total_values = [v for v in values if v not in ("_T", "_Z")]
+        if not non_total_values:
+            continue
+
+        if expand_non_trivial:
+            # Expand: set to None so _fetch_all_pages retrieves all breakdowns.
+            effective_filters[field_name] = None
+            auto_expanded_dims.append(field_name.lower())
+        else:
+            # Pin to _T (aggregate total) when available to avoid duplicate rows.
+            effective_filters[field_name] = "_T" if "_T" in values else non_total_values[0]
+
+    return effective_filters, auto_expanded_dims
+
+
 def _compute_trend_direction(values: list[float]) -> str:
     """Determine trend direction from a time-ordered list of values.
 
@@ -2083,17 +2178,30 @@ async def summarize_data(
     data360_get_data for that (PATH A). Do NOT call this for visualization — use
     data360_get_viz_spec which fetches data internally.
 
+    Auto-detection of disaggregation dimensions: before fetching data, this tool calls
+    get_disaggregation to discover non-trivial dimensions (SEX, AGE, URBANISATION,
+    COMP_BREAKDOWN_1/2) that the indicator supports beyond the aggregate total (_T).
+    Any such dimension not already specified in disaggregation_filters is automatically
+    added to group_by and fetched with all its values. The auto-expanded dimension names
+    are reported in ambiguous_dimensions. Caller-provided disaggregation_filters always
+    take precedence and suppress auto-expansion for that dimension.
+
     Args:
         database_id: Database identifier (e.g., "WB_WDI", "WB_GS").
         indicator_id: Indicator ID (e.g., "WB_WDI_NY_GDP_PCAP_KD").
         country_code: Optional 3-letter code or semicolon-separated list (e.g. "KEN;NGA").
         disaggregation_filters: Optional dimension filters (e.g. {"UNIT_MEASURE": "KD"}).
+            Filters specified here are honoured as-is and suppress auto-detection for
+            that dimension. Pass {"SEX": "_T"} to force totals only, or {"SEX": None}
+            to explicitly request all sex breakdowns.
         start_year: Optional start year. Defaults to last 20 years.
         end_year: Optional end year. Defaults to current year.
         group_by: Dimensions to group by. Default ["ref_area"]. Supports multiple columns
             for cross-dimensional summaries (e.g. ["ref_area", "sex"] for per-country,
             per-gender summaries). Valid columns: ref_area, time_period, sex, age,
             urbanisation, unit_measure, comp_breakdown_1, comp_breakdown_2.
+            Non-trivial dimensions discovered via auto-detection are appended to this
+            list automatically when not already present.
 
     Returns:
         DataSummaryResponse:
@@ -2102,17 +2210,51 @@ async def summarize_data(
                 and source claim_ids.
             metadata: Indicator metadata (name, definition, database_name).
             unit_measure: The unit for interpreting values.
+            ambiguous_dimensions: Lowercase names of dimensions that were auto-detected
+                as non-trivial and appended to group_by (e.g. ["sex", "age"]). None when
+                no auto-expansion occurred.
             error: Error message if request failed; otherwise None.
                 Falls back to data360_get_data if this tool encounters an error.
     """
     if group_by is None:
         group_by = ["ref_area"]
 
-    # Validate group_by columns
+    # Validate group_by columns before the disagg fetch to fail fast.
     invalid_cols = [c for c in group_by if c.lower() not in _GROUPBY_FIELD_MAP]
     if invalid_cols:
         return DataSummaryResponse(
             error=f"Invalid group_by columns: {invalid_cols}. "
+            f"Valid options: {list(_GROUPBY_FIELD_MAP.keys())}"
+        )
+
+    # Pre-fetch: detect non-trivial disaggregation dimensions and auto-expand
+    # them into group_by + effective_filters before the data fetch.  This ensures
+    # _fetch_all_pages retrieves all breakdown values in a single call, avoiding
+    # the silent data loss that occurred when the API defaulted to _T only.
+    sample_country: str | None = None
+    if country_code:
+        sample_country = country_code.replace(";", ",").split(",")[0].strip() or None
+
+    effective_filters, auto_expanded_dims = await _auto_detect_disagg_dimensions(
+        database_id=database_id,
+        indicator_id=indicator_id,
+        sample_country=sample_country,
+        existing_filters=dict(disaggregation_filters or {}),
+        expand_non_trivial=True,
+    )
+
+    # Append auto-detected dims to group_by (preserves caller's explicit list).
+    group_by = list(group_by)  # mutable copy
+    for dim_lower in auto_expanded_dims:
+        if dim_lower not in group_by:
+            group_by.append(dim_lower)
+
+    # Validate any auto-appended dims (defensive; _DISAGG_DIMS_TO_DETECT are
+    # all in _GROUPBY_FIELD_MAP, but check to avoid silent runtime errors).
+    invalid_auto = [c for c in group_by if c.lower() not in _GROUPBY_FIELD_MAP]
+    if invalid_auto:
+        return DataSummaryResponse(
+            error=f"Auto-detected invalid group_by columns: {invalid_auto}. "
             f"Valid options: {list(_GROUPBY_FIELD_MAP.keys())}"
         )
 
@@ -2122,7 +2264,7 @@ async def summarize_data(
             database_id=database_id,
             indicator_id=indicator_id,
             country_code=country_code,
-            disaggregation_filters=disaggregation_filters,
+            disaggregation_filters=effective_filters or None,
             start_year=start_year,
             end_year=end_year,
         )
@@ -2150,29 +2292,18 @@ async def summarize_data(
     groups_dict: dict[tuple[str, ...], list[dict[str, Any]]] = {}
 
     for row in data_response.data:
-        key = tuple(str(row.get(f, "_MISSING")) for f in raw_field_names)
+        key_parts = []
+        for f in raw_field_names:
+            val = row.get(f)
+            if val is None:
+                # The upstream API omits disaggregation keys when their value is
+                # the default aggregate total (_T).
+                val = "_T" if f in (
+                    "SEX", "AGE", "URBANISATION", "COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2"
+                ) else "_MISSING"
+            key_parts.append(str(val))
+        key = tuple(key_parts)
         groups_dict.setdefault(key, []).append(row)
-
-    # Detect disaggregation dimensions that have cardinality > 1 in the data
-    # but are NOT covered by group_by.  When this happens, multiple distinct
-    # disaggregation values (e.g. SEX=M, F, _T) land in the same group bucket,
-    # making trend/summary statistics unreliable.
-    _DISAGG_DIMS = [
-        "SEX", "AGE", "URBANISATION",
-        "UNIT_MEASURE", "COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2",
-    ]
-    ambiguous_dimensions: list[str] = []
-    for dim in _DISAGG_DIMS:
-        if dim in raw_field_names:
-            # Already part of the grouping key — no ambiguity for this dim.
-            continue
-        distinct_values = {
-            str(row[dim])
-            for row in data_response.data
-            if row.get(dim) not in (None, "", "_T")
-        }
-        if len(distinct_values) > 1:
-            ambiguous_dimensions.append(dim.lower())
 
     # Build summaries
     group_summaries = []
@@ -2190,7 +2321,7 @@ async def summarize_data(
         groups=group_summaries,
         metadata=data_response.metadata,
         unit_measure=unit_measure,
-        ambiguous_dimensions=ambiguous_dimensions if ambiguous_dimensions else None,
+        ambiguous_dimensions=auto_expanded_dims if auto_expanded_dims else None,
     )
 
 
@@ -2281,29 +2412,19 @@ async def rank_countries(
 
     total_requested = len(resolved_codes)
 
-    # Auto-detect UNIT_MEASURE for this indicator using one sample country.
-    # When querying 48+ countries in a single batched call, get_data's internal
-    # metadata pre-fetch cannot reliably auto-default UNIT_MEASURE, which causes
-    # empty results. We resolve this here so _fetch_all_pages always has a pinned
-    # unit filter. If the caller already provided UNIT_MEASURE, honour it.
-    effective_filters: dict[str, str | None] = dict(disaggregation_filters or {})
-    if "UNIT_MEASURE" not in effective_filters:
-        try:
-            sample_country = resolved_codes[0] if resolved_codes else None
-            disagg_res = await get_disaggregation(
-                database_id=database_id,
-                indicator_id=indicator_id,
-                required_country=sample_country,
-            )
-            if disagg_res and not disagg_res.get("error"):
-                for dim in disagg_res.get("dimensions", []):
-                    if dim.get("field_name") == "UNIT_MEASURE":
-                        values = dim.get("field_value", [])
-                        if len(values) == 1:
-                            effective_filters["UNIT_MEASURE"] = values[0]
-                        break
-        except Exception:
-            pass  # Non-fatal — proceed without the filter
+    # Auto-detect UNIT_MEASURE and pin non-trivial disaggregation dims (SEX, AGE,
+    # URBANISATION, COMP_BREAKDOWN_1/2) to their _T (aggregate total) value.
+    # This prevents duplicate rows per country per year — which would otherwise
+    # corrupt ranking statistics — when an indicator carries sex/age breakdowns.
+    # Caller-provided disaggregation_filters always take precedence.
+    sample_country = resolved_codes[0] if resolved_codes else None
+    effective_filters, _ = await _auto_detect_disagg_dimensions(
+        database_id=database_id,
+        indicator_id=indicator_id,
+        sample_country=sample_country,
+        existing_filters=dict(disaggregation_filters or {}),
+        expand_non_trivial=False,
+    )
 
     # Fetch all pages for all countries in one batched call
     try:
@@ -2494,27 +2615,18 @@ async def compare_countries(
             error="At least 2 country codes required for comparison."
         )
 
-    # Auto-detect UNIT_MEASURE using the same strategy as rank_countries.
-    # Batched multi-country fetches can return 0 results when UNIT_MEASURE is
-    # not pinned, because get_data's internal metadata pre-fetch may not reliably
-    # auto-default it for multi-country calls.  Honour any caller-provided filter.
-    effective_filters: dict[str, str | None] = dict(disaggregation_filters or {})
-    if "UNIT_MEASURE" not in effective_filters:
-        try:
-            disagg_res = await get_disaggregation(
-                database_id=database_id,
-                indicator_id=indicator_id,
-                required_country=codes[0],
-            )
-            if disagg_res and not disagg_res.get("error"):
-                for dim in disagg_res.get("dimensions", []):
-                    if dim.get("field_name") == "UNIT_MEASURE":
-                        values = dim.get("field_value", [])
-                        if len(values) == 1:
-                            effective_filters["UNIT_MEASURE"] = values[0]
-                        break
-        except Exception:
-            pass  # Non-fatal — proceed without the filter
+    # Auto-detect UNIT_MEASURE and pin non-trivial disaggregation dims (SEX, AGE,
+    # URBANISATION, COMP_BREAKDOWN_1/2) to their _T (aggregate total) value.
+    # This prevents duplicate rows per country per year — which would otherwise
+    # corrupt comparison statistics — when an indicator carries sex/age breakdowns.
+    # Caller-provided disaggregation_filters always take precedence.
+    effective_filters, _ = await _auto_detect_disagg_dimensions(
+        database_id=database_id,
+        indicator_id=indicator_id,
+        sample_country=codes[0],
+        existing_filters=dict(disaggregation_filters or {}),
+        expand_non_trivial=False,
+    )
 
     # Fetch all pages for all countries in one batched call
     try:
