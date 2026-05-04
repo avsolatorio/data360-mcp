@@ -301,7 +301,13 @@ class IndicatorDataRequest(BaseModel):
     )
     disaggregation_filters: dict[str, str | None] | None = Field(
         default=None,
-        description="Dictionary of disaggregation filters (e.g., {'REF_AREA': 'UGA', 'UNIT_MEASURE': 'PT'})",
+        description=(
+            "Per-dimension filters: each value is a string or null (never a JSON array). "
+            "Example: {'REF_AREA': 'KEN', 'UNIT_MEASURE': 'KD'}. "
+            "Multiple areas: comma-separated ISO codes in REF_AREA (e.g. 'KEN,TZA'); "
+            "semicolons in REF_AREA are accepted and normalized to commas. "
+            "Use null for a dimension to request all values of that dimension."
+        ),
     )
 
     @model_validator(mode="after")

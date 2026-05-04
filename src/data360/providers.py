@@ -1013,8 +1013,9 @@ async def expand_country_group(
          call data360_find_codelist_value(codelist_type="REF_AREA", query="<name>")
          first to resolve it to a group code (e.g. "SAS").
       2. Pass that code to this function to get the full country list.
-      3. Use the returned country_codes string directly in data360_get_data or
-         data360_search_indicators disaggregation_filters for country-level queries.
+      3. Use the returned country_codes string as disaggregation_filters['REF_AREA']
+         (already comma-separated ISO codes), or pass the same codes via get_data's
+         country_code using semicolons between codes (e.g. 'KEN;MAR').
 
     Decision guidance — check the returned `count` after calling this function:
     - count <= 20: proceed with country-level data retrieval directly.

@@ -538,10 +538,14 @@ async def get_viz_spec(
     Args:
         database_id: Database identifier (e.g., WB_HNP, WB_WDI).
         indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL).
-        country_code: Optional 3-letter code or comma-separated list (e.g. "KEN" or "CHN,USA").
+        country_code: Optional ISO code(s) for REF_AREA — one code, or several separated
+            by semicolons (e.g. KEN or CHN;USA, matching required_country style) or commas
+            (also accepted). Normalized to comma-separated for the Data API.
         start_year: Optional start year (inclusive).
         end_year: Optional end year (inclusive).
-        disaggregation_filters: Optional dict of dimension filters (e.g. {"SEX": "F"}).
+        disaggregation_filters: Optional dimension filters; each value is str or null, not a list.
+            Example: {'SEX': 'F'}. For REF_AREA use comma-separated ISO codes (e.g. 'KEN,TZA');
+            semicolons in REF_AREA are normalized to commas.
         chart_type: Optional hint — "line", "bar", "scatter", "strip", "small_multiples".
         relevant_fields: Optional list of column names to include in the chart.
         custom_constraints: Optional list of raw Draco ASP constraints.
@@ -870,10 +874,12 @@ async def get_multi_indicator_viz_spec(
                 {"database_id": "WB_WDI", "indicator_id": "WB_WDI_NY_GDP_PCAP_KD"},
                 {"database_id": "WB_WDI", "indicator_id": "WB_WDI_SP_DYN_LE00_IN"}
             ]
-        country_code: Optional 3-letter code or comma-separated list.
+        country_code: Optional ISO code(s): one code or semicolon-separated (e.g. KEN;MAR)
+            or comma-separated; normalized for the Data API like data360_get_data.
         start_year: Optional start year (inclusive).
         end_year: Optional end year (inclusive).
-        disaggregation_filters: Optional dimension filters applied to ALL indicators.
+        disaggregation_filters: Optional filters applied to ALL indicators; values are str or null.
+            REF_AREA uses comma-separated ISO codes (semicolons normalized to commas).
         chart_type: Optional hint — "scatter", "connected_scatter", "layered_lines",
             "line", "bar". If omitted, auto-selected by data shape.
 
