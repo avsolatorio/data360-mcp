@@ -407,6 +407,18 @@ class DataSummaryResponse(BaseModel):
     error: str | None = Field(
         None, description="Error message if request failed; otherwise None"
     )
+    ambiguous_dimensions: list[str] | None = Field(
+        None,
+        description=(
+            "Disaggregation dimensions present in the data with more than one distinct "
+            "value that are NOT included in group_by. When non-empty, the per-group "
+            "time-series statistics may be computed over mixed disaggregation values "
+            "(e.g. SEX=M, F, and _T all collapsed into one group), making trend and "
+            "summary stats unreliable. To fix: either add these dimensions to group_by "
+            "(e.g. group_by=['ref_area', 'sex']) or pass disaggregation_filters to pin "
+            "each dimension to a single value (e.g. {'SEX': '_T'})."
+        ),
+    )
 
 
 class RankedCountry(BaseModel):

@@ -2153,6 +2153,27 @@ async def summarize_data(
         key = tuple(str(row.get(f, "_MISSING")) for f in raw_field_names)
         groups_dict.setdefault(key, []).append(row)
 
+    # Detect disaggregation dimensions that have cardinality > 1 in the data
+    # but are NOT covered by group_by.  When this happens, multiple distinct
+    # disaggregation values (e.g. SEX=M, F, _T) land in the same group bucket,
+    # making trend/summary statistics unreliable.
+    _DISAGG_DIMS = [
+        "SEX", "AGE", "URBANISATION",
+        "UNIT_MEASURE", "COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2",
+    ]
+    ambiguous_dimensions: list[str] = []
+    for dim in _DISAGG_DIMS:
+        if dim in raw_field_names:
+            # Already part of the grouping key — no ambiguity for this dim.
+            continue
+        distinct_values = {
+            str(row[dim])
+            for row in data_response.data
+            if row.get(dim) not in (None, "", "_T")
+        }
+        if len(distinct_values) > 1:
+            ambiguous_dimensions.append(dim.lower())
+
     # Build summaries
     group_summaries = []
     for key_tuple, rows in groups_dict.items():
@@ -2169,6 +2190,7 @@ async def summarize_data(
         groups=group_summaries,
         metadata=data_response.metadata,
         unit_measure=unit_measure,
+        ambiguous_dimensions=ambiguous_dimensions if ambiguous_dimensions else None,
     )
 
 
