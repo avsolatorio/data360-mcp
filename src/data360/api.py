@@ -1,14 +1,18 @@
 import asyncio
 import json
 import logging
+import threading
 import zlib
 from typing import Any
 from urllib.parse import urlencode
 
+import cachetools
 import dotenv
 import httpx
+import numpy as np
 import pandas as pd
 from pydantic import ValidationError as PydanticValidationError
+from sklearn.linear_model import HuberRegressor
 
 from .config import get_data360_settings
 from .errors import (
@@ -56,6 +60,24 @@ COUNTRY_CODE_LENGTH = 3
 SCORE_THRESHOLD = 70
 MAX_RETURN_STATEMENTS = 6
 DEFAULT_SEARCH_LIMIT = 5
+
+# ---------------------------------------------------------------------------
+# Metadata / disaggregation response caches (Comment 1+8 — avsolatorio PR #75)
+# ---------------------------------------------------------------------------
+# Metadata changes rarely; a 1-day TTL prevents stale data on long-running
+# servers while eliminating redundant HTTP calls across multi-page aggregation
+# fetches (e.g. _fetch_all_pages issues one get_data call per page, each of
+# which would otherwise re-fetch the same metadata).
+_METADATA_CACHE_TTL = 86_400  # 24 hours in seconds
+_metadata_cache: cachetools.TTLCache = cachetools.TTLCache(
+    maxsize=256, ttl=_METADATA_CACHE_TTL
+)
+_disaggregation_cache: cachetools.TTLCache = cachetools.TTLCache(
+    maxsize=256, ttl=_METADATA_CACHE_TTL
+)
+# Locks to prevent thundering-herd on cache misses under async concurrency.
+_metadata_cache_lock = threading.Lock()
+_disaggregation_cache_lock = threading.Lock()
 
 # Fields fetched by _search_raw for LLM-friendly enrichment.
 # Shared between single-query and multi-query paths to ensure consistency.
@@ -1114,7 +1136,7 @@ async def get_metadata(
     get_valid_disaggregations_func: Any | None = None,
     fetch_disaggregation: bool = True,
     required_country: str | None = None,
-) -> MetadataResponse:
+) -> MetadataResponse:  # noqa: PLR0912
     """Get metadata and disaggregation options for a Data360 indicator.
 
     Call after data360_search_indicators only when you need deep metadata NOT included in the enriched search results (e.g. methodology, source notes). If the user asks a basic metadata question (like definition or periodicity), simply answer using the fields provided by data360_search_indicators.
@@ -1145,6 +1167,21 @@ async def get_metadata(
     # Use provided function or default
     if get_valid_disaggregations_func is None:
         get_valid_disaggregations_func = _get_valid_disaggregations
+
+    # Cache lookup — key includes select_fields (as frozenset) and required_country
+    # because those affect what is returned.  get_valid_disaggregations_func is
+    # excluded intentionally: it is always _get_valid_disaggregations in production.
+    _cache_key = (
+        database_id,
+        indicator_id,
+        frozenset(select_fields) if select_fields else None,
+        fetch_disaggregation,
+        required_country,
+    )
+    with _metadata_cache_lock:
+        _cached = _metadata_cache.get(_cache_key)
+    if _cached is not None:
+        return _cached
 
     # Resolve country codes if provided
     queried_countries = await _resolve_queried_countries(required_country)
@@ -1250,11 +1287,17 @@ async def get_metadata(
     # 3. Combine and Return
     error_message = "; ".join(errors) if errors else None
 
-    return MetadataResponse(
+    result = MetadataResponse(
         indicator_metadata=indicator_metadata,
         disaggregation_options=disaggregations,
         error=error_message,
     )
+    # Only cache successful responses — don't cache errors so transient
+    # network failures don't persist for a full day.
+    if not error_message:
+        with _metadata_cache_lock:
+            _metadata_cache[_cache_key] = result
+    return result
 
 
 async def get_disaggregation(
@@ -1289,6 +1332,13 @@ async def get_disaggregation(
         On failure: dict with key "error" and an error message string.
         TIME_PERIOD gives actual available years (may have gaps).
     """
+    # Cache lookup — required_country affects how REF_AREA is reported.
+    _disagg_cache_key = (database_id, indicator_id, required_country)
+    with _disaggregation_cache_lock:
+        _cached_disagg = _disaggregation_cache.get(_disagg_cache_key)
+    if _cached_disagg is not None:
+        return _cached_disagg
+
     # Resolve country codes if provided
     queried_countries = await _resolve_queried_countries(required_country)
 
@@ -1309,7 +1359,10 @@ async def get_disaggregation(
             raw_data = response.json()
             # Filter out _Z values and format response
             valid_dimensions = _get_valid_disaggregations(raw_data)
-            return {"dimensions": _strip_disaggregation(valid_dimensions, queried_countries)}
+            result_disagg = {"dimensions": _strip_disaggregation(valid_dimensions, queried_countries)}
+            with _disaggregation_cache_lock:
+                _disaggregation_cache[_disagg_cache_key] = result_disagg
+            return result_disagg
 
     except Exception as e:
         mcp_err = classify_error(e, context="disaggregation")
@@ -1855,36 +1908,43 @@ async def _resolve_country_names(codes: list[str]) -> dict[str, str]:
 def _compute_trend_direction(values: list[float]) -> str:
     """Determine trend direction from a time-ordered list of values.
 
-    Uses simple linear regression slope + R² to classify:
-    - R² < 0.3 → "volatile" (no clear trend)
-    - |slope| < 1% of mean per step → "stable"
+    Uses Huber regression (outlier-robust) to fit a linear trend, then
+    classifies the result into one of four categories:
+    - R² < 0.3  → "volatile"   (no clear linear trend)
+    - |slope| < 1% of |mean| per step → "stable"
     - slope > 0 → "increasing"
     - slope < 0 → "decreasing"
+
+    HuberRegressor is preferred over OLS because development indicators can
+    contain anomalous years (conflict, crises, revisions) that would skew an
+    OLS slope.  The Huber loss function down-weights outliers automatically.
+
+    Expects pre-cleaned, finite float values. The caller (_build_group_summary)
+    applies .dropna() upstream; np.isfinite() below drops any remaining
+    non-finite values (inf, -inf) before fitting.
     """
-    n = len(values)
-    if n < 2:
+    y = np.asarray(values, dtype=float)
+    y = y[np.isfinite(y)]  # drop inf/-inf; NaN already removed by caller
+
+    if len(y) < 2:
         return "stable"
 
-    # Simple linear regression: y = a + b*x
-    x_mean = (n - 1) / 2.0
-    y_mean = sum(values) / n
-    numerator = sum((i - x_mean) * (v - y_mean) for i, v in enumerate(values))
-    denominator = sum((i - x_mean) ** 2 for i in range(n))
+    x = np.arange(len(y)).reshape(-1, 1)
 
-    if denominator == 0:
+    model = HuberRegressor()
+    try:
+        model.fit(x, y)
+    except Exception:
+        # Fallback: all identical values or degenerate input
         return "stable"
 
-    slope = numerator / denominator
-
-    # R² calculation
-    ss_res = sum((v - (y_mean + slope * (i - x_mean))) ** 2 for i, v in enumerate(values))
-    ss_tot = sum((v - y_mean) ** 2 for v in values)
-    r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+    slope = float(model.coef_[0])
+    r_squared = float(model.score(x, y))
 
     if r_squared < 0.3:
         return "volatile"
 
-    # Check if slope is meaningful relative to the mean
+    y_mean = float(np.mean(y))
     if y_mean != 0 and abs(slope / y_mean) < 0.01:
         return "stable"
 
@@ -1900,8 +1960,15 @@ def _build_group_summary(
     Uses pandas for type-safe numeric coercion and descriptive statistics.
     pd.to_numeric with errors='coerce' handles mixed-type OBS_VALUE values
     from the API (strings, None, empty string) without raising exceptions.
-    Duplicate TIME_PERIOD rows (from un-filtered disaggregations) are resolved
-    by keeping the last observation per period after sorting.
+
+    TIME_PERIOD deduplication: indicators with multiple disaggregation dimensions
+    (e.g. IPC_IPC_PHASE with COMP_BREAKDOWN_2) can return several rows per period
+    when the caller has not fully specified all disaggregation filters.  The
+    .drop_duplicates(keep="last") call reduces these to one row per period so that
+    trend statistics are computed on a single time series rather than a mix of
+    disaggregated values.  A warning is emitted when rows are actually dropped so
+    the behaviour is observable; callers should pass disaggregation_filters to
+    narrow to a single series and suppress the warning.
     """
     df = pd.DataFrame(rows)
 
@@ -1919,13 +1986,23 @@ def _build_group_summary(
         df["TIME_PERIOD"] = ""
     df["TIME_PERIOD"] = df["TIME_PERIOD"].astype(str)
 
-    # Sort ascending, drop missing values, deduplicate periods (keep last)
+    # Sort ascending, drop missing values, deduplicate periods (keep last).
+    # See docstring for rationale on TIME_PERIOD deduplication.
+    df_sorted = df.sort_values("TIME_PERIOD").dropna(subset=["OBS_VALUE"])
+    n_before_dedup = len(df_sorted)
     df = (
-        df.sort_values("TIME_PERIOD")
-        .dropna(subset=["OBS_VALUE"])
+        df_sorted
         .drop_duplicates(subset=["TIME_PERIOD"], keep="last")
         .reset_index(drop=True)
     )
+    n_dropped = n_before_dedup - len(df)
+    if n_dropped > 0:
+        _logger.warning(
+            "_build_group_summary: dropped %d duplicate TIME_PERIOD row(s) for group %s. "
+            "Pass disaggregation_filters to narrow to a single series and avoid this.",
+            n_dropped,
+            group_key,
+        )
 
     if df.empty:
         return GroupSummary(group_key=group_key, count=0, claim_ids=claim_ids)
@@ -1948,6 +2025,10 @@ def _build_group_summary(
         f"{earliest_yr}-{latest_yr}" if earliest_yr != latest_yr else earliest_yr
     )
 
+    # Use .describe() for a single-pass computation of standard statistics.
+    # More efficient than 4 separate aggregation calls on the same series.
+    _desc = values_s.describe()
+
     return GroupSummary(
         group_key=group_key,
         count=len(df),
@@ -1955,10 +2036,10 @@ def _build_group_summary(
         latest_year=latest_yr,
         earliest_value=round(earliest_val, 4),
         earliest_year=earliest_yr,
-        min=round(float(values_s.min()), 4),
-        max=round(float(values_s.max()), 4),
-        mean=round(float(values_s.mean()), 4),
-        median=round(float(values_s.median()), 4),
+        min=round(float(_desc["min"]), 4),
+        max=round(float(_desc["max"]), 4),
+        mean=round(float(_desc["mean"]), 4),
+        median=round(float(_desc["50%"]), 4),
         total_change=round(total_change, 4),
         pct_change=pct_change,
         trend_direction=_compute_trend_direction(values_s.tolist()),

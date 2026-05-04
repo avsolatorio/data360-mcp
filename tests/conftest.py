@@ -40,3 +40,19 @@ def patch_data360_config(mock_data360_settings):
         ):
             with patch("data360.api.data360_config", mock_data360_settings):
                 yield mock_data360_settings
+
+
+@pytest.fixture(autouse=True)
+def clear_api_caches():
+    """Clear module-level TTL caches before each test.
+
+    The metadata and disaggregation caches in data360.api persist across tests
+    at module scope. Without this fixture, a test that mocks an HTTP response
+    and populates the cache will cause the next test (with a different mock) to
+    receive the cached value instead of hitting its own mock, producing false
+    results.
+    """
+    import data360.api as api_module  # noqa: PLC0415
+    api_module._metadata_cache.clear()
+    api_module._disaggregation_cache.clear()
+    yield
