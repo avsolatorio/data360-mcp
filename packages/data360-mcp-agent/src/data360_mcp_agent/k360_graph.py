@@ -239,7 +239,7 @@ def _is_context_dependent_query(text: str) -> bool:
     )
 
 
-def _error_payload(exc: BaseException) -> dict[str, Any]:
+def _error_payload(exc: Exception) -> dict[str, Any]:
     tb_lines = traceback.format_exception(type(exc), exc, exc.__traceback__)
     return {
         "error": f"{type(exc).__name__}: {exc}",
@@ -342,7 +342,7 @@ async def create_k360_graph(  # noqa: PLR0913
                 {"relevant": gate_result.relevant},
             )
             return {"gate": gate_result.model_dump()}
-        except BaseException as exc:
+        except Exception as exc:
             raise RuntimeError(f"[gate] {type(exc).__name__}: {exc}") from exc
 
     async def rewrite_node(state: K360State) -> K360State:
@@ -402,7 +402,7 @@ async def create_k360_graph(  # noqa: PLR0913
                 {"rewritten": rewrite_result.rewritten},
             )
             return {"rewrite": rewrite_result.model_dump()}
-        except BaseException as exc:
+        except Exception as exc:
             raise RuntimeError(f"[rewrite] {type(exc).__name__}: {exc}") from exc
 
     async def compile_node(state: K360State) -> K360State:
@@ -475,7 +475,7 @@ async def create_k360_graph(  # noqa: PLR0913
                 "compile_answer": collected.get("answer"),
                 "content_packet": packet,
             }
-        except BaseException as exc:
+        except Exception as exc:
             raise RuntimeError(f"[compile] {type(exc).__name__}: {exc}") from exc
 
     async def narrative_node(state: K360State) -> K360State:
@@ -525,7 +525,7 @@ async def create_k360_graph(  # noqa: PLR0913
                 {"narrative_length": len(narrative)},
             )
             return {"narrative": _normalize_narrative_sections(narrative)}
-        except BaseException as exc:
+        except Exception as exc:
             raise RuntimeError(f"[narrative] {type(exc).__name__}: {exc}") from exc
 
     graph = StateGraph(K360State)
@@ -574,7 +574,7 @@ async def run_k360_query(
                 "context": context or [],
             }
         )
-    except BaseException as exc:
+    except Exception as exc:
         logger.exception("K360 query failed")
         err = _error_payload(exc)
         return {
