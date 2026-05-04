@@ -17,7 +17,7 @@ For a longer **interactive REPL** with token tracking, use [`scripts/llm_mcp_dem
 | `DATA360_MCP_URL` | Yes | Full MCP URL, e.g. `http://127.0.0.1:8000/mcp` (must match the server port) |
 | `DATA360_MCP_TRANSPORT` | No | Default `streamable_http` (matches `poe serve` default). Use the transport your server advertises. |
 | `OPENAI_API_KEY` | Yes | For `ChatOpenAI` |
-| `DATA360_AGENT_MODEL` | No | Default `gpt-4o-mini` |
+| `DATA360_AGENT_MODEL` | No | Default `gpt-4.1-mini` |
 
 Set `DATA360_MCP_TRANSPORT` to match your server. The FastMCP app in this repo is mounted at `/mcp` (see `src/data360/server.py`). The interactive demo uses SSE in places; this minimal example uses **streamable HTTP** to match the default server.
 
