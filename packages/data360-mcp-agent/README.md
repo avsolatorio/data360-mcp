@@ -45,6 +45,11 @@ The MCP server publishes **`data360://agent-recipe`** — composition order, nam
 - **`fetch_mcp_prompt_messages(name, …)`** — fetch `gate_classifier`, `thematic_to_data`, etc., as LangChain messages when you want the **same wording** as the MCP server instead of only the gated node’s embedded prompts.
 
 Python constant: **`AGENT_RECIPE_URI`** (`data360://agent-recipe`).
+
+Additional environment variables:
+
+| Variable | Description |
+|----------|-------------|
 | `DATA360_MCP_TRANSPORT` | Default `streamable_http` |
 | `DATA360_MCP_STREAMABLE_TERMINATE_ON_CLOSE` | Optional `false` to skip MCP session DELETE on disconnect (rare) |
 | `OPENAI_API_KEY` | If using default `ChatOpenAI` (or inject your own `llm`) |
