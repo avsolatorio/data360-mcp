@@ -79,7 +79,8 @@ Do not answer with guesses. Do not stop after describing a plan.
 4) If you need raw data values for a **specific point lookup or small dataset** → call data360_get_data.
    - **CRITICAL**: pass disaggregation_filters={"REF_AREA": "..."} when the user asked for a geography.
    - Multiple countries: {"REF_AREA": "KEN,TZA"} in **one** call — not one call per country.
-   - Do not call get_data with no REF_AREA filter unless you intentionally want global/world aggregates.
+   - Unpinned REF_AREA (no country_code / no REF_AREA string) returns **all geographic series** from the Data API, including regional aggregates (EAS, EMU, …). For **member economies only**, pass ref_area_filter="member_economies_only".
+   - Do not call get_data with no REF_AREA filter unless you want that full mix—or use ref_area_filter to narrow it.
    - The response already includes indicator name/definition in many cases; you may not need a separate metadata call only for the title.
    - **PAGINATION**: get_data returns ONE page. When has_more=True, call again with next_offset.
      EXCEPTION: If the query involves 20+ countries (e.g. from data360_expand_country_group), do NOT
@@ -102,9 +103,11 @@ Do not answer with guesses. Do not stop after describing a plan.
    └───────────────────────────────────────────────────────────────────────┘
 
    ┌─ RANKING (large group / top-N)? ──────────────────────────────────────┐
-   │  "Top 10 countries by X" / "Which country has the highest/lowest?"    │
+   │  **Within a region or group:**                                         │
    │  → data360_rank_countries(country_group="SAS", top_n=10)              │
-   │  Returns ordered list with percentiles + excluded countries.          │
+   │  **Worldwide / all economies:** omit country_group and country_codes; │
+   │  → data360_rank_countries(..., rank_universe="all_member_economies")  │
+   │  Returns ordered list + universe metadata; aggregates excluded.       │
    │  For expanded groups (SSF=48, HIC=83), this handles all pagination.  │
    └───────────────────────────────────────────────────────────────────────┘
 

@@ -922,6 +922,44 @@ class TestGetDataResilience:
         assert "REF_AREA=KEN%2CMAR" in captured_urls[0] or "REF_AREA=KEN,MAR" in captured_urls[0]
         assert result.data is not None
 
+    @pytest.mark.asyncio
+    async def test_get_data_ref_area_filter_drops_aggregates_when_unpinned(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """member_economies_only removes regional aggregate rows from an unpinned REF_AREA page."""
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/disaggregation.*"),
+            json=[],
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=re.compile(r".*/data\?.*"),
+            json={
+                "value": [
+                    {"REF_AREA": "EAS", "TIME_PERIOD": "2020", "OBS_VALUE": 1e9},
+                    {"REF_AREA": "KEN", "TIME_PERIOD": "2020", "OBS_VALUE": 5000},
+                ]
+            },
+        )
+
+        result = await get_data(
+            "WB_WDI",
+            "WB_WDI_SP_POP_TOTL",
+            ref_area_filter="member_economies_only",
+        )
+
+        assert result.error is None
+        assert result.data is not None
+        areas = {r["REF_AREA"] for r in result.data}
+        assert "EAS" not in areas
+        assert "KEN" in areas
+
 
 class TestDatabaseNameInSearch:
     """Tests that search results carry the correct database_name for each indicator."""
