@@ -74,7 +74,7 @@ Same contract as React: **`[onDownload]`** and **`[onExport]`** accept callbacks
 
 | Package | Notes |
 |--------|--------|
-| `@angular/core`, `@angular/common` | 18.x–20.x (see `package.json` peer range) |
+| `@angular/core`, `@angular/common` | **17.0.0**–20.x (see `package.json` peer range `>=17.0.0 <21.0.0`) |
 | `@data360/mcp-viz-core` | Same major/minor as this package |
 | `rxjs` | ^7.5 |
 | `vega`, `vega-lite`, `vega-embed` | Same as React viz card |
@@ -89,6 +89,19 @@ npm run build
 ```
 
 Output is written to `dist/` (FESM bundles and typings for publishing).
+
+### Publishing to npm
+
+The published tarball is the **package root** plus the **`dist/`** tree only (`files` in `package.json`). Entry points use **`./dist/...`** (`module`, `typings`, and `exports`).
+
+From the monorepo root (after `npm login`):
+
+```bash
+npm pack -w @data360/mcp-ui-angular --dry-run   # optional: inspect tarball
+npm publish -w @data360/mcp-ui-angular --access public
+```
+
+`prepublishOnly` runs **`npm run build`** so `dist/` is fresh before publish.
 
 ### Live demo app
 

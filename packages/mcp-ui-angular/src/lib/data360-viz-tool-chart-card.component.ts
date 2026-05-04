@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectorRef,
   Component,
@@ -16,16 +17,32 @@ import {
 import type { VLSpec } from "@data360/mcp-viz-core";
 import { Data360VegaChartCardComponent } from "./data360-vega-chart-card.component";
 
+/**
+ * Argument to {@link Data360VizToolChartCardComponent.onChartReady} — aligned with React
+ * `Data360ChartFromVizToolProps.onChartReady`.
+ */
+export interface Data360VizToolChartCardReadyInfo {
+  spec: Record<string, unknown>;
+  title: string;
+  specJson: string;
+  /** From Vega-Lite `title.subtitle` when present. */
+  subtitleFromSpec?: string;
+}
+
 @Component({
   selector: "data360-viz-tool-chart-card",
   standalone: true,
-  imports: [Data360VegaChartCardComponent],
+  imports: [Data360VegaChartCardComponent, NgTemplateOutlet],
   template: `
     @if (loadError) {
       <div class="d360-viz-tool-err">{{ loadError }}</div>
     } @else if (hasChartUrl()) {
       @if (isLoading || spec === null) {
-        <div class="d360-viz-tool-loading">Loading chart…</div>
+        @if (loadingFallback) {
+          <ng-container [ngTemplateOutlet]="loadingFallback"></ng-container>
+        } @else {
+          <div class="d360-viz-tool-loading">Loading chart…</div>
+        }
       } @else {
         <data360-vega-chart-card
           [spec]="spec"
@@ -75,6 +92,17 @@ export class Data360VizToolChartCardComponent
   @Input() className = "";
   @Input() railTopSlot: TemplateRef<unknown> | null = null;
 
+  /**
+   * Shown while the chart JSON is loading (same role as React `loadingFallback`).
+   * Use an `ng-template` and bind `[loadingFallback]="tpl"`.
+   */
+  @Input() loadingFallback: TemplateRef<unknown> | null = null;
+
+  /**
+   * Called after JSON is fetched and normalized (same contract as React `onChartReady`).
+   */
+  @Input() onChartReady?: (info: Data360VizToolChartCardReadyInfo) => void;
+
   spec: VLSpec | null = null;
   title = "Chart";
   subtitle: string | undefined;
@@ -87,7 +115,11 @@ export class Data360VizToolChartCardComponent
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["toolResult"] || changes["mapUrlForFetch"]) {
+    if (
+      changes["toolResult"] ||
+      changes["mapUrlForFetch"] ||
+      changes["onChartReady"]
+    ) {
       void this.load();
     }
   }
@@ -143,6 +175,12 @@ export class Data360VizToolChartCardComponent
       this.subtitle =
         normalized.subtitle ?? formatData360VizSubtitleLine(tr);
       this.loadError = null;
+      this.onChartReady?.({
+        spec: normalized.spec as Record<string, unknown>,
+        title: normalized.title,
+        specJson: JSON.stringify(normalized.spec),
+        subtitleFromSpec: normalized.subtitle,
+      });
     } catch (e: unknown) {
       if (requestId !== this.loadRequestId) {
         return;
