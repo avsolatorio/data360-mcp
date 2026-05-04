@@ -1,5 +1,10 @@
 import React, { type CSSProperties, useMemo, useState } from "react";
 import ReactDOM from "react-dom/client";
+import type { Schema } from "hast-util-sanitize";
+import ReactMarkdown, { type Components } from "react-markdown";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
+import type { PluggableList } from "unified";
 
 import type { VLSpec } from "@data360/mcp-viz-core";
 import { VegaChartCard } from "../viz-card";
@@ -233,6 +238,106 @@ function extractVizMeta(toolCalls: ToolCall[]): VizCardMeta {
   return {};
 }
 
+/** Legacy demo: these list lines were rendered as subheadings. */
+function preprocessK360NarrativeMarkdown(md: string): string {
+  return md.replace(
+    /^[ \t]*- (\*\*(?:Data|Analysis|Note|Sources):\*\*)(.*)$/gm,
+    "### $1$2",
+  );
+}
+
+const REHYPE_SANITIZE_SCHEMA: Schema = {
+  ...defaultSchema,
+  attributes: {
+    ...defaultSchema.attributes,
+    a: [...(defaultSchema.attributes?.a ?? []), "target", "rel"],
+  },
+};
+
+const REMARK_PLUGINS = [remarkGfm];
+/** Tuple form so unified calls `use(rehypeSanitize, schema)` (not a bare transform). */
+const REHYPE_PLUGINS: PluggableList = [[rehypeSanitize, REHYPE_SANITIZE_SCHEMA]];
+
+const TABLE_BORDER = "1px solid #d9e0ea";
+
+const RESPONSE_MARKDOWN_COMPONENTS: Components = {
+  h1: ({ style, ...props }) => (
+    <h1
+      {...props}
+      style={{ margin: "10px 0 6px", fontSize: 22, ...style }}
+    />
+  ),
+  h2: ({ style, ...props }) => (
+    <h2
+      {...props}
+      style={{ margin: "10px 0 6px", fontSize: 20, ...style }}
+    />
+  ),
+  h3: ({ style, ...props }) => (
+    <h3
+      {...props}
+      style={{ margin: "8px 0 4px", fontSize: 16, ...style }}
+    />
+  ),
+  p: ({ style, ...props }) => (
+    <p {...props} style={{ margin: "6px 0", ...style }} />
+  ),
+  ul: ({ style, ...props }) => (
+    <ul {...props} style={{ margin: "6px 0", paddingLeft: 22, ...style }} />
+  ),
+  ol: ({ style, ...props }) => (
+    <ol {...props} style={{ margin: "6px 0", paddingLeft: 22, ...style }} />
+  ),
+  li: ({ style, ...props }) => (
+    <li {...props} style={{ margin: "2px 0", ...style }} />
+  ),
+  a: ({ style, ...props }) => (
+    <a
+      {...props}
+      rel="noopener noreferrer"
+      style={{ color: "#1d4ed8", ...style }}
+      target="_blank"
+    />
+  ),
+  table: ({ style, ...props }) => (
+    <div style={{ overflowX: "auto", margin: "10px 0" }}>
+      <table
+        {...props}
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          fontSize: 13,
+          ...style,
+        }}
+      />
+    </div>
+  ),
+  th: ({ style, ...props }) => (
+    <th
+      {...props}
+      style={{
+        border: TABLE_BORDER,
+        background: "#f8fbff",
+        textAlign: "left",
+        padding: "6px 8px",
+        fontWeight: 700,
+        ...style,
+      }}
+    />
+  ),
+  td: ({ style, ...props }) => (
+    <td
+      {...props}
+      style={{
+        border: TABLE_BORDER,
+        padding: "6px 8px",
+        verticalAlign: "top",
+        ...style,
+      }}
+    />
+  ),
+};
+
 function extractSubtitleFromSpec(spec: VLSpec): string | undefined {
   const rawTitle = spec.title;
   if (!rawTitle || typeof rawTitle === "string") {
@@ -255,159 +360,21 @@ function extractSubtitleFromSpec(spec: VLSpec): string | undefined {
 }
 
 function ResponseMarkdown({ content }: { content: string }) {
-  const html = useMemo(() => {
-    const escapeHtml = (text: string) =>
-      text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-    const fmtInline = (text: string) =>
-      escapeHtml(text)
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/\*(.*?)\*/g, "<em>$1</em>")
-        .replace(
-          /\[(.*?)\]\((.*?)\)/g,
-          '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#1d4ed8">$1</a>',
-        );
-
-    const lines = content.split("\n");
-    const out: string[] = [];
-    let inList = false;
-    let inTable = false;
-
-    const closeList = () => {
-      if (inList) {
-        out.push("</ul>");
-        inList = false;
-      }
-    };
-
-    const closeTable = () => {
-      if (inTable) {
-        out.push("</tbody></table></div>");
-        inTable = false;
-      }
-    };
-
-    const parseTableCells = (line: string) =>
-      line
-        .trim()
-        .replace(/^\|/, "")
-        .replace(/\|$/, "")
-        .split("|")
-        .map((cell) => cell.trim());
-
-    const isTableDivider = (line: string) => /^\|?(\s*:?-{3,}:?\s*\|)+\s*$/.test(line.trim());
-
-    let index = 0;
-    while (index < lines.length) {
-      const rawLine = lines[index] ?? "";
-      const line = rawLine.trim();
-
-      if (!line) {
-        closeList();
-        closeTable();
-        out.push("<p>&nbsp;</p>");
-        index += 1;
-        continue;
-      }
-
-      if (line.includes("|") && index + 1 < lines.length && isTableDivider(lines[index + 1] ?? "")) {
-        closeList();
-        closeTable();
-        const headerCells = parseTableCells(line);
-        out.push(
-          '<div style="overflow-x:auto;margin:10px 0;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr>',
-        );
-        for (const cell of headerCells) {
-          out.push(
-            `<th style="border:1px solid #d9e0ea;background:#f8fbff;text-align:left;padding:6px 8px;font-weight:700;">${fmtInline(cell)}</th>`,
-          );
-        }
-        out.push("</tr></thead><tbody>");
-        inTable = true;
-        index += 2;
-
-        while (index < lines.length) {
-          const rowRaw = (lines[index] ?? "").trim();
-          if (!rowRaw || !rowRaw.includes("|")) {
-            break;
-          }
-          const rowCells = parseTableCells(rowRaw);
-          out.push("<tr>");
-          for (const cell of rowCells) {
-            out.push(
-              `<td style="border:1px solid #d9e0ea;padding:6px 8px;vertical-align:top;">${fmtInline(cell)}</td>`,
-            );
-          }
-          out.push("</tr>");
-          index += 1;
-        }
-        continue;
-      }
-
-      const safe = fmtInline(line);
-      if (safe.startsWith("### ")) {
-        closeList();
-        closeTable();
-        out.push(`<h3 style="margin:8px 0 4px;font-size:16px;">${safe.slice(4)}</h3>`);
-        index += 1;
-        continue;
-      }
-      if (safe.startsWith("## ")) {
-        closeList();
-        closeTable();
-        out.push(`<h2 style="margin:10px 0 6px;font-size:20px;">${safe.slice(3)}</h2>`);
-        index += 1;
-        continue;
-      }
-      if (safe.startsWith("# ")) {
-        closeList();
-        closeTable();
-        out.push(`<h1 style="margin:10px 0 6px;font-size:22px;">${safe.slice(2)}</h1>`);
-        index += 1;
-        continue;
-      }
-      if (
-        safe.startsWith("- <strong>Data:</strong>") ||
-        safe.startsWith("- <strong>Analysis:</strong>") ||
-        safe.startsWith("- <strong>Note:</strong>") ||
-        safe.startsWith("- <strong>Sources:</strong>")
-      ) {
-        closeList();
-        closeTable();
-        out.push(`<h3 style="margin:8px 0 4px;font-size:16px;">${safe.slice(2)}</h3>`);
-        index += 1;
-        continue;
-      }
-      if (safe.startsWith("- ")) {
-        closeTable();
-        if (!inList) {
-          out.push("<ul style='margin:6px 0;padding-left:22px;'>");
-          inList = true;
-        }
-        out.push(`<li style="margin:2px 0;">${safe.slice(2)}</li>`);
-        index += 1;
-        continue;
-      }
-
-      closeList();
-      closeTable();
-      out.push(`<p style="margin:6px 0;">${safe}</p>`);
-      index += 1;
-    }
-
-    closeList();
-    closeTable();
-    return out.join("");
-  }, [content]);
+  const markdown = useMemo(
+    () => preprocessK360NarrativeMarkdown(content),
+    [content],
+  );
 
   return (
-    <div
-      style={{ lineHeight: 1.6, color: "#183047" }}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <div style={{ lineHeight: 1.6, color: "#183047" }}>
+      <ReactMarkdown
+        components={RESPONSE_MARKDOWN_COMPONENTS}
+        rehypePlugins={REHYPE_PLUGINS}
+        remarkPlugins={REMARK_PLUGINS}
+      >
+        {markdown}
+      </ReactMarkdown>
+    </div>
   );
 }
 
