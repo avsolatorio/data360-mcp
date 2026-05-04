@@ -66,6 +66,22 @@ def _json_safe_text(value: Any) -> str:
         return json.dumps(str(value), ensure_ascii=True)
 
 
+def _accumulate_geo_codes(geographies: set[str], value: Any) -> None:
+    """Add geography codes from a tool arg (comma/semicolon-separated string or list of strings)."""
+    if isinstance(value, str):
+        for part in re.split(r"[,;]", value):
+            c = part.strip()
+            if c:
+                geographies.add(c)
+    elif isinstance(value, list):
+        for item in value:
+            if isinstance(item, str):
+                for part in re.split(r"[,;]", item):
+                    c = part.strip()
+                    if c:
+                        geographies.add(c)
+
+
 def _content_packet_from_tool_calls(
     query: str,
     rewrite: Data360ReformulationResult | None,
@@ -102,12 +118,8 @@ def _content_packet_from_tool_calls(
 
         filters = tool_args.get("disaggregation_filters")
         if isinstance(filters, dict):
-            ref_area = filters.get("REF_AREA")
-            if isinstance(ref_area, str):
-                for code in ref_area.split(","):
-                    c = code.strip()
-                    if c:
-                        geographies.add(c)
+            _accumulate_geo_codes(geographies, filters.get("REF_AREA"))
+        _accumulate_geo_codes(geographies, tool_args.get("country_code"))
 
         start_year = tool_args.get("start_year")
         end_year = tool_args.get("end_year")

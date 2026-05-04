@@ -64,3 +64,40 @@ async def test_run_k360_query_returns_full_envelope_for_relevant(monkeypatch):
     assert out["tool_calls"][0]["tool_name"] == "data360_get_viz_spec"
     assert out["content_packet"]["query_focus"] == "GDP per capita Kenya latest"
     assert out["narrative"].startswith("**Data:**")
+
+
+def test_content_packet_geographies_from_country_code():
+    packet = k360_graph._content_packet_from_tool_calls(
+        "GDP Kenya",
+        None,
+        [
+            {
+                "tool_name": "data360_get_viz_spec",
+                "tool_args": {
+                    "database_id": "WB_WDI",
+                    "indicator_id": "WB_WDI_NY_GDP_PCAP_KD",
+                    "country_code": "KEN,TZA",
+                },
+            }
+        ],
+    )
+    assert packet["geographies"] == ["KEN", "TZA"]
+
+
+def test_content_packet_geographies_ref_area_list_and_semicolon_country_code():
+    packet = k360_graph._content_packet_from_tool_calls(
+        "q",
+        None,
+        [
+            {
+                "tool_name": "data360_get_data",
+                "tool_args": {
+                    "database_id": "WB_WDI",
+                    "indicator_id": "X",
+                    "disaggregation_filters": {"REF_AREA": ["KEN", "MAR"]},
+                    "country_code": "UGA;GHA",
+                },
+            }
+        ],
+    )
+    assert set(packet["geographies"]) == {"GHA", "KEN", "MAR", "UGA"}
