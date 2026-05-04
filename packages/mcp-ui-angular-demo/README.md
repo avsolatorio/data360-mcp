@@ -11,7 +11,7 @@ npm run build:libs
 npm install
 ```
 
-`build:libs` compiles `@data360/mcp-viz-core` and `@data360/mcp-ui-angular` (output consumed from `../mcp-ui-angular/dist`). Run **`build:libs` again** after you change the library source.
+`build:libs` compiles `@data360/mcp-viz-core` and `@data360/mcp-ui-angular` (the demo depends on `@data360/mcp-ui-angular` via the monorepo workspace so it shares the same `@angular/core` as the app; run **`build:libs` again** after you change the library source so `packages/mcp-ui-angular/dist` is up to date).
 
 ## Run the demo
 

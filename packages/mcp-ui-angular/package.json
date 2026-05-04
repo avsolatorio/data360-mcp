@@ -1,20 +1,31 @@
 {
   "name": "@data360/mcp-ui-angular",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Angular components for presenting Data360 MCP tool output (Vega-Lite chart card).",
   "type": "module",
+  "module": "./dist/fesm2022/data360-mcp-ui-angular.mjs",
+  "typings": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/fesm2022/data360-mcp-ui-angular.mjs",
+      "default": "./dist/fesm2022/data360-mcp-ui-angular.mjs"
+    }
+  },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
-    "build": "ng-packagr -p ng-package.json"
+    "build": "ng-packagr -p ng-package.json",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "html-to-image": "^1.11.13"
   },
   "peerDependencies": {
-    "@angular/common": ">=18.0.0 <21.0.0",
-    "@angular/core": ">=18.0.0 <21.0.0",
+    "@angular/common": ">=17.0.0 <21.0.0",
+    "@angular/core": ">=17.0.0 <21.0.0",
     "@data360/chart-payload-normalize": "0.0.1",
     "@data360/mcp-viz-core": "0.0.2",
     "@data360/tool-types": "0.0.4",
@@ -27,10 +38,10 @@
     "@data360/chart-payload-normalize": "0.0.1",
     "@data360/mcp-viz-core": "0.0.2",
     "@data360/tool-types": "0.0.4",
-    "@angular/common": "^18.2.13",
-    "@angular/compiler": "^18.2.13",
-    "@angular/compiler-cli": "^18.2.13",
-    "@angular/core": "^18.2.13",
+    "@angular/common": "^18.2.14",
+    "@angular/compiler": "^18.2.14",
+    "@angular/compiler-cli": "^18.2.14",
+    "@angular/core": "^18.2.14",
     "ng-packagr": "^18.2.1",
     "rxjs": "^7.8.1",
     "typescript": "~5.5.4",
@@ -47,8 +58,7 @@
   ],
   "license": "MIT",
   "publishConfig": {
-    "access": "public",
-    "directory": "dist"
+    "access": "public"
   },
   "repository": {
     "type": "git",
