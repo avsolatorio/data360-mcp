@@ -18,6 +18,8 @@ dependencies = [
   "opencensus-ext-azure>=1.1.13",
   "azure-monitor-opentelemetry>=1.6.0",
   "pandas>=3.0.0",
+  "cachetools>=6.2.4",
+  "scikit-learn>=1.8.0",
 ]
 
 [project.optional-dependencies]
