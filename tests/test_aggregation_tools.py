@@ -16,6 +16,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from data360.api import (
+    _auto_detect_disagg_dimensions,
     _build_group_summary,
     _compute_trend_direction,
     _fetch_all_pages,
@@ -465,10 +466,237 @@ class TestSummarizeData:
         # Two groups: (KEN, M) and (KEN, F)
         assert len(result.groups) == 2
 
+    # -----------------------------------------------------------------------
+    # Auto-detection of disaggregation dimensions
+    # -----------------------------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_auto_expands_sex_when_not_in_group_by(self):
+        """When SEX has M/F/_T and group_by doesn't include sex, it is auto-added."""
+        rows_expanded = [
+            {**_make_row("KEN", "2020", 100.0), "SEX": "_T", "UNIT_MEASURE": "PT"},
+            {**_make_row("KEN", "2020", 60.0),  "SEX": "M",  "UNIT_MEASURE": "PT"},
+            {**_make_row("KEN", "2020", 40.0),  "SEX": "F",  "UNIT_MEASURE": "PT"},
+        ]
+        full_page = _make_data_page(rows_expanded, has_more=False)
+
+        async def fake_disagg(**kwargs):
+            return {
+                "dimensions": [
+                    {"field_name": "SEX",          "field_value": ["_T", "M", "F"]},
+                    {"field_name": "UNIT_MEASURE", "field_value": ["PT"]},
+                ]
+            }
+
+        async def fake_fetch_all(**kwargs):
+            # Verify that SEX filter was set to None (fetch all) by the caller.
+            filters = kwargs.get("disaggregation_filters") or {}
+            assert filters.get("SEX") is None, "SEX must be expanded (set to None)"
+            assert filters.get("UNIT_MEASURE") == "PT"
+            return full_page
+
+        with (
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+        ):
+            result = await summarize_data(
+                "WB_HCP", "WB_HCP_UNE_2EAP_MF_A",
+                country_code="KEN",
+                group_by=["time_period"],
+            )
+
+        assert result.error is None
+        # sex should appear in ambiguous_dimensions
+        assert result.ambiguous_dimensions is not None
+        assert "sex" in result.ambiguous_dimensions
+        # Three groups: one per SEX value
+        assert len(result.groups) == 3
+        sex_values = {g.group_key.get("sex") for g in result.groups}
+        assert sex_values == {"_T", "M", "F"}
+
+    @pytest.mark.asyncio
+    async def test_caller_sex_filter_suppresses_auto_expansion(self):
+        """Caller-specified SEX filter must not be overwritten by auto-detection."""
+        rows_female = [
+            {**_make_row("KEN", "2020", 40.0), "SEX": "F", "UNIT_MEASURE": "PT"},
+        ]
+        full_page = _make_data_page(rows_female, has_more=False)
+
+        async def fake_disagg(**kwargs):
+            return {
+                "dimensions": [
+                    {"field_name": "SEX",          "field_value": ["_T", "M", "F"]},
+                    {"field_name": "UNIT_MEASURE", "field_value": ["PT"]},
+                ]
+            }
+
+        async def fake_fetch_all(**kwargs):
+            filters = kwargs.get("disaggregation_filters") or {}
+            # Caller pinned SEX to F — must not be changed to None.
+            assert filters.get("SEX") == "F", "Caller SEX filter must be preserved"
+            return full_page
+
+        with (
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+        ):
+            result = await summarize_data(
+                "WB_HCP", "WB_HCP_UNE_2EAP_MF_A",
+                country_code="KEN",
+                disaggregation_filters={"SEX": "F"},
+                group_by=["time_period"],
+            )
+
+        assert result.error is None
+        # No auto-expansion occurred — ambiguous_dimensions should be None or empty.
+        assert not result.ambiguous_dimensions
+
+    @pytest.mark.asyncio
+    async def test_auto_expands_multiple_non_trivial_dims(self):
+        """Both SEX and AGE are auto-expanded when both are non-trivial."""
+        rows = [
+            {**_make_row("KEN", "2020", 10.0), "SEX": "M", "AGE": "Y15T64", "UNIT_MEASURE": "PT"},
+            {**_make_row("KEN", "2020", 12.0), "SEX": "F", "AGE": "Y15T64", "UNIT_MEASURE": "PT"},
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_disagg(**kwargs):
+            return {
+                "dimensions": [
+                    {"field_name": "SEX",          "field_value": ["_T", "M", "F"]},
+                    {"field_name": "AGE",          "field_value": ["_T", "Y15T64"]},
+                    {"field_name": "UNIT_MEASURE", "field_value": ["PT"]},
+                ]
+            }
+
+        async def fake_fetch_all(**kwargs):
+            filters = kwargs.get("disaggregation_filters") or {}
+            assert filters.get("SEX") is None
+            assert filters.get("AGE") is None
+            return full_page
+
+        with (
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+        ):
+            result = await summarize_data("WB_WDI", "IND_ID", country_code="KEN")
+
+        assert result.error is None
+        expanded = set(result.ambiguous_dimensions or [])
+        assert "sex" in expanded
+        assert "age" in expanded
+
+    @pytest.mark.asyncio
+    async def test_trivial_sex_not_expanded(self):
+        """When SEX only has _T (no real breakdown), it must NOT be auto-expanded."""
+        rows = [
+            {**_make_row("KEN", "2020", 100.0), "SEX": "_T", "UNIT_MEASURE": "PT"},
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_disagg(**kwargs):
+            return {
+                "dimensions": [
+                    {"field_name": "SEX",          "field_value": ["_T"]},
+                    {"field_name": "UNIT_MEASURE", "field_value": ["PT"]},
+                ]
+            }
+
+        async def fake_fetch_all(**kwargs):
+            filters = kwargs.get("disaggregation_filters") or {}
+            # SEX should NOT appear with None value when only _T exists.
+            assert "SEX" not in filters or filters["SEX"] != None  # noqa: E711
+            return full_page
+
+        with (
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+        ):
+            result = await summarize_data("WB_WDI", "IND_ID", country_code="KEN")
+
+        assert result.error is None
+        assert not result.ambiguous_dimensions
+
 
 # ---------------------------------------------------------------------------
 # compare_countries
 # ---------------------------------------------------------------------------
+
+
+class TestAutoDetectDisaggDimensions:
+    """Unit tests for the _auto_detect_disagg_dimensions helper."""
+
+    @pytest.mark.asyncio
+    async def test_pins_sex_to_total_for_rank_path(self):
+        """expand_non_trivial=False must pin SEX to _T when available."""
+        async def fake_disagg(**kwargs):
+            return {
+                "dimensions": [
+                    {"field_name": "SEX",          "field_value": ["_T", "M", "F"]},
+                    {"field_name": "UNIT_MEASURE", "field_value": ["PT"]},
+                ]
+            }
+
+        with patch("data360.api.get_disaggregation", side_effect=fake_disagg):
+            filters, expanded = await _auto_detect_disagg_dimensions(
+                "WB_HCP", "IND", "KEN", {}, expand_non_trivial=False
+            )
+
+        assert filters["SEX"] == "_T"
+        assert filters["UNIT_MEASURE"] == "PT"
+        assert expanded == []  # no expansion in rank mode
+
+    @pytest.mark.asyncio
+    async def test_expands_sex_to_none_for_summarize_path(self):
+        """expand_non_trivial=True must set SEX to None and report it expanded."""
+        async def fake_disagg(**kwargs):
+            return {
+                "dimensions": [
+                    {"field_name": "SEX",          "field_value": ["_T", "M", "F"]},
+                    {"field_name": "UNIT_MEASURE", "field_value": ["PT"]},
+                ]
+            }
+
+        with patch("data360.api.get_disaggregation", side_effect=fake_disagg):
+            filters, expanded = await _auto_detect_disagg_dimensions(
+                "WB_HCP", "IND", "KEN", {}, expand_non_trivial=True
+            )
+
+        assert filters["SEX"] is None
+        assert filters["UNIT_MEASURE"] == "PT"
+        assert "sex" in expanded
+
+    @pytest.mark.asyncio
+    async def test_caller_filter_takes_precedence(self):
+        """An existing filter must not be overwritten regardless of mode."""
+        async def fake_disagg(**kwargs):
+            return {
+                "dimensions": [
+                    {"field_name": "SEX", "field_value": ["_T", "M", "F"]},
+                ]
+            }
+
+        with patch("data360.api.get_disaggregation", side_effect=fake_disagg):
+            filters, expanded = await _auto_detect_disagg_dimensions(
+                "WB_HCP", "IND", "KEN", {"SEX": "F"}, expand_non_trivial=True
+            )
+
+        assert filters["SEX"] == "F"  # caller's choice preserved
+        assert expanded == []
+
+    @pytest.mark.asyncio
+    async def test_disagg_error_returns_existing_filters_unchanged(self):
+        """A disaggregation API error must be silently swallowed."""
+        async def fake_disagg(**kwargs):
+            return {"error": "upstream unavailable"}
+
+        with patch("data360.api.get_disaggregation", side_effect=fake_disagg):
+            filters, expanded = await _auto_detect_disagg_dimensions(
+                "WB_HCP", "IND", "KEN", {"UNIT_MEASURE": "PT"}, expand_non_trivial=True
+            )
+
+        assert filters == {"UNIT_MEASURE": "PT"}  # unchanged
+        assert expanded == []
 
 
 class TestCompareCountries:
