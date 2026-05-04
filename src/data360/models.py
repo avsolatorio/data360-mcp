@@ -341,7 +341,6 @@ class IndicatorDataResponse(MCPPagedResponse):
     )
 
 
-
 # ---------------------------------------------------------------------------
 # Data Aggregation Tool Models (Tier 1 — full implementation)
 # ---------------------------------------------------------------------------
@@ -356,16 +355,10 @@ class GroupSummary(BaseModel):
         '(e.g. {"ref_area": "KEN"} or {"ref_area": "KEN", "sex": "F"})',
     )
     count: int = Field(..., description="Number of observations in this group")
-    latest_value: float | None = Field(
-        None, description="Most recent obs_value"
-    )
+    latest_value: float | None = Field(None, description="Most recent obs_value")
     latest_year: str | None = Field(None, description="Year of latest_value")
-    earliest_value: float | None = Field(
-        None, description="Oldest obs_value in range"
-    )
-    earliest_year: str | None = Field(
-        None, description="Year of earliest_value"
-    )
+    earliest_value: float | None = Field(None, description="Oldest obs_value in range")
+    earliest_year: str | None = Field(None, description="Year of earliest_value")
     min: float | None = Field(None, description="Minimum obs_value")
     max: float | None = Field(None, description="Maximum obs_value")
     mean: float | None = Field(None, description="Arithmetic mean of obs_values")
@@ -448,9 +441,7 @@ class ExcludedCountry(BaseModel):
 class RankingResponse(BaseModel):
     """Response model for data360_rank_countries."""
 
-    year: str | None = Field(
-        None, description="The year used for ranking"
-    )
+    year: str | None = Field(None, description="The year used for ranking")
     year_selection_note: str | None = Field(
         None,
         description="Explains how the ranking year was chosen. "
@@ -460,11 +451,22 @@ class RankingResponse(BaseModel):
     order: str = Field(
         "desc", description="'desc' (highest first) or 'asc' (lowest first)"
     )
-    total_with_data: int = Field(
-        0, description="Number of countries that had data"
+    total_with_data: int = Field(0, description="Number of countries that had data")
+    total_requested: int = Field(0, description="Number of countries attempted")
+    universe: str | None = Field(
+        None,
+        description=(
+            "'explicit' when country_group or country_codes was used; "
+            "'all_member_economies' when ranking used full geographic fetch with "
+            "member-economy row filtering."
+        ),
     )
-    total_requested: int = Field(
-        0, description="Number of countries attempted"
+    universe_size: int | None = Field(
+        None,
+        description=(
+            "For explicit scope: same as total_requested. For all_member_economies: "
+            "count of known FMR leaf economies in the ranking universe."
+        ),
     )
     rankings: list[RankedCountry] = Field(
         default_factory=list, description="Ranked list of countries"
@@ -472,9 +474,7 @@ class RankingResponse(BaseModel):
     excluded: list[ExcludedCountry] = Field(
         default_factory=list, description="Countries with no data for ranking year"
     )
-    metadata: dict[str, Any] | None = Field(
-        None, description="Indicator metadata"
-    )
+    metadata: dict[str, Any] | None = Field(None, description="Indicator metadata")
     unit_measure: str | None = Field(None, description="Unit of measurement")
     error: str | None = Field(None, description="Error message if request failed")
 
@@ -522,7 +522,8 @@ class CountryComparisonResponse(BaseModel):
         None, description="Single-year ranked comparison"
     )
     time_series: ComparisonTimeSeries | None = Field(
-        None, description="Aligned time-series comparison (when include_time_series=True)"
+        None,
+        description="Aligned time-series comparison (when include_time_series=True)",
     )
     metadata: dict[str, Any] | None = Field(None, description="Indicator metadata")
     unit_measure: str | None = Field(None, description="Unit of measurement")
@@ -545,9 +546,7 @@ class DerivedDataResponse(BaseModel):
     data: list[dict[str, Any]] = Field(
         default_factory=list, description="Computed values"
     )
-    summary: str | None = Field(
-        None, description="Human-readable one-line summary"
-    )
+    summary: str | None = Field(None, description="Human-readable one-line summary")
     metadata: dict[str, Any] | None = Field(None, description="Indicator metadata")
     unit_measure: str | None = Field(None, description="Original unit")
     derived_unit: str | None = Field(
@@ -563,9 +562,7 @@ class PivotTableResponse(BaseModel):
     organized as a structured table with row/column dimensions.
     """
 
-    table: list[dict[str, Any]] = Field(
-        default_factory=list, description="Table rows"
-    )
+    table: list[dict[str, Any]] = Field(default_factory=list, description="Table rows")
     column_metadata: list[dict[str, Any]] = Field(
         default_factory=list, description="Per-column metadata"
     )

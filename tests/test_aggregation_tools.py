@@ -11,7 +11,7 @@ Covers the functionality gaps identified in the code review:
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -287,6 +287,93 @@ class TestRankCountriesTieHandling:
         result = await rank_countries("WB_WDI", "IND_ID")
         assert result.error is not None
         assert "No countries specified" in result.error
+        assert "rank_universe" in result.error
+
+    @pytest.mark.asyncio
+    async def test_all_member_economies_filters_aggregate_rows(self):
+        """Global ranking: unpinned fetch includes aggregates; is_country keeps leaf rows."""
+        rows = [
+            _make_row("EAS", "2022", 999999.0),
+            _make_row("KEN", "2022", 50.0),
+            _make_row("NGA", "2022", 200.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            assert kwargs.get("country_code") is None
+            return full_page
+
+        async def fake_resolve(codes):
+            return {c: c for c in codes}
+
+        async def fake_disagg(**kwargs):
+            return {"dimensions": []}
+
+        mock_ghm = MagicMock()
+        mock_ghm.list_rankable_country_codes.return_value = ["KEN", "NGA", "BRA"]
+        mock_ghm.is_country.side_effect = lambda code: code in ("KEN", "NGA", "BRA")
+        mock_ghm.is_group.return_value = False
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+            patch(
+                "data360.providers.get_group_hierarchy_manager",
+                return_value=mock_ghm,
+            ),
+        ):
+            result = await rank_countries(
+                "WB_WDI",
+                "IND_ID",
+                rank_universe="all_member_economies",
+                order="desc",
+                top_n=5,
+            )
+
+        assert result.error is None
+        assert result.universe == "all_member_economies"
+        assert result.universe_size == 3
+        assert len(result.rankings) == 2
+        assert result.rankings[0].ref_area == "NGA"
+        assert result.rankings[1].ref_area == "KEN"
+        assert len(result.excluded) == 1
+        assert result.excluded[0].ref_area == "BRA"
+
+    @pytest.mark.asyncio
+    async def test_rank_skips_string_null_obs_value(self):
+        """API may send OBS_VALUE as the string 'null'; ranking must not crash."""
+        rows = [
+            {**_make_row("KEN", "2022", 0.0), "OBS_VALUE": "null"},
+            _make_row("NGA", "2022", 7.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            return {c: c for c in codes}
+
+        async def fake_disagg(**kwargs):
+            return {"dimensions": []}
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+        ):
+            result = await rank_countries(
+                "WB_WDI",
+                "IND_ID",
+                country_codes="KEN;NGA",
+                top_n=5,
+            )
+
+        assert result.error is None
+        assert len(result.rankings) == 1
+        assert result.rankings[0].ref_area == "NGA"
+        assert any(e.ref_area == "KEN" for e in result.excluded)
 
     @pytest.mark.asyncio
     async def test_tie_gives_same_rank_to_tied_countries(self):

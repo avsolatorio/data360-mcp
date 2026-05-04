@@ -15,6 +15,7 @@ data360_config = get_data360_settings()
 
 _logger = logging.getLogger(__name__)
 
+
 class DatabaseManager:
     """Manages the list of databases dynamically fetched from the Data360 API.
 
@@ -37,9 +38,7 @@ class DatabaseManager:
         try:
             with open(fallback_path, encoding="utf-8") as f:
                 self._cache = json.load(f)
-            _logger.info(
-                "Loaded %d databases from fallback JSON.", len(self._cache)
-            )
+            _logger.info("Loaded %d databases from fallback JSON.", len(self._cache))
         except Exception as e:
             _logger.error("Failed to load fallback database mapping: %s", e)
             self._cache = {}
@@ -102,7 +101,10 @@ class DatabaseManager:
                     try:
                         response = await client.post(
                             url,
-                            headers={"accept": "*/*", "Content-Type": "application/json"},
+                            headers={
+                                "accept": "*/*",
+                                "Content-Type": "application/json",
+                            },
                             json={
                                 "filter": "type eq 'dataset' and (is_active ne false or is_active eq null)",
                                 "orderby": "series_description/name",
@@ -117,13 +119,22 @@ class DatabaseManager:
                         break  # Success
                     except Exception as e:
                         last_error = e
-                        _logger.warning("Fetch attempt %d failed for skip=%d: %s", attempt + 1, skip, e)
+                        _logger.warning(
+                            "Fetch attempt %d failed for skip=%d: %s",
+                            attempt + 1,
+                            skip,
+                            e,
+                        )
                         if attempt < 2:
-                            await asyncio.sleep(2 ** attempt)  # Backoff: 1s, 2s
+                            await asyncio.sleep(2**attempt)  # Backoff: 1s, 2s
 
                 if items is None:
                     # All attempts failed
-                    raise last_error if last_error else Exception("Unknown error during fetch")
+                    raise (
+                        last_error
+                        if last_error
+                        else Exception("Unknown error during fetch")
+                    )
 
                 if not items:
                     break
@@ -183,19 +194,19 @@ async def get_database_mapping() -> dict[str, str]:
 # ---------------------------------------------------------------------------
 _GROUP_ALIASES: dict[str, str] = {
     # Category 1: "and" vs "&" — fuzzy fails because "&" != "and"
-    "east asia and pacific": "EAS",           # official: "East Asia & Pacific"
-    "europe and central asia": "ECS",          # official: "Europe & Central Asia"
+    "east asia and pacific": "EAS",  # official: "East Asia & Pacific"
+    "europe and central asia": "ECS",  # official: "Europe & Central Asia"
     "latin america and the caribbean": "LCN",  # official: "Latin America & Caribbean"
-    "middle east and north africa": "MEA",     # official: "Middle East, North Africa, Afghanistan & Pakistan"
-    "middle east & north africa": "MEA",       # same but omits "Afghanistan & Pakistan"
-    "low and middle income": "LMY",            # official: "Low & middle income"
+    "middle east and north africa": "MEA",  # official: "Middle East, North Africa, Afghanistan & Pakistan"
+    "middle east & north africa": "MEA",  # same but omits "Afghanistan & Pakistan"
+    "low and middle income": "LMY",  # official: "Low & middle income"
     # Category 2: abbreviation not in official name
-    "mena": "MEA",                             # common abbreviation for the region
+    "mena": "MEA",  # common abbreviation for the region
     # Category 3: shorthands whose words don't appear in the official name
-    "fragile states": "FCS",                   # official: "Fragile and conflict affected situations"
-    "small island states": "SST",              # official: "Small states"
-    "eastern africa": "AFE",                   # official: "Africa Eastern and Southern"
-    "western africa": "AFW",                   # official: "Africa Western and Central"
+    "fragile states": "FCS",  # official: "Fragile and conflict affected situations"
+    "small island states": "SST",  # official: "Small states"
+    "eastern africa": "AFE",  # official: "Africa Eastern and Southern"
+    "western africa": "AFW",  # official: "Africa Western and Central"
     # Category 4: semantic synonym — "lower" absent from "Low income"
     "lower income": "LIC",
 }
@@ -489,6 +500,17 @@ class GroupHierarchyManager:
         """Return True if the code is an individual country in the hierarchy."""
         self._ensure_loaded()
         return code.upper() in self._all_countries and not self.is_group(code.upper())
+
+    def list_rankable_country_codes(self) -> list[str]:
+        """Return sorted leaf economy codes (FMR member countries, excluding group aggregates).
+
+        Used for ranking metadata and for ``member_economies_only`` filtering; the Data API
+        may still return additional aggregate codes when ``REF_AREA`` is unpinned—those
+        should be dropped with :meth:`is_country` per row.
+        """
+        self._ensure_loaded()
+        self._ensure_background_sync()
+        return sorted(c for c in self._all_countries if self.is_country(c))
 
     def get_group_info(self, code: str) -> dict[str, Any] | None:
         """Return {name, type, countries} for a group code, or None if unknown."""
@@ -1086,8 +1108,7 @@ async def expand_country_group(
         )
 
     countries = [
-        {"code": c, "name": country_name_map.get(c, c)}
-        for c in info["countries"]
+        {"code": c, "name": country_name_map.get(c, c)} for c in info["countries"]
     ]
 
     meta = ghm.get_meta()

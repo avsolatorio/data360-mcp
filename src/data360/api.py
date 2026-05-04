@@ -1,9 +1,10 @@
 import asyncio
 import json
 import logging
+import math
 import threading
 import zlib
-from typing import Any
+from typing import Any, Literal
 from urllib.parse import urlencode
 
 import cachetools
@@ -23,9 +24,9 @@ from .errors import (
 )
 from .errors import ValidationError as Data360ValidationError
 from .models import (
-    CountryComparisonResponse,
     ComparisonSnapshot,
     ComparisonTimeSeries,
+    CountryComparisonResponse,
     DataSummaryResponse,
     DerivedDataResponse,
     DiagnosticSummaryResponse,
@@ -114,6 +115,26 @@ def _short_hash(data: dict[str, Any]) -> str:
     return f"{zlib.crc32(json.dumps(data, sort_keys=True).encode()) & 0xFFFFFFFF:08x}"
 
 
+def _obs_value_to_float(val: Any) -> float | None:
+    """Parse OBS_VALUE for aggregation paths; None if missing or non-numeric.
+
+    The Data API sometimes returns the literal string ``\"null\"`` for missing
+    values; ``val is not None`` is therefore not sufficient before ``float()``."""
+    if val is None:
+        return None
+    if isinstance(val, str):
+        stripped = val.strip()
+        if not stripped or stripped.lower() in ("null", "nan", "none"):
+            return None
+    try:
+        out = float(val)
+    except (TypeError, ValueError):
+        return None
+    if math.isnan(out):
+        return None
+    return out
+
+
 def _get_valid_disaggregations(
     disagg_res: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
@@ -196,9 +217,7 @@ def _strip_disaggregation(
             entry["count"] = len(values)
             if queried_countries:
                 ref_set = set(values)
-                entry["queried"] = {
-                    code: code in ref_set for code in queried_countries
-                }
+                entry["queried"] = {code: code in ref_set for code in queried_countries}
             else:
                 entry["sample"] = sorted(values)[:_REF_AREA_SAMPLE_SIZE]
         else:
@@ -753,11 +772,13 @@ async def search(  # noqa: PLR0911
         _logger.debug("queries=%r normalised to None (all entries empty)", queries)
         queries = None
 
-    active_modes = sum((
-        query is not None,
-        queries is not None,
-        query_groups is not None,
-    ))
+    active_modes = sum(
+        (
+            query is not None,
+            queries is not None,
+            query_groups is not None,
+        )
+    )
     if active_modes > 1:
         return EnrichedSearchResponse(
             error="Provide exactly one of 'query', 'queries', or 'query_groups', not multiple."
@@ -766,7 +787,6 @@ async def search(  # noqa: PLR0911
         return EnrichedSearchResponse(
             error="One of 'query', 'queries', or 'query_groups' must be provided."
         )
-
 
     # --- Multi-query path (queries= flat list) ---
     if queries is not None:
@@ -820,7 +840,12 @@ async def search(  # noqa: PLR0911
 
         # Fan out concurrent _search_raw calls, one per query
         raw_tasks = [
-            _search_raw(query=q, limit=limit, offset=offset, select_fields=_ENRICHMENT_SELECT_FIELDS)
+            _search_raw(
+                query=q,
+                limit=limit,
+                offset=offset,
+                select_fields=_ENRICHMENT_SELECT_FIELDS,
+            )
             for q in clean_queries
         ]
         raw_results = await asyncio.gather(*raw_tasks, return_exceptions=True)
@@ -896,14 +921,16 @@ async def search(  # noqa: PLR0911
             resolved_map = dict(zip(unique_countries, codes))
 
         clean_queries = [q for q, _ in flat_pairs]
-        per_query_codes = [
-            resolved_map.get(c) if c else None
-            for _, c in flat_pairs
-        ]
+        per_query_codes = [resolved_map.get(c) if c else None for _, c in flat_pairs]
 
         # Fan out concurrent _search_raw calls, one per flattened query
         raw_tasks = [
-            _search_raw(query=q, limit=limit, offset=offset, select_fields=_ENRICHMENT_SELECT_FIELDS)
+            _search_raw(
+                query=q,
+                limit=limit,
+                offset=offset,
+                select_fields=_ENRICHMENT_SELECT_FIELDS,
+            )
             for q in clean_queries
         ]
         raw_results = await asyncio.gather(*raw_tasks, return_exceptions=True)
@@ -972,11 +999,7 @@ async def search(  # noqa: PLR0911
     # For flagged indicators, concurrently query the disaggregation endpoint to
     # determine the definitive True/False for each regional code.
     if country_code and indicators_to_verify:
-        regional_codes = [
-            c.strip()
-            for c in country_code.split(";")
-            if c.strip()
-        ]
+        regional_codes = [c.strip() for c in country_code.split(";") if c.strip()]
 
         async def _verify_regional_coverage(ind: EnrichedIndicator) -> None:
             try:
@@ -996,7 +1019,9 @@ async def search(  # noqa: PLR0911
                     "Failed to verify regional coverage for %s: %s", ind.idno, e
                 )
 
-        await asyncio.gather(*(_verify_regional_coverage(ind) for ind in indicators_to_verify))
+        await asyncio.gather(
+            *(_verify_regional_coverage(ind) for ind in indicators_to_verify)
+        )
 
         indicators.sort(
             key=lambda x: (
@@ -1038,18 +1063,22 @@ async def _build_multi_query_response(
     for i, (q, raw_result) in enumerate(zip(clean_queries, raw_results)):
         code_for_query = per_query_codes[i]
         if isinstance(raw_result, Exception):
-            groups.append(QueryGroupResult(
-                query=q,
-                country_code=code_for_query,
-                error=str(raw_result),
-            ))
+            groups.append(
+                QueryGroupResult(
+                    query=q,
+                    country_code=code_for_query,
+                    error=str(raw_result),
+                )
+            )
             continue
         if raw_result.error or not raw_result.items:
-            groups.append(QueryGroupResult(
-                query=q,
-                country_code=code_for_query,
-                error=raw_result.error or f"No indicators found for: '{q}'",
-            ))
+            groups.append(
+                QueryGroupResult(
+                    query=q,
+                    country_code=code_for_query,
+                    error=raw_result.error or f"No indicators found for: '{q}'",
+                )
+            )
             continue
 
         # Multi-query uses sovereign country codes per group; regional aggregate
@@ -1067,31 +1096,35 @@ async def _build_multi_query_response(
                 existing_ind = seen_dict[key]
 
                 # Merge covers_country data across queries/groups
-                if existing_ind.covers_country is not None and ind.covers_country is not None:
+                if (
+                    existing_ind.covers_country is not None
+                    and ind.covers_country is not None
+                ):
                     existing_ind.covers_country.update(ind.covers_country)
 
                 if dedupe and result_layout == "merged":
                     # Global deduplication: discard from subsequent groups in merged layout
                     deduplicated_count += 1
+                # In by_query layout, or if dedupe=False, we keep the indicator.
+                # But if dedupe=True, we still deduplicate WITHIN the same group.
+                elif dedupe and key in group_seen:
+                    deduplicated_count += 1
                 else:
-                    # In by_query layout, or if dedupe=False, we keep the indicator.
-                    # But if dedupe=True, we still deduplicate WITHIN the same group.
-                    if dedupe and key in group_seen:
-                        deduplicated_count += 1
-                    else:
-                        group_seen.add(key)
-                        group_indicators.append(existing_ind)
+                    group_seen.add(key)
+                    group_indicators.append(existing_ind)
             else:
                 seen_dict[key] = ind
                 group_seen.add(key)
                 group_indicators.append(ind)
 
-        groups.append(QueryGroupResult(
-            query=q,
-            country_code=code_for_query,
-            indicators=group_indicators,
-            count=len(group_indicators),
-        ))
+        groups.append(
+            QueryGroupResult(
+                query=q,
+                country_code=code_for_query,
+                indicators=group_indicators,
+                count=len(group_indicators),
+            )
+        )
 
     # Compute response-level required_country: join all unique resolved codes with ";"
     all_codes = sorted({c for c in per_query_codes if c})
@@ -1106,7 +1139,11 @@ async def _build_multi_query_response(
             merged_indicators.sort(
                 key=lambda x: (
                     not any((x.covers_country or {}).values()),
-                    -(int(x.latest_data or 0) if str(x.latest_data or "").isdigit() else 0),
+                    -(
+                        int(x.latest_data or 0)
+                        if str(x.latest_data or "").isdigit()
+                        else 0
+                    ),
                 )
             )
         return MultiQuerySearchResponse(
@@ -1359,7 +1396,9 @@ async def get_disaggregation(
             raw_data = response.json()
             # Filter out _Z values and format response
             valid_dimensions = _get_valid_disaggregations(raw_data)
-            result_disagg = {"dimensions": _strip_disaggregation(valid_dimensions, queried_countries)}
+            result_disagg = {
+                "dimensions": _strip_disaggregation(valid_dimensions, queried_countries)
+            }
             with _disaggregation_cache_lock:
                 _disaggregation_cache[_disagg_cache_key] = result_disagg
             return result_disagg
@@ -1378,6 +1417,7 @@ async def get_data(
     end_year: int | None = None,
     limit: int = 50,
     offset: int = 0,
+    ref_area_filter: Literal["none", "member_economies_only"] = "none",
 ) -> IndicatorDataResponse:
     """Fetch indicator data from the Data360 API with pagination.
 
@@ -1393,11 +1433,17 @@ async def get_data(
         disaggregation_filters: Optional dict of dimension filters. Keys: REF_AREA, SEX, AGE,
             URBANISATION, UNIT_MEASURE, etc. Values are str or None (not lists). REF_AREA supports
             comma-separated ISO codes (e.g. "KEN,TZA"); semicolons are normalized to commas.
-            Use value None to request all values for a dimension (e.g. {"SEX": None}).
+            Use value None to request all values for a dimension (e.g. {"SEX": None}). When REF_AREA
+            is omitted or None, the Data API returns all geographic series—including regional aggregates
+            (e.g. EAS, EMU)—mixed with member economies.
         start_year: Optional start year (inclusive). Defaults to last 5 years if both start/end omitted.
         end_year: Optional end year (inclusive). Defaults to current year if both start/end omitted.
         limit: Maximum records per page (default 50, max 100).
         offset: Number of records to skip for pagination (default 0).
+        ref_area_filter: When ``member_economies_only``, drop rows whose ``REF_AREA`` is not an FMR
+            leaf member economy **only if** REF_AREA is not pinned (no ``country_code`` and no explicit
+            ``REF_AREA`` string in filters). Otherwise a note is added to ``failed_validation`` and
+            no filtering is applied.
 
     Returns:
         IndicatorDataResponse:
@@ -1523,6 +1569,7 @@ async def get_data(
         valid_filters, available_disaggregations=available_disaggregations
     )
     params.update(effective_disagg)
+    ref_area_unpinned = not country_code and "REF_AREA" not in params
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             _logger.debug("Fetching data from %s with params: %s", data_url, params)
@@ -1573,6 +1620,26 @@ async def get_data(
             # Strip boilerplate fields for LLM token savings
             raw_data = [_strip_data_row(row) for row in raw_data]
 
+            filter_notes: list[str] = (
+                list(validation_errors) if validation_errors else []
+            )
+            if ref_area_filter == "member_economies_only":
+                if ref_area_unpinned:
+                    from .providers import get_group_hierarchy_manager  # noqa: PLC0415
+
+                    _ghm = get_group_hierarchy_manager()
+                    raw_data = [
+                        r
+                        for r in raw_data
+                        if _ghm.is_country(str(r.get("REF_AREA", "")))
+                    ]
+                else:
+                    filter_notes.append(
+                        "ref_area_filter=member_economies_only applies only when REF_AREA is "
+                        "unpinned (omit country_code and do not set REF_AREA to specific codes); "
+                        "filter was not applied."
+                    )
+
             return IndicatorDataResponse(
                 data=raw_data,
                 metadata=api_metadata,
@@ -1582,7 +1649,7 @@ async def get_data(
                 has_more=has_more,
                 next_offset=api_next_offset,
                 error=None,
-                failed_validation=validation_errors if validation_errors else None,
+                failed_validation=filter_notes if filter_notes else None,
             )
 
     except Exception as e:
@@ -1838,7 +1905,10 @@ async def _fetch_all_pages(
             _logger.warning(
                 "_fetch_all_pages: hit safety page limit (%d) for %s/%s after %d rows. "
                 "Returning partial results.",
-                _MAX_PAGES, database_id, indicator_id, len(all_rows),
+                _MAX_PAGES,
+                database_id,
+                indicator_id,
+                len(all_rows),
             )
             break
 
@@ -1859,7 +1929,10 @@ async def _fetch_all_pages(
                 return page
             _logger.warning(
                 "Pagination error at offset %d for %s/%s: %s",
-                offset, database_id, indicator_id, page.error,
+                offset,
+                database_id,
+                indicator_id,
+                page.error,
             )
             break
 
@@ -1908,7 +1981,11 @@ async def _resolve_country_names(codes: list[str]) -> dict[str, str]:
 # Disaggregation dimensions that may carry meaningful sub-categories.
 # UNIT_MEASURE is handled via a separate branch in the helper below.
 _DISAGG_DIMS_TO_DETECT: tuple[str, ...] = (
-    "SEX", "AGE", "URBANISATION", "COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2",
+    "SEX",
+    "AGE",
+    "URBANISATION",
+    "COMP_BREAKDOWN_1",
+    "COMP_BREAKDOWN_2",
 )
 
 
@@ -1995,7 +2072,9 @@ async def _auto_detect_disagg_dimensions(
             auto_expanded_dims.append(field_name.lower())
         else:
             # Pin to _T (aggregate total) when available to avoid duplicate rows.
-            effective_filters[field_name] = "_T" if "_T" in values else non_total_values[0]
+            effective_filters[field_name] = (
+                "_T" if "_T" in values else non_total_values[0]
+            )
 
     return effective_filters, auto_expanded_dims
 
@@ -2085,10 +2164,8 @@ def _build_group_summary(
     # See docstring for rationale on TIME_PERIOD deduplication.
     df_sorted = df.sort_values("TIME_PERIOD").dropna(subset=["OBS_VALUE"])
     n_before_dedup = len(df_sorted)
-    df = (
-        df_sorted
-        .drop_duplicates(subset=["TIME_PERIOD"], keep="last")
-        .reset_index(drop=True)
+    df = df_sorted.drop_duplicates(subset=["TIME_PERIOD"], keep="last").reset_index(
+        drop=True
     )
     n_dropped = n_before_dedup - len(df)
     if n_dropped > 0:
@@ -2298,9 +2375,18 @@ async def summarize_data(
             if val is None:
                 # The upstream API omits disaggregation keys when their value is
                 # the default aggregate total (_T).
-                val = "_T" if f in (
-                    "SEX", "AGE", "URBANISATION", "COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2"
-                ) else "_MISSING"
+                val = (
+                    "_T"
+                    if f
+                    in (
+                        "SEX",
+                        "AGE",
+                        "URBANISATION",
+                        "COMP_BREAKDOWN_1",
+                        "COMP_BREAKDOWN_2",
+                    )
+                    else "_MISSING"
+                )
             key_parts.append(str(val))
         key = tuple(key_parts)
         groups_dict.setdefault(key, []).append(row)
@@ -2334,6 +2420,7 @@ async def rank_countries(
     order: str = "desc",
     top_n: int = 10,
     disaggregation_filters: dict[str, str | None] | None = None,
+    rank_universe: Literal["explicit", "all_member_economies"] = "explicit",
 ) -> RankingResponse:
     """Rank countries by indicator value for a specific year.
 
@@ -2341,6 +2428,11 @@ async def rank_countries(
     "Which South Asian country has the lowest poverty rate?", "Rank Sub-Saharan African
     countries by life expectancy". Handles ties, missing data, and group expansion internally
     (calls data360_expand_country_group when country_group is provided).
+
+    **Global rankings ("top 10 in the world"):** set ``rank_universe='all_member_economies'``
+    and omit both ``country_group`` and ``country_codes``. The tool fetches unpinned
+    geographic data from the Data API (full REF_AREA coverage) and keeps only FMR leaf
+    member economies—regional aggregates such as ``EAS`` or ``EMU`` are excluded.
 
     When year is None, the tool selects the ranking year automatically. It considers both
     the latest available year and the year with broadest country coverage, and reports which
@@ -2359,7 +2451,10 @@ async def rank_countries(
         year: Ranking year. None = auto-select (see year_selection_note in response).
         order: "desc" (highest first) or "asc" (lowest first).
         top_n: Number of top results to return (default 10).
-        disaggregation_filters: Optional dimension filters.
+        disaggregation_filters: Optional dimension filters. Do not pin ``REF_AREA`` when
+            using ``rank_universe='all_member_economies'`` (it is ignored for the fetch).
+        rank_universe: ``explicit`` (default) requires ``country_codes`` or ``country_group``.
+            Use ``all_member_economies`` for worldwide leaderboards when both are omitted.
 
     Returns:
         RankingResponse:
@@ -2368,6 +2463,7 @@ async def rank_countries(
             order: "desc" or "asc".
             total_with_data: Countries that had data.
             total_requested: Countries attempted.
+            universe / universe_size: Scope metadata (see field descriptions).
             rankings: Ranked list with rank, ref_area, country_name, obs_value,
                 percentile, claim_id. Ties share the same rank.
             excluded: Countries with no data and reason.
@@ -2376,16 +2472,26 @@ async def rank_countries(
             error: Error message if request failed; otherwise None.
                 Falls back to data360_get_data if this tool encounters an error.
     """
-    from .providers import expand_country_group, get_group_hierarchy_manager  # noqa: PLC0415
+    from .providers import (  # noqa: PLC0415
+        expand_country_group,
+        get_group_hierarchy_manager,
+    )
 
-    # Resolve country codes
+    ghm = get_group_hierarchy_manager()
+    universe: str | None = None
+    universe_size: int | None = None
+    global_member_ranking = False
+
+    # Resolve country codes (explicit scope wins over rank_universe)
     resolved_codes: list[str] = []
     if country_codes:
-        resolved_codes = [c.strip() for c in country_codes.replace(";", ",").split(",") if c.strip()]
+        resolved_codes = [
+            c.strip() for c in country_codes.replace(";", ",").split(",") if c.strip()
+        ]
+        universe = "explicit"
     elif country_group:
         # Gate on is_group() before attempting expansion — this prevents silent
         # failures where an unrecognised code reaches the API and returns 0 rows.
-        ghm = get_group_hierarchy_manager()
         if not ghm.is_group(country_group):
             return RankingResponse(
                 error=(
@@ -2397,41 +2503,62 @@ async def rank_countries(
         try:
             expand_result = await expand_country_group(country_group)
             if isinstance(expand_result, dict) and expand_result.get("country_codes"):
-                resolved_codes = [c.strip() for c in expand_result["country_codes"].split(",") if c.strip()]
+                resolved_codes = [
+                    c.strip()
+                    for c in expand_result["country_codes"].split(",")
+                    if c.strip()
+                ]
             elif isinstance(expand_result, dict) and expand_result.get("error"):
                 return RankingResponse(error=expand_result["error"])
             else:
-                return RankingResponse(error=f"Could not expand country group '{country_group}'.")
+                return RankingResponse(
+                    error=f"Could not expand country group '{country_group}'."
+                )
         except Exception as e:
             return RankingResponse(error=f"Failed to expand country group: {e}")
-
-    if not resolved_codes:
+        universe = "explicit"
+    elif rank_universe == "all_member_economies":
+        resolved_codes = ghm.list_rankable_country_codes()
+        global_member_ranking = True
+        universe = "all_member_economies"
+    else:
         return RankingResponse(
-            error="No countries specified. Provide country_codes or country_group."
+            error=(
+                "No countries specified. Provide country_codes or country_group, "
+                "or set rank_universe='all_member_economies' to rank all World Bank "
+                "member economies (regional aggregates excluded)."
+            )
         )
 
     total_requested = len(resolved_codes)
+    universe_size = total_requested
+
+    filters_for_auto = dict(disaggregation_filters or {})
+    if global_member_ranking:
+        filters_for_auto.pop("REF_AREA", None)
 
     # Auto-detect UNIT_MEASURE and pin non-trivial disaggregation dims (SEX, AGE,
     # URBANISATION, COMP_BREAKDOWN_1/2) to their _T (aggregate total) value.
     # This prevents duplicate rows per country per year — which would otherwise
     # corrupt ranking statistics — when an indicator carries sex/age breakdowns.
     # Caller-provided disaggregation_filters always take precedence.
-    sample_country = resolved_codes[0] if resolved_codes else None
+    sample_country = resolved_codes[0] if resolved_codes else "WLD"
     effective_filters, _ = await _auto_detect_disagg_dimensions(
         database_id=database_id,
         indicator_id=indicator_id,
         sample_country=sample_country,
-        existing_filters=dict(disaggregation_filters or {}),
+        existing_filters=filters_for_auto,
         expand_non_trivial=False,
     )
+    if global_member_ranking and effective_filters:
+        effective_filters.pop("REF_AREA", None)
 
-    # Fetch all pages for all countries in one batched call
+    # Fetch all pages: explicit list uses REF_AREA pin; global uses unpinned full geography.
     try:
         data_response = await _fetch_all_pages(
             database_id=database_id,
             indicator_id=indicator_id,
-            country_code=";".join(resolved_codes),
+            country_code=(None if global_member_ranking else ";".join(resolved_codes)),
             disaggregation_filters=effective_filters or None,
             start_year=year - 2 if year else None,
             end_year=year + 1 if year else None,
@@ -2455,10 +2582,13 @@ async def rank_countries(
     for row in data_response.data:
         tp = str(row.get("TIME_PERIOD", ""))
         ra = str(row.get("REF_AREA", ""))
+        if global_member_ranking and not ghm.is_country(ra):
+            continue
         val = row.get("OBS_VALUE")
         cid = row.get("claim_id", "")
-        if tp and ra and val is not None:
-            year_country_map.setdefault(tp, {})[ra] = (float(val), cid)
+        obs = _obs_value_to_float(val)
+        if tp and ra and obs is not None:
+            year_country_map.setdefault(tp, {})[ra] = (obs, cid)
 
     # Select ranking year
     year_selection_note = None
@@ -2468,7 +2598,9 @@ async def rank_countries(
         # If exact year not available, try closest
         if ranking_year not in year_country_map:
             available = sorted(year_country_map.keys())
-            closest = min(available, key=lambda y: abs(int(y) - year)) if available else None
+            closest = (
+                min(available, key=lambda y: abs(int(y) - year)) if available else None
+            )
             if closest:
                 ranking_year = closest
                 year_selection_note = f"Requested {year}, closest available: {closest}"
@@ -2529,27 +2661,33 @@ async def rank_countries(
             # Different value — rank is one past the previous entry's position
             rank = i + 1
 
-        percentile = round(((n_ranked - i) / n_ranked) * 100, 1) if n_ranked > 0 else None
+        percentile = (
+            round(((n_ranked - i) / n_ranked) * 100, 1) if n_ranked > 0 else None
+        )
 
-        rankings.append(RankedCountry(
-            rank=rank,
-            ref_area=code,
-            country_name=name_map.get(code),
-            obs_value=round(val, 4),
-            percentile=percentile,
-            claim_id=cid,
-        ))
+        rankings.append(
+            RankedCountry(
+                rank=rank,
+                ref_area=code,
+                country_name=name_map.get(code),
+                obs_value=round(val, 4),
+                percentile=percentile,
+                claim_id=cid,
+            )
+        )
 
     # Build excluded list
     excluded = []
     countries_with_data = set(year_data.keys())
     for code in resolved_codes:
         if code not in countries_with_data:
-            excluded.append(ExcludedCountry(
-                ref_area=code,
-                country_name=name_map.get(code),
-                reason=f"No data for {ranking_year}",
-            ))
+            excluded.append(
+                ExcludedCountry(
+                    ref_area=code,
+                    country_name=name_map.get(code),
+                    reason=f"No data for {ranking_year}",
+                )
+            )
 
     return RankingResponse(
         year=ranking_year,
@@ -2557,6 +2695,8 @@ async def rank_countries(
         order=order,
         total_with_data=len(year_data),
         total_requested=total_requested,
+        universe=universe,
+        universe_size=universe_size,
         rankings=rankings,
         excluded=excluded,
         metadata=data_response.metadata,
@@ -2657,13 +2797,16 @@ async def compare_countries(
         tp = str(row.get("TIME_PERIOD", ""))
         val = row.get("OBS_VALUE")
         cid = row.get("claim_id", "")
-        if ra and tp and val is not None:
-            country_year_map.setdefault(ra, {})[tp] = (float(val), cid)
+        obs = _obs_value_to_float(val)
+        if ra and tp and obs is not None:
+            country_year_map.setdefault(ra, {})[tp] = (obs, cid)
 
     # Batch-resolve country names in a single call
     name_map = await _resolve_country_names(codes)
 
-    unit_measure = data_response.data[0].get("UNIT_MEASURE") if data_response.data else None
+    unit_measure = (
+        data_response.data[0].get("UNIT_MEASURE") if data_response.data else None
+    )
 
     # Determine snapshot year
     all_years = set()
@@ -2696,15 +2839,21 @@ async def compare_countries(
 
         ranked = []
         for i, (code, val, cid) in enumerate(snap_entries):
-            gap = round(((val - leader_val) / leader_val) * 100, 2) if leader_val != 0 else 0
-            ranked.append(RankedCountry(
-                rank=i + 1,
-                ref_area=code,
-                country_name=name_map.get(code),
-                obs_value=round(val, 4),
-                percentile=None,
-                claim_id=cid,
-            ))
+            gap = (
+                round(((val - leader_val) / leader_val) * 100, 2)
+                if leader_val != 0
+                else 0
+            )
+            ranked.append(
+                RankedCountry(
+                    rank=i + 1,
+                    ref_area=code,
+                    country_name=name_map.get(code),
+                    obs_value=round(val, 4),
+                    percentile=None,
+                    claim_id=cid,
+                )
+            )
 
         vals_s = pd.Series([e[1] for e in snap_entries], dtype=float)
         spread: dict[str, float | None] = {}
@@ -2721,7 +2870,9 @@ async def compare_countries(
             }
 
         snapshot = ComparisonSnapshot(
-            year=snap_year, rankings=ranked, spread=spread,
+            year=snap_year,
+            rankings=ranked,
+            spread=spread,
         )
 
     # Build time series (if requested) using pandas for alignment, CAGR, convergence
@@ -2750,7 +2901,11 @@ async def compare_countries(
         for code in codes:
             code_data = country_year_map.get(code, {})
             series[code] = [
-                {"time_period": y, "obs_value": code_data[y][0], "claim_id": code_data[y][1]}
+                {
+                    "time_period": y,
+                    "obs_value": code_data[y][0],
+                    "claim_id": code_data[y][1],
+                }
                 for y in aligned_years
                 if y in code_data
             ]
@@ -2783,7 +2938,11 @@ async def compare_countries(
             row_means = aligned_pivot[codes].mean(axis=1)
             row_stds = aligned_pivot[codes].std(axis=1, ddof=1)
             # CV per year — only where mean != 0
-            cvs_s = (row_stds / row_means).replace([float("inf"), float("-inf")], pd.NA).dropna()
+            cvs_s = (
+                (row_stds / row_means)
+                .replace([float("inf"), float("-inf")], pd.NA)
+                .dropna()
+            )
             if len(cvs_s) >= 3:
                 cv_trend = _compute_trend_direction(cvs_s.tolist())
                 convergence = {
