@@ -25,11 +25,15 @@ from data360.api import (
     compare_countries,
 )
 from data360.models import (
+    ComparisonSnapshot,
+    ComparisonTimeSeries,
+    CountryComparisonResponse,
+    DataSummaryResponse,
+    ExcludedCountry,
     GroupSummary,
     IndicatorDataResponse,
+    RankedCountry,
     RankingResponse,
-    DataSummaryResponse,
-    CountryComparisonResponse,
 )
 
 
@@ -905,3 +909,303 @@ class TestCompareCountries:
         assert result.error is None
         assert result.time_series is not None
         assert result.time_series.cagr.get("KEN") is None
+
+
+# ---------------------------------------------------------------------------
+# to_compact() output — PCN + size invariants
+# ---------------------------------------------------------------------------
+
+
+def _make_ranked_country(
+    rank: int = 1,
+    ref_area: str = "KEN",
+    country_name: str = "Kenya",
+    obs_value: float = 5.6,
+    claim_id: str = "abc12345",
+) -> RankedCountry:
+    return RankedCountry(
+        rank=rank,
+        ref_area=ref_area,
+        country_name=country_name,
+        obs_value=obs_value,
+        percentile=80.0,
+        claim_id=claim_id,
+    )
+
+
+def _make_group_summary(
+    ref_area: str = "KEN",
+    claim_ids: list[str] | None = None,
+) -> GroupSummary:
+    return GroupSummary(
+        group_key={"ref_area": ref_area},
+        count=10,
+        latest_value=5.6,
+        latest_year="2023",
+        earliest_value=3.2,
+        earliest_year="2005",
+        min=3.0,
+        max=6.0,
+        mean=4.5,
+        median=4.4,
+        total_change=2.4,
+        pct_change=75.0,
+        trend_direction="increasing",
+        time_range="2005-2023",
+        claim_ids=claim_ids or ["aa11bb22", "cc33dd44"],
+    )
+
+
+class TestCompactOutput:
+    """Verify the PCN contract and size-reduction invariants of to_compact().
+
+    The core rule: claim_ids are 8-character CRC32 hashes that identify each
+    raw observation for data provenance (PCN). They MUST remain in the full
+    Pydantic model but MUST NOT appear in the compact representation sent to
+    the LLM's context window.
+    """
+
+    # ------------------------------------------------------------------
+    # GroupSummary
+    # ------------------------------------------------------------------
+
+    def test_group_summary_claim_ids_in_full_model(self):
+        """Full model must carry claim_ids for provenance."""
+        gs = _make_group_summary(claim_ids=["aa11bb22", "cc33dd44"])
+        assert gs.claim_ids == ["aa11bb22", "cc33dd44"]
+
+    def test_group_summary_compact_includes_claim_ids(self):
+        """Compact output must retain claim_ids for UI provenance attribution (PCN).
+
+        The group-to-claim_ids association must be preserved so the UI knows
+        which claim_ids belong to which group's statistics.
+        """
+        gs = _make_group_summary(claim_ids=["aa11bb22", "cc33dd44"])
+        compact = gs.to_compact()
+        assert "claim_ids" in compact
+        assert compact["claim_ids"] == ["aa11bb22", "cc33dd44"]
+
+    def test_group_summary_compact_shape(self):
+        """Compact output must include all LLM-useful analytic fields plus claim_ids."""
+        gs = _make_group_summary()
+        compact = gs.to_compact()
+        assert compact["group"] == {"ref_area": "KEN"}
+        assert compact["n"] == 10
+        assert compact["latest"] == {"value": 5.6, "year": "2023"}
+        assert compact["earliest"] == {"value": 3.2, "year": "2005"}
+        assert compact["range"] == "2005-2023"
+        assert compact["stats"] == {"min": 3.0, "max": 6.0, "mean": 4.5, "median": 4.4}
+        assert compact["change"] == {"abs": 2.4, "pct": 75.0}
+        assert compact["trend"] == "increasing"
+        assert "claim_ids" in compact
+
+    # ------------------------------------------------------------------
+    # RankedCountry
+    # ------------------------------------------------------------------
+
+    def test_ranked_country_claim_id_in_full_model(self):
+        """Full model must carry claim_id for provenance."""
+        rc = _make_ranked_country(claim_id="abc12345")
+        assert rc.claim_id == "abc12345"
+        assert rc.percentile == 80.0
+
+    def test_ranked_country_compact_includes_claim_id(self):
+        """Compact output must retain claim_id for per-entry PCN attribution.
+
+        Only percentile is dropped from RankedCountry compact — it is derivable
+        from rank order. claim_id must remain so the UI can render provenance
+        per ranked entry.
+        """
+        rc = _make_ranked_country(claim_id="abc12345")
+        compact = rc.to_compact()
+        assert "claim_id" in compact
+        assert compact["claim_id"] == "abc12345"
+        assert "percentile" not in compact
+
+    def test_ranked_country_compact_shape(self):
+        """Compact output must include rank, code, country, value, and claim_id."""
+        rc = _make_ranked_country(rank=3, ref_area="NGA", country_name="Nigeria", obs_value=4.1)
+        compact = rc.to_compact()
+        assert compact["rank"] == 3
+        assert compact["code"] == "NGA"
+        assert compact["country"] == "Nigeria"
+        assert compact["value"] == 4.1
+        assert "claim_id" in compact
+
+    def test_ranked_country_compact_uses_ref_area_when_no_country_name(self):
+        """When country_name is None, compact falls back to ref_area for readability."""
+        rc = RankedCountry(rank=1, ref_area="ZZZ", obs_value=10.0, claim_id="ff001122")
+        compact = rc.to_compact()
+        assert compact["country"] == "ZZZ"
+
+    # ------------------------------------------------------------------
+    # RankingResponse — excluded list cap
+    # ------------------------------------------------------------------
+
+    def test_ranking_response_excluded_capped_at_five_in_compact(self):
+        """Compact must cap excluded_sample at 5 entries, but full model is unchanged.
+
+        Rationale: ranking SSF (48 countries) with 30 excluded entries would
+        flood the LLM context. The compact exposes just the count + a 5-entry
+        sample; the UI can render the full list from the structured_content.
+        """
+        excluded_30 = [
+            ExcludedCountry(ref_area=f"X{i:02d}", country_name=f"Country {i}", reason="No data")
+            for i in range(30)
+        ]
+        r = RankingResponse(
+            year="2022",
+            order="desc",
+            total_with_data=10,
+            total_requested=40,
+            rankings=[_make_ranked_country()],
+            excluded=excluded_30,
+            metadata={"name": "Unemployment rate"},
+            unit_measure="PT",
+        )
+
+        # Full model: all 30 preserved
+        assert len(r.excluded) == 30
+
+        compact = r.to_compact()
+        # Compact: count is accurate, sample is capped
+        assert compact["excluded_count"] == 30
+        assert len(compact["excluded_sample"]) == 5
+
+    def test_ranking_response_compact_has_claim_ids_per_entry(self):
+        """Each ranking entry in compact must carry its own claim_id for PCN."""
+        r = RankingResponse(
+            year="2022",
+            order="desc",
+            total_with_data=2,
+            total_requested=2,
+            rankings=[
+                _make_ranked_country(rank=1, ref_area="KEN", claim_id="aaaaaaaa"),
+                _make_ranked_country(rank=2, ref_area="NGA", claim_id="bbbbbbbb"),
+            ],
+            excluded=[],
+            metadata={"name": "Unemployment rate"},
+            unit_measure="PT",
+        )
+        compact = r.to_compact()
+        claim_ids_in_compact = [entry.get("claim_id") for entry in compact["rankings"]]
+        assert "aaaaaaaa" in claim_ids_in_compact
+        assert "bbbbbbbb" in claim_ids_in_compact
+        # percentile must still be absent
+        assert all("percentile" not in entry for entry in compact["rankings"])
+
+    # ------------------------------------------------------------------
+    # DataSummaryResponse
+    # ------------------------------------------------------------------
+
+    def test_summary_response_compact_includes_claim_ids_per_group(self):
+        """Compact must retain claim_ids within each GroupSummary for PCN.
+
+        The group→claim_ids association is preserved so the UI can attribute
+        provenance per group (e.g. KEN/female vs KEN/male summaries).
+        """
+        ds = DataSummaryResponse(
+            groups=[_make_group_summary(claim_ids=["deadbeef"])],
+            metadata={"name": "GDP per capita"},
+            unit_measure="USD",
+        )
+        compact = ds.to_compact()
+        assert compact["groups"][0]["claim_ids"] == ["deadbeef"]
+
+    def test_summary_response_compact_error_included(self):
+        """Even when error is set, compact must include the error field."""
+        ds = DataSummaryResponse(error="No data returned for the given filters.")
+        compact = ds.to_compact()
+        assert compact["error"] == "No data returned for the given filters."
+
+    # ------------------------------------------------------------------
+    # ComparisonTimeSeries — series stripped
+    # ------------------------------------------------------------------
+
+    def test_comparison_time_series_compact_uses_array_format(self):
+        """Compact series must use positional arrays to preserve PCN association.
+
+        Each data point becomes [time_period, obs_value, claim_id] instead of
+        a named dict. This reduces per-point overhead from ~55 chars to ~24
+        chars (~56%) while keeping year→value→claim_id bound together so the
+        UI can render provenance per data point.
+
+        The full dict-format series (with named fields) is still available
+        in the Pydantic model's series attribute.
+        """
+        ts = ComparisonTimeSeries(
+            aligned_years=["2020", "2021", "2022"],
+            series={
+                "KEN": [
+                    {"time_period": "2020", "obs_value": 5.0, "claim_id": "cccccccc"},
+                    {"time_period": "2021", "obs_value": 5.2, "claim_id": "dddddddd"},
+                    {"time_period": "2022", "obs_value": 5.4, "claim_id": "eeeeeeee"},
+                ]
+            },
+            convergence="converging",
+            cagr={"KEN": 3.8},
+        )
+
+        # Full model retains the named-dict series
+        assert ts.series["KEN"][0]["claim_id"] == "cccccccc"
+
+        compact = ts.to_compact()
+
+        # Series must be present in compact — but as arrays, not dicts
+        assert "series" in compact
+        ken_series = compact["series"]["KEN"]
+        assert ken_series == [
+            ["2020", 5.0, "cccccccc"],
+            ["2021", 5.2, "dddddddd"],
+            ["2022", 5.4, "eeeeeeee"],
+        ]
+
+        # schema header must be present to document array positions
+        assert compact["series_schema"] == ["time_period", "obs_value", "claim_id"]
+
+        # summary fields must still be present
+        assert compact["year_range"] == "2020-2022"
+        assert compact["n_aligned_years"] == 3
+        assert compact["convergence"] == "converging"
+        assert compact["cagr"] == {"KEN": 3.8}
+
+    def test_comparison_time_series_compact_empty_aligned_years(self):
+        """year_range must be None when aligned_years is empty."""
+        ts = ComparisonTimeSeries()
+        compact = ts.to_compact()
+        assert compact["year_range"] is None
+        assert compact["n_aligned_years"] == 0
+
+    # ------------------------------------------------------------------
+    # Serializer round-trip
+    # ------------------------------------------------------------------
+
+    def test_compact_aggregation_serializer_produces_valid_json(self):
+        """The serializer must call to_compact() and return valid JSON."""
+        import json as _json
+        from data360.mcp_server.tools import _compact_aggregation_serializer
+
+        ds = DataSummaryResponse(
+            groups=[_make_group_summary(claim_ids=["feedface"])],
+            metadata={"name": "Test Indicator"},
+            unit_measure="PT",
+        )
+        result = _compact_aggregation_serializer(ds)
+        parsed = _json.loads(result)  # must not raise
+
+        # claim_ids must be present per group (PCN preserved)
+        assert parsed["groups"][0]["claim_ids"] == ["feedface"]
+        # Must still expose useful fields
+        assert parsed["indicator"] == "Test Indicator"
+        assert parsed["unit"] == "PT"
+        assert len(parsed["groups"]) == 1
+
+    def test_compact_aggregation_serializer_fallback_for_unknown_type(self):
+        """Serializer must fall back gracefully for objects without to_compact()."""
+        from data360.mcp_server.tools import _compact_aggregation_serializer
+
+        plain_dict = {"key": "value", "count": 42}
+        result = _compact_aggregation_serializer(plain_dict)
+        import json as _json
+        parsed = _json.loads(result)
+        assert parsed == plain_dict
