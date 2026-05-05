@@ -399,6 +399,33 @@ class TestEnrichSearchResultsRedirect:
         assert indicators[0].primary_source_of is None
 
 
+    def test_no_redirect_when_database_id_is_none_logs_warning(self, caplog):
+        """A primary link with database_id=None must emit a warning and not redirect."""
+        import logging
+
+        response = _make_search_response(
+            [
+                {
+                    "idno": "WB_SSGD_MULTIDIM_POVERTY_RATIO",
+                    "database_id": "WB_SSGD",
+                    "metadata_link": [
+                        {
+                            "type": "primary",
+                            "metadata_id": "META_SI.POV.MPWB",
+                            "database_id": None,
+                        }
+                    ],
+                }
+            ]
+        )
+        with caplog.at_level(logging.WARNING, logger="data360.api"):
+            indicators, _ = _enrich_search_results(response, country_code=None)
+
+        assert indicators[0].idno == "WB_SSGD_MULTIDIM_POVERTY_RATIO"
+        assert indicators[0].primary_source_of is None
+        assert any("database_id is None" in r.message for r in caplog.records)
+
+
 class TestGetItemsNullDatabaseIdInMetadataLink:
     """Ensure items with null database_id in metadata_link are still parsed."""
 

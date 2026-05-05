@@ -470,7 +470,9 @@ async def _search_raw(
         # it lives under additional/, not series_description/.
         select_val += ", additional/metadata_link"
     elif odata_options and odata_options.get("select"):
-        # Backward compatibility: use odata_options.select if provided
+        # Backward compatibility: use odata_options.select if provided.
+        # Note: additional/metadata_link is NOT injected here. Callers on
+        # this deprecated path will not get primary indicator redirects.
         select_val = odata_options.get("select")
     else:
         select_val = None
@@ -648,16 +650,25 @@ def _enrich_search_results(
         primary = item.primary_source
         original_idno: str | None = None
         if primary and primary.metadata_id and primary.database_id:
-            original_idno = raw.get("idno", "")
-            # Overwrite with primary source coordinates
+            original_idno = raw.get("idno")
+            # Overwrite with primary source coordinates; raw["database_id"] is
+            # read back into db_id on the next unconditional line below.
             raw["idno"] = primary.indicator_id
             raw["database_id"] = primary.database_id
-            db_id = primary.database_id
             _logger.debug(
                 "Redirected %s -> %s/%s (primary source)",
                 original_idno,
                 primary.database_id,
                 primary.indicator_id,
+            )
+        elif primary and primary.metadata_id and not primary.database_id:
+            # database_id is None (e.g. META_SI.POV.MPWB) — cannot redirect
+            # without a target database. Log for observability.
+            _logger.warning(
+                "Skipping primary redirect for %s: metadata_link has type='primary' "
+                "but database_id is None (metadata_id=%s)",
+                raw.get("idno"),
+                primary.metadata_id,
             )
 
         db_id = raw.get("database_id", "")
@@ -705,8 +716,11 @@ def _enrich_search_results(
                 key[0],
                 key[1],
             )
-    # Also remove duplicates from the verification list
-    deduped_verify = [ind for ind in indicators_to_verify if ind in deduped]
+    # Also remove duplicates from the verification list.
+    # Use object identity (id()) because EnrichedIndicator does not define __eq__
+    # and these are the same instances built in the loop above — not copies.
+    deduped_ids = {id(ind) for ind in deduped}
+    deduped_verify = [ind for ind in indicators_to_verify if id(ind) in deduped_ids]
 
     return deduped, deduped_verify
 
