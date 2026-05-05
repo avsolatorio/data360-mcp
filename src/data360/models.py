@@ -90,8 +90,8 @@ class PrimarySourceInfo(BaseModel):
         ...,
         description="Metadata ID with META_ prefix (e.g. META_WB_WDI_SP_POP_TOTL)",
     )
-    database_id: str = Field(
-        ..., description="Primary source database (e.g. WB_WDI)"
+    database_id: str | None = Field(
+        None, description="Primary source database (e.g. WB_WDI)"
     )
     database_name: str | None = Field(
         None, description="Human-readable database name"

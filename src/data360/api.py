@@ -643,10 +643,11 @@ def _enrich_search_results(
                     if label in _label_to_code:
                         useful_dims.append(_label_to_code[label])
 
-        # Apply primary indicator redirect if metadata_link has type='primary'.
+        # Apply primary indicator redirect if metadata_link has type='primary'
+        # and a valid database_id (some entries have database_id=None).
         primary = item.primary_source
         original_idno: str | None = None
-        if primary and primary.metadata_id:
+        if primary and primary.metadata_id and primary.database_id:
             original_idno = raw.get("idno", "")
             # Overwrite with primary source coordinates
             raw["idno"] = primary.indicator_id
