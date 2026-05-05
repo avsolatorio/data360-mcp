@@ -26,11 +26,11 @@ from data360.api import (
     _metadata_cache,
     _metadata_cache_lock,
 )
-from data360.http_client import reset_shared_httpx_client_for_tests
+from data360.http_client import aclose_shared_httpx_client
 
 
 @pytest.fixture(autouse=True)
-def _isolate_data360_api_state():
+async def _isolate_data360_api_state():
     """Clear API TTL caches and shared httpx so tests do not share mocked responses."""
     if os.environ.get("PYTEST_RUNNING"):
         with _metadata_cache_lock:
@@ -43,4 +43,4 @@ def _isolate_data360_api_state():
             _metadata_cache.clear()
         with _disaggregation_cache_lock:
             _disaggregation_cache.clear()
-    reset_shared_httpx_client_for_tests()
+    await aclose_shared_httpx_client()
