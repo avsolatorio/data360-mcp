@@ -9,13 +9,13 @@ from urllib.parse import urlencode
 
 import cachetools
 import dotenv
-import httpx
 import numpy as np
 import pandas as pd
 from pydantic import ValidationError as PydanticValidationError
 from sklearn.linear_model import HuberRegressor
 
 from .config import get_data360_settings
+from .http_client import get_shared_httpx_client
 from .errors import (
     Data360MCPError,
     NotFoundError,
@@ -481,23 +481,23 @@ async def _search_raw(
 
     mcp_error: Data360MCPError | None = None
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(url, json=payload)
-            response.raise_for_status()
+        client = get_shared_httpx_client()
+        response = await client.post(url, json=payload)
+        response.raise_for_status()
 
+        try:
+            response_data = response.json()
+        except ValueError as e:
+            mcp_error = ParseError(context="search", original_error=e)
+        else:
             try:
-                response_data = response.json()
-            except ValueError as e:
-                mcp_error = ParseError(context="search", original_error=e)
-            else:
-                try:
-                    return _process_search_response(response_data, request)
-                except Exception as e:
-                    mcp_error = ParseError(
-                        context="search",
-                        detail=f"Failed to parse API response: {str(e)}",
-                        original_error=e,
-                    )
+                return _process_search_response(response_data, request)
+            except Exception as e:
+                mcp_error = ParseError(
+                    context="search",
+                    detail=f"Failed to parse API response: {str(e)}",
+                    original_error=e,
+                )
 
     except Exception as e:
         mcp_error = classify_error(e, context="search")
@@ -1255,42 +1255,42 @@ async def get_metadata(
 
     # 1. Fetch Metadata
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            metadata_res = await client.post(
-                metadata_url, json=metadata_payload, headers=headers
-            )
-            metadata_res.raise_for_status()
+        client = get_shared_httpx_client()
+        metadata_res = await client.post(
+            metadata_url, json=metadata_payload, headers=headers
+        )
+        metadata_res.raise_for_status()
 
-            try:
-                metadata_json = metadata_res.json()
-                if metadata_json and metadata_json.get("value"):
-                    indicator_metadata = metadata_json["value"][0].get(
-                        "series_description", {}
-                    )
-                    # Inject database_name so clients always have the correct, grounded
-                    # label for the database_id — prevents LLMs from guessing
-                    # (e.g. WB_GS is "Gender Statistics", not "Global Statistics").
-                    if indicator_metadata:
-                        db_id = indicator_metadata.get("database_id", database_id)
-                        db_mapping = await get_database_mapping()
-                        indicator_metadata["database_name"] = db_mapping.get(db_id)
-                    # Force filtering if select_fields provided (API might return more).
-                    # Always retain database_name regardless of select_fields.
-                    if select_fields and indicator_metadata:
-                        indicator_metadata = {
-                            k: v
-                            for k, v in indicator_metadata.items()
-                            if k in select_fields or k == "database_name"
-                        }
-                else:
-                    mcp_err = NotFoundError(
-                        context="metadata",
-                        detail=f"No metadata found for indicator ID '{indicator_id}'",
-                    )
-                    errors.append(mcp_err.detail)
-            except ValueError as e:
-                mcp_err = ParseError(context="metadata", original_error=e)
+        try:
+            metadata_json = metadata_res.json()
+            if metadata_json and metadata_json.get("value"):
+                indicator_metadata = metadata_json["value"][0].get(
+                    "series_description", {}
+                )
+                # Inject database_name so clients always have the correct, grounded
+                # label for the database_id — prevents LLMs from guessing
+                # (e.g. WB_GS is "Gender Statistics", not "Global Statistics").
+                if indicator_metadata:
+                    db_id = indicator_metadata.get("database_id", database_id)
+                    db_mapping = await get_database_mapping()
+                    indicator_metadata["database_name"] = db_mapping.get(db_id)
+                # Force filtering if select_fields provided (API might return more).
+                # Always retain database_name regardless of select_fields.
+                if select_fields and indicator_metadata:
+                    indicator_metadata = {
+                        k: v
+                        for k, v in indicator_metadata.items()
+                        if k in select_fields or k == "database_name"
+                    }
+            else:
+                mcp_err = NotFoundError(
+                    context="metadata",
+                    detail=f"No metadata found for indicator ID '{indicator_id}'",
+                )
                 errors.append(mcp_err.detail)
+        except ValueError as e:
+            mcp_err = ParseError(context="metadata", original_error=e)
+            errors.append(mcp_err.detail)
 
     except Exception as e:
         mcp_err = classify_error(e, context="metadata")
@@ -1299,23 +1299,23 @@ async def get_metadata(
     # 2. Fetch Disaggregation
     if fetch_disaggregation:
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                disagg_res = await client.get(
-                    disaggregation_url,
-                    params={"datasetId": database_id, "indicatorId": indicator_id},
-                    headers=headers,
-                )
-                disagg_res.raise_for_status()
+            client = get_shared_httpx_client()
+            disagg_res = await client.get(
+                disaggregation_url,
+                params={"datasetId": database_id, "indicatorId": indicator_id},
+                headers=headers,
+            )
+            disagg_res.raise_for_status()
 
-                try:
-                    raw_disaggregations = disagg_res.json()
-                    disaggregations = _strip_disaggregation(
-                        get_valid_disaggregations_func(raw_disaggregations),
-                        queried_countries,
-                    )
-                except ValueError as e:
-                    mcp_err = ParseError(context="disaggregation", original_error=e)
-                    errors.append(mcp_err.detail)
+            try:
+                raw_disaggregations = disagg_res.json()
+                disaggregations = _strip_disaggregation(
+                    get_valid_disaggregations_func(raw_disaggregations),
+                    queried_countries,
+                )
+            except ValueError as e:
+                mcp_err = ParseError(context="disaggregation", original_error=e)
+                errors.append(mcp_err.detail)
 
         except Exception as e:
             mcp_err = classify_error(e, context="disaggregation")
@@ -1385,23 +1385,23 @@ async def get_disaggregation(
     headers = {"accept": "*/*", "Content-Type": "application/json"}
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.get(
-                disaggregation_url,
-                params={"datasetId": database_id, "indicatorId": indicator_id},
-                headers=headers,
-            )
-            response.raise_for_status()
+        client = get_shared_httpx_client()
+        response = await client.get(
+            disaggregation_url,
+            params={"datasetId": database_id, "indicatorId": indicator_id},
+            headers=headers,
+        )
+        response.raise_for_status()
 
-            raw_data = response.json()
-            # Filter out _Z values and format response
-            valid_dimensions = _get_valid_disaggregations(raw_data)
-            result_disagg = {
-                "dimensions": _strip_disaggregation(valid_dimensions, queried_countries)
-            }
-            with _disaggregation_cache_lock:
-                _disaggregation_cache[_disagg_cache_key] = result_disagg
-            return result_disagg
+        raw_data = response.json()
+        # Filter out _Z values and format response
+        valid_dimensions = _get_valid_disaggregations(raw_data)
+        result_disagg = {
+            "dimensions": _strip_disaggregation(valid_dimensions, queried_countries)
+        }
+        with _disaggregation_cache_lock:
+            _disaggregation_cache[_disagg_cache_key] = result_disagg
+        return result_disagg
 
     except Exception as e:
         mcp_err = classify_error(e, context="disaggregation")
@@ -1571,86 +1571,86 @@ async def get_data(
     params.update(effective_disagg)
     ref_area_unpinned = not country_code and "REF_AREA" not in params
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            _logger.debug("Fetching data from %s with params: %s", data_url, params)
-            data_res = await client.get(data_url, params=params)
-            data_res.raise_for_status()
+        client = get_shared_httpx_client()
+        _logger.debug("Fetching data from %s with params: %s", data_url, params)
+        data_res = await client.get(data_url, params=params)
+        data_res.raise_for_status()
 
-            try:
-                data_json = data_res.json()
-            except ValueError as e:
-                mcp_err = ParseError(context="data", original_error=e)
-                return IndicatorDataResponse(data=None, error=mcp_err.detail)
+        try:
+            data_json = data_res.json()
+        except ValueError as e:
+            mcp_err = ParseError(context="data", original_error=e)
+            return IndicatorDataResponse(data=None, error=mcp_err.detail)
 
-            raw_data = data_json.get("value", [])
-            total_count = data_json.get("@odata.count")  # May be None
+        raw_data = data_json.get("value", [])
+        total_count = data_json.get("@odata.count")  # May be None
 
-            # Compute API-level pagination BEFORE any filtering
-            # This ensures next_offset correctly tracks position in the API result set
-            api_returned_count = len(raw_data)
-            has_more = api_returned_count > limit
+        # Compute API-level pagination BEFORE any filtering
+        # This ensures next_offset correctly tracks position in the API result set
+        api_returned_count = len(raw_data)
+        has_more = api_returned_count > limit
 
-            # Trim the extra detection row (we requested limit+1 to detect has_more)
-            if api_returned_count > limit:
-                raw_data = raw_data[:limit]
+        # Trim the extra detection row (we requested limit+1 to detect has_more)
+        if api_returned_count > limit:
+            raw_data = raw_data[:limit]
 
-            # Compute API-based next_offset - the true cursor position for next page
-            api_next_offset = offset + len(raw_data) if has_more else None
+        # Compute API-based next_offset - the true cursor position for next page
+        api_next_offset = offset + len(raw_data) if has_more else None
 
-            # Sort by TIME_PERIOD descending (most recent first)
-            raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
+        # Sort by TIME_PERIOD descending (most recent first)
+        raw_data.sort(key=lambda x: str(x.get("TIME_PERIOD", "")), reverse=True)
 
-            # Final limit enforcement (safety check)
-            if len(raw_data) > limit:
-                raw_data = raw_data[:limit]
+        # Final limit enforcement (safety check)
+        if len(raw_data) > limit:
+            raw_data = raw_data[:limit]
 
-            # Add claim_id for data verification (computed on raw row)
-            for row in raw_data:
-                row["claim_id"] = _short_hash(row)
+        # Add claim_id for data verification (computed on raw row)
+        for row in raw_data:
+            row["claim_id"] = _short_hash(row)
 
-            # Promote COMMENT_TS to metadata (repeats identically per row)
-            if raw_data and api_metadata is not None:
-                comment_ts = next(
-                    (r.get("COMMENT_TS") for r in raw_data if r.get("COMMENT_TS")),
-                    None,
+        # Promote COMMENT_TS to metadata (repeats identically per row)
+        if raw_data and api_metadata is not None:
+            comment_ts = next(
+                (r.get("COMMENT_TS") for r in raw_data if r.get("COMMENT_TS")),
+                None,
+            )
+            if comment_ts:
+                api_metadata["indicator_description"] = comment_ts
+
+        # Strip boilerplate fields for LLM token savings
+        raw_data = [_strip_data_row(row) for row in raw_data]
+
+        filter_notes: list[str] = (
+            list(validation_errors) if validation_errors else []
+        )
+        if ref_area_filter == "member_economies_only":
+            if ref_area_unpinned:
+                from .providers import get_group_hierarchy_manager  # noqa: PLC0415
+
+                _ghm = get_group_hierarchy_manager()
+                raw_data = [
+                    r
+                    for r in raw_data
+                    if _ghm.is_country(str(r.get("REF_AREA", "")))
+                ]
+            else:
+                filter_notes.append(
+                    "ref_area_filter=member_economies_only applies only when REF_AREA is "
+                    "unpinned (omit country_code and do not set REF_AREA to specific codes); "
+                    "filter was not applied."
                 )
-                if comment_ts:
-                    api_metadata["indicator_description"] = comment_ts
 
-            # Strip boilerplate fields for LLM token savings
-            raw_data = [_strip_data_row(row) for row in raw_data]
-
-            filter_notes: list[str] = (
-                list(validation_errors) if validation_errors else []
-            )
-            if ref_area_filter == "member_economies_only":
-                if ref_area_unpinned:
-                    from .providers import get_group_hierarchy_manager  # noqa: PLC0415
-
-                    _ghm = get_group_hierarchy_manager()
-                    raw_data = [
-                        r
-                        for r in raw_data
-                        if _ghm.is_country(str(r.get("REF_AREA", "")))
-                    ]
-                else:
-                    filter_notes.append(
-                        "ref_area_filter=member_economies_only applies only when REF_AREA is "
-                        "unpinned (omit country_code and do not set REF_AREA to specific codes); "
-                        "filter was not applied."
-                    )
-
-            return IndicatorDataResponse(
-                data=raw_data,
-                metadata=api_metadata,
-                count=len(raw_data),
-                total_count=total_count,
-                offset=offset,
-                has_more=has_more,
-                next_offset=api_next_offset,
-                error=None,
-                failed_validation=filter_notes if filter_notes else None,
-            )
+        return IndicatorDataResponse(
+            data=raw_data,
+            metadata=api_metadata,
+            count=len(raw_data),
+            total_count=total_count,
+            offset=offset,
+            has_more=has_more,
+            next_offset=api_next_offset,
+            error=None,
+            failed_validation=filter_notes if filter_notes else None,
+        )
 
     except Exception as e:
         mcp_err = classify_error(e, context="data")
@@ -1673,15 +1673,15 @@ async def get_indicators(database_id: str) -> list[str]:
     params = {"datasetId": database_id}
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.get(url, params=params)
-            response.raise_for_status()
+        client = get_shared_httpx_client()
+        response = await client.get(url, params=params)
+        response.raise_for_status()
 
-            data = response.json()
-            if isinstance(data, list):
-                # Data is a list of indicator ID strings
-                return data
-            return []
+        data = response.json()
+        if isinstance(data, list):
+            # Data is a list of indicator ID strings
+            return data
+        return []
 
     except Exception as e:
         _logger.error(f"Failed to fetch indicators for {database_id}: {e}")

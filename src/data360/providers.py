@@ -3,6 +3,7 @@
 import asyncio
 import json
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,7 @@ from typing import Any
 import httpx
 
 from data360.config import get_data360_settings
+from data360.http_client import get_shared_httpx_client
 
 data360_config = get_data360_settings()
 
@@ -62,6 +64,8 @@ class DatabaseManager:
 
     def _ensure_background_sync(self) -> None:
         """Spawn the background refresh loop if it is not already running."""
+        if os.environ.get("PYTEST_RUNNING"):
+            return
         if self._bg_task is None or self._bg_task.done():
             self._bg_task = asyncio.create_task(self._background_sync_loop())
 
@@ -88,65 +92,65 @@ class DatabaseManager:
 
     async def _fetch_all(self) -> dict[str, str]:
         """Fetch all datasets from the search endpoint using pagination."""
-        url = f"{data360_config.api_url}searchv2"
+        url = data360_config.search_url or f"{data360_config.api_url}/searchv2"
         mapping: dict[str, str] = {}
         skip = 0
         limit = 50
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            while True:
-                items = None
-                last_error = None
-                for attempt in range(3):
-                    try:
-                        response = await client.post(
-                            url,
-                            headers={
-                                "accept": "*/*",
-                                "Content-Type": "application/json",
-                            },
-                            json={
-                                "filter": "type eq 'dataset' and (is_active ne false or is_active eq null)",
-                                "orderby": "series_description/name",
-                                "select": "series_description/database_id, series_description/name",
-                                "skip": skip,
-                                "top": limit,
-                            },
-                        )
-                        response.raise_for_status()
-                        data = response.json()
-                        items = data.get("value", [])
-                        break  # Success
-                    except Exception as e:
-                        last_error = e
-                        _logger.warning(
-                            "Fetch attempt %d failed for skip=%d: %s",
-                            attempt + 1,
-                            skip,
-                            e,
-                        )
-                        if attempt < 2:
-                            await asyncio.sleep(2**attempt)  # Backoff: 1s, 2s
-
-                if items is None:
-                    # All attempts failed
-                    raise (
-                        last_error
-                        if last_error
-                        else Exception("Unknown error during fetch")
+        client = get_shared_httpx_client()
+        while True:
+            items = None
+            last_error = None
+            for attempt in range(3):
+                try:
+                    response = await client.post(
+                        url,
+                        headers={
+                            "accept": "*/*",
+                            "Content-Type": "application/json",
+                        },
+                        json={
+                            "filter": "type eq 'dataset' and (is_active ne false or is_active eq null)",
+                            "orderby": "series_description/name",
+                            "select": "series_description/database_id, series_description/name",
+                            "skip": skip,
+                            "top": limit,
+                        },
                     )
+                    response.raise_for_status()
+                    data = response.json()
+                    items = data.get("value", [])
+                    break  # Success
+                except Exception as e:
+                    last_error = e
+                    _logger.warning(
+                        "Fetch attempt %d failed for skip=%d: %s",
+                        attempt + 1,
+                        skip,
+                        e,
+                    )
+                    if attempt < 2:
+                        await asyncio.sleep(2**attempt)  # Backoff: 1s, 2s
 
-                if not items:
-                    break
+            if items is None:
+                # All attempts failed
+                raise (
+                    last_error
+                    if last_error
+                    else Exception("Unknown error during fetch")
+                )
 
-                for x in items:
-                    sd = x.get("series_description", {})
-                    db_id = sd.get("database_id")
-                    db_name = sd.get("name")
-                    if db_id and db_name and db_id not in mapping:
-                        mapping[db_id] = db_name
+            if not items:
+                break
 
-                skip += limit
+            for x in items:
+                sd = x.get("series_description", {})
+                db_id = sd.get("database_id")
+                db_name = sd.get("name")
+                if db_id and db_name and db_id not in mapping:
+                    mapping[db_id] = db_name
+
+            skip += limit
 
         return mapping
 
@@ -395,6 +399,8 @@ class GroupHierarchyManager:
         or during module import). The bundled JSON is always pre-loaded, so
         the background task is only an update mechanism, not a prerequisite.
         """
+        if os.environ.get("PYTEST_RUNNING"):
+            return
         try:
             asyncio.get_running_loop()
         except RuntimeError:
@@ -473,15 +479,15 @@ class GroupHierarchyManager:
         hierarchy_url = _FMR_HIERARCHY_URL.format(version=hierarchy_version)
         codelist_url = _FMR_CODELIST_URL.format(version=codelist_version)
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            h_resp, cl_resp = await asyncio.gather(
-                client.get(hierarchy_url, headers={"Accept": "application/json"}),
-                client.get(codelist_url, headers={"Accept": "application/json"}),
-            )
-            h_resp.raise_for_status()
-            cl_resp.raise_for_status()
-            hierarchy_data = h_resp.json()
-            codelist_data = cl_resp.json()
+        client = get_shared_httpx_client()
+        h_resp, cl_resp = await asyncio.gather(
+            client.get(hierarchy_url, headers={"Accept": "application/json"}),
+            client.get(codelist_url, headers={"Accept": "application/json"}),
+        )
+        h_resp.raise_for_status()
+        cl_resp.raise_for_status()
+        hierarchy_data = h_resp.json()
+        codelist_data = cl_resp.json()
 
         name_map = self.parse_name_map(codelist_data)
         return self.parse_hierarchy(hierarchy_data, name_map, self._include_types)
@@ -674,19 +680,19 @@ class CodelistManager:
 
     async def _load_from_api(self, codelist_type: str) -> None:
         """Fetch a global codelist from the API."""
-        url = f"{data360_config.api_url}codelist"
+        url = f"{data360_config.api_url}/codelist"
         params = {"type": codelist_type}
 
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                response = await client.get(url, params=params)
-                response.raise_for_status()
-                data = response.json()
-                self._cache[codelist_type] = data.get("value", [])
-                self._loaded.add(codelist_type)
-                _logger.info(
-                    f"Loaded {len(self._cache[codelist_type])} items for {codelist_type}"
-                )
+            client = get_shared_httpx_client()
+            response = await client.get(url, params=params)
+            response.raise_for_status()
+            data = response.json()
+            self._cache[codelist_type] = data.get("value", [])
+            self._loaded.add(codelist_type)
+            _logger.info(
+                f"Loaded {len(self._cache[codelist_type])} items for {codelist_type}"
+            )
         except httpx.HTTPStatusError as e:
             error_msg = f"HTTP error fetching {codelist_type} codelist: {e.response.status_code}"
             _logger.error(error_msg)

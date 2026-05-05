@@ -35,6 +35,8 @@ from urllib.parse import parse_qs, urlparse
 
 import altair as alt
 import httpx
+
+from data360.http_client import get_shared_httpx_client
 import numpy as np
 import pandas as pd
 from draco import Draco, answer_set_to_dict, dict_to_facts, schema_from_dataframe
@@ -97,13 +99,13 @@ async def post_spec_to_charts_api(vl_spec: dict) -> str:
     headers = {"accept": "application/json", "Content-Type": "application/json"}
     if settings.charts_api_token:
         headers["Authorization"] = f"Bearer {settings.charts_api_token}"
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            url,
-            json=payload,
-            headers=headers,
-        )
-        response.raise_for_status()
+    client = get_shared_httpx_client()
+    response = await client.post(
+        url,
+        json=payload,
+        headers=headers,
+    )
+    response.raise_for_status()
     location = response.headers.get("Location")
     if location:
         return (
@@ -285,10 +287,10 @@ def _sanitize_dataframe_for_json_records(df: pd.DataFrame) -> pd.DataFrame:
 
 
 async def _fetch_data_internal(url: str) -> pd.DataFrame:
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.get(url)
-        response.raise_for_status()
-        data = response.json()
+    client = get_shared_httpx_client()
+    response = await client.get(url)
+    response.raise_for_status()
+    data = response.json()
     raw_data = data.get("value", [])
     if not raw_data:
         raise ValueError("No data found at the provided URL.")

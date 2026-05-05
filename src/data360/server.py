@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import uuid
+from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 
 from fastapi import FastAPI, Request
@@ -10,7 +11,11 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from data360.config import get_mcp_server_settings, setup_logging
-from data360.mcp_server import mcp
+from data360.http_client import aclose_shared_httpx_client
+from data360.otel_setup import (
+    configure_open_telemetry_for_server,
+    instrument_httpx_outbound,
+)
 
 _audit_logger = logging.getLogger("audit")
 
@@ -23,19 +28,16 @@ setup_logging(
     azure_connection_string=mcp_settings.azure_connection_string,
 )
 
-# Configure Azure Monitor OpenTelemetry for request/dependency tracking
+# Tracer export (Azure in deployed envs; optional OTLP/console when MCP_ENV=local) and httpx spans
+configure_open_telemetry_for_server(mcp_settings)
+instrument_httpx_outbound()
+
+# Import MCP after telemetry so the process uses an instrumented httpx from the first request.
+from data360.mcp_server import mcp  # noqa: E402
+
 _connection_string = mcp_settings.azure_connection_string or os.environ.get(
     "APPLICATIONINSIGHTS_CONNECTION_STRING"
 )
-if mcp_settings.env != "local" and _connection_string:
-    try:
-        from azure.monitor.opentelemetry import (
-            configure_azure_monitor,  # type: ignore[import-untyped]
-        )
-
-        configure_azure_monitor(connection_string=_connection_string)
-    except ImportError:
-        pass
 
 
 class AuditLogMiddleware(BaseHTTPMiddleware):
@@ -88,11 +90,20 @@ mcp.settings.stateless_http = True
 # path="/mcp" means the MCP endpoint lives at /mcp (no trailing slash needed)
 mcp_app = mcp.http_app(path="/mcp")
 
+
+@asynccontextmanager
+async def _lifespan_with_http_cleanup(app: FastAPI):
+    """Run MCP startup/shutdown, then close the shared httpx client."""
+    async with mcp_app.router.lifespan_context(mcp_app):
+        yield
+    await aclose_shared_httpx_client()
+
+
 # https://gofastmcp.com/deployment/http#asgi-application
 # redirect_slashes=False prevents 308 redirects between /mcp and /mcp/
 app = FastAPI(
     title="Data360 MCP Server",
-    lifespan=mcp_app.lifespan,
+    lifespan=_lifespan_with_http_cleanup,
     redirect_slashes=False,
 )  # pyright: ignore[reportUnusedExpression]
 

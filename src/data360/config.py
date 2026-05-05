@@ -1,17 +1,19 @@
 import functools as ft
 import logging
 import os
-import sys
-from pathlib import Path
-
-from dotenv import load_dotenv
 
 # Load environment variables from .env file at import time, but only when not
 # running under pytest.  Test sessions set env vars explicitly via conftest/fixtures;
 # unconditional load_dotenv() would stomp on those values with whatever is in a
 # local .env file, making tests environment-dependent.
 import os as _os
-if not _os.environ.get("PYTEST_CURRENT_TEST"):
+import sys
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# Skip .env during pytest (collection and execution) so tests control DATA360_* URLs.
+if not _os.environ.get("PYTEST_CURRENT_TEST") and not _os.environ.get("PYTEST_RUNNING"):
     load_dotenv()
 del _os
 
@@ -48,7 +50,10 @@ class MCPServerSettings(BaseSettings):
     )
     env: str | None = Field(
         default=None,
-        description="Deployment environment (e.g. local, dev, staging, prod). Azure App Insights logging is disabled when set to 'local'.",
+        description="Deployment environment (e.g. local, dev, staging, prod). Azure App Insights "
+        "and OpenTelemetry export are disabled when set to 'local' unless you set "
+        "OTEL_EXPORTER_OTLP_ENDPOINT (or OTEL_EXPORTER_OTLP_TRACES_ENDPOINT) and/or "
+        "MCP_OTEL_CONSOLE=1 for local trace export; see data360.otel_setup.",
     )
     azure_connection_string: str | None = Field(
         default=None,
@@ -113,8 +118,8 @@ class Data360Settings(BaseSettings):
 
     @property
     def api_url(self) -> str:
-        """Get the full search API URL."""
-        return f"{self.api_base_url}/data360/"
+        """Base path for Data360 HTTP APIs: ``{api_base_url}/data360`` (no trailing slash)."""
+        return f"{self.api_base_url.rstrip('/')}/data360"
 
 
 @ft.cache

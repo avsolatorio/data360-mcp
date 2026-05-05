@@ -1040,6 +1040,9 @@ class TestDatabaseNameInSearch:
 
         mapping = await get_database_mapping()
         registered_ids = list(mapping.keys())
+        # SearchRequest enforces limit <= 50; fallback databases.json can exceed that.
+        limit = min(len(registered_ids), 50)
+        slice_ids = registered_ids[:limit]
 
         value = [
             {
@@ -1051,7 +1054,7 @@ class TestDatabaseNameInSearch:
                     "dimensions": [],
                 }
             }
-            for db_id in registered_ids
+            for db_id in slice_ids
         ]
         httpx_mock.add_response(
             method="POST",
@@ -1059,7 +1062,7 @@ class TestDatabaseNameInSearch:
             json={"@odata.count": len(value), "value": value},
         )
 
-        result = await search("indicator", limit=len(registered_ids))
+        result = await search("indicator", limit=limit)
 
         assert isinstance(result, EnrichedSearchResponse)
         for ind in result.indicators:
