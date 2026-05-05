@@ -37,9 +37,3 @@ async def aclose_shared_httpx_client() -> None:
     if client is not None and not client.is_closed:
         await client.aclose()
 
-
-def reset_shared_httpx_client_for_tests() -> None:
-    """Sync reset for pytest (clears singleton without async close when unused)."""
-    global _client  # noqa: PLW0603
-    with _client_lock:
-        _client = None
