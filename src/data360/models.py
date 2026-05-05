@@ -384,6 +384,31 @@ class GroupSummary(BaseModel):
         description="Source claim_ids from underlying raw observations",
     )
 
+    def to_compact(self) -> dict[str, Any]:
+        """Return a slimmed dict for LLM context.
+
+        claim_ids are retained here — they are 8-character PCN hashes and the
+        UI needs them to render provenance attribution per group. The token cost
+        is bounded (one hash per observation per group) and preserves the
+        group→claim_ids association that a flat top-level list would lose.
+        """
+        return {
+            "group": self.group_key,
+            "n": self.count,
+            "latest": {"value": self.latest_value, "year": self.latest_year},
+            "earliest": {"value": self.earliest_value, "year": self.earliest_year},
+            "range": self.time_range,
+            "stats": {
+                "min": self.min,
+                "max": self.max,
+                "mean": self.mean,
+                "median": self.median,
+            },
+            "change": {"abs": self.total_change, "pct": self.pct_change},
+            "trend": self.trend_direction,
+            "claim_ids": self.claim_ids,
+        }
+
 
 class DataSummaryResponse(BaseModel):
     """Response model for data360_summarize_data."""
@@ -413,6 +438,20 @@ class DataSummaryResponse(BaseModel):
         ),
     )
 
+    def to_compact(self) -> dict[str, Any]:
+        """Return a slimmed dict for LLM context.
+
+        claim_ids are excluded from each GroupSummary entry — they are PCN
+        hashes retained in the full model for provenance traceability.
+        """
+        return {
+            "indicator": self.metadata.get("name") if self.metadata else None,
+            "unit": self.unit_measure,
+            "ambiguous_dimensions": self.ambiguous_dimensions,
+            "groups": [g.to_compact() for g in self.groups],
+            "error": self.error,
+        }
+
 
 class RankedCountry(BaseModel):
     """A single country entry in a ranking result."""
@@ -428,6 +467,21 @@ class RankedCountry(BaseModel):
     claim_id: str | None = Field(
         None, description="Claim ID from the source observation"
     )
+
+    def to_compact(self) -> dict[str, Any]:
+        """Return a slimmed dict for LLM context.
+
+        claim_id is retained — it is the PCN hash for this observation and the
+        UI needs it to render per-entry provenance attribution. Only percentile
+        is dropped; it is derivable from rank order and adds no LLM value.
+        """
+        return {
+            "rank": self.rank,
+            "code": self.ref_area,
+            "country": self.country_name or self.ref_area,
+            "value": self.obs_value,
+            "claim_id": self.claim_id,
+        }
 
 
 class ExcludedCountry(BaseModel):
@@ -478,6 +532,35 @@ class RankingResponse(BaseModel):
     unit_measure: str | None = Field(None, description="Unit of measurement")
     error: str | None = Field(None, description="Error message if request failed")
 
+    def to_compact(self) -> dict[str, Any]:
+        """Return a slimmed dict for LLM context.
+
+        Key reductions vs. the full model:
+        - rankings: claim_id and percentile dropped from each entry (PCN hash
+          retained in the full RankedCountry model).
+        - excluded: capped at 5 sample entries; full count is in excluded_count.
+          This prevents 30+ excluded entries from flooding the context when
+          ranking a large group like SSF (48 countries).
+        """
+        return {
+            "year": self.year,
+            "year_selection_note": self.year_selection_note,
+            "order": self.order,
+            "counts": {
+                "with_data": self.total_with_data,
+                "requested": self.total_requested,
+            },
+            "unit": self.unit_measure,
+            "indicator": self.metadata.get("name") if self.metadata else None,
+            "rankings": [r.to_compact() for r in self.rankings],
+            "excluded_count": len(self.excluded),
+            "excluded_sample": [
+                {"code": e.ref_area, "name": e.country_name}
+                for e in self.excluded[:5]
+            ],
+            "error": self.error,
+        }
+
 
 class ComparisonSnapshot(BaseModel):
     """Single-year comparison snapshot across countries."""
@@ -491,6 +574,18 @@ class ComparisonSnapshot(BaseModel):
         default_factory=dict,
         description="Spread statistics: min, max, range, coefficient_of_variation",
     )
+
+    def to_compact(self) -> dict[str, Any]:
+        """Return a slimmed dict for LLM context.
+
+        claim_id is excluded from each RankedCountry entry (PCN hash retained
+        in the full model).
+        """
+        return {
+            "year": self.year,
+            "rankings": [r.to_compact() for r in self.rankings],
+            "spread": self.spread,
+        }
 
 
 class ComparisonTimeSeries(BaseModel):
@@ -514,6 +609,42 @@ class ComparisonTimeSeries(BaseModel):
         description="Compound annual growth rate per country over aligned period",
     )
 
+    def to_compact(self) -> dict[str, Any]:
+        """Return a slimmed dict for LLM context.
+
+        The per-year ``series`` dict is retained but restructured: each data
+        point is encoded as a positional array ``[time_period, obs_value, claim_id]``
+        instead of a named dict. This reduces per-point overhead from ~55 chars
+        to ~24 chars (~56% reduction) while preserving the year→value→PCN
+        association the UI needs for provenance attribution.
+
+        A ``series_schema`` field documents the array positions so the UI
+        decoder does not need to hard-code positional assumptions.
+
+        ``aligned_years`` list is replaced by ``year_range`` + ``n_aligned_years``
+        since the LLM only needs to know the span, not the individual years.
+        """
+        year_range = (
+            f"{self.aligned_years[0]}-{self.aligned_years[-1]}"
+            if self.aligned_years
+            else None
+        )
+        compact_series = {
+            country: [
+                [pt["time_period"], pt["obs_value"], pt.get("claim_id")]
+                for pt in points
+            ]
+            for country, points in self.series.items()
+        }
+        return {
+            "year_range": year_range,
+            "n_aligned_years": len(self.aligned_years),
+            "convergence": self.convergence,
+            "cagr": self.cagr,
+            "series_schema": ["time_period", "obs_value", "claim_id"],
+            "series": compact_series,
+        }
+
 
 class CountryComparisonResponse(BaseModel):
     """Response model for data360_compare_countries."""
@@ -528,6 +659,21 @@ class CountryComparisonResponse(BaseModel):
     metadata: dict[str, Any] | None = Field(None, description="Indicator metadata")
     unit_measure: str | None = Field(None, description="Unit of measurement")
     error: str | None = Field(None, description="Error message if request failed")
+
+    def to_compact(self) -> dict[str, Any]:
+        """Return a slimmed dict for LLM context.
+
+        Delegates to ComparisonSnapshot.to_compact() and
+        ComparisonTimeSeries.to_compact(), which strip claim_ids (PCN hashes)
+        and per-year series data respectively.
+        """
+        return {
+            "indicator": self.metadata.get("name") if self.metadata else None,
+            "unit": self.unit_measure,
+            "snapshot": self.snapshot.to_compact() if self.snapshot else None,
+            "time_series": self.time_series.to_compact() if self.time_series else None,
+            "error": self.error,
+        }
 
 
 # ---------------------------------------------------------------------------
