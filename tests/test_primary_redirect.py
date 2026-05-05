@@ -374,6 +374,63 @@ class TestEnrichSearchResultsRedirect:
         indicators, _ = _enrich_search_results(response, country_code=None)
         assert indicators == []
 
+    def test_no_redirect_when_database_id_is_none(self):
+        """metadata_link with database_id=None (real case: META_SI.POV.MPWB) should not redirect."""
+        response = _make_search_response(
+            [
+                {
+                    "idno": "WB_SSGD_MULTIDIM_POVERTY_RATIO",
+                    "database_id": "WB_SSGD",
+                    "metadata_link": [
+                        {
+                            "type": "primary",
+                            "metadata_id": "META_SI.POV.MPWB",
+                            "database_id": None,
+                        }
+                    ],
+                }
+            ]
+        )
+        indicators, _ = _enrich_search_results(response, country_code=None)
+        assert len(indicators) == 1
+        # Should NOT redirect since database_id is None
+        assert indicators[0].idno == "WB_SSGD_MULTIDIM_POVERTY_RATIO"
+        assert indicators[0].database_id == "WB_SSGD"
+        assert indicators[0].primary_source_of is None
+
+
+class TestGetItemsNullDatabaseIdInMetadataLink:
+    """Ensure items with null database_id in metadata_link are still parsed."""
+
+    def test_item_with_null_database_id_in_metadata_link_is_not_dropped(self):
+        """Previously this caused a Pydantic ValidationError and dropped the item."""
+        response_data = {
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "WB_SSGD_MULTIDIM_POVERTY_RATIO",
+                        "name": "Multidimensional poverty headcount ratio",
+                        "database_id": "WB_SSGD",
+                    },
+                    "additional": {
+                        "metadata_link": [
+                            {
+                                "type": "primary",
+                                "metadata_id": "META_SI.POV.MPWB",
+                                "database_id": None,
+                                "database_name": None,
+                            }
+                        ]
+                    },
+                }
+            ]
+        }
+        items = _get_items_from_response(response_data)
+        assert len(items) == 1
+        assert items[0].idno == "WB_SSGD_MULTIDIM_POVERTY_RATIO"
+        assert len(items[0].metadata_link) == 1
+        assert items[0].metadata_link[0].database_id is None
+
 
 # ---------------------------------------------------------------------------
 # Integration: search() with mocked HTTP
