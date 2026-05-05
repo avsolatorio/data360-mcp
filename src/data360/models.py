@@ -137,10 +137,7 @@ class SeriesDescription(BaseModel):
     @property
     def primary_source(self) -> PrimarySourceInfo | None:
         """Return the first primary-type metadata link, or None."""
-        for link in self.metadata_link:
-            if link.type == "primary":
-                return link
-        return None
+        return next((link for link in self.metadata_link if link.type == "primary"), None)
 
 
 class SearchResponse(MCPPagedResponse):
