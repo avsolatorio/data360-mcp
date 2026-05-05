@@ -8,6 +8,7 @@ import pytest
 import pytest_httpx
 from data360.api import (
     _get_valid_disaggregations,
+    _obs_value_to_float,
     _strip_data_row,
     get_data,
     get_metadata,
@@ -50,6 +51,29 @@ class TestGetValidDisaggregations:
         result = _get_valid_disaggregations(disagg_res)
         # Default is ["_T"], which is not in null_values, so it should be included
         assert len(result) == 1
+
+
+@pytest.mark.parametrize(
+    ("val", "expected"),
+    [
+        (None, None),
+        ("", None),
+        ("  ", None),
+        ("null", None),
+        ("NaN", None),
+        ("none", None),
+        (float("nan"), None),
+        ("abc", None),
+        (42, 42.0),
+        ("42.5", 42.5),
+        (0, 0.0),
+        ("0", 0.0),
+        (" 3.14 ", 3.14),
+    ],
+)
+def test_obs_value_to_float(val, expected):
+    """_obs_value_to_float normalizes API edge-case values for ranking/comparison."""
+    assert _obs_value_to_float(val) == expected
 
 
 class TestSearch:
