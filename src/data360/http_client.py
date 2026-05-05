@@ -2,30 +2,44 @@
 
 from __future__ import annotations
 
+import threading
+
 import httpx
 
 _DEFAULT_TIMEOUT = 30.0
 
 _client: httpx.AsyncClient | None = None
+_client_lock = threading.Lock()
 
 
 def get_shared_httpx_client() -> httpx.AsyncClient:
     """Return a process-wide async HTTP client (lazy singleton)."""
     global _client  # noqa: PLW0603
-    if _client is None:
-        _client = httpx.AsyncClient(timeout=_DEFAULT_TIMEOUT)
-    return _client
+    client = _client
+    if client is not None and not client.is_closed:
+        return client
+
+    with _client_lock:
+        client = _client
+        if client is None or client.is_closed:
+            client = httpx.AsyncClient(timeout=_DEFAULT_TIMEOUT)
+            _client = client
+        return client
 
 
 async def aclose_shared_httpx_client() -> None:
     """Close the shared client (call from ASGI shutdown)."""
     global _client  # noqa: PLW0603
-    if _client is not None:
-        await _client.aclose()
+    with _client_lock:
+        client = _client
         _client = None
+
+    if client is not None and not client.is_closed:
+        await client.aclose()
 
 
 def reset_shared_httpx_client_for_tests() -> None:
     """Sync reset for pytest (clears singleton without async close when unused)."""
     global _client  # noqa: PLW0603
-    _client = None
+    with _client_lock:
+        _client = None
