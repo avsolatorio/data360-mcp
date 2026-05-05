@@ -796,7 +796,7 @@ async def get_viz_spec(
         # Structured tooltips
         mark_type_for_tt = viz_config.parse_chart_type_hint(chart_type)
         structured_tooltips = viz_config.build_structured_tooltips(
-            list(viz_data.columns), mark_type_for_tt
+            list(viz_data.columns), mark_type_for_tt, viz_data=viz_data
         )
         chart = chart.encode(tooltip=[alt.Tooltip(**t) for t in structured_tooltips])
 
