@@ -15,7 +15,6 @@ from pydantic import ValidationError as PydanticValidationError
 from sklearn.linear_model import HuberRegressor
 
 from .config import get_data360_settings
-from .http_client import get_shared_httpx_client
 from .errors import (
     Data360MCPError,
     NotFoundError,
@@ -23,6 +22,7 @@ from .errors import (
     classify_error,
 )
 from .errors import ValidationError as Data360ValidationError
+from .http_client import get_shared_httpx_client
 from .models import (
     ComparisonSnapshot,
     ComparisonTimeSeries,
@@ -363,7 +363,11 @@ def _build_disaggregation_params(
 
 
 def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescription]:
-    """Extract and validate series descriptions from API response."""
+    """Extract and validate series descriptions from API response.
+
+    Also hoists ``metadata_link`` from ``additional.metadata_link`` into the
+    ``SeriesDescription`` so the enrichment pipeline can detect primary sources.
+    """
     values = response_data.get("value", [])
     items = []
     for value in values:
@@ -375,6 +379,12 @@ def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescri
             and series_description.get("name")
             and series_description.get("database_id")
         ):
+            # Hoist metadata_link from additional -> series_description
+            additional = value.get("additional")
+            if additional and isinstance(additional, dict):
+                ml = additional.get("metadata_link")
+                if ml and isinstance(ml, list):
+                    series_description["metadata_link"] = ml
             try:
                 items.append(SeriesDescription.model_validate(series_description))
             except Exception as e:
@@ -456,6 +466,9 @@ async def _search_raw(
 
     if select_fields:
         select_val = ", ".join(f"series_description/{f}" for f in select_fields)
+        # Always request metadata_link for primary indicator detection;
+        # it lives under additional/, not series_description/.
+        select_val += ", additional/metadata_link"
     elif odata_options and odata_options.get("select"):
         # Backward compatibility: use odata_options.select if provided
         select_val = odata_options.get("select")
@@ -630,6 +643,22 @@ def _enrich_search_results(
                     if label in _label_to_code:
                         useful_dims.append(_label_to_code[label])
 
+        # Apply primary indicator redirect if metadata_link has type='primary'.
+        primary = item.primary_source
+        original_idno: str | None = None
+        if primary and primary.metadata_id:
+            original_idno = raw.get("idno", "")
+            # Overwrite with primary source coordinates
+            raw["idno"] = primary.indicator_id
+            raw["database_id"] = primary.database_id
+            db_id = primary.database_id
+            _logger.debug(
+                "Redirected %s -> %s/%s (primary source)",
+                original_idno,
+                primary.database_id,
+                primary.indicator_id,
+            )
+
         db_id = raw.get("database_id", "")
         ind = EnrichedIndicator(
             idno=raw.get("idno", ""),
@@ -643,6 +672,7 @@ def _enrich_search_results(
             time_period_range=time_period_range,
             covers_country=covers_country,
             dimensions=useful_dims if useful_dims else None,
+            primary_source_of=original_idno,
         )
         indicators.append(ind)
 
@@ -658,7 +688,26 @@ def _enrich_search_results(
     for ind in indicators:
         ind.requested_country = country_code
 
-    return indicators, indicators_to_verify
+    # Deduplicate after primary redirect: if multiple secondary indicators
+    # resolved to the same primary (idno + database_id), keep only the first
+    # occurrence (highest search score, since items are score-ordered).
+    seen: set[tuple[str, str]] = set()
+    deduped: list[EnrichedIndicator] = []
+    for ind in indicators:
+        key = (ind.database_id, ind.idno)
+        if key not in seen:
+            seen.add(key)
+            deduped.append(ind)
+        else:
+            _logger.debug(
+                "Dropped duplicate after primary redirect: %s/%s",
+                key[0],
+                key[1],
+            )
+    # Also remove duplicates from the verification list
+    deduped_verify = [ind for ind in indicators_to_verify if ind in deduped]
+
+    return deduped, deduped_verify
 
 
 async def search(  # noqa: PLR0911

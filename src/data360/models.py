@@ -2,6 +2,10 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
+# Prefix used by the search API's metadata_link entries.
+# Strip this to derive the usable indicator_id.
+_META_ID_PREFIX = "META_"
+
 
 class MCPPagedResponse(BaseModel):
     """Response model for MCP paged results.
@@ -73,6 +77,34 @@ class SearchRequest(BaseModel):
         return self
 
 
+class PrimarySourceInfo(BaseModel):
+    """A single metadata_link entry identifying a primary source indicator.
+
+    The search API returns this under ``additional.metadata_link`` when an
+    indicator has been curated to point to its authoritative primary source
+    (typically in WDI).
+    """
+
+    type: str = Field(..., description="Link type (e.g. 'primary')")
+    metadata_id: str = Field(
+        ...,
+        description="Metadata ID with META_ prefix (e.g. META_WB_WDI_SP_POP_TOTL)",
+    )
+    database_id: str = Field(
+        ..., description="Primary source database (e.g. WB_WDI)"
+    )
+    database_name: str | None = Field(
+        None, description="Human-readable database name"
+    )
+
+    @property
+    def indicator_id(self) -> str:
+        """Derive the usable indicator_id by stripping the META_ prefix."""
+        if self.metadata_id.startswith(_META_ID_PREFIX):
+            return self.metadata_id[len(_META_ID_PREFIX) :]
+        return self.metadata_id
+
+
 class SeriesDescription(BaseModel):
     """Model for series description in search results.
 
@@ -97,6 +129,18 @@ class SeriesDescription(BaseModel):
     dimensions: list[dict[str, Any]] | None = Field(
         None, description="Available disaggregations"
     )
+    metadata_link: list[PrimarySourceInfo] = Field(
+        default_factory=list,
+        description="Metadata links from the API's additional.metadata_link field.",
+    )
+
+    @property
+    def primary_source(self) -> PrimarySourceInfo | None:
+        """Return the first primary-type metadata link, or None."""
+        for link in self.metadata_link:
+            if link.type == "primary":
+                return link
+        return None
 
 
 class SearchResponse(MCPPagedResponse):
@@ -148,6 +192,12 @@ class EnrichedIndicator(BaseModel):
     )
     dimensions: list[str] | None = Field(
         None, description="Available disaggregations (SEX, AGE, URBANISATION)"
+    )
+    primary_source_of: str | None = Field(
+        None,
+        description="When this indicator was redirected from a secondary source, "
+        "contains the original secondary idno (e.g. 'WB_HNP_SP_POP_TOTL'). "
+        "None if the indicator was already the primary source.",
     )
 
 
