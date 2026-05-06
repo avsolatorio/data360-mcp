@@ -5,6 +5,7 @@ Covers:
 - SeriesDescription.primary_source property
 - _get_items_from_response metadata_link hoisting
 - _enrich_search_results redirect and deduplication
+- _backfill_primary_metadata: patches latest_data/time_period_range from primary
 - End-to-end search() with mocked HTTP
 """
 
@@ -17,6 +18,7 @@ import pytest
 import pytest_httpx
 
 from data360.api import (
+    _backfill_primary_metadata,
     _enrich_search_results,
     _get_items_from_response,
     search,
@@ -284,7 +286,8 @@ class TestEnrichSearchResultsRedirect:
         assert indicators[0].primary_source_of is None
 
     def test_deduplicates_after_redirect(self):
-        """Two secondary indicators pointing to the same primary should collapse."""
+        """Two secondary indicators pointing to the same primary both appear in the
+        full list returned by _enrich_search_results — dedup is the caller's job."""
         response = _make_search_response(
             [
                 {
@@ -312,11 +315,14 @@ class TestEnrichSearchResultsRedirect:
             ]
         )
         indicators, _ = _enrich_search_results(response, country_code=None)
-        assert len(indicators) == 1
-        assert indicators[0].idno == "WB_WDI_SP_POP_TOTL"
+        # Both are redirected to the same primary; the full (undeduped) list is returned.
+        assert len(indicators) == 2
+        assert all(ind.idno == "WB_WDI_SP_POP_TOTL" for ind in indicators)
+        assert all(ind.primary_source_of is not None for ind in indicators)
 
     def test_mixed_redirected_and_native(self):
-        """Native WDI indicator + secondary that redirects to same -> deduped to 1."""
+        """Native WDI + secondary that redirects to same primary both appear.
+        Dedup (collapsing to 1) is the caller's responsibility."""
         response = _make_search_response(
             [
                 {
@@ -338,10 +344,14 @@ class TestEnrichSearchResultsRedirect:
             ]
         )
         indicators, _ = _enrich_search_results(response, country_code=None)
-        assert len(indicators) == 1
-        assert indicators[0].idno == "WB_WDI_SP_POP_TOTL"
+        # _enrich_search_results no longer deduplicates; both items are returned.
+        assert len(indicators) == 2
         # First occurrence was the native one (no redirect)
+        assert indicators[0].idno == "WB_WDI_SP_POP_TOTL"
         assert indicators[0].primary_source_of is None
+        # Second was redirected
+        assert indicators[1].idno == "WB_WDI_SP_POP_TOTL"
+        assert indicators[1].primary_source_of == "WB_HNP_SP_POP_TOTL_ZS"
 
     def test_preserves_original_name(self):
         """Redirect changes idno/database_id but preserves the original name."""
@@ -512,6 +522,13 @@ class TestSearchPrimaryRedirectIntegration:
             url="https://api.test.example.com/searchv2",
             json=mock_response,
         )
+        # The redirected indicator triggers a backfill metadata fetch.
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": []},  # empty — backfill gracefully skips
+            is_optional=True,
+        )
 
         result = await search("population", limit=10)
 
@@ -561,7 +578,8 @@ class TestSearchPrimaryRedirectIntegration:
     async def test_search_deduplicates_after_redirect(
         self, httpx_mock: pytest_httpx.HTTPXMock
     ):
-        """Two results redirecting to the same primary are collapsed."""
+        """Two results redirecting to the same primary — single-query search() does not
+        deduplicate; both are returned (dedup is the multi-query caller's responsibility)."""
         mock_response = {
             "@odata.context": "...",
             "@odata.count": 2,
@@ -610,8 +628,208 @@ class TestSearchPrimaryRedirectIntegration:
             url="https://api.test.example.com/searchv2",
             json=mock_response,
         )
+        # One (or both) redirected indicators trigger backfill metadata fetches.
+        # We use is_optional because the dedup-from-caller may vary in multi-mock order.
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": []},  # empty — backfill gracefully skips
+            is_optional=True,
+        )
 
         result = await search("population", limit=10)
 
-        assert len(result.indicators) == 1
-        assert result.indicators[0].idno == "WB_WDI_SP_POP_TOTL"
+        # Single-query search() does not deduplicate: both items are returned.
+        assert len(result.indicators) == 2
+        assert all(ind.idno == "WB_WDI_SP_POP_TOTL" for ind in result.indicators)
+        assert all(ind.primary_source_of is not None for ind in result.indicators)
+
+
+
+# ---------------------------------------------------------------------------
+# _backfill_primary_metadata
+# ---------------------------------------------------------------------------
+
+
+_METADATA_URL = "https://api.test.example.com/metadata"
+_SEARCH_URL = "https://api.test.example.com/searchv2"
+
+
+def _make_metadata_response(start: str, end: str, latest: str) -> dict:
+    """Build a minimal metadata API response payload."""
+    return {
+        "value": [
+            {
+                "series_description": {
+                    "idno": "IGNORED",
+                    "database_id": "IGNORED",
+                    "time_periods": [
+                        {
+                            "start": start,
+                            "end": end,
+                            "LATEST_DATA_POINT": latest,
+                        }
+                    ],
+                }
+            }
+        ]
+    }
+
+
+class TestBackfillPrimaryMetadata:
+    """Unit tests for _backfill_primary_metadata using mocked HTTP."""
+
+    @pytest.mark.asyncio
+    async def test_backfill_patches_latest_data_and_range(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Redirected indicator gets latest_data and time_period_range from the primary."""
+        httpx_mock.add_response(
+            method="POST",
+            url=_METADATA_URL,
+            json=_make_metadata_response("1960", "2025", "2025"),
+        )
+
+        from data360.models import EnrichedIndicator
+
+        ind = EnrichedIndicator(
+            idno="WB_WDI_SP_POP_TOTL",
+            database_id="WB_WDI",
+            name="Population",
+            truncated_definition="Total population.",
+            latest_data="2023",           # stale secondary value
+            time_period_range="1960-2023",  # stale secondary value
+        )
+
+        await _backfill_primary_metadata([ind])
+
+        assert ind.latest_data == "2025"
+        assert ind.time_period_range == "1960-2025"
+
+    @pytest.mark.asyncio
+    async def test_backfill_noop_on_empty_list(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Empty redirected list must not trigger any HTTP request."""
+        await _backfill_primary_metadata([])
+        # httpx_mock would raise AssertionError if any unexpected requests were fired.
+
+    @pytest.mark.asyncio
+    async def test_backfill_graceful_on_metadata_failure(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """HTTP failure during backfill must not raise; original values are kept."""
+        httpx_mock.add_response(
+            method="POST",
+            url=_METADATA_URL,
+            status_code=500,
+        )
+
+        from data360.models import EnrichedIndicator
+
+        ind = EnrichedIndicator(
+            idno="WB_WDI_SP_POP_TOTL",
+            database_id="WB_WDI",
+            name="Population",
+            truncated_definition="Total population.",
+            latest_data="2023",
+            time_period_range="1960-2023",
+        )
+
+        # Should not raise — failure is swallowed with a warning.
+        await _backfill_primary_metadata([ind])
+
+        # Original (secondary) values are preserved on failure.
+        assert ind.latest_data == "2023"
+        assert ind.time_period_range == "1960-2023"
+
+    @pytest.mark.asyncio
+    async def test_backfill_deduplicates_same_primary(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Two indicators pointing to the same primary should issue only one fetch."""
+        httpx_mock.add_response(
+            method="POST",
+            url=_METADATA_URL,
+            json=_make_metadata_response("1960", "2025", "2025"),
+        )
+
+        from data360.models import EnrichedIndicator
+
+        # Two separate EnrichedIndicator instances that both resolved to the same primary.
+        ind1 = EnrichedIndicator(
+            idno="WB_WDI_SP_POP_TOTL",
+            database_id="WB_WDI",
+            name="Population (HNP)",
+            truncated_definition="HNP source.",
+            latest_data="2020",
+            time_period_range="1960-2020",
+        )
+        ind2 = EnrichedIndicator(
+            idno="WB_WDI_SP_POP_TOTL",
+            database_id="WB_WDI",
+            name="Population (GS)",
+            truncated_definition="GS source.",
+            latest_data="2021",
+            time_period_range="1960-2021",
+        )
+
+        # Only one metadata mock registered — if both fetch, the second will fail.
+        await _backfill_primary_metadata([ind1, ind2])
+
+        # ind1 was the unique representative; its values should be updated.
+        assert ind1.latest_data == "2025"
+        assert ind1.time_period_range == "1960-2025"
+        # ind2 was skipped (deduped); original values preserved.
+        assert ind2.latest_data == "2021"
+
+    @pytest.mark.asyncio
+    async def test_search_backfills_primary_time_period(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """End-to-end: search() redirects and then backfills time period from primary."""
+        search_response = {
+            "@odata.context": "...",
+            "@odata.count": 1,
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "WB_HNP_SP_POP_TOTL_ZS",
+                        "name": "Population (secondary)",
+                        "database_id": "WB_HNP",
+                        "definition_long": "Secondary source",
+                        "dimensions": [],
+                        "time_periods": [
+                            {"start": "1960", "end": "2023", "LATEST_DATA_POINT": "2023"}
+                        ],
+                    },
+                    "additional": {
+                        "metadata_link": [
+                            {
+                                "type": "primary",
+                                "metadata_id": "META_WB_WDI_SP_POP_TOTL",
+                                "database_id": "WB_WDI",
+                            }
+                        ]
+                    },
+                }
+            ],
+        }
+
+        httpx_mock.add_response(
+            method="POST",
+            url=_SEARCH_URL,
+            json=search_response,
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url=_METADATA_URL,
+            json=_make_metadata_response("1960", "2025", "2025"),
+        )
+
+        result = await search("population", limit=5)
+
+        assert isinstance(result, EnrichedSearchResponse)
+        ind = result.indicators[0]
+        assert ind.idno == "WB_WDI_SP_POP_TOTL"
+        # Backfill should have replaced the secondary's 2023 with the primary's 2025.
+        assert ind.latest_data == "2025"
+        assert ind.time_period_range == "1960-2025"

@@ -708,6 +708,75 @@ def _enrich_search_results(
     return indicators, indicators_to_verify
 
 
+async def _backfill_primary_metadata(
+    redirected: "list[EnrichedIndicator]",
+) -> None:
+    """Fetch fresh metadata for redirected primary indicators and update
+    latest_data / time_period_range in place.
+
+    When a secondary indicator is redirected to its primary source, the
+    time-period data carried by the search result still belongs to the
+    secondary (which may be a frozen snapshot while the primary is
+    actively updated). This helper fetches the real time_periods from
+    the primary indicator's metadata and patches both fields.
+
+    Duplicate primary targets (multiple secondaries pointing to the same
+    primary) are collapsed to a single fetch via the metadata cache.
+
+    Args:
+        redirected: EnrichedIndicator objects whose idno/database_id were
+            rewritten to point at a primary source (identified by
+            primary_source_of is not None).
+    """
+    if not redirected:
+        return
+
+    # Deduplicate by (database_id, idno) so we issue at most one metadata
+    # request per unique primary target. The metadata cache also handles
+    # this, but deduplicating here avoids concurrent redundant fetches.
+    seen: set[tuple[str, str]] = set()
+    unique_redirected: list[EnrichedIndicator] = []
+    for ind in redirected:
+        key = (ind.database_id, ind.idno)
+        if key not in seen:
+            seen.add(key)
+            unique_redirected.append(ind)
+
+    async def _fetch_and_patch(ind: "EnrichedIndicator") -> None:
+        try:
+            meta = await get_metadata(
+                database_id=ind.database_id,
+                indicator_id=ind.idno,
+                select_fields=["time_periods"],
+                fetch_disaggregation=False,
+            )
+            if meta.indicator_metadata:
+                time_periods = meta.indicator_metadata.get("time_periods", [])
+                if time_periods and isinstance(time_periods, list):
+                    tp = time_periods[0] if isinstance(time_periods[0], dict) else {}
+                    ind.latest_data = tp.get("LATEST_DATA_POINT") or tp.get("end")
+                    start = tp.get("start")
+                    end = tp.get("end")
+                    if start and end:
+                        ind.time_period_range = f"{start}-{end}"
+                    _logger.debug(
+                        "Backfilled primary metadata for %s/%s: latest=%s range=%s",
+                        ind.database_id,
+                        ind.idno,
+                        ind.latest_data,
+                        ind.time_period_range,
+                    )
+        except Exception as e:
+            _logger.warning(
+                "Failed to backfill primary metadata for %s/%s: %s",
+                ind.database_id,
+                ind.idno,
+                e,
+            )
+
+    await asyncio.gather(*(_fetch_and_patch(ind) for ind in unique_redirected))
+
+
 async def search(  # noqa: PLR0911
     query: str | None = None,
     required_country: str | None = None,
@@ -1041,6 +1110,11 @@ async def search(  # noqa: PLR0911
         search_result, country_code, db_mapping
     )
 
+    # Backfill latest_data / time_period_range for redirected indicators so
+    # the LLM sees the primary source's actual data range, not the secondary's.
+    redirected = [ind for ind in indicators if ind.primary_source_of is not None]
+    await _backfill_primary_metadata(redirected)
+
     # Secondary verification pass: the search API's ref_country array omits group
     # aggregate codes (SAS, WLD, etc.) even when the data endpoint supports them.
     # For flagged indicators, concurrently query the disaggregation endpoint to
@@ -1131,6 +1205,9 @@ async def _build_multi_query_response(
         # Multi-query uses sovereign country codes per group; regional aggregate
         # verification is only needed for the single-query path. Discard it.
         enriched, _ = _enrich_search_results(raw_result, code_for_query, db_mapping)
+        # Backfill latest_data / time_period_range for any redirected indicators.
+        redirected = [ind for ind in enriched if ind.primary_source_of is not None]
+        await _backfill_primary_metadata(redirected)
         total_candidates += len(enriched)
 
         group_indicators: list[EnrichedIndicator] = []
