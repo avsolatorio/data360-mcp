@@ -625,8 +625,10 @@ class ComparisonSnapshot(BaseModel):
     def to_compact(self) -> dict[str, Any]:
         """Return a slimmed dict for LLM context.
 
-        claim_id is excluded from each RankedCountry entry (PCN hash retained
-        in the full model).
+        Delegates to RankedCountry.to_compact() for each ranked entry, which
+        retains claim_id (PCN hash) and drops percentile. claim_id is preserved
+        here so the UI can render per-country provenance attribution in the
+        snapshot table.
         """
         return {
             "year": self.year,
