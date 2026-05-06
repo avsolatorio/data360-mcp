@@ -700,29 +700,12 @@ def _enrich_search_results(
     for ind in indicators:
         ind.requested_country = country_code
 
-    # Deduplicate after primary redirect: if multiple secondary indicators
-    # resolved to the same primary (idno + database_id), keep only the first
-    # occurrence (highest search score, since items are score-ordered).
-    seen: set[tuple[str, str]] = set()
-    deduped: list[EnrichedIndicator] = []
-    for ind in indicators:
-        key = (ind.database_id, ind.idno)
-        if key not in seen:
-            seen.add(key)
-            deduped.append(ind)
-        else:
-            _logger.debug(
-                "Dropped duplicate after primary redirect: %s/%s",
-                key[0],
-                key[1],
-            )
-    # Also remove duplicates from the verification list.
-    # Use object identity (id()) because EnrichedIndicator does not define __eq__
-    # and these are the same instances built in the loop above — not copies.
-    deduped_ids = {id(ind) for ind in deduped}
-    deduped_verify = [ind for ind in indicators_to_verify if id(ind) in deduped_ids]
-
-    return deduped, deduped_verify
+    # Do not deduplicate here. `_enrich_search_results()` is used by both
+    # single-query and multi-query flows, and multi-query needs access to the
+    # full post-redirect candidate list so its `dedupe` flag and candidate
+    # counts remain accurate. Any deduplication should happen in the caller
+    # that owns the response semantics.
+    return indicators, indicators_to_verify
 
 
 async def search(  # noqa: PLR0911
