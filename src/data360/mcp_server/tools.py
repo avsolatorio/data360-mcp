@@ -27,17 +27,19 @@ from .tool_spans import instrument_mcp_tool
 def _compact_aggregation_serializer(data: Any) -> str:
     """Compact serializer for aggregation tool responses.
 
-    Calls ``to_compact()`` on the response model if available. This strips
-    PCN claim_ids from the LLM-facing TextContent output — they are retained
-    in the full Pydantic model (and in the MCP structured_content block)
-    for data provenance verification, but they consume tokens without aiding
-    the LLM's reasoning.
+    Calls ``to_compact()`` on the response model if available, producing a
+    token-efficient JSON representation while preserving all PCN claim_ids
+    for data provenance verification:
 
-    For RankingResponse the excluded list is also capped at 5 sample entries
-    (see RankingResponse.to_compact for details).
-
-    For ComparisonTimeSeries the per-year series dict is dropped; the LLM
-    receives only the year_range, n_aligned_years, convergence, and CAGR.
+    - summarize_data (DataSummaryResponse): claim_ids retained as a list per
+      group; verbose stats keys are shortened.
+    - rank_countries (RankingResponse): claim_id retained per ranked entry;
+      percentile dropped (derivable from rank order). Excluded list capped at
+      5 sample entries — see RankingResponse.to_compact for details.
+    - compare_countries (CountryComparisonResponse): claim_id retained per
+      snapshot entry. Time-series points are encoded as positional arrays
+      [time_period, obs_value, claim_id] with a series_schema key, reducing
+      per-point overhead by ~56% vs named dicts.
 
     Falls back to FastMCP's default pydantic_core serializer when the model
     has no to_compact() method (should not happen for these three tools but
