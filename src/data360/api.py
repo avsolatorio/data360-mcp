@@ -2371,9 +2371,10 @@ async def summarize_data(
     Call instead of data360_get_data when the user asks about trends, changes over time,
     or general patterns — not specific year values. Particularly useful for PATH C (trend)
     questions like "How has X changed?" or "What is the trend of Y?". Use the default
-    group_by=["ref_area"] for all single- or multi-country trend questions — this produces
-    one group per country with meaningful multi-point statistics. The LLM should pick
-    group_by columns based on the question's analytical intent.
+    group_by=["ref_area"] for all single- or multi-country trend questions to group at the
+    country level; this typically yields meaningful multi-point statistics per country, but
+    additional auto-detected disaggregation dimensions may create multiple groups per
+    country. The LLM should pick group_by columns based on the question's analytical intent.
 
     Do NOT call this when the user wants a specific data point for a specific year — use
     data360_get_data for that (PATH A). Do NOT call this for visualization — use
