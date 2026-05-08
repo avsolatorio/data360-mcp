@@ -2412,10 +2412,11 @@ async def summarize_data(
             - "GDP by sex for Kenya" → ["ref_area", "sex"]. One group per (country, sex).
 
             WARNING — NEVER use ["time_period"] as the sole group_by for trend or
-            single-country questions. Grouping by time_period alone creates ONE GROUP
-            PER YEAR, each containing exactly ONE observation. With n=1, every group
+            single-country questions. Grouping by time_period alone typically creates
+            ONE GROUP PER YEAR and, when a single series is returned, often leaves each
+            group with exactly ONE observation. In that common n=1 case, every group
             shows min=max=mean=median=that single value, change=0 %, trend=stable —
-            mathematically degenerate and useless for any trend analysis.
+            mathematically degenerate and usually useless for trend analysis.
             ["time_period"] is only valid for cross-country year-over-year aggregates
             (e.g. "global average per year") when country_code is NOT specified.
 
