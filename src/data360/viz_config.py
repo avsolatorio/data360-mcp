@@ -272,7 +272,9 @@ _MULTI_IND_TOOLTIP_DIMS: tuple[str, ...] = (
 _LINE_HOVER_POINT: dict[str, object] = {"filled": True, "size": 56}
 
 
-def _multi_indicator_tooltip_columns(df_columns: list[str], value_col: str) -> list[str]:
+def _multi_indicator_tooltip_columns(
+    df_columns: list[str], value_col: str
+) -> list[str]:
     colset = set(df_columns)
     out: list[str] = []
     for c in _MULTI_IND_TOOLTIP_DIMS:
@@ -867,11 +869,7 @@ def build_breakdown_comparison_spec(
                 "axis": {
                     "title": None,
                     "labelFontWeight": "bold",
-                    **(
-                        {"labelAngle": 0}
-                        if x_field in ("year", "time_period")
-                        else {}
-                    ),
+                    **({"labelAngle": 0} if x_field in ("year", "time_period") else {}),
                 },
             },
             "xOffset": {"field": color_dim, "type": "nominal"},
@@ -1233,6 +1231,386 @@ def build_fallback_line_spec(
         "width": 600,
         "height": 350,
     }
+    return inject_wb_config(spec)
+
+
+# ============================================================================
+# CHOROPLETH (single indicator, single year, geoshape + lookup)
+# ============================================================================
+
+
+def wants_choropleth(chart_type: str | None) -> bool:
+    """True when user asked for a world / geo choropleth via chart_type text."""
+    if not chart_type:
+        return False
+    t = chart_type.lower()
+    if "choropleth" in t:
+        return True
+    if "world map" in t:
+        return True
+    if "geo map" in t:
+        return True
+    return False
+
+
+def build_choropleth_geo_join_alias_map(features: list) -> dict[str, str]:
+    """Map REF_AREA-style codes to canonical ``WB_A3`` using world GeoJSON features.
+
+    Data360 ``REF_AREA`` may be ISO 3166-1 alpha-3, alpha-2, or UN M49 numeric strings.
+    Vega choropleth lookup joins on ``properties.WB_A3`` in the bundled world GeoJSON.
+    """
+
+    index: dict[str, str] = {}
+    for feat in features:
+        if not isinstance(feat, dict):
+            continue
+        props = feat.get("properties")
+        if not isinstance(props, dict):
+            continue
+        wb_raw = props.get("WB_A3")
+        if not isinstance(wb_raw, str):
+            continue
+        wb = wb_raw.strip().upper()
+        if len(wb) != 3 or not wb.isalpha():
+            continue
+
+        def add(key: str | int | float | None) -> None:
+            if key is None:
+                return
+            k = str(key).strip().upper()
+            if not k:
+                return
+            if k not in index:
+                index[k] = wb
+
+        add(wb)
+        for iso_key in ("ISO_A3", "ISO_A3_EH"):
+            v = props.get(iso_key)
+            if isinstance(v, str):
+                add(v)
+        for a2_key in ("WB_A2", "ISO_A2"):
+            v = props.get(a2_key)
+            if isinstance(v, str):
+                add(v)
+        un_a3 = props.get("UN_A3")
+        if un_a3 is not None:
+            u = str(un_a3).strip()
+            if u.isdigit():
+                add(u.zfill(3))
+                add(str(int(u)))
+    return index
+
+
+def normalize_choropleth_wb_a3_codes(
+    raw_codes: pd.Series,
+    alias_map: dict[str, str],
+) -> pd.Series:
+    """Rewrite stats area codes to ``WB_A3`` when ``alias_map`` recognises them."""
+
+    def norm(val: object) -> str:
+        raw = str(val).strip().upper()
+        if not raw:
+            return raw
+        if raw in alias_map:
+            return alias_map[raw]
+        if raw.isdigit():
+            k3 = raw.zfill(3)
+            if k3 in alias_map:
+                return alias_map[k3]
+        return raw
+
+    return raw_codes.map(norm)
+
+
+def validate_choropleth_df(df: pd.DataFrame) -> str | None:
+    """Return an error message if ``df`` cannot be used for a choropleth, else None."""
+    if "wb_a3" not in df.columns:
+        return (
+            "Choropleth requires country codes (wb_a3). Ensure REF_AREA / country is present "
+            "before mapping."
+        )
+    if "value" not in df.columns:
+        return "Choropleth requires a value column."
+    if "year" not in df.columns:
+        return "Choropleth requires a year column."
+    if df["year"].nunique() > 1:
+        return (
+            "Choropleth supports a single time period. "
+            "Set start_year and end_year to the same year, or narrow the query."
+        )
+    if df.dropna(subset=["value", "wb_a3"]).empty:
+        return "No rows with both wb_a3 and value for choropleth."
+    return None
+
+
+def build_choropleth_spec(
+    df: pd.DataFrame,
+    title: str | dict,
+    geo_url: str,
+    geo_format: str = "json",
+    geo_feature: str | None = None,
+    geo_join_prop: str = "WB_A3",
+    small_countries_geo_url: str | None = None,
+    disputed_areas_geo_url: str | None = None,
+    country_name_rows: list[dict[str, str]] | None = None,
+    unit_measure: str | None = None,
+) -> dict:
+    """Vega-Lite choropleth with base map + data overlay."""
+    cols = [c for c in ("wb_a3", "value", "country", "year") if c in df.columns]
+    plot_df = df[cols].copy()
+    plot_df = plot_df.dropna(subset=["value", "wb_a3"])
+    # GeoJSON join keys are uppercase (e.g. properties.WB_A3); normalize defensively.
+    plot_df["wb_a3"] = plot_df["wb_a3"].astype(str).str.strip().str.upper()
+    plot_df["year"] = plot_df["year"].astype(str)
+    rows = plot_df.to_dict(orient="records")
+
+    value_legend = "Value"
+    if unit_measure and str(unit_measure).strip():
+        value_legend = f"Value ({unit_measure})"
+
+    lookup_key = f"properties.{geo_join_prop}"
+    join_value_expr = f"datum.{lookup_key}"
+    if geo_format == "topojson":
+        data_format: dict[str, str] = {"type": "topojson"}
+        if geo_feature:
+            data_format["feature"] = geo_feature
+    else:
+        data_format = {"type": "json", "property": "features"}
+
+    spec: dict = {
+        "$schema": _vl_schema(),
+        "title": title,
+        # Plate Carree. ``clipAngle: null`` enables antimeridian cutting (D3); without it,
+        # USA (Alaska + dateline) and similar polygons span ~360 deg lon and fill the whole view.
+        "projection": {"type": "equirectangular", "clipAngle": None},
+        "layer": [
+            {
+                "data": {"url": geo_url, "format": data_format},
+                # Base map for context: countries without values still appear.
+                "transform": [
+                    *(
+                        [
+                            {
+                                "lookup": lookup_key,
+                                "from": {
+                                    "data": {"values": country_name_rows},
+                                    "key": "wb_a3",
+                                    "fields": ["country_name"],
+                                },
+                            }
+                        ]
+                        if country_name_rows
+                        else []
+                    ),
+                    {
+                        "calculate": "isValid(datum.country_name) && datum.country_name != '' ? datum.country_name : (isValid(datum.properties.NAME_EN) && datum.properties.NAME_EN != '' ? datum.properties.NAME_EN : (isValid(datum.properties.WB_NAME) && datum.properties.WB_NAME != '' ? datum.properties.WB_NAME : (isValid(datum.properties.ISO_A3) && datum.properties.ISO_A3 != '' ? datum.properties.ISO_A3 : (isValid(datum.properties.WB_A3) && datum.properties.WB_A3 != '' ? datum.properties.WB_A3 : 'Unknown'))))",
+                        "as": "country_base",
+                    },
+                    {
+                        "calculate": f"isValid({join_value_expr}) ? toString({join_value_expr}) : 'N/A'",
+                        "as": "wb_a3_base",
+                    },
+                    {"calculate": "'N/A'", "as": "value_base"},
+                    {"calculate": "'N/A'", "as": "year_base"},
+                ],
+                "mark": {
+                    "type": "geoshape",
+                    "fill": WB_NO_DATA,
+                    "stroke": "#9AA7B4",
+                    "strokeWidth": 0.75,
+                },
+                "encoding": {
+                    "tooltip": [
+                        {
+                            "field": "country_base",
+                            "type": "nominal",
+                            "title": "Country",
+                        },
+                        {"field": "wb_a3_base", "type": "nominal", "title": "Code"},
+                        {
+                            "field": "value_base",
+                            "type": "nominal",
+                            "title": value_legend,
+                        },
+                        {"field": "year_base", "type": "nominal", "title": "Year"},
+                    ]
+                },
+            },
+            {
+                "data": {"url": geo_url, "format": data_format},
+                "transform": [
+                    {
+                        "lookup": lookup_key,
+                        "from": {
+                            "data": {"values": rows},
+                            "key": "wb_a3",
+                            "fields": ["value", "country", "year", "wb_a3"],
+                        },
+                    },
+                    {"filter": "isValid(datum.value)"},
+                ],
+                "mark": {
+                    "type": "geoshape",
+                    "stroke": "#D7DEE7",
+                    "strokeWidth": 0.55,
+                },
+                "encoding": {
+                    "color": {
+                        "field": "value",
+                        "type": "quantitative",
+                        # "sequential" on fieldDef is ignored by VL (warns); linear + scheme is correct.
+                        "scale": {"type": "linear", "scheme": "blues", "domainMin": 0},
+                        "legend": {"title": value_legend},
+                    },
+                    "tooltip": [
+                        {"field": "country", "type": "nominal", "title": "Country"},
+                        {"field": "wb_a3", "type": "nominal", "title": "Code"},
+                        {
+                            "field": "value",
+                            "type": "quantitative",
+                            "title": value_legend,
+                            "format": ",.2f",
+                        },
+                        {"field": "year", "type": "nominal", "title": "Year"},
+                    ],
+                },
+            },
+        ],
+        # ~2:1 aspect matches typical equirectangular world extent (excluding polar caps in data).
+        "width": 600,
+        "height": 300,
+    }
+
+    if small_countries_geo_url:
+        small_format: dict[str, str] = {"type": "json", "property": "features"}
+        spec["layer"].append(
+            {
+                "data": {"url": small_countries_geo_url, "format": small_format},
+                "transform": [
+                    *(
+                        [
+                            {
+                                "lookup": "properties.ISO_A3",
+                                "from": {
+                                    "data": {"values": country_name_rows},
+                                    "key": "wb_a3",
+                                    "fields": ["country_name"],
+                                },
+                            }
+                        ]
+                        if country_name_rows
+                        else []
+                    )
+                ],
+                "mark": {
+                    "type": "circle",
+                    "size": 26,
+                    "fill": WB_NO_DATA,
+                    "stroke": WB_GRID_COLOR,
+                    "strokeWidth": 0.7,
+                },
+                "encoding": {
+                    "longitude": {
+                        "field": "geometry.coordinates[0]",
+                        "type": "quantitative",
+                    },
+                    "latitude": {
+                        "field": "geometry.coordinates[1]",
+                        "type": "quantitative",
+                    },
+                    "tooltip": [
+                        {
+                            "field": "country_name",
+                            "type": "nominal",
+                            "title": "Country",
+                        },
+                        {
+                            "field": "properties.ISO_A3",
+                            "type": "nominal",
+                            "title": "Code",
+                        },
+                        {"value": "N/A", "title": value_legend},
+                        {"value": "N/A", "title": "Year"},
+                    ],
+                },
+            }
+        )
+        spec["layer"].append(
+            {
+                "data": {"url": small_countries_geo_url, "format": small_format},
+                "transform": [
+                    {
+                        "lookup": "properties.ISO_A3",
+                        "from": {
+                            "data": {"values": rows},
+                            "key": "wb_a3",
+                            "fields": ["value", "country", "year", "wb_a3"],
+                        },
+                    },
+                    {"filter": "isValid(datum.value)"},
+                ],
+                "mark": {
+                    "type": "circle",
+                    "size": 42,
+                    "stroke": WB_WHITE,
+                    "strokeWidth": 0.75,
+                },
+                "encoding": {
+                    "longitude": {
+                        "field": "geometry.coordinates[0]",
+                        "type": "quantitative",
+                    },
+                    "latitude": {
+                        "field": "geometry.coordinates[1]",
+                        "type": "quantitative",
+                    },
+                    "color": {
+                        "field": "value",
+                        "type": "quantitative",
+                        "scale": {"type": "linear", "scheme": "blues", "domainMin": 0},
+                        "legend": None,
+                    },
+                    "tooltip": [
+                        {"field": "country", "type": "nominal", "title": "Country"},
+                        {"field": "wb_a3", "type": "nominal", "title": "Code"},
+                        {
+                            "field": "value",
+                            "type": "quantitative",
+                            "title": value_legend,
+                            "format": ",.2f",
+                        },
+                        {"field": "year", "type": "nominal", "title": "Year"},
+                    ],
+                },
+            }
+        )
+
+    if disputed_areas_geo_url:
+        spec["layer"].append(
+            {
+                "data": {
+                    "url": disputed_areas_geo_url,
+                    "format": {"type": "json", "property": "features"},
+                },
+                "mark": {
+                    "type": "geoshape",
+                    "fillOpacity": 0,
+                    "stroke": "#8A969F",
+                    "strokeWidth": 0.7,
+                    "strokeDash": [3, 2],
+                },
+                "encoding": {
+                    "tooltip": [
+                        {
+                            "field": "properties.NAM_0",
+                            "type": "nominal",
+                            "title": "Area",
+                        }
+                    ]
+                },
+            }
+        )
+
     return inject_wb_config(spec)
 
 

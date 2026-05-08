@@ -11,7 +11,7 @@ import {
 import type { VegaChartCardProps } from "./types";
 import { toPng } from "html-to-image";
 import { WB_PALETTE } from "@data360/mcp-viz-core";
-import { prepareSpec, parseSpec } from "@data360/mcp-viz-core";
+import { getMark, prepareSpec, parseSpec } from "@data360/mcp-viz-core";
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -222,6 +222,18 @@ export default function VegaChartCard({
   // Parse legend metadata from the original spec (not prepared)
   const parsed = useMemo(() => parseSpec(spec, WB_PALETTE), [spec]);
 
+  /** Choropleths use quantitative color + sequential scale; card legend toggles are categorical-only. */
+  const isChoroplethQuantitative = useMemo(() => {
+    const colorEnc = spec.encoding?.color;
+    const colorType =
+      colorEnc && typeof colorEnc === "object" && "type" in colorEnc
+        ? (colorEnc as { type?: string }).type
+        : undefined;
+    return (
+      String(getMark(spec)) === "geoshape" && colorType === "quantitative"
+    );
+  }, [spec]);
+
   // Initialise active groups when spec changes
   useEffect(() => {
     setActiveGroups(new Set(parsed.distinctGroups));
@@ -240,14 +252,25 @@ export default function VegaChartCard({
   useEffect(() => {
     if (!chartRef.current) return;
     // Single-series specs have no color legend → distinctGroups and activeGroups stay empty; still embed.
-    if (parsed.distinctGroups.length > 0 && activeGroups.size === 0) return;
+    // Choropleth quantitative: skip this guard — distinct "groups" are numeric bins, not series toggles.
+    if (
+      !isChoroplethQuantitative &&
+      parsed.distinctGroups.length > 0 &&
+      activeGroups.size === 0
+    ) {
+      return;
+    }
 
     // Dynamically import vega-embed (peer dep)
     import("vega-embed").then(({ default: embed }) => {
       let prepared = prepareSpec(spec, chartHeight);
 
-      // Filter rows to active groups
-      if (parsed.colorField && prepared.data?.values) {
+      // Filter rows to active groups (categorical series only; not choropleth sequential color)
+      if (
+        !isChoroplethQuantitative &&
+        parsed.colorField &&
+        prepared.data?.values
+      ) {
         prepared = {
           ...prepared,
           data: {
@@ -258,8 +281,12 @@ export default function VegaChartCard({
         };
       }
 
-      // Apply active color scale
-      if (prepared.encoding?.color && parsed.colorField) {
+      // Apply active color scale (categorical palette only; keep Vega sequential scale for choropleths)
+      if (
+        !isChoroplethQuantitative &&
+        prepared.encoding?.color &&
+        parsed.colorField
+      ) {
         const activeDomain = parsed.distinctGroups.filter((g) => activeGroups.has(g));
         prepared.encoding.color.scale = {
           domain: activeDomain,
@@ -281,14 +308,18 @@ export default function VegaChartCard({
     return () => {
       try { vegaViewRef.current?.finalize(); } catch { /* ignore */ }
     };
-  }, [spec, activeGroups, chartHeight, parsed]);
+  }, [spec, activeGroups, chartHeight, parsed, isChoroplethQuantitative]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
   const handleDownload = useCallback(() => {
-    const rows = parsed.rows.filter(
-      (r) => !parsed.colorField || activeGroups.has(String(r[parsed.colorField]))
-    );
+    const rows = isChoroplethQuantitative
+      ? parsed.rows
+      : parsed.rows.filter(
+          (r) =>
+            !parsed.colorField ||
+            activeGroups.has(String(r[parsed.colorField])),
+        );
     if (onDownload) {
       onDownload(rows);
       return;
@@ -300,7 +331,7 @@ export default function VegaChartCard({
     a.href     = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
     a.download = "chart-data.csv";
     a.click();
-  }, [parsed, activeGroups, onDownload]);
+  }, [parsed, activeGroups, onDownload, isChoroplethQuantitative]);
 
   const handleExport = useCallback(() => {
     const deliver = (url: string) => {
@@ -413,8 +444,8 @@ export default function VegaChartCard({
         {/* Chart (PNG export captures this whole card via html-to-image) */}
         <div ref={chartRef} style={chartArea} />
 
-        {/* Interactive legend */}
-        {parsed.distinctGroups.length > 0 && (
+        {/* Interactive legend (categorical series only) */}
+        {parsed.distinctGroups.length > 0 && !isChoroplethQuantitative && (
           <div style={{ display: "flex", gap: 4, justifyContent: "center", flexWrap: "wrap", margin: "10px 0 4px" }}>
             {parsed.distinctGroups.map((g) => (
               <LegendButton

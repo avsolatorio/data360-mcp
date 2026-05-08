@@ -1,6 +1,6 @@
 // ─── Vega-Lite spec (minimal typed surface) ───────────────────────────────────
 
-export type MarkType = "line" | "bar" | "point" | "area" | "tick";
+export type MarkType = "line" | "bar" | "point" | "area" | "tick" | "geoshape";
 
 export interface VLEncoding {
   field?: string;

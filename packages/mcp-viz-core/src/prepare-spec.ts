@@ -36,7 +36,8 @@ function mergeConfig(
  *
  * Guards:
  *  1. Inline named dataset → data.values
- *  2. Responsive sizing (width: "container", configurable height)
+ *  2. Responsive sizing (width: "container" for most marks; geoshape uses numeric width
+ *     when the spec omits one — "container" can be 0 before layout and break projection fit)
  *  3. Suppress built-in legend (card renders its own)
  *  3b. Remove top-level title (card header shows it; avoids duplicating Vega’s title)
  *  4. Strip zoom/pan params (conflicts with card controls)
@@ -53,12 +54,35 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
   out = inlineDataset(out);
 
   // 2. Responsive sizing
-  out.width = "container";
-  out.height = chartHeight;
+  const origWidth = out.width;
+  const origHeight = out.height;
+  if (markType === "geoshape") {
+    out.width =
+      typeof origWidth === "number" &&
+      Number.isFinite(origWidth) &&
+      origWidth > 0
+        ? origWidth
+        : 600;
+    out.height =
+      typeof origHeight === "number" &&
+      Number.isFinite(origHeight) &&
+      origHeight > 0
+        ? origHeight
+        : chartHeight;
+  } else {
+    out.width = "container";
+    out.height = chartHeight;
+  }
 
-  // 3. Suppress built-in legend — card renders its own
+  // 3. Suppress built-in legend — card renders its own (except choropleth: quantitative
+  // color needs Vega's gradient legend; stripping it removes the scale guide).
   if (out.encoding?.color) {
-    out.encoding.color.legend = null;
+    const colorEnc = out.encoding.color as Record<string, unknown>;
+    const keepLegendForChoropleth =
+      markType === "geoshape" && colorEnc.type === "quantitative";
+    if (!keepLegendForChoropleth) {
+      out.encoding.color.legend = null;
+    }
   }
 
   // 3b. Title is displayed by VegaChartCard (prop / parseSpec); strip from the embedded spec

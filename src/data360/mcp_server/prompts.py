@@ -129,6 +129,7 @@ Do not answer with guesses. Do not stop after describing a plan.
    │  • Multi-year, 1-8 countries  → chart_type="line"  (auto color by cntry) │
    │  • Single year, ≤8 countries  → chart_type="bar"                         │
    │  • Single year, >8 countries  → chart_type="strip"                       │
+   │  • Single year, world map / choropleth → chart_type="choropleth" or "world map" │
    │  • Sex/age breakdown present  → chart_type="small_multiples"             │
    │  • Pass relevant_fields=["time_period","obs_value",...] when you must    │
    │    pin exact columns; the tool can auto-enrich dimensions when needed.   │
