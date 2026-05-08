@@ -2370,10 +2370,10 @@ async def summarize_data(
 
     Call instead of data360_get_data when the user asks about trends, changes over time,
     or general patterns — not specific year values. Particularly useful for PATH C (trend)
-    questions like "How has X changed?" or "What is the trend of Y?". The primary grouping
-    dimensions are time_period (temporal) and ref_area (geographic) since most Data360
-    indicators are time-bound and geography-scoped. The LLM should pick group_by columns
-    based on the question's analytical intent.
+    questions like "How has X changed?" or "What is the trend of Y?". Use the default
+    group_by=["ref_area"] for all single- or multi-country trend questions — this produces
+    one group per country with meaningful multi-point statistics. The LLM should pick
+    group_by columns based on the question's analytical intent.
 
     Do NOT call this when the user wants a specific data point for a specific year — use
     data360_get_data for that (PATH A). Do NOT call this for visualization — use
@@ -2397,12 +2397,26 @@ async def summarize_data(
             to explicitly request all sex breakdowns.
         start_year: Optional start year. Defaults to last 20 years.
         end_year: Optional end year. Defaults to current year.
-        group_by: Dimensions to group by. Default ["ref_area"]. Supports multiple columns
-            for cross-dimensional summaries (e.g. ["ref_area", "sex"] for per-country,
-            per-gender summaries). Valid columns: ref_area, time_period, sex, age,
-            urbanisation, unit_measure, comp_breakdown_1, comp_breakdown_2.
-            Non-trivial dimensions discovered via auto-detection are appended to this
-            list automatically when not already present.
+        group_by: Dimensions to group by. Default ["ref_area"]. Valid columns: ref_area,
+            time_period, sex, age, urbanisation, unit_measure, comp_breakdown_1,
+            comp_breakdown_2. Non-trivial dimensions found via auto-detection are appended
+            automatically when not already present.
+
+            DECISION GUIDE — always match group_by to the analytical intent:
+            - "How has Kenya's GDP changed?" → ["ref_area"] (DEFAULT). Produces ONE
+              group (KEN) spanning all years — gives real trend direction, min, max,
+              mean, pct_change over the full period.
+            - "Compare GDP trends: Kenya vs. Nigeria" → ["ref_area"] (DEFAULT).
+              Produces TWO groups, one trend line each.
+            - "GDP by sex for Kenya" → ["ref_area", "sex"]. One group per (country, sex).
+
+            WARNING — NEVER use ["time_period"] as the sole group_by for trend or
+            single-country questions. Grouping by time_period alone creates ONE GROUP
+            PER YEAR, each containing exactly ONE observation. With n=1, every group
+            shows min=max=mean=median=that single value, change=0 %, trend=stable —
+            mathematically degenerate and useless for any trend analysis.
+            ["time_period"] is only valid for cross-country year-over-year aggregates
+            (e.g. "global average per year") when country_code is NOT specified.
 
     Returns:
         DataSummaryResponse:
