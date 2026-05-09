@@ -26,8 +26,12 @@ export {
 } from "./choropleth-wheel-zoom";
 export { patchVegaSpecChoroplethMapGroupClip } from "./choropleth-map-clip";
 export {
+  assertChoroplethDisputedLayersUseTopoJson,
   CHOROPLETH_DISPUTED_TOPO_FEATURE,
+  coerceChoroplethDisputedLayersToTopoJsonFormat,
   rewriteChoroplethDisputedOverlayToBundledTopo,
+  validateChoroplethDisputedLayersUseTopoJson,
+  type ChoroplethDisputedTopoJsonValidation,
 } from "./choropleth-disputed-topo";
 export {
   CHOROPLETH_MAX_MAP_FACET_PX,
