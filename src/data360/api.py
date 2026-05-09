@@ -2543,6 +2543,24 @@ async def summarize_data(
         reverse=True,
     )
 
+    # Resolve human-readable country names for ref_area groups.
+    # Reuses the same _resolve_country_names helper used by rank_countries and
+    # compare_countries. ref_area_name is injected into group_key so it flows
+    # through GroupSummary.to_compact() → "group" dict without any model change.
+    # Silently no-ops on error — country name is optional enrichment.
+    _area_codes = [
+        g.group_key["ref_area"]
+        for g in group_summaries
+        if "ref_area" in g.group_key
+    ]
+    if _area_codes:
+        _name_map = await _resolve_country_names(_area_codes)
+        for g in group_summaries:
+            if "ref_area" in g.group_key:
+                g.group_key["ref_area_name"] = _name_map.get(
+                    g.group_key["ref_area"], ""
+                )
+
     return DataSummaryResponse(
         groups=group_summaries,
         metadata=data_response.metadata,
