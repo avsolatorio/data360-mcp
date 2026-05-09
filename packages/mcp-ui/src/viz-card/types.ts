@@ -25,4 +25,10 @@ export interface VegaChartCardProps extends VegaChartCardBaseProps {
    * @default 4
    */
   pngExportPixelRatio?: number;
+
+  /**
+   * When false (default), choropleth maps show “Data360 map UI · …” **below** the Source line (not
+   * under the chart) so it never overlaps the Vega legend. Set true to hide it.
+   */
+  hideChartUiRevision?: boolean;
 }

@@ -27,7 +27,7 @@
     "@angular/common": ">=17.0.0 <21.0.0",
     "@angular/core": ">=17.0.0 <21.0.0",
     "@data360/chart-payload-normalize": "0.0.1",
-    "@data360/mcp-viz-core": "0.0.2",
+    "@data360/mcp-viz-core": "file:../mcp-viz-core",
     "@data360/tool-types": "0.0.4",
     "rxjs": "^7.5.0",
     "vega": ">=5.0.0",
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@data360/chart-payload-normalize": "0.0.1",
-    "@data360/mcp-viz-core": "0.0.2",
+    "@data360/mcp-viz-core": "file:../mcp-viz-core",
     "@data360/tool-types": "0.0.4",
     "@angular/common": "^18.2.14",
     "@angular/compiler": "^18.2.14",

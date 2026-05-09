@@ -81,8 +81,8 @@ class MCPServerSettings(BaseSettings):
         description="GeoJSON FeatureCollection URL with point geometries for micro/small countries (optional layer).",
     )
     choropleth_disputed_areas_geojson_url: str | None = Field(
-        default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/wb_disputed_areas_geo.json",
-        description="GeoJSON FeatureCollection URL for disputed-area boundary overlays (optional layer).",
+        default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/wb_disputed_areas_topo.json",
+        description="TopoJSON (recommended) or GeoJSON FeatureCollection URL for disputed-area boundary overlays (optional layer).",
     )
     choropleth_country_names_json_url: str | None = Field(
         default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/ref_area_iso3_country_names.json",

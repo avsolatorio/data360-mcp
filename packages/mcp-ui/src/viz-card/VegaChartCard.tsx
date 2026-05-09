@@ -12,104 +12,18 @@ import type { VegaChartCardProps } from "./types";
 import { toPng } from "html-to-image";
 import {
   WB_PALETTE,
+  choroplethLegendVerticalReservePx,
+  choroplethMapFacetHeightPx,
   hasChoroplethQuantitativeColor,
+  patchVegaSpecChoroplethMapGroupClip,
   patchVegaSpecChoroplethWheelZoom,
   prepareSpec,
   parseSpec,
+  suggestChoroplethSceneHeight,
 } from "@data360/mcp-viz-core";
-
-const CHOROPLETH_ZOOM_SENSITIVITY = 1.0018;
-
-/** Double-click reset, Shift+drag pan, wheel zoom (DOM coords → projection pivot). */
-function attachChoroplethMapInteractions(
-  el: HTMLElement,
-  view: {
-    signal(name: string, value?: unknown): unknown;
-    runAsync(): Promise<unknown>;
-    origin?: () => number[];
-  },
-): () => void {
-  const reset = (e: MouseEvent) => {
-    e.preventDefault();
-    const w = view.signal("width") as number;
-    const h = view.signal("height") as number;
-    view.signal("choropleth_zoom", 1);
-    view.signal("choropleth_tx", w / 2);
-    view.signal("choropleth_ty", h / 2);
-    void view.runAsync();
-  };
-
-  const onWheel = (e: WheelEvent) => {
-    e.preventDefault();
-    const rect = el.getBoundingClientRect();
-    const origin = view.origin?.() ?? [0, 0];
-    const vw = view.signal("width") as number;
-    const vh = view.signal("height") as number;
-    const rw = rect.width > 0 ? rect.width : 1;
-    const rh = rect.height > 0 ? rect.height : 1;
-    /** Map DOM coords to Vega scene pixels when CSS scales the SVG inside the slot. */
-    const mx = ((e.clientX - rect.left) / rw) * vw - origin[0];
-    const my = ((e.clientY - rect.top) / rh) * vh - origin[1];
-    const rawF = CHOROPLETH_ZOOM_SENSITIVITY ** -e.deltaY;
-    const zoom = view.signal("choropleth_zoom") as number;
-    const tx = view.signal("choropleth_tx") as number;
-    const ty = view.signal("choropleth_ty") as number;
-    const nextZoom = Math.min(14, Math.max(0.35, zoom * rawF));
-    const fApplied = nextZoom / zoom;
-    view.signal("choropleth_zoom", nextZoom);
-    view.signal("choropleth_tx", mx + (tx - mx) * fApplied);
-    view.signal("choropleth_ty", my + (ty - my) * fApplied);
-    void view.runAsync();
-  };
-
-  let dragging = false;
-
-  const onDown = (e: PointerEvent) => {
-    if (!e.shiftKey || e.button !== 0) return;
-    dragging = true;
-    el.setPointerCapture(e.pointerId);
-  };
-
-  const onMove = (e: PointerEvent) => {
-    if (!dragging) return;
-    const tx = view.signal("choropleth_tx") as number;
-    const ty = view.signal("choropleth_ty") as number;
-    const vw = view.signal("width") as number;
-    const vh = view.signal("height") as number;
-    const rect = el.getBoundingClientRect();
-    const rw = rect.width > 0 ? rect.width : 1;
-    const rh = rect.height > 0 ? rect.height : 1;
-    view.signal("choropleth_tx", tx + (e.movementX * vw) / rw);
-    view.signal("choropleth_ty", ty + (e.movementY * vh) / rh);
-    void view.runAsync();
-  };
-
-  const endDrag = (e: PointerEvent) => {
-    if (!dragging) return;
-    dragging = false;
-    try {
-      el.releasePointerCapture(e.pointerId);
-    } catch {
-      /* ignore */
-    }
-  };
-
-  el.addEventListener("dblclick", reset);
-  el.addEventListener("wheel", onWheel, { passive: false });
-  el.addEventListener("pointerdown", onDown);
-  el.addEventListener("pointermove", onMove);
-  el.addEventListener("pointerup", endDrag);
-  el.addEventListener("pointercancel", endDrag);
-
-  return () => {
-    el.removeEventListener("dblclick", reset);
-    el.removeEventListener("wheel", onWheel);
-    el.removeEventListener("pointerdown", onDown);
-    el.removeEventListener("pointermove", onMove);
-    el.removeEventListener("pointerup", endDrag);
-    el.removeEventListener("pointercancel", endDrag);
-  };
-}
+import { DATA360_CHART_UI_REVISION } from "./chart-ui-revision";
+import { applyChoroplethEmbedDomStyles } from "./choropleth-embed-dom";
+import { attachChoroplethMapInteractions } from "./choropleth-host-interactions";
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -309,6 +223,7 @@ export default function VegaChartCard({
   pngExportPixelRatio = 4,
   railTopSlot,
   className,
+  hideChartUiRevision = false,
 }: VegaChartCardProps) {
   const cardRef     = useRef<HTMLDivElement>(null);
   const chartRef    = useRef<HTMLDivElement>(null);
@@ -328,13 +243,15 @@ export default function VegaChartCard({
     [spec],
   );
 
-  /** Equirectangular fit uses min(W/2π, H/π); raise H so wide cards are width-limited, not height-limited. */
-  const choroplethPlotHeight = useMemo(() => {
+  /** VL scene height (``prepareSpec``): capped map facet + legend strip — see ``suggestChoroplethSceneHeight``. */
+  const choroplethSpecHeight = useMemo(() => {
     if (!isChoroplethQuantitative || mapSlotWidth < 1) {
       return chartHeight;
     }
-    return Math.max(chartHeight, Math.ceil(mapSlotWidth / 2));
+    return suggestChoroplethSceneHeight(mapSlotWidth, chartHeight);
   }, [isChoroplethQuantitative, mapSlotWidth, chartHeight]);
+
+  const choroplethVegaHeight = choroplethSpecHeight;
 
   // Initialise active groups when spec changes
   useEffect(() => {
@@ -396,7 +313,7 @@ export default function VegaChartCard({
 
         let prepared = prepareSpec(
           spec,
-          isChoroplethQuantitative ? choroplethPlotHeight : chartHeight,
+          isChoroplethQuantitative ? choroplethVegaHeight : chartHeight,
           isChoroplethQuantitative ? mapSlotWidth : undefined,
         );
 
@@ -446,17 +363,37 @@ export default function VegaChartCard({
           const plotHeight =
             typeof prepared.height === "number" && Number.isFinite(prepared.height)
               ? prepared.height
-              : choroplethPlotHeight;
-          const vegaSpec = patchVegaSpecChoroplethWheelZoom(
-            vl.compile(prepared as Parameters<typeof vl.compile>[0]).spec as Record<string, unknown>,
-            { plotWidth, plotHeight },
+              : choroplethVegaHeight;
+          const stripDesired = choroplethLegendVerticalReservePx(mapSlotWidth);
+          /** Same cap as ``choroplethMapFacetHeightPx`` — must stay aligned with ``plotHeight`` / ``prepareSpec``. */
+          const mapFacetMin = choroplethMapFacetHeightPx(mapSlotWidth);
+          const legendStripPx = Math.min(
+            stripDesired,
+            Math.max(80, plotHeight - mapFacetMin - 8),
           );
+          const compiled = vl.compile(prepared as Parameters<typeof vl.compile>[0])
+            .spec as Record<string, unknown>;
+          const vegaSpec = {
+            ...patchVegaSpecChoroplethMapGroupClip(
+              patchVegaSpecChoroplethWheelZoom(compiled, {
+                plotWidth,
+                plotHeight,
+                legendStripPx,
+              }),
+            ),
+            /**
+             * ``fit`` + ``resize`` reflows layout when zoom/pan signals update → stutter and a
+             * jumping legend. ``none`` keeps width/height fixed; the slot clips overflow.
+             */
+            autosize: "none" as const,
+          };
           embed(host, vegaSpec as never, embedCommon)
             .then((result) => {
               if (cancelled) {
                 result.finalize();
                 return;
               }
+              applyChoroplethEmbedDomStyles(host);
               vegaViewRef.current = result.view as typeof vegaViewRef.current;
               detachChoropleth?.();
               detachChoropleth = attachChoroplethMapInteractions(host, result.view);
@@ -493,7 +430,7 @@ export default function VegaChartCard({
     parsed,
     isChoroplethQuantitative,
     mapSlotWidth,
-    choroplethPlotHeight,
+    choroplethVegaHeight,
   ]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
@@ -569,7 +506,10 @@ export default function VegaChartCard({
 
   const card: CSSProperties = {
     flex: 1,
+    /** Without this, ``alignItems: stretch`` on the row makes the card as tall as the rail → huge blank band. */
+    alignSelf: "flex-start",
     minWidth: 0,
+    width: "100%",
     background: "#ffffff",
     border: "0.5px solid rgba(0,0,0,0.12)",
     borderRadius: 12,
@@ -601,17 +541,32 @@ export default function VegaChartCard({
     overflow: "visible",
   };
 
-  /** Choropleth specs use a fixed pixel width (~600); the embed SVG stays centered with empty
+    /** Choropleth specs use a fixed pixel width (~600); the embed SVG stays centered with empty
    *  gutter unless the chart slot matches. A grey slot background reads as a rectangular “frame”
    *  around the white map — match the spec background instead. Other charts keep the subtle grey. */
   const chartArea: CSSProperties = {
     background: isChoroplethQuantitative ? "#ffffff" : "rgba(0,0,0,0.03)",
     borderRadius: 8,
     margin: "14px 0 0",
-    minHeight: isChoroplethQuantitative ? choroplethPlotHeight : chartHeight,
     width: "100%",
+    minWidth: 0,
+    /**
+     * Choropleth: host clips the rounded slot; **map paths** clip inside Vega via
+     * ``patchVegaSpecChoroplethMapGroupClip``. Do not use ``contain: paint`` / ``clip-path`` here
+     * — they clip the legend.
+     */
     overflow: "hidden",
-    ...(isChoroplethQuantitative ? { touchAction: "none" as const } : {}),
+    ...(isChoroplethQuantitative
+      ? {
+          position: "relative" as const,
+          height: "auto",
+          /** Slot hugs SVG height; small floor avoids layout flash before embed (not ``choroplethSpecHeight``). */
+          minHeight: chartHeight,
+          touchAction: "none" as const,
+          /** Extra gap below SVG before Source (margins with Source collapse to the larger side). */
+          marginBottom: source ? 36 : 14,
+        }
+      : { minHeight: chartHeight }),
   };
 
   // ── Render ───────────────────────────────────────────────────────────────────
@@ -637,7 +592,7 @@ export default function VegaChartCard({
           style={chartArea}
           title={
             isChoroplethQuantitative
-              ? "Scroll to zoom. Shift+drag to pan. Double-click to reset."
+              ? "Scroll to zoom. Drag to pan. Double-click to reset."
               : undefined
           }
         />
@@ -681,12 +636,36 @@ export default function VegaChartCard({
           </>
         )}
 
-        {/* Source */}
+        {/* Source — choropleth: clear gap below Vega gradient/tick labels (avoids cramped legend ↔ Source). */}
         {source && (
-          <p style={{ fontSize: 12, color: "#999999", marginTop: 12 }}>
+          <p
+            style={{
+              fontSize: 12,
+              color: "#999999",
+              marginTop: isChoroplethQuantitative ? 58 : 12,
+            }}
+          >
             <strong style={{ fontWeight: 600, color: "#666666" }}>Source:</strong> {source}
           </p>
         )}
+
+        {isChoroplethQuantitative && !hideChartUiRevision ? (
+          <div
+            data-chart-card-export-skip=""
+            data-data360-chart-ui-revision={DATA360_CHART_UI_REVISION}
+            style={{
+              fontSize: 11,
+              color: "#94a3b8",
+              marginTop: 8,
+              marginBottom: 0,
+              letterSpacing: "0.02em",
+              fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+            }}
+            title="Confirms this page loaded the Data360 chart-card bundle at this revision. Hidden from Save as PNG."
+          >
+            Data360 map UI · {DATA360_CHART_UI_REVISION}
+          </div>
+        ) : null}
 
         {/* Omitted from PNG export (toggle is UI chrome, not chart content) */}
         <div data-chart-card-export-skip="">

@@ -92,10 +92,20 @@ WB_FONT_FAMILY = "Noto Sans, Arial, sans-serif"
 # Aligns with World Bank map guidance: outline grey400, noData fill, selected grey500.
 WB_MAP_OUTLINE_WIDTH = 0.3
 WB_MAP_OUTLINE_GREY = "#9AA7B4"
+# TopoJSON object in bundled `wb_disputed_areas_topo.json`.
+CHOROPLETH_DISPUTED_TOPOJSON_FEATURE = "wb_disputed_areas_geo"
 WB_MAP_SELECTED_WIDTH = 2.5
 WB_MAP_SELECTED_GREY = "#6F7D88"
 WB_MAP_NO_DATA_FILL = WB_NO_DATA
 WB_MAP_TOOLTIP_NO_DATA = "Data not available"
+
+
+def _disputed_overlay_data_format(disputed_url: str) -> dict[str, str]:
+    """GeoJSON FeatureCollection vs TopoJSON for the optional disputed-outline layer."""
+    u = disputed_url.strip().lower()
+    if u.endswith((".topojson", "_topo.json")):
+        return {"type": "topojson", "feature": CHOROPLETH_DISPUTED_TOPOJSON_FEATURE}
+    return {"type": "json", "property": "features"}
 
 
 def _vl_string_literal_expr(s: str) -> str:
@@ -1767,15 +1777,15 @@ def build_choropleth_spec(
     }
 
     # Stack: disputed (optional) → grey base (all countries) → quantitative overlay (stats only).
-    # Disputed polygons only draw thin outlines along boundaries (not a viewport rectangle). Omit
-    # the layer by setting MCP_CHOROPLETH_DISPUTED_AREAS_GEOJSON_URL empty if undesired.
+    # Prefer TopoJSON for disputed outlines so projection fit stays tight. Omit the layer by
+    # setting MCP_CHOROPLETH_DISPUTED_AREAS_GEOJSON_URL empty if undesired.
     map_layers: list[dict] = []
     if disputed_areas_geo_url:
         map_layers.append(
             {
                 "data": {
                     "url": disputed_areas_geo_url,
-                    "format": {"type": "json", "property": "features"},
+                    "format": _disputed_overlay_data_format(disputed_areas_geo_url),
                 },
                 "mark": {
                     "type": "geoshape",

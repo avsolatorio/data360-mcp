@@ -154,15 +154,15 @@ function mergeConfig(
   return merged;
 }
 
-type ChoroplethLegendBottomOpts = {
+type ChoroplethLegendHostOpts = {
   /** Horizontal gradient bar length when host measures slot width (reserves space for “No data” symbol). */
   gradientLength?: number;
 };
 
-/** Persisted MCP specs often pin legend to top; card layout expects gradient below the map. */
+/** Pin quantitative gradient to the **bottom** so the map sits above the ramp (readable card layout). */
 function forceChoroplethLegendBottom(
   spec: VLSpec,
-  opts?: ChoroplethLegendBottomOpts,
+  opts?: ChoroplethLegendHostOpts,
 ): VLSpec {
   const gradientLength = opts?.gradientLength;
   const cfg = spec.config as Record<string, unknown> | undefined;
@@ -173,7 +173,14 @@ function forceChoroplethLegendBottom(
     !Array.isArray(nextCfg.legend)
       ? { ...(nextCfg.legend as Record<string, unknown>) }
       : {};
-  nextCfg.legend = { ...leg, orient: "bottom", direction: "horizontal" };
+  nextCfg.legend = {
+    ...leg,
+    orient: "bottom",
+    direction: "horizontal",
+    titlePadding: 4,
+    labelPadding: 4,
+    padding: 2,
+  };
 
   const layers = spec.layer as
     | Array<{ encoding?: { color?: Record<string, unknown> } }>
@@ -192,7 +199,15 @@ function forceChoroplethLegendBottom(
         lr !== null && typeof lr === "object" && !Array.isArray(lr)
           ? { ...(lr as Record<string, unknown>) }
           : {};
-      const bottom = { ...legendObj, orient: "bottom", direction: "horizontal" };
+      const bottomLegend = {
+        ...legendObj,
+        orient: "bottom",
+        direction: "horizontal",
+        titlePadding: 4,
+        labelPadding: 4,
+        padding: 2,
+        offset: 2,
+      };
       if (colorEncodingIsQuantitative(col) && gradientLength !== undefined) {
         return {
           ...layer,
@@ -200,7 +215,7 @@ function forceChoroplethLegendBottom(
             ...layer.encoding,
             color: {
               ...col,
-              legend: { ...bottom, gradientLength },
+              legend: { ...bottomLegend, gradientLength },
             },
           },
         };
@@ -211,7 +226,7 @@ function forceChoroplethLegendBottom(
           ...layer.encoding,
           color: {
             ...col,
-            legend: bottom,
+            legend: bottomLegend,
           },
         },
       };
@@ -227,7 +242,15 @@ function forceChoroplethLegendBottom(
         lr !== null && typeof lr === "object" && !Array.isArray(lr)
           ? { ...(lr as Record<string, unknown>) }
           : {};
-      const bottom = { ...legendObj, orient: "bottom", direction: "horizontal" };
+      const bottomLegend = {
+        ...legendObj,
+        orient: "bottom",
+        direction: "horizontal",
+        titlePadding: 4,
+        labelPadding: 4,
+        padding: 2,
+        offset: 2,
+      };
       return {
         ...spec,
         config: nextCfg as typeof spec.config,
@@ -237,8 +260,8 @@ function forceChoroplethLegendBottom(
             ...col,
             legend:
               gradientLength !== undefined
-                ? { ...bottom, gradientLength }
-                : bottom,
+                ? { ...bottomLegend, gradientLength }
+                : bottomLegend,
           },
         },
       };
@@ -246,6 +269,33 @@ function forceChoroplethLegendBottom(
   }
 
   return { ...spec, config: nextCfg as typeof spec.config };
+}
+
+/**
+ * Layered choropleth: constant-fill base (and similar) often carry a redundant categorical
+ * legend beside the quantitative gradient. Vega stacks them vertically and inflates the scene
+ * with empty space; drop legends on non-quantitative color encodings when a quantitative layer exists.
+ */
+function stripRedundantChoroplethLegends(spec: VLSpec): VLSpec {
+  if (!hasChoroplethQuantitativeColor(spec)) return spec;
+  const layers = spec.layer as
+    | Array<{ encoding?: { color?: Record<string, unknown> } }>
+    | undefined;
+  if (!Array.isArray(layers) || layers.length === 0) return spec;
+
+  const nextLayer = layers.map((layer) => {
+    const col = layer.encoding?.color;
+    if (!col || typeof col !== "object") return layer;
+    if (colorEncodingIsQuantitative(col)) return layer;
+    return {
+      ...layer,
+      encoding: {
+        ...layer.encoding,
+        color: { ...col, legend: null },
+      },
+    };
+  }) as typeof spec.layer;
+  return { ...spec, layer: nextLayer };
 }
 
 // ─── prepareSpec ─────────────────────────────────────────────────────────────
@@ -291,12 +341,19 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260, containerWidth?: nu
       origWidth > 0
         ? origWidth
         : 600);
-    out.height =
-      typeof origHeight === "number" &&
-      Number.isFinite(origHeight) &&
-      origHeight > 0
-        ? origHeight
-        : chartHeight;
+    const qtyChoropleth = hasChoroplethQuantitativeColor(out);
+    if (qtyChoropleth) {
+      // MCP specs pin height (e.g. 300); host passes total VL height for map + legend. Keeping
+      // the pin breaks wheel-zoom scale when legend strip is subtracted from height.
+      out.height = chartHeight;
+    } else {
+      out.height =
+        typeof origHeight === "number" &&
+        Number.isFinite(origHeight) &&
+        origHeight > 0
+          ? origHeight
+          : chartHeight;
+    }
   } else {
     out.width = "container";
     out.height = chartHeight;
@@ -331,11 +388,12 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260, containerWidth?: nu
   out.config = mergeConfig(out.config as Record<string, unknown> | undefined, WB_THEME);
 
   // 6b. Choropleth gradient legend: baked specs override theme.legend entirely (shallow merge).
-  // Force bottom legend so wide cards do not leave a top band + wasted width beside the map.
+  // Pin legend at the **bottom** so the map uses the upper scene and the ramp sits under it (clear of card title/subtitle).
   if (hasChoroplethQuantitativeColor(out)) {
     const legendGradientLen =
       measuredW !== undefined ? Math.max(120, measuredW - 80) : undefined;
     out = forceChoroplethLegendBottom(out, { gradientLength: legendGradientLen });
+    out = stripRedundantChoroplethLegends(out);
   }
 
   // 7. scale.zero — bars must start at zero; everything else benefits from false

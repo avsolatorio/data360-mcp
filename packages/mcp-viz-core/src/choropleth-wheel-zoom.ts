@@ -11,12 +11,28 @@ export type ChoroplethWheelZoomPatchOpts = {
   plotWidth: number;
   /** Initial view height (numeric VL ``height``). */
   plotHeight: number;
+  /** Pixels reserved for the gradient legend strip at the **bottom** (map band uses ``height - strip``). */
+  legendStripPx?: number;
 };
 
 type UnknownRecord = Record<string, unknown>;
 
 function isObject(x: unknown): x is UnknownRecord {
   return typeof x === "object" && x !== null && !Array.isArray(x);
+}
+
+/**
+ * Vertical center of the projection in plot coordinates. Biased **down** in the map band so the
+ * sphere sits closer to the legend strip (less empty gap between map silhouette and gradient).
+ */
+export function choroplethMapBandCenterY(plotHeight: number, legendStripPx: number): number {
+  const strip = Math.max(0, Math.floor(legendStripPx ?? 0));
+  const band = plotHeight - strip;
+  if (band <= 0) {
+    return plotHeight / 2;
+  }
+  /** Larger ty shifts the projection center **down** → globe sits closer to the legend strip (less dead air). */
+  return band * 0.67;
 }
 
 export function patchVegaSpecChoroplethWheelZoom(
@@ -48,10 +64,22 @@ export function patchVegaSpecChoroplethWheelZoom(
    * matches the pointer. Vega ``event.x``/``event.y`` on ``scope:wheel`` are often not aligned
    * with the projection translate space for layered SVG maps.
    */
+  const strip = Math.max(0, Math.floor(opts.legendStripPx ?? 0));
+  const mapBandCenterY = choroplethMapBandCenterY(opts.plotHeight, strip);
+
   const zoomSignals: unknown[] = [
     {
+      name: "choropleth_legend_strip_px",
+      value: strip,
+    },
+    {
       name: "choropleth_base_scale",
-      update: "min(width / (2 * PI), height / PI)",
+      /**
+       * ``min(...)`` fits the sphere in the map band above the bottom legend strip; letterboxing may
+       * remain inside that band.
+       */
+      update:
+        "min(width / (2 * PI), max(1, height - choropleth_legend_strip_px) / PI)",
     },
     {
       name: "choropleth_zoom",
@@ -63,12 +91,14 @@ export function patchVegaSpecChoroplethWheelZoom(
     },
     {
       name: "choropleth_ty",
-      value: opts.plotHeight / 2,
+      value: mapBandCenterY,
     },
   ];
 
   const nextProjections = projections.map((p, i) => (i === idx ? newProj : p));
 
+  // Keep Vega-Lite's scene ``padding`` (typically ~5px). Forcing ``padding: 0`` removed the
+  // inset legends rely on with ``orient: "bottom"``, which made the gradient disappear in the embed.
   return {
     ...vegaSpec,
     projections: nextProjections,

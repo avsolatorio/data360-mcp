@@ -293,3 +293,46 @@ def test_build_choropleth_spec_country_names_lookup_precedence() -> None:
     inline_layer = _choropleth_map_layer(inline_spec)
     inline_lookup = next(t for t in inline_layer["transform"] if "lookup" in t)["from"]
     assert inline_lookup["data"]["values"][0]["country_name"] == "Inline"
+
+
+def test_build_choropleth_spec_disputed_topojson_format() -> None:
+    df = pd.DataFrame(
+        {
+            "wb_a3": ["USA"],
+            "value": [1.0],
+            "year": ["2020"],
+            "country": ["United States"],
+        }
+    )
+    spec = viz_config.build_choropleth_spec(
+        df,
+        "T",
+        geo_url="https://example.com/world.json",
+        geo_join_prop="WB_A3",
+        disputed_areas_geo_url="https://example.com/wb_disputed_areas_topo.json",
+    )
+    disputed = spec["layer"][0]
+    assert disputed["data"]["format"] == {
+        "type": "topojson",
+        "feature": viz_config.CHOROPLETH_DISPUTED_TOPOJSON_FEATURE,
+    }
+
+
+def test_build_choropleth_spec_disputed_geojson_format_when_not_topo_suffix() -> None:
+    df = pd.DataFrame(
+        {
+            "wb_a3": ["USA"],
+            "value": [1.0],
+            "year": ["2020"],
+            "country": ["United States"],
+        }
+    )
+    spec = viz_config.build_choropleth_spec(
+        df,
+        "T",
+        geo_url="https://example.com/world.json",
+        geo_join_prop="WB_A3",
+        disputed_areas_geo_url="https://example.com/wb_disputed_areas_geo.json",
+    )
+    disputed = spec["layer"][0]
+    assert disputed["data"]["format"] == {"type": "json", "property": "features"}
