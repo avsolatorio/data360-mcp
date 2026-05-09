@@ -37,8 +37,6 @@ from urllib.parse import parse_qs, urlparse
 
 import altair as alt
 import httpx
-
-from data360.http_client import get_shared_httpx_client
 import numpy as np
 import pandas as pd
 from draco import Draco, answer_set_to_dict, dict_to_facts, schema_from_dataframe
@@ -46,7 +44,8 @@ from draco.renderer import AltairRenderer
 
 from data360 import viz_config
 from data360.config import get_mcp_server_settings
-from data360.providers import get_codelist_mapping, get_database_mapping
+from data360.http_client import get_shared_httpx_client
+from data360.providers import get_database_mapping
 
 _logger = logging.getLogger(__name__)
 
@@ -259,9 +258,7 @@ def _format_subtitle_line(
     if warning:
         parts.append(warning)
     if strategy or reason:
-        parts.append(
-            " — ".join(x for x in (strategy or "", reason or "") if x)
-        )
+        parts.append(" — ".join(x for x in (strategy or "", reason or "") if x))
     if not parts:
         return None
     return " · ".join(parts)
@@ -405,6 +402,17 @@ def _clean_single_df(
                 viz_data["time_period"] = pd.to_datetime(viz_data["time_period"])
         except Exception as e:
             _logger.warning(f"time_period conversion failed: {e}")
+
+        # Choropleth uses a single annual period; default prep keeps ``datetime`` (line default),
+        # which serializes as ``2020-01-01``. Use calendar year strings for tooltips/spec.
+        if chart_type and viz_config.wants_choropleth(chart_type):
+            try:
+                viz_data["time_period"] = (
+                    pd.to_datetime(viz_data["time_period"], errors="coerce")
+                    .dt.year.astype(str)
+                )
+            except Exception as e:
+                _logger.warning("choropleth year display normalization failed: %s", e)
 
     if "obs_value" in viz_data.columns:
         viz_data["obs_value"] = pd.to_numeric(viz_data["obs_value"], errors="coerce")
@@ -707,9 +715,7 @@ async def get_viz_spec(
         db_map = {}
     database_display = db_map.get(database_id, database_id)
     indicator_display = (
-        chart_title
-        if chart_title != "Generated Visualization"
-        else indicator_id
+        chart_title if chart_title != "Generated Visualization" else indicator_id
     )
     source_attribution: dict[str, str] = {
         "database_id": database_id,
@@ -757,17 +763,6 @@ async def get_viz_spec(
             )
         else:
             viz_data["wb_a3"] = raw_geo
-        country_name_rows: list[dict[str, str]] = []
-        try:
-            ref_area_map = await get_codelist_mapping("REF_AREA")
-            for code, name in ref_area_map.items():
-                k = str(code).strip().upper()
-                if len(k) == 3 and k.isalpha():
-                    v = str(name).strip()
-                    if v:
-                        country_name_rows.append({"wb_a3": k, "country_name": v})
-        except Exception as e:
-            _logger.warning("Choropleth country-name map load failed: %s", e)
         viz_data = await _map_country_codes(viz_data)
         chart_title_vl = viz_config.build_chart_title_with_context(
             chart_title, raw_unit or None, viz_data
@@ -784,7 +779,7 @@ async def get_viz_spec(
             geo_join_prop=mcp_settings.choropleth_geo_join_key,
             small_countries_geo_url=mcp_settings.choropleth_small_countries_geojson_url,
             disputed_areas_geo_url=mcp_settings.choropleth_disputed_areas_geojson_url,
-            country_name_rows=country_name_rows,
+            country_names_url=mcp_settings.choropleth_country_names_json_url,
             unit_measure=raw_unit or None,
         )
         return _ok(

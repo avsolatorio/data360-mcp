@@ -28,6 +28,17 @@ setup_logging(
     azure_connection_string=mcp_settings.azure_connection_string,
 )
 
+_boot = logging.getLogger(__name__)
+if mcp_settings.charts_api_url:
+    _tok = (mcp_settings.charts_api_token or "").strip()
+    _boot.info(
+        "MCP_CHARTS_API_URL is set (%s); bearer token %s. "
+        "If POST fails (401/403), viz specs fall back to static/viz_specs — "
+        "set MCP_CHARTS_API_TOKEN to match the Charts API CHARTS_API_WRITE_TOKEN.",
+        mcp_settings.charts_api_url.rstrip("/"),
+        "is configured" if _tok else "is MISSING (Charts API will reject requests)",
+    )
+
 # Tracer export (Azure in deployed envs; optional OTLP/console when MCP_ENV=local) and httpx spans
 configure_open_telemetry_for_server(mcp_settings)
 instrument_httpx_outbound()

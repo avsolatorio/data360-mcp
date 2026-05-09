@@ -76,12 +76,17 @@ class MCPServerSettings(BaseSettings):
         description="Feature property name joined to stats wb_a3 (e.g. WB_A3 in properties).",
     )
     choropleth_small_countries_geojson_url: str | None = Field(
-        default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/small_countries_points_geo.json",
+        # default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/small_countries_points_geo.json",
+        default=None,
         description="GeoJSON FeatureCollection URL with point geometries for micro/small countries (optional layer).",
     )
     choropleth_disputed_areas_geojson_url: str | None = Field(
         default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/wb_disputed_areas_geo.json",
         description="GeoJSON FeatureCollection URL for disputed-area boundary overlays (optional layer).",
+    )
+    choropleth_country_names_json_url: str | None = Field(
+        default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/ref_area_iso3_country_names.json",
+        description="JSON array URL [{wb_a3, country_name}] for choropleth tooltip labels (Vega lookup).",
     )
 
     model_config = SettingsConfigDict(env_prefix="MCP_")

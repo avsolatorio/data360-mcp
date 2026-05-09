@@ -10,8 +10,106 @@ import {
 } from "react";
 import type { VegaChartCardProps } from "./types";
 import { toPng } from "html-to-image";
-import { WB_PALETTE } from "@data360/mcp-viz-core";
-import { getMark, prepareSpec, parseSpec } from "@data360/mcp-viz-core";
+import {
+  WB_PALETTE,
+  hasChoroplethQuantitativeColor,
+  patchVegaSpecChoroplethWheelZoom,
+  prepareSpec,
+  parseSpec,
+} from "@data360/mcp-viz-core";
+
+const CHOROPLETH_ZOOM_SENSITIVITY = 1.0018;
+
+/** Double-click reset, Shift+drag pan, wheel zoom (DOM coords → projection pivot). */
+function attachChoroplethMapInteractions(
+  el: HTMLElement,
+  view: {
+    signal(name: string, value?: unknown): unknown;
+    runAsync(): Promise<unknown>;
+    origin?: () => number[];
+  },
+): () => void {
+  const reset = (e: MouseEvent) => {
+    e.preventDefault();
+    const w = view.signal("width") as number;
+    const h = view.signal("height") as number;
+    view.signal("choropleth_zoom", 1);
+    view.signal("choropleth_tx", w / 2);
+    view.signal("choropleth_ty", h / 2);
+    void view.runAsync();
+  };
+
+  const onWheel = (e: WheelEvent) => {
+    e.preventDefault();
+    const rect = el.getBoundingClientRect();
+    const origin = view.origin?.() ?? [0, 0];
+    const vw = view.signal("width") as number;
+    const vh = view.signal("height") as number;
+    const rw = rect.width > 0 ? rect.width : 1;
+    const rh = rect.height > 0 ? rect.height : 1;
+    /** Map DOM coords to Vega scene pixels when CSS scales the SVG inside the slot. */
+    const mx = ((e.clientX - rect.left) / rw) * vw - origin[0];
+    const my = ((e.clientY - rect.top) / rh) * vh - origin[1];
+    const rawF = CHOROPLETH_ZOOM_SENSITIVITY ** -e.deltaY;
+    const zoom = view.signal("choropleth_zoom") as number;
+    const tx = view.signal("choropleth_tx") as number;
+    const ty = view.signal("choropleth_ty") as number;
+    const nextZoom = Math.min(14, Math.max(0.35, zoom * rawF));
+    const fApplied = nextZoom / zoom;
+    view.signal("choropleth_zoom", nextZoom);
+    view.signal("choropleth_tx", mx + (tx - mx) * fApplied);
+    view.signal("choropleth_ty", my + (ty - my) * fApplied);
+    void view.runAsync();
+  };
+
+  let dragging = false;
+
+  const onDown = (e: PointerEvent) => {
+    if (!e.shiftKey || e.button !== 0) return;
+    dragging = true;
+    el.setPointerCapture(e.pointerId);
+  };
+
+  const onMove = (e: PointerEvent) => {
+    if (!dragging) return;
+    const tx = view.signal("choropleth_tx") as number;
+    const ty = view.signal("choropleth_ty") as number;
+    const vw = view.signal("width") as number;
+    const vh = view.signal("height") as number;
+    const rect = el.getBoundingClientRect();
+    const rw = rect.width > 0 ? rect.width : 1;
+    const rh = rect.height > 0 ? rect.height : 1;
+    view.signal("choropleth_tx", tx + (e.movementX * vw) / rw);
+    view.signal("choropleth_ty", ty + (e.movementY * vh) / rh);
+    void view.runAsync();
+  };
+
+  const endDrag = (e: PointerEvent) => {
+    if (!dragging) return;
+    dragging = false;
+    try {
+      el.releasePointerCapture(e.pointerId);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  el.addEventListener("dblclick", reset);
+  el.addEventListener("wheel", onWheel, { passive: false });
+  el.addEventListener("pointerdown", onDown);
+  el.addEventListener("pointermove", onMove);
+  el.addEventListener("pointerup", endDrag);
+  el.addEventListener("pointercancel", endDrag);
+
+  return () => {
+    el.removeEventListener("dblclick", reset);
+    el.removeEventListener("wheel", onWheel);
+    el.removeEventListener("pointerdown", onDown);
+    el.removeEventListener("pointermove", onMove);
+    el.removeEventListener("pointerup", endDrag);
+    el.removeEventListener("pointercancel", endDrag);
+  };
+}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -218,21 +316,25 @@ export default function VegaChartCard({
 
   const [activeGroups, setActiveGroups] = useState<Set<string>>(new Set());
   const [showAnnotations, setShowAnnotations] = useState(true);
+  /** Geoshape slot width so maps use full card width instead of a fixed 600px spec. */
+  const [mapSlotWidth, setMapSlotWidth] = useState(0);
 
   // Parse legend metadata from the original spec (not prepared)
   const parsed = useMemo(() => parseSpec(spec, WB_PALETTE), [spec]);
 
   /** Choropleths use quantitative color + sequential scale; card legend toggles are categorical-only. */
-  const isChoroplethQuantitative = useMemo(() => {
-    const colorEnc = spec.encoding?.color;
-    const colorType =
-      colorEnc && typeof colorEnc === "object" && "type" in colorEnc
-        ? (colorEnc as { type?: string }).type
-        : undefined;
-    return (
-      String(getMark(spec)) === "geoshape" && colorType === "quantitative"
-    );
-  }, [spec]);
+  const isChoroplethQuantitative = useMemo(
+    () => hasChoroplethQuantitativeColor(spec),
+    [spec],
+  );
+
+  /** Equirectangular fit uses min(W/2π, H/π); raise H so wide cards are width-limited, not height-limited. */
+  const choroplethPlotHeight = useMemo(() => {
+    if (!isChoroplethQuantitative || mapSlotWidth < 1) {
+      return chartHeight;
+    }
+    return Math.max(chartHeight, Math.ceil(mapSlotWidth / 2));
+  }, [isChoroplethQuantitative, mapSlotWidth, chartHeight]);
 
   // Initialise active groups when spec changes
   useEffect(() => {
@@ -248,6 +350,26 @@ export default function VegaChartCard({
     });
   }, []);
 
+  useEffect(() => {
+    const node = chartRef.current;
+    if (!node || !isChoroplethQuantitative) {
+      setMapSlotWidth(0);
+      return;
+    }
+    const measure = () => {
+      const w = node.clientWidth;
+      if (w > 0) {
+        setMapSlotWidth(Math.floor(w));
+      }
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+    };
+  }, [isChoroplethQuantitative]);
+
   // Re-render chart when spec, active groups, or height changes
   useEffect(() => {
     if (!chartRef.current) return;
@@ -261,54 +383,118 @@ export default function VegaChartCard({
       return;
     }
 
-    // Dynamically import vega-embed (peer dep)
-    import("vega-embed").then(({ default: embed }) => {
-      let prepared = prepareSpec(spec, chartHeight);
+    if (isChoroplethQuantitative && mapSlotWidth < 1) {
+      return;
+    }
 
-      // Filter rows to active groups (categorical series only; not choropleth sequential color)
-      if (
-        !isChoroplethQuantitative &&
-        parsed.colorField &&
-        prepared.data?.values
-      ) {
-        prepared = {
-          ...prepared,
-          data: {
-            values: prepared.data.values.filter(
-              (r) => activeGroups.has(String(r[parsed.colorField!]))
-            ),
-          },
-        };
-      }
+    let cancelled = false;
+    let detachChoropleth: (() => void) | undefined;
 
-      // Apply active color scale (categorical palette only; keep Vega sequential scale for choropleths)
-      if (
-        !isChoroplethQuantitative &&
-        prepared.encoding?.color &&
-        parsed.colorField
-      ) {
-        const activeDomain = parsed.distinctGroups.filter((g) => activeGroups.has(g));
-        prepared.encoding.color.scale = {
-          domain: activeDomain,
-          range:  activeDomain.map((g) => parsed.colorMap[g]),
-        };
-      }
+    void Promise.all([import("vega-embed"), import("vega-lite")]).then(
+      ([{ default: embed }, vl]) => {
+        if (cancelled || !chartRef.current) return;
 
-      // Finalize previous view
-      try { vegaViewRef.current?.finalize(); } catch { /* ignore */ }
+        let prepared = prepareSpec(
+          spec,
+          isChoroplethQuantitative ? choroplethPlotHeight : chartHeight,
+          isChoroplethQuantitative ? mapSlotWidth : undefined,
+        );
 
-      embed(chartRef.current!, prepared as never, {
-        actions: false,
-        renderer: "svg",
-      }).then((result) => {
-        vegaViewRef.current = result.view as typeof vegaViewRef.current;
-      }).catch(console.error);
-    });
+        // Filter rows to active groups (categorical series only; not choropleth sequential color)
+        if (
+          !isChoroplethQuantitative &&
+          parsed.colorField &&
+          prepared.data?.values
+        ) {
+          prepared = {
+            ...prepared,
+            data: {
+              values: prepared.data.values.filter(
+                (r) => activeGroups.has(String(r[parsed.colorField!]))
+              ),
+            },
+          };
+        }
+
+        // Apply active color scale (categorical palette only; keep Vega sequential scale for choropleths)
+        if (
+          !isChoroplethQuantitative &&
+          prepared.encoding?.color &&
+          parsed.colorField
+        ) {
+          const activeDomain = parsed.distinctGroups.filter((g) => activeGroups.has(g));
+          prepared.encoding.color.scale = {
+            domain: activeDomain,
+            range: activeDomain.map((g) => parsed.colorMap[g]),
+          };
+        }
+
+        try {
+          vegaViewRef.current?.finalize();
+        } catch {
+          /* ignore */
+        }
+
+        const embedCommon = { actions: false, renderer: "svg" as const };
+        const host = chartRef.current;
+
+        if (isChoroplethQuantitative) {
+          const plotWidth =
+            typeof prepared.width === "number" && Number.isFinite(prepared.width)
+              ? prepared.width
+              : 600;
+          const plotHeight =
+            typeof prepared.height === "number" && Number.isFinite(prepared.height)
+              ? prepared.height
+              : choroplethPlotHeight;
+          const vegaSpec = patchVegaSpecChoroplethWheelZoom(
+            vl.compile(prepared as Parameters<typeof vl.compile>[0]).spec as Record<string, unknown>,
+            { plotWidth, plotHeight },
+          );
+          embed(host, vegaSpec as never, embedCommon)
+            .then((result) => {
+              if (cancelled) {
+                result.finalize();
+                return;
+              }
+              vegaViewRef.current = result.view as typeof vegaViewRef.current;
+              detachChoropleth?.();
+              detachChoropleth = attachChoroplethMapInteractions(host, result.view);
+            })
+            .catch(console.error);
+        } else {
+          embed(host, prepared as never, embedCommon)
+            .then((result) => {
+              if (cancelled) {
+                result.finalize();
+                return;
+              }
+              vegaViewRef.current = result.view as typeof vegaViewRef.current;
+            })
+            .catch(console.error);
+        }
+      },
+    );
 
     return () => {
-      try { vegaViewRef.current?.finalize(); } catch { /* ignore */ }
+      cancelled = true;
+      detachChoropleth?.();
+      detachChoropleth = undefined;
+      try {
+        vegaViewRef.current?.finalize();
+      } catch {
+        /* ignore */
+      }
     };
-  }, [spec, activeGroups, chartHeight, parsed, isChoroplethQuantitative]);
+  }, [
+    spec,
+    activeGroups,
+    chartHeight,
+    parsed,
+    isChoroplethQuantitative,
+    mapSlotWidth,
+    choroplethPlotHeight,
+  ]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
@@ -415,13 +601,17 @@ export default function VegaChartCard({
     overflow: "visible",
   };
 
+  /** Choropleth specs use a fixed pixel width (~600); the embed SVG stays centered with empty
+   *  gutter unless the chart slot matches. A grey slot background reads as a rectangular “frame”
+   *  around the white map — match the spec background instead. Other charts keep the subtle grey. */
   const chartArea: CSSProperties = {
-    background: "rgba(0,0,0,0.03)",
+    background: isChoroplethQuantitative ? "#ffffff" : "rgba(0,0,0,0.03)",
     borderRadius: 8,
     margin: "14px 0 0",
-    minHeight: chartHeight,
+    minHeight: isChoroplethQuantitative ? choroplethPlotHeight : chartHeight,
     width: "100%",
     overflow: "hidden",
+    ...(isChoroplethQuantitative ? { touchAction: "none" as const } : {}),
   };
 
   // ── Render ───────────────────────────────────────────────────────────────────
@@ -442,7 +632,15 @@ export default function VegaChartCard({
         )}
 
         {/* Chart (PNG export captures this whole card via html-to-image) */}
-        <div ref={chartRef} style={chartArea} />
+        <div
+          ref={chartRef}
+          style={chartArea}
+          title={
+            isChoroplethQuantitative
+              ? "Scroll to zoom. Shift+drag to pan. Double-click to reset."
+              : undefined
+          }
+        />
 
         {/* Interactive legend (categorical series only) */}
         {parsed.distinctGroups.length > 0 && !isChoroplethQuantitative && (
