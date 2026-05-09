@@ -430,6 +430,12 @@ class GroupSummary(BaseModel):
         default_factory=list,
         description="Source claim_ids from underlying raw observations",
     )
+    ref_area_name: str | None = Field(
+        None,
+        description="Human-readable country name resolved from ref_area code. "
+        "Populated after construction by the summarize_data provider when "
+        "ref_area is present in the group_key.",
+    )
 
     def to_compact(self) -> dict[str, Any]:
         """Return a slimmed dict for LLM context.
@@ -439,8 +445,11 @@ class GroupSummary(BaseModel):
         is bounded (one hash per observation per group) and preserves the
         group→claim_ids association that a flat top-level list would lose.
         """
+        group = dict(self.group_key)
+        if self.ref_area_name:
+            group["ref_area_name"] = self.ref_area_name
         return {
-            "group": self.group_key,
+            "group": group,
             "n": self.count,
             "latest": {"value": self.latest_value, "year": self.latest_year},
             "earliest": {"value": self.earliest_value, "year": self.earliest_year},
