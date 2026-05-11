@@ -1,3 +1,4 @@
+export { DATA360_CHART_UI_REVISION } from "./chart-ui-revision";
 export { default as VegaChartCard } from "./VegaChartCard";
 export {
   Data360ChartFromVizTool,
@@ -20,3 +21,12 @@ export type {
   VLEncoding,
   VLSpec,
 } from "./types";
+export {
+  applyChoroplethEmbedDomStyles,
+  resolveVegaEmbedRoot,
+} from "./choropleth-embed-dom";
+export {
+  attachChoroplethMapInteractions,
+  CHOROPLETH_ZOOM_SENSITIVITY,
+  runChoroplethVegaView,
+} from "./choropleth-host-interactions";

@@ -59,6 +59,35 @@ class MCPServerSettings(BaseSettings):
         default=None,
         description="Azure Application Insights connection string. If unset, falls back to APPLICATIONINSIGHTS_CONNECTION_STRING env var.",
     )
+    choropleth_geojson_url: str = Field(
+        default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/wb_countries_topo.json",
+        description="Boundary URL for choropleth maps (GeoJSON FeatureCollection or TopoJSON).",
+    )
+    choropleth_geo_format: str = Field(
+        default="topojson",
+        description="Choropleth boundary format: 'json' (GeoJSON FeatureCollection) or 'topojson'.",
+    )
+    choropleth_geo_feature: str | None = Field(
+        default="wb_countries",
+        description="TopoJSON object name to extract features from (e.g. 'countries'). Ignored for json.",
+    )
+    choropleth_geo_join_key: str = Field(
+        default="ISO_A3",
+        description="Feature property name joined to stats wb_a3 (e.g. WB_A3 in properties).",
+    )
+    choropleth_small_countries_geojson_url: str | None = Field(
+        # default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/small_countries_points_geo.json",
+        default=None,
+        description="GeoJSON FeatureCollection URL with point geometries for micro/small countries (optional layer).",
+    )
+    choropleth_disputed_areas_geojson_url: str | None = Field(
+        default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/wb_disputed_areas_topo.json",
+        description="TopoJSON (recommended) or GeoJSON FeatureCollection URL for disputed-area boundary overlays (optional layer).",
+    )
+    choropleth_country_names_json_url: str | None = Field(
+        default="https://raw.githubusercontent.com/worldbank/data-ai-chatbot/refs/heads/feat/viz-prompts-patch/frontend/public/json/ref_area_iso3_country_names.json",
+        description="JSON array URL [{wb_a3, country_name}] for choropleth tooltip labels (Vega lookup).",
+    )
 
     model_config = SettingsConfigDict(env_prefix="MCP_")
 

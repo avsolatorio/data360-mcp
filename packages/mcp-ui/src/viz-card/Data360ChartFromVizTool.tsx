@@ -19,6 +19,10 @@ export type Data360ChartFromVizToolProps = {
   toolResult: Data360VizToolResult;
   /** Host-specific URL rewrite (e.g. Next.js basePath / same-origin proxy). */
   mapUrlForFetch?: (url: string) => string;
+  /** Applied after fetch/normalize (e.g. point disputed layer at bundled TopoJSON). */
+  prepareDisplaySpec?: (
+    spec: Record<string, unknown>,
+  ) => Record<string, unknown>;
   chartHeight?: number;
   railTopSlot?: ReactNode;
   className?: string;
@@ -32,16 +36,20 @@ export type Data360ChartFromVizToolProps = {
     /** From Vega-Lite `title.subtitle` when present. */
     subtitleFromSpec?: string;
   }) => void;
+  /** Passed through to ``VegaChartCard`` (choropleth build stamp). */
+  hideChartUiRevision?: boolean;
 };
 
 export function Data360ChartFromVizTool({
   toolResult,
   mapUrlForFetch,
+  prepareDisplaySpec,
   chartHeight = 280,
   railTopSlot,
   className,
   loadingFallback,
   onChartReady,
+  hideChartUiRevision,
 }: Data360ChartFromVizToolProps) {
   const fetchUrl = useMemo(() => {
     if (!isData360VizToolSuccess(toolResult)) {
@@ -83,9 +91,21 @@ export function Data360ChartFromVizTool({
         }
         const { spec, title, subtitle: specSubtitle } =
           normalizeChartPayloadFromJson(data);
-        const specJson = JSON.stringify(spec);
-        setChartData({ spec, title, specSubtitle });
-        onChartReady?.({ spec, title, specJson, subtitleFromSpec: specSubtitle });
+        const displaySpec = prepareDisplaySpec
+          ? prepareDisplaySpec(spec as Record<string, unknown>)
+          : (spec as Record<string, unknown>);
+        const specJson = JSON.stringify(displaySpec);
+        setChartData({
+          spec: displaySpec,
+          title,
+          specSubtitle,
+        });
+        onChartReady?.({
+          spec: displaySpec,
+          title,
+          specJson,
+          subtitleFromSpec: specSubtitle,
+        });
       })
       .catch((err: unknown) => {
         if (cancelled) {
@@ -99,7 +119,7 @@ export function Data360ChartFromVizTool({
     return () => {
       cancelled = true;
     };
-  }, [fetchUrl, onChartReady]);
+  }, [fetchUrl, onChartReady, prepareDisplaySpec]);
 
   if (!isData360VizToolSuccess(toolResult)) {
     return null;
@@ -153,6 +173,7 @@ export function Data360ChartFromVizTool({
     <div className={className}>
       <VegaChartCard
         chartHeight={chartHeight}
+        hideChartUiRevision={hideChartUiRevision}
         railTopSlot={railTopSlot}
         source={source}
         spec={chartData.spec as VLSpec}

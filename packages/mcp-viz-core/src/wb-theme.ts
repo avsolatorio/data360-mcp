@@ -3,7 +3,17 @@ export const WB_THEME_URL =
 
 export const WB_THEME = {
   background: "#ffffff",
-  view: { stroke: null },
+  /** VL ``config.view`` → Vega ``style.cell`` (faceted cells). */
+  view: { stroke: null, strokeWidth: 0 },
+  /**
+   * Layered geographic specs use root scene style `"view"` → Vega ``config.style.view``.
+   * Clearing only ``config.view`` leaves the default plot outline; set both ``style.view`` and
+   * ``style.cell`` so merges and VL redirects stay consistent.
+   */
+  style: {
+    view: { stroke: null, strokeWidth: 0 },
+    cell: { stroke: null, strokeWidth: 0 },
+  },
   arc: { fill: "#34A7F2" },
   area: { fill: "#34A7F2" },
   line: { stroke: "#34A7F2", strokeCap: "round", strokeJoin: "round" },

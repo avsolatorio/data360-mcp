@@ -7,6 +7,12 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "clean": "rm -rf packages/*/dist",
+    "rebuild:viz-stack": "npm run clean && npm run build:viz-stack",
+    "build:mcp-viz-core": "npm run build -w @data360/mcp-viz-core",
+    "build:mcp-ui": "npm run build -w @data360/mcp-ui",
+    "build:tool-types": "npm run build -w @data360/tool-types",
+    "build:viz-stack": "npm run build -w @data360/tool-types && npm run build -w @data360/chart-payload-normalize && npm run build -w @data360/mcp-viz-core && npm run build -w @data360/mcp-ui"
   }
 }

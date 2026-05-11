@@ -1050,6 +1050,15 @@ class TestGetSupportedChartTypes:
         ids = [ct["id"] for ct in data["chart_types"]]
         assert "scatter" in ids
 
+    def test_includes_choropleth_type(self):
+        import json
+
+        from data360.visualization import get_supported_chart_types
+
+        data = json.loads(get_supported_chart_types())
+        ids = [ct["id"] for ct in data["chart_types"]]
+        assert "choropleth" in ids
+
     def test_includes_multi_indicator_note(self):
         import json
 

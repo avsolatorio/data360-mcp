@@ -6,6 +6,7 @@ Data360 visualization system.
 
 Design principles:
   - World Bank Data Visualization Style Guide (colors, typography, grid)
+  - World Bank Maps guidance where relevant (outline / no-data / selected borders)
   - FT Visual Vocabulary (chart-type selection by data relationship)
   - All functions here are pure (no async, no I/O) → fully unit-testable
 """
@@ -16,6 +17,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Literal
 
+import numpy as np
 import pandas as pd
 
 # ============================================================================
@@ -86,6 +88,30 @@ WB_WHITE = "#FFFFFF"
 WB_BACKGROUND = "#FFFFFF"
 WB_FONT_FAMILY = "Noto Sans, Arial, sans-serif"
 
+# World Bank Maps style — outline / noData / selected (neutral ramp as hex).
+# Aligns with World Bank map guidance: outline grey400, noData fill, selected grey500.
+WB_MAP_OUTLINE_WIDTH = 0.3
+WB_MAP_OUTLINE_GREY = "#9AA7B4"
+# TopoJSON object in bundled `wb_disputed_areas_topo.json`.
+CHOROPLETH_DISPUTED_TOPOJSON_FEATURE = "wb_disputed_areas_geo"
+WB_MAP_SELECTED_WIDTH = 2.5
+WB_MAP_SELECTED_GREY = "#6F7D88"
+WB_MAP_NO_DATA_FILL = WB_NO_DATA
+WB_MAP_TOOLTIP_NO_DATA = "Data not available"
+
+
+def _disputed_overlay_data_format(disputed_url: str) -> dict[str, str]:
+    """GeoJSON FeatureCollection vs TopoJSON for the optional disputed-outline layer."""
+    u = disputed_url.strip().lower()
+    if u.endswith((".topojson", "_topo.json")):
+        return {"type": "topojson", "feature": CHOROPLETH_DISPUTED_TOPOJSON_FEATURE}
+    return {"type": "json", "property": "features"}
+
+
+def _vl_string_literal_expr(s: str) -> str:
+    """Vega expression that evaluates to a JS string literal (for calculate transforms)."""
+    return "'" + s.replace("\\", "\\\\").replace("'", "\\'") + "'"
+
 
 # ============================================================================
 # WB ALTAIR THEME CONFIG
@@ -133,15 +159,36 @@ def wb_altair_config() -> dict:
             "titleColor": WB_TEXT,
             "titleFont": WB_FONT_FAMILY,
             "titleFontSize": 12,
-            "orient": "top",
+            "orient": "bottom",
             "direction": "horizontal",
         },
         "range": {"category": WB_CAT_COLORS},
-        "view": {"stroke": "transparent"},
+        # Vega-Lite maps ``config.view`` → Vega ``style.cell`` (facet cells). Layered maps use
+        # root scene ``style: "view"``, which reads ``config.style.view`` — that frame kept the
+        # default light-gray stroke until we clear both ``style.view`` and ``style.cell``.
+        "view": {"stroke": None, "strokeWidth": 0},
+        "style": {
+            "view": {"stroke": None, "strokeWidth": 0},
+            "cell": {"stroke": None, "strokeWidth": 0},
+        },
         "line": {"strokeWidth": 3, "strokeCap": "round"},
         "point": {"size": 60, "stroke": WB_WHITE, "strokeWidth": 1},
         "bar": {"cornerRadiusTopLeft": 2, "cornerRadiusTopRight": 2},
     }
+
+
+def _inject_style_defaults(existing: dict, defaults: dict) -> None:
+    """Merge WB ``config.style`` defaults without clobbering user ``style.view`` / ``style.cell``."""
+    for k, v in defaults.items():
+        if (
+            k in ("view", "cell")
+            and isinstance(v, dict)
+            and isinstance(existing.get(k), dict)
+        ):
+            for sk, sv in v.items():
+                existing[k].setdefault(sk, sv)
+        else:
+            existing.setdefault(k, v)
 
 
 def inject_wb_config(vl_spec: dict) -> dict:
@@ -156,8 +203,11 @@ def inject_wb_config(vl_spec: dict) -> dict:
             elif isinstance(props, dict) and isinstance(
                 vl_spec["config"].get(section), dict
             ):
-                for k, v in props.items():
-                    vl_spec["config"][section].setdefault(k, v)
+                if section == "style":
+                    _inject_style_defaults(vl_spec["config"][section], props)
+                else:
+                    for k, v in props.items():
+                        vl_spec["config"][section].setdefault(k, v)
     return vl_spec
 
 
@@ -165,14 +215,15 @@ def inject_wb_config(vl_spec: dict) -> dict:
 # STRUCTURED TOOLTIPS
 # ============================================================================
 
+# ``year`` / ``time_period`` are built in ``build_structured_tooltips`` from ``viz_data``:
+# marking them ``temporal`` when values are plain strings like "2018" makes Vega-Lite parse
+# the field as dates for all encodings, so an ordinal x-axis shows epoch milliseconds.
 _TOOLTIP_SPECS: dict[str, dict] = {
-    "year": {"title": "Year", "format": "%Y", "type": "temporal"},
     "value": {"title": "Value", "format": ",.2f", "type": "quantitative"},
     "country": {"title": "Country", "type": "nominal"},
     "sex": {"title": "Sex", "type": "nominal"},
     "age": {"title": "Age Group", "type": "nominal"},
     "urbanisation": {"title": "Urbanisation", "type": "nominal"},
-    "time_period": {"title": "Period", "type": "temporal"},
     "obs_value": {"title": "Value", "format": ",.2f", "type": "quantitative"},
     "ref_area": {"title": "Country", "type": "nominal"},
     "region": {"title": "Region", "type": "nominal"},
@@ -192,6 +243,49 @@ _TOOLTIP_PRIORITY = [
 ]
 
 
+def normalize_year_column_for_display(year_series: pd.Series) -> pd.Series:
+    """Coerce period cells to ``YYYY`` strings when they are datetimes or plain Jan-1 dates.
+
+    API annual periods often parse as ``2020-01-01``; choropleth tooltips and ``datasets``
+    JSON should show ``2020`` when there is no distinct month/day. Non–Jan-1 dates are kept
+    as their original string form.
+    """
+    if year_series.empty:
+        return year_series.astype(str)
+    s = year_series.copy()
+    if pd.api.types.is_datetime64_any_dtype(s):
+
+        def _from_ts(ts: object) -> str:
+            if pd.isna(ts):
+                return ""
+            t = pd.Timestamp(ts)
+            if int(t.month) == 1 and int(t.day) == 1:
+                return str(int(t.year))
+            return t.strftime("%Y-%m-%d")
+
+        return s.map(_from_ts)
+
+    def _cell(v: object) -> str:
+        try:
+            if pd.isna(v):
+                return ""
+        except TypeError:
+            pass
+        if isinstance(v, pd.Timestamp):
+            return str(v.year)
+        t = str(v).strip()
+        if not t:
+            return t
+        if len(t) == 4 and t.isdigit():
+            return t
+        parsed = pd.to_datetime(t, errors="coerce")
+        if pd.notna(parsed) and int(parsed.month) == 1 and int(parsed.day) == 1:
+            return str(int(parsed.year))
+        return t
+
+    return s.map(_cell)
+
+
 def _year_range_label(year_series: pd.Series) -> str | None:
     """Min–max year label, e.g. ``1990-2024`` or ``2020`` when only one year."""
     if year_series.empty:
@@ -201,6 +295,8 @@ def _year_range_label(year_series: pd.Series) -> str | None:
             ynum = year_series.dt.year
         else:
             ynum = pd.to_numeric(year_series, errors="coerce")
+            if ynum.isna().all():
+                ynum = pd.to_datetime(year_series, errors="coerce").dt.year
         yvalid = ynum.dropna()
         if yvalid.empty:
             return None
@@ -271,7 +367,9 @@ _MULTI_IND_TOOLTIP_DIMS: tuple[str, ...] = (
 _LINE_HOVER_POINT: dict[str, object] = {"filled": True, "size": 56}
 
 
-def _multi_indicator_tooltip_columns(df_columns: list[str], value_col: str) -> list[str]:
+def _multi_indicator_tooltip_columns(
+    df_columns: list[str], value_col: str
+) -> list[str]:
     colset = set(df_columns)
     out: list[str] = []
     for c in _MULTI_IND_TOOLTIP_DIMS:
@@ -282,23 +380,45 @@ def _multi_indicator_tooltip_columns(df_columns: list[str], value_col: str) -> l
     return out
 
 
+def _tooltip_spec_for_time_dim(col: str, viz_data: pd.DataFrame | None) -> dict:
+    """Year/period tooltips: temporal only when the frame actually has datetime values."""
+    title = "Year" if col == "year" else "Period"
+    if viz_data is not None and col in viz_data.columns:
+        s = viz_data[col]
+        if pd.api.types.is_datetime64_any_dtype(s):
+            return {
+                "field": col,
+                "title": title,
+                "type": "temporal",
+                "format": "%Y",
+            }
+    return {"field": col, "title": title, "type": "nominal"}
+
+
 def build_structured_tooltips(
     columns: list[str],
     mark_type: str,
     indicator_labels: dict[str, str] | None = None,
     value_format: str = ",.2f",
+    viz_data: pd.DataFrame | None = None,
 ) -> list[dict]:
     """Build typed, labelled tooltip list for a Vega-Lite encoding.
 
     indicator_labels: optional {col_name: human_label} for indicator value columns
     in multi-indicator charts (e.g. {"gdp_per_capita": "GDP per capita (USD)"}).
     value_format: D3 format string for quantitative value fields.
+    viz_data: when set, ``year`` / ``time_period`` tooltips use ``temporal`` only if
+        that column is datetime64; otherwise ``nominal`` so VL does not parse string
+        years as dates (which breaks ordinal x-axes).
     """
     ordered = [c for c in _TOOLTIP_PRIORITY if c in columns]
     ordered += [c for c in columns if c not in _TOOLTIP_PRIORITY]
 
     tooltips = []
     for col in ordered:
+        if col in ("year", "time_period"):
+            tooltips.append(_tooltip_spec_for_time_dim(col, viz_data))
+            continue
         if indicator_labels and col in indicator_labels:
             tip = {
                 "field": col,
@@ -326,8 +446,11 @@ def apply_structured_tooltips(
     columns: list[str],
     mark_type: str,
     indicator_labels: dict[str, str] | None = None,
+    viz_data: pd.DataFrame | None = None,
 ) -> dict:
-    tips = build_structured_tooltips(columns, mark_type, indicator_labels)
+    tips = build_structured_tooltips(
+        columns, mark_type, indicator_labels, viz_data=viz_data
+    )
     vl_spec.setdefault("encoding", {})["tooltip"] = tips
     return vl_spec
 
@@ -544,8 +667,12 @@ def _axis_style(title: str | None = None, temporal: bool = False) -> dict:
     return ax
 
 
-def _value_label_expr(unit_measure: str | None = None) -> str:
-    """Vega expression for custom k/m/b/t axis label formatting."""
+def _compact_number_label_expr(value_ref: str, unit_measure: str | None = None) -> str:
+    """Vega expression: compact numeric label (k, m, b, t suffixes) for any value reference.
+
+    ``value_ref`` is a Vega expression fragment, e.g. ``datum.value`` or
+    ``datum.choropleth_value`` (no wrapping parentheses).
+    """
     normalized = (unit_measure or "").upper().strip()
     is_currency = "$" in normalized or "USD" in normalized
     prefix = "$" if is_currency else ""
@@ -558,15 +685,41 @@ def _value_label_expr(unit_measure: str | None = None) -> str:
     else:
         tiers = [("1e12", "t"), ("1e9", "b"), ("1e6", "m"), ("1e3", "k")]
     parts = [
-        f"abs(datum.value)>={t} ? '{prefix}'+format(datum.value/{t},'.1f')+'{s}'"
+        f"abs({value_ref})>={t} ? '{prefix}'+format({value_ref}/{t},'.1f')+'{s}'"
         for t, s in tiers
     ]
     tail = (
-        f" : abs(datum.value)>=10 ? '{prefix}'+format(datum.value,',.1f')"
-        f" : abs(datum.value)>=1 ? '{prefix}'+format(datum.value,'.1f')"
-        f" : '{prefix}'+format(datum.value,'.2f')"
+        f" : abs({value_ref})>=10 ? '{prefix}'+format({value_ref},',.1f')"
+        f" : abs({value_ref})>=1 ? '{prefix}'+format({value_ref},'.1f')"
+        f" : '{prefix}'+format({value_ref},'.2f')"
     )
     return " : ".join(parts) + tail
+
+
+def _value_label_expr(unit_measure: str | None = None) -> str:
+    """Vega expression for custom k/m/b/t axis label formatting."""
+    return _compact_number_label_expr("datum.value", unit_measure)
+
+
+def _choropleth_legend_label_expr(unit_measure: str | None = None) -> str:
+    """Vega ``legend.labelExpr`` for quantitative choropleth ticks (``datum.value``)."""
+    if unit_measure == "%":
+        return "format(datum.value, '.1f') + '%'"
+    return _compact_number_label_expr("datum.value", unit_measure)
+
+
+def _choropleth_value_tip_calculate(unit_measure: str | None = None) -> str:
+    """Vega calculate expression for ``value_tip`` on choropleth layers."""
+    if unit_measure == "%":
+        inner = "format(datum.choropleth_value, '.1f') + '%'"
+    else:
+        inner = _compact_number_label_expr("datum.choropleth_value", unit_measure)
+    return (
+        "isValid(datum.choropleth_value) ? ("
+        + inner
+        + ") : "
+        + _vl_string_literal_expr(WB_MAP_TOOLTIP_NO_DATA)
+    )
 
 
 def _compute_tooltip_format(
@@ -643,7 +796,11 @@ def build_temporal_single_spec(
             "scale": {"zero": False},
         },
         "tooltip": build_structured_tooltips(
-            list(df.columns), "line", indicator_labels, value_format=tt_fmt
+            list(df.columns),
+            "line",
+            indicator_labels,
+            value_format=tt_fmt,
+            viz_data=df,
         ),
     }
     if result.color_dim:
@@ -726,7 +883,11 @@ def build_cross_sectional_spec(
             },
             "color": color_enc,
             "tooltip": build_structured_tooltips(
-                list(df.columns), "bar", indicator_labels, value_format=tt_fmt
+                list(df.columns),
+                "bar",
+                indicator_labels,
+                value_format=tt_fmt,
+                viz_data=sorted_df,
             ),
         },
         "width": 500,
@@ -779,7 +940,11 @@ def build_distribution_spec(
             },
             "color": _color_encoding("country"),
             "tooltip": build_structured_tooltips(
-                list(sorted_df.columns), "tick", indicator_labels, value_format=tt_fmt
+                list(sorted_df.columns),
+                "tick",
+                indicator_labels,
+                value_format=tt_fmt,
+                viz_data=sorted_df,
             ),
         },
         "width": 500,
@@ -826,7 +991,11 @@ def build_breakdown_comparison_spec(
             "x": {
                 "field": x_field,
                 "type": x_type,
-                "axis": {"title": None, "labelFontWeight": "bold"},
+                "axis": {
+                    "title": None,
+                    "labelFontWeight": "bold",
+                    **({"labelAngle": 0} if x_field in ("year", "time_period") else {}),
+                },
             },
             "xOffset": {"field": color_dim, "type": "nominal"},
             "y": {
@@ -847,7 +1016,11 @@ def build_breakdown_comparison_spec(
                 },
             },
             "tooltip": build_structured_tooltips(
-                list(df.columns), "bar", indicator_labels, value_format=tt_fmt
+                list(df.columns),
+                "bar",
+                indicator_labels,
+                value_format=tt_fmt,
+                viz_data=df,
             ),
         },
         "width": max(300, df[x_field].nunique() * 80),
@@ -894,7 +1067,11 @@ def build_small_multiples_spec(
                 "scale": {"zero": False},
             },
             "tooltip": build_structured_tooltips(
-                list(df.columns), "line", indicator_labels, value_format=tt_fmt
+                list(df.columns),
+                "line",
+                indicator_labels,
+                value_format=tt_fmt,
+                viz_data=df,
             ),
         },
     }
@@ -962,7 +1139,9 @@ def build_correlation_spec(
                 "scale": {"zero": False},
             },
             "color": _color_encoding(result.color_dim or "country"),
-            "tooltip": build_structured_tooltips(list(df.columns), "point", lab),
+            "tooltip": build_structured_tooltips(
+                list(df.columns), "point", lab, viz_data=df
+            ),
         },
         "width": 550,
         "height": 450,
@@ -1005,7 +1184,9 @@ def build_correlation_temporal_spec(
         },
         "color": _color_encoding(color_dim),
         "order": {"field": "year", "type": "temporal"},
-        "tooltip": build_structured_tooltips(list(df.columns), "line", lab),
+        "tooltip": build_structured_tooltips(
+            list(df.columns), "line", lab, viz_data=df
+        ),
     }
 
     spec: dict = {
@@ -1084,7 +1265,7 @@ def build_temporal_multi_indicator_spec(
             },
             "color": {"value": color},
             "tooltip": build_structured_tooltips(
-                tooltip_cols, "line", lab, value_format=tt_fmt
+                tooltip_cols, "line", lab, value_format=tt_fmt, viz_data=df
             ),
         }
         layers.append(
@@ -1148,7 +1329,11 @@ def build_fallback_line_spec(
         },
         "y": {"field": y_col, "type": "quantitative", "axis": y_ax},
         "tooltip": build_structured_tooltips(
-            list(df.columns), "line", indicator_labels, value_format=tt_fmt
+            list(df.columns),
+            "line",
+            indicator_labels,
+            value_format=tt_fmt,
+            viz_data=df,
         ),
     }
     if result.color_dim and result.color_dim in cols:
@@ -1171,6 +1356,608 @@ def build_fallback_line_spec(
         "width": 600,
         "height": 350,
     }
+    return inject_wb_config(spec)
+
+
+# ============================================================================
+# CHOROPLETH (single indicator, single year, geoshape + lookup)
+# ============================================================================
+
+
+def wants_choropleth(chart_type: str | None) -> bool:
+    """True when user asked for a world / geo choropleth via chart_type text."""
+    if not chart_type:
+        return False
+    t = chart_type.lower()
+    if "choropleth" in t:
+        return True
+    if "world map" in t:
+        return True
+    if "geo map" in t:
+        return True
+    return False
+
+
+def build_choropleth_geo_join_alias_map(features: list) -> dict[str, str]:
+    """Map REF_AREA-style codes to canonical ``WB_A3`` using world GeoJSON features.
+
+    Data360 ``REF_AREA`` may be ISO 3166-1 alpha-3, alpha-2, or UN M49 numeric strings.
+    Vega choropleth lookup joins on ``properties.WB_A3`` in the bundled world GeoJSON.
+    """
+
+    index: dict[str, str] = {}
+    for feat in features:
+        if not isinstance(feat, dict):
+            continue
+        props = feat.get("properties")
+        if not isinstance(props, dict):
+            continue
+        wb_raw = props.get("WB_A3")
+        if not isinstance(wb_raw, str):
+            continue
+        wb = wb_raw.strip().upper()
+        if len(wb) != 3 or not wb.isalpha():
+            continue
+
+        def add(key: str | int | float | None) -> None:
+            if key is None:
+                return
+            k = str(key).strip().upper()
+            if not k:
+                return
+            if k not in index:
+                index[k] = wb
+
+        add(wb)
+        for iso_key in ("ISO_A3", "ISO_A3_EH"):
+            v = props.get(iso_key)
+            if isinstance(v, str):
+                add(v)
+        for a2_key in ("WB_A2", "ISO_A2"):
+            v = props.get(a2_key)
+            if isinstance(v, str):
+                add(v)
+        un_a3 = props.get("UN_A3")
+        if un_a3 is not None:
+            u = str(un_a3).strip()
+            if u.isdigit():
+                add(u.zfill(3))
+                add(str(int(u)))
+    return index
+
+
+def normalize_choropleth_wb_a3_codes(
+    raw_codes: pd.Series,
+    alias_map: dict[str, str],
+) -> pd.Series:
+    """Rewrite stats area codes to ``WB_A3`` when ``alias_map`` recognises them."""
+
+    def norm(val: object) -> str:
+        raw = str(val).strip().upper()
+        if not raw:
+            return raw
+        if raw in alias_map:
+            return alias_map[raw]
+        if raw.isdigit():
+            k3 = raw.zfill(3)
+            if k3 in alias_map:
+                return alias_map[k3]
+        return raw
+
+    return raw_codes.map(norm)
+
+
+def validate_choropleth_df(df: pd.DataFrame) -> str | None:
+    """Return an error message if ``df`` cannot be used for a choropleth, else None."""
+    if "wb_a3" not in df.columns:
+        return (
+            "Choropleth requires country codes (wb_a3). Ensure REF_AREA / country is present "
+            "before mapping."
+        )
+    if "value" not in df.columns:
+        return "Choropleth requires a value column."
+    if "year" not in df.columns:
+        return "Choropleth requires a year column."
+    if df["year"].nunique() > 1:
+        return (
+            "Choropleth supports a single time period. "
+            "Set start_year and end_year to the same year, or narrow the query."
+        )
+    if df.dropna(subset=["value", "wb_a3"]).empty:
+        return "No rows with both wb_a3 and value for choropleth."
+    return None
+
+
+def _choropleth_country_name_lookup_from(
+    country_names_url: str | None,
+    country_name_rows: list[dict[str, str]] | None,
+) -> dict | None:
+    """Vega ``lookup.from`` for ISO3 → label; URL preferred over inline ``values``."""
+    url = (country_names_url or "").strip()
+    if url:
+        return {
+            "data": {"url": url},
+            "key": "wb_a3",
+            "fields": ["country_name"],
+        }
+    if country_name_rows:
+        return {
+            "data": {"values": country_name_rows},
+            "key": "wb_a3",
+            "fields": ["country_name"],
+        }
+    return None
+
+
+def _dataframe_for_choropleth_color_domain(plot_df: pd.DataFrame) -> pd.DataFrame:
+    """Restrict min/max/symmetric span to **member economies**, not WB aggregates.
+
+    Full-indicator pulls often include ``WLD`` (World) and regional/income groups (``EAS``,
+    ``HIC``, …). Those totals dwarf country-level values and force a diverging domain like
+    ±49e9 while China (~13e9) barely moves off white.
+
+    The choropleth dataset still lists every row for lookup/tooltips; only **color scale**
+    statistics use this filtered frame.
+    """
+    wb = plot_df["wb_a3"].astype(str).str.strip().str.upper()
+    # World total — always exclude from domain even if group hierarchy is unavailable.
+    exclude = wb == "WLD"
+    try:
+        from data360.providers import get_group_hierarchy_manager
+
+        ghm = get_group_hierarchy_manager()
+
+        def is_other_aggregate(code: str) -> bool:
+            try:
+                return ghm.is_group(code)
+            except Exception:
+                return False
+
+        exclude = exclude | wb.map(is_other_aggregate)
+    except Exception:
+        pass
+
+    filtered = plot_df.loc[~exclude]
+    return filtered if len(filtered) > 0 else plot_df
+
+
+def build_choropleth_spec(
+    df: pd.DataFrame,
+    title: str | dict,
+    geo_url: str,
+    geo_format: str = "json",
+    geo_feature: str | None = None,
+    geo_join_prop: str = "WB_A3",
+    small_countries_geo_url: str | None = None,
+    disputed_areas_geo_url: str | None = None,
+    country_names_url: str | None = None,
+    country_name_rows: list[dict[str, str]] | None = None,
+    unit_measure: str | None = None,
+) -> dict:
+    """Vega-Lite choropleth: one geoshape layer with conditional fill + stats lookup."""
+    cols = [c for c in ("wb_a3", "value", "country", "year") if c in df.columns]
+    plot_df = df[cols].copy()
+    plot_df = plot_df.dropna(subset=["value", "wb_a3"])
+    # GeoJSON join keys are uppercase (e.g. properties.WB_A3); normalize defensively.
+    plot_df["wb_a3"] = plot_df["wb_a3"].astype(str).str.strip().str.upper()
+    plot_df["year"] = normalize_year_column_for_display(plot_df["year"])
+    rows = plot_df.to_dict(orient="records")
+
+    plot_df_domain = _dataframe_for_choropleth_color_domain(plot_df)
+    vals_arr = pd.to_numeric(plot_df_domain["value"], errors="coerce").to_numpy(
+        dtype=float
+    )
+    vals_arr = vals_arr[np.isfinite(vals_arr)]
+    vmin = float(vals_arr.min()) if vals_arr.size else 0.0
+    vmax = float(vals_arr.max()) if vals_arr.size else 0.0
+
+    # Diverging blue (negative / low) → red (positive / high): ``redblue`` with ``reverse`` so
+    # the left side of the domain is blue. Symmetric domain [-v, +v] where v = max(abs(value)).
+    # Sequential blues when all nonnegative; reversed blues when all nonpositive.
+    choropleth_legend_values: list[float] | None = None
+    if vmin < 0 and vmax > 0:
+        v_sym = float(np.max(np.abs(vals_arr)))
+        choropleth_color_scale = {
+            "type": "linear",
+            "scheme": "redblue",
+            "reverse": True,
+            "domain": [-v_sym, v_sym],
+        }
+        if v_sym > 0:
+            choropleth_legend_values = [-v_sym, 0.0, v_sym]
+    elif vmin >= 0:
+        choropleth_color_scale = {
+            "type": "linear",
+            "scheme": "blues",
+            "domainMin": 0,
+        }
+        # Scale starts at 0; legend shows ends and midpoint of the encoded range.
+        if vmax > 0:
+            choropleth_legend_values = [0.0, vmax / 2.0, vmax]
+        else:
+            choropleth_legend_values = [0.0]
+    else:
+        choropleth_color_scale = {
+            "type": "linear",
+            "scheme": "blues",
+            "reverse": True,
+            "domain": [vmin, 0.0],
+        }
+        if vmin < 0:
+            choropleth_legend_values = [vmin, vmin / 2.0, 0.0]
+        else:
+            choropleth_legend_values = [0.0]
+
+    _default_map_w = 600
+    _legend_gradient_len = max(120, _default_map_w - 80)
+
+    value_legend = "Value"
+    if unit_measure and str(unit_measure).strip():
+        value_legend = f"Value ({unit_measure})"
+
+    cn_lookup = _choropleth_country_name_lookup_from(
+        country_names_url, country_name_rows
+    )
+
+    lookup_key = f"properties.{geo_join_prop}"
+    join_value_expr = f"datum.{lookup_key}"
+    if geo_format == "topojson":
+        data_format: dict[str, str] = {"type": "topojson"}
+        if geo_feature:
+            data_format["feature"] = geo_feature
+    else:
+        data_format = {"type": "json", "property": "features"}
+
+    # One geoshape layer for all countries: SVG hit-testing only sees the top geoshape; a
+    # separate base + filtered choropleth stack meant no-data polygons never received pointer
+    # events. Conditional color encodes values where present; tooltips use lookup fallbacks.
+    country_fallback_expr = (
+        "isValid(datum.country_name) && datum.country_name != '' ? datum.country_name : "
+        "(isValid(datum.properties.NAME_EN) && datum.properties.NAME_EN != '' ? datum.properties.NAME_EN : "
+        "(isValid(datum.properties.WB_NAME) && datum.properties.WB_NAME != '' ? datum.properties.WB_NAME : "
+        "(isValid(datum.properties.ISO_A3) && datum.properties.ISO_A3 != '' ? toString(datum.properties.ISO_A3) : "
+        "(isValid(datum.properties.WB_A3) && datum.properties.WB_A3 != '' ? toString(datum.properties.WB_A3) : 'Unknown'))))"
+    )
+    # Rename lookup outputs so ``value`` / ``country`` never collide with GeoJSON ``properties``
+    # (or Vega merges). Those collisions made ``isValid(datum.value)`` true without a real stat,
+    # breaking the else-fill and leaving large areas white.
+    _choropleth_stat_fields = ["value", "country", "year", "wb_a3"]
+    _choropleth_stat_as = [
+        "choropleth_value",
+        "choropleth_country",
+        "choropleth_year",
+        "choropleth_wb_a3",
+    ]
+    base_country_label_expr = country_fallback_expr
+    base_map_layer: dict = {
+        # Full landmass: constant grey fill (``encoding.color.value`` only — never combine
+        # ``mark.fill`` with quantitative color on the same layer; see choropleth overlay).
+        # SVG hit-testing: polygons without stats exist only here → tooltips still work.
+        "data": {"url": geo_url, "format": data_format},
+        "transform": [
+            *([{"lookup": lookup_key, "from": cn_lookup}] if cn_lookup else []),
+            {"calculate": base_country_label_expr, "as": "country_label"},
+            {
+                "calculate": (
+                    f"isValid({join_value_expr}) ? toString({join_value_expr}) : 'N/A'"
+                ),
+                "as": "wb_detail",
+            },
+            # Constant tooltips as fields — vega-tooltip often drops ``encoding.tooltip`` entries
+            # that use ``value`` only, so "Data not available" never appeared for no-data areas.
+            {
+                "calculate": _vl_string_literal_expr(WB_MAP_TOOLTIP_NO_DATA),
+                "as": "na_value_tip",
+            },
+            {
+                "calculate": _vl_string_literal_expr(WB_MAP_TOOLTIP_NO_DATA),
+                "as": "na_year_tip",
+            },
+        ],
+        "mark": {
+            "type": "geoshape",
+            "strokeCap": "round",
+            "strokeJoin": "round",
+        },
+        "encoding": {
+            "color": {
+                "value": WB_MAP_NO_DATA_FILL,
+                "legend": {
+                    "title": "No data",
+                    "orient": "bottom",
+                    "direction": "horizontal",
+                },
+            },
+            "stroke": {"value": WB_MAP_OUTLINE_GREY},
+            "strokeWidth": {"value": WB_MAP_OUTLINE_WIDTH},
+            "detail": {"field": "wb_detail", "type": "nominal"},
+            "tooltip": [
+                {"field": "country_label", "type": "nominal", "title": "Country"},
+                {"field": "wb_detail", "type": "nominal", "title": "Code"},
+                {"field": "na_value_tip", "type": "nominal", "title": value_legend},
+                {"field": "na_year_tip", "type": "nominal", "title": "Year"},
+            ],
+        },
+    }
+
+    choropleth_overlay_layer: dict = {
+        # Hover lives on this layer only — top-level ``params`` on ``layer`` specs can
+        # compile to duplicate ``*_tuple`` signals in Vega (VL #6890 / layered selections).
+        "params": [
+            {
+                "name": "choropleth_hover",
+                "select": {
+                    "type": "point",
+                    "on": "mouseover",
+                    "clear": "mouseout",
+                    "fields": ["wb_detail"],
+                },
+            }
+        ],
+        "data": {"url": geo_url, "format": data_format},
+        "transform": [
+            *([{"lookup": lookup_key, "from": cn_lookup}] if cn_lookup else []),
+            {
+                "lookup": lookup_key,
+                "from": {
+                    "data": {"name": "choropleth_stats"},
+                    "key": "wb_a3",
+                    "fields": _choropleth_stat_fields,
+                },
+                "as": _choropleth_stat_as,
+            },
+            {"filter": "isValid(datum.choropleth_value)"},
+            {
+                "calculate": ("toString(datum.choropleth_wb_a3)"),
+                "as": "wb_detail",
+            },
+            {
+                "calculate": (
+                    "isValid(datum.choropleth_country) && toString(datum.choropleth_country) != '' "
+                    "? toString(datum.choropleth_country) : toString(datum.choropleth_wb_a3)"
+                ),
+                "as": "country_tip",
+            },
+            {
+                "calculate": _choropleth_value_tip_calculate(unit_measure),
+                "as": "value_tip",
+            },
+            {
+                "calculate": (
+                    "isValid(datum.choropleth_year) && toString(datum.choropleth_year) != '' "
+                    "? toString(datum.choropleth_year) : "
+                    + _vl_string_literal_expr(WB_MAP_TOOLTIP_NO_DATA)
+                ),
+                "as": "year_tip",
+            },
+        ],
+        "mark": {"type": "geoshape", "strokeCap": "round", "strokeJoin": "round"},
+        "encoding": {
+            "color": {
+                "field": "choropleth_value",
+                "type": "quantitative",
+                "scale": dict(choropleth_color_scale),
+                "legend": {
+                    "title": value_legend,
+                    "orient": "bottom",
+                    "direction": "horizontal",
+                    "gradientLength": _legend_gradient_len,
+                    "labelExpr": _choropleth_legend_label_expr(unit_measure),
+                    **(
+                        {"values": choropleth_legend_values}
+                        if choropleth_legend_values is not None
+                        else {}
+                    ),
+                },
+            },
+            "stroke": {
+                "condition": {
+                    "param": "choropleth_hover",
+                    "empty": False,
+                    "value": WB_MAP_SELECTED_GREY,
+                },
+                "value": WB_MAP_OUTLINE_GREY,
+            },
+            "strokeWidth": {
+                "condition": {
+                    "param": "choropleth_hover",
+                    "empty": False,
+                    "value": WB_MAP_SELECTED_WIDTH,
+                },
+                "value": WB_MAP_OUTLINE_WIDTH,
+            },
+            "detail": {"field": "wb_detail", "type": "nominal"},
+            "tooltip": [
+                {"field": "country_tip", "type": "nominal", "title": "Country"},
+                {"field": "wb_detail", "type": "nominal", "title": "Code"},
+                {"field": "value_tip", "type": "nominal", "title": value_legend},
+                {"field": "year_tip", "type": "nominal", "title": "Year"},
+            ],
+        },
+    }
+
+    # Stack: disputed (optional) → grey base (all countries) → quantitative overlay (stats only).
+    # Prefer TopoJSON for disputed outlines so projection fit stays tight. Omit the layer by
+    # setting MCP_CHOROPLETH_DISPUTED_AREAS_GEOJSON_URL empty if undesired.
+    map_layers: list[dict] = []
+    if disputed_areas_geo_url:
+        map_layers.append(
+            {
+                "data": {
+                    "url": disputed_areas_geo_url,
+                    "format": _disputed_overlay_data_format(disputed_areas_geo_url),
+                },
+                "mark": {
+                    "type": "geoshape",
+                    "fillOpacity": 0,
+                    "stroke": WB_MAP_OUTLINE_GREY,
+                    "strokeWidth": WB_MAP_OUTLINE_WIDTH,
+                    "strokeOpacity": 0.45,
+                    "strokeCap": "round",
+                    "strokeJoin": "round",
+                },
+                "encoding": {"tooltip": None},
+            }
+        )
+    map_layers.extend([base_map_layer, choropleth_overlay_layer])
+
+    spec: dict = {
+        "$schema": _vl_schema(),
+        "title": title,
+        "datasets": {"choropleth_stats": rows},
+        # Plate Carree. ``clipAngle: null`` enables antimeridian cutting (D3); without it,
+        # USA (Alaska + dateline) and similar polygons span ~360 deg lon and fill the whole view.
+        "projection": {"type": "equirectangular", "clipAngle": None},
+        "layer": map_layers,
+        "resolve": {"legend": {"merge": False}},
+        # ~2:1 aspect matches typical equirectangular world extent (excluding polar caps in data).
+        "width": _default_map_w,
+        "height": 300,
+    }
+
+    if small_countries_geo_url:
+        small_format: dict[str, str] = {"type": "json", "property": "features"}
+        spec["layer"].append(
+            {
+                "data": {"url": small_countries_geo_url, "format": small_format},
+                "transform": [
+                    *(
+                        [
+                            {
+                                "lookup": "properties.ISO_A3",
+                                "from": cn_lookup,
+                            }
+                        ]
+                        if cn_lookup
+                        else []
+                    ),
+                    {
+                        "calculate": _vl_string_literal_expr(WB_MAP_TOOLTIP_NO_DATA),
+                        "as": "na_value_tip",
+                    },
+                    {
+                        "calculate": _vl_string_literal_expr(WB_MAP_TOOLTIP_NO_DATA),
+                        "as": "na_year_tip",
+                    },
+                ],
+                "mark": {
+                    "type": "circle",
+                    "size": 26,
+                    "fill": WB_MAP_NO_DATA_FILL,
+                    "stroke": WB_MAP_OUTLINE_GREY,
+                    "strokeWidth": WB_MAP_OUTLINE_WIDTH,
+                    "strokeCap": "round",
+                    "strokeJoin": "round",
+                },
+                "encoding": {
+                    "longitude": {
+                        "field": "geometry.coordinates[0]",
+                        "type": "quantitative",
+                    },
+                    "latitude": {
+                        "field": "geometry.coordinates[1]",
+                        "type": "quantitative",
+                    },
+                    "tooltip": [
+                        {
+                            "field": "country_name",
+                            "type": "nominal",
+                            "title": "Country",
+                        },
+                        {
+                            "field": "properties.ISO_A3",
+                            "type": "nominal",
+                            "title": "Code",
+                        },
+                        {
+                            "field": "na_value_tip",
+                            "type": "nominal",
+                            "title": value_legend,
+                        },
+                        {"field": "na_year_tip", "type": "nominal", "title": "Year"},
+                    ],
+                },
+            }
+        )
+        spec["layer"].append(
+            {
+                "data": {"url": small_countries_geo_url, "format": small_format},
+                "transform": [
+                    {
+                        "lookup": "properties.ISO_A3",
+                        "from": {
+                            "data": {"name": "choropleth_stats"},
+                            "key": "wb_a3",
+                            "fields": [
+                                "value",
+                                "country",
+                                "year",
+                                "wb_a3",
+                            ],
+                        },
+                        "as": [
+                            "choropleth_value",
+                            "choropleth_country",
+                            "choropleth_year",
+                            "choropleth_wb_a3",
+                        ],
+                    },
+                    {"filter": "isValid(datum.choropleth_value)"},
+                    {
+                        "calculate": _choropleth_value_tip_calculate(unit_measure),
+                        "as": "value_tip",
+                    },
+                ],
+                "mark": {
+                    "type": "circle",
+                    "size": 42,
+                    "stroke": WB_WHITE,
+                    # Slightly thicker than map outline so dots stay visible on dark fills.
+                    "strokeWidth": 0.75,
+                    "strokeCap": "round",
+                    "strokeJoin": "round",
+                },
+                "encoding": {
+                    "longitude": {
+                        "field": "geometry.coordinates[0]",
+                        "type": "quantitative",
+                    },
+                    "latitude": {
+                        "field": "geometry.coordinates[1]",
+                        "type": "quantitative",
+                    },
+                    "color": {
+                        "field": "choropleth_value",
+                        "type": "quantitative",
+                        "scale": dict(choropleth_color_scale),
+                        "legend": None,
+                    },
+                    "tooltip": [
+                        {
+                            "field": "choropleth_country",
+                            "type": "nominal",
+                            "title": "Country",
+                        },
+                        {
+                            "field": "choropleth_wb_a3",
+                            "type": "nominal",
+                            "title": "Code",
+                        },
+                        {
+                            "field": "value_tip",
+                            "type": "nominal",
+                            "title": value_legend,
+                        },
+                        {
+                            "field": "choropleth_year",
+                            "type": "nominal",
+                            "title": "Year",
+                        },
+                    ],
+                },
+            }
+        )
+
     return inject_wb_config(spec)
 
 
@@ -1348,6 +2135,12 @@ DATA_PREPARATION_RULES: list[DataPreparationRule] = [
     DataPreparationRule(
         "bar", "A", "year_strings", "Bar charts with annual data use year strings"
     ),
+    DataPreparationRule(
+        "bar",
+        None,
+        "year_strings",
+        "Bar charts when API frequency is unknown — assume annual WDI-style years",
+    ),
     DataPreparationRule("*", "*", "datetime", "Default: datetime"),
 ]
 
@@ -1392,12 +2185,39 @@ class PostProcessingRule:
         raise NotImplementedError
 
 
+def _first_non_null_dataset_value(dataset: list, field: str) -> object:
+    for row in dataset:
+        if field in row:
+            v = row[field]
+            if v is not None:
+                return v
+    return None
+
+
+# Ordinal ``year`` values at or above this magnitude are treated as epoch milliseconds
+# (typical Altair / Vega-Lite JSON for datetimes), not calendar years.
+_YEAR_ORDINAL_EPOCH_MS_THRESHOLD = 1e12
+
+
+def _year_ordinal_value_needs_temporal_encoding(value: object) -> bool:
+    """True when x is ordinal but values are ISO datetimes or epoch ms (Vega-Lite)."""
+    if value is None or isinstance(value, bool):
+        return False
+    if isinstance(value, str):
+        return "T" in value
+    if isinstance(value, (int, float)):
+        fv = float(value)
+        # Altair often serializes datetimes as milliseconds in embedded datasets
+        return abs(fv) >= _YEAR_ORDINAL_EPOCH_MS_THRESHOLD
+    return False
+
+
 class OrdinalToTemporalRule(PostProcessingRule):
     def __init__(self):
         super().__init__(
             "ordinal_to_temporal",
-            ["line", "area", "point", "tick"],
-            "Fix ordinal→temporal for time fields",
+            ["line", "area", "point", "tick", "bar"],
+            "Fix ordinal→temporal for time fields (ISO or epoch ms), including bars",
         )
 
     def should_apply(self, mark_type, x_enc, dataset):
@@ -1408,9 +2228,10 @@ class OrdinalToTemporalRule(PostProcessingRule):
         x_field = x_enc.get("field")
         if x_field not in ["year", "time_period"]:
             return False
-        if dataset and x_field in dataset[0]:
-            return isinstance(dataset[0][x_field], str) and "T" in dataset[0][x_field]
-        return False
+        if not dataset:
+            return False
+        sample = _first_non_null_dataset_value(dataset, x_field)
+        return _year_ordinal_value_needs_temporal_encoding(sample)
 
     def apply(self, spec, data_frequency=None, unit_measure=None):
         mark_type = (
@@ -1493,7 +2314,7 @@ class TemporalAxisCleanupRule(PostProcessingRule):
     def __init__(self):
         super().__init__(
             "temporal_axis_cleanup",
-            ["line", "area", "point"],
+            ["line", "area", "point", "bar"],
             "Remove title from temporal x-axis",
         )
 
@@ -1516,6 +2337,38 @@ class TemporalAxisCleanupRule(PostProcessingRule):
         x["axis"]["labelAngle"] = 0
         x["axis"].setdefault("format", "%Y")
         x["axis"].setdefault("tickCount", 5)
+        return spec
+
+
+class DiscreteYearBarXAxisRule(PostProcessingRule):
+    """Vega-Lite defaults often rotate discrete x labels on bars; force horizontal years."""
+
+    def __init__(self):
+        super().__init__(
+            "discrete_year_bar_x_axis",
+            ["bar"],
+            "Horizontal labels for ordinal/nominal year on column/bar x-axis",
+        )
+
+    def should_apply(self, spec, data_frequency=None):
+        mark_type = (
+            spec.get("mark", {}).get("type")
+            if isinstance(spec.get("mark"), dict)
+            else spec.get("mark")
+        )
+        if mark_type not in self.applies_to_mark_types:
+            return False
+        x = spec.get("encoding", {}).get("x", {})
+        if x.get("field") not in ("year", "time_period"):
+            return False
+        return x.get("type") in ("ordinal", "nominal")
+
+    def apply(self, spec, data_frequency=None, unit_measure=None):
+        if not self.should_apply(spec):
+            return spec
+        x = spec["encoding"]["x"]
+        x.setdefault("axis", {})
+        x["axis"]["labelAngle"] = 0
         return spec
 
 
@@ -1634,6 +2487,7 @@ POST_PROCESSING_RULES: list[PostProcessingRule] = [
     ApplyTimeUnitRule(),
     FixValueAxisEncodingRule(),
     TemporalAxisCleanupRule(),
+    DiscreteYearBarXAxisRule(),
     ValueAxisLabelFormatRule(),
     LineChartPointHoverRule(),
     ZeroLineRule(),

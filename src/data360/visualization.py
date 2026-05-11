@@ -9,6 +9,8 @@ Vega-Lite specifications, then persists them either through the optional Charts 
 
 - ``get_viz_spec`` — one indicator. Uses Draco where appropriate and
   ``data360.viz_config`` strategy dispatch for patterns Draco does not handle well.
+  Choropleth world maps use ``chart_type`` hints such as ``choropleth`` or ``world map``
+  (single year, multiple countries; GeoJSON from MCP settings).
 - ``get_multi_indicator_viz_spec`` — two to four indicators; merges frames and
   dispatches multi-series strategies (scatter, layered lines, connected scatter, etc.).
 
@@ -35,8 +37,6 @@ from urllib.parse import parse_qs, urlparse
 
 import altair as alt
 import httpx
-
-from data360.http_client import get_shared_httpx_client
 import numpy as np
 import pandas as pd
 from draco import Draco, answer_set_to_dict, dict_to_facts, schema_from_dataframe
@@ -44,9 +44,12 @@ from draco.renderer import AltairRenderer
 
 from data360 import viz_config
 from data360.config import get_mcp_server_settings
+from data360.http_client import get_shared_httpx_client
 from data360.providers import get_database_mapping
 
 _logger = logging.getLogger(__name__)
+
+_choropleth_geo_alias_cache: dict[tuple[str, str, str | None], dict[str, str]] = {}
 
 _FALLBACK_WARNING = (
     "Draco could not determine an optimal encoding; "
@@ -255,9 +258,7 @@ def _format_subtitle_line(
     if warning:
         parts.append(warning)
     if strategy or reason:
-        parts.append(
-            " — ".join(x for x in (strategy or "", reason or "") if x)
-        )
+        parts.append(" — ".join(x for x in (strategy or "", reason or "") if x))
     if not parts:
         return None
     return " · ".join(parts)
@@ -402,6 +403,17 @@ def _clean_single_df(
         except Exception as e:
             _logger.warning(f"time_period conversion failed: {e}")
 
+        # Choropleth uses a single annual period; default prep keeps ``datetime`` (line default),
+        # which serializes as ``2020-01-01``. Use calendar year strings for tooltips/spec.
+        if chart_type and viz_config.wants_choropleth(chart_type):
+            try:
+                viz_data["time_period"] = (
+                    pd.to_datetime(viz_data["time_period"], errors="coerce")
+                    .dt.year.astype(str)
+                )
+            except Exception as e:
+                _logger.warning("choropleth year display normalization failed: %s", e)
+
     if "obs_value" in viz_data.columns:
         viz_data["obs_value"] = pd.to_numeric(viz_data["obs_value"], errors="coerce")
 
@@ -431,6 +443,55 @@ async def _map_country_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
     except Exception as e:
         _logger.warning(f"Could not map country codes: {e}")
     return viz_data
+
+
+def _extract_geo_features(
+    body: dict,
+    geo_format: str,
+    geo_feature: str | None,
+) -> list:
+    """Extract GeoJSON-like features for alias-map creation from json/topojson."""
+    if geo_format == "topojson":
+        objects = body.get("objects")
+        if not isinstance(objects, dict):
+            return []
+        if geo_feature and isinstance(objects.get(geo_feature), dict):
+            target = objects[geo_feature]
+        else:
+            target = next(
+                (obj for obj in objects.values() if isinstance(obj, dict)),
+                None,
+            )
+        if not isinstance(target, dict):
+            return []
+        geometries = target.get("geometries")
+        if not isinstance(geometries, list):
+            return []
+        return [{"properties": g.get("properties", {})} for g in geometries]
+
+    features = body.get("features")
+    if not isinstance(features, list):
+        return []
+    return features
+
+
+async def _load_choropleth_geo_alias_map(
+    geo_url: str,
+    geo_format: str = "json",
+    geo_feature: str | None = None,
+) -> dict[str, str]:
+    """Load REF_AREA → WB_A3 aliases from choropleth boundaries (cached by URL+format)."""
+    cache_key = (geo_url, geo_format, geo_feature)
+    if cache_key in _choropleth_geo_alias_cache:
+        return _choropleth_geo_alias_cache[cache_key]
+    client = get_shared_httpx_client()
+    response = await client.get(geo_url)
+    response.raise_for_status()
+    body = response.json()
+    features = _extract_geo_features(body, geo_format, geo_feature)
+    alias_map = viz_config.build_choropleth_geo_join_alias_map(features)
+    _choropleth_geo_alias_cache[cache_key] = alias_map
+    return alias_map
 
 
 def _slugify(name: str) -> str:
@@ -506,6 +567,16 @@ def get_supported_chart_types() -> str:
                 "when_to_use": ">8 countries, single year.",
                 "data_requirements": "obs_value + many country values.",
             },
+            {
+                "id": "choropleth",
+                "description": "World choropleth map (filled countries) for one indicator.",
+                "when_to_use": "Single indicator, multiple countries, exactly one year; user asks for map/choropleth.",
+                "data_requirements": (
+                    "Pass chart_type containing 'choropleth', 'world map', or 'geo map'. "
+                    "REF_AREA codes should match GeoJSON WB_A3 (typical 3-letter). "
+                    "Narrow start_year/end_year to the same year."
+                ),
+            },
         ],
         "multi_indicator_note": (
             "For scatter, connected_scatter, and layered_lines, use "
@@ -548,7 +619,9 @@ async def get_viz_spec(
         disaggregation_filters: Optional dimension filters; each value is str or null, not a list.
             Example: {'SEX': 'F'}. For REF_AREA use comma-separated ISO codes (e.g. 'KEN,TZA');
             semicolons in REF_AREA are normalized to commas.
-        chart_type: Optional hint — "line", "bar", "scatter", "strip", "small_multiples".
+        chart_type: Optional hint — "line", "bar", "scatter", "strip", "small_multiples",
+            or choropleth phrases ("choropleth", "world map", "geo map") for a single-year
+            world map (requires REF_AREA codes that match GeoJSON WB_A3).
         relevant_fields: Optional list of column names to include in the chart.
         custom_constraints: Optional list of raw Draco ASP constraints.
         use_default_constraints: If True (default), apply standard encoding heuristics.
@@ -642,9 +715,7 @@ async def get_viz_spec(
         db_map = {}
     database_display = db_map.get(database_id, database_id)
     indicator_display = (
-        chart_title
-        if chart_title != "Generated Visualization"
-        else indicator_id
+        chart_title if chart_title != "Generated Visualization" else indicator_id
     )
     source_attribution: dict[str, str] = {
         "database_id": database_id,
@@ -667,7 +738,61 @@ async def get_viz_spec(
     if viz_data.empty:
         return _err("Error: No data available for visualization after cleaning.")
 
-    # 6. Map country codes
+    # 6. Choropleth (normalize REF_AREA to WB_A3 via GeoJSON, then country names) or …
+    if viz_config.wants_choropleth(chart_type):
+        viz_data = viz_data.copy()
+        if "country" not in viz_data.columns:
+            return _err(
+                "Choropleth requires a country / REF_AREA dimension. "
+                "Pass country_code or ensure data includes REF_AREA."
+            )
+        mcp_settings = get_mcp_server_settings()
+        try:
+            alias_map = await _load_choropleth_geo_alias_map(
+                mcp_settings.choropleth_geojson_url,
+                mcp_settings.choropleth_geo_format,
+                mcp_settings.choropleth_geo_feature,
+            )
+        except Exception as e:
+            _logger.warning("Choropleth geo alias map failed: %s", e)
+            alias_map = {}
+        raw_geo = viz_data["country"].astype(str).str.strip().str.upper()
+        if alias_map:
+            viz_data["wb_a3"] = viz_config.normalize_choropleth_wb_a3_codes(
+                raw_geo, alias_map
+            )
+        else:
+            viz_data["wb_a3"] = raw_geo
+        viz_data = await _map_country_codes(viz_data)
+        chart_title_vl = viz_config.build_chart_title_with_context(
+            chart_title, raw_unit or None, viz_data
+        )
+        choropleth_err = viz_config.validate_choropleth_df(viz_data)
+        if choropleth_err:
+            return _err(choropleth_err)
+        spec = viz_config.build_choropleth_spec(
+            viz_data,
+            chart_title_vl,
+            geo_url=mcp_settings.choropleth_geojson_url,
+            geo_format=mcp_settings.choropleth_geo_format,
+            geo_feature=mcp_settings.choropleth_geo_feature,
+            geo_join_prop=mcp_settings.choropleth_geo_join_key,
+            small_countries_geo_url=mcp_settings.choropleth_small_countries_geojson_url,
+            disputed_areas_geo_url=mcp_settings.choropleth_disputed_areas_geojson_url,
+            country_names_url=mcp_settings.choropleth_country_names_json_url,
+            unit_measure=raw_unit or None,
+        )
+        return _ok(
+            await _store_spec(spec),
+            source_attribution=source_attribution,
+            strategy="choropleth",
+            reason=(
+                "Choropleth: single-period data joined to GeoJSON by "
+                f"{mcp_settings.choropleth_geo_join_key}."
+            ),
+        )
+
+    # 6b. Map country codes (human-readable names for non-map charts)
     viz_data = await _map_country_codes(viz_data)
 
     # Vega-Lite title + subtitle (geography, year range, unit) after data is cleaned
@@ -796,7 +921,7 @@ async def get_viz_spec(
         # Structured tooltips
         mark_type_for_tt = viz_config.parse_chart_type_hint(chart_type)
         structured_tooltips = viz_config.build_structured_tooltips(
-            list(viz_data.columns), mark_type_for_tt
+            list(viz_data.columns), mark_type_for_tt, viz_data=viz_data
         )
         chart = chart.encode(tooltip=[alt.Tooltip(**t) for t in structured_tooltips])
 
