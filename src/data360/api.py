@@ -1764,16 +1764,6 @@ async def get_data(
                     "filter was not applied."
                 )
 
-        # Inject REF_AREA_NAME for UX label resolution
-        if raw_data:
-            unique_ref_areas = list({str(r.get("REF_AREA")) for r in raw_data if r.get("REF_AREA")})
-            if unique_ref_areas:
-                _name_map = await _resolve_country_names(unique_ref_areas)
-                for row in raw_data:
-                    ref_area = str(row.get("REF_AREA", ""))
-                    if ref_area in _name_map:
-                        row["REF_AREA_NAME"] = _name_map[ref_area]
-
         return IndicatorDataResponse(
             data=raw_data,
             metadata=api_metadata,
@@ -2555,19 +2545,21 @@ async def summarize_data(
 
     # Resolve human-readable country names for ref_area groups.
     # Reuses the same _resolve_country_names helper used by rank_countries and
-    # compare_countries. Sets GroupSummary.ref_area_name (declared field) so it
-    # flows through GroupSummary.to_compact() → "group" dict without dict mutation.
+    # compare_countries. Injects ref_area_name directly into the group_key dict
+    # so it flows through GroupSummary.to_compact() without a schema change.
     # Silently no-ops on error — country name is optional enrichment.
-    _area_codes = [
+    _area_codes = sorted({
         g.group_key["ref_area"]
         for g in group_summaries
         if "ref_area" in g.group_key
-    ]
+    })
     if _area_codes:
         _name_map = await _resolve_country_names(_area_codes)
         for g in group_summaries:
             if "ref_area" in g.group_key:
-                g.ref_area_name = _name_map.get(g.group_key["ref_area"]) or None
+                name = _name_map.get(g.group_key["ref_area"])
+                if name:
+                    g.group_key["ref_area_name"] = name
 
     return DataSummaryResponse(
         groups=group_summaries,

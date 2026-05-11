@@ -708,6 +708,100 @@ class TestSummarizeData:
         assert result.error is None
         assert not result.ambiguous_dimensions
 
+    @pytest.mark.asyncio
+    async def test_ref_area_name_injected_into_compact_output(self):
+        """ref_area_name should appear in group dict when _resolve_country_names succeeds."""
+        rows = [
+            _make_row("KEN", "2020", 100.0),
+            _make_row("KEN", "2021", 110.0),
+            _make_row("NGA", "2020", 200.0),
+            _make_row("NGA", "2021", 220.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            return {"KEN": "Kenya", "NGA": "Nigeria"}
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+        ):
+            result = await summarize_data(
+                "WB_WDI", "IND_ID",
+                country_code="KEN;NGA",
+                group_by=["ref_area"],
+            )
+
+        assert result.error is None
+        compact = result.to_compact()
+        group_dicts = {g["group"]["ref_area"]: g["group"] for g in compact["groups"]}
+        assert group_dicts["KEN"]["ref_area_name"] == "Kenya"
+        assert group_dicts["NGA"]["ref_area_name"] == "Nigeria"
+
+    @pytest.mark.asyncio
+    async def test_ref_area_name_omitted_when_resolution_fails(self):
+        """If _resolve_country_names returns empty, compact output omits ref_area_name."""
+        rows = [
+            _make_row("KEN", "2020", 100.0),
+            _make_row("KEN", "2021", 110.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            return {}  # simulates resolution failure / empty response
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+        ):
+            result = await summarize_data(
+                "WB_WDI", "IND_ID",
+                country_code="KEN",
+                group_by=["ref_area"],
+            )
+
+        assert result.error is None
+        compact = result.to_compact()
+        assert len(compact["groups"]) == 1
+        assert "ref_area_name" not in compact["groups"][0]["group"]
+
+    @pytest.mark.asyncio
+    async def test_area_codes_deduplicated_before_resolution(self):
+        """Duplicate ref_area values across groups should be resolved only once."""
+        rows = [
+            _make_row("KEN", "2020", 100.0),
+            _make_row("KEN", "2021", 110.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+        resolve_calls: list[list[str]] = []
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            resolve_calls.append(list(codes))
+            return {c: c for c in codes}
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+        ):
+            await summarize_data(
+                "WB_WDI", "IND_ID",
+                country_code="KEN",
+                group_by=["ref_area"],
+            )
+
+        # Should have called _resolve_country_names exactly once with deduplicated codes
+        assert len(resolve_calls) == 1
+        assert resolve_calls[0].count("KEN") == 1
+
 
 # ---------------------------------------------------------------------------
 # compare_countries
