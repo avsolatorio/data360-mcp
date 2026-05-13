@@ -165,14 +165,15 @@ def inject_wb_config(vl_spec: dict) -> dict:
 # STRUCTURED TOOLTIPS
 # ============================================================================
 
+# ``year`` / ``time_period`` are built in ``build_structured_tooltips`` from ``viz_data``:
+# marking them ``temporal`` when values are plain strings like "2018" makes Vega-Lite parse
+# the field as dates for all encodings, so an ordinal x-axis shows epoch milliseconds.
 _TOOLTIP_SPECS: dict[str, dict] = {
-    "year": {"title": "Year", "format": "%Y", "type": "temporal"},
     "value": {"title": "Value", "format": ",.2f", "type": "quantitative"},
     "country": {"title": "Country", "type": "nominal"},
     "sex": {"title": "Sex", "type": "nominal"},
     "age": {"title": "Age Group", "type": "nominal"},
     "urbanisation": {"title": "Urbanisation", "type": "nominal"},
-    "time_period": {"title": "Period", "type": "temporal"},
     "obs_value": {"title": "Value", "format": ",.2f", "type": "quantitative"},
     "ref_area": {"title": "Country", "type": "nominal"},
     "region": {"title": "Region", "type": "nominal"},
@@ -271,7 +272,9 @@ _MULTI_IND_TOOLTIP_DIMS: tuple[str, ...] = (
 _LINE_HOVER_POINT: dict[str, object] = {"filled": True, "size": 56}
 
 
-def _multi_indicator_tooltip_columns(df_columns: list[str], value_col: str) -> list[str]:
+def _multi_indicator_tooltip_columns(
+    df_columns: list[str], value_col: str
+) -> list[str]:
     colset = set(df_columns)
     out: list[str] = []
     for c in _MULTI_IND_TOOLTIP_DIMS:
@@ -282,23 +285,45 @@ def _multi_indicator_tooltip_columns(df_columns: list[str], value_col: str) -> l
     return out
 
 
+def _tooltip_spec_for_time_dim(col: str, viz_data: pd.DataFrame | None) -> dict:
+    """Year/period tooltips: temporal only when the frame actually has datetime values."""
+    title = "Year" if col == "year" else "Period"
+    if viz_data is not None and col in viz_data.columns:
+        s = viz_data[col]
+        if pd.api.types.is_datetime64_any_dtype(s):
+            return {
+                "field": col,
+                "title": title,
+                "type": "temporal",
+                "format": "%Y",
+            }
+    return {"field": col, "title": title, "type": "nominal"}
+
+
 def build_structured_tooltips(
     columns: list[str],
     mark_type: str,
     indicator_labels: dict[str, str] | None = None,
     value_format: str = ",.2f",
+    viz_data: pd.DataFrame | None = None,
 ) -> list[dict]:
     """Build typed, labelled tooltip list for a Vega-Lite encoding.
 
     indicator_labels: optional {col_name: human_label} for indicator value columns
     in multi-indicator charts (e.g. {"gdp_per_capita": "GDP per capita (USD)"}).
     value_format: D3 format string for quantitative value fields.
+    viz_data: when set, ``year`` / ``time_period`` tooltips use ``temporal`` only if
+        that column is datetime64; otherwise ``nominal`` so VL does not parse string
+        years as dates (which breaks ordinal x-axes).
     """
     ordered = [c for c in _TOOLTIP_PRIORITY if c in columns]
     ordered += [c for c in columns if c not in _TOOLTIP_PRIORITY]
 
     tooltips = []
     for col in ordered:
+        if col in ("year", "time_period"):
+            tooltips.append(_tooltip_spec_for_time_dim(col, viz_data))
+            continue
         if indicator_labels and col in indicator_labels:
             tip = {
                 "field": col,
@@ -326,8 +351,11 @@ def apply_structured_tooltips(
     columns: list[str],
     mark_type: str,
     indicator_labels: dict[str, str] | None = None,
+    viz_data: pd.DataFrame | None = None,
 ) -> dict:
-    tips = build_structured_tooltips(columns, mark_type, indicator_labels)
+    tips = build_structured_tooltips(
+        columns, mark_type, indicator_labels, viz_data=viz_data
+    )
     vl_spec.setdefault("encoding", {})["tooltip"] = tips
     return vl_spec
 
@@ -643,7 +671,11 @@ def build_temporal_single_spec(
             "scale": {"zero": False},
         },
         "tooltip": build_structured_tooltips(
-            list(df.columns), "line", indicator_labels, value_format=tt_fmt
+            list(df.columns),
+            "line",
+            indicator_labels,
+            value_format=tt_fmt,
+            viz_data=df,
         ),
     }
     if result.color_dim:
@@ -726,7 +758,11 @@ def build_cross_sectional_spec(
             },
             "color": color_enc,
             "tooltip": build_structured_tooltips(
-                list(df.columns), "bar", indicator_labels, value_format=tt_fmt
+                list(df.columns),
+                "bar",
+                indicator_labels,
+                value_format=tt_fmt,
+                viz_data=sorted_df,
             ),
         },
         "width": 500,
@@ -779,7 +815,11 @@ def build_distribution_spec(
             },
             "color": _color_encoding("country"),
             "tooltip": build_structured_tooltips(
-                list(sorted_df.columns), "tick", indicator_labels, value_format=tt_fmt
+                list(sorted_df.columns),
+                "tick",
+                indicator_labels,
+                value_format=tt_fmt,
+                viz_data=sorted_df,
             ),
         },
         "width": 500,
@@ -826,7 +866,11 @@ def build_breakdown_comparison_spec(
             "x": {
                 "field": x_field,
                 "type": x_type,
-                "axis": {"title": None, "labelFontWeight": "bold"},
+                "axis": {
+                    "title": None,
+                    "labelFontWeight": "bold",
+                    **({"labelAngle": 0} if x_field in ("year", "time_period") else {}),
+                },
             },
             "xOffset": {"field": color_dim, "type": "nominal"},
             "y": {
@@ -847,7 +891,11 @@ def build_breakdown_comparison_spec(
                 },
             },
             "tooltip": build_structured_tooltips(
-                list(df.columns), "bar", indicator_labels, value_format=tt_fmt
+                list(df.columns),
+                "bar",
+                indicator_labels,
+                value_format=tt_fmt,
+                viz_data=df,
             ),
         },
         "width": max(300, df[x_field].nunique() * 80),
@@ -894,7 +942,11 @@ def build_small_multiples_spec(
                 "scale": {"zero": False},
             },
             "tooltip": build_structured_tooltips(
-                list(df.columns), "line", indicator_labels, value_format=tt_fmt
+                list(df.columns),
+                "line",
+                indicator_labels,
+                value_format=tt_fmt,
+                viz_data=df,
             ),
         },
     }
@@ -962,7 +1014,9 @@ def build_correlation_spec(
                 "scale": {"zero": False},
             },
             "color": _color_encoding(result.color_dim or "country"),
-            "tooltip": build_structured_tooltips(list(df.columns), "point", lab),
+            "tooltip": build_structured_tooltips(
+                list(df.columns), "point", lab, viz_data=df
+            ),
         },
         "width": 550,
         "height": 450,
@@ -1005,7 +1059,9 @@ def build_correlation_temporal_spec(
         },
         "color": _color_encoding(color_dim),
         "order": {"field": "year", "type": "temporal"},
-        "tooltip": build_structured_tooltips(list(df.columns), "line", lab),
+        "tooltip": build_structured_tooltips(
+            list(df.columns), "line", lab, viz_data=df
+        ),
     }
 
     spec: dict = {
@@ -1084,7 +1140,7 @@ def build_temporal_multi_indicator_spec(
             },
             "color": {"value": color},
             "tooltip": build_structured_tooltips(
-                tooltip_cols, "line", lab, value_format=tt_fmt
+                tooltip_cols, "line", lab, value_format=tt_fmt, viz_data=df
             ),
         }
         layers.append(
@@ -1148,7 +1204,11 @@ def build_fallback_line_spec(
         },
         "y": {"field": y_col, "type": "quantitative", "axis": y_ax},
         "tooltip": build_structured_tooltips(
-            list(df.columns), "line", indicator_labels, value_format=tt_fmt
+            list(df.columns),
+            "line",
+            indicator_labels,
+            value_format=tt_fmt,
+            viz_data=df,
         ),
     }
     if result.color_dim and result.color_dim in cols:
@@ -1348,6 +1408,12 @@ DATA_PREPARATION_RULES: list[DataPreparationRule] = [
     DataPreparationRule(
         "bar", "A", "year_strings", "Bar charts with annual data use year strings"
     ),
+    DataPreparationRule(
+        "bar",
+        None,
+        "year_strings",
+        "Bar charts when API frequency is unknown — assume annual WDI-style years",
+    ),
     DataPreparationRule("*", "*", "datetime", "Default: datetime"),
 ]
 
@@ -1392,12 +1458,39 @@ class PostProcessingRule:
         raise NotImplementedError
 
 
+def _first_non_null_dataset_value(dataset: list, field: str) -> object:
+    for row in dataset:
+        if field in row:
+            v = row[field]
+            if v is not None:
+                return v
+    return None
+
+
+# Ordinal ``year`` values at or above this magnitude are treated as epoch milliseconds
+# (typical Altair / Vega-Lite JSON for datetimes), not calendar years.
+_YEAR_ORDINAL_EPOCH_MS_THRESHOLD = 1e12
+
+
+def _year_ordinal_value_needs_temporal_encoding(value: object) -> bool:
+    """True when x is ordinal but values are ISO datetimes or epoch ms (Vega-Lite)."""
+    if value is None or isinstance(value, bool):
+        return False
+    if isinstance(value, str):
+        return "T" in value
+    if isinstance(value, (int, float)):
+        fv = float(value)
+        # Altair often serializes datetimes as milliseconds in embedded datasets
+        return abs(fv) >= _YEAR_ORDINAL_EPOCH_MS_THRESHOLD
+    return False
+
+
 class OrdinalToTemporalRule(PostProcessingRule):
     def __init__(self):
         super().__init__(
             "ordinal_to_temporal",
-            ["line", "area", "point", "tick"],
-            "Fix ordinal→temporal for time fields",
+            ["line", "area", "point", "tick", "bar"],
+            "Fix ordinal→temporal for time fields (ISO or epoch ms), including bars",
         )
 
     def should_apply(self, mark_type, x_enc, dataset):
@@ -1408,9 +1501,10 @@ class OrdinalToTemporalRule(PostProcessingRule):
         x_field = x_enc.get("field")
         if x_field not in ["year", "time_period"]:
             return False
-        if dataset and x_field in dataset[0]:
-            return isinstance(dataset[0][x_field], str) and "T" in dataset[0][x_field]
-        return False
+        if not dataset:
+            return False
+        sample = _first_non_null_dataset_value(dataset, x_field)
+        return _year_ordinal_value_needs_temporal_encoding(sample)
 
     def apply(self, spec, data_frequency=None, unit_measure=None):
         mark_type = (
@@ -1493,7 +1587,7 @@ class TemporalAxisCleanupRule(PostProcessingRule):
     def __init__(self):
         super().__init__(
             "temporal_axis_cleanup",
-            ["line", "area", "point"],
+            ["line", "area", "point", "bar"],
             "Remove title from temporal x-axis",
         )
 
@@ -1516,6 +1610,38 @@ class TemporalAxisCleanupRule(PostProcessingRule):
         x["axis"]["labelAngle"] = 0
         x["axis"].setdefault("format", "%Y")
         x["axis"].setdefault("tickCount", 5)
+        return spec
+
+
+class DiscreteYearBarXAxisRule(PostProcessingRule):
+    """Vega-Lite defaults often rotate discrete x labels on bars; force horizontal years."""
+
+    def __init__(self):
+        super().__init__(
+            "discrete_year_bar_x_axis",
+            ["bar"],
+            "Horizontal labels for ordinal/nominal year on column/bar x-axis",
+        )
+
+    def should_apply(self, spec, data_frequency=None):
+        mark_type = (
+            spec.get("mark", {}).get("type")
+            if isinstance(spec.get("mark"), dict)
+            else spec.get("mark")
+        )
+        if mark_type not in self.applies_to_mark_types:
+            return False
+        x = spec.get("encoding", {}).get("x", {})
+        if x.get("field") not in ("year", "time_period"):
+            return False
+        return x.get("type") in ("ordinal", "nominal")
+
+    def apply(self, spec, data_frequency=None, unit_measure=None):
+        if not self.should_apply(spec):
+            return spec
+        x = spec["encoding"]["x"]
+        x.setdefault("axis", {})
+        x["axis"]["labelAngle"] = 0
         return spec
 
 
@@ -1634,6 +1760,7 @@ POST_PROCESSING_RULES: list[PostProcessingRule] = [
     ApplyTimeUnitRule(),
     FixValueAxisEncodingRule(),
     TemporalAxisCleanupRule(),
+    DiscreteYearBarXAxisRule(),
     ValueAxisLabelFormatRule(),
     LineChartPointHoverRule(),
     ZeroLineRule(),
