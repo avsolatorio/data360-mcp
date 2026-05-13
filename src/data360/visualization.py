@@ -35,8 +35,6 @@ from urllib.parse import parse_qs, urlparse
 
 import altair as alt
 import httpx
-
-from data360.http_client import get_shared_httpx_client
 import numpy as np
 import pandas as pd
 from draco import Draco, answer_set_to_dict, dict_to_facts, schema_from_dataframe
@@ -44,6 +42,7 @@ from draco.renderer import AltairRenderer
 
 from data360 import viz_config
 from data360.config import get_mcp_server_settings
+from data360.http_client import get_shared_httpx_client
 from data360.providers import get_database_mapping
 
 _logger = logging.getLogger(__name__)
@@ -255,9 +254,7 @@ def _format_subtitle_line(
     if warning:
         parts.append(warning)
     if strategy or reason:
-        parts.append(
-            " — ".join(x for x in (strategy or "", reason or "") if x)
-        )
+        parts.append(" — ".join(x for x in (strategy or "", reason or "") if x))
     if not parts:
         return None
     return " · ".join(parts)
@@ -642,9 +639,7 @@ async def get_viz_spec(
         db_map = {}
     database_display = db_map.get(database_id, database_id)
     indicator_display = (
-        chart_title
-        if chart_title != "Generated Visualization"
-        else indicator_id
+        chart_title if chart_title != "Generated Visualization" else indicator_id
     )
     source_attribution: dict[str, str] = {
         "database_id": database_id,
@@ -796,7 +791,7 @@ async def get_viz_spec(
         # Structured tooltips
         mark_type_for_tt = viz_config.parse_chart_type_hint(chart_type)
         structured_tooltips = viz_config.build_structured_tooltips(
-            list(viz_data.columns), mark_type_for_tt
+            list(viz_data.columns), mark_type_for_tt, viz_data=viz_data
         )
         chart = chart.encode(tooltip=[alt.Tooltip(**t) for t in structured_tooltips])
 
