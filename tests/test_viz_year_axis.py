@@ -1,12 +1,17 @@
 """Bar / ordinal year axis: confirm data-prep and post-processing avoid raw epoch ms labels."""
 
+import pandas as pd
+
 from data360.viz_config import (
     DiscreteYearBarXAxisRule,
     OrdinalToTemporalRule,
     TemporalAxisCleanupRule,
     _first_non_null_dataset_value,
     _year_ordinal_value_needs_temporal_encoding,
+    fill_missing_calendar_years_annual,
+    frequency_allows_annual_year_gap_fill,
     get_data_preparation_action,
+    wb_altair_config,
 )
 
 # 2014-01-01T00:00:00.000Z as milliseconds (example Altair dataset serialization)
@@ -87,3 +92,62 @@ def test_discrete_year_bar_x_axis_skips_temporal_x() -> None:
         "encoding": {"x": {"field": "year", "type": "temporal", "axis": {}}},
     }
     assert rule.should_apply(spec) is False
+
+
+def test_wb_altair_config_has_no_mark_invalid_override() -> None:
+    cfg = wb_altair_config()
+    assert "invalid" not in cfg.get("mark", {})
+
+
+def test_contiguous_year_domain_rule_sets_ordinal_domain() -> None:
+    from data360.viz_config import ContiguousCalendarYearDomainRule
+
+    rule = ContiguousCalendarYearDomainRule()
+    spec = {
+        "mark": {"type": "bar"},
+        "data": {
+            "values": [
+                {"year": "2007", "value": 10.0, "country": "Brazil"},
+                {"year": "2009", "value": 9.0, "country": "Brazil"},
+            ]
+        },
+        "encoding": {
+            "x": {"field": "year", "type": "ordinal"},
+            "y": {"field": "value", "type": "quantitative"},
+        },
+    }
+    out = rule.apply(spec, data_frequency="A")
+    assert out["encoding"]["x"]["scale"]["domain"] == ["2007", "2008", "2009"]
+    assert out["encoding"]["x"]["sort"] == ["2007", "2008", "2009"]
+
+
+def test_frequency_allows_annual_year_gap_fill() -> None:
+    assert frequency_allows_annual_year_gap_fill(None) is True
+    assert frequency_allows_annual_year_gap_fill("A") is True
+    assert frequency_allows_annual_year_gap_fill("M") is False
+    assert frequency_allows_annual_year_gap_fill("Q") is False
+
+
+def test_fill_missing_calendar_years_inserts_gap_year() -> None:
+    df = pd.DataFrame(
+        {
+            "year": ["2007", "2008", "2009", "2011"],
+            "value": [40.0, 39.0, 38.0, 36.0],
+            "country": ["Brazil"] * 4,
+        }
+    )
+    out = fill_missing_calendar_years_annual(df, "A")
+    assert len(out) == 5
+    years = sorted(int(str(y)[:4]) for y in out["year"])
+    assert years == [2007, 2008, 2009, 2010, 2011]
+    y2010 = out[out["year"].astype(str).str.startswith("2010")]
+    assert len(y2010) == 1
+    assert y2010["value"].isna().all()
+
+
+def test_fill_missing_calendar_years_skips_duplicate_year_rows() -> None:
+    df = pd.DataFrame(
+        {"year": ["2007", "2007"], "value": [1.0, 2.0], "country": ["x", "x"]}
+    )
+    out = fill_missing_calendar_years_annual(df, "A")
+    assert len(out) == len(df)
