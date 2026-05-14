@@ -501,13 +501,16 @@ def select_strategy(
 
     # ── Single indicator from here ──
 
-    # Small multiples: 2+ meaningful breakdowns, or breakdown + many countries
-    if n_breakdowns >= 2 or (n_breakdowns >= 1 and country_count > 4):
+    # Small multiples: 2+ meaningful breakdowns, or breakdown + multiple countries.
+    # With breakdown + 2+ countries, series count = country_count × breakdown_values.
+    # Even 2 countries × 6 WGI metrics = 12 overlapping series on one chart — unreadable.
+    # Facet by country so each panel shows one country's breakdown lines.
+    if n_breakdowns >= 2 or (n_breakdowns >= 1 and country_count > 1):
         facet_dim = "country" if country_count > 1 else list(breakdown_counts.keys())[0]
         color_dim = list(breakdown_counts.keys())[0] if breakdown_counts else None
         return StrategyResult(
             ChartStrategy.SMALL_MULTIPLES,
-            f"{n_breakdowns} breakdowns, {country_count} countries → small multiples",
+            f"{n_breakdowns} breakdowns, {country_count} countries → small multiples (facet={facet_dim})",
             color_dim=color_dim,
             facet_dim=facet_dim,
         )

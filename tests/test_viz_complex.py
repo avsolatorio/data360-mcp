@@ -174,12 +174,13 @@ class TestStrategyRouter:
         assert r.strategy == ChartStrategy.DISTRIBUTION
 
     def test_breakdown_single_disagg(self):
-        # _sex_df has 3 years (2020-2022) + sex breakdown → TEMPORAL_SINGLE (lines per sex)
-        # BREAKDOWN_COMPARISON (grouped bar) only fires for single-year data now.
+        # 2 countries × 2 sex × 3 years → SMALL_MULTIPLES (facet by country, color by sex)
+        # Overlaying 4 series on one chart loses per-country context.
         df = _sex_df(countries=2)
         r = select_strategy(df)
-        assert r.strategy == ChartStrategy.TEMPORAL_SINGLE
+        assert r.strategy == ChartStrategy.SMALL_MULTIPLES
         assert r.color_dim == "sex"
+        assert r.facet_dim == "country"
 
     def test_small_multiples_many_countries_with_breakdown(self):
         # 6 countries × 2 sexes → small multiples
