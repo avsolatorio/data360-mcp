@@ -705,6 +705,16 @@ async def get_viz_spec(
         viz_config.ChartStrategy.SMALL_MULTIPLES,
     }
 
+    # Also bypass Draco for TEMPORAL_SINGLE when the color dim is a breakdown dimension
+    # (not country). Draco independently picks mark type (often scatter/point) and ignores
+    # the strategy result, producing a scatter cloud instead of colored lines.
+    _nominal_breakdown_dims = set(_VIZ_DISAGG_DIMS)  # sex, age, urbanisation, comp_breakdown_1/2
+    if (
+        strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE
+        and strategy_result.color_dim in _nominal_breakdown_dims
+    ):
+        bypass_strategies.add(viz_config.ChartStrategy.TEMPORAL_SINGLE)
+
     if strategy_result.strategy in bypass_strategies:
         spec = viz_config.dispatch_spec(
             strategy_result.strategy,
@@ -812,9 +822,11 @@ async def get_viz_spec(
 
         vl_spec = chart.to_dict()
 
-        # Patch color type
+        # Patch color type: nominal for all known categorical dims.
+        # Without this, Draco sometimes assigns 'ordinal' to breakdown/sex dims.
         if "encoding" in vl_spec and "color" in vl_spec["encoding"]:
-            if color_dim in ["country", "sex", "urbanisation", "ref_area"]:
+            _nominal_color_dims = {"country", "ref_area", *_VIZ_DISAGG_DIMS}
+            if color_dim in _nominal_color_dims:
                 vl_spec["encoding"]["color"]["type"] = "nominal"
 
         # Post-processing rules
