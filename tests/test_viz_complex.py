@@ -156,6 +156,13 @@ class TestStrategyRouter:
         assert r.strategy == ChartStrategy.TEMPORAL_SINGLE
         assert r.color_dim == "country"
 
+    def test_temporal_single_reason_reflects_chart_type_hint(self):
+        df = _ts_df(n_countries=1, n_years=5)
+        r_bar = select_strategy(df, chart_type_hint="bar chart")
+        assert "→ bar chart" in r_bar.reason
+        r_line = select_strategy(df, chart_type_hint="line")
+        assert "→ line chart" in r_line.reason
+
     def test_cross_sectional_single_year_few_countries(self):
         df = _cs_df(n_countries=5)
         r = select_strategy(df)

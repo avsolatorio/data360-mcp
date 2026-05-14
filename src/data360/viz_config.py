@@ -531,15 +531,16 @@ def select_strategy(
 
     # Multi-year time series
     if year_count > 1:
+        phrase = chart_type_phrase_for_reason(hint)
         return StrategyResult(
             ChartStrategy.TEMPORAL_SINGLE,
-            f"Single indicator, {year_count} years, {country_count} countries → line chart",
+            f"Single indicator, {year_count} years, {country_count} countries → {phrase}",
             color_dim="country" if country_count > 0 else None,
         )
 
     return StrategyResult(
         ChartStrategy.FALLBACK_LINE,
-        "Default fallback → line chart",
+        f"Default fallback → {chart_type_phrase_for_reason(hint)}",
         color_dim="country" if country_count > 0 else None,
     )
 
@@ -1353,6 +1354,43 @@ def parse_chart_type_hint(chart_type: str | None) -> str:
         if any(keyword in hint for keyword in keywords):
             return mark_type
     return DEFAULT_CHART_TYPE
+
+
+_REASON_CHART_PHRASES: dict[str, str] = {
+    "line": "line chart",
+    "bar": "bar chart",
+    "area": "area chart",
+    "point": "point chart",
+    "tick": "strip chart",
+}
+
+
+def chart_type_phrase_for_reason(mark_type: str | None) -> str:
+    """Human phrase for strategy / tool ``reason`` (aligned with mark type hint or render)."""
+    if not mark_type:
+        return _REASON_CHART_PHRASES["line"]
+    normalized = mark_type.lower().strip()
+    return _REASON_CHART_PHRASES.get(normalized, f"{normalized} chart")
+
+
+def patch_strategy_reason_chart_phrase(reason: str, mark_type: str) -> str:
+    """Replace the trailing ``→ …`` segment so it reflects the given mark type."""
+    sep = " → "
+    if sep not in reason:
+        return reason
+    prefix, _old = reason.rsplit(sep, 1)
+    return f"{prefix}{sep}{chart_type_phrase_for_reason(mark_type)}"
+
+
+def extract_top_level_mark_type(vl_spec: dict) -> str | None:
+    """Best-effort mark ``type`` from a single-view Vega-Lite spec."""
+    mark = vl_spec.get("mark")
+    if isinstance(mark, str):
+        return mark
+    if isinstance(mark, dict):
+        t = mark.get("type")
+        return t if isinstance(t, str) else None
+    return None
 
 
 def infer_frequency_from_periodicity(periodicity: str) -> str | None:
