@@ -263,6 +263,47 @@ def build_chart_title_with_context(
     return {"text": main_title, "subtitle": " · ".join(subtitle_parts)}
 
 
+# Dimension codes that are custom breakdowns (not standard demographic dims).
+_CUSTOM_BREAKDOWN_DIMS = {"comp_breakdown_1", "comp_breakdown_2"}
+
+
+def _format_breakdown_subtitle(df: pd.DataFrame, color_dim: str | None) -> str | None:
+    """Return a compact subtitle note when color_dim is a custom breakdown.
+
+    Appended to chart subtitles so end users can see which series are present
+    and understand that each series may carry different units or scales.
+
+    Returns None when color_dim is a standard dimension (country, sex, age, …)
+    or when there is only one unique breakdown value.
+    """
+    if color_dim not in _CUSTOM_BREAKDOWN_DIMS:
+        return None
+    if color_dim not in df.columns:
+        return None
+    vals = sorted(str(v) for v in df[color_dim].dropna().unique())
+    if len(vals) <= 1:
+        return None
+    series_list = ", ".join(vals)
+    return f"Series: {series_list} — series may have different units/scales"
+
+
+def _append_breakdown_note(
+    title: str | dict,
+    df: pd.DataFrame,
+    color_dim: str | None,
+) -> str | dict:
+    """Inject breakdown note into a Vega-Lite title dict's subtitle field."""
+    note = _format_breakdown_subtitle(df, color_dim)
+    if not note:
+        return title
+    if isinstance(title, dict):
+        existing = title.get("subtitle", "")
+        new_sub = f"{existing} · {note}" if existing else note
+        return {**title, "subtitle": new_sub}
+    # Plain string title — upgrade to dict
+    return {"text": title, "subtitle": note}
+
+
 # Shared dimensions for multi-indicator line layers: one value column per layer’s tooltip.
 _MULTI_IND_TOOLTIP_DIMS: tuple[str, ...] = (
     "year",
@@ -711,9 +752,13 @@ def build_temporal_single_spec(
             result.color_dim, mark_type="line", n_items=n_items
         )
 
+    # Option C: annotate chart subtitle with breakdown series names when color_dim is
+    # a custom breakdown (comp_breakdown_1/2). Omits note for standard dims like country.
+    annotated_title = _append_breakdown_note(title, df, result.color_dim)
+
     spec: dict = {
         "$schema": _vl_schema(),
-        "title": title,
+        "title": annotated_title,
         "data": {"values": rows},
         "mark": {
             "type": "line",
@@ -987,9 +1032,13 @@ def build_small_multiples_spec(
     if color_dim and color_dim != facet_dim:
         inner["encoding"]["color"] = _color_encoding(color_dim, mark_type="line")
 
+    # Option C: annotate chart subtitle with breakdown series names when color_dim is
+    # a custom breakdown (comp_breakdown_1/2). Standard dims (country, sex) are unaffected.
+    annotated_title = _append_breakdown_note(title, df, color_dim)
+
     spec: dict = {
         "$schema": _vl_schema(),
-        "title": title,
+        "title": annotated_title,
         "data": {"values": rows},
         "facet": {
             "field": facet_dim,

@@ -549,6 +549,63 @@ async def get_viz_spec(
     Use when the user wants a visualization for ONE indicator. For comparing multiple
     indicators (scatter, dual-axis), use data360_get_multi_indicator_viz_spec instead.
 
+    ## Grammar of Graphics Contract
+
+    The pipeline maps data dimensions to Vega-Lite aesthetic channels automatically
+    (color, facet). DO NOT pre-filter a dimension to simplify the chart — that collapses
+    multi-series data into a single undifferentiated line and silently discards information.
+
+    ### disaggregation_filters decision rule
+
+    Only pin a dimension when the user has explicitly requested a specific value:
+
+      CORRECT — user asked for females only:
+        disaggregation_filters={"SEX": "F"}
+
+      CORRECT — force aggregate totals (suppress breakdown display):
+        disaggregation_filters={"SEX": "_T"}
+
+      CORRECT — dimension is not applicable for this indicator:
+        disaggregation_filters={"SEX": "_Z"}
+
+      WRONG — do not pre-filter to reduce chart complexity:
+        disaggregation_filters={"COMP_BREAKDOWN_1": "WGI_EST"}  # silently drops other series
+        disaggregation_filters={"SEX": "_T"}                    # unless user said "totals only"
+
+    When a dimension has multiple meaningful values and the user has not requested a
+    specific one, OMIT it from disaggregation_filters entirely. The pipeline will:
+      - detect non-trivial values (anything other than "_T" or "_Z")
+      - choose the correct Vega-Lite channel based on data shape (see chart strategy table)
+
+    ### Chart strategy → Vega-Lite encoding table
+
+    The pipeline selects a strategy from the shape of the data after filtering. All
+    strategies bypass Draco and produce validated Vega-Lite v5 specs directly.
+
+    Strategy              | When selected                                       | Vega-Lite encoding
+    ----------------------|-----------------------------------------------------|-------------------------------------------
+    TEMPORAL_SINGLE       | multi-year, ≤8 countries, 0-1 breakdowns            | x=year(temporal), y=value(Q), color=country or breakdown(N)
+    CROSS_SECTIONAL       | single year, ≤8 countries, no breakdown             | y=country(N) sorted, x=value(Q) (horizontal bar)
+    DISTRIBUTION          | single year, >8 countries                           | x=value(Q), y=country(N) (tick/strip chart)
+    BREAKDOWN_COMPARISON  | 1 breakdown, single year, ≤4 countries              | x=country(N), xOffset=breakdown(N), y=value(Q) (grouped bar)
+    SMALL_MULTIPLES       | breakdown + >1 country, OR 2+ breakdowns            | facet=country(N), color=breakdown(N), x=year(temporal), y=value(Q)
+    TEMPORAL_SINGLE*      | 1 breakdown (any dim), multi-year                   | x=year(temporal), y=value(Q), color=breakdown(N) (multi-series line)
+    FALLBACK_LINE         | unclassified shapes                                 | x=year(temporal), y=value(Q), color=country(N)
+
+    *When comp_breakdown_1/2 has multiple values and year_count > 1, the pipeline routes
+    to TEMPORAL_SINGLE with color=comp_breakdown_1 — producing one colored line per
+    breakdown series. This is the correct encoding for WGI, sectoral breakdowns, etc.
+
+    ### Encoding type rules (Vega-Lite v5)
+
+    - Year fields: always type="temporal", format="%Y". Do not use "ordinal" for years
+      — ordinal maps ISO timestamps to raw millisecond integers on the axis.
+    - Country / breakdown fields: type="nominal"
+    - Numeric values: type="quantitative"
+    - Legend titles: derived from _TOOLTIP_SPECS labels (e.g. "Breakdown", not
+      "Comp_Breakdown_1").
+    - Color scale: WB categorical palette (9 colors). Gender data uses WB_GENDER_COLORS.
+
     Args:
         database_id: Database identifier (e.g., WB_HNP, WB_WDI).
         indicator_id: Indicator ID (e.g., WB_HNP_SP_POP_TOTL).
@@ -558,7 +615,10 @@ async def get_viz_spec(
         start_year: Optional start year (inclusive).
         end_year: Optional end year (inclusive).
         disaggregation_filters: Optional dimension filters; each value is str or null, not a list.
-            Example: {'SEX': 'F'}. For REF_AREA use comma-separated ISO codes (e.g. 'KEN,TZA');
+            See grammar of graphics contract above — only pin a dimension when the user
+            explicitly requested a specific value. Omitting a dimension fetches all values
+            and lets the pipeline choose the correct Vega-Lite channel automatically.
+            For REF_AREA use comma-separated ISO codes (e.g. 'KEN,TZA');
             semicolons in REF_AREA are normalized to commas.
         chart_type: Optional hint — "line", "bar", "scatter", "strip", "small_multiples".
         relevant_fields: Optional list of column names to include in the chart.
@@ -899,6 +959,49 @@ async def get_multi_indicator_viz_spec(
     Use for: scatterplots (2 indicators vs each other), layered/dual-axis line charts
     (2-3 indicators over time in one country), connected scatter (trajectory charts).
 
+    ## Grammar of Graphics Contract
+
+    The pipeline maps data dimensions to Vega-Lite aesthetic channels automatically.
+    DO NOT pre-filter a dimension to simplify the chart — that collapses multi-series
+    data into a single undifferentiated line and silently discards information.
+
+    ### disaggregation_filters decision rule
+
+    disaggregation_filters applies to ALL indicators in this call. Only pin a dimension
+    when the user has explicitly requested a specific value:
+
+      CORRECT — user asked for females only:
+        disaggregation_filters={"SEX": "F"}
+
+      CORRECT — force aggregate totals (suppress breakdown display):
+        disaggregation_filters={"SEX": "_T"}
+
+      WRONG — do not pre-filter to reduce chart complexity:
+        disaggregation_filters={"COMP_BREAKDOWN_1": "WGI_EST"}  # silently drops other series
+
+    When a dimension has multiple meaningful values and the user has not requested a
+    specific one, OMIT it from disaggregation_filters. The pipeline will detect
+    non-trivial values (anything other than "_T" or "_Z") and choose the correct
+    Vega-Lite channel for them.
+
+    ### Chart strategy → Vega-Lite encoding table
+
+    Strategy              | When selected                                       | Vega-Lite encoding
+    ----------------------|-----------------------------------------------------|-------------------------------------------
+    CORRELATION           | 2 indicators, >1 country, single year               | x=indicator1(Q), y=indicator2(Q), color=country(N) (scatter)
+    CORRELATION_TEMPORAL  | 2 indicators, >1 country, multi-year                | x=indicator1(Q), y=indicator2(Q), color=country(N), order=year (connected scatter)
+    TEMPORAL_MULTI_IND    | 2-4 indicators, 1 country or 3+ indicators          | layered lines, independent y-scales per indicator
+
+    ### Encoding type rules (Vega-Lite v5)
+
+    - Year fields: type="temporal", format="%Y". Never "ordinal" for years.
+    - Country / breakdown fields: type="nominal"
+    - Numeric values: type="quantitative", scale.zero=False for non-ratio data
+    - Multi-indicator layers: each indicator gets its own y-axis (left/right), its own
+      WB categorical color. Resolved with resolve.scale.y="independent".
+    - Connected scatter uses order channel (order=year, type=temporal) to draw
+      trajectory lines in chronological order.
+
     Args:
         indicator_ids: List of dicts, each with "database_id" and "indicator_id".
             Example: [
@@ -910,6 +1013,9 @@ async def get_multi_indicator_viz_spec(
         start_year: Optional start year (inclusive).
         end_year: Optional end year (inclusive).
         disaggregation_filters: Optional filters applied to ALL indicators; values are str or null.
+            See grammar of graphics contract above — only pin a dimension when the user
+            explicitly requested a specific value. Omitting a dimension fetches all values
+            and lets the pipeline choose the correct Vega-Lite channel automatically.
             REF_AREA uses comma-separated ISO codes (semicolons normalized to commas).
         chart_type: Optional hint — "scatter", "connected_scatter", "layered_lines",
             "line", "bar". If omitted, auto-selected by data shape.
