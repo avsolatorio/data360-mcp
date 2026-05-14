@@ -12,6 +12,7 @@ Design principles:
 
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
 from numbers import Integral
@@ -1917,6 +1918,285 @@ class ValueAxisLabelFormatRule(PostProcessingRule):
         return spec
 
 
+# Internal columns for year-gap dashed line segments (unlikely to collide with WDI columns).
+_LINE_GAP_SEG_DETAIL = "_d360_lseg"
+_LINE_GAP_STROKE_FLAG = "_d360_ygap"
+
+
+class LineYearGapStrokeDashRule(PostProcessingRule):
+    """Temporal / discrete-year line charts: dashed stroke across multi-year gaps.
+
+    Vega-Lite draws one continuous polyline per color series. We split each
+    consecutive observation pair into its own ``detail`` group and use
+    ``strokeDash`` so segments that skip one or more calendar years render dashed.
+    """
+
+    def __init__(self):
+        super().__init__(
+            "line_year_gap_stroke_dash",
+            ["line"],
+            "Dashed line segments where consecutive points differ by >1 calendar year",
+        )
+
+    def apply(self, spec, data_frequency=None, unit_measure=None):
+        if not isinstance(spec, dict):
+            return spec
+        if "layer" in spec and isinstance(spec["layer"], list):
+            self._apply_to_layer_root(spec)
+            return spec
+        if "spec" in spec and isinstance(spec.get("spec"), dict):
+            inner = spec["spec"]
+            # Facet + inner layer (e.g. line + point from interactive) — data often on facet root
+            if "layer" in inner and isinstance(inner["layer"], list):
+                self._apply_to_layer_root(inner, data_root=spec)
+                return spec
+            if self._is_candidate_line_spec(inner):
+                self._maybe_transform_line_spec(inner, spec)
+            return spec
+        if self._is_candidate_line_spec(spec):
+            self._maybe_transform_line_spec(spec, spec)
+        return spec
+
+    def _apply_to_layer_root(
+        self, layer_parent: dict, data_root: dict | None = None
+    ) -> None:
+        root = data_root if data_root is not None else layer_parent
+        line_layers = [
+            layer
+            for layer in layer_parent["layer"]
+            if isinstance(layer, dict) and self._is_candidate_line_spec(layer)
+        ]
+        if len(line_layers) != 1:
+            return
+        self._maybe_transform_line_spec(line_layers[0], root)
+
+    def _mark_type(self, enc_spec: dict) -> str | None:
+        m = enc_spec.get("mark")
+        if isinstance(m, str):
+            return m
+        if isinstance(m, dict):
+            return m.get("type")
+        return None
+
+    def _is_candidate_line_spec(self, enc_spec: dict) -> bool:
+        if self._mark_type(enc_spec) != "line":
+            return False
+        enc = enc_spec.get("encoding")
+        if not isinstance(enc, dict):
+            return False
+        x = enc.get("x", {})
+        if not isinstance(x, dict):
+            return False
+        xf = x.get("field")
+        if xf not in ("year", "time_period"):
+            return False
+        # ApplyTimeUnitRule sets ``timeUnit: "year"`` for annual (A) data; still one value
+        # per calendar year — allow dashed segments across missing years. Reject finer
+        # units (month, quarter) where calendar-year gap logic does not apply.
+        if not self._x_timeunit_allows_year_gap_segments(x):
+            return False
+        if x.get("type") not in ("temporal", "ordinal", "nominal"):
+            return False
+        y = enc.get("y", {})
+        if not isinstance(y, dict) or y.get("type") != "quantitative":
+            return False
+        if not y.get("field"):
+            return False
+        if enc.get("detail") is not None:
+            return False
+        if enc.get("strokeDash") is not None:
+            return False
+        return True
+
+    @staticmethod
+    def _x_timeunit_allows_year_gap_segments(x: dict) -> bool:
+        tu = x.get("timeUnit")
+        if tu is None:
+            return True
+        if isinstance(tu, str):
+            return tu == "year"
+        if isinstance(tu, dict):
+            return tu.get("unit") == "year"
+        return False
+
+    def _find_inline_values_holder(self, line_spec: dict, data_root: dict) -> dict | None:
+        for candidate in (line_spec, data_root):
+            data = candidate.get("data")
+            if isinstance(data, dict) and isinstance(data.get("values"), list):
+                return candidate
+        return None
+
+    def _write_inline_values(self, holder: dict, rows: list[dict]) -> None:
+        data = holder.get("data")
+        if isinstance(data, dict) and "values" in data:
+            data["values"] = rows
+
+    def _named_dataset_rows(
+        self, line_spec: dict, data_root: dict
+    ) -> tuple[str, list] | None:
+        for candidate in (line_spec, data_root):
+            data = candidate.get("data")
+            if not isinstance(data, dict):
+                continue
+            name = data.get("name")
+            if (
+                isinstance(name, str)
+                and isinstance(data_root.get("datasets"), dict)
+                and isinstance(data_root["datasets"].get(name), list)
+            ):
+                return name, data_root["datasets"][name]
+        return None
+
+    def _set_named_dataset_rows(self, data_root: dict, name: str, rows: list[dict]) -> None:
+        data_root.setdefault("datasets", {})[name] = rows
+
+    def _series_keys(self, encoding: dict) -> list[str]:
+        c = encoding.get("color")
+        if isinstance(c, dict) and isinstance(c.get("field"), str):
+            return [c["field"]]
+        return []
+
+    def _facet_field_keys(self, data_root: dict) -> list[str]:
+        """Facet / row / column fields so multi-panel specs split series per panel."""
+        keys: list[str] = []
+        for name in ("facet", "row", "column"):
+            node = data_root.get(name)
+            if not isinstance(node, dict):
+                continue
+            f = node.get("field")
+            if isinstance(f, str):
+                keys.append(f)
+        return keys
+
+    def _dedupe_sort_group(
+        self, rows: list[dict], x_field: str
+    ) -> list[tuple[int, dict]]:
+        by_year: dict[int, dict] = {}
+        order: list[int] = []
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            yi = _single_obs_year_to_int(row.get(x_field))
+            if yi is None:
+                continue
+            if yi not in by_year:
+                order.append(yi)
+            by_year[yi] = dict(row)
+        order.sort()
+        return [(y, by_year[y]) for y in order]
+
+    def _group_rows_by_series(
+        self, rows: list[dict], series_keys: list[str]
+    ) -> dict[tuple, list[dict]]:
+        groups: defaultdict[tuple, list[dict]] = defaultdict(list)
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            key = tuple(row.get(k) for k in series_keys) if series_keys else (None,)
+            groups[key].append(dict(row))
+        return dict(groups)
+
+    def _any_calendar_year_gap(
+        self, groups: dict[tuple, list[dict]], x_field: str
+    ) -> bool:
+        for grp_rows in groups.values():
+            chain = self._dedupe_sort_group(grp_rows, x_field)
+            if len(chain) < 2:
+                continue
+            for i in range(len(chain) - 1):
+                y0 = chain[i][0]
+                y1 = chain[i + 1][0]
+                if y1 - y0 > 1:
+                    return True
+        return False
+
+    def _build_segment_rows(
+        self, groups: dict[tuple, list[dict]], x_field: str, series_keys: list[str]
+    ) -> list[dict]:
+        out: list[dict] = []
+        seg_i = 0
+        for key, grp_rows in groups.items():
+            chain = self._dedupe_sort_group(grp_rows, x_field)
+            if len(chain) < 2:
+                continue
+            prefix = "_".join("" if v is None else str(v) for v in key)
+            for i in range(len(chain) - 1):
+                y0, r0 = chain[i]
+                y1, r1 = chain[i + 1]
+                gap = 1 if (y1 - y0) > 1 else 0
+                sid = f"{prefix}_{seg_i}" if prefix else str(seg_i)
+                seg_i += 1
+                a = {**r0, _LINE_GAP_SEG_DETAIL: sid, _LINE_GAP_STROKE_FLAG: gap}
+                b = {**r1, _LINE_GAP_SEG_DETAIL: sid, _LINE_GAP_STROKE_FLAG: gap}
+                out.append(a)
+                out.append(b)
+        return out
+
+    def _strip_internal_tooltip_channels(self, encoding: dict) -> None:
+        tips = encoding.get("tooltip")
+        if not isinstance(tips, list):
+            return
+        internal = {_LINE_GAP_SEG_DETAIL, _LINE_GAP_STROKE_FLAG}
+        encoding["tooltip"] = [
+            t
+            for t in tips
+            if not (isinstance(t, dict) and t.get("field") in internal)
+        ]
+
+    def _maybe_transform_line_spec(self, line_spec: dict, data_root: dict) -> None:
+        enc = line_spec.get("encoding")
+        if not isinstance(enc, dict):
+            return
+        x = enc.get("x", {})
+        x_field = x.get("field") if isinstance(x, dict) else None
+        if x_field not in ("year", "time_period"):
+            return
+
+        holder = self._find_inline_values_holder(line_spec, data_root)
+        rows: list[dict] | None = None
+        if holder is not None:
+            v = holder["data"]["values"]
+            rows = v if isinstance(v, list) else None
+        else:
+            named = self._named_dataset_rows(line_spec, data_root)
+            if named is not None:
+                _, rows_list = named
+                rows = rows_list if isinstance(rows_list, list) else None
+        if not rows or len(rows) < 2:
+            return
+
+        facet_keys = self._facet_field_keys(data_root)
+        series_keys = list(
+            dict.fromkeys([*self._series_keys(enc), *facet_keys]),
+        )
+        groups = self._group_rows_by_series(rows, series_keys)
+        if not self._any_calendar_year_gap(groups, x_field):
+            return
+
+        new_rows = self._build_segment_rows(groups, x_field, series_keys)
+        if len(new_rows) < 2:
+            return
+
+        if holder is not None:
+            self._write_inline_values(holder, new_rows)
+        else:
+            named = self._named_dataset_rows(line_spec, data_root)
+            if named is None:
+                return
+            name, _ = named
+            self._set_named_dataset_rows(data_root, name, new_rows)
+
+        enc["detail"] = {"field": _LINE_GAP_SEG_DETAIL, "type": "nominal"}
+        enc["strokeDash"] = {
+            "condition": {
+                "test": f"datum.{_LINE_GAP_STROKE_FLAG} == 1",
+                "value": [6, 4],
+            },
+            "value": [],
+        }
+        self._strip_internal_tooltip_channels(enc)
+
+
 class LineChartPointHoverRule(PostProcessingRule):
     """Add / enlarge line points so tooltips are easier to trigger (thin line geometry)."""
 
@@ -2004,6 +2284,7 @@ POST_PROCESSING_RULES: list[PostProcessingRule] = [
     TemporalAxisCleanupRule(),
     DiscreteYearBarXAxisRule(),
     ValueAxisLabelFormatRule(),
+    LineYearGapStrokeDashRule(),
     LineChartPointHoverRule(),
     ZeroLineRule(),
     ApplyWBStyleRule(),

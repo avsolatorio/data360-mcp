@@ -4,6 +4,7 @@ import pandas as pd
 
 from data360.viz_config import (
     DiscreteYearBarXAxisRule,
+    LineYearGapStrokeDashRule,
     OrdinalToTemporalRule,
     TemporalAxisCleanupRule,
     _first_non_null_dataset_value,
@@ -151,3 +152,170 @@ def test_fill_missing_calendar_years_skips_duplicate_year_rows() -> None:
     )
     out = fill_missing_calendar_years_annual(df, "A")
     assert len(out) == len(df)
+
+
+def test_line_year_gap_stroke_dash_splits_when_calendar_gap() -> None:
+    rule = LineYearGapStrokeDashRule()
+    spec = {
+        "data": {
+            "values": [
+                {"year": "2020-01-01", "country": "A", "value": 1.0},
+                {"year": "2021-01-01", "country": "A", "value": 2.0},
+                {"year": "2024-01-01", "country": "A", "value": 3.0},
+            ]
+        },
+        "mark": {"type": "line"},
+        "encoding": {
+            "x": {"field": "year", "type": "temporal"},
+            "y": {"field": "value", "type": "quantitative"},
+            "color": {"field": "country", "type": "nominal"},
+        },
+    }
+    out = rule.apply(spec)
+    assert len(out["data"]["values"]) == 4
+    assert out["encoding"]["detail"]["field"] == "_d360_lseg"
+    assert "strokeDash" in out["encoding"]
+    cond = out["encoding"]["strokeDash"]["condition"]
+    assert cond["value"] == [6, 4]
+
+
+def test_line_year_gap_stroke_dash_applies_when_x_has_annual_timeunit() -> None:
+    """WDI annual pipeline sets ``timeUnit: \"year\"`` on x before this rule — must still dash gaps."""
+    rule = LineYearGapStrokeDashRule()
+    spec = {
+        "data": {
+            "values": [
+                {"year": "2009-01-01", "value": 8.4},
+                {"year": "2011-01-01", "value": 7.1},
+            ]
+        },
+        "mark": {"type": "line"},
+        "encoding": {
+            "x": {"field": "year", "type": "temporal", "timeUnit": "year"},
+            "y": {"field": "value", "type": "quantitative"},
+        },
+    }
+    out = rule.apply(spec)
+    assert out["encoding"]["detail"]["field"] == "_d360_lseg"
+    assert len(out["data"]["values"]) == 2
+
+
+def test_line_year_gap_stroke_dash_skips_monthly_timeunit() -> None:
+    rule = LineYearGapStrokeDashRule()
+    spec = {
+        "data": {
+            "values": [
+                {"year": "2009-01-01", "value": 8.4},
+                {"year": "2011-01-01", "value": 7.1},
+            ]
+        },
+        "mark": {"type": "line"},
+        "encoding": {
+            "x": {"field": "year", "type": "temporal", "timeUnit": "yearmonth"},
+            "y": {"field": "value", "type": "quantitative"},
+        },
+    }
+    out = rule.apply(spec)
+    assert "detail" not in out["encoding"]
+    assert len(out["data"]["values"]) == 2
+
+
+def test_line_year_gap_stroke_dash_skips_monthly_timeunit() -> None:
+    rule = LineYearGapStrokeDashRule()
+    spec = {
+        "data": {
+            "values": [
+                {"year": "2009-01-01", "value": 8.4},
+                {"year": "2011-01-01", "value": 7.1},
+            ]
+        },
+        "mark": {"type": "line"},
+        "encoding": {
+            "x": {"field": "year", "type": "temporal", "timeUnit": "yearmonth"},
+            "y": {"field": "value", "type": "quantitative"},
+        },
+    }
+    out = rule.apply(spec)
+    assert "detail" not in out["encoding"]
+    assert len(out["data"]["values"]) == 2
+
+
+def test_line_year_gap_facet_with_inner_layer_reads_outer_data() -> None:
+    rule = LineYearGapStrokeDashRule()
+    spec = {
+        "data": {
+            "values": [
+                {"country": "Brazil", "year": "2009-01-01", "value": 8.4},
+                {"country": "Brazil", "year": "2011-01-01", "value": 7.1},
+            ]
+        },
+        "facet": {"field": "country", "type": "nominal"},
+        "spec": {
+            "layer": [
+                {
+                    "mark": {"type": "line"},
+                    "encoding": {
+                        "x": {"field": "year", "type": "temporal"},
+                        "y": {"field": "value", "type": "quantitative"},
+                    },
+                },
+                {
+                    "mark": {"type": "point"},
+                    "encoding": {
+                        "x": {"field": "year", "type": "temporal"},
+                        "y": {"field": "value", "type": "quantitative"},
+                    },
+                },
+            ]
+        },
+    }
+    out = rule.apply(spec)
+    line0 = out["spec"]["layer"][0]
+    assert line0["encoding"]["detail"]["field"] == "_d360_lseg"
+    assert len(out["data"]["values"]) == 2
+
+
+def test_line_year_gap_stroke_dash_skips_consecutive_years() -> None:
+    rule = LineYearGapStrokeDashRule()
+    spec = {
+        "data": {
+            "values": [
+                {"year": "2020-01-01", "value": 1.0},
+                {"year": "2021-01-01", "value": 2.0},
+            ]
+        },
+        "mark": {"type": "line"},
+        "encoding": {
+            "x": {"field": "year", "type": "temporal"},
+            "y": {"field": "value", "type": "quantitative"},
+        },
+    }
+    out = rule.apply(spec)
+    assert len(out["data"]["values"]) == 2
+    assert "detail" not in out["encoding"]
+
+
+def test_line_year_gap_stroke_dash_respects_facet_field() -> None:
+    """Each facet series is split separately (no merging countries into one line)."""
+    rule = LineYearGapStrokeDashRule()
+    spec = {
+        "data": {
+            "values": [
+                {"country": "A", "year": "2020-01-01", "value": 1.0},
+                {"country": "A", "year": "2024-01-01", "value": 2.0},
+                {"country": "B", "year": "2020-01-01", "value": 3.0},
+                {"country": "B", "year": "2021-01-01", "value": 4.0},
+            ]
+        },
+        "facet": {"field": "country", "type": "nominal"},
+        "spec": {
+            "mark": {"type": "line"},
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "quantitative"},
+            },
+        },
+    }
+    out = rule.apply(spec)
+    assert len(out["data"]["values"]) == 4
+    assert out["spec"]["encoding"]["detail"]["field"] == "_d360_lseg"
