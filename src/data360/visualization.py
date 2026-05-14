@@ -806,11 +806,19 @@ async def get_viz_spec(
         for rule in viz_config.POST_PROCESSING_RULES:
             vl_spec = rule.apply(vl_spec, data_frequency, raw_unit or None)
 
+        out_reason = strategy_result.reason
+        if strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE:
+            resolved_mark = viz_config.extract_top_level_mark_type(vl_spec)
+            if resolved_mark:
+                out_reason = viz_config.patch_strategy_reason_chart_phrase(
+                    strategy_result.reason, resolved_mark
+                )
+
         return _ok(
             await _store_spec(vl_spec),
             source_attribution=source_attribution,
             strategy=strategy_result.strategy.value,
-            reason=strategy_result.reason,
+            reason=out_reason,
         )
 
     except StopIteration:
