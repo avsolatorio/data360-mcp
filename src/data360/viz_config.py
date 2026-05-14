@@ -862,12 +862,29 @@ def build_breakdown_comparison_spec(
         color_scale = {"range": WB_CAT_COLORS}
 
     x_field = "country" if df.get("country", pd.Series()).nunique() > 1 else "year"
-    x_type = "nominal" if x_field == "country" else "ordinal"
+    # Use temporal type for year so Vega-Lite formats ISO strings as years, not raw ms integers.
+    x_enc: dict
+    if x_field == "year":
+        x_enc = {
+            "field": "year",
+            "type": "temporal",
+            "timeUnit": "year",
+            "axis": {"title": None, "labelFontWeight": "bold", "format": "%Y", "labelAngle": -45},
+        }
+    else:
+        x_enc = {
+            "field": x_field,
+            "type": "nominal",
+            "axis": {"title": None, "labelFontWeight": "bold"},
+        }
     y_ax = {
         **_axis_style(),
         "title": None,
         "labelExpr": _value_label_expr(unit_measure),
     }
+
+    # Resolve a friendly legend title: prefer _TOOLTIP_SPECS label, fall back to title-cased field.
+    legend_title = _TOOLTIP_SPECS.get(color_dim, {}).get("title") or color_dim.replace("_", " ").title()
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -875,15 +892,7 @@ def build_breakdown_comparison_spec(
         "data": {"values": rows},
         "mark": {"type": "bar"},
         "encoding": {
-            "x": {
-                "field": x_field,
-                "type": x_type,
-                "axis": {
-                    "title": None,
-                    "labelFontWeight": "bold",
-                    **({"labelAngle": 0} if x_field in ("year", "time_period") else {}),
-                },
-            },
+            "x": x_enc,
             "xOffset": {"field": color_dim, "type": "nominal"},
             "y": {
                 "field": "value",
@@ -897,7 +906,7 @@ def build_breakdown_comparison_spec(
                 "scale": color_scale,
                 "legend": {
                     "orient": "top",
-                    "title": color_dim.title(),
+                    "title": legend_title,
                     "labelLimit": 100,
                     "columns": 3,
                 },

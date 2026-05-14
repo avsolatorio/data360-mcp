@@ -220,3 +220,52 @@ def test_viz_disagg_dims_constant_is_complete():
     assert "sex" in _VIZ_DISAGG_DIMS
     assert "age" in _VIZ_DISAGG_DIMS
     assert "urbanisation" in _VIZ_DISAGG_DIMS
+
+
+# ---------------------------------------------------------------------------
+# Bugfix: build_breakdown_comparison_spec year axis and legend title
+# ---------------------------------------------------------------------------
+
+
+def test_breakdown_comparison_spec_uses_temporal_year_encoding():
+    """Year X axis must use type=temporal so Vega-Lite renders years, not millisecond integers."""
+    from data360.viz_config import ChartStrategy, StrategyResult, build_breakdown_comparison_spec
+
+    WGI_BREAKDOWNS = ["WGI_EST", "WGI_SC", "WGI_SE"]
+    df = _make_viz_df(WGI_BREAKDOWNS, [2020, 2021, 2022, 2023, 2024])
+    result = StrategyResult(
+        strategy=ChartStrategy.BREAKDOWN_COMPARISON,
+        reason="test",
+        color_dim="comp_breakdown_1",
+    )
+
+    spec = build_breakdown_comparison_spec(df, "Test Title", result)
+
+    x_enc = spec["encoding"]["x"]
+    assert x_enc["type"] == "temporal", (
+        "X encoding must use type=temporal for year, not ordinal — "
+        "ordinal causes Vega-Lite to render ISO timestamps as raw millisecond integers"
+    )
+    assert x_enc.get("timeUnit") == "year"
+    assert x_enc.get("axis", {}).get("format") == "%Y"
+
+
+def test_breakdown_comparison_spec_uses_friendly_legend_title():
+    """Legend title must use the friendly label from _TOOLTIP_SPECS, not field.title()."""
+    from data360.viz_config import ChartStrategy, StrategyResult, build_breakdown_comparison_spec
+
+    WGI_BREAKDOWNS = ["WGI_EST", "WGI_SC"]
+    df = _make_viz_df(WGI_BREAKDOWNS, [2022, 2023])
+    result = StrategyResult(
+        strategy=ChartStrategy.BREAKDOWN_COMPARISON,
+        reason="test",
+        color_dim="comp_breakdown_1",
+    )
+
+    spec = build_breakdown_comparison_spec(df, "Test Title", result)
+
+    legend_title = spec["encoding"]["color"]["legend"]["title"]
+    assert legend_title == "Breakdown", (
+        f"Legend title should be 'Breakdown' from _TOOLTIP_SPECS, got '{legend_title}'. "
+        "The old code used color_dim.title() which produced 'Comp_Breakdown_1'."
+    )
