@@ -697,23 +697,18 @@ async def get_viz_spec(
         f"Chart strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
     )
 
-    # Strategy-based direct spec (bypasses Draco for non-Draco-friendly patterns)
+    # Strategy-based direct spec (bypasses Draco for all known patterns).
+    # TEMPORAL_SINGLE and FALLBACK_LINE are included unconditionally: Draco consistently
+    # picks scatter/point for time-series data regardless of color_dim, ignoring the
+    # strategy result. build_temporal_single_spec always produces the correct output.
     bypass_strategies = {
         viz_config.ChartStrategy.DISTRIBUTION,
         viz_config.ChartStrategy.CROSS_SECTIONAL,
         viz_config.ChartStrategy.BREAKDOWN_COMPARISON,
         viz_config.ChartStrategy.SMALL_MULTIPLES,
+        viz_config.ChartStrategy.TEMPORAL_SINGLE,
+        viz_config.ChartStrategy.FALLBACK_LINE,
     }
-
-    # Also bypass Draco for TEMPORAL_SINGLE when the color dim is a breakdown dimension
-    # (not country). Draco independently picks mark type (often scatter/point) and ignores
-    # the strategy result, producing a scatter cloud instead of colored lines.
-    _nominal_breakdown_dims = set(_VIZ_DISAGG_DIMS)  # sex, age, urbanisation, comp_breakdown_1/2
-    if (
-        strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE
-        and strategy_result.color_dim in _nominal_breakdown_dims
-    ):
-        bypass_strategies.add(viz_config.ChartStrategy.TEMPORAL_SINGLE)
 
     if strategy_result.strategy in bypass_strategies:
         spec = viz_config.dispatch_spec(
