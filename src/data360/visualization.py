@@ -711,19 +711,23 @@ async def get_viz_spec(
     }
 
     if strategy_result.strategy in bypass_strategies:
-        spec = viz_config.dispatch_spec(
-            strategy_result.strategy,
-            viz_data,
-            chart_title_vl,
-            strategy_result,
-            unit_measure=raw_unit,
-        )
-        return _ok(
-            await _store_spec(spec),
-            source_attribution=source_attribution,
-            strategy=strategy_result.strategy.value,
-            reason=strategy_result.reason,
-        )
+        try:
+            spec = viz_config.dispatch_spec(
+                strategy_result.strategy,
+                viz_data,
+                chart_title_vl,
+                strategy_result,
+                unit_measure=raw_unit,
+            )
+            return _ok(
+                await _store_spec(spec),
+                source_attribution=source_attribution,
+                strategy=strategy_result.strategy.value,
+                reason=strategy_result.reason,
+            )
+        except Exception as e:
+            _logger.exception("Strategy builder failed")
+            return _err(f"Chart generation failed: {e}")
 
     # 8. Draco path (temporal_single, fallback)
     try:
