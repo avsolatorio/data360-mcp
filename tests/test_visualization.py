@@ -72,9 +72,10 @@ class TestGetVizSpecDracoFallbackWarning:
             }
 
     @pytest.mark.asyncio
-    async def test_fallback_returns_warning(self, patches):
-        """When Draco raises StopIteration, the response should include a warning key."""
+    async def test_temporal_single_bypasses_draco_and_returns_line(self, patches):
+        """TEMPORAL_SINGLE no longer goes through Draco — it should return a clean line spec."""
         with patch("data360.visualization.Draco") as MockDraco:
+            # Draco returns empty — but TEMPORAL_SINGLE is bypassed before Draco is called
             draco_instance = MagicMock()
             draco_instance.complete_spec.return_value = iter([])
             MockDraco.return_value = draco_instance
@@ -84,14 +85,13 @@ class TestGetVizSpecDracoFallbackWarning:
                 indicator_id="FAKE_IND",
             )
 
-        assert result["url"] is not None, "Expected a URL from fallback generation"
-        assert result["error"] is None, "Expected no error from successful fallback"
-        assert result.get("database_name") == "World Development Indicators"
-        assert result.get("indicator_id") == "FAKE_IND"
-        assert "warning" in result, "Expected a 'warning' key when Draco falls back"
-        assert "fallback" in result["warning"].lower(), (
-            f"Warning message should mention fallback, got: {result['warning']}"
+        # Must succeed cleanly — no error, no fallback warning
+        assert result["url"] is not None, "Expected a URL from strategy builder"
+        assert result["error"] is None, f"Unexpected error: {result['error']}"
+        assert "warning" not in result, (
+            "TEMPORAL_SINGLE bypasses Draco, so no fallback warning is expected"
         )
+        assert result["strategy"] == "temporal_single"
 
     @pytest.mark.asyncio
     async def test_draco_success_has_no_warning(self, patches):
@@ -202,8 +202,8 @@ class TestGetVizSpecDracoFallbackWarning:
         assert point.get("size", 0) >= 40
 
     @pytest.mark.asyncio
-    async def test_fallback_also_fails_returns_error(self, patches):
-        """When both Draco and the dispatch_spec fallback fail, an error is returned."""
+    async def test_strategy_dispatch_failure_returns_error(self, patches):
+        """When dispatch_spec raises for a bypass strategy, an error is returned."""
         with (
             patch("data360.visualization.Draco") as MockDraco,
             patch(
@@ -222,7 +222,6 @@ class TestGetVizSpecDracoFallbackWarning:
 
         assert result["url"] is None
         assert result["error"] is not None
-        assert "fallback" in result["error"].lower()
 
 
 # =============================================================================
