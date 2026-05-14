@@ -324,6 +324,76 @@ def _append_breakdown_note(
     return {"text": title, "subtitle": note}
 
 
+def _cap_cardinality(
+    df: pd.DataFrame,
+    dim: str,
+    max_n: int,
+) -> tuple[pd.DataFrame, int | None]:
+    """Cap the number of unique values for *dim* to *max_n*.
+
+    Shared utility called by every spec builder that renders one visual element
+    per dim value (facet panels, bar rows, color lines).  This is standard
+    chart best practice: beyond ~8–12 elements embedded charts overflow the
+    chatbot UI and individual items become unreadable.
+
+    Selection strategy: top-N by most-recent data point, ties broken by row
+    count (more data = more informative panel).  Rows outside the top-N are
+    dropped from the returned DataFrame.
+
+    Args:
+        df:    Input DataFrame.  Must have a ``year`` column for recency sort.
+        dim:   Dimension column whose cardinality to cap (e.g. ``country``).
+        max_n: Maximum number of unique values to retain.
+
+    Returns:
+        (trimmed_df, original_n) where *original_n* is the pre-trim count, or
+        *None* when no trimming was needed (df is returned unchanged).
+    """
+    if dim not in df.columns:
+        return df, None
+    n_total = df[dim].nunique()
+    if n_total <= max_n:
+        return df, None
+
+    if "year" in df.columns:
+        latest = df.groupby(dim)["year"].max()
+    else:
+        latest = pd.Series(dtype="object", index=df[dim].unique())
+    count = df.groupby(dim).size()
+    rank = pd.DataFrame(
+        {"latest": latest.reindex(count.index).fillna(pd.Timestamp.min), "count": count}
+    )
+    top = (
+        rank.sort_values(["latest", "count"], ascending=False)
+        .head(max_n)
+        .index.tolist()
+    )
+    return df[df[dim].isin(top)].copy(), n_total
+
+
+def _append_trim_note(
+    title: str | dict,
+    dim_label: str,
+    shown: int,
+    original: int | None,
+) -> str | dict:
+    """Inject a 'Showing N of M' note into the chart subtitle when cardinality
+    was capped by :func:`_cap_cardinality`.
+
+    No-op when *original* is None (no trimming occurred).
+    """
+    if original is None:
+        return title
+    note = (
+        f"Showing {shown} of {original} {dim_label}s by most recent data — "
+        "specify a subset for the full view"
+    )
+    if isinstance(title, dict):
+        existing = title.get("subtitle", "")
+        return {**title, "subtitle": f"{existing} · {note}" if existing else note}
+    return {"text": title, "subtitle": note}
+
+
 # Shared dimensions for multi-indicator line layers: one value column per layer’s tooltip.
 _MULTI_IND_TOOLTIP_DIMS: tuple[str, ...] = (
     "year",
@@ -801,7 +871,19 @@ def build_cross_sectional_spec(
     x_label: str = "Value",
     unit_measure: str | None = None,
 ) -> dict:
-    """Horizontal bar: 1 indicator, single year, ≤8 countries."""
+    """Horizontal bar: 1 indicator, single year.
+
+    Rows are capped at HIGH_CARDINALITY_THRESHOLDS["cross_sectional_max_items"]
+    and sorted descending by value (highest performing country at top).
+    """
+    bar_dim = result.color_dim or "country"
+    df, original_n = _cap_cardinality(
+        df.sort_values("value", ascending=False),
+        bar_dim,
+        HIGH_CARDINALITY_THRESHOLDS["cross_sectional_max_items"],
+    )
+    title = _append_trim_note(title, bar_dim, df[bar_dim].nunique() if bar_dim in df.columns else 0, original_n)
+
     sorted_df = df.sort_values("value", ascending=False)
     rows = sorted_df.to_dict(orient="records")
     max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
@@ -1013,34 +1095,18 @@ def build_small_multiples_spec(
 ) -> dict:
     """Faceted small multiples: 1 indicator, 2+ breakdowns or breakdown+many countries.
 
-    Facet panels are capped at SMALL_MULTIPLES_MAX_FACETS to prevent the chart
-    overflowing the embedding UI. When the cap is applied, the top-N facet values
-    by most-recent data point are retained and a note is added to the subtitle.
+    Facet panels are capped at HIGH_CARDINALITY_THRESHOLDS["small_multiples_max_facets"]
+    via the shared :func:`_cap_cardinality` utility. When trimmed, the top-N facet
+    values by most-recent data point are retained and a subtitle note is injected via
+    :func:`_append_trim_note` — the same logic used by build_cross_sectional_spec.
     """
     facet_dim = result.facet_dim or "country"
     color_dim = result.color_dim
 
-    # --- Facet cap: keep at most SMALL_MULTIPLES_MAX_FACETS panels ---
-    n_facets_total = df[facet_dim].nunique() if facet_dim in df.columns else 1
-    trimmed = False
-    if n_facets_total > SMALL_MULTIPLES_MAX_FACETS:
-        trimmed = True
-        # Select top-N facet values by most recent (highest TIME_PERIOD) row count.
-        # Ties broken by total row count (more data = more useful panel).
-        if "year" in df.columns:
-            latest_year = df.groupby(facet_dim)["year"].max()
-        else:
-            latest_year = pd.Series(dtype="object")
-        row_count = df.groupby(facet_dim).size()
-        rank_key = latest_year.reindex(row_count.index).fillna(pd.Timestamp.min)
-        # Sort: latest year desc, then row count desc
-        top_facets = (
-            pd.DataFrame({"latest": rank_key, "count": row_count})
-            .sort_values(["latest", "count"], ascending=False)
-            .head(SMALL_MULTIPLES_MAX_FACETS)
-            .index.tolist()
-        )
-        df = df[df[facet_dim].isin(top_facets)].copy()
+    # Shared cap utility — identical contract to cross_sectional bar rows.
+    df, original_n = _cap_cardinality(
+        df, facet_dim, HIGH_CARDINALITY_THRESHOLDS["small_multiples_max_facets"]
+    )
 
     rows = df.to_dict(orient="records")
     max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
@@ -1080,25 +1146,10 @@ def build_small_multiples_spec(
     if color_dim and color_dim != facet_dim:
         inner["encoding"]["color"] = _color_encoding(color_dim, mark_type="line")
 
-    # Option C: annotate chart subtitle with breakdown series names when color_dim is
-    # a custom breakdown (comp_breakdown_1/2). Standard dims (country, sex) are unaffected.
+    # Option C: annotate with breakdown series names (heterogeneous → mixed-unit warning).
     annotated_title = _append_breakdown_note(title, df, color_dim)
-
-    # Append facet-cap note when panels were trimmed.
-    if trimmed:
-        facet_label = facet_dim.replace("_", " ")
-        cap_note = (
-            f"Showing {SMALL_MULTIPLES_MAX_FACETS} of {n_facets_total} {facet_label}s "
-            f"by most recent data — specify a subset for the full view"
-        )
-        if isinstance(annotated_title, dict):
-            existing = annotated_title.get("subtitle", "")
-            annotated_title = {
-                **annotated_title,
-                "subtitle": f"{existing} · {cap_note}" if existing else cap_note,
-            }
-        else:
-            annotated_title = {"text": annotated_title, "subtitle": cap_note}
+    # Shared trim note — same utility as cross_sectional.
+    annotated_title = _append_trim_note(annotated_title, facet_dim, n_facets, original_n)
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -1117,6 +1168,7 @@ def build_small_multiples_spec(
         "spec": {**inner, "width": 220, "height": 160},
     }
     return inject_wb_config(spec)
+
 
 
 def build_correlation_spec(
@@ -1426,16 +1478,26 @@ def dispatch_spec(
 # ============================================================================
 
 HIGH_CARDINALITY_THRESHOLDS: dict[str, int] = {
+    # Maximum color series in a TEMPORAL_SINGLE line chart.
+    # Strategy routing enforces this before the builder is called.
     "line_max_series": 8,
+    # Minimum country count to switch from line to strip (beeswarm) in single-year views.
     "beeswarm_threshold": 8,
+    # Minimum breakdown count to prefer SMALL_MULTIPLES over BREAKDOWN_COMPARISON.
     "facet_threshold": 4,
+    # Maximum color series in any context where the strategy router can’t pre-filter.
     "top_n_series": 12,
+    # Maximum facet panels in SMALL_MULTIPLES.
+    # Chatbot UIs embed charts at fixed widths; beyond this panels become unreadably
+    # small and the page overflows vertically.
+    "small_multiples_max_facets": 8,
+    # Maximum bar rows in CROSS_SECTIONAL horizontal bar charts.
+    # Beyond this, bars become hair-thin and labels collide.
+    "cross_sectional_max_items": 20,
 }
 
-# Maximum number of facet panels rendered in SMALL_MULTIPLES.
-# Chatbot UIs embed charts at fixed widths; beyond this the panels become
-# unreadably small and the page overflows vertically.
-SMALL_MULTIPLES_MAX_FACETS: int = 8
+# Keep the standalone constant as a typed alias for backward compat with existing tests.
+SMALL_MULTIPLES_MAX_FACETS: int = HIGH_CARDINALITY_THRESHOLDS["small_multiples_max_facets"]
 
 
 # Keep legacy aliases for backward compat with existing tests
