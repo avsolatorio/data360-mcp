@@ -512,12 +512,22 @@ def select_strategy(
             facet_dim=facet_dim,
         )
 
-    # Breakdown comparison: 1 disaggregation, 2-4 values, ≤4 countries
+    # Breakdown + multi-year → line chart with breakdown as color dim.
+    # Avoids a dense grouped bar chart (e.g. 6 breakdowns × 15 years = 90 bars).
+    if n_breakdowns == 1 and year_count > 1:
+        color_dim = list(breakdown_counts.keys())[0]
+        return StrategyResult(
+            ChartStrategy.TEMPORAL_SINGLE,
+            f"1 breakdown ({color_dim}), {year_count} years → multi-series line chart",
+            color_dim=color_dim,
+        )
+
+    # Breakdown comparison: 1 disaggregation, single year, ≤4 countries → grouped bar
     if n_breakdowns == 1 and country_count <= 4:
         color_dim = list(breakdown_counts.keys())[0]
         return StrategyResult(
             ChartStrategy.BREAKDOWN_COMPARISON,
-            f"1 breakdown ({color_dim}), {breakdown_counts[color_dim]} values → grouped bar",
+            f"1 breakdown ({color_dim}), {breakdown_counts[color_dim]} values, single year → grouped bar",
             color_dim=color_dim,
         )
 

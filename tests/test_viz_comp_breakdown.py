@@ -141,22 +141,34 @@ def test_clean_single_df_relevant_fields_branch_keeps_comp_breakdown():
 # ---------------------------------------------------------------------------
 
 
-def test_strategy_detects_comp_breakdown_1_as_breakdown():
-    """select_strategy must count comp_breakdown_1 values in breakdown_counts."""
+def test_strategy_wgi_multi_year_routes_to_temporal_single():
+    """WGI-style multi-year breakdown must route to TEMPORAL_SINGLE (multi-line), not grouped bar."""
     WGI_BREAKDOWNS = ["WGI_EST", "WGI_SE", "WGI_SC", "WGI_SR", "WGI_SC_LB", "WGI_SC_UB"]
     df = _make_viz_df(WGI_BREAKDOWNS, list(range(2010, 2025)))
 
     result = select_strategy(df, n_indicators=1)
 
-    # 6 breakdowns, 1 country, multi-year → must NOT fall through to TEMPORAL_SINGLE
-    # (which would produce a tangled single-color line cloud)
-    assert result.strategy != ChartStrategy.TEMPORAL_SINGLE, (
-        "WGI-style indicators with 6 COMP_BREAKDOWN_1 values must not route to "
-        "TEMPORAL_SINGLE — that produces an unreadable overlapping line cloud"
+    # 6 breakdowns × 15 years → TEMPORAL_SINGLE with comp_breakdown_1 as color dim
+    # (not BREAKDOWN_COMPARISON which produces 90 grouped bars — unreadable)
+    assert result.strategy == ChartStrategy.TEMPORAL_SINGLE, (
+        f"Expected TEMPORAL_SINGLE for multi-year breakdown data, got {result.strategy}. "
+        "Multi-year breakdown should produce 6 colored lines, not 90 grouped bars."
     )
-    # Should route to BREAKDOWN_COMPARISON or SMALL_MULTIPLES
-    assert result.strategy in (ChartStrategy.BREAKDOWN_COMPARISON, ChartStrategy.SMALL_MULTIPLES), (
-        f"Expected BREAKDOWN_COMPARISON or SMALL_MULTIPLES, got {result.strategy}"
+    assert result.color_dim == "comp_breakdown_1", (
+        f"color_dim should be 'comp_breakdown_1', got '{result.color_dim}'"
+    )
+
+
+def test_strategy_single_year_breakdown_routes_to_breakdown_comparison():
+    """Single-year breakdown still routes to BREAKDOWN_COMPARISON (grouped bar)."""
+    WGI_BREAKDOWNS = ["WGI_EST", "WGI_SE", "WGI_SC"]
+    # Only one year — grouped bar is correct here
+    df = _make_viz_df(WGI_BREAKDOWNS, [2024])
+
+    result = select_strategy(df, n_indicators=1)
+
+    assert result.strategy == ChartStrategy.BREAKDOWN_COMPARISON, (
+        f"Expected BREAKDOWN_COMPARISON for single-year breakdown, got {result.strategy}"
     )
 
 
