@@ -14,7 +14,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Literal
+from numbers import Integral
+from typing import Any, Literal
 
 import pandas as pd
 
@@ -1467,6 +1468,108 @@ def get_data_preparation_action(
     return "datetime"
 
 
+_YEAR_GAP_FILL_MAX_SPAN = 400
+
+
+def frequency_allows_annual_year_gap_fill(data_frequency: str | None) -> bool:
+    """True when data are treated as annual so missing calendar years can be inserted."""
+    if data_frequency is None or not str(data_frequency).strip():
+        return True
+    code = str(data_frequency).strip().upper()
+    if code in FREQUENCY_TO_TIMEUNIT and code != "A":
+        return False
+    return code in ("A", "ANNUAL", "Y", "YEAR", "YA")
+
+
+def _clone_year_field(y_int: int, sample: Any) -> Any:
+    """Match ``year`` dtype/shape used in the source group (string, datetime, int)."""
+    if isinstance(sample, str):
+        stripped = sample.strip()
+        if len(stripped) == 4 and stripped.isdigit():
+            return str(y_int)
+        return pd.Timestamp(year=y_int, month=1, day=1)
+    if isinstance(sample, pd.Timestamp):
+        return pd.Timestamp(year=y_int, month=1, day=1)
+    if isinstance(sample, Integral) and not isinstance(sample, bool):
+        return int(y_int)
+    if isinstance(sample, float) and not pd.isna(sample) and sample == int(sample):
+        return int(y_int)
+    return pd.Timestamp(year=y_int, month=1, day=1)
+
+
+def _coerce_year_column_to_int(series: pd.Series) -> pd.Series:
+    if pd.api.types.is_datetime64_any_dtype(series):
+        return series.dt.year.astype("Int64")
+    parsed = pd.to_datetime(series, errors="coerce")
+    if parsed.notna().mean() >= 0.99 and parsed.notna().any():
+        return parsed.dt.year.astype("Int64")
+    num = pd.to_numeric(series, errors="coerce")
+    return num.round().astype("Int64")
+
+
+def fill_missing_calendar_years_annual(
+    df: pd.DataFrame,
+    data_frequency: str | None,
+) -> pd.DataFrame:
+    """Insert NaN rows for missing integer calendar years within each series' span.
+
+    Each *series* is defined by every column except ``year`` and ``value`` (e.g. one
+    country). For that series, all calendar years from min(year) to max(year) appear
+    exactly once; gaps in the source (e.g. no 2010) become explicit rows with null
+    ``value``. Skipped when frequency is not annual, years cannot be coerced, any
+    (series, year) duplicates exist, or the span exceeds ``_YEAR_GAP_FILL_MAX_SPAN``.
+    """
+    if df.empty or "year" not in df.columns or "value" not in df.columns:
+        return df
+    if not frequency_allows_annual_year_gap_fill(data_frequency):
+        return df
+
+    y_int = _coerce_year_column_to_int(df["year"])
+    if y_int.isna().all():
+        return df
+
+    work = df.copy()
+    work["_yi"] = y_int
+    work = work.loc[~work["_yi"].isna()].copy()
+    work["_yi"] = work["_yi"].astype(int)
+
+    gcols = [c for c in work.columns if c not in ("year", "value", "_yi")]
+    dup_check = work.groupby(gcols + ["_yi"], dropna=False).size()
+    if (dup_check > 1).any():
+        return df
+
+    out_rows: list[pd.Series] = []
+    grouped = (
+        work.groupby(gcols, dropna=False)
+        if gcols
+        else [(tuple(), work)]
+    )
+    for _gkey, g in grouped:
+        lo = int(g["_yi"].min())
+        hi = int(g["_yi"].max())
+        if hi - lo > _YEAR_GAP_FILL_MAX_SPAN:
+            return df
+        sample_year = g["year"].iloc[0]
+        existing = set(int(x) for x in g["_yi"].tolist())
+        for yi in range(lo, hi + 1):
+            match = g[g["_yi"] == yi]
+            if len(match) > 0:
+                out_rows.append(match.iloc[0].drop(labels=["_yi"]))
+            else:
+                proto = g.iloc[0].drop(labels=["_yi"]).to_dict()
+                proto["year"] = _clone_year_field(yi, sample_year)
+                proto["value"] = float("nan")
+                out_rows.append(pd.Series(proto))
+
+    out = pd.DataFrame(out_rows)
+    out = out.reindex(columns=df.columns)
+    meta_cols = [c for c in df.columns if c not in ("year", "value")]
+    out["_sy"] = _coerce_year_column_to_int(out["year"])
+    sort_keys = [k for k in (*meta_cols, "_sy") if k in out.columns]
+    out = out.sort_values(by=sort_keys, na_position="last").drop(columns=["_sy"])
+    return out
+
+
 def should_prepare_as_datetime(
     viz_data: pd.DataFrame, chart_type: str, frequency: str | None
 ) -> bool:
@@ -1521,6 +1624,106 @@ def _year_ordinal_value_needs_temporal_encoding(value: object) -> bool:
         # Altair often serializes datetimes as milliseconds in embedded datasets
         return abs(fv) >= _YEAR_ORDINAL_EPOCH_MS_THRESHOLD
     return False
+
+
+def _extract_spec_dataset_rows(spec: dict) -> list[dict] | None:
+    """Return embedded chart rows from ``data.values`` or ``datasets[name]``."""
+    data = spec.get("data")
+    if isinstance(data, dict) and "values" in data:
+        v = data.get("values")
+        return v if isinstance(v, list) else None
+    ds_name = data.get("name") if isinstance(data, dict) else None
+    if ds_name and isinstance(spec.get("datasets"), dict):
+        rows = spec["datasets"].get(ds_name)
+        return rows if isinstance(rows, list) else None
+    return None
+
+
+def _single_obs_year_to_int(value: object) -> int | None:
+    """Parse one observation's year field to a calendar year, or None."""
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return None
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, Integral):
+        return int(value)
+    if isinstance(value, float) and value == int(value):
+        return int(value)
+    if isinstance(value, str):
+        s = value.strip()
+        if len(s) >= 4 and s[:4].isdigit():
+            return int(s[:4])
+        ts = pd.to_datetime(s, errors="coerce")
+        if pd.notna(ts):
+            return int(ts.year)
+        return None
+    if isinstance(value, pd.Timestamp):
+        return int(value.year)
+    return None
+
+
+class ContiguousCalendarYearDomainRule(PostProcessingRule):
+    """Ordinal/nominal ``year`` / ``time_period`` on x: full calendar year range on the scale.
+
+    Applies to marks that commonly use a discrete year axis (bar, line, area, point, tick).
+    Does **not** apply when ``x`` is ``temporal`` (handled separately; continuous time ≠ discrete domain).
+    """
+
+    def __init__(self):
+        super().__init__(
+            "contiguous_calendar_year_domain",
+            ["bar", "line", "area", "point", "tick"],
+            "Ordinal/nominal year x: explicit scale.domain for every calendar year in min–max span",
+        )
+
+    def apply(self, spec, data_frequency=None, unit_measure=None):
+        if not frequency_allows_annual_year_gap_fill(data_frequency):
+            return spec
+        if "encoding" not in spec or "x" not in spec["encoding"]:
+            return spec
+        mark_type = (
+            spec.get("mark", {}).get("type")
+            if isinstance(spec.get("mark"), dict)
+            else spec.get("mark")
+        )
+        if mark_type not in self.applies_to_mark_types:
+            return spec
+        x = spec["encoding"]["x"]
+        xf = x.get("field")
+        if xf not in ("year", "time_period"):
+            return spec
+        if x.get("type") not in ("ordinal", "nominal"):
+            return spec
+        if x.get("scale", {}).get("domain") is not None:
+            return spec
+        rows = _extract_spec_dataset_rows(spec)
+        if not rows or len(rows) < 2:
+            return spec
+        years: list[int] = []
+        template: object | None = None
+        for row in rows:
+            if not isinstance(row, dict) or xf not in row:
+                continue
+            raw = row.get(xf)
+            if raw is None:
+                continue
+            if template is None:
+                template = raw
+            yi = _single_obs_year_to_int(raw)
+            if yi is not None:
+                years.append(yi)
+        if len(years) < 2:
+            return spec
+        lo, hi = min(years), max(years)
+        if hi - lo > _YEAR_GAP_FILL_MAX_SPAN:
+            return spec
+        if template is None:
+            return spec
+        domain = [_clone_year_field(y, template) for y in range(lo, hi + 1)]
+        x.setdefault("scale", {})["domain"] = domain
+        # Explicit sort matches domain order (helps Vega-Lite / Vega compile stability).
+        x["sort"] = domain
+        return spec
 
 
 class OrdinalToTemporalRule(PostProcessingRule):
@@ -1797,6 +2000,7 @@ POST_PROCESSING_RULES: list[PostProcessingRule] = [
     OrdinalToTemporalRule(),
     ApplyTimeUnitRule(),
     FixValueAxisEncodingRule(),
+    ContiguousCalendarYearDomainRule(),
     TemporalAxisCleanupRule(),
     DiscreteYearBarXAxisRule(),
     ValueAxisLabelFormatRule(),
