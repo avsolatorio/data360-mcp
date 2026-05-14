@@ -54,6 +54,18 @@ _FALLBACK_WARNING = (
 
 VizResult = dict[str, str | None]
 
+# Disaggregation dimensions considered during viz data cleaning and encoding.
+# Mirrors _DISAGG_DIMS_TO_DETECT from api.py but in lowercase (post-column-rename).
+# Single source of truth for the viz pipeline: _clean_single_df, color dim
+# detection, and multi-indicator join keys all reference this tuple.
+_VIZ_DISAGG_DIMS: tuple[str, ...] = (
+    "sex",
+    "age",
+    "urbanisation",
+    "comp_breakdown_1",
+    "comp_breakdown_2",
+)
+
 
 # ============================================================================
 # STORAGE HELPERS
@@ -358,6 +370,9 @@ def _clean_single_df(
     data_frequency: str | None,
 ) -> tuple[pd.DataFrame, list[str]]:
     """Clean + rename a single-indicator DataFrame for the Draco path."""
+    # Trivial values for disaggregation dimensions: _T = aggregate total, _Z = not applicable.
+    _TRIVIAL_DIM_VALUES = ("_T", "_Z")
+
     if relevant_fields:
         req = [f.lower() for f in relevant_fields]
         missing = [f for f in req if f not in data.columns]
@@ -366,10 +381,10 @@ def _clean_single_df(
                 f"Requested fields not found: {missing}. Available: {list(data.columns)}"
             )
         valid_cols = req
-        for dim in ["ref_area", "sex", "age", "urbanisation"]:
+        for dim in ["ref_area", *_VIZ_DISAGG_DIMS]:
             if dim in data.columns and dim not in valid_cols:
                 uv = data[dim].unique()
-                if len(uv) > 1 or (len(uv) == 1 and uv[0] != "_T"):
+                if len(uv) > 1 or (len(uv) == 1 and uv[0] not in _TRIVIAL_DIM_VALUES):
                     valid_cols.append(dim)
         viz_data = data[valid_cols].copy()
         relevant_cols = valid_cols
@@ -378,10 +393,10 @@ def _clean_single_df(
         for col in ["time_period", "obs_value", "ref_area"]:
             if col in data.columns:
                 relevant_cols.append(col)
-        for dim in ["sex", "age", "urbanisation"]:
+        for dim in _VIZ_DISAGG_DIMS:
             if dim in data.columns:
                 uv = data[dim].unique()
-                if len(uv) > 1 or (len(uv) == 1 and uv[0] != "_T"):
+                if len(uv) > 1 or (len(uv) == 1 and uv[0] not in _TRIVIAL_DIM_VALUES):
                     relevant_cols.append(dim)
         viz_data = data[relevant_cols].copy() if relevant_cols else data.copy()
 
@@ -748,10 +763,10 @@ async def get_viz_spec(
                 "attribute((encoding,field),e2,value).",
             ]
 
-        # Color dimension
+        # Color dimension: prefer country, then standard disagg dims, then custom breakdowns.
         color_dim = strategy_result.color_dim
         if not color_dim:
-            for dim, _ in [("country", 0), ("sex", 0), ("age", 0), ("urbanisation", 0)]:
+            for dim in ["country", *_VIZ_DISAGG_DIMS]:
                 if dim in viz_data.columns and viz_data[dim].nunique() > 1:
                     color_dim = dim
                     break
@@ -967,7 +982,7 @@ async def get_multi_indicator_viz_spec(
         # Keep only join keys + value column
         keep = [
             c
-            for c in ["year", "country", "sex", "age", "urbanisation"]
+            for c in ["year", "country", *_VIZ_DISAGG_DIMS]
             if c in df.columns
         ]
         keep.append(col)
@@ -987,7 +1002,7 @@ async def get_multi_indicator_viz_spec(
     # 4. Merge on common keys
     join_keys = [
         c
-        for c in ["year", "country", "sex", "age", "urbanisation"]
+        for c in ["year", "country", *_VIZ_DISAGG_DIMS]
         if all(c in df.columns for df in std_dfs)
     ]
 

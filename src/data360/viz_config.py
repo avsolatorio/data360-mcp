@@ -176,6 +176,9 @@ _TOOLTIP_SPECS: dict[str, dict] = {
     "sex": {"title": "Sex", "type": "nominal"},
     "age": {"title": "Age Group", "type": "nominal"},
     "urbanisation": {"title": "Urbanisation", "type": "nominal"},
+    "comp_breakdown_1": {"title": "Breakdown", "type": "nominal"},
+    "comp_breakdown_2": {"title": "Sub-Breakdown", "type": "nominal"},
+    "time_period": {"title": "Period", "type": "temporal"},
     "obs_value": {"title": "Value", "format": ",.2f", "type": "quantitative"},
     "ref_area": {"title": "Country", "type": "nominal"},
     "region": {"title": "Region", "type": "nominal"},
@@ -192,6 +195,8 @@ _TOOLTIP_PRIORITY = [
     "sex",
     "age",
     "urbanisation",
+    "comp_breakdown_1",
+    "comp_breakdown_2",
 ]
 
 
@@ -426,6 +431,8 @@ def select_strategy(
     sex_count = df["sex"].nunique() if "sex" in cols else 0
     age_count = df["age"].nunique() if "age" in cols else 0
     urban_count = df["urbanisation"].nunique() if "urbanisation" in cols else 0
+    cb1_count = df["comp_breakdown_1"].nunique() if "comp_breakdown_1" in cols else 0
+    cb2_count = df["comp_breakdown_2"].nunique() if "comp_breakdown_2" in cols else 0
 
     breakdown_counts = {
         k: v
@@ -433,6 +440,8 @@ def select_strategy(
             ("sex", sex_count),
             ("age", age_count),
             ("urbanisation", urban_count),
+            ("comp_breakdown_1", cb1_count),
+            ("comp_breakdown_2", cb2_count),
         ]
         if v > 1
     }
