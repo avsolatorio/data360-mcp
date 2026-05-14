@@ -1,12 +1,16 @@
 """Tests for the Grammar of Graphics contract in visualization tool docstrings
 and the corresponding pipeline behavior for multi-breakdown indicators.
 
-Two concerns verified here:
+Concerns verified here:
   1. Contract presence — the docstring cannot be accidentally stripped without
      failing CI, preventing silent regression of the LLM guidance.
-  2. Pipeline correctness — unfiltered WGI-style data (multi-country ×
-     multi-breakdown × multi-year) must produce SMALL_MULTIPLES with the
+  2. Pipeline correctness — unfiltered WGI-style data (multi-country x
+     multi-breakdown x multi-year) must produce SMALL_MULTIPLES with the
      correct Vega-Lite facet/color encoding, NOT a single collapsed series.
+  3. Homogeneous breakdown detection — IPC phases must NOT trigger the
+     mixed-unit warning; WGI breakdowns must.
+  4. Facet cap — SMALL_MULTIPLES must not produce more than
+     SMALL_MULTIPLES_MAX_FACETS panels.
 """
 
 from __future__ import annotations
@@ -14,7 +18,14 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from data360.viz_config import ChartStrategy, select_strategy
+from data360.viz_config import (
+    SMALL_MULTIPLES_MAX_FACETS,
+    ChartStrategy,
+    _format_breakdown_subtitle,
+    _is_homogeneous_breakdown,
+    dispatch_spec,
+    select_strategy,
+)
 from data360.visualization import get_multi_indicator_viz_spec, get_viz_spec
 
 
@@ -72,7 +83,6 @@ class TestGrammarOfGraphicsContractPresence:
     def test_get_viz_spec_docstring_has_encoding_type_rules(self):
         """Vega-Lite v5 encoding type rules must be documented."""
         doc = get_viz_spec.__doc__ or ""
-        # Year type rule — prevents ordinal-on-year bug
         assert "ordinal" in doc, (
             "Docstring must warn against using 'ordinal' for year fields."
         )
@@ -99,7 +109,7 @@ def _make_wgi_df(
     countries: list[str],
     years: list[int],
 ) -> pd.DataFrame:
-    """Synthetic WGI-style DataFrame: multi-breakdown × multi-country × multi-year."""
+    """Synthetic WGI-style DataFrame: multi-breakdown x multi-country x multi-year."""
     rows = []
     for country in countries:
         for bd in breakdowns:
@@ -121,13 +131,8 @@ YEARS_2010_2024 = list(range(2010, 2025))
 
 
 class TestUnfilteredWGIPipelineBehavior:
-    """Unfiltered WGI data (3 countries × 6 breakdowns × 15 years) must route
+    """Unfiltered WGI data (3 countries x 6 breakdowns x 15 years) must route
     to SMALL_MULTIPLES with facet=country and color=comp_breakdown_1.
-
-    This is the correct grammar-of-graphics encoding: each country gets its own
-    panel (facet) and each breakdown series gets its own color line within that
-    panel. Pre-filtering to COMP_BREAKDOWN_1=WGI_EST would collapse all 6 series
-    into one line and produce TEMPORAL_SINGLE with color=country instead.
     """
 
     def setup_method(self):
@@ -136,134 +141,206 @@ class TestUnfilteredWGIPipelineBehavior:
     def test_strategy_is_small_multiples(self):
         result = select_strategy(self.df, n_indicators=1)
         assert result.strategy == ChartStrategy.SMALL_MULTIPLES, (
-            f"Expected SMALL_MULTIPLES for 3 countries × 6 breakdowns × 15 years, "
-            f"got {result.strategy}. "
-            "Pre-filtering (COMP_BREAKDOWN_1=WGI_EST) would suppress this and "
-            "produce TEMPORAL_SINGLE with color=country — wrong for multi-breakdown data."
+            f"Expected SMALL_MULTIPLES for 3 countries x 6 breakdowns x 15 years, "
+            f"got {result.strategy}."
         )
 
     def test_facet_dim_is_country(self):
         result = select_strategy(self.df, n_indicators=1)
         assert result.facet_dim == "country", (
-            f"facet_dim should be 'country', got {result.facet_dim!r}. "
-            "Each country must get its own panel so breakdown lines are readable."
+            f"facet_dim should be 'country', got {result.facet_dim!r}."
         )
 
     def test_color_dim_is_comp_breakdown_1(self):
         result = select_strategy(self.df, n_indicators=1)
         assert result.color_dim == "comp_breakdown_1", (
-            f"color_dim should be 'comp_breakdown_1', got {result.color_dim!r}. "
-            "Each breakdown series must be a distinct colored line within each panel."
+            f"color_dim should be 'comp_breakdown_1', got {result.color_dim!r}."
         )
 
     def test_vega_lite_spec_has_facet_encoding(self):
-        """The Vega-Lite spec must use the facet operator, not a flat mark spec."""
-        from data360.viz_config import dispatch_spec
-
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-
-        assert "facet" in spec, (
-            "SMALL_MULTIPLES spec must use top-level 'facet' key. "
-            "A flat mark spec would overlay all series on one chart."
-        )
+        assert "facet" in spec, "SMALL_MULTIPLES spec must use top-level 'facet' key."
 
     def test_vega_lite_spec_facet_field_is_country(self):
-        from data360.viz_config import dispatch_spec
-
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-
         facet = spec.get("facet", {})
-        assert facet.get("field") == "country", (
-            f"facet.field should be 'country', got {facet.get('field')!r}"
-        )
-        assert facet.get("type") == "nominal", (
-            f"facet.type should be 'nominal', got {facet.get('type')!r}"
-        )
+        assert facet.get("field") == "country"
+        assert facet.get("type") == "nominal"
 
     def test_vega_lite_spec_inner_color_is_comp_breakdown_1(self):
-        from data360.viz_config import dispatch_spec
-
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-
         inner_enc = spec.get("spec", {}).get("encoding", {})
         color = inner_enc.get("color", {})
-        assert color.get("field") == "comp_breakdown_1", (
-            f"Inner color.field should be 'comp_breakdown_1', got {color.get('field')!r}. "
-            "Each breakdown must map to a distinct color channel."
-        )
-        assert color.get("type") == "nominal", (
-            f"color.type should be 'nominal', got {color.get('type')!r}"
-        )
+        assert color.get("field") == "comp_breakdown_1"
+        assert color.get("type") == "nominal"
 
     def test_vega_lite_spec_x_axis_is_temporal(self):
-        """Year axis must use type='temporal', not 'ordinal'.
-
-        Using 'ordinal' causes Vega-Lite to render ISO timestamp strings as raw
-        millisecond integers on the axis, which is unreadable.
-        """
-        from data360.viz_config import dispatch_spec
-
+        """Year axis must use type='temporal', not 'ordinal'."""
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-
         inner_enc = spec.get("spec", {}).get("encoding", {})
         x = inner_enc.get("x", {})
         assert x.get("type") == "temporal", (
-            f"x.type should be 'temporal', got {x.get('type')!r}. "
-            "Ordinal encoding converts ISO timestamps to raw millisecond integers."
+            f"x.type should be 'temporal', got {x.get('type')!r}."
         )
 
 
 # ============================================================================
-# 3. Pre-filter regression: confirm that filtering collapses to the wrong strategy
+# 3. Pre-filter regression documentation
 # ============================================================================
 
 
 class TestPinningBreakdownCollapsesBehavior:
-    """Verify that the bug scenario (pre-filtering to WGI_EST) does route to
-    TEMPORAL_SINGLE with color=country — which is readable for 3 countries but
-    discards the 5 other breakdown series without warning.
-
-    These tests document the expected behavior of the WRONG pattern so it is
-    clear in CI what information is being lost when a filter is pinned.
-    """
+    """Documents what happens when the LLM incorrectly pins COMP_BREAKDOWN_1."""
 
     def test_filtered_to_single_breakdown_routes_to_temporal_single(self):
-        """After pinning COMP_BREAKDOWN_1=WGI_EST, only 1 breakdown remains.
-        The strategy degrades to TEMPORAL_SINGLE (no breakdown variation detected).
-        """
         df = _make_wgi_df(["WGI_EST"], THREE_COUNTRIES, YEARS_2010_2024)
-        # comp_breakdown_1 has only 1 unique value — treated as trivial, dropped
-        # by _clean_single_df. Strategy sees: 3 countries × 15 years, no breakdown.
-        # But in the strategy df the column would have been dropped already.
-        # Simulate a df without comp_breakdown_1 (as _clean_single_df would produce):
         df_no_cb = df.drop(columns=["comp_breakdown_1"])
-
         result = select_strategy(df_no_cb, n_indicators=1)
-
-        assert result.strategy == ChartStrategy.TEMPORAL_SINGLE, (
-            f"After filtering to single breakdown, expected TEMPORAL_SINGLE, "
-            f"got {result.strategy}"
-        )
-        assert result.color_dim == "country", (
-            "With no breakdown dimension, color must fall back to country."
-        )
+        assert result.strategy == ChartStrategy.TEMPORAL_SINGLE
+        assert result.color_dim == "country"
 
     def test_filtered_df_loses_breakdown_information(self):
-        """Quantify the information loss: 5 out of 6 breakdown series are invisible."""
         full_df = _make_wgi_df(WGI_BREAKDOWNS, THREE_COUNTRIES, YEARS_2010_2024)
         filtered_df = _make_wgi_df(["WGI_EST"], THREE_COUNTRIES, YEARS_2010_2024)
-
-        full_series = len(WGI_BREAKDOWNS) * len(THREE_COUNTRIES)  # 18 series
-        filtered_series = 1 * len(THREE_COUNTRIES)  # 3 series
-
+        full_series = len(WGI_BREAKDOWNS) * len(THREE_COUNTRIES)
+        filtered_series = 1 * len(THREE_COUNTRIES)
+        lost_pct = (1 - filtered_series / full_series) * 100
+        assert lost_pct == pytest.approx(83.33, abs=0.01), (
+            f"Expected ~83% series lost by pinning WGI_EST, got {lost_pct:.1f}%"
+        )
         assert len(full_df) == full_series * len(YEARS_2010_2024)
         assert len(filtered_df) == filtered_series * len(YEARS_2010_2024)
 
-        lost_pct = (1 - filtered_series / full_series) * 100
-        assert lost_pct == pytest.approx(83.33, abs=0.01), (
-            f"Expected ~83% of series to be lost by pinning WGI_EST, got {lost_pct:.1f}%"
+
+# ============================================================================
+# 4. Homogeneous breakdown detection
+# ============================================================================
+
+
+class TestHomogeneousBreakdownDetection:
+    """IPC phases are ordinal categories of ONE metric.
+    WGI breakdowns are structurally different metric types."""
+
+    def test_ipc_phases_are_homogeneous(self):
+        ipc = [
+            "IPC_IPC_PHASE1", "IPC_IPC_PHASE2", "IPC_IPC_PHASE3",
+            "IPC_IPC_PHASE4", "IPC_IPC_PHASE5",
+        ]
+        assert _is_homogeneous_breakdown(ipc) is True, (
+            "IPC phases share base 'IPC_IPC_PHASE' — should be homogeneous."
+        )
+
+    def test_wgi_breakdowns_are_heterogeneous(self):
+        wgi = ["WGI_EST", "WGI_SE", "WGI_SC", "WGI_SR", "WGI_SC_LB", "WGI_SC_UB"]
+        assert _is_homogeneous_breakdown(wgi) is False, (
+            "WGI breakdowns are structurally different metrics — heterogeneous."
+        )
+
+    def test_single_value_is_treated_as_homogeneous(self):
+        assert _is_homogeneous_breakdown(["WGI_EST"]) is True
+
+    def test_ipc_subtitle_has_no_mixed_unit_warning(self):
+        """IPC phase subtitle: list series, no 'different units/scales' warning."""
+        ipc_phases = ["IPC_IPC_PHASE1", "IPC_IPC_PHASE2", "IPC_IPC_PHASE3"]
+        rows = [
+            {"year": pd.Timestamp("2022"), "value": 10.0, "country": "Kenya",
+             "comp_breakdown_2": p}
+            for p in ipc_phases
+        ]
+        df = pd.DataFrame(rows)
+        note = _format_breakdown_subtitle(df, "comp_breakdown_2")
+        assert note is not None, "A note should still be returned for multi-value breakdowns."
+        assert "different units" not in note, (
+            "Homogeneous IPC phases must not show 'different units/scales' warning."
+        )
+        assert "Series:" in note, "Note must still list the series names."
+
+    def test_wgi_subtitle_has_mixed_unit_warning(self):
+        """WGI subtitle must include 'different units/scales' warning."""
+        wgi_bds = ["WGI_EST", "WGI_SC", "WGI_SE", "WGI_SR"]
+        rows = [
+            {"year": pd.Timestamp("2022"), "value": 0.5, "country": "Kenya",
+             "comp_breakdown_1": b}
+            for b in wgi_bds
+        ]
+        df = pd.DataFrame(rows)
+        note = _format_breakdown_subtitle(df, "comp_breakdown_1")
+        assert note is not None
+        assert "different units/scales" in note, (
+            "WGI breakdowns must show the mixed-unit warning."
+        )
+
+    def test_standard_dim_returns_none(self):
+        """Standard dims (country, sex) must never trigger a breakdown note."""
+        rows = [{"year": pd.Timestamp("2022"), "value": 1.0, "country": c}
+                for c in ["Kenya", "Ghana"]]
+        df = pd.DataFrame(rows)
+        assert _format_breakdown_subtitle(df, "country") is None
+        assert _format_breakdown_subtitle(df, "sex") is None
+
+
+# ============================================================================
+# 5. SMALL_MULTIPLES facet cap
+# ============================================================================
+
+
+class TestSmallMultiplesFacetCap:
+    """SMALL_MULTIPLES must cap at SMALL_MULTIPLES_MAX_FACETS panels.
+    Chatbot UIs overflow vertically beyond this."""
+
+    def _make_many_country_df(self, n_countries: int) -> pd.DataFrame:
+        countries = [f"Country_{i:02d}" for i in range(n_countries)]
+        # Two breakdown values ensures select_strategy routes to SMALL_MULTIPLES
+        breakdowns = ["BD_A", "BD_B"]
+        rows = []
+        for c in countries:
+            for bd in breakdowns:
+                for yr in [2020, 2021, 2022]:
+                    rows.append({
+                        "year": pd.Timestamp(str(yr)),
+                        "value": 1.0,
+                        "country": c,
+                        "comp_breakdown_1": bd,
+                    })
+        return pd.DataFrame(rows)
+
+    def test_under_cap_produces_no_trim_note(self):
+        """Fewer than MAX_FACETS countries: all panels, no trim note."""
+        df = self._make_many_country_df(SMALL_MULTIPLES_MAX_FACETS)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, {"text": "T", "subtitle": "S"}, result)
+        subtitle = spec.get("title", {}).get("subtitle", "")
+        assert "Showing" not in subtitle, "No cap note should appear at or under MAX_FACETS."
+
+    def test_over_cap_trims_to_max_facets(self):
+        """More than MAX_FACETS countries: exactly MAX_FACETS shown."""
+        n = SMALL_MULTIPLES_MAX_FACETS + 10
+        df = self._make_many_country_df(n)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, {"text": "T", "subtitle": "S"}, result)
+        shown = {r["country"] for r in spec["data"]["values"]}
+        assert len(shown) == SMALL_MULTIPLES_MAX_FACETS, (
+            f"Expected {SMALL_MULTIPLES_MAX_FACETS} panels, got {len(shown)}."
+        )
+
+    def test_over_cap_adds_showing_note_to_subtitle(self):
+        """Subtitle must say 'Showing N of M' when panels are trimmed."""
+        n = SMALL_MULTIPLES_MAX_FACETS + 10
+        df = self._make_many_country_df(n)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, {"text": "T", "subtitle": "S"}, result)
+        subtitle = spec.get("title", {}).get("subtitle", "")
+        assert f"Showing {SMALL_MULTIPLES_MAX_FACETS} of {n}" in subtitle, (
+            f"Expected 'Showing {SMALL_MULTIPLES_MAX_FACETS} of {n}' in subtitle, "
+            f"got: {subtitle!r}"
+        )
+
+    def test_max_facets_constant_is_chatbot_safe(self):
+        """SMALL_MULTIPLES_MAX_FACETS must be in the usable range [4, 12]."""
+        assert 4 <= SMALL_MULTIPLES_MAX_FACETS <= 12, (
+            f"SMALL_MULTIPLES_MAX_FACETS={SMALL_MULTIPLES_MAX_FACETS} is outside [4, 12]."
         )

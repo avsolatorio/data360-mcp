@@ -13,6 +13,7 @@ Design principles:
 from __future__ import annotations
 
 from collections import defaultdict
+import re
 from dataclasses import dataclass, field
 from enum import Enum
 from numbers import Integral
@@ -267,14 +268,30 @@ def build_chart_title_with_context(
 _CUSTOM_BREAKDOWN_DIMS = {"comp_breakdown_1", "comp_breakdown_2"}
 
 
+def _is_homogeneous_breakdown(vals: list[str]) -> bool:
+    """Return True when breakdown codes are ordinal categories of ONE metric.
+
+    Strategy: strip trailing digits from each code. If all codes reduce to the
+    same base string, they are categories of the same metric (e.g.
+    IPC_IPC_PHASE1, IPC_IPC_PHASE2, IPC_IPC_PHASE3 → all become IPC_IPC_PHASE).
+    Heterogeneous codes (WGI_EST, WGI_SC, WGI_SE, WGI_SR) reduce to distinct
+    base strings and are correctly flagged as mixed-unit.
+    """
+    bases = {re.sub(r"\d+$", "", v) for v in vals}
+    return len(bases) == 1 and next(iter(bases)) != ""  # non-empty shared prefix
+
+
 def _format_breakdown_subtitle(df: pd.DataFrame, color_dim: str | None) -> str | None:
-    """Return a compact subtitle note when color_dim is a custom breakdown.
+    """Return a compact subtitle note when color_dim is a heterogeneous custom breakdown.
 
     Appended to chart subtitles so end users can see which series are present
-    and understand that each series may carry different units or scales.
+    and understand they may carry different units or scales.
 
-    Returns None when color_dim is a standard dimension (country, sex, age, …)
-    or when there is only one unique breakdown value.
+    Returns None when:
+    - color_dim is a standard dimension (country, sex, age, …)
+    - there is only one unique breakdown value
+    - the breakdowns are homogeneous (ordinal categories of the same metric,
+      e.g. IPC Phase 1–5 are all person counts — no mixed-unit warning needed)
     """
     if color_dim not in _CUSTOM_BREAKDOWN_DIMS:
         return None
@@ -283,6 +300,9 @@ def _format_breakdown_subtitle(df: pd.DataFrame, color_dim: str | None) -> str |
     vals = sorted(str(v) for v in df[color_dim].dropna().unique())
     if len(vals) <= 1:
         return None
+    if _is_homogeneous_breakdown(vals):
+        # Ordinal categories of one metric — list series but omit the mixed-unit warning.
+        return f"Series: {', '.join(vals)}"
     series_list = ", ".join(vals)
     return f"Series: {series_list} — series may have different units/scales"
 
@@ -991,10 +1011,38 @@ def build_small_multiples_spec(
     y_label: str = "Value",
     unit_measure: str | None = None,
 ) -> dict:
-    """Faceted small multiples: 1 indicator, 2+ breakdowns or breakdown+many countries."""
-    rows = df.to_dict(orient="records")
+    """Faceted small multiples: 1 indicator, 2+ breakdowns or breakdown+many countries.
+
+    Facet panels are capped at SMALL_MULTIPLES_MAX_FACETS to prevent the chart
+    overflowing the embedding UI. When the cap is applied, the top-N facet values
+    by most-recent data point are retained and a note is added to the subtitle.
+    """
     facet_dim = result.facet_dim or "country"
     color_dim = result.color_dim
+
+    # --- Facet cap: keep at most SMALL_MULTIPLES_MAX_FACETS panels ---
+    n_facets_total = df[facet_dim].nunique() if facet_dim in df.columns else 1
+    trimmed = False
+    if n_facets_total > SMALL_MULTIPLES_MAX_FACETS:
+        trimmed = True
+        # Select top-N facet values by most recent (highest TIME_PERIOD) row count.
+        # Ties broken by total row count (more data = more useful panel).
+        if "year" in df.columns:
+            latest_year = df.groupby(facet_dim)["year"].max()
+        else:
+            latest_year = pd.Series(dtype="object")
+        row_count = df.groupby(facet_dim).size()
+        rank_key = latest_year.reindex(row_count.index).fillna(pd.Timestamp.min)
+        # Sort: latest year desc, then row count desc
+        top_facets = (
+            pd.DataFrame({"latest": rank_key, "count": row_count})
+            .sort_values(["latest", "count"], ascending=False)
+            .head(SMALL_MULTIPLES_MAX_FACETS)
+            .index.tolist()
+        )
+        df = df[df[facet_dim].isin(top_facets)].copy()
+
+    rows = df.to_dict(orient="records")
     max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
     tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
 
@@ -1035,6 +1083,22 @@ def build_small_multiples_spec(
     # Option C: annotate chart subtitle with breakdown series names when color_dim is
     # a custom breakdown (comp_breakdown_1/2). Standard dims (country, sex) are unaffected.
     annotated_title = _append_breakdown_note(title, df, color_dim)
+
+    # Append facet-cap note when panels were trimmed.
+    if trimmed:
+        facet_label = facet_dim.replace("_", " ")
+        cap_note = (
+            f"Showing {SMALL_MULTIPLES_MAX_FACETS} of {n_facets_total} {facet_label}s "
+            f"by most recent data — specify a subset for the full view"
+        )
+        if isinstance(annotated_title, dict):
+            existing = annotated_title.get("subtitle", "")
+            annotated_title = {
+                **annotated_title,
+                "subtitle": f"{existing} · {cap_note}" if existing else cap_note,
+            }
+        else:
+            annotated_title = {"text": annotated_title, "subtitle": cap_note}
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -1367,6 +1431,11 @@ HIGH_CARDINALITY_THRESHOLDS: dict[str, int] = {
     "facet_threshold": 4,
     "top_n_series": 12,
 }
+
+# Maximum number of facet panels rendered in SMALL_MULTIPLES.
+# Chatbot UIs embed charts at fixed widths; beyond this the panels become
+# unreadably small and the page overflows vertically.
+SMALL_MULTIPLES_MAX_FACETS: int = 8
 
 
 # Keep legacy aliases for backward compat with existing tests
