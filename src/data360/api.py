@@ -1284,7 +1284,6 @@ async def get_metadata(
     database_id: str,
     indicator_id: str,
     select_fields: list[str] | None = None,
-    get_valid_disaggregations_func: Any | None = None,
     fetch_disaggregation: bool = True,
     required_country: str | None = None,
 ) -> MetadataResponse:  # noqa: PLR0912
@@ -1300,7 +1299,6 @@ async def get_metadata(
         select_fields: Optional list of metadata fields to return. If None, returns all fields.
             Available fields: methodology, statistical_concept, definition_long, limitation,
             relevance, aggregation_method, periodicity, time_periods, ref_country, sources_note.
-        get_valid_disaggregations_func: Internal parameter — do not pass this; leave it as None.
         fetch_disaggregation: If True (default), also fetch disaggregation dimensions (field_name, field_value).
         required_country: Optional country name or 3-letter code (e.g. "Kenya", "KEN").
             Use semicolon-separated for multiple (e.g. "China; USA"). When provided,
@@ -1315,13 +1313,9 @@ async def get_metadata(
                 instead of the full field_value list.
             error: Error message string if any request failed; otherwise None.
     """
-    # Use provided function or default
-    if get_valid_disaggregations_func is None:
-        get_valid_disaggregations_func = _get_valid_disaggregations
 
     # Cache lookup — key includes select_fields (as frozenset) and required_country
-    # because those affect what is returned.  get_valid_disaggregations_func is
-    # excluded intentionally: it is always _get_valid_disaggregations in production.
+    # because those affect what is returned.
     _cache_key = (
         database_id,
         indicator_id,
@@ -1424,7 +1418,7 @@ async def get_metadata(
             try:
                 raw_disaggregations = disagg_res.json()
                 disaggregations = _strip_disaggregation(
-                    get_valid_disaggregations_func(raw_disaggregations),
+                    _get_valid_disaggregations(raw_disaggregations),
                     queried_countries,
                 )
             except ValueError as e:
