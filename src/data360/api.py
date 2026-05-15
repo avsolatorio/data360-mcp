@@ -1744,18 +1744,14 @@ async def get_data(
         # Strip boilerplate fields for LLM token savings
         raw_data = [_strip_data_row(row) for row in raw_data]
 
-        filter_notes: list[str] = (
-            list(validation_errors) if validation_errors else []
-        )
+        filter_notes: list[str] = list(validation_errors) if validation_errors else []
         if ref_area_filter == "member_economies_only":
             if ref_area_unpinned:
                 from .providers import get_group_hierarchy_manager  # noqa: PLC0415
 
                 _ghm = get_group_hierarchy_manager()
                 raw_data = [
-                    r
-                    for r in raw_data
-                    if _ghm.is_country(str(r.get("REF_AREA", "")))
+                    r for r in raw_data if _ghm.is_country(str(r.get("REF_AREA", "")))
                 ]
             else:
                 filter_notes.append(
@@ -2548,11 +2544,9 @@ async def summarize_data(
     # compare_countries. Injects ref_area_name directly into the group_key dict
     # so it flows through GroupSummary.to_compact() without a schema change.
     # Silently no-ops on error — country name is optional enrichment.
-    _area_codes = sorted({
-        g.group_key["ref_area"]
-        for g in group_summaries
-        if "ref_area" in g.group_key
-    })
+    _area_codes = sorted(
+        {g.group_key["ref_area"] for g in group_summaries if "ref_area" in g.group_key}
+    )
     if _area_codes:
         _name_map = await _resolve_country_names(_area_codes)
         for g in group_summaries:
