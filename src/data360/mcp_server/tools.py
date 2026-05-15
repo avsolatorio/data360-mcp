@@ -18,7 +18,6 @@ from data360 import visualization as data360_viz
 from ._server_definition import mcp
 from .tool_spans import instrument_mcp_tool
 
-
 # ---------------------------------------------------------------------------
 # Serializer for aggregation tools
 # ---------------------------------------------------------------------------
@@ -48,6 +47,7 @@ def _compact_aggregation_serializer(data: Any) -> str:
     if hasattr(data, "to_compact"):
         return json.dumps(data.to_compact(), separators=(",", ":"))
     return pydantic_core.to_json(data, fallback=str).decode()
+
 
 search_indicators = mcp.tool(
     instrument_mcp_tool(data360_api.search, tool_name="data360_search_indicators"),
@@ -84,7 +84,9 @@ find_codelist_value = mcp.tool(
 )
 
 list_indicators = mcp.tool(
-    instrument_mcp_tool(data360_api.get_indicators, tool_name="data360_list_indicators"),
+    instrument_mcp_tool(
+        data360_api.get_indicators, tool_name="data360_list_indicators"
+    ),
     name="data360_list_indicators",
     description=data360_api.get_indicators.__doc__,
 )
@@ -135,7 +137,9 @@ expand_country_group = mcp.tool(
 
 summarize_data = mcp.add_tool(
     Tool.from_function(
-        instrument_mcp_tool(data360_api.summarize_data, tool_name="data360_summarize_data"),
+        instrument_mcp_tool(
+            data360_api.summarize_data, tool_name="data360_summarize_data"
+        ),
         name="data360_summarize_data",
         description=data360_api.summarize_data.__doc__,
         serializer=_compact_aggregation_serializer,
@@ -144,7 +148,9 @@ summarize_data = mcp.add_tool(
 
 rank_countries = mcp.add_tool(
     Tool.from_function(
-        instrument_mcp_tool(data360_api.rank_countries, tool_name="data360_rank_countries"),
+        instrument_mcp_tool(
+            data360_api.rank_countries, tool_name="data360_rank_countries"
+        ),
         name="data360_rank_countries",
         description=data360_api.rank_countries.__doc__,
         serializer=_compact_aggregation_serializer,
@@ -162,23 +168,23 @@ compare_countries = mcp.add_tool(
     )
 )
 
+# TODO: Add these tools back in when they are implemented
+# compute_derived = mcp.tool(
+#     instrument_mcp_tool(data360_api.compute_derived, tool_name="data360_compute_derived"),
+#     name="data360_compute_derived",
+#     description=data360_api.compute_derived.__doc__,
+# )
 
-compute_derived = mcp.tool(
-    instrument_mcp_tool(data360_api.compute_derived, tool_name="data360_compute_derived"),
-    name="data360_compute_derived",
-    description=data360_api.compute_derived.__doc__,
-)
+# pivot_table = mcp.tool(
+#     instrument_mcp_tool(data360_api.pivot_table, tool_name="data360_pivot_table"),
+#     name="data360_pivot_table",
+#     description=data360_api.pivot_table.__doc__,
+# )
 
-pivot_table = mcp.tool(
-    instrument_mcp_tool(data360_api.pivot_table, tool_name="data360_pivot_table"),
-    name="data360_pivot_table",
-    description=data360_api.pivot_table.__doc__,
-)
-
-diagnostic_summary = mcp.tool(
-    instrument_mcp_tool(
-        data360_api.diagnostic_summary, tool_name="data360_diagnostic_summary"
-    ),
-    name="data360_diagnostic_summary",
-    description=data360_api.diagnostic_summary.__doc__,
-)
+# diagnostic_summary = mcp.tool(
+#     instrument_mcp_tool(
+#         data360_api.diagnostic_summary, tool_name="data360_diagnostic_summary"
+#     ),
+#     name="data360_diagnostic_summary",
+#     description=data360_api.diagnostic_summary.__doc__,
+# )
