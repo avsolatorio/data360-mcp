@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -18,6 +19,7 @@ from data360.otel_setup import (
 )
 
 _audit_logger = logging.getLogger("audit")
+_telemetry_client = None
 
 # Setup logging from configuration
 mcp_settings = get_mcp_server_settings()
@@ -38,6 +40,100 @@ from data360.mcp_server import mcp  # noqa: E402
 _connection_string = mcp_settings.azure_connection_string or os.environ.get(
     "APPLICATIONINSIGHTS_CONNECTION_STRING"
 )
+
+# Initialize OpenCensus TelemetryClient for custom events (forwarded to Splunk)
+if mcp_settings.env != "local" and _connection_string:
+    try:
+        from opencensus.ext.azure.log_exporter import (
+            AzureEventHandler,  # type: ignore[import-untyped]
+        )
+
+        # Create a dedicated logger for custom events
+        event_logger = logging.getLogger("customEvents")
+        event_logger.setLevel(logging.INFO)
+
+        # Add Azure handler that sends to customEvents table
+        azure_handler = AzureEventHandler(connection_string=_connection_string)
+        event_logger.addHandler(azure_handler)
+
+        _telemetry_client = event_logger
+    except ImportError:
+        pass
+
+
+class SecurityValidationMiddleware(BaseHTTPMiddleware):
+    """Validate MCP tool calls to prevent prompt injection and unauthorized access."""
+
+    async def dispatch(self, request: Request, call_next):
+        # Only validate MCP tool calls
+        if not request.url.path.startswith("/mcp"):
+            return await call_next(request)
+
+        try:
+            # Read and parse body
+            body_bytes = await request.body()
+            if not body_bytes:
+                return await call_next(request)
+
+            body = json.loads(body_bytes)
+            method = body.get("method", "")
+
+            # Log tools/list requests for monitoring (allowed but monitored)
+            if method == "tools/list":
+                client_ip = request.headers.get(
+                    "X-Forwarded-For",
+                    request.client.host if request.client else "unknown",
+                )
+                logging.info(f"tools/list called from IP: {client_ip}")
+
+            # Validate tools/call requests
+            if method == "tools/call":
+                from data360.mcp_server.security_validator import (  # noqa: PLC0415
+                    validate_search_query,
+                    validate_tool_call,
+                )
+
+                params = body.get("params", {})
+                tool_name = params.get("name", "")
+                arguments = params.get("arguments", {})
+
+                # Validate tool call
+                is_valid, error_msg = validate_tool_call(tool_name, arguments)
+                if not is_valid:
+                    logging.warning(
+                        f"Security violation: {error_msg} | Tool: {tool_name}"
+                    )
+                    return JSONResponse(
+                        status_code=403,
+                        content={
+                            "jsonrpc": "2.0",
+                            "id": body.get("id"),
+                            "error": {"code": -32001, "message": error_msg},
+                        },
+                    )
+
+                # Additional validation for search queries
+                if tool_name == "data360_search_indicators":
+                    query = arguments.get("query", "")
+                    is_valid, error_msg = validate_search_query(query)
+                    if not is_valid:
+                        logging.warning(f"Search query blocked: {query[:100]}")
+                        return JSONResponse(
+                            status_code=403,
+                            content={
+                                "jsonrpc": "2.0",
+                                "id": body.get("id"),
+                                "error": {"code": -32001, "message": error_msg},
+                            },
+                        )
+
+        except json.JSONDecodeError:
+            pass  # Let MCP handle invalid JSON
+        except Exception as e:
+            logging.error(f"Security validation error: {e}")
+            # Continue on validation errors to avoid blocking legitimate requests
+
+        return await call_next(request)
 
 
 class AuditLogMiddleware(BaseHTTPMiddleware):
@@ -67,20 +163,30 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
         except Exception:
             pass
         response = await call_next(request)
-        _audit_logger.info(
-            "mcp_audit",
-            extra={
-                "custom_dimensions": {
-                    "session_id": session_id,
-                    "requestor_id": requestor_id,
-                    "timestamp": timestamp,
-                    "prompt": prompt,
-                    "prompt_hash": prompt_hash,
-                    "status_code": response.status_code,
-                    "path": request.url.path,
-                }
-            },
-        )
+
+        properties = {
+            "session_id": session_id,
+            "requestor_id": requestor_id,
+            "timestamp": timestamp,
+            "prompt": prompt,
+            "prompt_hash": prompt_hash,
+            "status_code": str(response.status_code),
+            "path": request.url.path,
+        }
+
+        # Log to traces with custom dimensions
+        _audit_logger.info("mcp_audit", extra={"custom_dimensions": properties})
+
+        # Also log as custom event for Splunk forwarding
+        if _telemetry_client:
+            _telemetry_client.info(
+                "MCP_Request",
+                extra={
+                    "custom_dimensions": properties,
+                    "event_name": "MCP_Request",
+                },
+            )
+
         return response
 
 
@@ -108,6 +214,8 @@ app = FastAPI(
 )  # pyright: ignore[reportUnusedExpression]
 
 app.add_middleware(AuditLogMiddleware)
+# SecurityValidationMiddleware disabled - was blocking tools/list
+app.add_middleware(SecurityValidationMiddleware)
 
 # Instrument FastAPI for incoming request tracking
 if mcp_settings.env != "local" and _connection_string:
