@@ -503,26 +503,16 @@ async def _search_raw(
         try:
             response_data = response.json()
         except ValueError as e:
-            mcp_error = ParseError(context="search", original_error=e)
-        else:
-            try:
-                return _process_search_response(response_data, request)
-            except Exception as e:
-                mcp_error = ParseError(
-                    context="search",
-                    detail=f"Failed to parse API response: {str(e)}",
-                    original_error=e,
-                )
+            raise ParseError(context="search", original_error=e)
 
+        return _process_search_response(response_data, request)
+
+    except Data360MCPError:
+        # Re-raise our own errors to propagate isError: true to MCP client
+        raise
     except Exception as e:
-        mcp_error = classify_error(e, context="search")
-
-    if mcp_error:
-        return SearchResponse(items=None, error=mcp_error.detail)
-    # This should never be reached, but pyright needs it for type checking
-    return SearchResponse(
-        items=None, error="Unexpected error: no response and no error message"
-    )
+        # Convert unknown exceptions to Data360MCPError and raise
+        raise classify_error(e, context="search")
 
 
 async def _resolve_country_code(country_query: str) -> str | None:
@@ -1703,8 +1693,9 @@ async def get_data(
         try:
             data_json = data_res.json()
         except ValueError as e:
-            mcp_err = ParseError(context="data", original_error=e)
-            return IndicatorDataResponse(data=None, error=mcp_err.detail)
+            # mcp_err = ParseError(context="data", original_error=e)
+            # return IndicatorDataResponse(data=None, error=mcp_err.detail)
+            raise ParseError(context="data", original_error=e)
 
         raw_data = data_json.get("value", [])
         total_count = data_json.get("@odata.count")  # May be None
@@ -1772,9 +1763,14 @@ async def get_data(
             failed_validation=filter_notes if filter_notes else None,
         )
 
+    except Data360MCPError:
+        # Re-raise our own errors to propagate isError: true to MCP client
+        raise
     except Exception as e:
-        mcp_err = classify_error(e, context="data")
-        return IndicatorDataResponse(data=None, error=mcp_err.detail)
+        # # Convert unknown exceptions to Data360MCPError and raise
+        # mcp_err = classify_error(e, context="data")
+        # return IndicatorDataResponse(data=None, error=mcp_err.detail)
+        raise classify_error(e, context="data")
 
 
 async def get_indicators(database_id: str) -> list[str]:

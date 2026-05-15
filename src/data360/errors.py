@@ -116,12 +116,101 @@ class APIError(Data360MCPError):
     ):
         self.status_code = status_code
         self.response_text = response_text
-        detail = f"HTTP error {status_code}: {response_text}"
+
+        # Sanitize response text - avoid leaking WAF HTML into error messages
+        sanitized_response = self._sanitize_error_response(response_text, status_code)
+        detail = f"HTTP {status_code}: {sanitized_response}"
+
         super().__init__(
             error_code=f"http_error:{context}",
             detail=detail,
             original_error=original_error,
         )
+
+    @staticmethod
+    def _sanitize_error_response(response_text: str, status_code: int) -> str:
+        """Sanitize error responses to avoid leaking HTML/WAF content.
+
+        Args:
+            response_text: Raw response body from the backend
+            status_code: HTTP status code
+
+        Returns:
+            Clean, user-friendly error message
+        """
+        # Empty or whitespace-only response
+        if not response_text or not response_text.strip():
+            return _get_status_message(status_code)
+
+        # If response looks like HTML (WAF error pages), don't include it
+        # Check both raw and after stripping common whitespace/newlines
+        text_to_check = response_text.lstrip()
+        if text_to_check.startswith(
+            ("<html", "<!DOCTYPE", "<HTML", "<!doctype", "<!DOCTYPE", "<!Doctype")
+        ):
+            return _get_status_message(status_code)
+
+        # For JSON error responses, try to extract the error message
+        if text_to_check.startswith("{"):
+            try:
+                import json
+
+                error_data = json.loads(response_text)
+                # Common error message fields
+                for key in ["error", "message", "detail", "error_description", "code"]:
+                    if key in error_data:
+                        msg = error_data[key]
+                        # Skip if the JSON error field itself contains HTML
+                        msg_str = str(msg)
+                        if msg_str.lstrip().startswith(
+                            ("<html", "<!DOCTYPE", "<HTML", "<!doctype")
+                        ):
+                            return _get_status_message(status_code)
+                        # Limit length to avoid verbose error dumps
+                        return (
+                            msg_str[:200]
+                            if len(msg_str) <= 200
+                            else msg_str[:200] + "..."
+                        )
+            except Exception:
+                pass  # Fall through to default message
+
+        # Check if response contains HTML tags anywhere (not just at start)
+        # Common WAF patterns: <html, <body, <head, <title
+        lower_text = response_text.lower()
+        if any(
+            tag in lower_text
+            for tag in ["<html", "<body", "<head", "<title", "<!doctype"]
+        ):
+            return _get_status_message(status_code)
+
+        # For other responses, truncate and sanitize
+        # Remove excessive whitespace and newlines
+        cleaned = " ".join(response_text.split())
+        if len(cleaned) > 200:
+            return cleaned[:200] + "..."
+
+        return cleaned if cleaned else _get_status_message(status_code)
+
+
+def _get_status_message(status_code: int) -> str:
+    """Get a user-friendly message for common HTTP status codes."""
+    status_messages = {
+        400: "Bad Request - Invalid parameters",
+        401: "Unauthorized - Authentication required",
+        403: "Forbidden - Access denied",
+        404: "Not Found - Resource does not exist",
+        408: "Request Timeout - Session expired",
+        413: "Payload Too Large - Request exceeds size limit",
+        429: "Too Many Requests - Rate limit exceeded",
+        500: "Internal Server Error - Backend service error",
+        502: "Bad Gateway - Backend service unavailable",
+        503: "Service Unavailable - Backend temporarily down",
+        504: "Gateway Timeout - Backend did not respond in time",
+    }
+    return status_messages.get(
+        status_code, f"The request failed with status {status_code}"
+    )
 
 
 class Data360TimeoutError(Data360MCPError):
@@ -132,7 +221,9 @@ class Data360TimeoutError(Data360MCPError):
         context: str,
         original_error: Exception | None = None,
     ):
-        detail = _ERROR_MESSAGES.get(f"timeout:{context}", f"Request timed out: {context}")
+        detail = _ERROR_MESSAGES.get(
+            f"timeout:{context}", f"Request timed out: {context}"
+        )
         super().__init__(
             error_code=f"timeout:{context}",
             detail=detail,
