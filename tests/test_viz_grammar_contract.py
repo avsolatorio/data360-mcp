@@ -344,3 +344,136 @@ class TestSmallMultiplesFacetCap:
         assert 4 <= SMALL_MULTIPLES_MAX_FACETS <= 12, (
             f"SMALL_MULTIPLES_MAX_FACETS={SMALL_MULTIPLES_MAX_FACETS} is outside [4, 12]."
         )
+
+# ============================================================================
+# 6. Legend title — _color_encoding resolves _TOOLTIP_SPECS labels
+# ============================================================================
+
+
+class TestColorEncodingLegendTitle:
+    """_color_encoding must use human-readable labels from _TOOLTIP_SPECS.
+
+    Previously the legend title was missing entirely, so Vega-Lite rendered the
+    raw column name (e.g. 'comp_breakdown_2') as the legend header.
+    """
+
+    def test_comp_breakdown_2_legend_title_is_sub_breakdown(self):
+        from data360.viz_config import _color_encoding
+        enc = _color_encoding("comp_breakdown_2", mark_type="line", n_items=3)
+        legend = enc.get("legend", {})
+        assert legend is not None, "Legend should be present for n_items > 1."
+        assert legend.get("title") == "Sub-Breakdown", (
+            f"Legend title for comp_breakdown_2 should be 'Sub-Breakdown', "
+            f"got {legend.get('title')!r}."
+        )
+
+    def test_comp_breakdown_1_legend_title_is_breakdown(self):
+        from data360.viz_config import _color_encoding
+        enc = _color_encoding("comp_breakdown_1", mark_type="line", n_items=6)
+        legend = enc.get("legend", {})
+        assert legend.get("title") == "Breakdown", (
+            f"Legend title for comp_breakdown_1 should be 'Breakdown', "
+            f"got {legend.get('title')!r}."
+        )
+
+    def test_country_legend_title_is_country(self):
+        from data360.viz_config import _color_encoding
+        enc = _color_encoding("country", mark_type="line", n_items=3)
+        legend = enc.get("legend", {})
+        assert legend.get("title") == "Country"
+
+    def test_caller_supplied_title_takes_priority(self):
+        from data360.viz_config import _color_encoding
+        enc = _color_encoding("comp_breakdown_2", mark_type="line", n_items=3,
+                               legend_title="Food Security Phase")
+        assert enc["legend"]["title"] == "Food Security Phase"
+
+    def test_unknown_field_falls_back_to_title_case(self):
+        from data360.viz_config import _color_encoding
+        enc = _color_encoding("some_custom_dim", mark_type="line", n_items=3)
+        assert enc["legend"]["title"] == "Some Custom Dim"
+
+    def test_small_multiples_spec_legend_not_raw_column_name(self):
+        """End-to-end: SMALL_MULTIPLES spec must not expose raw column names in legend."""
+        breakdowns = ["IPC_IPC_PHASE1", "IPC_IPC_PHASE2", "IPC_IPC_PHASE3"]
+        countries = ["Kenya", "Ghana", "Nigeria"]
+        rows = []
+        for c in countries:
+            for bd in breakdowns:
+                for yr in [2021, 2022, 2023]:
+                    rows.append({"year": pd.Timestamp(str(yr)), "value": 10.0,
+                                 "country": c, "comp_breakdown_2": bd})
+        df = pd.DataFrame(rows)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test", result)
+        inner_color = spec.get("spec", {}).get("encoding", {}).get("color", {})
+        legend = inner_color.get("legend", {})
+        title = legend.get("title", "") if legend else ""
+        assert title not in ("comp_breakdown_2", "comp_breakdown_1", ""), (
+            f"Legend title must not be a raw column name. Got: {title!r}."
+        )
+
+
+# ============================================================================
+# 7. Subtitle rebuild — shown countries only after SMALL_MULTIPLES cap
+# ============================================================================
+
+
+class TestSmallMultiplesSubtitleRebuild:
+    """After capping, the subtitle country list must only name the shown countries."""
+
+    def _make_many_country_df(self, n_countries: int) -> pd.DataFrame:
+        countries = [f"Country_{i:02d}" for i in range(n_countries)]
+        breakdowns = ["BD_A", "BD_B"]
+        rows = []
+        for c in countries:
+            for bd in breakdowns:
+                for yr in [2021, 2022, 2023]:
+                    rows.append({"year": pd.Timestamp(str(yr)), "value": 1.0,
+                                 "country": c, "comp_breakdown_1": bd})
+        return pd.DataFrame(rows)
+
+    def test_subtitle_only_lists_shown_countries(self):
+        n = SMALL_MULTIPLES_MAX_FACETS + 10
+        df = self._make_many_country_df(n)
+        result = select_strategy(df, n_indicators=1)
+
+        from data360.viz_config import build_chart_title_with_context
+        pre_built = build_chart_title_with_context("Test", None, df)
+        spec = dispatch_spec(result.strategy, df, pre_built, result)
+        subtitle = spec.get("title", {}).get("subtitle", "")
+
+        shown = {r["country"] for r in spec["data"]["values"]}
+        assert len(shown) == SMALL_MULTIPLES_MAX_FACETS
+
+        trimmed = {f"Country_{i:02d}" for i in range(n)} - shown
+        for c in trimmed:
+            assert c not in subtitle, (
+                f"Trimmed country '{c}' must not appear in subtitle. Got: {subtitle!r}"
+            )
+
+    def test_subtitle_does_not_say_plus_more_after_cap(self):
+        n = SMALL_MULTIPLES_MAX_FACETS + 10
+        df = self._make_many_country_df(n)
+        result = select_strategy(df, n_indicators=1)
+
+        from data360.viz_config import build_chart_title_with_context
+        pre_built = build_chart_title_with_context("Test", None, df)
+        spec = dispatch_spec(result.strategy, df, pre_built, result)
+        subtitle = spec.get("title", {}).get("subtitle", "")
+        assert "(+" not in subtitle, (
+            f"After cap, '(+N more)' must not appear. Got: {subtitle!r}"
+        )
+
+    def test_no_subtitle_change_under_cap(self):
+        n = SMALL_MULTIPLES_MAX_FACETS
+        df = self._make_many_country_df(n)
+        result = select_strategy(df, n_indicators=1)
+
+        from data360.viz_config import build_chart_title_with_context
+        pre_built = build_chart_title_with_context("Test", None, df)
+        spec = dispatch_spec(result.strategy, df, pre_built, result)
+        subtitle = spec.get("title", {}).get("subtitle", "")
+        assert "Showing" not in subtitle, (
+            f"No 'Showing N of M' note expected at or under cap. Got: {subtitle!r}"
+        )

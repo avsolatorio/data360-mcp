@@ -776,7 +776,20 @@ def _color_encoding(
     domain: list | None = None,
     mark_type: str = "point",
     n_items: int = 0,
+    legend_title: str | None = None,
 ) -> dict:
+    """Build a Vega-Lite color encoding channel.
+
+    Legend title resolves in this priority order:
+    1. Caller-supplied ``legend_title``
+    2. Human-readable label from ``_TOOLTIP_SPECS`` (e.g. "Sub-Breakdown")
+    3. Title-cased field name (e.g. "Comp Breakdown 2")
+    """
+    resolved_title = (
+        legend_title
+        or _TOOLTIP_SPECS.get(field, {}).get("title")
+        or field.replace("_", " ").title()
+    )
     scale = {"range": WB_CAT_COLORS}
     if domain:
         scale["domain"] = domain
@@ -787,6 +800,7 @@ def _color_encoding(
         legend: dict | None = {
             "orient": "top",
             "direction": "horizontal",
+            "title": resolved_title,
             "labelLimit": 100,
             "columns": 3,
         }
@@ -1107,6 +1121,28 @@ def build_small_multiples_spec(
     df, original_n = _cap_cardinality(
         df, facet_dim, HIGH_CARDINALITY_THRESHOLDS["small_multiples_max_facets"]
     )
+
+    # Rebuild the context subtitle so it only names the countries actually shown,
+    # not the full pre-cap list that build_chart_title_with_context built earlier.
+    if original_n is not None and isinstance(title, dict):
+        # Reconstruct the subtitle: country list + existing non-country parts
+        # The subtitle format is: "Country1, Country2, ... · year_range · units"
+        # We keep the year/unit parts and replace the country list.
+        existing_sub = title.get("subtitle", "")
+        # Extract parts after the first " · " separator (year range, units, series notes).
+        sep = " \u00b7 "
+        sub_parts = existing_sub.split(sep)
+        # First part is the country+year segment from format_chart_context_subtitle.
+        # Rebuild it with only the shown countries.
+        shown_countries = sorted(df[facet_dim].unique().tolist(), key=str.casefold)
+        year_lbl = _year_range_label(df["year"]) if "year" in df.columns else None
+        new_geo = ", ".join(shown_countries)
+        if year_lbl:
+            new_geo = f"{new_geo}, {year_lbl}"
+        # Re-assemble: new geo + any non-geo parts from position 2+ (units, series notes).
+        non_geo_parts = sub_parts[1:] if len(sub_parts) > 1 else []
+        new_sub_parts = [new_geo] + non_geo_parts
+        title = {**title, "subtitle": sep.join(new_sub_parts)}
 
     rows = df.to_dict(orient="records")
     max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
