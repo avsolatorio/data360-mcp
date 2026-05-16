@@ -1159,7 +1159,7 @@ def build_small_multiples_spec(
     tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
 
     n_facets = df[facet_dim].nunique() if facet_dim in df.columns else 1
-    columns = min(3, n_facets)
+    columns = min(2, n_facets)
     y_ax = {
         **_axis_style(),
         "title": None,
@@ -1211,7 +1211,7 @@ def build_small_multiples_spec(
                 "titleColor": WB_TEXT,
             },
         },
-        "spec": {**inner, "width": 220, "height": 160},
+        "spec": {**inner, "width": 180, "height": 120},
     }
     return inject_wb_config(spec)
 
@@ -1536,7 +1536,7 @@ HIGH_CARDINALITY_THRESHOLDS: dict[str, int] = {
     # Maximum facet panels in SMALL_MULTIPLES.
     # Chatbot UIs embed charts at fixed widths; beyond this panels become unreadably
     # small and the page overflows vertically.
-    "small_multiples_max_facets": 8,
+    "small_multiples_max_facets": 6,
     # Maximum bar rows in CROSS_SECTIONAL horizontal bar charts.
     # Beyond this, bars become hair-thin and labels collide.
     "cross_sectional_max_items": 20,
