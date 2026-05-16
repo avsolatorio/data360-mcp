@@ -251,9 +251,11 @@ class TestChartTitleContext:
         t = build_chart_title_with_context("My indicator", "current US$", df)
         assert isinstance(t, dict)
         assert t["text"] == "My indicator"
-        assert "Kenya" in t["subtitle"]
-        assert "2020-2021" in t["subtitle"]
-        assert "current US$" in t["subtitle"]
+        # subtitle is now a list of lines; join for substring checks.
+        full_text = " ".join(t["subtitle"]) if isinstance(t["subtitle"], list) else t["subtitle"]
+        assert "Kenya" in full_text
+        assert "2020-2021" in full_text
+        assert "current US$" in full_text
 
 
 # ─────────────────────────────────────────────────────────────────────────────

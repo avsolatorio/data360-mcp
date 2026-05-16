@@ -252,7 +252,12 @@ def build_chart_title_with_context(
     unit_subtitle: str | None,
     df: pd.DataFrame,
 ) -> str | dict:
-    """Vega-Lite title: main text plus subtitle (geography + years · unit when present)."""
+    """Vega-Lite title: main text plus subtitle lines (geography + years, unit).
+
+    Subtitle is returned as a **list of strings** so Vega-Lite v5 renders each
+    part on its own line. This prevents the single-line overflow that occurs
+    when country names, year ranges, units, and trim notes are concatenated.
+    """
     ctx = format_chart_context_subtitle(df)
     subtitle_parts: list[str] = []
     if ctx:
@@ -261,7 +266,7 @@ def build_chart_title_with_context(
         subtitle_parts.append(str(unit_subtitle).strip())
     if not subtitle_parts:
         return main_title
-    return {"text": main_title, "subtitle": " · ".join(subtitle_parts)}
+    return {"text": main_title, "subtitle": subtitle_parts}
 
 
 # Dimension codes that are custom breakdowns (not standard demographic dims).
@@ -312,15 +317,21 @@ def _append_breakdown_note(
     df: pd.DataFrame,
     color_dim: str | None,
 ) -> str | dict:
-    """Inject breakdown note into a Vega-Lite title dict's subtitle field."""
+    """Inject breakdown note into a Vega-Lite title dict's subtitle.
+
+    When subtitle is a list (Vega-Lite multi-line form), the note is appended
+    as a new line. When subtitle is a string, it is appended with ' · '.
+    """
     note = _format_breakdown_subtitle(df, color_dim)
     if not note:
         return title
     if isinstance(title, dict):
         existing = title.get("subtitle", "")
+        if isinstance(existing, list):
+            return {**title, "subtitle": existing + [note]}
         new_sub = f"{existing} · {note}" if existing else note
         return {**title, "subtitle": new_sub}
-    # Plain string title — upgrade to dict
+    # Plain string title — upgrade to single-line dict.
     return {"text": title, "subtitle": note}
 
 
@@ -381,15 +392,21 @@ def _append_trim_note(
     was capped by :func:`_cap_cardinality`.
 
     No-op when *original* is None (no trimming occurred).
+    When subtitle is a list (Vega-Lite multi-line form), the note is appended
+    as a new line. When subtitle is a string, it is appended with ' · '.
     """
     if original is None:
         return title
+    # Correct pluralisation: 'country' → 'countries', others get plain 's'.
+    dim_plural = "countries" if dim_label == "country" else f"{dim_label}s"
     note = (
-        f"Showing {shown} of {original} {dim_label}s by most recent data — "
+        f"Showing {shown} of {original} {dim_plural} by most recent data — "
         "specify a subset for the full view"
     )
     if isinstance(title, dict):
         existing = title.get("subtitle", "")
+        if isinstance(existing, list):
+            return {**title, "subtitle": existing + [note]}
         return {**title, "subtitle": f"{existing} · {note}" if existing else note}
     return {"text": title, "subtitle": note}
 
@@ -1125,24 +1142,17 @@ def build_small_multiples_spec(
     # Rebuild the context subtitle so it only names the countries actually shown,
     # not the full pre-cap list that build_chart_title_with_context built earlier.
     if original_n is not None and isinstance(title, dict):
-        # Reconstruct the subtitle: country list + existing non-country parts
-        # The subtitle format is: "Country1, Country2, ... · year_range · units"
-        # We keep the year/unit parts and replace the country list.
         existing_sub = title.get("subtitle", "")
-        # Extract parts after the first " · " separator (year range, units, series notes).
-        sep = " \u00b7 "
-        sub_parts = existing_sub.split(sep)
-        # First part is the country+year segment from format_chart_context_subtitle.
-        # Rebuild it with only the shown countries.
+        # Normalise to list (handle legacy string subtitles from tests).
+        if isinstance(existing_sub, str):
+            existing_sub = [p.strip() for p in existing_sub.split(" · ") if p.strip()]
+        # Rebuild element [0] (country + year range); keep [1:] (units, series notes).
         shown_countries = sorted(df[facet_dim].unique().tolist(), key=str.casefold)
         year_lbl = _year_range_label(df["year"]) if "year" in df.columns else None
         new_geo = ", ".join(shown_countries)
         if year_lbl:
             new_geo = f"{new_geo}, {year_lbl}"
-        # Re-assemble: new geo + any non-geo parts from position 2+ (units, series notes).
-        non_geo_parts = sub_parts[1:] if len(sub_parts) > 1 else []
-        new_sub_parts = [new_geo] + non_geo_parts
-        title = {**title, "subtitle": sep.join(new_sub_parts)}
+        title = {**title, "subtitle": [new_geo] + existing_sub[1:]}
 
     rows = df.to_dict(orient="records")
     max_abs = float(df["value"].abs().max()) if "value" in df.columns else None

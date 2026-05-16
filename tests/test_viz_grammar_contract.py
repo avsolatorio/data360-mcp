@@ -328,12 +328,14 @@ class TestSmallMultiplesFacetCap:
         )
 
     def test_over_cap_adds_showing_note_to_subtitle(self):
-        """Subtitle must say 'Showing N of M' when panels are trimmed."""
+        """Subtitle must contain 'Showing N of M' when panels are trimmed."""
         n = SMALL_MULTIPLES_MAX_FACETS + 10
         df = self._make_many_country_df(n)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, {"text": "T", "subtitle": "S"}, result)
-        subtitle = spec.get("title", {}).get("subtitle", "")
+        raw_sub = spec.get("title", {}).get("subtitle", "")
+        # subtitle may be a list (new multi-line form) or a plain string.
+        subtitle = " ".join(raw_sub) if isinstance(raw_sub, list) else raw_sub
         assert f"Showing {SMALL_MULTIPLES_MAX_FACETS} of {n}" in subtitle, (
             f"Expected 'Showing {SMALL_MULTIPLES_MAX_FACETS} of {n}' in subtitle, "
             f"got: {subtitle!r}"
@@ -460,7 +462,8 @@ class TestSmallMultiplesSubtitleRebuild:
         from data360.viz_config import build_chart_title_with_context
         pre_built = build_chart_title_with_context("Test", None, df)
         spec = dispatch_spec(result.strategy, df, pre_built, result)
-        subtitle = spec.get("title", {}).get("subtitle", "")
+        raw_sub = spec.get("title", {}).get("subtitle", "")
+        subtitle = " ".join(raw_sub) if isinstance(raw_sub, list) else raw_sub
         assert "(+" not in subtitle, (
             f"After cap, '(+N more)' must not appear. Got: {subtitle!r}"
         )
