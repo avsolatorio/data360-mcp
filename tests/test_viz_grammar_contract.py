@@ -509,9 +509,11 @@ class TestSmallMultiplesSubtitleRebuild:
         assert "Kenya" in subtitle
 
 
-def test_append_trim_note_uses_human_friendly_plural():
-    title = {"text": "Test", "subtitle": ["Kenya, 2021-2023"]}
-    out = _append_trim_note(title, "comp_breakdown_1", shown=8, original=14)
-    subtitle = " ".join(out["subtitle"]) if isinstance(out["subtitle"], list) else ""
-    assert "breakdowns" in subtitle
-    assert "comp_breakdown_1s" not in subtitle
+class TestTrimNotePluralization:
+    def test_append_trim_note_pluralizes_custom_dimensions(self):
+        title = {"text": "Test", "subtitle": ["Kenya, 2021-2023"]}
+        out = _append_trim_note(title, "comp_breakdown_1", shown=8, original=14)
+        raw_sub = out.get("subtitle", "")
+        subtitle = " ".join(raw_sub) if isinstance(raw_sub, list) else raw_sub
+        assert "breakdowns" in subtitle
+        assert "comp_breakdown_1s" not in subtitle

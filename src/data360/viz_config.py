@@ -200,6 +200,8 @@ _TOOLTIP_PRIORITY = [
     "comp_breakdown_2",
 ]
 
+_VOWELS = {"a", "e", "i", "o", "u"}
+
 
 def _year_range_label(year_series: pd.Series) -> str | None:
     """Min–max year label, e.g. ``1990-2024`` or ``2020`` when only one year."""
@@ -399,9 +401,10 @@ def _append_trim_note(
         return title
     dim_title = (
         _TOOLTIP_SPECS.get(dim_label, {}).get("title")
-        or dim_label.replace("_", " ").title()
+        or dim_label.replace("_", " ")
     ).strip().lower()
-    if dim_title.endswith("y") and len(dim_title) > 1 and dim_title[-2] not in "aeiou":
+    # Simple English pluralization for subtitle notes.
+    if dim_title.endswith("y") and len(dim_title) > 2 and dim_title[-2] not in _VOWELS:
         dim_plural = f"{dim_title[:-1]}ies"
     elif dim_title.endswith(("s", "x", "z", "ch", "sh")):
         dim_plural = f"{dim_title}es"
