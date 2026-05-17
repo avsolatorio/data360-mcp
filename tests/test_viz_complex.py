@@ -1423,3 +1423,210 @@ class TestBarChartGoGRobustness:
         assert spec["config"]["axis"].get("labelOverlap") == "greedy", (
             "Bar chart axis config must set labelOverlap='greedy'."
         )
+
+
+# ============================================================================
+# Gap L5/B12 — _value_label_expr compact number format (non-currency)
+# ============================================================================
+
+
+class TestValueLabelExpr:
+    """_value_label_expr must emit compact K/M/B/T suffixes for non-currency units."""
+
+    def test_non_currency_expr_contains_trillion_tier(self):
+        """Default unit must produce a trillion ('t') tier for macro indicators."""
+        from data360.viz_config import _value_label_expr
+
+        expr = _value_label_expr(None)
+        assert "1e12" in expr and "'t'" in expr, (
+            "_value_label_expr must include a trillion tier (1e12 -> 't') "
+            "for large-number macro indicators like population."
+        )
+
+    def test_non_currency_expr_contains_billion_tier(self):
+        from data360.viz_config import _value_label_expr
+
+        expr = _value_label_expr(None)
+        assert "1e9" in expr and "'b'" in expr, (
+            "_value_label_expr must include a billion tier (1e9 -> 'b')."
+        )
+
+    def test_non_currency_expr_contains_million_tier(self):
+        from data360.viz_config import _value_label_expr
+
+        expr = _value_label_expr(None)
+        assert "1e6" in expr and "'m'" in expr, (
+            "_value_label_expr must include a million tier (1e6 -> 'm')."
+        )
+
+    def test_non_currency_expr_contains_thousand_tier(self):
+        from data360.viz_config import _value_label_expr
+
+        expr = _value_label_expr(None)
+        assert "1e3" in expr and "'k'" in expr, (
+            "_value_label_expr must include a thousand tier (1e3 -> 'k')."
+        )
+
+    def test_percentage_unit_still_produces_expr(self):
+        """Percentage units must still get a label expression (no empty string fallback)."""
+        from data360.viz_config import _value_label_expr
+
+        expr = _value_label_expr("%")
+        assert isinstance(expr, str) and len(expr) > 0, (
+            "_value_label_expr must return a non-empty string for percentage units."
+        )
+
+    def test_currency_expr_has_dollar_prefix(self):
+        """Currency units must prepend a '$' prefix character in the expression."""
+        from data360.viz_config import _value_label_expr
+
+        expr = _value_label_expr("current US$")
+        assert "'$'" in expr or "\"$\"" in expr, (
+            "Currency labelExpr must include a '$' prefix. "
+            "Got: " + repr(expr[:80])
+        )
+
+    def test_expr_handles_abs_for_negative_values(self):
+        """Expression must use abs(datum.value) so negative axis labels are formatted correctly."""
+        from data360.viz_config import _value_label_expr
+
+        expr = _value_label_expr(None)
+        assert "abs(datum.value)" in expr, (
+            "labelExpr must use abs(datum.value) for tier comparison so that "
+            "negative values like -2.5B are formatted as '-2.5b', not '0'."
+        )
+
+
+# ============================================================================
+# Gap L6 — subtitle must be a list for long country lists (AntVis T3 wrap)
+# ============================================================================
+
+
+class TestSubtitleWrapping:
+    """build_chart_title_with_context must produce a list subtitle for multi-line wrapping."""
+
+    def _make_df(self, countries, years=(2000, 2023)):
+        import pandas as pd
+
+        rows = []
+        for c in countries:
+            for y in range(years[0], years[1] + 1):
+                rows.append({"country": c, "year": y, "value": 1.0})
+        return pd.DataFrame(rows)
+
+    def test_subtitle_is_list_for_single_country(self):
+        """Even single-country specs must return subtitle as a list for uniform rendering."""
+        df = self._make_df(["Kenya"])
+        t = build_chart_title_with_context("GDP per capita", "current US$", df)
+        assert isinstance(t["subtitle"], list), (
+            "subtitle must always be a list so the Vega-Lite renderer can wrap text. "
+            f"Got type: {type(t['subtitle'])}"
+        )
+
+    def test_subtitle_is_list_for_many_countries(self):
+        """8-country subtitle must be a list to allow wrapping at 80 chars."""
+        countries = [
+            "South Africa", "Spain", "Greece", "Brazil",
+            "Germany", "France", "Japan", "Nigeria",
+        ]
+        df = self._make_df(countries)
+        t = build_chart_title_with_context("Unemployment rate", "%", df)
+        assert isinstance(t["subtitle"], list), (
+            "8-country subtitle must be a list for multi-line wrapping in the chatbot UI."
+        )
+
+    def test_subtitle_list_contains_at_least_one_nonempty_line(self):
+        df = self._make_df(["Kenya", "Tanzania", "Uganda"])
+        t = build_chart_title_with_context("Life expectancy", "years", df)
+        assert any(line.strip() for line in t["subtitle"]), (
+            "subtitle list must contain at least one non-empty string."
+        )
+
+    def test_title_text_is_string_not_list(self):
+        """title.text must be a string (or list with the indicator name in it)."""
+        df = self._make_df(["Kenya"])
+        t = build_chart_title_with_context("My indicator", None, df)
+        text = t["text"]
+        if isinstance(text, list):
+            assert any("My indicator" in s for s in text), (
+                "title.text list must contain the indicator name."
+            )
+        else:
+            assert "My indicator" in text
+
+
+# ============================================================================
+# Gap L10/B11 — negative obs_values survive unchanged in line and bar specs
+# ============================================================================
+
+
+class TestNegativeValuePassthrough:
+    """Negative data values must reach the Vega-Lite spec without clamping or dropping."""
+
+    def test_line_spec_y_scale_zero_false_allows_negatives(self):
+        """scale.zero=False is the GoG guarantee that negative Y-values are not clipped."""
+        import pandas as pd
+
+        df = pd.DataFrame({
+            "year": pd.to_datetime(["2019-01-01", "2020-01-01", "2021-01-01"]),
+            "value": [-3.5, -1.2, 2.0],  # Argentina-style GDP growth with negatives
+            "country": ["ARG"] * 3,
+        })
+        result = _make_line_result(color_dim="country")
+        spec = build_temporal_single_spec(df, "GDP Growth", result)
+        assert spec["encoding"]["y"]["scale"]["zero"] is False, (
+            "Y scale must not be forced to zero for line charts. "
+            "Negative GDP growth (-3.5%) would be invisible if zero=True."
+        )
+
+    def test_line_spec_negative_values_present_in_data(self):
+        """The negative values must actually appear in the spec's inline data."""
+        import pandas as pd
+
+        df = pd.DataFrame({
+            "year": pd.to_datetime(["2019-01-01", "2020-01-01"]),
+            "value": [-5.2, 3.1],
+            "country": ["ARG"] * 2,
+        })
+        result = _make_line_result(color_dim="country")
+        spec = build_temporal_single_spec(df, "GDP Growth", result)
+        values = [row["value"] for row in spec["data"]["values"]]
+        assert any(v < 0 for v in values), (
+            "Negative obs_values must survive into spec data unchanged. "
+            f"All values in spec: {values}"
+        )
+
+    def test_bar_spec_x_scale_zero_true_anchors_negative_bars(self):
+        """scale.zero=True is the GoG guarantee that bars always originate at 0.
+        For negative values this means the bar extends *left* of the zero line,
+        which is the correct visual encoding — not clipping them away."""
+        import pandas as pd
+
+        df = pd.DataFrame({
+            "year": [2020, 2020, 2020],
+            "value": [-4.3, -1.1, 2.8],  # mix of negative and positive
+            "country": ["ARG", "BRA", "USA"],
+        })
+        result = _make_bar_result(color_dim="country")
+        spec = build_cross_sectional_spec(df, "GDP Growth", result)
+        assert spec["encoding"]["x"]["scale"]["zero"] is True, (
+            "Bar X scale must have zero=True so negative bars extend left of 0 "
+            "rather than disappearing. Got zero=False."
+        )
+
+    def test_bar_spec_negative_values_present_in_data(self):
+        """Negative obs_values must not be dropped or clamped before reaching the spec."""
+        import pandas as pd
+
+        df = pd.DataFrame({
+            "year": [2020, 2020, 2020],
+            "value": [-4.3, -1.1, 2.8],
+            "country": ["ARG", "BRA", "USA"],
+        })
+        result = _make_bar_result(color_dim="country")
+        spec = build_cross_sectional_spec(df, "GDP Growth", result)
+        values = [row["value"] for row in spec["data"]["values"]]
+        assert any(v < 0 for v in values), (
+            "Negative obs_values must survive into bar spec data unchanged. "
+            f"All values in spec: {values}"
+        )
