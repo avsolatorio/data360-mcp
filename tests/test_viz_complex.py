@@ -507,21 +507,21 @@ class TestSpecBuilders:
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         spec = build_temporal_multi_indicator_spec(df, "Test", r)
-        assert len(spec["layer"]) == 2
+        assert len(spec["vconcat"]) == 2
 
-    def test_temporal_multi_indicator_independent_y_scale(self):
+    def test_temporal_multi_indicator_shared_x_scale(self):
         df = _two_ind_ts_df()[lambda x: x["country"] == "CountryA"]
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         spec = build_temporal_multi_indicator_spec(df, "Test", r)
-        assert spec.get("resolve", {}).get("scale", {}).get("y") == "independent"
+        assert spec.get("resolve", {}).get("scale", {}).get("x") == "shared"
 
     def test_temporal_multi_indicator_each_layer_different_color(self):
         df = _two_ind_ts_df()[lambda x: x["country"] == "CountryA"]
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         spec = build_temporal_multi_indicator_spec(df, "Test", r)
-        colors = [layer["mark"]["color"] for layer in spec["layer"]]
+        colors = [chart["mark"]["color"] for chart in spec["vconcat"]]
         assert len(set(colors)) == 2  # distinct colors
 
     def test_temporal_multi_indicator_tooltip_one_value_field_per_layer(self):
@@ -530,8 +530,8 @@ class TestSpecBuilders:
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         lab = {"gdp_per_capita": "GDP (USD)", "life_expectancy": "Life exp"}
         spec = build_temporal_multi_indicator_spec(df, "Test", r, indicator_labels=lab)
-        tips0 = spec["layer"][0]["encoding"]["tooltip"]
-        tips1 = spec["layer"][1]["encoding"]["tooltip"]
+        tips0 = spec["vconcat"][0]["encoding"]["tooltip"]
+        tips1 = spec["vconcat"][1]["encoding"]["tooltip"]
         fields0 = {t["field"] for t in tips0}
         fields1 = {t["field"] for t in tips1}
         assert "gdp_per_capita" in fields0
@@ -539,19 +539,15 @@ class TestSpecBuilders:
         assert "life_expectancy" in fields1
         assert "gdp_per_capita" not in fields1
 
-    def test_temporal_multi_indicator_staggered_y_axes_for_four_series(self):
+    def test_temporal_multi_indicator_four_series_stacked(self):
         df = _four_ind_ts_df()
         ind_cols = ["ind_a", "ind_b", "ind_c", "ind_d"]
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         spec = build_temporal_multi_indicator_spec(df, "Test", r)
-        assert len(spec["layer"]) == 4
-        assert spec["width"] == 680
-        axes = [layer["encoding"]["y"]["axis"] for layer in spec["layer"]]
-        assert axes[0]["orient"] == "left"
-        assert axes[1]["orient"] == "right"
-        assert "offset" not in axes[1]
-        assert axes[2]["orient"] == "right" and axes[2]["offset"] == 50
-        assert axes[3]["orient"] == "right" and axes[3]["offset"] == 100
+        assert len(spec["vconcat"]) == 4
+        axes_x_labels = [chart["encoding"]["x"]["axis"].get("labels") for chart in spec["vconcat"]]
+        assert axes_x_labels[0] is False
+        assert axes_x_labels[3] is None  # Not set, so defaults to true in VegaLite
 
     # fallback
     def test_fallback_produces_line(self):
@@ -749,6 +745,8 @@ class TestWBStyleOnAllSpecs:
             if "layer" in spec:
                 # last layer has tooltips
                 layer_enc = spec["layer"][-1].get("encoding", {})
+            elif "vconcat" in spec:
+                layer_enc = spec["vconcat"][0].get("encoding", {})
             check_enc = layer_enc or enc
             assert "tooltip" in check_enc, (
                 f"Missing tooltip in spec: {spec.get('title')}"
@@ -983,7 +981,7 @@ class TestAxisLabelThreading:
         assert spec["encoding"]["x"]["axis"]["title"] == "GDP (USD)"
         assert spec["encoding"]["y"]["axis"]["title"] == "Life Exp"
 
-    def test_multi_ind_layer_y_axis_per_indicator(self):
+    def test_multi_ind_vconcat_facet_title_per_indicator(self):
         df = _two_ind_ts_df()[lambda x: x.country == "CountryA"]
         r = StrategyResult(
             ChartStrategy.TEMPORAL_MULTI_IND,
@@ -999,9 +997,9 @@ class TestAxisLabelThreading:
                 "life_expectancy": "Life Exp (yr)",
             },
         )
-        y_titles = [layer["encoding"]["y"]["axis"]["title"] for layer in spec["layer"]]
-        assert "GDP (USD)" in y_titles
-        assert "Life Exp (yr)" in y_titles
+        facet_titles = [chart.get("title", {}).get("text") for chart in spec["vconcat"]]
+        assert "GDP (USD)" in facet_titles
+        assert "Life Exp (yr)" in facet_titles
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -1,0 +1,1045 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Unemployment, female (% of female labor force) (modeled ILO estimate) vs. Unemployment, male (% of male labor force) (modeled ILO estimate)",
+    "subtitle": "Egypt, Arab Rep."
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1991-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 21.089,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "1991-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 5.744
+      },
+      {
+        "year": "1992-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 17.064,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "1992-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 6.307
+      },
+      {
+        "year": "1993-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 22.394,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "1993-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 7.455
+      },
+      {
+        "year": "1994-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 22.842,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "1994-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 7.259
+      },
+      {
+        "year": "1995-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 23.746,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "1995-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 7.329
+      },
+      {
+        "year": "1996-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 18.56,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "1996-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 6.278
+      },
+      {
+        "year": "1997-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 19.811,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "1997-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 5.193
+      },
+      {
+        "year": "1998-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 19.633,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "1998-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 4.891
+      },
+      {
+        "year": "1999-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 19.111,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "1999-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 4.902
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 22.844,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 5.085
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 21.838,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 5.613
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 24.078,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 6.29
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 23.403,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 7.531
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 26.429,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 5.863
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 24.602,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 7.212
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 23.786,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 6.637
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 18.283,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 5.777
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 18.726,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 5.487
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 22.187,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 4.996
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 21.941,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 4.733
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 22.317,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 8.722
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 23.911,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 9.196
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 24.091,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 9.766
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 23.915,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 9.697
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 24.68,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 9.341
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 23.507,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 8.83
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 22.824,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 8.159
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 21.333,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 6.767
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 21.312,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 4.747
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 17.631,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 5.925
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 15.924,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 5.569
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 14.454,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 4.842
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 15.166,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 4.568
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 15.282,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 4.615
+      },
+      {
+        "year": "2025-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "F",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": 15.307,
+        "unemployment_male_of_male_labor_force_mo": null
+      },
+      {
+        "year": "2025-01-01T00:00:00",
+        "country": "Egypt, Arab Rep.",
+        "sex": "M",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "unemployment_female_of_female_labor_forc": null,
+        "unemployment_male_of_male_labor_force_mo": 4.564
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#34A7F2",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "format": "%Y",
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "unemployment_female_of_female_labor_forc",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#34A7F2",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Unemployment, female (% of female labor force) (modeled ILO estimate) (% of female labor force)",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')",
+            "orient": "left"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "sex",
+            "title": "Sex",
+            "type": "nominal"
+          },
+          {
+            "field": "age",
+            "title": "Age Group",
+            "type": "nominal"
+          },
+          {
+            "field": "urbanisation",
+            "title": "Urbanisation",
+            "type": "nominal"
+          },
+          {
+            "field": "unemployment_female_of_female_labor_forc",
+            "title": "Unemployment, female (% of female labor force) (modeled ILO estimate) (% of female labor force)",
+            "format": ",.1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#FF9800",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "format": "%Y",
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "unemployment_male_of_male_labor_force_mo",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#FF9800",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Unemployment, male (% of male labor force) (modeled ILO estimate) (% of male labor force)",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')",
+            "orient": "right"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "sex",
+            "title": "Sex",
+            "type": "nominal"
+          },
+          {
+            "field": "age",
+            "title": "Age Group",
+            "type": "nominal"
+          },
+          {
+            "field": "urbanisation",
+            "title": "Urbanisation",
+            "type": "nominal"
+          },
+          {
+            "field": "unemployment_male_of_male_labor_force_mo",
+            "title": "Unemployment, male (% of male labor force) (modeled ILO estimate) (% of male labor force)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  },
+  "width": 620,
+  "height": 380,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 1.2,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,397 @@
+{
+  "data": {
+    "values": [
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2014-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 3.122064,
+        "gdp_per_capita_constant_2015_us": 5086.550928
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2015-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 2.770166,
+        "gdp_per_capita_constant_2015_us": 5125.680641
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2016-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 4.498467,
+        "gdp_per_capita_constant_2015_us": 5259.359219
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2017-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 2.076518,
+        "gdp_per_capita_constant_2015_us": 5279.970163
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2018-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 2.399952,
+        "gdp_per_capita_constant_2015_us": 5321.743451
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2019-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 1.591372,
+        "gdp_per_capita_constant_2015_us": 5316.517466
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2020-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": -3.584997,
+        "gdp_per_capita_constant_2015_us": 5033.142085
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2021-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 5.036314,
+        "gdp_per_capita_constant_2015_us": 5209.672711
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2022-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 6.446529,
+        "gdp_per_capita_constant_2015_us": 5440.815305
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2023-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 2.259207,
+        "gdp_per_capita_constant_2015_us": 5455.974298
+      },
+      {
+        "age": "_T",
+        "sex": "_T",
+        "year": "2024-01-01T00:00:00",
+        "country": "Middle East & North Africa",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 2.112325,
+        "gdp_per_capita_constant_2015_us": 5466.089026
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "color": "#34A7F2",
+        "point": {
+          "size": 56,
+          "filled": true
+        },
+        "strokeCap": "round",
+        "strokeWidth": 3
+      },
+      "encoding": {
+        "x": {
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "gridDash": [
+              4,
+              2
+            ],
+            "gridColor": "#CED4DE",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          },
+          "type": "temporal",
+          "field": "year"
+        },
+        "y": {
+          "axis": {
+            "title": "GDP (annual % growth) (%)",
+            "orient": "left",
+            "gridDash": [
+              4,
+              2
+            ],
+            "gridColor": "#CED4DE",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')",
+            "tickCount": 5,
+            "labelColor": "#666666",
+            "titleColor": "#34A7F2",
+            "titleFontWeight": "bold"
+          },
+          "type": "quantitative",
+          "field": "gdp_annual_growth",
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "type": "nominal",
+            "field": "year",
+            "title": "Year"
+          },
+          {
+            "type": "nominal",
+            "field": "country",
+            "title": "Country"
+          },
+          {
+            "type": "nominal",
+            "field": "sex",
+            "title": "Sex"
+          },
+          {
+            "type": "nominal",
+            "field": "age",
+            "title": "Age Group"
+          },
+          {
+            "type": "nominal",
+            "field": "urbanisation",
+            "title": "Urbanisation"
+          },
+          {
+            "type": "quantitative",
+            "field": "gdp_annual_growth",
+            "title": "GDP (annual % growth) (%)",
+            "format": ".1f"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "line",
+        "color": "#FF9800",
+        "point": {
+          "size": 56,
+          "filled": true
+        },
+        "strokeCap": "round",
+        "strokeWidth": 3
+      },
+      "encoding": {
+        "x": {
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "gridDash": [
+              4,
+              2
+            ],
+            "gridColor": "#CED4DE",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          },
+          "type": "temporal",
+          "field": "year"
+        },
+        "y": {
+          "axis": {
+            "title": "GDP per capita (constant 2015 US$) (constant 2015 US$)",
+            "orient": "right",
+            "gridDash": [
+              4,
+              2
+            ],
+            "gridColor": "#CED4DE",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')",
+            "tickCount": 5,
+            "labelColor": "#666666",
+            "titleColor": "#FF9800",
+            "titleFontWeight": "bold"
+          },
+          "type": "quantitative",
+          "field": "gdp_per_capita_constant_2015_us",
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "type": "nominal",
+            "field": "year",
+            "title": "Year"
+          },
+          {
+            "type": "nominal",
+            "field": "country",
+            "title": "Country"
+          },
+          {
+            "type": "nominal",
+            "field": "sex",
+            "title": "Sex"
+          },
+          {
+            "type": "nominal",
+            "field": "age",
+            "title": "Age Group"
+          },
+          {
+            "type": "nominal",
+            "field": "urbanisation",
+            "title": "Urbanisation"
+          },
+          {
+            "type": "quantitative",
+            "field": "gdp_per_capita_constant_2015_us",
+            "title": "GDP per capita (constant 2015 US$) (constant 2015 US$)",
+            "format": ",.3~s"
+          }
+        ]
+      }
+    }
+  ],
+  "title": {
+    "text": "GDP (annual % growth) vs. GDP per capita (constant 2015 US$)",
+    "subtitle": [
+      "Middle East & North Africa"
+    ]
+  },
+  "width": 620,
+  "config": {
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    },
+    "axis": {
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridColor": "#CED4DE",
+      "gridWidth": 1,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "labelColor": "#666666",
+      "titleColor": "#111111",
+      "domainColor": "#CED4DE",
+      "labelOverlap": "greedy",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": "bold"
+    },
+    "font": "Noto Sans, Arial, sans-serif",
+    "line": {
+      "strokeCap": "round",
+      "strokeWidth": 3
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "title": {
+      "color": "#111111",
+      "anchor": "start",
+      "offset": 8,
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "lineHeight": 1.2,
+      "subtitleColor": "#666666",
+      "subtitlePadding": 4,
+      "subtitleFontSize": 12,
+      "subtitleFontWeight": "normal"
+    },
+    "legend": {
+      "orient": "top",
+      "direction": "horizontal",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "labelColor": "#111111",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelFontWeight": "bold"
+    },
+    "background": "#FFFFFF"
+  },
+  "height": 380,
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  }
+}

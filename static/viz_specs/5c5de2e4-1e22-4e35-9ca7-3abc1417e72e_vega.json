@@ -1,0 +1,4405 @@
+{
+  "data": {
+    "values": [
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 68.722,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 72.984,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 73.455,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 73.198,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 69.144,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 73.385,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 68.586,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 72.746,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 75.317,
+        "country": "China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 84.69561,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 69.953,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 69.729,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 73.713,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 84.869756,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 70.08,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 74.843,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 68.371,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 83.021951,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 75.345,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 63.095,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 59.852,
+        "country": "Nauru"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 75.676,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 80.702439,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 77.903,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 68.267,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 82.931463,
+        "country": "Japan"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 77.452,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 68.981,
+        "country": "Palau"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 63.927,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 69.283,
+        "country": "Philippines"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 82.721951,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 75.464,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 77.94,
+        "country": "China"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 70.059,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 78.019,
+        "country": "China"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 76.769,
+        "country": "Thailand"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 65.61,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 71.951,
+        "country": "Tonga"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 65.51,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 74.82,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 70.043,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 73.886,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 74.992,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 69.993,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 81.609024,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 67.531,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 82.246341,
+        "country": "Singapore"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 69.007,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 69.109268,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 63.859,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 60.287,
+        "country": "Nauru"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 76.315,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 75.302,
+        "country": "Thailand"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 64.022,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 71.437,
+        "country": "Tonga"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 64.96,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 70.839,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 81.543902,
+        "country": "Australia"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 66.965,
+        "country": "Fiji"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 82.985,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 65.878,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 71.349024,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 66.612,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 61.527,
+        "country": "Nauru"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 72.397,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 81.041463,
+        "country": "Australia"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 82.587561,
+        "country": "Japan"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 65.746,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 69.303,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 79.517073,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 62.248,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 74.814,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 66.747,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 76.463,
+        "country": "Guam"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 83.2,
+        "country": "Australia"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 61.443,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 59.346,
+        "country": "Nauru"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 74.713,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 79.54878,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 76.789,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 62.345,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 73.385,
+        "country": "China"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 74.833,
+        "country": "China"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 76.141,
+        "country": "Guam"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 82.775122,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 70.5,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 74.026,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 82.026829,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 75.151,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 65.549,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 74.789,
+        "country": "China"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 69.898,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 73.762,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 72.292,
+        "country": "Tonga"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 66.109,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 82.17561,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 75.269,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 69.126,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 73.293,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 62.367,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 59.49,
+        "country": "Nauru"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 75.181,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 80.15122,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 70.349,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 84.356341,
+        "country": "Japan"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 65.11,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 65.294,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 70.583171,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 67.562,
+        "country": "Palau"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 62.511,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 68.643,
+        "country": "Philippines"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 74.278,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 78.846341,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 75.934,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 65.076,
+        "country": "Palau"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 61.643,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 71.698,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 80.239024,
+        "country": "Australia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 81.141,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 76.095,
+        "country": "Guam"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 70.626,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 74.1,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 77.206,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 81.612439,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 77.36,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 81.416341,
+        "country": "Japan"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 64.918,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 60.893,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 76.412195,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 58.887,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 69.966,
+        "country": "Philippines"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 70.991,
+        "country": "Samoa"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 64.044,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 64.898,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 64.630244,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 71.451,
+        "country": "Samoa"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 81.541463,
+        "country": "Singapore"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 67.009,
+        "country": "Fiji"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 83.195,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 77.51,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 68.989,
+        "country": "Palau"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 65.114,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 64.113,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 74.085,
+        "country": "China"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 76.233,
+        "country": "Guam"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 77.844,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 68.982,
+        "country": "Palau"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 65.331,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 69.68,
+        "country": "Philippines"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 67.886,
+        "country": "Philippines"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 71.233,
+        "country": "Samoa"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 65.477,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 65.576,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 70.223902,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 79.951,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 76.427,
+        "country": "Guam"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 65.492,
+        "country": "Fiji"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 79.544,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 66.205,
+        "country": "Fiji"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 81.695122,
+        "country": "Australia"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 77.113,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 82.207317,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 78.16,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 68.563,
+        "country": "Palau"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 76.237,
+        "country": "Guam"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 80.841463,
+        "country": "Australia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 76.563,
+        "country": "Thailand"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 65.326,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 81.690732,
+        "country": "Japan"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 65.123,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 60.877,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 76.765854,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 59.302,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 71.573,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 79.634146,
+        "country": "Australia"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 68.049,
+        "country": "Philippines"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 71.441,
+        "country": "Samoa"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 70.791,
+        "country": "Samoa"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 77.95122,
+        "country": "Singapore"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 67.116,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 81.076098,
+        "country": "Japan"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 64.674,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 60.911,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 75.909756,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 58.317,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 77.606,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 66.199,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 72.13,
+        "country": "Tonga"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 65.824,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 69.761,
+        "country": "Philippines"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 71.052,
+        "country": "Samoa"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 71.508,
+        "country": "Samoa"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 79.490244,
+        "country": "Singapore"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 80.441463,
+        "country": "Singapore"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 67.845,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 68.336,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 71.52,
+        "country": "Thailand"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 58.772,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 82.895122,
+        "country": "Singapore"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 70.409,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 64.112,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 64.906,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 65.280732,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 71.755,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 72.64,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 73.525,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 68.933,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 73.236,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 65.64,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 60.996,
+        "country": "Nauru"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 77.359,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 81.658537,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 70.783,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 74.211,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 64.617,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 60.701,
+        "country": "Nauru"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 76.867,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 81.404878,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 65.799,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 72.971,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 82.27561,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 67.014,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 67.869,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 75.889,
+        "country": "China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 74.943,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 69.842,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 76.449,
+        "country": "Guam"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 84.211463,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 72.801,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 82.5,
+        "country": "Australia"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 71.229,
+        "country": "Samoa"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 83.27561,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 75.371,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 82.44878,
+        "country": "Australia"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 83.096098,
+        "country": "Japan"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 65.908,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 71.317,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 80.819512,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 56.364,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 59.675,
+        "country": "Nauru"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 75.398,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 80.35122,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 77.938,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 77.377,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 69.062,
+        "country": "Palau"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 64.198,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 72.769,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 82.14878,
+        "country": "Australia"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 82.340488,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 68.085,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 72.894,
+        "country": "Thailand"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 61.272,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 70.56,
+        "country": "Tonga"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 74.404,
+        "country": "China"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 84.210976,
+        "country": "Japan"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 65.807,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 73.02,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 82.626829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 66.457,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 61.393,
+        "country": "Nauru"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 77.262,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 82.056098,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 83.450244,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 68.862,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 64.516,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 69.302,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 81.452195,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 66.954,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 74.221,
+        "country": "Thailand"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 62.858,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 71.041,
+        "country": "Tonga"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 74.509,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 74.814,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 66.147,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 76.477,
+        "country": "Guam"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 82.384878,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 74.869,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 69.301,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 72.751,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 82.9,
+        "country": "Australia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 64.505,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 70.397,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 73.984,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 66.778,
+        "country": "Fiji"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 66.357,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 70.385,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 75.383,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 83.297561,
+        "country": "Singapore"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 69.806,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 78.117,
+        "country": "China"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 75.552,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 64.776,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 65.08,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 70.887,
+        "country": "Tonga"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 64.402,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 81.156098,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 77.688,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 68.638,
+        "country": "Palau"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 63.382,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 72.708,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 83.3,
+        "country": "Australia"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 70.269,
+        "country": "Samoa"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 70.03,
+        "country": "Tonga"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 63.825,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 60.08,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 80.992683,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 74.027,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 63.056,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 68.883,
+        "country": "Philippines"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 82.957561,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 68.364,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 66.88,
+        "country": "Fiji"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 73.958,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 78.692683,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 75.419,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 64.8,
+        "country": "Palau"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 61.647,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 64.395,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 64.865,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 67.969024,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 74.209,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 60.457,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 72.675,
+        "country": "China"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 80.04878,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 77.688,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 66.633,
+        "country": "Palau"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 62.018,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 76.561,
+        "country": "Guam"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 74.669,
+        "country": "Thailand"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 63.265,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 70.949,
+        "country": "Tonga"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 69.952,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 74.145,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 71.096,
+        "country": "Samoa"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 83.092683,
+        "country": "Singapore"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 68.89,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 83.595122,
+        "country": "Singapore"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 69.981,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 81.292683,
+        "country": "Australia"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 72.365,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 70.097,
+        "country": "Philippines"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 82.273171,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 75.376,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 64.498,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 80.328,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 76.397,
+        "country": "Guam"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 67.452,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 84.44561,
+        "country": "Japan"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 78.55122,
+        "country": "Singapore"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 67.35,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 59.491,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 72.288,
+        "country": "China"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 78.202,
+        "country": "China"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 79.829,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 76.114,
+        "country": "Guam"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 64.801,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 63.391707,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 60.64,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 59.482,
+        "country": "Nauru"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 80.141463,
+        "country": "Singapore"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 67.968,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 75.542,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 65.673,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 65.761,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 70.543415,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 77.049,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 82.256098,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 78.03,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 68.689,
+        "country": "Palau"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 65.075,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 67.829,
+        "country": "Philippines"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 71.028,
+        "country": "Samoa"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 80.946341,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 73.469,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 63.848,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 68.669,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 65.653,
+        "country": "Fiji"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 79.71,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 66.269,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 73.641,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 82.680488,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 68.715,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 65.601,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 69.061,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 78.668293,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 61.074,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 71.487,
+        "country": "Samoa"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 79.990244,
+        "country": "Singapore"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 75.291,
+        "country": "Thailand"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 67.368,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 72.101,
+        "country": "Thailand"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 60.13,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 66.961,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 71.900732,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 66.506,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 61.93,
+        "country": "Nauru"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 77.698,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 81.958537,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 65.816,
+        "country": "Palau"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 61.795,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 68.301,
+        "country": "Philippines"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 77.102,
+        "country": "Guam"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 83.660976,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 72.382,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 72.687,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 68.836,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 73.138,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 73.611,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 72.43,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 81.395122,
+        "country": "Australia"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 76.714,
+        "country": "China"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 70.163,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 73.955,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 77.709,
+        "country": "China"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 76.279,
+        "country": "Thailand"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 65.027,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 71.721,
+        "country": "Tonga"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 65.278,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 76.2,
+        "country": "China"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 69.733,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 83.984878,
+        "country": "Japan"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 77.47,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 69.019,
+        "country": "Palau"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 64.923,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 83.331951,
+        "country": "Japan"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 65.898,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 71.867,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 81.270732,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 65.723,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 65.909,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 61.101,
+        "country": "Nauru"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 77.504,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 81.858537,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 74.862,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 69.117,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 67.664,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 82.321951,
+        "country": "Japan"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 65.808,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 69.702,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 79.968293,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 63.023,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 81.799268,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 65.521,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 82.842683,
+        "country": "Japan"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 65.859,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 70.246,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 71.65,
+        "country": "Tonga"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 65.171,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 82.59122,
+        "country": "Japan"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 65.896,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 70.772,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 80.568293,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 77.566,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 68.863,
+        "country": "Palau"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 63.639,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 76.423,
+        "country": "Guam"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 83.93561,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 83.526829,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 69.486,
+        "country": "Samoa"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 81.241463,
+        "country": "Singapore"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 85.496341,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 68.817,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 61.72,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 59.361,
+        "country": "Nauru"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 74.867,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 79.85122,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 77.307,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 81.995122,
+        "country": "Singapore"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 68.961,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 81.434,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 76.153,
+        "country": "Guam"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 74.854,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 68.755,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 82.339,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 76.444,
+        "country": "Guam"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 69.064,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 80.873171,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 66.292,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 77.331,
+        "country": "Thailand"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 66.919,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 72.379,
+        "country": "Tonga"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 61.881,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 70.71,
+        "country": "Tonga"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 64.247,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 82.030244,
+        "country": "Japan"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 65.416,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 69.294,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 77.665854,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 77.19,
+        "country": "Thailand"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 66.204,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 72.169,
+        "country": "Tonga"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 65.871,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 72.794,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 82.74878,
+        "country": "Australia"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 67.594,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 83.678049,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 69.237,
+        "country": "Philippines"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 71.159,
+        "country": "Samoa"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 75.96,
+        "country": "Thailand"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 64.719,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 72.1,
+        "country": "Thailand"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 60.743,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 70.433,
+        "country": "Tonga"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 63.989,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 66.924,
+        "country": "Fiji"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 64.954,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 65.179,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 70.098049,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 67.06,
+        "country": "Fiji"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 82.774,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 65.866,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 72.928,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 83.226829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 67.911,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 74.793,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 76.989,
+        "country": "Thailand"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 65.898,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 72.066,
+        "country": "Tonga"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 65.683,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 74.017,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 64.892,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 68.50561,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 63.479,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 60.074,
+        "country": "Nauru"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 74.5,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 79.146341,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 76.505,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 65.446,
+        "country": "Palau"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 61.741,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 84.129268,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 76.057,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 65.387,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 71.531,
+        "country": "Samoa"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 80.790244,
+        "country": "Singapore"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 82.366829,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 67.914,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 64.859,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 65.902195,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 62.026,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 59.409,
+        "country": "Nauru"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 75.016,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 83.793902,
+        "country": "Japan"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 65.831,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 72.825,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 76.361,
+        "country": "Guam"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 83.83122,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 84.56,
+        "country": "Japan"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 65.205,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 72.783,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 79.936585,
+        "country": "Australia"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 66.32,
+        "country": "Fiji"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 80.587,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 81.76,
+        "country": "Japan"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 65.287,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 69.399,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 77.214634,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 59.643,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 59.574,
+        "country": "Nauru"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 73.574,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 78.636585,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 74.9,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 64.499,
+        "country": "Palau"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 76.645,
+        "country": "Guam"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 85.155854,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 66.347,
+        "country": "Fiji"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 80.867,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 78.25122,
+        "country": "Singapore"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 67.237,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 68.172,
+        "country": "Philippines"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 71.62,
+        "country": "Samoa"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 64.915,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 63.575366,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 61.196,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 59.359,
+        "country": "Nauru"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 81.729268,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 74.697,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 64.207,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 75.012,
+        "country": "Thailand"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 63.66,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 71.319,
+        "country": "Tonga"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 74.365,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 63.907,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 63.540244,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 60.925,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 59.427,
+        "country": "Nauru"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 64.096,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 69.166,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 65.126,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 82.470732,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 64.904,
+        "country": "Fiji"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 79.571,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 70.925,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 83.996341,
+        "country": "Japan"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 82.470732,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 75.488,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 64.641,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 64.969,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 74.88,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 69.398,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 66.161,
+        "country": "Fiji"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 74.683,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 69.07,
+        "country": "Palau"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 64.473,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 69.45,
+        "country": "Philippines"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 71.205,
+        "country": "Thailand"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 58.097,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 69.635,
+        "country": "Tonga"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 63.536,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 71.775,
+        "country": "Thailand"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 59.477,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 79.0,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 74.894,
+        "country": "Guam"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 63.323,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 64.317,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 63.210488,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 60.357,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 83.426829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 68.339,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 72.277,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 80.490244,
+        "country": "Australia"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 73.341,
+        "country": "Thailand"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 61.694,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 81.729268,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 70.727,
+        "country": "Samoa"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 83.543902,
+        "country": "Singapore"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 69.258,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 80.182927,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 72.732,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 61.609,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 67.789,
+        "country": "Philippines"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 75.734,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 65.87,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 65.943,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 68.397,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 73.779,
+        "country": "Thailand"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 62.396,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 66.047,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 66.196,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 71.053171,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 72.635,
+        "country": "Tonga"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 66.852,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 80.587805,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 73.08,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 63.735,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 75.506,
+        "country": "Guam"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 83.2,
+        "country": "Australia"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 83.080488,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 75.444,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 66.725,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 82.743902,
+        "country": "Singapore"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 69.323,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 67.148,
+        "country": "Fiji"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 83.859,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 72.662,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 81.895122,
+        "country": "Australia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 72.587,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 69.986,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 73.821,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 71.302,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 74.502,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 77.235,
+        "country": "China"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 83.587805,
+        "country": "Japan"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 65.869,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 72.451,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 81.721951,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 66.35,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 76.452,
+        "country": "China"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 74.905,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 77.214,
+        "country": "China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 84.099756,
+        "country": "Japan"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 65.787,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 73.034,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 82.626829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 67.345,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 69.292,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 69.500244,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 64.251,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 60.533,
+        "country": "Nauru"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 76.615,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 81.407317,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 82.3,
+        "country": "Australia"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 66.545,
+        "country": "Fiji"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 81.935,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 83.095122,
+        "country": "Singapore"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 69.652,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 67.311,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 75.668,
+        "country": "China"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 64.994,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 60.834,
+        "country": "Nauru"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 77.053,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 81.456829,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 82.495122,
+        "country": "Singapore"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 68.984,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 69.635,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 74.603,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 63.256,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 73.727,
+        "country": "China"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 66.581,
+        "country": "Fiji"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 82.151,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 76.975,
+        "country": "China"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 72.709,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 82.046341,
+        "country": "Australia"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 82.846341,
+        "country": "Singapore"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 69.501,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 81.343415,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 67.134,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 81.419268,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 66.583,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 77.392,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 69.046,
+        "country": "Palau"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 64.7,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 69.49,
+        "country": "Philippines"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 70.827073,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 66.232,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 61.238,
+        "country": "Nauru"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 77.557,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 81.707317,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 84.252683,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 69.52,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 65.812,
+        "country": "Fiji"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 81.695,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 81.743902,
+        "country": "Singapore"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 68.824,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 66.126,
+        "country": "Fiji"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 80.1,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 71.003,
+        "country": "Samoa"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 83.411951,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 68.629,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 66.657,
+        "country": "Fiji"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 82.555,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 82.507073,
+        "country": "Japan"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 65.677,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 69.021,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 79.119512,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 69.096,
+        "country": "Philippines"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 71.393,
+        "country": "Samoa"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 61.395,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 73.034,
+        "country": "China"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 71.06,
+        "country": "Samoa"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 74.835,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 75.992,
+        "country": "New Caledonia"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 80.904878,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 77.8,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 68.347,
+        "country": "Palau"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 69.8,
+        "country": "Tonga"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 63.709,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 75.59,
+        "country": "Thailand"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 64.384,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 71.546,
+        "country": "Tonga"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 65.079,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 75.049,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 70.127,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 67.99,
+        "country": "Palau"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 62.772,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 68.631,
+        "country": "Philippines"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 80.117073,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 63.69,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 64.834,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 69.57,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 72.752,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 81.955122,
+        "country": "Japan"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 65.517,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 69.168,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 78.168293,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 72.672,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 64.693,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 69.422,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 68.985,
+        "country": "Vanuatu"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 73.062,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 70.228,
+        "country": "Tonga"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 63.897,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 75.885,
+        "country": "Guam"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 64.3,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 64.849,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 67.246098,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 75.434,
+        "country": "Guam"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 85.532683,
+        "country": "Hong Kong SAR, China"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 83.929268,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 75.9,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 74.753,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 64.886,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 79.039024,
+        "country": "Singapore"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 67.479,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 77.863,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 67.113,
+        "country": "Palau"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 62.211,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 68.549,
+        "country": "Philippines"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 78.531,
+        "country": "Northern Mariana Islands"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 68.922,
+        "country": "Palau"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 65.274,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 71.443,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 79.234146,
+        "country": "Australia"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 65.841,
+        "country": "Fiji"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 72.654,
+        "country": "American Samoa"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 82.4,
+        "country": "Australia"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 82.459,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 75.529,
+        "country": "Guam"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 64.358,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 66.675,
+        "country": "Philippines"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 71.851,
+        "country": "Tonga"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 65.365,
+        "country": "Tuvalu"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 69.311,
+        "country": "Philippines"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 71.142,
+        "country": "Samoa"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 75.114,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 67.628,
+        "country": "Solomon Islands"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 77.197,
+        "country": "Thailand"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 66.496,
+        "country": "Timor-Leste"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 74.961,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 64.259,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 64.844,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 66.593415,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 66.48,
+        "country": "Fiji"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 83.729268,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 73.917,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 65.421,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 79.316,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 75.195,
+        "country": "Guam"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 60.688,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 81.341463,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 74.37,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 71.605,
+        "country": "Samoa"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 66.194,
+        "country": "Fiji"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 72.917,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 70.528,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 82.02439,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 66.688,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 65.306,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 70.810244,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 65.288,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 60.897,
+        "country": "Nauru"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 81.043902,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 73.727,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 63.956,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 66.152,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 71.645122,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 65.553,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 61.331,
+        "country": "Nauru"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 65.983,
+        "country": "Fiji"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 83.22439,
+        "country": "Macao SAR, China"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 75.288,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 65.292,
+        "country": "Marshall Islands"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 64.148,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 73.437,
+        "country": "Korea, Dem. People's Rep."
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 83.526829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 67.807,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 69.472,
+        "country": "Philippines"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 71.55,
+        "country": "Samoa"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 66.219,
+        "country": "Palau"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 61.868,
+        "country": "Papua New Guinea"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 68.423,
+        "country": "Philippines"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 67.79,
+        "country": "Solomon Islands"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "title": {
+    "text": "Life expectancy at birth, total (years)",
+    "subtitle": [
+      "American Samoa, Australia, Brunei Darussalam, Cambodia, China, Fiji, French Polynesia, Guam, Hong Kong SAR, China, Indonesia, \u2026 (+27 more), 2000-2022",
+      "Years"
+    ]
+  },
+  "width": 600,
+  "config": {
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    },
+    "axis": {
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridColor": "#CED4DE",
+      "gridWidth": 1,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "labelColor": "#666666",
+      "titleColor": "#111111",
+      "domainColor": "#CED4DE",
+      "labelOverlap": "greedy",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": "bold"
+    },
+    "font": "Noto Sans, Arial, sans-serif",
+    "line": {
+      "strokeCap": "round",
+      "strokeWidth": 3
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "title": {
+      "color": "#111111",
+      "anchor": "start",
+      "offset": 8,
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "lineHeight": 1.2,
+      "subtitleColor": "#666666",
+      "subtitlePadding": 4,
+      "subtitleFontSize": 12,
+      "subtitleFontWeight": "normal"
+    },
+    "legend": {
+      "orient": "top",
+      "direction": "horizontal",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "labelColor": "#111111",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelFontWeight": "bold"
+    },
+    "background": "#FFFFFF"
+  },
+  "height": {
+    "step": 15
+  },
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "encoding": {
+    "x": {
+      "axis": {
+        "title": null,
+        "format": "%Y"
+      },
+      "type": "temporal",
+      "field": "year",
+      "timeUnit": "year"
+    },
+    "y": {
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      },
+      "type": "nominal",
+      "field": "country"
+    },
+    "color": {
+      "type": "quantitative",
+      "field": "value",
+      "scale": {
+        "scheme": "yellowgreenblue"
+      },
+      "legend": {
+        "title": "Value",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200
+      }
+    },
+    "tooltip": [
+      {
+        "type": "nominal",
+        "field": "country",
+        "title": "Country"
+      },
+      {
+        "type": "temporal",
+        "field": "year",
+        "title": "Year",
+        "format": "%Y",
+        "timeUnit": "year"
+      },
+      {
+        "type": "quantitative",
+        "field": "value",
+        "title": "Value",
+        "format": ",.1f"
+      }
+    ]
+  }
+}

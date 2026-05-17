@@ -1,0 +1,253 @@
+{
+  "config": {
+    "view": {
+      "continuousWidth": 300,
+      "continuousHeight": 300,
+      "stroke": "transparent"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 1.2,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  },
+  "data": {
+    "name": "data-dc7975ff7b55d8835fcb0475258d0d32"
+  },
+  "mark": {
+    "type": "point"
+  },
+  "encoding": {
+    "color": {
+      "field": "country",
+      "type": "nominal"
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "format": "%Y",
+        "title": "Year",
+        "type": "temporal"
+      },
+      {
+        "field": "value",
+        "format": ",.2f",
+        "title": "Value",
+        "type": "quantitative"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      },
+      {
+        "field": "comp_breakdown_1",
+        "title": "Breakdown",
+        "type": "nominal"
+      }
+    ],
+    "x": {
+      "field": "year",
+      "scale": {
+        "type": "linear",
+        "zero": true
+      },
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "labelAngle": 0,
+        "format": "%Y",
+        "tickCount": 5
+      }
+    },
+    "y": {
+      "field": "value",
+      "scale": {
+        "type": "linear",
+        "zero": true
+      },
+      "type": "quantitative",
+      "axis": {
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      }
+    }
+  },
+  "params": [
+    {
+      "name": "param_1e9efca18e7a2868",
+      "select": {
+        "type": "interval",
+        "encodings": [
+          "x",
+          "y"
+        ]
+      },
+      "bind": "scales"
+    }
+  ],
+  "title": {
+    "text": "Worldwide Governance Indicators: Government Effectiveness",
+    "subtitle": "Georgia, 2010-2024 \u00b7 Unitless"
+  },
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json",
+  "datasets": {
+    "data-dc7975ff7b55d8835fcb0475258d0d32": [
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 0.211846,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 0.543123,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 0.613774,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 0.551104,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 0.529676,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 0.469891,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 0.597732,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 0.633482,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 0.502022,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 0.511363,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 0.308157,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 0.451543,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 0.442425,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": 0.587604,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "value": 0.456267,
+        "country": "Georgia",
+        "comp_breakdown_1": "WGI_EST"
+      }
+    ]
+  }
+}

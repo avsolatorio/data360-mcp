@@ -1,0 +1,390 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Rule of Law: Estimate",
+    "subtitle": "Ghana, Kenya, South Africa, 2010-2023 \u00b7 Units of a standard normal distribution (between -2.5 and 2.5, approximately)"
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": -0.457081,
+        "country": "Kenya"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 0.063402,
+        "country": "Ghana"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": -0.221828,
+        "country": "South Africa"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 0.097749,
+        "country": "South Africa"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": -0.579113,
+        "country": "Kenya"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 0.135301,
+        "country": "South Africa"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": -0.421448,
+        "country": "Kenya"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": 0.086235,
+        "country": "South Africa"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": -0.412037,
+        "country": "Kenya"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": -0.428282,
+        "country": "Kenya"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 0.051087,
+        "country": "Ghana"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 0.03323,
+        "country": "Ghana"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": -0.953962,
+        "country": "Kenya"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 0.154123,
+        "country": "Ghana"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": -0.033293,
+        "country": "Ghana"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 0.084444,
+        "country": "South Africa"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": -0.003144,
+        "country": "Ghana"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": -0.107684,
+        "country": "Ghana"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 0.06498,
+        "country": "South Africa"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 0.129663,
+        "country": "South Africa"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": -0.188337,
+        "country": "South Africa"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": -0.099638,
+        "country": "Ghana"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": -0.831433,
+        "country": "Kenya"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 0.155199,
+        "country": "South Africa"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": -0.464812,
+        "country": "Kenya"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": -0.912997,
+        "country": "Kenya"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": -0.431836,
+        "country": "Kenya"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": -0.507377,
+        "country": "Kenya"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 0.016669,
+        "country": "Ghana"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 0.012741,
+        "country": "Ghana"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": -0.082129,
+        "country": "Ghana"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 0.015778,
+        "country": "South Africa"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": -0.156248,
+        "country": "South Africa"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": -0.71526,
+        "country": "Kenya"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 0.105521,
+        "country": "Ghana"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 0.04356,
+        "country": "South Africa"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 0.123092,
+        "country": "Ghana"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": -0.243994,
+        "country": "South Africa"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": -0.317989,
+        "country": "Kenya"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": -0.326222,
+        "country": "Kenya"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": -0.079547,
+        "country": "Ghana"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 0.040775,
+        "country": "South Africa"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "format": "%Y",
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".2f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ],
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "labelLimit": 100,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 1.2,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

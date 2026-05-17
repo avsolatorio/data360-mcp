@@ -104,13 +104,17 @@ def wb_altair_config() -> dict:
             "fontSize": 16,
             "fontWeight": "bold",
             "color": WB_TEXT,
-            "lineHeight": 1.2,
+            # AntVis component guideline: use absolute px line-height for predictable wrapping.
+            # ratio (1.2) causes tight stacking when title wraps to 2 lines.
+            "lineHeight": 22,
             "anchor": "start",
             "offset": 8,
             "subtitleFontSize": 12,
             "subtitleColor": WB_TEXT_SUBTLE,
             "subtitleFontWeight": "normal",
             "subtitlePadding": 4,
+            # Breathing room between each subtitle part (geography / unit / breakdown note).
+            "subtitleLineHeight": 18,
         },
         "axis": {
             "labelColor": WB_TEXT_SUBTLE,
@@ -249,10 +253,10 @@ def format_chart_context_subtitle(df: pd.DataFrame) -> str | None:
 
 
 def build_chart_title_with_context(
-    main_title: str,
+    main_title: str | list[str],
     unit_subtitle: str | None,
     df: pd.DataFrame,
-) -> str | dict:
+) -> str | dict | list:
     """Vega-Lite title: main text plus subtitle lines (geography + years, unit).
 
     Subtitle is returned as a **list of strings** so Vega-Lite v5 renders each
@@ -722,6 +726,14 @@ def select_strategy(
             ChartStrategy.BREAKDOWN_COMPARISON,
             f"1 breakdown ({color_dim}), {breakdown_counts[color_dim]} values, single year → grouped bar",
             color_dim=color_dim,
+        )
+
+    # Explicit bar chart hint overrides high-cardinality distribution
+    if hint == "bar" and year_count <= 1 and country_count > 0:
+        return StrategyResult(
+            ChartStrategy.CROSS_SECTIONAL,
+            f"User requested bar; {country_count} countries, single year → horizontal bar",
+            color_dim="country",
         )
 
     # Distribution: >8 countries, single year
@@ -1515,12 +1527,11 @@ def build_temporal_multi_indicator_spec(
     y_label: str = "Value",
     unit_measure: str | None = None,
 ) -> dict:
-    """Layered multi-axis line chart: 2-4 indicators, multi-year when applicable.
+    """Faceted (Small Multiples) multi-axis line chart: 2-4 indicators, multi-year.
 
-    Uses Vega-Lite layer + independent y-scale resolution.
-    Each indicator gets its own y-axis; left + right for the first two, staggered
-    offsets on the right for additional series (Vega-Lite only lays out two
-    independent Y-axes cleanly without offset).
+    Complies with Grammar of Graphics by strictly avoiding dual-axis overlapping.
+    Uses Vega-Lite `vconcat` to create vertically stacked charts that share a
+    common X-axis (time), giving each indicator its own isolated Y-axis plane.
     """
     ind_cols = result.indicator_cols
     if not ind_cols:
@@ -1530,30 +1541,30 @@ def build_temporal_multi_indicator_spec(
     rows = df.to_dict(orient="records")
 
     label_expr = _value_label_expr(unit_measure)
-    layers = []
+    charts = []
     for i, col in enumerate(ind_cols):
         color = WB_CAT_COLORS[i % len(WB_CAT_COLORS)]
         col_label = lab.get(col, col.replace("_", " ").title())
         max_abs = float(df[col].abs().max()) if col in df.columns else None
         tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
         y_axis = {
-            **_axis_style(col_label),
-            "titleColor": color,
+            **_axis_style(),
+            "title": None,  # Remove vertical Y-axis title
             "labelExpr": label_expr,
         }
-        if i == 0:
-            y_axis["orient"] = "left"
-        elif i == 1:
-            y_axis["orient"] = "right"
-        else:
-            y_axis["orient"] = "right"
-            y_axis["offset"] = 50 * (i - 1)
+
+        # Only show X-axis labels on the bottom-most chart to reduce clutter
+        x_axis = _axis_style(temporal=True)
+        if i < len(ind_cols) - 1:
+            x_axis["labels"] = False
+            x_axis["title"] = None
+
         tooltip_cols = _multi_indicator_tooltip_columns(list(df.columns), col)
         layer_enc: dict = {
             "x": {
                 "field": "year",
                 "type": "temporal",
-                "axis": _axis_style(temporal=True),
+                "axis": x_axis,
             },
             "y": {
                 "field": col,
@@ -1566,8 +1577,18 @@ def build_temporal_multi_indicator_spec(
                 tooltip_cols, "line", lab, value_format=tt_fmt, viz_data=df
             ),
         }
-        layers.append(
+        charts.append(
             {
+                "title": {
+                    "text": col_label,
+                    "color": color,
+                    "fontSize": 12,
+                    "fontWeight": "bold",
+                    "anchor": "start",
+                    "offset": 4
+                },
+                "width": 680,
+                "height": 140,  # Fixed height per small multiple
                 "mark": {
                     "type": "line",
                     "strokeWidth": 3,
@@ -1583,10 +1604,8 @@ def build_temporal_multi_indicator_spec(
         "$schema": _vl_schema(),
         "title": title,
         "data": {"values": rows},
-        "layer": layers,
-        "resolve": {"scale": {"y": "independent"}},
-        "width": 680 if len(ind_cols) > 2 else 620,
-        "height": 380,
+        "vconcat": charts,
+        "resolve": {"scale": {"x": "shared"}},
     }
     return inject_wb_config(spec)
 

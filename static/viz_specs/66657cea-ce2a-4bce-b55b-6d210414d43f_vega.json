@@ -1,0 +1,1028 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years)"
+    ],
+    "subtitle": [
+      "Afghanistan, Bangladesh, Bhutan, India, Maldives, Nepal, Pakistan, Sri Lanka, 2000-2020",
+      "Years"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 70.068,
+        "country": "India"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 70.415,
+        "country": "India"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 66.6,
+        "country": "Nepal"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 66.7,
+        "country": "India"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 66.048,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 66.499,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 65.129,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 77.847,
+        "country": "Maldives"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 68.765,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 64.939,
+        "country": "India"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 75.546,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 67.123,
+        "country": "Nepal"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 69.106,
+        "country": "Nepal"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 71.421,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 64.744,
+        "country": "Nepal"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 75.999,
+        "country": "Maldives"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 76.371,
+        "country": "Maldives"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 66.169,
+        "country": "Nepal"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 70.746,
+        "country": "India"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 62.836,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 63.323,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 78.187,
+        "country": "Maldives"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 64.002,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 74.74,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 62.556,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 76.136,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 64.288,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 67.374,
+        "country": "Nepal"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 65.641,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 68.499,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 73.008,
+        "country": "Maldives"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 66.481,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 66.729,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 76.485,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 68.009,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 65.509,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 72.983,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 72.556,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 74.785,
+        "country": "Maldives"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 56.225,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 62.188,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 62.646,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 60.248,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 68.444,
+        "country": "Nepal"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 67.598,
+        "country": "Nepal"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 78.913,
+        "country": "Maldives"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 71.075,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 66.442,
+        "country": "Nepal"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 65.374,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 66.247,
+        "country": "India"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 69.487,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 70.161,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 69.299,
+        "country": "Nepal"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 68.076,
+        "country": "India"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 63.649,
+        "country": "India"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 64.662,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 65.373,
+        "country": "India"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 77.512,
+        "country": "Maldives"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 64.659,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 76.239,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 72.122,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 71.711,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 67.162,
+        "country": "India"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 62.241,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 63.624,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 76.698,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 66.458,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 58.956,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 76.756,
+        "country": "Maldives"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 72.271,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 63.288,
+        "country": "Nepal"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 79.228,
+        "country": "Maldives"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 65.701,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 72.36,
+        "country": "Maldives"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 74.463,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 72.442,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 63.097,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 57.171,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 55.005,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 58.247,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 62.26,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 59.708,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 69.709,
+        "country": "India"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 66.223,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 68.74,
+        "country": "Nepal"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 64.484,
+        "country": "India"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 64.883,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 70.156,
+        "country": "India"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 65.275,
+        "country": "Nepal"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 68.499,
+        "country": "India"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 62.749,
+        "country": "India"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 64.912,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 65.29,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 67.152,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 61.842,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 66.772,
+        "country": "Nepal"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 62.834,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 78.713,
+        "country": "Maldives"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 65.803,
+        "country": "India"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 65.891,
+        "country": "Nepal"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 63.591,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 62.642,
+        "country": "Nepal"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 61.903,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 71.804,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 64.229,
+        "country": "Nepal"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 75.256,
+        "country": "Maldives"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 63.984,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 72.625,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 72.005,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 63.507,
+        "country": "Nepal"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 77.141,
+        "country": "Maldives"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 65.875,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 70.543,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 70.797,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 72.825,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 75.187,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 70.892,
+        "country": "Maldives"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 79.433,
+        "country": "Maldives"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 70.298,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 71.659,
+        "country": "Maldives"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 75.99,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 58.553,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 62.406,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 62.941,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 62.443,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 61.735,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 62.27,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 61.25,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 60.702,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 71.119,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 68.932,
+        "country": "India"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 67.364,
+        "country": "Nepal"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 70.504,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 70.016,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 67.812,
+        "country": "Nepal"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 71.606,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 71.413,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 64.086,
+        "country": "India"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 63.158,
+        "country": "India"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 65.943,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 69.036,
+        "country": "Nepal"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 69.326,
+        "country": "India"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 67.623,
+        "country": "India"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 69.28,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 64.378,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 67.527,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 68.156,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 68.989,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 69.759,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 64.206,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 75.757,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 61.454,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 79.707,
+        "country": "Maldives"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 63.807,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 62.049,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 76.928,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 72.253,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 67.047,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 67.733,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 68.022,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 75.711,
+        "country": "Maldives"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 71.179,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 73.263,
+        "country": "Maldives"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 78.607,
+        "country": "Maldives"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 62.416,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 73.073,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 57.81,
+        "country": "Afghanistan"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 55.511,
+        "country": "Afghanistan"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "format": "%Y",
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ],
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Country",
+        "labelLimit": 100,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

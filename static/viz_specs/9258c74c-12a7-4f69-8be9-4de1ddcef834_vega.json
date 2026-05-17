@@ -1,0 +1,262 @@
+{
+  "config": {
+    "view": {
+      "continuousWidth": 300,
+      "continuousHeight": 300,
+      "stroke": "transparent"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 1.2,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  },
+  "data": {
+    "name": "data-ae948f0f533288ca45ac3f99f2ba55ce"
+  },
+  "mark": {
+    "type": "point"
+  },
+  "encoding": {
+    "color": {
+      "field": "country",
+      "type": "nominal"
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "format": "%Y",
+        "title": "Year",
+        "type": "temporal"
+      },
+      {
+        "field": "value",
+        "format": ",.2f",
+        "title": "Value",
+        "type": "quantitative"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ],
+    "x": {
+      "field": "year",
+      "scale": {
+        "type": "linear",
+        "zero": true
+      },
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "labelAngle": 0,
+        "format": "%Y",
+        "tickCount": 5
+      }
+    },
+    "y": {
+      "field": "value",
+      "scale": {
+        "type": "linear"
+      },
+      "type": "quantitative",
+      "axis": {
+        "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1f') : '$'+format(datum.value,'.2f')"
+      }
+    }
+  },
+  "params": [
+    {
+      "name": "param_1e9efca18e7a2868",
+      "select": {
+        "type": "interval",
+        "encodings": [
+          "x",
+          "y"
+        ]
+      },
+      "bind": "scales"
+    }
+  ],
+  "title": {
+    "text": "GDP per capita (constant 2015 US$)",
+    "subtitle": "Kenya, 2004-2024 \u00b7 constant 2015 US$"
+  },
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json",
+  "datasets": {
+    "data-ae948f0f533288ca45ac3f99f2ba55ce": [
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 1273.772261,
+        "country": "Kenya"
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "value": 1860.02287,
+        "country": "Kenya"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 1517.977961,
+        "country": "Kenya"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 1396.301787,
+        "country": "Kenya"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 1596.690459,
+        "country": "Kenya"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": 1811.216518,
+        "country": "Kenya"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 1698.895783,
+        "country": "Kenya"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 1747.531988,
+        "country": "Kenya"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 1413.941425,
+        "country": "Kenya"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 1263.541647,
+        "country": "Kenya"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 1276.735035,
+        "country": "Kenya"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 1340.164674,
+        "country": "Kenya"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 1370.580009,
+        "country": "Kenya"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 1191.254436,
+        "country": "Kenya"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 1645.709618,
+        "country": "Kenya"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 1489.119598,
+        "country": "Kenya"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 1609.334141,
+        "country": "Kenya"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 1450.593382,
+        "country": "Kenya"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 1542.33774,
+        "country": "Kenya"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 1309.910929,
+        "country": "Kenya"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 1223.447385,
+        "country": "Kenya"
+      }
+    ]
+  }
+}

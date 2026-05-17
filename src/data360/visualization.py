@@ -797,9 +797,14 @@ async def get_viz_spec(
     # 6. Map country codes
     viz_data = await _map_country_codes(viz_data)
 
+    import textwrap
+
+    # Apply text wrapping (Typography T3 constraint) so long single-indicator titles don't overflow
+    wrapped_title = textwrap.wrap(chart_title, width=80) if isinstance(chart_title, str) else chart_title
+
     # Vega-Lite title + subtitle (geography, year range, unit) after data is cleaned
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
-        chart_title, raw_unit or None, viz_data
+        wrapped_title, raw_unit or None, viz_data
     )
 
     # 7. Determine strategy — route around Draco for complex patterns
@@ -1240,11 +1245,18 @@ async def get_multi_indicator_viz_spec(
 
     merged = _sanitize_dataframe_for_json_records(merged)
 
+    import textwrap
+
     # 5. Build chart title (with subtitle when all indicators share the same unit)
+    # GoG / AntVis guideline: Do not arbitrarily truncate strings with ellipses.
+    # Instead, preserve the full text but word-wrap it so it fits the chart width.
     if len(titles) == 2:
-        chart_title = f"{titles[0]} vs. {titles[1]}"
+        full_title = f"{titles[0]} vs. {titles[1]}"
     else:
-        chart_title = " | ".join(titles)
+        full_title = " | ".join(titles)
+
+    # Wrap at 80 characters to ensure it fits safely within standard chart widths
+    chart_title = textwrap.wrap(full_title, width=80)
 
     unique_units = list(dict.fromkeys(u for u in units if u))
     shared_unit = unique_units[0] if len(unique_units) == 1 else ""

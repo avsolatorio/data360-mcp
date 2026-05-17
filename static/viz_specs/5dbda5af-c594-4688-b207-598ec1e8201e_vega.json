@@ -1,0 +1,768 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP (annual % growth) | Inflation, consumer prices (annual % growth) | Unemployment, total (% of total labor force) (modeled ILO estimate) | Life expectancy at birth, total (years)",
+    "subtitle": [
+      "Brazil"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2000-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 4.387949,
+        "inflation_consumer_prices_annual_growth": 7.044141,
+        "unemployment_total_of_total_labor_force": 10.889,
+        "life_expectancy_at_birth_total_years": 69.584
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 1.389896,
+        "inflation_consumer_prices_annual_growth": 6.840359,
+        "unemployment_total_of_total_labor_force": 10.649,
+        "life_expectancy_at_birth_total_years": 69.98
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 3.053462,
+        "inflation_consumer_prices_annual_growth": 8.450164,
+        "unemployment_total_of_total_labor_force": 10.641,
+        "life_expectancy_at_birth_total_years": 70.396
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 1.140829,
+        "inflation_consumer_prices_annual_growth": 14.71492,
+        "unemployment_total_of_total_labor_force": 11.168,
+        "life_expectancy_at_birth_total_years": 70.884
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 5.759965,
+        "inflation_consumer_prices_annual_growth": 6.597185,
+        "unemployment_total_of_total_labor_force": 10.072,
+        "life_expectancy_at_birth_total_years": 71.361
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 3.202132,
+        "inflation_consumer_prices_annual_growth": 6.869537,
+        "unemployment_total_of_total_labor_force": 10.551,
+        "life_expectancy_at_birth_total_years": 71.832
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 3.961989,
+        "inflation_consumer_prices_annual_growth": 4.183568,
+        "unemployment_total_of_total_labor_force": 9.692,
+        "life_expectancy_at_birth_total_years": 72.296
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 6.069871,
+        "inflation_consumer_prices_annual_growth": 3.641273,
+        "unemployment_total_of_total_labor_force": 9.28,
+        "life_expectancy_at_birth_total_years": 72.73
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 5.094195,
+        "inflation_consumer_prices_annual_growth": 5.678594,
+        "unemployment_total_of_total_labor_force": 8.268,
+        "life_expectancy_at_birth_total_years": 73.111
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": -0.125812,
+        "inflation_consumer_prices_annual_growth": 4.888035,
+        "unemployment_total_of_total_labor_force": 9.419,
+        "life_expectancy_at_birth_total_years": 73.457
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 7.528226,
+        "inflation_consumer_prices_annual_growth": 5.038727,
+        "unemployment_total_of_total_labor_force": 8.42,
+        "life_expectancy_at_birth_total_years": 73.779
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 3.974423,
+        "inflation_consumer_prices_annual_growth": 6.63645,
+        "unemployment_total_of_total_labor_force": 7.578,
+        "life_expectancy_at_birth_total_years": 74.047
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 1.921176,
+        "inflation_consumer_prices_annual_growth": 5.403499,
+        "unemployment_total_of_total_labor_force": 7.251,
+        "life_expectancy_at_birth_total_years": 74.335
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 3.004823,
+        "inflation_consumer_prices_annual_growth": 6.204311,
+        "unemployment_total_of_total_labor_force": 7.071,
+        "life_expectancy_at_birth_total_years": 74.609
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 0.503956,
+        "inflation_consumer_prices_annual_growth": 6.32904,
+        "unemployment_total_of_total_labor_force": 6.755,
+        "life_expectancy_at_birth_total_years": 74.823
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": -3.545763,
+        "inflation_consumer_prices_annual_growth": 9.029901,
+        "unemployment_total_of_total_labor_force": 8.538,
+        "life_expectancy_at_birth_total_years": 75.106
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": -3.275917,
+        "inflation_consumer_prices_annual_growth": 8.739144,
+        "unemployment_total_of_total_labor_force": 11.58,
+        "life_expectancy_at_birth_total_years": 75.081
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 1.322869,
+        "inflation_consumer_prices_annual_growth": 3.446373,
+        "unemployment_total_of_total_labor_force": 12.792,
+        "life_expectancy_at_birth_total_years": 75.383
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 1.783667,
+        "inflation_consumer_prices_annual_growth": 3.66485,
+        "unemployment_total_of_total_labor_force": 12.329,
+        "life_expectancy_at_birth_total_years": 75.633
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 1.220778,
+        "inflation_consumer_prices_annual_growth": 3.732976,
+        "unemployment_total_of_total_labor_force": 11.936,
+        "life_expectancy_at_birth_total_years": 75.809
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": -3.276759,
+        "inflation_consumer_prices_annual_growth": 3.211768,
+        "unemployment_total_of_total_labor_force": 13.697,
+        "life_expectancy_at_birth_total_years": 74.506
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 4.762604,
+        "inflation_consumer_prices_annual_growth": 8.30166,
+        "unemployment_total_of_total_labor_force": 13.158,
+        "life_expectancy_at_birth_total_years": 73.038
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 3.016694,
+        "inflation_consumer_prices_annual_growth": 9.280106,
+        "unemployment_total_of_total_labor_force": 9.231,
+        "life_expectancy_at_birth_total_years": 74.872
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "country": "Brazil",
+        "sex": "_T",
+        "age": "_T",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "gdp_annual_growth": 3.241655,
+        "inflation_consumer_prices_annual_growth": 4.593563,
+        "unemployment_total_of_total_labor_force": 7.947,
+        "life_expectancy_at_birth_total_years": 75.848
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#34A7F2",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "format": "%Y",
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "gdp_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#34A7F2",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP (annual % growth) (%)",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')",
+            "orient": "left"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "sex",
+            "title": "Sex",
+            "type": "nominal"
+          },
+          {
+            "field": "age",
+            "title": "Age Group",
+            "type": "nominal"
+          },
+          {
+            "field": "urbanisation",
+            "title": "Urbanisation",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_annual_growth",
+            "title": "GDP (annual % growth) (%)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#FF9800",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "format": "%Y",
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "inflation_consumer_prices_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#FF9800",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Inflation, consumer prices (annual % growth) (%)",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')",
+            "orient": "right"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "sex",
+            "title": "Sex",
+            "type": "nominal"
+          },
+          {
+            "field": "age",
+            "title": "Age Group",
+            "type": "nominal"
+          },
+          {
+            "field": "urbanisation",
+            "title": "Urbanisation",
+            "type": "nominal"
+          },
+          {
+            "field": "inflation_consumer_prices_annual_growth",
+            "title": "Inflation, consumer prices (annual % growth) (%)",
+            "format": ",.1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#664AB6",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "format": "%Y",
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "unemployment_total_of_total_labor_force",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#664AB6",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Unemployment, total (% of total labor force) (modeled ILO estimate) (% of total labor force)",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')",
+            "orient": "right",
+            "offset": 50
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#664AB6"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "sex",
+            "title": "Sex",
+            "type": "nominal"
+          },
+          {
+            "field": "age",
+            "title": "Age Group",
+            "type": "nominal"
+          },
+          {
+            "field": "urbanisation",
+            "title": "Urbanisation",
+            "type": "nominal"
+          },
+          {
+            "field": "unemployment_total_of_total_labor_force",
+            "title": "Unemployment, total (% of total labor force) (modeled ILO estimate) (% of total labor force)",
+            "format": ",.1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#4EC2C0",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "format": "%Y",
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#4EC2C0",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Life expectancy at birth, total (years) (Years)",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')",
+            "orient": "right",
+            "offset": 100
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#4EC2C0"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "sex",
+            "title": "Sex",
+            "type": "nominal"
+          },
+          {
+            "field": "age",
+            "title": "Age Group",
+            "type": "nominal"
+          },
+          {
+            "field": "urbanisation",
+            "title": "Urbanisation",
+            "type": "nominal"
+          },
+          {
+            "field": "life_expectancy_at_birth_total_years",
+            "title": "Life expectancy at birth, total (years) (Years)",
+            "format": ",.1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  },
+  "width": 680,
+  "height": 380,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 1.2,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

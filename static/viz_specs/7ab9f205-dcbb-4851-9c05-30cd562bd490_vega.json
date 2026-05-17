@@ -1,0 +1,725 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Worldwide Governance Indicators: Government Effectiveness",
+    "subtitle": "Kenya, 2010-2024 \u00b7 Unitless"
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 10.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 10.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 10.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 11.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 11.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 11.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 11.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 11.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 11.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 11.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 11.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 11.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 12.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": 12.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "value": 13.0,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SR"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": -0.501484,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": -0.530936,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": -0.468612,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": -0.418694,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": -0.415559,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": -0.367567,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": -0.31658,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": -0.303305,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": -0.344954,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": -0.291442,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": -0.375971,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": -0.346807,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": -0.33248,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": -0.313111,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "value": -0.29789,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_EST"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 0.204365,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 0.204365,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 0.204365,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 0.189746,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 0.189746,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 0.189746,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 0.189746,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 0.189746,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 0.189746,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 0.189746,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 0.189746,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 0.189746,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 0.184485,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": 0.184485,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "value": 0.177895,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SE"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 41.589623,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 41.016948,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 42.228777,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 43.199384,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 43.260349,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 44.193493,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 45.184897,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 45.443006,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 44.63318,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 45.673678,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 44.030085,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 44.597158,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 44.875735,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": 45.252338,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "value": 45.548292,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 35.072779,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 34.500104,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 35.711933,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 37.148714,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 37.209679,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 38.142823,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 39.134227,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 39.392336,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 38.58251,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 39.623009,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 37.979415,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 38.546488,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 38.992832,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": 39.369435,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "value": 39.875547,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_LB"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 48.106467,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 47.533792,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 48.745622,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 49.250054,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 49.311019,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 50.244162,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 51.235566,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 51.493676,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 50.68385,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 51.724348,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 50.080755,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2021-01-01T00:00:00",
+        "value": 50.647828,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2022-01-01T00:00:00",
+        "value": 50.758638,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2023-01-01T00:00:00",
+        "value": 51.135241,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      },
+      {
+        "year": "2024-01-01T00:00:00",
+        "value": 51.221036,
+        "country": "Kenya",
+        "comp_breakdown_1": "WGI_SC_UB"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "format": "%Y",
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      },
+      {
+        "field": "comp_breakdown_1",
+        "title": "Breakdown",
+        "type": "nominal"
+      }
+    ],
+    "color": {
+      "field": "comp_breakdown_1",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "labelLimit": 100,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 1.2,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

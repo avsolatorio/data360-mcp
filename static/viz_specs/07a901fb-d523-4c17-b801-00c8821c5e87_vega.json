@@ -1,0 +1,1194 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Population ages 0-14, total | Population ages 15-64, total | Population ages 65 and above, total",
+    "subtitle": [
+      "Japan",
+      "Unit"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1990-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 22251962.0
+      },
+      {
+        "year": "1991-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 21564797.0
+      },
+      {
+        "year": "1992-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 20989460.0
+      },
+      {
+        "year": "1993-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 20470109.0
+      },
+      {
+        "year": "1994-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 20014369.0
+      },
+      {
+        "year": "1995-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 19620415.0
+      },
+      {
+        "year": "1996-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 19279757.0
+      },
+      {
+        "year": "1997-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 18988513.0
+      },
+      {
+        "year": "1998-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 18725673.0
+      },
+      {
+        "year": "1999-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 18464775.0
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 18240652.0
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 18077664.0
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 17938976.0
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 17813886.0
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 17684465.0
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 17571809.0
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 17475497.0
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 17400413.0
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 17330137.0
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 17230781.0
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 17124148.0
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 16988362.0
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 16842042.0
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 16682657.0
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 16508622.0
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 16330468.0
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 16168196.0
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 16008417.0
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 15840243.0
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 15660145.0
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y0T14",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 0-14, total",
+        "value": 15430045.0
+      },
+      {
+        "year": "1990-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 86212055.0
+      },
+      {
+        "year": "1991-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 86726853.0
+      },
+      {
+        "year": "1992-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 87078505.0
+      },
+      {
+        "year": "1993-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 87325791.0
+      },
+      {
+        "year": "1994-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 87454486.0
+      },
+      {
+        "year": "1995-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 87457274.0
+      },
+      {
+        "year": "1996-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 87360338.0
+      },
+      {
+        "year": "1997-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 87195854.0
+      },
+      {
+        "year": "1998-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 87046199.0
+      },
+      {
+        "year": "1999-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 86805399.0
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 86478606.0
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 86140893.0
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 85801645.0
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 85516887.0
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 85007810.0
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 84286399.0
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 83556704.0
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 82918195.0
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 82234517.0
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 81669561.0
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 81364210.0
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 80608631.0
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 79501672.0
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 78375939.0
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 77387735.0
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 76580356.0
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 75946619.0
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 75439583.0
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 75025904.0
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 74719384.0
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y15T64",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 15-64, total",
+        "value": 74318579.0
+      },
+      {
+        "year": "1990-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 15013983.0
+      },
+      {
+        "year": "1991-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 15672350.0
+      },
+      {
+        "year": "1992-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 16357035.0
+      },
+      {
+        "year": "1993-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 17033101.0
+      },
+      {
+        "year": "1994-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 17709145.0
+      },
+      {
+        "year": "1995-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 18394310.0
+      },
+      {
+        "year": "1996-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 19116905.0
+      },
+      {
+        "year": "1997-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 19872633.0
+      },
+      {
+        "year": "1998-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 20628128.0
+      },
+      {
+        "year": "1999-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 21360826.0
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 22123742.0
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 22930443.0
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 23704379.0
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 24387227.0
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 25068724.0
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 25914792.0
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 26821799.0
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 27682392.0
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 28498346.0
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 29146658.0
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 29581642.0
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 30236006.0
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 31285286.0
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 32386404.0
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 33379643.0
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 34230176.0
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 34961185.0
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 35523999.0
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 35944852.0
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 36253471.0
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "country": "Japan",
+        "sex": "_T",
+        "age": "Y_GE65",
+        "urbanisation": "_T",
+        "comp_breakdown_1": "_Z",
+        "comp_breakdown_2": "_Z",
+        "indicator": "Population ages 65 and above, total",
+        "value": 36512376.0
+      }
+    ]
+  },
+  "mark": {
+    "type": "area",
+    "tooltip": true,
+    "line": true,
+    "opacity": 0.8
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "stack": "zero",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      }
+    },
+    "color": {
+      "field": "indicator",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Indicator",
+        "labelLimit": 100,
+        "columns": 3
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "title": "Year",
+        "format": "%Y"
+      },
+      {
+        "field": "indicator",
+        "type": "nominal",
+        "title": "Indicator"
+      },
+      {
+        "field": "value",
+        "type": "quantitative",
+        "title": "Population ages 15-64, total (Unit)",
+        "format": ",.3~s"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 1.2,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,1028 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years)"
+    ],
+    "subtitle": [
+      "Brazil, China, France, Germany, India, Japan, United Kingdom, United States, 2000-2020",
+      "Years"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 76.636585,
+        "country": "United States"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 75.317,
+        "country": "China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 70.068,
+        "country": "India"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 80.95122,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 78.641463,
+        "country": "United States"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 70.415,
+        "country": "India"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 74.335,
+        "country": "Brazil"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 66.7,
+        "country": "India"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 82.931463,
+        "country": "Japan"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 72.296,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 77.94,
+        "country": "China"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 78.019,
+        "country": "China"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 73.779,
+        "country": "Brazil"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 81.304878,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 78.841463,
+        "country": "United States"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 75.633,
+        "country": "Brazil"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 64.939,
+        "country": "India"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 82.67561,
+        "country": "France"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 82.587561,
+        "country": "Japan"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 73.457,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 80.992683,
+        "country": "Germany"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 73.385,
+        "country": "China"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 74.833,
+        "country": "China"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 79.836585,
+        "country": "Germany"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 81.256098,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 78.539024,
+        "country": "United States"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 74.789,
+        "country": "China"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 80.904878,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 78.741463,
+        "country": "United States"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 81.369122,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 77.687805,
+        "country": "United States"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 70.746,
+        "country": "India"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 84.356341,
+        "country": "Japan"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 69.98,
+        "country": "Brazil"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 81.663415,
+        "country": "France"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 79.987805,
+        "country": "Germany"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 81.256098,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 78.639024,
+        "country": "United States"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 81.416341,
+        "country": "Japan"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 82.826829,
+        "country": "France"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 81.292683,
+        "country": "Germany"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 74.085,
+        "country": "China"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 79.736585,
+        "country": "Germany"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 78.931707,
+        "country": "Germany"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 79.260976,
+        "country": "France"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 79.158537,
+        "country": "France"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 80.539024,
+        "country": "Germany"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 81.690732,
+        "country": "Japan"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 81.076098,
+        "country": "Japan"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 78.787805,
+        "country": "United States"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 75.889,
+        "country": "China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 75.383,
+        "country": "Brazil"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 83.096098,
+        "country": "Japan"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 66.247,
+        "country": "India"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 74.404,
+        "country": "China"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 84.210976,
+        "country": "Japan"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 68.076,
+        "country": "India"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 79.6,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 78.039024,
+        "country": "United States"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 63.649,
+        "country": "India"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 70.884,
+        "country": "Brazil"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 73.111,
+        "country": "Brazil"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 65.373,
+        "country": "India"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 81.156098,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 78.539024,
+        "country": "United States"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 80.331756,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 76.980488,
+        "country": "United States"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 79.44878,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 77.987805,
+        "country": "United States"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 78.143902,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 76.936585,
+        "country": "United States"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 67.162,
+        "country": "India"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 72.675,
+        "country": "China"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 80.892683,
+        "country": "Germany"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 79.534146,
+        "country": "Germany"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 72.288,
+        "country": "China"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 80.163415,
+        "country": "France"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 78.680488,
+        "country": "Germany"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 79.114634,
+        "country": "France"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 76.714,
+        "country": "China"
+      },
+      {
+        "year": "2018-01-01T00:00:00",
+        "value": 77.709,
+        "country": "China"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 76.2,
+        "country": "China"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 69.709,
+        "country": "India"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 83.984878,
+        "country": "Japan"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 83.331951,
+        "country": "Japan"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 82.321951,
+        "country": "Japan"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 64.484,
+        "country": "India"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 82.842683,
+        "country": "Japan"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 81.004878,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 82.59122,
+        "country": "Japan"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 70.156,
+        "country": "India"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 82.114634,
+        "country": "France"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 80.436585,
+        "country": "Germany"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 74.609,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 80.641463,
+        "country": "Germany"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 68.499,
+        "country": "India"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 62.749,
+        "country": "India"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 79.24878,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 82.030244,
+        "country": "Japan"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 71.361,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 82.57561,
+        "country": "France"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 72.73,
+        "country": "Brazil"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 69.584,
+        "country": "Brazil"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 65.803,
+        "country": "India"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 83.793902,
+        "country": "Japan"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 84.56,
+        "country": "Japan"
+      },
+      {
+        "year": "2008-01-01T00:00:00",
+        "value": 81.214634,
+        "country": "France"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 81.76,
+        "country": "Japan"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 81.414634,
+        "country": "France"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 70.396,
+        "country": "Brazil"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 79.04878,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 77.487805,
+        "country": "United States"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 75.106,
+        "country": "Brazil"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 81.112195,
+        "country": "France"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 71.832,
+        "country": "Brazil"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 77.741463,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 79.056098,
+        "country": "France"
+      },
+      {
+        "year": "2000-01-01T00:00:00",
+        "value": 77.926829,
+        "country": "Germany"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 78.229268,
+        "country": "Germany"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 78.741463,
+        "country": "United States"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 77.235,
+        "country": "China"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 83.587805,
+        "country": "Japan"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 76.452,
+        "country": "China"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 75.081,
+        "country": "Brazil"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 77.214,
+        "country": "China"
+      },
+      {
+        "year": "2017-01-01T00:00:00",
+        "value": 84.099756,
+        "country": "Japan"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 68.932,
+        "country": "India"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 74.823,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 82.219512,
+        "country": "France"
+      },
+      {
+        "year": "2013-01-01T00:00:00",
+        "value": 80.490244,
+        "country": "Germany"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 75.668,
+        "country": "China"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 73.727,
+        "country": "China"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 82.719512,
+        "country": "France"
+      },
+      {
+        "year": "2014-01-01T00:00:00",
+        "value": 81.090244,
+        "country": "Germany"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 76.975,
+        "country": "China"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 64.086,
+        "country": "India"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 63.158,
+        "country": "India"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 69.326,
+        "country": "India"
+      },
+      {
+        "year": "2012-01-01T00:00:00",
+        "value": 81.968293,
+        "country": "France"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 80.812195,
+        "country": "France"
+      },
+      {
+        "year": "2006-01-01T00:00:00",
+        "value": 79.131707,
+        "country": "Germany"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 67.623,
+        "country": "India"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 82.573171,
+        "country": "France"
+      },
+      {
+        "year": "2016-01-01T00:00:00",
+        "value": 80.990244,
+        "country": "Germany"
+      },
+      {
+        "year": "2007-01-01T00:00:00",
+        "value": 82.507073,
+        "country": "Japan"
+      },
+      {
+        "year": "2002-01-01T00:00:00",
+        "value": 73.034,
+        "country": "China"
+      },
+      {
+        "year": "2011-01-01T00:00:00",
+        "value": 74.047,
+        "country": "Brazil"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 77.992683,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 76.836585,
+        "country": "United States"
+      },
+      {
+        "year": "2019-01-01T00:00:00",
+        "value": 75.809,
+        "country": "Brazil"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 80.402439,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2010-01-01T00:00:00",
+        "value": 78.541463,
+        "country": "United States"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 81.955122,
+        "country": "Japan"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 80.05122,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2009-01-01T00:00:00",
+        "value": 78.390244,
+        "country": "United States"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 78.746341,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2004-01-01T00:00:00",
+        "value": 77.487805,
+        "country": "United States"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 78.446341,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 77.036585,
+        "country": "United States"
+      },
+      {
+        "year": "2003-01-01T00:00:00",
+        "value": 78.380488,
+        "country": "Germany"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 82.17561,
+        "country": "France"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 81.041463,
+        "country": "Germany"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 80.956098,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 78.690244,
+        "country": "United States"
+      },
+      {
+        "year": "2020-01-01T00:00:00",
+        "value": 74.506,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015-01-01T00:00:00",
+        "value": 82.321951,
+        "country": "France"
+      },
+      {
+        "year": "2001-01-01T00:00:00",
+        "value": 78.329268,
+        "country": "Germany"
+      },
+      {
+        "year": "2005-01-01T00:00:00",
+        "value": 80.163415,
+        "country": "France"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "format": "%Y",
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ],
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Country",
+        "labelLimit": 100,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 200,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}
