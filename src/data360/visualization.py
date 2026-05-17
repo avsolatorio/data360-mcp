@@ -590,11 +590,46 @@ async def get_viz_spec(
     BREAKDOWN_COMPARISON  | 1 breakdown, single year, ≤4 countries              | x=country(N), xOffset=breakdown(N), y=value(Q) (grouped bar)
     SMALL_MULTIPLES       | breakdown + >1 country, OR 2+ breakdowns            | facet=country(N), color=breakdown(N), x=year(temporal), y=value(Q)
     TEMPORAL_SINGLE*      | 1 breakdown (any dim), multi-year                   | x=year(temporal), y=value(Q), color=breakdown(N) (multi-series line)
+    HEATMAP               | >8 countries, multi-year, 0 breakdowns              | x=year(temporal), y=country(N), color=value(Q) (rect grid)
+    STACKED_AREA          | chart_type="area"/"stacked_area", composition Q     | x=year(temporal), y=value(Q) stacked, color=breakdown(N)
     FALLBACK_LINE         | unclassified shapes                                 | x=year(temporal), y=value(Q), color=country(N)
 
     *When comp_breakdown_1/2 has multiple values and year_count > 1, the pipeline routes
     to TEMPORAL_SINGLE with color=comp_breakdown_1 — producing one colored line per
     breakdown series. This is the correct encoding for WGI, sectoral breakdowns, etc.
+
+    ### High-cardinality and high-dimensionality guidance
+
+    DO NOT reduce country_code or disaggregation_filters to simplify the output.
+    The pipeline handles high-cardinality data automatically:
+
+    | Data shape                              | Pipeline action                              |
+    |-----------------------------------------|----------------------------------------------|
+    | >8 countries, multi-year, 0 breakdowns  | Auto-routes to HEATMAP (rect grid)           |
+    | >8 countries + breakdown                | SMALL_MULTIPLES, caps at 6 facets            |
+    | Single year, >8 countries               | DISTRIBUTION (strip chart), caps at 20 bars  |
+    | ≤8 countries + breakdown, multi-year    | TEMPORAL_SINGLE with colored lines per series|
+
+    If the LLM passes 3 countries when the user asked for all Sub-Saharan Africa,
+    the pipeline cannot recover the missing data — it will produce a misleading chart.
+    Always pass the full country list and let the pipeline decide the correct strategy.
+
+    ### Visual channel hierarchy (perception accuracy)
+
+    Channels are ranked by how accurately viewers read encoded values:
+
+    Channel           | Type        | Used for
+    ------------------|-------------|----------------------------------------
+    Position (x/y)    | Highest     | Quantitative values, time axis
+    Color (hue)       | Medium      | Nominal categories (country, breakdown)
+    Color (lightness) | Medium      | Quantitative gradient (heatmap cells)
+    Size              | Medium-low  | Not used in current strategies
+    Shape             | Low         | Not used in current strategies
+
+    The pipeline always maps `value` → position (y-axis) and `country`/`breakdown` → color
+    (hue). Do not override this — a chart that encodes values as colors (instead of y) is
+    strictly less readable, except in heatmaps where a 2D spatial grid makes position
+    unavailable for both axes simultaneously.
 
     ### Encoding type rules (Vega-Lite v5)
 
@@ -605,6 +640,8 @@ async def get_viz_spec(
     - Legend titles: derived from _TOOLTIP_SPECS labels (e.g. "Breakdown", not
       "Comp_Breakdown_1").
     - Color scale: WB categorical palette (9 colors). Gender data uses WB_GENDER_COLORS.
+    - Heatmap color scale: sequential ("yellowgreenblue") for positive-only data;
+      divergent ("redblue") when data contains negative values.
 
     Args:
         database_id: Database identifier (e.g., WB_HNP, WB_WDI).
@@ -1013,6 +1050,29 @@ async def get_multi_indicator_viz_spec(
     CORRELATION           | 2 indicators, >1 country, single year               | x=indicator1(Q), y=indicator2(Q), color=country(N) (scatter)
     CORRELATION_TEMPORAL  | 2 indicators, >1 country, multi-year                | x=indicator1(Q), y=indicator2(Q), color=country(N), order=year (connected scatter)
     TEMPORAL_MULTI_IND    | 2-4 indicators, 1 country or 3+ indicators          | layered lines, independent y-scales per indicator
+    STACKED_AREA          | chart_type="area"/"stacked_area", composition Q     | x=year(temporal), y=value(Q) stacked, color=indicator(N)
+
+    ### High-cardinality guidance
+
+    DO NOT reduce indicator_ids or disaggregation_filters to simplify the output.
+    Pass the full set of indicators the user asked about. The pipeline will:
+    - Merge all indicator series into a single aligned DataFrame
+    - Auto-select the correct strategy (scatter, layered lines, stacked area)
+    - Cap series count if needed and annotate the subtitle with a trim note
+
+    ### Visual channel hierarchy (perception accuracy)
+
+    Channels are ranked by how accurately viewers read encoded values:
+
+    Channel           | Type        | Used for
+    ------------------|-------------|----------------------------------------
+    Position (x/y)    | Highest     | Quantitative values, time axis
+    Color (hue)       | Medium      | Nominal categories (country, indicator)
+    Color (lightness) | Medium      | Not used for multi-indicator charts
+    Size / Shape      | Low         | Not used in current strategies
+
+    The pipeline always maps quantitative values → position (y-axis) and nominal
+    categories → color (hue). Do not override this with custom disaggregation_filters.
 
     ### Encoding type rules (Vega-Lite v5)
 

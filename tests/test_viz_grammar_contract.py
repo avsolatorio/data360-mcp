@@ -73,6 +73,8 @@ class TestGrammarOfGraphicsContractPresence:
             "DISTRIBUTION",
             "BREAKDOWN_COMPARISON",
             "SMALL_MULTIPLES",
+            "HEATMAP",
+            "STACKED_AREA",
             "FALLBACK_LINE",
         ]
         for strategy in required_strategies:
@@ -479,4 +481,384 @@ class TestSmallMultiplesSubtitleRebuild:
         subtitle = spec.get("title", {}).get("subtitle", "")
         assert "Showing" not in subtitle, (
             f"No 'Showing N of M' note expected at or under cap. Got: {subtitle!r}"
+        )
+
+
+# ============================================================================
+# 7. New strategy docstring coverage: HEATMAP and STACKED_AREA
+# ============================================================================
+
+
+class TestNewStrategiesInDocstring:
+    """HEATMAP and STACKED_AREA must be documented in both tool docstrings."""
+
+    def test_get_viz_spec_strategy_table_has_heatmap(self):
+        doc = get_viz_spec.__doc__ or ""
+        assert "HEATMAP" in doc, (
+            "get_viz_spec strategy table is missing HEATMAP. "
+            "The LLM must know this strategy fires for >8 countries + multi-year + 0 breakdowns."
+        )
+
+    def test_get_viz_spec_strategy_table_has_stacked_area(self):
+        doc = get_viz_spec.__doc__ or ""
+        assert "STACKED_AREA" in doc, (
+            "get_viz_spec strategy table is missing STACKED_AREA. "
+            "The LLM must know this strategy is triggered by chart_type='area'/'stacked_area'."
+        )
+
+    def test_get_multi_indicator_strategy_table_has_stacked_area(self):
+        doc = get_multi_indicator_viz_spec.__doc__ or ""
+        assert "STACKED_AREA" in doc, (
+            "get_multi_indicator_viz_spec strategy table is missing STACKED_AREA."
+        )
+
+    def test_get_viz_spec_has_high_cardinality_guidance(self):
+        doc = get_viz_spec.__doc__ or ""
+        assert "High-cardinality" in doc, (
+            "get_viz_spec docstring is missing the high-cardinality guidance block."
+        )
+        assert "DO NOT reduce country_code" in doc, (
+            "get_viz_spec docstring must explicitly forbid reducing country_code "
+            "to simplify charts. The LLM must pass the full country list."
+        )
+
+    def test_get_multi_indicator_has_high_cardinality_guidance(self):
+        doc = get_multi_indicator_viz_spec.__doc__ or ""
+        assert "High-cardinality" in doc, (
+            "get_multi_indicator_viz_spec docstring is missing the high-cardinality guidance block."
+        )
+        assert "DO NOT reduce indicator_ids" in doc, (
+            "get_multi_indicator_viz_spec docstring must explicitly forbid reducing indicator_ids."
+        )
+
+    def test_get_viz_spec_has_visual_channel_hierarchy(self):
+        doc = get_viz_spec.__doc__ or ""
+        assert "Visual channel hierarchy" in doc, (
+            "get_viz_spec docstring is missing the visual channel hierarchy section."
+        )
+        assert "Position" in doc and "Color (hue)" in doc, (
+            "Visual channel hierarchy must list Position and Color (hue) as channels."
+        )
+
+    def test_get_multi_indicator_has_visual_channel_hierarchy(self):
+        doc = get_multi_indicator_viz_spec.__doc__ or ""
+        assert "Visual channel hierarchy" in doc, (
+            "get_multi_indicator_viz_spec docstring is missing the visual channel hierarchy section."
+        )
+
+    def test_heatmap_color_palette_documented(self):
+        """Sequential/divergent palette selection must be documented."""
+        doc = get_viz_spec.__doc__ or ""
+        assert "yellowgreenblue" in doc, (
+            "Heatmap sequential palette (yellowgreenblue) must be documented."
+        )
+        assert "redblue" in doc, (
+            "Heatmap divergent palette (redblue) must be documented for negative-value data."
+        )
+
+
+# ============================================================================
+# 8. HEATMAP strategy routing and spec builder
+# ============================================================================
+
+
+def _make_many_country_multiyr_df(n_countries: int, n_years: int = 3) -> pd.DataFrame:
+    """n_countries x n_years, no breakdown — triggers HEATMAP when n_countries > 8."""
+    rows = []
+    for i in range(n_countries):
+        for yr in range(2020, 2020 + n_years):
+            rows.append(
+                {
+                    "country": f"C{i:02d}",
+                    "year": pd.Timestamp(str(yr)),
+                    "value": float(i * 10 + yr - 2020),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+class TestHeatmapStrategyRouting:
+    """HEATMAP is selected for >8 countries + multi-year + 0 breakdowns."""
+
+    def test_routes_to_heatmap_above_threshold(self):
+        df = _make_many_country_multiyr_df(n_countries=10)
+        result = select_strategy(df, n_indicators=1)
+        assert result.strategy == ChartStrategy.HEATMAP, (
+            f"Expected HEATMAP for 10 countries x multi-year, got {result.strategy}."
+        )
+
+    def test_does_not_route_to_heatmap_below_threshold(self):
+        df = _make_many_country_multiyr_df(n_countries=5)
+        result = select_strategy(df, n_indicators=1)
+        assert result.strategy != ChartStrategy.HEATMAP, (
+            f"5 countries should NOT trigger HEATMAP, got {result.strategy}."
+        )
+
+    def test_does_not_route_to_heatmap_with_breakdown(self):
+        """Presence of a meaningful breakdown (>1 unique value) must route to SMALL_MULTIPLES."""
+        rows = []
+        for i in range(10):
+            for yr in [2020, 2021]:
+                for bd in ["A", "B"]:  # 2 unique values → n_breakdowns = 1
+                    rows.append(
+                        {
+                            "country": f"C{i:02d}",
+                            "year": pd.Timestamp(str(yr)),
+                            "comp_breakdown_1": bd,
+                            "value": 1.0,
+                        }
+                    )
+        df = pd.DataFrame(rows)
+        result = select_strategy(df, n_indicators=1)
+        assert result.strategy == ChartStrategy.SMALL_MULTIPLES, (
+            f"With a breakdown (2+ unique values), 10-country multi-year data must route to "
+            f"SMALL_MULTIPLES, got {result.strategy}."
+        )
+
+    def test_heatmap_color_dim_is_value(self):
+        df = _make_many_country_multiyr_df(n_countries=10)
+        result = select_strategy(df, n_indicators=1)
+        assert result.color_dim == "value", (
+            f"HEATMAP color_dim must be 'value' (the quantity to encode as cell color), "
+            f"got {result.color_dim!r}."
+        )
+
+    def test_heatmap_spec_mark_is_rect(self):
+        df = _make_many_country_multiyr_df(n_countries=10)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
+        mark = spec.get("mark", {})
+        mark_type = mark.get("type") if isinstance(mark, dict) else mark
+        assert mark_type == "rect", (
+            f"HEATMAP spec must use mark type 'rect', got {mark_type!r}."
+        )
+
+    def test_heatmap_spec_has_tooltip(self):
+        df = _make_many_country_multiyr_df(n_countries=10)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
+        enc = spec.get("encoding", {})
+        assert "tooltip" in enc, "HEATMAP spec must have tooltip encoding."
+
+    def test_heatmap_caps_at_50_countries(self):
+        df = _make_many_country_multiyr_df(n_countries=60)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
+        shown = {r["country"] for r in spec["data"]["values"]}
+        assert len(shown) <= 50, (
+            f"HEATMAP must cap at 50 countries, got {len(shown)}."
+        )
+
+    def test_heatmap_x_axis_is_temporal(self):
+        df = _make_many_country_multiyr_df(n_countries=10)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
+        x = spec.get("encoding", {}).get("x", {})
+        assert x.get("type") == "temporal", (
+            f"HEATMAP x-axis must be type='temporal', got {x.get('type')!r}."
+        )
+
+    def test_heatmap_y_axis_is_country_nominal(self):
+        df = _make_many_country_multiyr_df(n_countries=10)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
+        y = spec.get("encoding", {}).get("y", {})
+        assert y.get("field") == "country", (
+            f"HEATMAP y-axis must encode 'country', got {y.get('field')!r}."
+        )
+        assert y.get("type") == "nominal", (
+            f"HEATMAP y-axis must be type='nominal', got {y.get('type')!r}."
+        )
+
+    def test_heatmap_color_encodes_value(self):
+        df = _make_many_country_multiyr_df(n_countries=10)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
+        color = spec.get("encoding", {}).get("color", {})
+        assert color.get("field") == "value", (
+            f"HEATMAP color must encode 'value', got {color.get('field')!r}."
+        )
+        assert color.get("type") == "quantitative", (
+            f"HEATMAP color must be type='quantitative', got {color.get('type')!r}."
+        )
+
+    def test_heatmap_uses_sequential_palette_for_positive_data(self):
+        df = _make_many_country_multiyr_df(n_countries=10)  # all values >= 0
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
+        color = spec.get("encoding", {}).get("color", {})
+        scheme = color.get("scale", {}).get("scheme")
+        assert scheme == "yellowgreenblue", (
+            f"Positive-only data must use sequential palette 'yellowgreenblue', got {scheme!r}."
+        )
+
+    def test_heatmap_uses_divergent_palette_for_negative_data(self):
+        rows = []
+        for i in range(10):
+            for yr in [2020, 2021]:
+                rows.append(
+                    {
+                        "country": f"C{i:02d}",
+                        "year": pd.Timestamp(str(yr)),
+                        "value": float(i - 5),  # includes negatives
+                    }
+                )
+        df = pd.DataFrame(rows)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
+        color = spec.get("encoding", {}).get("color", {})
+        scheme = color.get("scale", {}).get("scheme")
+        assert scheme == "redblue", (
+            f"Mixed-sign data must use divergent palette 'redblue', got {scheme!r}."
+        )
+
+    def test_heatmap_has_wb_config(self):
+        df = _make_many_country_multiyr_df(n_countries=10)
+        result = select_strategy(df, n_indicators=1)
+        spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
+        assert "config" in spec, "HEATMAP spec must have WB config injected."
+
+
+# ============================================================================
+# 9. STACKED_AREA strategy routing and spec builder
+# ============================================================================
+
+
+def _make_stacked_area_df(
+    n_series: int = 3, n_years: int = 5, country: str = "Kenya"
+) -> pd.DataFrame:
+    rows = []
+    for s in range(n_series):
+        for yr in range(2020, 2020 + n_years):
+            rows.append(
+                {
+                    "country": country,
+                    "year": pd.Timestamp(str(yr)),
+                    "comp_breakdown_1": f"Series_{s}",
+                    "value": float(10 + s * 5),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+class TestStackedAreaStrategyRouting:
+    """STACKED_AREA is selected only when chart_type hint is 'area'/'stacked_area'."""
+
+    def test_routes_to_stacked_area_with_area_hint(self):
+        df = _make_stacked_area_df()
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        assert result.strategy == ChartStrategy.STACKED_AREA, (
+            f"chart_type='area' must route to STACKED_AREA, got {result.strategy}."
+        )
+
+    def test_routes_to_stacked_area_with_stacked_area_hint(self):
+        df = _make_stacked_area_df()
+        result = select_strategy(df, n_indicators=1, chart_type_hint="stacked_area")
+        assert result.strategy == ChartStrategy.STACKED_AREA, (
+            f"chart_type='stacked_area' must route to STACKED_AREA, got {result.strategy}."
+        )
+
+    def test_does_not_route_to_stacked_area_without_hint(self):
+        """Without an explicit hint, a trend question must NOT produce a stacked area."""
+        df = _make_stacked_area_df()
+        result = select_strategy(df, n_indicators=1)
+        assert result.strategy != ChartStrategy.STACKED_AREA, (
+            "Without chart_type hint, data must NOT route to STACKED_AREA. "
+            f"Got {result.strategy}. Trend questions must use line/small_multiples."
+        )
+
+    def test_stacked_area_color_dim_is_breakdown(self):
+        df = _make_stacked_area_df()
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        assert result.color_dim == "comp_breakdown_1", (
+            f"STACKED_AREA color_dim must be 'comp_breakdown_1', got {result.color_dim!r}."
+        )
+
+    def test_stacked_area_color_dim_is_country_when_no_breakdown(self):
+        rows = [
+            {"country": c, "year": pd.Timestamp(str(yr)), "value": 10.0}
+            for c in ["Kenya", "Ghana", "Nigeria"]
+            for yr in [2020, 2021, 2022]
+        ]
+        df = pd.DataFrame(rows)
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        assert result.color_dim == "country", (
+            f"Without breakdown, STACKED_AREA color_dim must be 'country', got {result.color_dim!r}."
+        )
+
+    def test_stacked_area_spec_mark_is_area(self):
+        df = _make_stacked_area_df()
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        spec = dispatch_spec(result.strategy, df, "Stacked Area Test", result)
+        mark = spec.get("mark", {})
+        mark_type = mark.get("type") if isinstance(mark, dict) else mark
+        assert mark_type == "area", (
+            f"STACKED_AREA spec must use mark type 'area', got {mark_type!r}."
+        )
+
+    def test_stacked_area_y_has_stack_zero(self):
+        df = _make_stacked_area_df()
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        spec = dispatch_spec(result.strategy, df, "Stacked Area Test", result)
+        y = spec.get("encoding", {}).get("y", {})
+        assert y.get("stack") == "zero", (
+            f"STACKED_AREA y-encoding must have stack='zero', got {y.get('stack')!r}."
+        )
+
+    def test_stacked_area_x_axis_is_temporal(self):
+        df = _make_stacked_area_df()
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        spec = dispatch_spec(result.strategy, df, "Stacked Area Test", result)
+        x = spec.get("encoding", {}).get("x", {})
+        assert x.get("type") == "temporal", (
+            f"STACKED_AREA x-axis must be type='temporal', got {x.get('type')!r}."
+        )
+
+    def test_stacked_area_falls_back_to_line_for_negative_data(self):
+        """Stacked area cannot represent negative values — must fall back to line."""
+        rows = [
+            {
+                "country": "Kenya",
+                "year": pd.Timestamp(str(yr)),
+                "comp_breakdown_1": f"Series_{s}",
+                "value": float(s - 2),  # Series_0 = -2 (negative)
+            }
+            for s in range(3)
+            for yr in [2020, 2021, 2022]
+        ]
+        df = pd.DataFrame(rows)
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        spec = dispatch_spec(result.strategy, df, "Negative Test", result)
+        # The builder should fall back to temporal_single (line) mark
+        mark = spec.get("mark", {})
+        mark_type = mark.get("type") if isinstance(mark, dict) else mark
+        assert mark_type == "line", (
+            f"STACKED_AREA must fall back to 'line' mark for negative data, got {mark_type!r}."
+        )
+
+    def test_stacked_area_has_tooltip(self):
+        df = _make_stacked_area_df()
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        spec = dispatch_spec(result.strategy, df, "Stacked Area Test", result)
+        enc = spec.get("encoding", {})
+        assert "tooltip" in enc, "STACKED_AREA spec must have tooltip encoding."
+
+    def test_stacked_area_has_wb_config(self):
+        df = _make_stacked_area_df()
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        spec = dispatch_spec(result.strategy, df, "Stacked Area Test", result)
+        assert "config" in spec, "STACKED_AREA spec must have WB config injected."
+
+    def test_stacked_area_caps_series_at_line_max(self):
+        """More than line_max_series color series must be capped."""
+        from data360.viz_config import HIGH_CARDINALITY_THRESHOLDS
+
+        cap = HIGH_CARDINALITY_THRESHOLDS["line_max_series"]
+        df = _make_stacked_area_df(n_series=cap + 5)
+        result = select_strategy(df, n_indicators=1, chart_type_hint="area")
+        spec = dispatch_spec(result.strategy, df, "Cap Test", result)
+        color_dim = result.color_dim or "comp_breakdown_1"
+        shown = {r[color_dim] for r in spec["data"]["values"]}
+        assert len(shown) <= cap, (
+            f"STACKED_AREA must cap at {cap} series, got {len(shown)}."
         )
