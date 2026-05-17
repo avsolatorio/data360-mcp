@@ -1001,6 +1001,9 @@ def build_cross_sectional_spec(
         if result.color_dim
         else {"value": WB_CAT_COLORS[0]}
     )
+    # The Y-axis already labels the rows; the legend is purely redundant.
+    if isinstance(color_enc, dict) and "field" in color_enc:
+        color_enc["legend"] = None
     x_title = None if x_label == "Value" else x_label
     x_ax = {
         **_axis_style(),
@@ -1470,14 +1473,21 @@ def build_correlation_spec(
                 "axis": _axis_style(y_label),
                 "scale": {"zero": False},
             },
-            "color": _color_encoding(result.color_dim or "country"),
-            "tooltip": build_structured_tooltips(
-                list(df.columns), "point", lab, viz_data=df
-            ),
         },
         "width": 550,
         "height": 450,
     }
+
+    color_dim = result.color_dim or "country"
+    color_enc = _color_encoding(color_dim)
+    if color_dim in df.columns and df[color_dim].nunique() > HIGH_CARDINALITY_THRESHOLDS["top_n_series"]:
+        color_enc["legend"] = None
+    spec["encoding"]["color"] = color_enc
+
+    spec["encoding"]["tooltip"] = build_structured_tooltips(
+        list(df.columns), "point", lab, viz_data=df
+    )
+
     return inject_wb_config(spec)
 
 
