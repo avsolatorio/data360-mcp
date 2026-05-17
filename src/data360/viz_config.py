@@ -126,6 +126,7 @@ def wb_altair_config() -> dict:
             "domainColor": WB_GRID_COLOR,
             "tickColor": WB_GRID_COLOR,
             "tickCount": 5,
+            "labelOverlap": "greedy",
         },
         "legend": {
             "labelColor": WB_TEXT,
@@ -539,6 +540,8 @@ class ChartStrategy(str, Enum):
     SMALL_MULTIPLES = (
         "small_multiples"  # 1 indicator, 2+ disagg or >4 cntry+breakdown → facet
     )
+    HEATMAP = "heatmap"  # dense country x year matrix
+    STACKED_AREA = "stacked_area"  # part-to-whole over time
     FALLBACK_LINE = "fallback_line"  # anything else
 
 
@@ -612,6 +615,20 @@ def select_strategy(
             color_dim="country" if country_count > 0 else None,
         )
 
+    # ── Explicit stacked-area hint for multi-indicator ──
+    # When the caller passes chart_type="stacked_area" (or "area") and supplies 2+
+    # indicators, treat each indicator as a part-of-whole series rather than routing
+    # to TEMPORAL_MULTI_IND (layered lines). The visualization.py pipeline will melt
+    # the wide merged frame into long format before calling build_stacked_area_spec.
+    if (hint in ("area", "stacked_area")) and n_indicators >= 2 and len(ind_cols) >= 2:
+        if year_count > 1:
+            return StrategyResult(
+                ChartStrategy.STACKED_AREA,
+                f"User requested stacked area; {n_indicators} indicators, {year_count} years → stacked area chart",
+                indicator_cols=ind_cols,
+                color_dim="indicator",
+            )
+
     # ── Multi-indicator: 2-3 indicators ──
     if n_indicators == 2 and len(ind_cols) == 2:
         if year_count <= 1 and country_count > 1:
@@ -648,6 +665,31 @@ def select_strategy(
         )
 
     # ── Single indicator from here ──
+
+    # Stacked Area: Explicit hint or Homogeneous Breakdown + multi-year + single country
+    if hint == "area" or hint == "stacked_area":
+        if year_count > 1:
+            color_dim = None
+            if breakdown_counts:
+                color_dim = list(breakdown_counts.keys())[0]
+            elif country_count > 1:
+                color_dim = "country"
+            return StrategyResult(
+                ChartStrategy.STACKED_AREA,
+                f"User requested area; {year_count} years → stacked area chart",
+                color_dim=color_dim,
+            )
+
+    # Heatmap: >8 countries, multi-year, no categorical breakdowns (dense matrix).
+    # When a breakdown is present the data has a third categorical dimension that maps
+    # better to SMALL_MULTIPLES faceting — each panel becomes one breakdown category.
+    if country_count > HIGH_CARDINALITY_THRESHOLDS["beeswarm_threshold"] and year_count > 1:
+        if n_breakdowns == 0:
+            return StrategyResult(
+                ChartStrategy.HEATMAP,
+                f"{country_count} countries, {year_count} years → heatmap",
+                color_dim="value",
+            )
 
     # Small multiples: 2+ meaningful breakdowns, or breakdown + multiple countries.
     # With breakdown + 2+ countries, series count = country_count × breakdown_values.
@@ -1216,6 +1258,142 @@ def build_small_multiples_spec(
     return inject_wb_config(spec)
 
 
+def build_heatmap_spec(
+    df: pd.DataFrame,
+    title: str | dict,
+    result: StrategyResult,
+    indicator_labels: dict[str, str] | None = None,
+    y_label: str = "Value",
+    unit_measure: str | None = None,
+) -> dict:
+    """Heatmap chart: >8 countries, multi-year matrix."""
+    df, original_n = _cap_cardinality(df, "country", 50)
+    title = _append_trim_note(title, "country", df["country"].nunique() if "country" in df.columns else 0, original_n)
+
+    rows = df.to_dict(orient="records")
+    tt_fmt = _compute_tooltip_format(float(df["value"].abs().max()) if "value" in df.columns else None, unit_measure)
+
+    # Determine scheme based on values: divergent for mixed signs, sequential otherwise
+    has_negative = df["value"].min() < 0 if "value" in df.columns else False
+    scheme = "redblue" if has_negative else "yellowgreenblue"
+
+    y_enc = {
+        "field": "country",
+        "type": "nominal",
+        "axis": {"title": None, "labelFontWeight": "bold"}
+    }
+
+    x_enc = {
+        "field": "year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "axis": {"title": None, "format": "%Y"}
+    }
+
+    color_enc = {
+        "field": "value",
+        "type": "quantitative",
+        "scale": {"scheme": scheme},
+        "legend": {"title": y_label, "orient": "top", "direction": "horizontal", "gradientLength": 200}
+    }
+
+    spec: dict = {
+        "$schema": _vl_schema(),
+        "title": title,
+        "data": {"values": rows},
+        "mark": {"type": "rect", "tooltip": True},
+        "encoding": {
+            "x": x_enc,
+            "y": y_enc,
+            "color": color_enc,
+            "tooltip": [
+                {"field": "country", "type": "nominal", "title": "Country"},
+                {"field": "year", "type": "temporal", "timeUnit": "year", "title": "Year", "format": "%Y"},
+                {"field": "value", "type": "quantitative", "title": y_label, "format": tt_fmt},
+            ]
+        },
+        "width": 600,
+        "height": {"step": 15}
+    }
+
+    if result.facet_dim:
+        spec["facet"] = {
+            "field": result.facet_dim,
+            "type": "nominal",
+            "columns": 2,
+            "header": {"labelFontWeight": "bold"}
+        }
+        spec["spec"] = {
+            "mark": {"type": "rect", "tooltip": True},
+            "encoding": spec.pop("encoding"),
+            "width": 250,
+            "height": {"step": 15}
+        }
+        del spec["mark"]
+        del spec["width"]
+        del spec["height"]
+
+    return inject_wb_config(spec)
+
+
+def build_stacked_area_spec(
+    df: pd.DataFrame,
+    title: str | dict,
+    result: StrategyResult,
+    indicator_labels: dict[str, str] | None = None,
+    y_label: str = "Value",
+    unit_measure: str | None = None,
+) -> dict:
+    """Stacked Area chart: multi-year, multiple series (part-to-whole)."""
+    color_dim = result.color_dim or "country"
+
+    # Fallback if mixed signs, as stacked area expects same-sign data
+    has_negative = df["value"].min() < 0 if "value" in df.columns else False
+    if has_negative:
+        return build_temporal_single_spec(df, title, result, indicator_labels, y_label, unit_measure)
+
+    df, original_n = _cap_cardinality(df, color_dim, HIGH_CARDINALITY_THRESHOLDS["line_max_series"])
+
+    annotated_title = _append_breakdown_note(title, df, color_dim)
+    annotated_title = _append_trim_note(annotated_title, color_dim, df[color_dim].nunique() if color_dim in df.columns else 0, original_n)
+
+    rows = df.to_dict(orient="records")
+    tt_fmt = _compute_tooltip_format(float(df["value"].abs().max()) if "value" in df.columns else None, unit_measure)
+
+    legend_title = _TOOLTIP_SPECS.get(color_dim, {}).get("title") or color_dim.replace("_", " ").title()
+
+    spec: dict = {
+        "$schema": _vl_schema(),
+        "title": annotated_title,
+        "data": {"values": rows},
+        "mark": {"type": "area", "tooltip": True, "line": True, "opacity": 0.8},
+        "encoding": {
+            "x": {
+                "field": "year",
+                "type": "temporal",
+                "timeUnit": "year",
+                "axis": {"title": None, "format": "%Y"}
+            },
+            "y": {
+                "field": "value",
+                "type": "quantitative",
+                "stack": "zero",
+                "axis": {**_axis_style(), "title": None, "labelExpr": _value_label_expr(unit_measure)}
+            },
+            "color": _color_encoding(color_dim, domain=None, mark_type="area", legend_title=legend_title),
+            "tooltip": [
+                {"field": "year", "type": "temporal", "timeUnit": "year", "title": "Year", "format": "%Y"},
+                {"field": color_dim, "type": "nominal", "title": legend_title},
+                {"field": "value", "type": "quantitative", "title": y_label, "format": tt_fmt},
+            ]
+        },
+        "width": 600,
+        "height": 350
+    }
+
+    return inject_wb_config(spec)
+
+
 
 def build_correlation_spec(
     df: pd.DataFrame,
@@ -1486,6 +1664,8 @@ STRATEGY_BUILDERS: dict[ChartStrategy, callable] = {
     ChartStrategy.DISTRIBUTION: build_distribution_spec,
     ChartStrategy.BREAKDOWN_COMPARISON: build_breakdown_comparison_spec,
     ChartStrategy.SMALL_MULTIPLES: build_small_multiples_spec,
+    ChartStrategy.HEATMAP: build_heatmap_spec,
+    ChartStrategy.STACKED_AREA: build_stacked_area_spec,
     ChartStrategy.CORRELATION: build_correlation_spec,
     ChartStrategy.CORRELATION_TEMPORAL: build_correlation_temporal_spec,
     ChartStrategy.TEMPORAL_MULTI_IND: build_temporal_multi_indicator_spec,
@@ -1510,6 +1690,7 @@ def dispatch_spec(
         ChartStrategy.TEMPORAL_MULTI_IND,
         ChartStrategy.BREAKDOWN_COMPARISON,
         ChartStrategy.SMALL_MULTIPLES,
+        ChartStrategy.STACKED_AREA,
         ChartStrategy.FALLBACK_LINE,
     ):
         return builder(df, title, result, indicator_labels, y_label, unit_measure)

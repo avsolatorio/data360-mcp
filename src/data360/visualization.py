@@ -620,7 +620,27 @@ async def get_viz_spec(
             and lets the pipeline choose the correct Vega-Lite channel automatically.
             For REF_AREA use comma-separated ISO codes (e.g. 'KEN,TZA');
             semicolons in REF_AREA are normalized to commas.
-        chart_type: Optional hint — "line", "bar", "scatter", "strip", "small_multiples".
+        chart_type: Optional hint — "line", "bar", "scatter", "strip", "small_multiples",
+            "area", "stacked_area".
+
+            ## chart_type decision rule
+
+            Only pass "area" or "stacked_area" when the user's question implies
+            **composition or share over time** — i.e., the series together add up to a
+            meaningful whole. Typical signal words: "breakdown of", "composition of",
+            "share of", "proportion", "what portion", "structure of".
+
+            CORRECT — user asked about composition:
+              chart_type="stacked_area"   # "Show the age group breakdown in Japan"
+              chart_type="area"           # "What is the composition of electricity by source?"
+
+            WRONG — user asked about a trend:
+              chart_type="area"           # "How has GDP changed in Africa?"   ← use default
+              chart_type="stacked_area"   # "What is the trend of poverty?"    ← use default
+
+            For trend questions ("how has X changed?", "show the evolution of Y"), omit
+            chart_type entirely and let the pipeline choose the correct strategy
+            (line chart, heatmap, etc.) based on data shape.
         relevant_fields: Optional list of column names to include in the chart.
         custom_constraints: Optional list of raw Draco ASP constraints.
         use_default_constraints: If True (default), apply standard encoding heuristics.
@@ -766,6 +786,8 @@ async def get_viz_spec(
         viz_config.ChartStrategy.CROSS_SECTIONAL,
         viz_config.ChartStrategy.BREAKDOWN_COMPARISON,
         viz_config.ChartStrategy.SMALL_MULTIPLES,
+        viz_config.ChartStrategy.HEATMAP,
+        viz_config.ChartStrategy.STACKED_AREA,
         viz_config.ChartStrategy.TEMPORAL_SINGLE,
         viz_config.ChartStrategy.FALLBACK_LINE,
     }
@@ -1018,7 +1040,25 @@ async def get_multi_indicator_viz_spec(
             and lets the pipeline choose the correct Vega-Lite channel automatically.
             REF_AREA uses comma-separated ISO codes (semicolons normalized to commas).
         chart_type: Optional hint — "scatter", "connected_scatter", "layered_lines",
-            "line", "bar". If omitted, auto-selected by data shape.
+            "line", "bar", "area", "stacked_area". If omitted, auto-selected by data shape.
+
+            ## chart_type decision rule
+
+            Only pass "area" or "stacked_area" when the user's question implies
+            **composition or share over time** — i.e., the multiple indicators together
+            add up to a meaningful whole (e.g., age groups summing to total population,
+            electricity sources summing to total generation).
+            Typical signal words: "breakdown of", "composition of", "share of",
+            "proportion", "structure of".
+
+            CORRECT — user asked about composition across multiple indicators:
+              chart_type="stacked_area"   # "Show the age group breakdown in Japan"
+
+            WRONG — user asked about a trend:
+              chart_type="area"           # "How has GDP and poverty changed?" ← use default
+
+            For trend or comparison questions, omit chart_type and let the pipeline
+            select the correct strategy (layered lines, scatter, etc.).
 
     Returns:
         Dict with "url" (chart URL on success), "error" (on failure),
@@ -1169,11 +1209,35 @@ async def get_multi_indicator_viz_spec(
         f"Multi-indicator strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
     )
 
+    # 7b. Reshape for stacked area: melt wide → long
+    # build_stacked_area_spec expects a DataFrame with a single "value" column and a
+    # "indicator" color column, not the wide merged layout produced by the join above.
+    spec_df = merged
+    if strategy_result.strategy == viz_config.ChartStrategy.STACKED_AREA:
+        id_cols = [c for c in merged.columns if c not in indicator_col_names]
+        spec_df = merged.melt(
+            id_vars=id_cols,
+            value_vars=indicator_col_names,
+            var_name="indicator",
+            value_name="value",
+        )
+        # Map internal slugified column names back to human-readable indicator titles
+        slug_to_title = dict(zip(indicator_col_names, titles))
+        spec_df["indicator"] = spec_df["indicator"].map(slug_to_title)
+        spec_df = spec_df.dropna(subset=["value"])
+        # Propagate the color_dim so the builder picks up the indicator column
+        strategy_result = viz_config.StrategyResult(
+            viz_config.ChartStrategy.STACKED_AREA,
+            strategy_result.reason,
+            indicator_cols=strategy_result.indicator_cols,
+            color_dim="indicator",
+        )
+
     # 8. Build spec
     try:
         spec = viz_config.dispatch_spec(
             strategy_result.strategy,
-            merged,
+            spec_df,
             chart_title_vl,
             strategy_result,
             indicator_labels=indicator_labels,
