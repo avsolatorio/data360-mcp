@@ -1069,3 +1069,359 @@ class TestGetSupportedChartTypes:
 
         data = json.loads(get_supported_chart_types())
         assert "multi_indicator" in data.get("multi_indicator_note", "")
+
+
+# ============================================================================
+# Grammar of Graphics robustness: LINE (TEMPORAL_SINGLE)
+# ============================================================================
+
+
+def _make_line_result(**kwargs):
+    return StrategyResult(
+        strategy=ChartStrategy.TEMPORAL_SINGLE,
+        reason="test",
+        **kwargs,
+    )
+
+
+class TestLineChartGoGRobustness:
+    """TEMPORAL_SINGLE must conform to Grammar of Graphics axioms for line charts."""
+
+    # ── Scale ──────────────────────────────────────────────────────────────
+
+    def test_y_scale_zero_is_false(self):
+        """Y-axis must NOT force zero baseline — trend differences would be compressed."""
+        df = _ts_df(n_countries=2)
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        assert spec["encoding"]["y"]["scale"]["zero"] is False, (
+            "TEMPORAL_SINGLE Y scale must set zero=False. "
+            "Forcing Y to start at 0 compresses small trend variations into noise."
+        )
+
+    # ── Axis types ─────────────────────────────────────────────────────────
+
+    def test_x_axis_type_is_temporal_not_ordinal(self):
+        """Year axis must be temporal, not ordinal."""
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        assert spec["encoding"]["x"]["type"] == "temporal", (
+            "X axis must be type='temporal'. Ordinal encoding maps ISO timestamps "
+            "to raw millisecond integers on the axis."
+        )
+
+    def test_y_axis_type_is_quantitative(self):
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        assert spec["encoding"]["y"]["type"] == "quantitative"
+
+    def test_color_field_type_is_nominal(self):
+        df = _ts_df(n_countries=3)
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        assert spec["encoding"]["color"]["type"] == "nominal", (
+            "Color channel for country/breakdown must be nominal, not ordinal or quantitative."
+        )
+
+    # ── Axis format ────────────────────────────────────────────────────────
+
+    def test_x_axis_has_no_title(self):
+        """Year axis title must be suppressed — year is self-evident."""
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        x_axis = spec["encoding"]["x"]["axis"]
+        assert x_axis.get("title") is None, (
+            "X axis title must be None. 'Year' clutters the axis without adding information."
+        )
+
+    def test_y_axis_title_suppressed_when_label_is_value(self):
+        """When y_label is the default 'Value', Y title must be None."""
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(), y_label="Value")
+        assert spec["encoding"]["y"]["axis"]["title"] is None, (
+            "Y axis must suppress title when y_label='Value' — generic labels add no information."
+        )
+
+    def test_y_axis_title_set_when_custom_label(self):
+        """Custom y_label must propagate to axis title."""
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(), y_label="GDP (USD)")
+        assert spec["encoding"]["y"]["axis"]["title"] == "GDP (USD)"
+
+    def test_y_axis_has_label_expr_for_currency(self):
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"), unit_measure="current US$")
+        expr = spec["encoding"]["y"]["axis"]["labelExpr"]
+        assert "$" in expr, (
+            "Currency units must produce a dollar-prefixed labelExpr for compact large number formatting."
+        )
+
+    # ── Mark visual integrity ───────────────────────────────────────────────
+
+    def test_mark_type_is_line(self):
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        assert spec["mark"]["type"] == "line"
+
+    def test_line_stroke_width_is_readable(self):
+        """Thin lines are unreadable in small embeds — minimum 2px."""
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        assert spec["mark"].get("strokeWidth", 0) >= 2, (
+            "Line strokeWidth must be >= 2. Lines thinner than 2px are unreadable in embeds."
+        )
+
+    def test_line_has_hover_points(self):
+        """Hover points are required for interactive value lookup."""
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        pt = spec["mark"].get("point", {})
+        assert isinstance(pt, dict) and pt.get("size", 0) >= 40, (
+            "Line mark must include hover points (size >= 40) for interactive value lookup."
+        )
+
+    # ── Tooltip completeness ────────────────────────────────────────────────
+
+    def test_tooltip_has_year_field(self):
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        assert "year" in fields, "Tooltip must include 'year' field."
+
+    def test_tooltip_has_value_field(self):
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        assert "value" in fields, "Tooltip must include 'value' field."
+
+    def test_tooltip_has_country_field(self):
+        df = _ts_df(n_countries=3)
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        assert "country" in fields, "Tooltip must include 'country' field."
+
+    def test_tooltip_year_type_is_temporal(self):
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        year_tip = next(t for t in spec["encoding"]["tooltip"] if t["field"] == "year")
+        assert year_tip["type"] == "temporal", (
+            "Tooltip year field must be type='temporal' to render as a human-readable date."
+        )
+
+    # ── WB config injection ─────────────────────────────────────────────────
+
+    def test_wb_config_is_present(self):
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        assert "config" in spec, "TEMPORAL_SINGLE spec must have WB config injected."
+
+    def test_wb_config_has_font(self):
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        assert "font" in spec["config"], "WB config must set a global font family."
+
+    def test_wb_config_has_label_overlap_greedy(self):
+        """labelOverlap='greedy' prevents axis label collision on dense charts."""
+        df = _ts_df()
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        axis_cfg = spec["config"].get("axis", {})
+        assert axis_cfg.get("labelOverlap") == "greedy", (
+            "Global axis config must set labelOverlap='greedy' to prevent label collisions."
+        )
+
+    # ── Multi-country color handling ────────────────────────────────────────
+
+    def test_color_uses_wb_categorical_palette(self):
+        df = _ts_df(n_countries=3)
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        palette = spec["encoding"]["color"]["scale"]["range"]
+        assert palette == WB_CAT_COLORS, (
+            "Line chart must use the WB categorical color palette for country series."
+        )
+
+    def test_eight_countries_all_get_color(self):
+        """Edge case: 8 countries is the max before HEATMAP — must still render cleanly."""
+        df = _ts_df(n_countries=8)
+        spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
+        assert "color" in spec["encoding"]
+        palette = spec["encoding"]["color"]["scale"]["range"]
+        assert len(palette) >= 8, (
+            "WB categorical palette must support at least 8 colors for the max line-chart country count."
+        )
+
+
+# ============================================================================
+# Grammar of Graphics robustness: BAR (CROSS_SECTIONAL)
+# ============================================================================
+
+
+def _make_bar_result(**kwargs):
+    return StrategyResult(
+        strategy=ChartStrategy.CROSS_SECTIONAL,
+        reason="test",
+        **kwargs,
+    )
+
+
+class TestBarChartGoGRobustness:
+    """CROSS_SECTIONAL must conform to Grammar of Graphics axioms for bar charts."""
+
+    # ── Scale ──────────────────────────────────────────────────────────────
+
+    def test_x_scale_zero_is_true(self):
+        """Bar chart X-axis MUST start at zero — non-zero baseline is deceptive."""
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
+        assert spec["encoding"]["x"]["scale"]["zero"] is True, (
+            "CROSS_SECTIONAL X scale must set zero=True. "
+            "Bars that don't start at 0 make small differences look large — a classic deception."
+        )
+
+    # ── Axis types ─────────────────────────────────────────────────────────
+
+    def test_y_axis_type_is_nominal(self):
+        """Country axis must be nominal, not ordinal."""
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
+        assert spec["encoding"]["y"]["type"] == "nominal", (
+            "Country axis must be nominal. Ordinal implies a meaningful rank order in the data."
+        )
+
+    def test_x_axis_type_is_quantitative(self):
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
+        assert spec["encoding"]["x"]["type"] == "quantitative"
+
+    # ── Sort order ─────────────────────────────────────────────────────────
+
+    def test_bars_sorted_descending_by_value(self):
+        """Highest value must appear at the top for immediate visual ranking."""
+        df = _cs_df(n_countries=5)
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
+        assert spec["encoding"]["y"]["sort"] == "-x", (
+            "Bars must be sorted descending (sort='-x') so the highest value appears at top."
+        )
+
+    def test_data_values_are_sorted_descending(self):
+        """The inline data must also be sorted descending for consistent rendering."""
+        df = _cs_df(n_countries=5)
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
+        vals = [r["value"] for r in spec["data"]["values"]]
+        assert vals == sorted(vals, reverse=True), (
+            "Inline data values must be sorted descending to match the sort encoding."
+        )
+
+    # ── Axis format ────────────────────────────────────────────────────────
+
+    def test_y_axis_has_no_title(self):
+        """Country names are self-evident — no axis title needed."""
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
+        assert spec["encoding"]["y"]["axis"]["title"] is None, (
+            "Y axis (country names) must have title=None — the country names are self-labeling."
+        )
+
+    def test_x_axis_title_suppressed_when_default(self):
+        """Default x_label='Value' must not appear as axis title."""
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(), x_label="Value")
+        assert spec["encoding"]["x"]["axis"]["title"] is None, (
+            "Generic x_label='Value' must be suppressed from axis title."
+        )
+
+    def test_x_axis_title_set_when_custom(self):
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(), x_label="GDP (USD)")
+        assert spec["encoding"]["x"]["axis"]["title"] == "GDP (USD)"
+
+    def test_x_axis_has_label_expr_for_currency(self):
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(), unit_measure="current US$")
+        expr = spec["encoding"]["x"]["axis"]["labelExpr"]
+        assert "$" in expr, (
+            "Currency units must produce a dollar-prefixed compact number format on the bar axis."
+        )
+
+    # ── Mark visual integrity ───────────────────────────────────────────────
+
+    def test_mark_type_is_bar(self):
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
+        assert spec["mark"]["type"] == "bar"
+
+    def test_bar_has_corner_radius(self):
+        """Rounded bar ends are a WB visual standard and improve readability."""
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
+        mark = spec["mark"]
+        has_radius = (
+            mark.get("cornerRadiusTopRight", 0) > 0
+            or mark.get("cornerRadiusBottomRight", 0) > 0
+        )
+        assert has_radius, (
+            "Bar mark must have a non-zero corner radius on the bar-end side."
+        )
+
+    def test_bar_height_scales_with_row_count(self):
+        """5-row chart must be taller than 3-row chart — bars must not be hair-thin."""
+        df_small = _cs_df(n_countries=3)
+        df_large = _cs_df(n_countries=7)
+        r = _make_bar_result(color_dim="country")
+        h_small = build_cross_sectional_spec(df_small, "Test", r)["height"]
+        h_large = build_cross_sectional_spec(df_large, "Test", r)["height"]
+        assert h_large > h_small, (
+            "Chart height must scale with row count so bars don't become hair-thin."
+        )
+
+    def test_country_label_limit_is_sufficient(self):
+        """Long country names must not be truncated to ellipsis."""
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
+        label_limit = spec["encoding"]["y"]["axis"]["labelLimit"]
+        assert label_limit >= 130, (
+            f"Y axis labelLimit must be >= 130 to accommodate long country names, got {label_limit}."
+        )
+
+    # ── Tooltip completeness ────────────────────────────────────────────────
+
+    def test_tooltip_has_country_field(self):
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
+        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        assert "country" in fields, "Bar tooltip must include 'country' field."
+
+    def test_tooltip_has_value_field(self):
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
+        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        assert "value" in fields, "Bar tooltip must include 'value' field."
+
+    def test_tooltip_value_type_is_quantitative(self):
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
+        val_tip = next(t for t in spec["encoding"]["tooltip"] if t["field"] == "value")
+        assert val_tip["type"] == "quantitative"
+
+    # ── Cardinality cap ─────────────────────────────────────────────────────
+
+    def test_bars_capped_at_cross_sectional_max(self):
+        """Avoid overwhelming the reader with too many bars."""
+        from data360 import viz_config as vc
+        cap = vc.HIGH_CARDINALITY_THRESHOLDS["cross_sectional_max_items"]
+        df = _cs_df(n_countries=cap + 10)
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
+        assert len(spec["data"]["values"]) <= cap, (
+            f"Bar chart must cap at {cap} items to prevent an unreadable wall of bars."
+        )
+
+    # ── WB config injection ─────────────────────────────────────────────────
+
+    def test_wb_config_is_present(self):
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
+        assert "config" in spec
+
+    def test_wb_config_has_label_overlap_greedy(self):
+        df = _cs_df()
+        spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
+        assert spec["config"]["axis"].get("labelOverlap") == "greedy", (
+            "Bar chart axis config must set labelOverlap='greedy'."
+        )
