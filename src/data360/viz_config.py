@@ -1453,11 +1453,10 @@ def build_correlation_spec(
     color_dim = result.color_dim or "country"
     color_enc = _color_encoding(color_dim)
 
-    # Place legend on the right for scatterplots so it doesn't compress vertical height
-    if isinstance(color_enc, dict) and "legend" in color_enc and color_enc["legend"] is not None:
-        color_enc["legend"]["orient"] = "right"
-        color_enc["legend"]["direction"] = "vertical"
-        color_enc["legend"].pop("columns", None)
+    # The legend is 100% redundant now because every dot has a direct text label.
+    # Direct labeling is superior in GoG as it prevents saccadic eye movement.
+    if isinstance(color_enc, dict) and "legend" in color_enc:
+        color_enc["legend"] = None
 
     spec: dict = {
         "$schema": _vl_schema(),
