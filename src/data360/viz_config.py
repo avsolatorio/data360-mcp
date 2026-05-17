@@ -397,8 +397,16 @@ def _append_trim_note(
     """
     if original is None:
         return title
-    # Correct pluralisation: 'country' → 'countries', others get plain 's'.
-    dim_plural = "countries" if dim_label == "country" else f"{dim_label}s"
+    dim_title = (
+        _TOOLTIP_SPECS.get(dim_label, {}).get("title")
+        or dim_label.replace("_", " ").title()
+    ).strip().lower()
+    if dim_title.endswith("y") and len(dim_title) > 1 and dim_title[-2] not in "aeiou":
+        dim_plural = f"{dim_title[:-1]}ies"
+    elif dim_title.endswith(("s", "x", "z", "ch", "sh")):
+        dim_plural = f"{dim_title}es"
+    else:
+        dim_plural = f"{dim_title}s"
     note = (
         f"Showing {shown} of {original} {dim_plural} by most recent data — "
         "specify a subset for the full view"
@@ -1141,13 +1149,13 @@ def build_small_multiples_spec(
 
     # Rebuild the context subtitle so it only names the countries actually shown,
     # not the full pre-cap list that build_chart_title_with_context built earlier.
-    if original_n is not None and isinstance(title, dict):
+    if original_n is not None and facet_dim == "country" and isinstance(title, dict):
         existing_sub = title.get("subtitle", "")
         # Normalise to list (handle legacy string subtitles from tests).
         if isinstance(existing_sub, str):
             existing_sub = [p.strip() for p in existing_sub.split(" · ") if p.strip()]
         # Rebuild element [0] (country + year range); keep [1:] (units, series notes).
-        shown_countries = sorted(df[facet_dim].unique().tolist(), key=str.casefold)
+        shown_countries = sorted(df["country"].unique().tolist(), key=str.casefold)
         year_lbl = _year_range_label(df["year"]) if "year" in df.columns else None
         new_geo = ", ".join(shown_countries)
         if year_lbl:

@@ -21,6 +21,7 @@ import pytest
 from data360.viz_config import (
     SMALL_MULTIPLES_MAX_FACETS,
     ChartStrategy,
+    _append_trim_note,
     _format_breakdown_subtitle,
     _is_homogeneous_breakdown,
     dispatch_spec,
@@ -480,3 +481,37 @@ class TestSmallMultiplesSubtitleRebuild:
         assert "Showing" not in subtitle, (
             f"No 'Showing N of M' note expected at or under cap. Got: {subtitle!r}"
         )
+
+    def test_non_country_facet_keeps_geography_subtitle(self):
+        rows = []
+        for bd1 in [f"BD{i:02d}" for i in range(SMALL_MULTIPLES_MAX_FACETS + 5)]:
+            for bd2 in ["A", "B"]:
+                for yr in [2021, 2022, 2023]:
+                    rows.append(
+                        {
+                            "year": pd.Timestamp(str(yr)),
+                            "value": 1.0,
+                            "country": "Kenya",
+                            "comp_breakdown_1": bd1,
+                            "comp_breakdown_2": bd2,
+                        }
+                    )
+        df = pd.DataFrame(rows)
+        result = select_strategy(df, n_indicators=1)
+        assert result.facet_dim == "comp_breakdown_1"
+
+        from data360.viz_config import build_chart_title_with_context
+
+        pre_built = build_chart_title_with_context("Test", None, df)
+        spec = dispatch_spec(result.strategy, df, pre_built, result)
+        raw_sub = spec.get("title", {}).get("subtitle", "")
+        subtitle = " ".join(raw_sub) if isinstance(raw_sub, list) else raw_sub
+        assert "Kenya" in subtitle
+
+
+def test_append_trim_note_uses_human_friendly_plural():
+    title = {"text": "Test", "subtitle": ["Kenya, 2021-2023"]}
+    out = _append_trim_note(title, "comp_breakdown_1", shown=8, original=14)
+    subtitle = " ".join(out["subtitle"]) if isinstance(out["subtitle"], list) else ""
+    assert "breakdowns" in subtitle
+    assert "comp_breakdown_1s" not in subtitle

@@ -1,7 +1,7 @@
 """Tests for data360.visualization module."""
 
 import json
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import numpy as np
 import pandas as pd
@@ -14,8 +14,8 @@ from data360.visualization import (
 )
 
 
-class TestGetVizSpecDracoFallbackWarning:
-    """Verify that a warning is surfaced when Draco fails and fallback is used."""
+class TestGetVizSpecStrategyDispatch:
+    """Verify single-indicator specs are built by strategy dispatch."""
 
     @pytest.fixture
     def sample_dataframe(self):
@@ -30,7 +30,7 @@ class TestGetVizSpecDracoFallbackWarning:
 
     @pytest.fixture
     def patches(self, sample_dataframe):
-        """Set up all the mocks needed to isolate the Draco fallback path."""
+        """Set up all the mocks needed to isolate strategy dispatch behavior."""
         with (
             patch(
                 "data360.api.get_data_api_url",
@@ -73,17 +73,11 @@ class TestGetVizSpecDracoFallbackWarning:
 
     @pytest.mark.asyncio
     async def test_temporal_single_bypasses_draco_and_returns_line(self, patches):
-        """TEMPORAL_SINGLE no longer goes through Draco — it should return a clean line spec."""
-        with patch("data360.visualization.Draco") as MockDraco:
-            # Draco returns empty — but TEMPORAL_SINGLE is bypassed before Draco is called
-            draco_instance = MagicMock()
-            draco_instance.complete_spec.return_value = iter([])
-            MockDraco.return_value = draco_instance
-
-            result = await get_viz_spec(
-                database_id="WB_WDI",
-                indicator_id="FAKE_IND",
-            )
+        """TEMPORAL_SINGLE should return a clean line spec via strategy dispatch."""
+        result = await get_viz_spec(
+            database_id="WB_WDI",
+            indicator_id="FAKE_IND",
+        )
 
         # Must succeed cleanly — no error, no fallback warning
         assert result["url"] is not None, "Expected a URL from strategy builder"
@@ -94,127 +88,12 @@ class TestGetVizSpecDracoFallbackWarning:
         assert result["strategy"] == "temporal_single"
 
     @pytest.mark.asyncio
-    async def test_draco_success_has_no_warning(self, patches):
-        """When Draco succeeds, no warning key should be present."""
-        # Build a chainable mock chart that returns a valid spec from to_dict()
-        mock_chart = MagicMock()
-        mock_vl_spec = {
-            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-            "mark": "point",
-            "encoding": {
-                "x": {"field": "year", "type": "temporal"},
-                "y": {"field": "value", "type": "quantitative"},
-            },
-        }
-        # Chain: chart.properties(...).interactive().encode(...).to_dict()
-        mock_chart.properties.return_value = mock_chart
-        mock_chart.interactive.return_value = mock_chart
-        mock_chart.encode.return_value = mock_chart
-        mock_chart.to_dict.return_value = mock_vl_spec
-
-        with (
-            patch("data360.visualization.Draco") as MockDraco,
-            patch("data360.visualization.answer_set_to_dict") as mock_as2d,
-            patch("data360.visualization.AltairRenderer") as MockRenderer,
-        ):
-            fake_model = MagicMock()
-            draco_instance = MagicMock()
-            draco_instance.complete_spec.return_value = iter([fake_model])
-            MockDraco.return_value = draco_instance
-
-            mock_as2d.return_value = {
-                "view": [{"mark": [{"type": "point", "encoding": []}]}]
-            }
-
-            renderer_instance = MagicMock()
-            renderer_instance.render.return_value = mock_chart
-            MockRenderer.return_value = renderer_instance
-
-            result = await get_viz_spec(
-                database_id="WB_WDI",
-                indicator_id="FAKE_IND",
-            )
-
-        assert result["error"] is None, f"Unexpected error: {result['error']}"
-        assert result["url"] is not None
-        assert "warning" not in result, (
-            f"No warning expected on Draco success, got: {result.get('warning')}"
-        )
-
-    @pytest.mark.asyncio
-    async def test_draco_line_spec_gets_hover_points_in_postprocess(self, patches):
-        """Draco line outputs should get mark.point injected for easier tooltip hover."""
-        mock_chart = MagicMock()
-        mock_vl_spec = {
-            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-            "mark": "line",
-            "encoding": {
-                "x": {"field": "year", "type": "temporal"},
-                "y": {"field": "value", "type": "quantitative"},
-            },
-        }
-        mock_chart.properties.return_value = mock_chart
-        mock_chart.interactive.return_value = mock_chart
-        mock_chart.encode.return_value = mock_chart
-        mock_chart.to_dict.return_value = mock_vl_spec
-
-        captured_spec: dict[str, object] = {}
-
-        async def _capture_spec(spec):
-            captured_spec.clear()
-            captured_spec.update(spec)
-            return "http://localhost:8021/static/viz_specs/test-line.json"
-
-        with (
-            patch("data360.visualization.Draco") as MockDraco,
-            patch("data360.visualization.answer_set_to_dict") as mock_as2d,
-            patch("data360.visualization.AltairRenderer") as MockRenderer,
-            patch(
-                "data360.visualization._store_spec",
-                side_effect=_capture_spec,
-            ),
-        ):
-            fake_model = MagicMock()
-            draco_instance = MagicMock()
-            draco_instance.complete_spec.return_value = iter([fake_model])
-            MockDraco.return_value = draco_instance
-            mock_as2d.return_value = {
-                "view": [{"mark": [{"type": "line", "encoding": []}]}]
-            }
-
-            renderer_instance = MagicMock()
-            renderer_instance.render.return_value = mock_chart
-            MockRenderer.return_value = renderer_instance
-
-            result = await get_viz_spec(
-                database_id="WB_WDI",
-                indicator_id="FAKE_IND",
-            )
-
-        assert result["error"] is None
-        mark = captured_spec.get("mark")
-        if isinstance(mark, str):
-            pytest.fail("Expected post-processing to normalize line mark into dict")
-        assert isinstance(mark, dict)
-        assert mark.get("type") == "line"
-        point = mark.get("point")
-        assert isinstance(point, dict)
-        assert point.get("size", 0) >= 40
-
-    @pytest.mark.asyncio
     async def test_strategy_dispatch_failure_returns_error(self, patches):
-        """When dispatch_spec raises for a bypass strategy, an error is returned."""
-        with (
-            patch("data360.visualization.Draco") as MockDraco,
-            patch(
-                "data360.viz_config.dispatch_spec",
-                side_effect=RuntimeError("dispatch broke"),
-            ),
+        """When dispatch_spec raises, an error is returned."""
+        with patch(
+            "data360.viz_config.dispatch_spec",
+            side_effect=RuntimeError("dispatch broke"),
         ):
-            draco_instance = MagicMock()
-            draco_instance.complete_spec.return_value = iter([])
-            MockDraco.return_value = draco_instance
-
             result = await get_viz_spec(
                 database_id="WB_WDI",
                 indicator_id="FAKE_IND",
@@ -533,15 +412,10 @@ class TestObsValueNullHandling:
         with patch(
             "data360.visualization.save_specs_to_static", side_effect=capture_spec
         ):
-            with patch("data360.visualization.Draco") as MockDraco:
-                draco_instance = MagicMock()
-                draco_instance.complete_spec.return_value = iter([])
-                MockDraco.return_value = draco_instance
-
-                result = await get_viz_spec(
-                    database_id="WB_WDI",
-                    indicator_id="FAKE_IND",
-                )
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+            )
 
         # If spec was captured, verify the data values
         if "spec" in captured_data:
