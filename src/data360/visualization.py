@@ -1374,13 +1374,16 @@ async def get_multi_indicator_viz_spec(
             color_dim="indicator",
         )
 
-    # 7c. Reshape for grouped bar (multi-indicator path): melt wide → long.
-    # build_breakdown_comparison_spec expects df["value"] + df[color_dim].
+    # 7c. Reshape for grouped bar or small multiples (multi-indicator path): melt wide → long.
+    # build_breakdown_comparison_spec and build_small_multiples_spec expect df["value"] + df[color_dim].
     # When color_dim="indicator" the wide merged frame must be melted so each
     # (country, indicator) pair becomes a row with a single "value" and an
-    # "indicator" label column used as the xOffset grouping key.
+    # "indicator" label column used as the grouping/coloring key.
     elif (
-        strategy_result.strategy == viz_config.ChartStrategy.BREAKDOWN_COMPARISON
+        strategy_result.strategy in (
+            viz_config.ChartStrategy.BREAKDOWN_COMPARISON,
+            viz_config.ChartStrategy.SMALL_MULTIPLES
+        )
         and strategy_result.color_dim == "indicator"
     ):
         id_cols = [c for c in merged.columns if c not in indicator_col_names]

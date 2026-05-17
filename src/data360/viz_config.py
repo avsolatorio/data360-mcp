@@ -604,7 +604,7 @@ def select_strategy(
     ind_cols = indicator_cols or []
 
     # ── Explicit scatter hint ──
-    if hint == "point" and n_indicators == 2 and len(ind_cols) == 2:
+    if hint in ("point", "scatter", "connected_scatter") and n_indicators == 2 and len(ind_cols) == 2:
         if year_count > 1:
             return StrategyResult(
                 ChartStrategy.CORRELATION_TEMPORAL,
@@ -656,12 +656,11 @@ def select_strategy(
             )
         if year_count > 1 and country_count > 1:
             return StrategyResult(
-                ChartStrategy.CORRELATION_TEMPORAL,
-                f"2 indicators, {country_count} countries, {year_count} years → connected scatter",
+                ChartStrategy.SMALL_MULTIPLES,
+                f"2 indicators, {country_count} countries, {year_count} years → small multiples",
                 indicator_cols=ind_cols,
-                color_dim="country",
-                x_dim=ind_cols[0],
-                y_dim=ind_cols[1],
+                color_dim="indicator",
+                facet_dim="country",
             )
         # 1 country, multi-year → layered lines
         return StrategyResult(

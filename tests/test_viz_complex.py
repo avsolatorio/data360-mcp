@@ -195,11 +195,11 @@ class TestStrategyRouter:
         assert r.strategy == ChartStrategy.CORRELATION
         assert r.indicator_cols == ind_cols
 
-    def test_correlation_temporal_two_indicators_multi_year(self):
+    def test_small_multiples_two_indicators_multi_year(self):
         df = _two_ind_ts_df()
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = select_strategy(df, n_indicators=2, indicator_cols=ind_cols)
-        assert r.strategy == ChartStrategy.CORRELATION_TEMPORAL
+        assert r.strategy == ChartStrategy.SMALL_MULTIPLES
 
     def test_temporal_multi_indicator_single_country(self):
         df = _two_ind_ts_df()
