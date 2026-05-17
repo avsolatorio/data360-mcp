@@ -1450,43 +1450,74 @@ def build_correlation_spec(
 
     rows = df.dropna(subset=[x_col, y_col]).to_dict(orient="records")
 
+    color_dim = result.color_dim or "country"
+    color_enc = _color_encoding(color_dim)
+
+    # Place legend on the right for scatterplots so it doesn't compress vertical height
+    if isinstance(color_enc, dict) and "legend" in color_enc and color_enc["legend"] is not None:
+        color_enc["legend"]["orient"] = "right"
+        color_enc["legend"]["direction"] = "vertical"
+        color_enc["legend"].pop("columns", None)
+
     spec: dict = {
         "$schema": _vl_schema(),
         "title": title,
         "data": {"values": rows},
-        "mark": {
-            "type": "circle",
-            "opacity": 0.85,
-            "stroke": WB_WHITE,
-            "strokeWidth": 1,
-        },
-        "encoding": {
-            "x": {
-                "field": x_col,
-                "type": "quantitative",
-                "axis": _axis_style(x_label),
-                "scale": {"zero": False},
+        "layer": [
+            {
+                "mark": {
+                    "type": "circle",
+                    "opacity": 0.85,
+                    "stroke": WB_WHITE,
+                    "strokeWidth": 1,
+                    "size": 70
+                },
+                "encoding": {
+                    "x": {
+                        "field": x_col,
+                        "type": "quantitative",
+                        "axis": _axis_style(x_label),
+                        "scale": {"zero": False},
+                    },
+                    "y": {
+                        "field": y_col,
+                        "type": "quantitative",
+                        "axis": _axis_style(y_label),
+                        "scale": {"zero": False},
+                    },
+                    "color": color_enc,
+                    "tooltip": build_structured_tooltips(
+                        list(df.columns), "point", lab, viz_data=df
+                    ),
+                }
             },
-            "y": {
-                "field": y_col,
-                "type": "quantitative",
-                "axis": _axis_style(y_label),
-                "scale": {"zero": False},
-            },
-        },
-        "width": 550,
+            {
+                "mark": {
+                    "type": "text",
+                    "dy": -10,
+                    "fontSize": 10,
+                    "fontWeight": "bold"
+                },
+                "encoding": {
+                    "x": {
+                        "field": x_col,
+                        "type": "quantitative"
+                    },
+                    "y": {
+                        "field": y_col,
+                        "type": "quantitative"
+                    },
+                    "text": {
+                        "field": color_dim,
+                        "type": "nominal"
+                    },
+                    "color": color_enc
+                }
+            }
+        ],
+        "width": 600,
         "height": 450,
     }
-
-    color_dim = result.color_dim or "country"
-    color_enc = _color_encoding(color_dim)
-    if color_dim in df.columns and df[color_dim].nunique() > HIGH_CARDINALITY_THRESHOLDS["top_n_series"]:
-        color_enc["legend"] = None
-    spec["encoding"]["color"] = color_enc
-
-    spec["encoding"]["tooltip"] = build_structured_tooltips(
-        list(df.columns), "point", lab, viz_data=df
-    )
 
     return inject_wb_config(spec)
 

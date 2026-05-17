@@ -435,7 +435,8 @@ class TestSpecBuilders:
             indicator_cols=["gdp_per_capita", "life_expectancy"],
         )
         spec = build_correlation_spec(df, "Test", r)
-        assert spec["mark"]["type"] == "circle"
+        assert spec["layer"][0]["mark"]["type"] == "circle"
+        assert spec["layer"][1]["mark"]["type"] == "text"
 
     def test_correlation_x_y_from_indicator_cols(self):
         df = _two_ind_df()
@@ -444,8 +445,8 @@ class TestSpecBuilders:
             ChartStrategy.CORRELATION, color_dim="country", indicator_cols=ind_cols
         )
         spec = build_correlation_spec(df, "Test", r)
-        assert spec["encoding"]["x"]["field"] == "gdp_per_capita"
-        assert spec["encoding"]["y"]["field"] == "life_expectancy"
+        assert spec["layer"][0]["encoding"]["x"]["field"] == "gdp_per_capita"
+        assert spec["layer"][0]["encoding"]["y"]["field"] == "life_expectancy"
 
     def test_correlation_axis_labels_from_indicator_labels(self):
         df = _two_ind_df()
@@ -455,8 +456,8 @@ class TestSpecBuilders:
         )
         labels = {"gdp_per_capita": "GDP (USD)", "life_expectancy": "Life Exp (years)"}
         spec = build_correlation_spec(df, "Test", r, indicator_labels=labels)
-        assert spec["encoding"]["x"]["axis"]["title"] == "GDP (USD)"
-        assert spec["encoding"]["y"]["axis"]["title"] == "Life Exp (years)"
+        assert spec["layer"][0]["encoding"]["x"]["axis"]["title"] == "GDP (USD)"
+        assert spec["layer"][0]["encoding"]["y"]["axis"]["title"] == "Life Exp (years)"
 
     def test_correlation_raises_without_indicator_cols(self):
         df = _two_ind_df()
@@ -741,16 +742,13 @@ class TestWBStyleOnAllSpecs:
     def test_all_specs_have_tooltips(self):
         for spec in self._all_specs():
             enc = spec.get("encoding") or spec.get("spec", {}).get("encoding", {}) or {}
-            layer_enc = None
+            has_tooltip = "tooltip" in enc
             if "layer" in spec:
-                # last layer has tooltips
-                layer_enc = spec["layer"][-1].get("encoding", {})
+                has_tooltip = any("tooltip" in layer.get("encoding", {}) for layer in spec["layer"])
             elif "vconcat" in spec:
-                layer_enc = spec["vconcat"][0].get("encoding", {})
-            check_enc = layer_enc or enc
-            assert "tooltip" in check_enc, (
-                f"Missing tooltip in spec: {spec.get('title')}"
-            )
+                has_tooltip = "tooltip" in spec["vconcat"][0].get("encoding", {})
+
+            assert has_tooltip, f"Missing tooltip in spec: {spec.get('title')}"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -978,8 +976,8 @@ class TestAxisLabelThreading:
                 "life_expectancy": "Life Exp",
             },
         )
-        assert spec["encoding"]["x"]["axis"]["title"] == "GDP (USD)"
-        assert spec["encoding"]["y"]["axis"]["title"] == "Life Exp"
+        assert spec["layer"][0]["encoding"]["x"]["axis"]["title"] == "GDP (USD)"
+        assert spec["layer"][0]["encoding"]["y"]["axis"]["title"] == "Life Exp"
 
     def test_multi_ind_vconcat_facet_title_per_indicator(self):
         df = _two_ind_ts_df()[lambda x: x.country == "CountryA"]
