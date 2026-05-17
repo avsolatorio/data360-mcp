@@ -686,33 +686,94 @@ async def get_viz_spec(
         Dict with "url" (chart URL on success), "error" (message on failure),
         and optionally "warning" (if fallback was used).
     """
-    from data360.api import get_data_api_url, get_metadata
+    from data360.api import get_data_api_url, get_disaggregation, get_metadata
 
-    # 1. Build URL
-    try:
-        data_url = await get_data_api_url(
-            database_id=database_id,
-            indicator_id=indicator_id,
-            country_code=country_code,
-            start_year=start_year,
-            end_year=end_year,
-            disaggregation_filters=disaggregation_filters,
-        )
-    except ValueError as e:
-        return _err(f"Error: {e}")
+    # ── Detect "expand" dimensions ─────────────────────────────────────────────
+    # If the caller passes disaggregation_filters={"SEX": None}, it means
+    # "fetch all values for SEX". The Data360 API only accepts a single scalar
+    # per dimension, so a None value is our internal sentinel for "expand me".
+    # We resolve the valid non-trivial codes via get_disaggregation, then fire
+    # one fetch per value concurrently and concat the results.
+    _TRIVIAL_CODES = {"_T", "_Z"}
+    expand_dims: dict[str, list[str]] = {}  # dim → [valid non-trivial codes]
+    if disaggregation_filters:
+        for dim, val in disaggregation_filters.items():
+            if val is None:
+                try:
+                    disagg = await get_disaggregation(database_id, indicator_id)
+                    for d in (disagg.get("dimensions") or []):
+                        if d.get("field_name", "").upper() == dim.upper():
+                            codes = [
+                                c for c in (d.get("field_value") or [])
+                                if c not in _TRIVIAL_CODES
+                            ]
+                            if codes:
+                                expand_dims[dim] = codes
+                            break
+                except Exception as e:
+                    _logger.warning(f"Could not resolve expand dim {dim}: {e}")
 
-    # 2. Fetch data
-    try:
-        data = await _fetch_data_internal(data_url)
-    except ValueError as e:
-        return _err(f"Error: {e}")
-    except httpx.HTTPStatusError as e:
-        return _err(f"Error fetching data: {e.response.status_code}")
-    except Exception as e:
-        _logger.exception("Failed to fetch data")
-        return _err(f"Error fetching data: {e}")
+    # ── Fetch ──────────────────────────────────────────────────────────────────
+    if expand_dims:
+        # Build one filter dict per value combination (only handles single expand dim for now).
+        # Multi-dim expansion (e.g. SEX × AGE) would be a combinatorial explosion — skip it.
+        first_dim, codes = next(iter(expand_dims.items()))
+        base_filters = {
+            k: v for k, v in (disaggregation_filters or {}).items()
+            if k != first_dim
+        }
 
-    data.columns = [c.lower() for c in data.columns]
+        async def _fetch_one(code: str) -> pd.DataFrame:
+            filters = {**base_filters, first_dim: code}
+            try:
+                url = await get_data_api_url(
+                    database_id=database_id,
+                    indicator_id=indicator_id,
+                    country_code=country_code,
+                    start_year=start_year,
+                    end_year=end_year,
+                    disaggregation_filters=filters,
+                )
+                df = await _fetch_data_internal(url)
+                df.columns = [c.lower() for c in df.columns]
+                return df
+            except Exception as e:
+                _logger.warning(f"Expand fetch failed for {first_dim}={code}: {e}")
+                return pd.DataFrame()
+
+        frames = await asyncio.gather(*[_fetch_one(c) for c in codes])
+        non_empty = [f for f in frames if not f.empty]
+        if not non_empty:
+            return _err("Error: No data returned for any disaggregation value.")
+        data = pd.concat(non_empty, ignore_index=True)
+        # data.columns already lowercased inside _fetch_one
+    else:
+        # 1. Build URL
+        try:
+            data_url = await get_data_api_url(
+                database_id=database_id,
+                indicator_id=indicator_id,
+                country_code=country_code,
+                start_year=start_year,
+                end_year=end_year,
+                disaggregation_filters=disaggregation_filters,
+            )
+        except ValueError as e:
+            return _err(f"Error: {e}")
+
+        # 2. Fetch data
+        try:
+            data = await _fetch_data_internal(data_url)
+        except ValueError as e:
+            return _err(f"Error: {e}")
+        except httpx.HTTPStatusError as e:
+            return _err(f"Error fetching data: {e.response.status_code}")
+        except Exception as e:
+            _logger.exception("Failed to fetch data")
+            return _err(f"Error fetching data: {e}")
+
+        data.columns = [c.lower() for c in data.columns]
+
 
     # 3. Detect frequency
     data_frequency = None
@@ -1304,6 +1365,26 @@ async def get_multi_indicator_viz_spec(
             indicator_cols=strategy_result.indicator_cols,
             color_dim="indicator",
         )
+
+    # 7c. Reshape for grouped bar (multi-indicator path): melt wide → long.
+    # build_breakdown_comparison_spec expects df["value"] + df[color_dim].
+    # When color_dim="indicator" the wide merged frame must be melted so each
+    # (country, indicator) pair becomes a row with a single "value" and an
+    # "indicator" label column used as the xOffset grouping key.
+    elif (
+        strategy_result.strategy == viz_config.ChartStrategy.BREAKDOWN_COMPARISON
+        and strategy_result.color_dim == "indicator"
+    ):
+        id_cols = [c for c in merged.columns if c not in indicator_col_names]
+        spec_df = merged.melt(
+            id_vars=id_cols,
+            value_vars=indicator_col_names,
+            var_name="indicator",
+            value_name="value",
+        )
+        slug_to_title = dict(zip(indicator_col_names, titles))
+        spec_df["indicator"] = spec_df["indicator"].map(slug_to_title)
+        spec_df = spec_df.dropna(subset=["value"])
 
     # 8. Build spec
     try:

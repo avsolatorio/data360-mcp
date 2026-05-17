@@ -636,6 +636,16 @@ def select_strategy(
     # ── Multi-indicator: 2-3 indicators ──
     if n_indicators == 2 and len(ind_cols) == 2:
         if year_count <= 1 and country_count > 1:
+            # Explicit bar hint: 2 indicators × N countries, single year → grouped bar.
+            # Each country gets a group of 2 side-by-side bars (one per indicator).
+            # This is the canonical path for "male vs female unemployment for 3 countries".
+            if hint == "bar":
+                return StrategyResult(
+                    ChartStrategy.BREAKDOWN_COMPARISON,
+                    f"User requested bar; 2 indicators, {country_count} countries, single year → grouped bar",
+                    indicator_cols=ind_cols,
+                    color_dim="indicator",
+                )
             return StrategyResult(
                 ChartStrategy.CORRELATION,
                 f"2 indicators, {country_count} countries, single year → scatterplot",
@@ -694,6 +704,19 @@ def select_strategy(
                 f"{country_count} countries, {year_count} years → heatmap",
                 color_dim="value",
             )
+
+    # Explicit bar + 1 breakdown + few countries → grouped bar (xOffset) instead of small multiples.
+    # GoG: if the user has explicitly requested a bar chart and there is exactly one breakdown
+    # dimension with few countries (≤4), the correct mapping is BREAKDOWN_COMPARISON
+    # (side-by-side bars within each country group) rather than SMALL_MULTIPLES (line facets).
+    # This is the canonical fix for "unemployment by sex for 3 countries as a bar chart".
+    if hint == "bar" and n_breakdowns == 1 and 0 < country_count <= 4:
+        color_dim = list(breakdown_counts.keys())[0]
+        return StrategyResult(
+            ChartStrategy.BREAKDOWN_COMPARISON,
+            f"User requested bar; 1 breakdown ({color_dim}), {country_count} countries → grouped bar",
+            color_dim=color_dim,
+        )
 
     # Small multiples: 2+ meaningful breakdowns, or breakdown + multiple countries.
     # With breakdown + 2+ countries, series count = country_count × breakdown_values.
