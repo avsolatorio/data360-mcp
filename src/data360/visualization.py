@@ -1326,8 +1326,16 @@ async def get_multi_indicator_viz_spec(
     )
 
     # 6. Build indicator_labels for axis/tooltip
+    def _format_label(t: str, u: str | None) -> str:
+        if not u:
+            return t
+        # Prevent redundant units like "GDP (annual % growth) (%)"
+        if str(u).lower() in str(t).lower():
+            return t
+        return f"{t} ({u})"
+
     indicator_labels = {
-        col: f"{title} ({unit})" if unit else title
+        col: _format_label(title, unit)
         for col, title, unit in zip(indicator_col_names, titles, units)
     }
 
