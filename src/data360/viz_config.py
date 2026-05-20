@@ -21,6 +21,11 @@ from typing import Any, Literal
 
 import pandas as pd
 
+# Temporal frequency detected from TIME_PERIOD column values.
+# Governs how the year column is formatted and how x-axis timeUnit/format
+# is set in Vega-Lite.
+TemporalFreq = Literal["annual", "quarterly", "monthly", "daily"]
+
 # ============================================================================
 # WORLD BANK COLOR PALETTE
 # Source: https://worldbank.github.io/data-visualization-style-guide/colors
@@ -629,6 +634,7 @@ class StrategyResult:
     x_dim: str | None = None
     y_dim: str | None = None
     scale_incompatible: bool = False  # breakdown series need independent Y-axes
+    temporal_frequency: TemporalFreq = "annual"  # detected from time_period values
 
 
 def select_strategy(
@@ -938,6 +944,171 @@ def _axis_style(title: str | None = None, temporal: bool = False) -> dict:
     return ax
 
 
+def _detect_temporal_frequency(series: pd.Series) -> TemporalFreq:
+    """Infer temporal frequency from raw TIME_PERIOD values.
+
+    Handles all formats the Data360 API produces:
+      - Annual:    "2019", "2020"
+      - Monthly:   "2019-09", "2019-09-01", "2019M09"
+      - Quarterly: "2019-Q1", "2019Q1", "2019-q1"
+      - Daily:     "2019-09-15"
+
+    Logic:
+      - Parse unique values as datetime. If all land on Jan-1 (or are bare
+        4-digit integers), treat as annual.
+      - If distinct parsed periods show > 1 period per year → sub-annual.
+        Distinguish quarterly (avg ~4/year) vs monthly (avg ~12/year).
+      - Fall back to annual on any parse error or empty series.
+    """
+    values = series.dropna().astype(str).unique()
+    if len(values) == 0:
+        return "annual"
+
+    # Fast path: all values are bare 4-digit years (most common case)
+    if all(v.strip().isdigit() and len(v.strip()) == 4 for v in values):
+        return "annual"
+
+    # Check for explicit quarter markers before parsing as datetime
+    q_pattern = re.compile(r"\d{4}[-\s]?[Qq]\d", re.IGNORECASE)
+    if any(q_pattern.search(v) for v in values):
+        return "quarterly"
+
+    # Parse as datetime
+    try:
+        parsed = pd.to_datetime(pd.Series(values), errors="coerce").dropna()
+    except Exception:
+        return "annual"
+
+    if parsed.empty:
+        return "annual"
+
+    # If every date is Jan-1 → effectively annual
+    if (parsed.dt.month == 1).all() and (parsed.dt.day == 1).all():
+        return "annual"
+
+    n_years = max(parsed.dt.year.nunique(), 1)
+    # Count distinct year-month combos to correctly classify monthly data
+    # where dates span calendar-year boundaries (e.g. Sep 2019 – Aug 2020).
+    n_year_months = parsed.dt.to_period("M").nunique()
+    avg_months_per_year = n_year_months / n_years
+
+    # Quarterly data has at most 4 year-months per year.
+    # Monthly data has >= 5 (even sparse datasets).
+    if avg_months_per_year >= 5:
+        return "monthly"
+    if avg_months_per_year >= 3:
+        return "quarterly"
+    # Fewer than 3 distinct months per year on average → annual (e.g. IPC biannual)
+    return "annual"
+
+
+def _format_time_period_series(
+    series: pd.Series, freq: TemporalFreq
+) -> pd.Series:
+    """Convert raw TIME_PERIOD strings to the correct format for a given frequency.
+
+    Annual   → "2019"         (4-digit year string; Vega-Lite ordinal)
+    Monthly  → "2019-09"      (ISO yearmonth; Vega-Lite temporal + timeUnit yearmonth)
+    Quarterly→ "2019-Q1"      (ISO yearquarter; Vega-Lite temporal + timeUnit yearquarter)
+    Daily    → "2019-09-15"   (ISO date; Vega-Lite temporal)
+
+    Values that fail parsing are left as-is (graceful fallback).
+    """
+    try:
+        parsed = pd.to_datetime(series, errors="coerce")
+    except Exception:
+        return series
+
+    if freq == "annual":
+        return parsed.dt.year.astype("Int64").astype(str).where(parsed.notna(), series)
+    elif freq == "monthly":
+        return parsed.dt.to_period("M").astype(str).where(parsed.notna(), series)
+    elif freq == "quarterly":
+        return parsed.dt.to_period("Q").astype(str).where(parsed.notna(), series)
+    else:  # daily
+        return parsed.dt.strftime("%Y-%m-%d").where(parsed.notna(), series)
+
+
+# Vega-Lite x-axis configuration per temporal frequency.
+# Using a separate dict per frequency so builder functions have a single
+# call site (_x_temporal_encoding) rather than hardcoded copies.
+_TEMPORAL_X_ENCODING: dict[TemporalFreq, dict] = {
+    "annual": {
+        "field": "year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "axis": {
+            "title": None,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "gridColor": WB_GRID_COLOR,
+            "gridDash": [4, 2],
+            "labelColor": WB_TEXT_SUBTLE,
+            "titleColor": WB_TEXT,
+            "titleFontWeight": "bold",
+        },
+    },
+    "monthly": {
+        "field": "year",
+        "type": "temporal",
+        "timeUnit": "yearmonth",
+        "axis": {
+            "title": None,
+            "format": "%b %Y",
+            "tickCount": 8,
+            "labelAngle": -45,
+            "gridColor": WB_GRID_COLOR,
+            "gridDash": [4, 2],
+            "labelColor": WB_TEXT_SUBTLE,
+            "titleColor": WB_TEXT,
+            "titleFontWeight": "bold",
+        },
+    },
+    "quarterly": {
+        "field": "year",
+        "type": "temporal",
+        "timeUnit": "yearquarter",
+        "axis": {
+            "title": None,
+            "format": "Q%q %Y",
+            "tickCount": 6,
+            "labelAngle": -45,
+            "gridColor": WB_GRID_COLOR,
+            "gridDash": [4, 2],
+            "labelColor": WB_TEXT_SUBTLE,
+            "titleColor": WB_TEXT,
+            "titleFontWeight": "bold",
+        },
+    },
+    "daily": {
+        "field": "year",
+        "type": "temporal",
+        "axis": {
+            "title": None,
+            "format": "%d %b %Y",
+            "tickCount": 6,
+            "labelAngle": -45,
+            "gridColor": WB_GRID_COLOR,
+            "gridDash": [4, 2],
+            "labelColor": WB_TEXT_SUBTLE,
+            "titleColor": WB_TEXT,
+            "titleFontWeight": "bold",
+        },
+    },
+}
+
+
+def _x_temporal_encoding(freq: TemporalFreq = "annual") -> dict:
+    """Return the correct Vega-Lite x encoding for the given temporal frequency.
+
+    Returns a deep copy so callers can mutate axis overrides (e.g. labels=False
+    for non-bottom panels) without affecting subsequent calls.
+    """
+    import copy
+    return copy.deepcopy(_TEMPORAL_X_ENCODING.get(freq, _TEMPORAL_X_ENCODING["annual"]))
+
+
 def _value_label_expr(unit_measure: str | None = None) -> str:
     """Vega expression for custom k/m/b/t axis label formatting."""
     normalized = (unit_measure or "").upper().strip()
@@ -1043,7 +1214,7 @@ def build_temporal_single_spec(
         "labelExpr": _value_label_expr(unit_measure),
     }
     encoding: dict = {
-        "x": {"field": "year", "type": "temporal", "axis": _axis_style(temporal=True)},
+        "x": _x_temporal_encoding(result.temporal_frequency),
         "y": {
             "field": "value",
             "type": "quantitative",
@@ -1252,12 +1423,7 @@ def build_breakdown_comparison_spec(
     # Use temporal type for year so Vega-Lite formats ISO strings as years, not raw ms integers.
     x_enc: dict
     if x_field == "year":
-        x_enc = {
-            "field": "year",
-            "type": "temporal",
-            "timeUnit": "year",
-            "axis": {"title": None, "labelFontWeight": "bold", "format": "%Y", "labelAngle": -45},
-        }
+        x_enc = _x_temporal_encoding(result.temporal_frequency)
     else:
         x_enc = {
             "field": x_field,
@@ -1462,10 +1628,9 @@ def _build_scale_split_vconcat(
     for g_idx, group in enumerate(groups):
         is_last_panel = g_idx == len(groups) - 1
 
-        x_axis = _axis_style(temporal=True)
+        x_enc = _x_temporal_encoding(result.temporal_frequency)
         if not is_last_panel:
-            x_axis["labels"] = False
-            x_axis["title"] = None
+            x_enc = {**x_enc, "axis": {**x_enc.get("axis", {}), "labels": False, "title": None}}
 
         y_axis = {**_axis_style(), "title": None, "labelExpr": label_expr}
 
@@ -1506,7 +1671,7 @@ def _build_scale_split_vconcat(
                     "point": _LINE_HOVER_POINT,
                 },
                 "encoding": {
-                    "x": {"field": "year", "type": "temporal", "axis": x_axis},
+                    "x": x_enc,
                     "y": {
                         "field": "value",
                         "type": "quantitative",
@@ -1575,7 +1740,7 @@ def _build_scale_split_vconcat(
                     "point": _LINE_HOVER_POINT,
                 },
                 "encoding": {
-                    "x": {"field": "year", "type": "temporal", "axis": x_axis},
+                    "x": x_enc,
                     "y": {
                         "field": "value",
                         "type": "quantitative",
@@ -1767,12 +1932,7 @@ def build_heatmap_spec(
         "axis": {"title": None, "labelFontWeight": "bold"}
     }
 
-    x_enc = {
-        "field": "year",
-        "type": "temporal",
-        "timeUnit": "year",
-        "axis": {"title": None, "format": "%Y"}
-    }
+    x_enc = _x_temporal_encoding(result.temporal_frequency)
 
     color_enc = {
         "field": "value",
@@ -1852,12 +2012,7 @@ def build_stacked_area_spec(
         "data": {"values": rows},
         "mark": {"type": "area", "tooltip": True, "line": True, "opacity": 0.8},
         "encoding": {
-            "x": {
-                "field": "year",
-                "type": "temporal",
-                "timeUnit": "year",
-                "axis": {"title": None, "format": "%Y"}
-            },
+            "x": _x_temporal_encoding(result.temporal_frequency),
             "y": {
                 "field": "value",
                 "type": "quantitative",
@@ -2063,18 +2218,13 @@ def build_temporal_multi_indicator_spec(
         }
 
         # Only show X-axis labels on the bottom-most chart to reduce clutter
-        x_axis = _axis_style(temporal=True)
+        x_enc = _x_temporal_encoding(result.temporal_frequency)
         if i < len(ind_cols) - 1:
-            x_axis["labels"] = False
-            x_axis["title"] = None
+            x_enc = {**x_enc, "axis": {**x_enc.get("axis", {}), "labels": False, "title": None}}
 
         tooltip_cols = _multi_indicator_tooltip_columns(list(df.columns), col)
         layer_enc: dict = {
-            "x": {
-                "field": "year",
-                "type": "temporal",
-                "axis": x_axis,
-            },
+            "x": x_enc,
             "y": {
                 "field": col,
                 "type": "quantitative",
@@ -2148,10 +2298,10 @@ def build_fallback_line_spec(
     }
 
     encoding: dict = {
-        "x": {
+        "x": _x_temporal_encoding(result.temporal_frequency) if "year" in x_col else {
             "field": x_col,
-            "type": "temporal" if "year" in x_col else "ordinal",
-            "axis": _axis_style(temporal=("year" in x_col)),
+            "type": "ordinal",
+            "axis": _axis_style(),
         },
         "y": {"field": y_col, "type": "quantitative", "axis": y_ax},
         "tooltip": build_structured_tooltips(

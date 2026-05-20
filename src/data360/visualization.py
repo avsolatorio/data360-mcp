@@ -440,7 +440,7 @@ def _clean_single_df(
     relevant_fields: list[str] | None,
     chart_type: str | None,
     data_frequency: str | None,
-) -> tuple[pd.DataFrame, list[str]]:
+) -> tuple[pd.DataFrame, list[str], "viz_config.TemporalFreq"]:
     # Trivial values for disaggregation dimensions: _T = aggregate total, _Z = not applicable.
     # unit_measure uses a different sentinel: 'U' = Unitless (defined in _UNIT_MEASURE_TRIVIAL).
     _TRIVIAL_DIM_VALUES = ("_T", "_Z")
@@ -478,18 +478,25 @@ def _clean_single_df(
                     relevant_cols.append(dim)
         viz_data = data[relevant_cols].copy() if relevant_cols else data.copy()
 
-    # Temporal preparation
-    # Always collapse to year strings: the viz pipeline has no sub-annual axis strategy,
-    # and passing full ISO timestamps (e.g. "2019-09-01T00:00:00") causes the Vega-Lite
-    # axis to display raw millisecond timestamps. Sub-annual IPC/monthly data is
-    # intentionally aggregated to year at the chart level.
+    # Temporal preparation — detect frequency from raw values, then format accordingly.
+    temporal_frequency: viz_config.TemporalFreq = "annual"
     if "time_period" in viz_data.columns:
         try:
-            viz_data["time_period"] = (
-                pd.to_datetime(viz_data["time_period"]).dt.year.astype(str)
+            temporal_frequency = viz_config._detect_temporal_frequency(
+                viz_data["time_period"]
+            )
+            viz_data["time_period"] = viz_config._format_time_period_series(
+                viz_data["time_period"], temporal_frequency
             )
         except Exception as e:
             _logger.warning(f"time_period conversion failed: {e}")
+            # Safe fallback: extract year string to avoid raw timestamp in Vega-Lite
+            try:
+                viz_data["time_period"] = (
+                    pd.to_datetime(viz_data["time_period"]).dt.year.astype(str)
+                )
+            except Exception:
+                pass
 
     if "obs_value" in viz_data.columns:
         viz_data["obs_value"] = pd.to_numeric(viz_data["obs_value"], errors="coerce")
@@ -504,7 +511,7 @@ def _clean_single_df(
     ]
     if "value" in viz_data.columns:
         viz_data["value"] = pd.to_numeric(viz_data["value"], errors="coerce")
-    return viz_data, relevant_cols
+    return viz_data, relevant_cols, temporal_frequency
 
 
 async def _map_country_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
@@ -1011,7 +1018,7 @@ async def get_viz_spec(
         data["obs_value"] = pd.to_numeric(data["obs_value"], errors="coerce")
 
     try:
-        viz_data, relevant_cols = _clean_single_df(
+        viz_data, relevant_cols, temporal_frequency = _clean_single_df(
             data, relevant_fields, chart_type, data_frequency
         )
     except ValueError as e:
@@ -1064,6 +1071,8 @@ async def get_viz_spec(
         n_indicators=n_indicators,
         chart_type_hint=chart_type,
     )
+    # Thread detected temporal frequency through to spec builders.
+    strategy_result.temporal_frequency = temporal_frequency
 
     _logger.info(
         f"Chart strategy: {strategy_result.strategy.value} — {strategy_result.reason}"

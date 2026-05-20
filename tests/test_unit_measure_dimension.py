@@ -49,7 +49,7 @@ class TestCleanSingleDfUnitMeasure:
     def test_unit_measure_kept_when_multi_valued(self):
         """Two meaningful unit values → unit_measure included in output."""
         df = _make_df(["Persons", "Percentage", "Persons", "Percentage"])
-        viz_data, relevant_cols = _clean_single_df(df, None, None, None)
+        viz_data, relevant_cols, _ = _clean_single_df(df, None, None, None)
 
         assert "unit_measure" in viz_data.columns, (
             "unit_measure should be kept when 2+ distinct non-trivial values exist"
@@ -59,21 +59,21 @@ class TestCleanSingleDfUnitMeasure:
     def test_unit_measure_dropped_when_single_valued(self):
         """All rows have the same unit → unit_measure not added."""
         df = _make_df(["Persons", "Persons", "Persons"])
-        viz_data, relevant_cols = _clean_single_df(df, None, None, None)
+        viz_data, relevant_cols, _ = _clean_single_df(df, None, None, None)
 
         assert "unit_measure" not in viz_data.columns
 
     def test_unit_measure_dropped_when_unitless_sentinel(self):
         """'U' = Unitless sentinel → dropped as non-discriminating."""
         df = _make_df(["U", "U", "U"])
-        viz_data, _ = _clean_single_df(df, None, None, None)
+        viz_data, _, _freq = _clean_single_df(df, None, None, None)
 
         assert "unit_measure" not in viz_data.columns
 
     def test_unit_measure_dropped_when_empty_string_only(self):
         """Empty-string unit → treated as trivial, not included."""
         df = _make_df(["", "", ""])
-        viz_data, _ = _clean_single_df(df, None, None, None)
+        viz_data, _, _freq = _clean_single_df(df, None, None, None)
 
         assert "unit_measure" not in viz_data.columns
 
@@ -84,13 +84,13 @@ class TestCleanSingleDfUnitMeasure:
             "obs_value": [1.0],
             "ref_area": ["GEO"],
         })
-        viz_data, _ = _clean_single_df(df, None, None, None)
+        viz_data, _, _freq = _clean_single_df(df, None, None, None)
         assert "unit_measure" not in viz_data.columns
 
     def test_unit_measure_included_via_relevant_fields(self):
         """When relevant_fields explicitly lists unit_measure, it is kept."""
         df = _make_df(["Persons", "Percentage"])
-        viz_data, _ = _clean_single_df(
+        viz_data, _, _freq = _clean_single_df(
             df,
             relevant_fields=["time_period", "obs_value", "ref_area", "unit_measure"],
             chart_type=None,
@@ -101,7 +101,7 @@ class TestCleanSingleDfUnitMeasure:
     def test_unit_measure_added_by_relevant_fields_branch_when_multi(self):
         """Even when relevant_fields does NOT list it, multi-value detection adds it."""
         df = _make_df(["Persons", "Percentage"])
-        viz_data, _ = _clean_single_df(
+        viz_data, _, _freq = _clean_single_df(
             df,
             relevant_fields=["time_period", "obs_value", "ref_area"],
             chart_type=None,

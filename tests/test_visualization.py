@@ -484,7 +484,7 @@ class TestCleanSingleDfValueNumeric:
                 "ref_area": ["KEN", "KEN"],
             }
         )
-        viz_data, _ = _clean_single_df(
+        viz_data, _, _freq = _clean_single_df(
             data,
             relevant_fields=["time_period", "value", "ref_area"],
             chart_type=None,

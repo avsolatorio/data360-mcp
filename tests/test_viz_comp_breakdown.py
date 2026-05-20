@@ -70,7 +70,7 @@ def test_clean_single_df_keeps_comp_breakdown_1_when_multi_value():
     WGI_BREAKDOWNS = ["WGI_EST", "WGI_SE", "WGI_SC", "WGI_SR", "WGI_SC_LB", "WGI_SC_UB"]
     raw = _make_wgi_df(WGI_BREAKDOWNS, [2022, 2023, 2024])
 
-    viz_data, relevant_cols = _clean_single_df(raw, None, None, "A")
+    viz_data, relevant_cols, _ = _clean_single_df(raw, None, None, "A")
 
     assert "comp_breakdown_1" in viz_data.columns, (
         "comp_breakdown_1 should be retained when it has 6 distinct values"
@@ -82,7 +82,7 @@ def test_clean_single_df_drops_comp_breakdown_1_when_trivial_z():
     """comp_breakdown_1 must be dropped when its only value is _Z (not applicable)."""
     raw = _make_wgi_df(["_Z"], [2022, 2023])  # single trivial value
 
-    viz_data, relevant_cols = _clean_single_df(raw, None, None, "A")
+    viz_data, relevant_cols, _ = _clean_single_df(raw, None, None, "A")
 
     assert "comp_breakdown_1" not in viz_data.columns, (
         "comp_breakdown_1 should be dropped when value is only _Z"
@@ -99,7 +99,7 @@ def test_clean_single_df_drops_comp_breakdown_1_when_trivial_t():
             "comp_breakdown_1": ["_T", "_T"],
         }
     )
-    viz_data, relevant_cols = _clean_single_df(df, None, None, "A")
+    viz_data, relevant_cols, _ = _clean_single_df(df, None, None, "A")
 
     assert "comp_breakdown_1" not in viz_data.columns, (
         "comp_breakdown_1 should be dropped when value is only _T"
@@ -116,7 +116,7 @@ def test_clean_single_df_keeps_comp_breakdown_2_when_multi_value():
             "comp_breakdown_2": ["PHASE1", "PHASE2"],
         }
     )
-    viz_data, relevant_cols = _clean_single_df(df, None, None, "A")
+    viz_data, relevant_cols, _ = _clean_single_df(df, None, None, "A")
 
     assert "comp_breakdown_2" in viz_data.columns
     assert "comp_breakdown_2" in relevant_cols
@@ -127,7 +127,7 @@ def test_clean_single_df_relevant_fields_branch_keeps_comp_breakdown():
     raw = _make_wgi_df(["WGI_EST", "WGI_SC"], [2022, 2023])
 
     # Pass only core fields; comp_breakdown_1 should be auto-added
-    viz_data, relevant_cols = _clean_single_df(
+    viz_data, relevant_cols, _ = _clean_single_df(
         raw, ["time_period", "obs_value"], None, "A"
     )
 
