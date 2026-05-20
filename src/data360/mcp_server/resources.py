@@ -16,20 +16,33 @@ from .agent_recipe import AGENT_RECIPE_MARKDOWN
 from .prompts import SYSTEM_PROMPT
 
 CODELISTS = {
-    "global_codelists": {
-        "description": "Available via find_codelist_value tool",
-        "REF_AREA": "Countries/regions (284 items) - use find_codelist_value('REF_AREA', 'Kenya')",
-        "UNIT_MEASURE": "Measurement units (42 items)",
+    "auto_resolved": {
+        "description": (
+            "The pipeline auto-resolves these dimensions from the extdataportal codelist. "
+            "series_labels is NOT required for these dimensions."
+        ),
+        "source": "https://extdataportal.worldbank.org/api/data360/metadata/codelist",
+        "dimensions": {
+            "COMP_BREAKDOWN_1": "5 191 indicator-subtype codes (e.g. WGI_EST, IPC_IPC_PHASE3, WEF_TTDI_RNK)",
+            "COMP_BREAKDOWN_2": "Same pool as COMP_BREAKDOWN_1",
+            "UNIT_MEASURE": "769 unit codes auto-resolved in Y-axis labels and subtitles",
+            "SEX": "7 codes: F=Female, M=Male, _T=Total, _O=Other, _U=Unknown, _Z=Not applicable",
+            "AGE": "173 codes: _T=All ages, Y15T24=15-24 years, Y_GE25=25+ years, etc.",
+            "URBANISATION": "16 codes: URB=Urban area, RUR=Rural area, CITY=City, VILL=Village, etc.",
+            "FREQ": "34 codes: A=Annual, M=Monthly, Q=Quarterly, etc.",
+        },
     },
-    "indicator_level_codelists": {
-        "description": "Available per indicator via get_disaggregation",
-        "fields": ["FREQ", "SEX", "AGE", "URBANISATION", "TIME_PERIOD"],
-        "example": "get_disaggregation('WB_WDI', 'WB_WDI_SP_POP_TOTL') returns valid values",
+    "manual_override": {
+        "description": (
+            "Provide series_labels only to shorten or rename auto-resolved labels, "
+            "e.g. to show 'Estimate' instead of 'Governance estimate (approx. -2.5 to +2.5)'."
+        ),
+        "example": {"WGI_EST": "Estimate", "WGI_SC": "Score", "WGI_SE": "Std. Error"},
     },
-    "static_mappings": {
-        "SEX": {"F": "Female", "M": "Male", "_T": "Total"},
-        "URBANISATION": {"URB": "Urban", "RUR": "Rural", "_T": "Total"},
-        "FREQ": {"A": "Annual", "M": "Monthly", "Q": "Quarterly"},
+    "geographic": {
+        "description": "REF_AREA groups resolved via GroupHierarchyManager (FMR H_REF_AREA_GROUPS)",
+        "individual_countries": "532 codes — resolved automatically to country names",
+        "groups": "147 group codes (REGION, INCOME, LENDING, CONTINENT) — use expand_country_group",
     },
 }
 
@@ -90,9 +103,14 @@ DATA_FILTERS = {
             "description": "Country code(s). Use comma-separated for multiple.",
             "example": "KEN,TZA",
         },
-        "SEX": {"values": ["F", "M", "_T"]},
-        "AGE": {"values": ["Y15T24", "Y15T29", "Y30T59", "Y_GE25", "Y_GE60", "_T"]},
-        "URBANISATION": {"values": ["URB", "RUR", "_T"]},
+        "SEX": {"values": ["F", "M", "_T", "_O", "_U", "_Z"]},
+        "AGE": {
+            "description": "173 age codes — common ones below; use get_disaggregation for indicator-specific values",
+            "common_values": ["_T", "Y15T24", "Y15T29", "Y30T59", "Y_GE25", "Y_GE60", "Y18T65"],
+        },
+        "URBANISATION": {
+            "values": ["_T", "URB", "RUR", "CITY", "VILL", "DTOW", "TSUB", "STOW", "SUBU", "SURB", "LURB", "_O", "_Z"],
+        },
     },
     "excluded_filters": {"FREQ": "DO NOT USE - breaks queries"},
     "important": "Check TIME_PERIOD in disaggregation for actual available years (may have gaps)",

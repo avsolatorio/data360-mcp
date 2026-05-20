@@ -437,6 +437,43 @@ async def _map_country_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
     return viz_data
 
 
+# Dimensions resolved automatically from the extdataportal bundle.
+# Maps DataFrame column name → extdataportal dimension key.
+_EXTDATAPORTAL_DIM_MAP: dict[str, str] = {
+    "comp_breakdown_1": "COMP_BREAKDOWN_1",
+    "comp_breakdown_2": "COMP_BREAKDOWN_2",
+    "comp_breakdown_3": "COMP_BREAKDOWN_3",
+    "sex": "SEX",
+    "age": "AGE",
+    "urbanisation": "URBANISATION",
+}
+
+
+async def _map_dimension_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
+    """Replace raw dimension codes with human-readable labels from extdataportal.
+
+    Resolves COMP_BREAKDOWN_1/2/3, SEX, AGE, and URBANISATION columns using the
+    bundled extdataportal codelist.  Columns absent from the DataFrame are silently
+    skipped.  Codes not found in the bundle are left unchanged (graceful fallback).
+
+    Must be called *before* the ``series_labels`` override so that LLM-supplied
+    labels can still take precedence over auto-resolved ones.
+    """
+    try:
+        from data360.providers import get_codelist_manager
+
+        manager = get_codelist_manager()
+        for col, dim in _EXTDATAPORTAL_DIM_MAP.items():
+            if col not in viz_data.columns:
+                continue
+            lookup = manager.get_dimension_labels(dim)
+            if lookup:
+                viz_data[col] = viz_data[col].map(lambda x, lu=lookup: lu.get(x, x))
+    except Exception as exc:
+        _logger.warning("Could not auto-resolve dimension codes: %s", exc)
+    return viz_data
+
+
 def _slugify(name: str) -> str:
     """Convert indicator name to a safe column name."""
     s = name.lower().strip()
@@ -688,7 +725,11 @@ async def get_viz_spec(
         custom_constraints: Deprecated legacy field; ignored by strategy-based specs.
         use_default_constraints: If True (default), apply standard encoding heuristics.
         chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Male vs. Female Unemployment'). Do not leave this blank.
-        series_labels: You MUST provide a dictionary mapping breakdown values to short, human-readable labels to prevent legend truncation (e.g., {"F": "Female", "M": "Male"}). Do not leave this blank if there are breakdowns.
+        series_labels: Optional. A dictionary mapping raw dimension codes to short,
+            human-readable labels (e.g., {"WGI_EST": "Estimate", "WGI_SC": "Score"}).
+            The pipeline auto-resolves COMP_BREAKDOWN, SEX, AGE, URBANISATION, and
+            UNIT_MEASURE codes from the extdataportal codelist, so series_labels is
+            only needed to shorten or override the auto-resolved labels.
 
     Returns:
         Dict with "url" (chart URL on success) and "error" (message on failure).
@@ -865,7 +906,20 @@ async def get_viz_spec(
     # 6. Map country codes
     viz_data = await _map_country_codes(viz_data)
 
-    # 6.5 Apply custom series labels directly to the data dimensions
+    # 6.1 Auto-resolve dimension codes from extdataportal codelist
+    # (COMP_BREAKDOWN_1/2/3, SEX, AGE, URBANISATION → human-readable labels).
+    viz_data = await _map_dimension_codes(viz_data)
+
+    # 6.2 Resolve raw_unit code to human-readable label for axis/subtitle.
+    try:
+        from data360.providers import get_codelist_manager
+        _cl_mgr = get_codelist_manager()
+        raw_unit_label: str = _cl_mgr.get_label("UNIT_MEASURE", raw_unit) if raw_unit else raw_unit
+    except Exception:
+        raw_unit_label = raw_unit
+
+    # 6.5 Apply custom series labels (override auto-resolved labels).
+    # series_labels is now optional — the pipeline auto-resolves the dimensions above.
     if series_labels and isinstance(series_labels, dict):
         for col in _VIZ_DISAGG_DIMS:
             if col in viz_data.columns:
@@ -883,7 +937,7 @@ async def get_viz_spec(
 
     # Vega-Lite title + subtitle (geography, year range, unit) after data is cleaned
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
-        final_title, raw_unit or None, viz_data
+        final_title, raw_unit_label or None, viz_data
     )
 
     # 7. Determine strategy
@@ -920,9 +974,9 @@ async def get_viz_spec(
             chart_title_vl,
             strategy_result,
             indicator_labels=series_labels,
-            y_label=raw_unit if raw_unit else "Value",
+            y_label=raw_unit_label if raw_unit_label else "Value",
             x_label="Value",
-            unit_measure=raw_unit or None,
+            unit_measure=raw_unit_label or None,
         )
         return _ok(
             await _store_spec(spec),
@@ -1063,7 +1117,9 @@ async def get_multi_indicator_viz_spec(
             select the correct strategy (layered lines, scatter, etc.).
 
         chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Electricity Mix by Source'). Do not leave this blank.
-        series_labels: You MUST provide a dictionary mapping indicator_ids to short, human-readable labels to prevent legend truncation (e.g., {"WB_WDI_EG_ELC_HYRO_ZS": "Hydro"}). Do not leave this blank.
+        series_labels: Optional. A dictionary mapping indicator IDs to short,
+            human-readable labels (e.g., {"WB_WDI_EG_ELC_HYRO_ZS": "Hydro"}).
+            Provide this to shorten long auto-generated indicator names in legends.
 
     Returns:
         Dict with "url" (chart URL on success), "error" (on failure),

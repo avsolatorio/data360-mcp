@@ -583,19 +583,37 @@ def _make_group_note(group_code: str, info: dict) -> str:
 class CodelistManager:
     """Unified manager for all Data360 codelists.
 
-    Handles both global codelists (fetched from API) and static codelists
-    (hardcoded mappings for dimensions without global API endpoints).
+    Primary data source (startup, zero-latency):
+      Loads the bundled ``extdataportal_codelists.json`` synchronously on first
+      construction.  Covers all dimensions returned by the extdataportal metadata
+      API, including COMP_BREAKDOWN (5 191 codes), UNIT_MEASURE (769 codes),
+      AGE (173 codes), URBANISATION (16 codes), SEX (7 codes), FREQ (34 codes),
+      and REF_AREA (532 codes).
 
-    Global codelists available via API:
-    - REF_AREA: 284 countries/regions
-    - UNIT_MEASURE: 42 measurement units
+      Re-generate the bundle with::
 
-    Static codelists (indicator-specific, using common patterns):
-    - FREQ: Frequency codes (A=Annual, M=Monthly, Q=Quarterly)
-    - SEX: Sex/gender codes (F=Female, M=Male, _T=Total)
-    - AGE: Age group codes (Y15T24, Y_GE25, etc.)
-    - URBANISATION: Urban/rural codes (URB, RUR, _T)
+          uv run python scripts/build_extdataportal_codelists.py
+
+    Legacy paths (kept for backward compatibility):
+      - ``find_value()`` / ``get_codelist_mapping()`` still work for REF_AREA and
+        UNIT_MEASURE via the old per-type API fetch (used by the find_codelist_value
+        MCP tool).
+      - ``STATIC_MAPPINGS`` (name→code) is kept for the ``find_value()`` search path
+        on SEX, AGE, URBANISATION, FREQ.
+
+    New preferred path:
+      - ``get_label(dimension, code)`` — O(1) code→name lookup from bundled data.
+      - ``get_dimension_labels(dimension)`` — full {code: name} dict for a dimension.
     """
+
+    # Bundled data file produced by scripts/build_extdataportal_codelists.py.
+    _EXTDATAPORTAL_FILE = Path(__file__).parent / "extdataportal_codelists.json"
+
+    # COMP_BREAKDOWN_1/2/3 are identical on the API — stored once under this key.
+    _COMP_BREAKDOWN_DIMS: frozenset[str] = frozenset(
+        {"COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2", "COMP_BREAKDOWN_3"}
+    )
+    _COMP_BREAKDOWN_KEY = "COMP_BREAKDOWN"
 
     # Codelists available via /codelist?type=X API
     GLOBAL_CODELISTS = ["REF_AREA", "UNIT_MEASURE"]
@@ -667,9 +685,95 @@ class CodelistManager:
     }
 
     def __init__(self):
-        """Initialize the CodelistManager."""
+        """Initialize the CodelistManager.
+
+        Loads the bundled extdataportal_codelists.json synchronously so that
+        ``get_label()`` and ``get_dimension_labels()`` are available immediately
+        without any async I/O.
+        """
         self._cache: dict[str, list[dict[str, Any]]] = {}
         self._loaded: set[str] = set()
+        # Bundled extdataportal data: {dimension → {code → name}}
+        self._extdataportal: dict[str, dict[str, str]] = {}
+        self._load_extdataportal_bundled()
+
+    def _load_extdataportal_bundled(self) -> None:
+        """Load extdataportal_codelists.json into _extdataportal at startup.
+
+        Called once from __init__.  Failures are logged but non-fatal — the
+        manager falls back to the legacy API paths.
+        """
+        try:
+            with open(self._EXTDATAPORTAL_FILE, encoding="utf-8") as fh:
+                raw: dict = json.load(fh)
+            built: dict[str, dict[str, str]] = {}
+            for dim, items in raw.items():
+                if dim == "_meta" or not isinstance(items, list):
+                    continue
+                built[dim] = {
+                    item["id"]: item.get("name", item["id"])
+                    for item in items
+                    if isinstance(item, dict) and "id" in item
+                }
+            self._extdataportal = built
+            meta = raw.get("_meta", {})
+            _logger.info(
+                "CodelistManager: loaded extdataportal codelists — %d dimensions, "
+                "COMP_BREAKDOWN=%d codes. Source: %s",
+                len(built),
+                len(built.get("COMP_BREAKDOWN", {})),
+                meta.get("source", "unknown"),
+            )
+        except FileNotFoundError:
+            _logger.warning(
+                "CodelistManager: extdataportal_codelists.json not found. "
+                "Run 'uv run python scripts/build_extdataportal_codelists.py' to generate it."
+            )
+        except Exception as exc:
+            _logger.error("CodelistManager: failed to load extdataportal codelists: %s", exc)
+
+    def _resolve_extdataportal_key(self, dimension: str) -> str:
+        """Normalise dimension name for extdataportal lookup.
+
+        Maps COMP_BREAKDOWN_1/2/3 → COMP_BREAKDOWN; everything else is
+        upper-cased and passed through unchanged.
+        """
+        upper = dimension.upper()
+        if upper in self._COMP_BREAKDOWN_DIMS:
+            return self._COMP_BREAKDOWN_KEY
+        return upper
+
+    def get_label(self, dimension: str, code: str) -> str:
+        """Return the human-readable label for a dimension code.
+
+        Looks up the extdataportal bundled data.  Returns the raw ``code``
+        unchanged if the dimension or code is not found (graceful degradation).
+
+        Args:
+            dimension: Dimension name, e.g. ``"COMP_BREAKDOWN_1"``, ``"SEX"``.
+            code: The raw code value, e.g. ``"WGI_EST"``, ``"F"``.
+
+        Returns:
+            Human-readable label (e.g. ``"Governance estimate (approx. -2.5 to +2.5)"``)
+            or the original ``code`` if not found.
+        """
+        key = self._resolve_extdataportal_key(dimension)
+        return self._extdataportal.get(key, {}).get(code, code)
+
+    def get_dimension_labels(self, dimension: str) -> dict[str, str]:
+        """Return a ``{code: name}`` mapping for an entire dimension.
+
+        Suitable for vectorised DataFrame replacement via ``df[col].map(lookup)``.
+        Returns an empty dict if the dimension is not found in the bundle.
+
+        Args:
+            dimension: Dimension name, e.g. ``"COMP_BREAKDOWN_1"``, ``"UNIT_MEASURE"``.
+
+        Returns:
+            A copy of the code→name dict for the dimension.
+        """
+        key = self._resolve_extdataportal_key(dimension)
+        return dict(self._extdataportal.get(key, {}))
 
     async def _ensure_loaded(self, codelist_type: str) -> None:
         """Ensure a global codelist is loaded."""
