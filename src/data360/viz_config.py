@@ -1279,6 +1279,99 @@ def build_breakdown_comparison_spec(
     return inject_wb_config(spec)
 
 
+def _group_breakdowns_by_scale(
+    df: pd.DataFrame,
+    breakdown_dim: str,
+    grouping_threshold: float = 0.75,
+) -> list[list[str]]:
+    """Cluster breakdown values into scale-compatible groups.
+
+    Groups breakdown series so that all members within a group can share a
+    Y-axis without any one series visually dominating the others.  Series in
+    different groups will be rendered as separate panels.
+
+    Algorithm
+    ---------
+    1. Compute ``log10(max |value|)`` for each breakdown value.
+    2. Sort breakdown values by this magnitude.
+    3. Greedily build groups: add the next value to the current group if the
+       group's magnitude span (max_mag − min_mag) stays within
+       *grouping_threshold*.  Otherwise start a new group.
+
+    The default *grouping_threshold* of **0.75** (≈5.6× difference max within
+    a group) is intentionally tighter than the detection threshold of 1.5
+    (≈30×) used by :func:`_detect_scale_incompatibility`.  This ensures that
+    within-group series are visually comparable on a shared Y-axis.
+
+    This function is **purely data-driven**: it does not use any hardcoded
+    dimension names, indicator codes, or external metadata.  It works for any
+    indicator and any number of breakdown values.
+
+    Args:
+        df: DataFrame containing *breakdown_dim* and ``value`` columns.
+        breakdown_dim: Column containing breakdown series identifiers.
+        grouping_threshold: Maximum log10 span within a group.  Default
+            ``0.75`` ≈ 5.6× — half the detection threshold.
+
+    Returns:
+        Ordered list of groups; each group is an ordered list of breakdown
+        value strings.  Every unique non-null breakdown value appears in
+        exactly one group.  Falls back to one singleton group per value if
+        computation fails.
+    """
+    import math
+
+    bd_vals = sorted(
+        str(v) for v in df[breakdown_dim].dropna().unique()
+    ) if breakdown_dim in df.columns else []
+
+    if len(bd_vals) <= 1:
+        return [bd_vals] if bd_vals else []
+
+    if "value" not in df.columns:
+        return [[v] for v in bd_vals]
+
+    # Compute log10(max|value|) for each breakdown value.
+    mags: dict[str, float] = {}
+    for v in bd_vals:
+        series = df.loc[df[breakdown_dim] == v, "value"].dropna()
+        if series.empty:
+            mags[v] = 0.0
+            continue
+        max_abs = float(series.abs().max())
+        mags[v] = math.log10(max_abs) if max_abs > 0 else 0.0
+
+    # Sort by magnitude then build groups greedily.
+    sorted_vals = sorted(bd_vals, key=lambda v: mags[v])
+
+    groups: list[list[str]] = []
+    current_group: list[str] = []
+    group_min_mag: float = 0.0
+    group_max_mag: float = 0.0
+
+    for v in sorted_vals:
+        mag = mags[v]
+        if not current_group:
+            current_group = [v]
+            group_min_mag = group_max_mag = mag
+        else:
+            new_min = min(group_min_mag, mag)
+            new_max = max(group_max_mag, mag)
+            if new_max - new_min <= grouping_threshold:
+                current_group.append(v)
+                group_min_mag = new_min
+                group_max_mag = new_max
+            else:
+                groups.append(current_group)
+                current_group = [v]
+                group_min_mag = group_max_mag = mag
+
+    if current_group:
+        groups.append(current_group)
+
+    return groups
+
+
 def _build_scale_split_vconcat(
     df: pd.DataFrame,
     title: str | dict,
@@ -1286,22 +1379,33 @@ def _build_scale_split_vconcat(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     unit_measure: str | None = None,
+    grouping_threshold: float = 0.75,
 ) -> dict:
     """Vconcat layout for scale-incompatible custom breakdowns.
 
-    Produces one full-width panel (680×140) per breakdown value, each with
-    its own independent Y-axis and a WB categorical color. Panels share the
-    X (year) axis via ``resolve.scale.x = 'shared'``.
+    Produces one full-width panel per **scale-compatible group** of breakdown
+    values.  Groups are discovered automatically by
+    :func:`_group_breakdowns_by_scale` (data-driven, no hard-coded metadata).
 
-    This replaces the default 180×120 facet layout when breakdown series
-    differ by more than ~30× in magnitude (detected by
-    :func:`_detect_scale_incompatibility`), preventing the visual
-    compression of small-magnitude series on a shared axis.
+    Panel layout
+    ------------
+    - **Single-member group** (680×140): one fixed-color line, panel title =
+      series label.  Identical to the pre-grouping behaviour.
+    - **Multi-member group** (680×180): layered multi-series lines with Vega-Lite
+      ``color`` encoding, a right-side legend, and a panel title listing the
+      member labels (truncated at 80 characters).
+
+    All panels share the X (year) axis via ``resolve.scale.x = 'shared'``.
+    X-axis labels are suppressed on all but the bottom panel.
+
+    The default *grouping_threshold* of 0.75 (≈5.6×) is tighter than the
+    detection threshold of 1.5 (≈30×), so within-group series are always
+    visually comparable on a shared Y-axis.
     """
     facet_dim = result.facet_dim or "comp_breakdown_1"
     lab = indicator_labels or {}
 
-    # Cap panels using the same threshold as regular small multiples.
+    # Cap using the same threshold as regular small multiples.
     df, original_n = _cap_cardinality(
         df, facet_dim, HIGH_CARDINALITY_THRESHOLDS["small_multiples_max_facets"]
     )
@@ -1316,74 +1420,171 @@ def _build_scale_split_vconcat(
         original_n,
     )
 
+    # Discover scale-compatible groups from the data — no hard-coded logic.
+    groups = _group_breakdowns_by_scale(df, facet_dim, grouping_threshold)
+
     charts: list[dict] = []
-    for i, bd_val in enumerate(breakdown_vals):
-        color = WB_CAT_COLORS[i % len(WB_CAT_COLORS)]
-        bd_label = lab.get(str(bd_val), str(bd_val))
+    color_offset = 0  # global color index so adjacent panels never share a colour
 
-        bd_data = df[df[facet_dim] == bd_val]
-        max_abs = (
-            float(bd_data["value"].abs().max())
-            if "value" in bd_data.columns and not bd_data.empty
-            else None
-        )
-        tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+    for g_idx, group in enumerate(groups):
+        is_last_panel = g_idx == len(groups) - 1
 
-        y_axis = {**_axis_style(), "title": None, "labelExpr": label_expr}
         x_axis = _axis_style(temporal=True)
-        # Only show X-axis labels on the bottom-most panel.
-        if i < len(breakdown_vals) - 1:
+        if not is_last_panel:
             x_axis["labels"] = False
             x_axis["title"] = None
 
-        charts.append({
-            "title": {
-                "text": bd_label,
-                "color": color,
-                "fontSize": 12,
-                "fontWeight": "bold",
-                "anchor": "start",
-                "offset": 4,
-            },
-            "width": 680,
-            "height": 140,
-            "transform": [{"filter": {"field": facet_dim, "equal": bd_val}}],
-            "mark": {
-                "type": "line",
-                "strokeWidth": 3,
-                "strokeCap": "round",
-                "color": color,
-                "point": _LINE_HOVER_POINT,
-            },
-            "encoding": {
-                "x": {
-                    "field": "year",
-                    "type": "temporal",
-                    "axis": x_axis,
+        y_axis = {**_axis_style(), "title": None, "labelExpr": label_expr}
+
+        if len(group) == 1:
+            # ----------------------------------------------------------------
+            # Single-member group — identical to pre-grouping behaviour.
+            # ----------------------------------------------------------------
+            bd_val = group[0]
+            color = WB_CAT_COLORS[color_offset % len(WB_CAT_COLORS)]
+            color_offset += 1
+            bd_label = lab.get(bd_val, bd_val)
+
+            bd_data = df[df[facet_dim] == bd_val]
+            max_abs = (
+                float(bd_data["value"].abs().max())
+                if "value" in bd_data.columns and not bd_data.empty
+                else None
+            )
+            tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+
+            charts.append({
+                "title": {
+                    "text": bd_label,
+                    "color": color,
+                    "fontSize": 12,
+                    "fontWeight": "bold",
+                    "anchor": "start",
+                    "offset": 4,
                 },
-                "y": {
-                    "field": "value",
-                    "type": "quantitative",
-                    "axis": y_axis,
-                    "scale": {"zero": False},
+                "width": 680,
+                "height": 140,
+                "transform": [{"filter": {"field": facet_dim, "equal": bd_val}}],
+                "mark": {
+                    "type": "line",
+                    "strokeWidth": 3,
+                    "strokeCap": "round",
+                    "color": color,
+                    "point": _LINE_HOVER_POINT,
                 },
-                "tooltip": [
-                    {
-                        "field": "year",
-                        "type": "temporal",
-                        "timeUnit": "year",
-                        "title": "Year",
-                        "format": "%Y",
-                    },
-                    {
+                "encoding": {
+                    "x": {"field": "year", "type": "temporal", "axis": x_axis},
+                    "y": {
                         "field": "value",
                         "type": "quantitative",
-                        "title": bd_label,
-                        "format": tt_fmt,
+                        "axis": y_axis,
+                        "scale": {"zero": False},
                     },
-                ],
-            },
-        })
+                    "tooltip": [
+                        {
+                            "field": "year",
+                            "type": "temporal",
+                            "timeUnit": "year",
+                            "title": "Year",
+                            "format": "%Y",
+                        },
+                        {
+                            "field": "value",
+                            "type": "quantitative",
+                            "title": bd_label,
+                            "format": tt_fmt,
+                        },
+                    ],
+                },
+            })
+
+        else:
+            # ----------------------------------------------------------------
+            # Multi-member group — layered lines, shared Y-axis, color legend.
+            # ----------------------------------------------------------------
+            group_colors = [
+                WB_CAT_COLORS[(color_offset + j) % len(WB_CAT_COLORS)]
+                for j in range(len(group))
+            ]
+            color_offset += len(group)
+
+            group_labels = [lab.get(v, v) for v in group]
+
+            # Panel title: list member labels, truncate if too long.
+            _MAX_TITLE = 80
+            joined = ", ".join(group_labels)
+            panel_title = joined if len(joined) <= _MAX_TITLE else joined[:_MAX_TITLE - 1] + "\u2026"
+
+            # Tooltip format based on the group's aggregate max absolute value.
+            group_data = df[df[facet_dim].isin(group)]
+            max_abs = (
+                float(group_data["value"].abs().max())
+                if "value" in group_data.columns and not group_data.empty
+                else None
+            )
+            tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+
+            charts.append({
+                "title": {
+                    "text": panel_title,
+                    "fontSize": 12,
+                    "fontWeight": "bold",
+                    "anchor": "start",
+                    "offset": 4,
+                },
+                "width": 680,
+                "height": 180,
+                "transform": [{"filter": {"field": facet_dim, "oneOf": group}}],
+                "mark": {
+                    "type": "line",
+                    "strokeWidth": 3,
+                    "strokeCap": "round",
+                    "point": _LINE_HOVER_POINT,
+                },
+                "encoding": {
+                    "x": {"field": "year", "type": "temporal", "axis": x_axis},
+                    "y": {
+                        "field": "value",
+                        "type": "quantitative",
+                        "axis": y_axis,
+                        "scale": {"zero": False},
+                    },
+                    "color": {
+                        "field": facet_dim,
+                        "type": "nominal",
+                        "scale": {
+                            "domain": group,
+                            "range": group_colors,
+                        },
+                        "legend": {
+                            "orient": "right",
+                            "labelFontSize": 11,
+                            "symbolSize": 80,
+                            "labelLimit": 200,
+                        },
+                    },
+                    "tooltip": [
+                        {
+                            "field": "year",
+                            "type": "temporal",
+                            "timeUnit": "year",
+                            "title": "Year",
+                            "format": "%Y",
+                        },
+                        {
+                            "field": facet_dim,
+                            "type": "nominal",
+                            "title": "Series",
+                        },
+                        {
+                            "field": "value",
+                            "type": "quantitative",
+                            "title": "Value",
+                            "format": tt_fmt,
+                        },
+                    ],
+                },
+            })
 
     spec: dict = {
         "$schema": _vl_schema(),
