@@ -214,7 +214,7 @@ app = FastAPI(
 )  # pyright: ignore[reportUnusedExpression]
 
 app.add_middleware(AuditLogMiddleware)
-# SecurityValidationMiddleware disabled - was blocking tools/list
+# SecurityValidationMiddleware is enabled for incoming request validation.
 app.add_middleware(SecurityValidationMiddleware)
 
 # Instrument FastAPI for incoming request tracking

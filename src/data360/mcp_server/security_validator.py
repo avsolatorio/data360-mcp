@@ -20,22 +20,22 @@ PROMPT_INJECTION_PATTERNS = [
     r"forget\s+(previous|all|your)\s+instructions",
     r"new\s+instructions?:",
     r"system\s+prompt:",
-    r"you\s+are\s+now",
+    r"\byou\s+are\s+now\s+(?:a|an|the)\b",
     # Role manipulation
-    r"act\s+as\s+a",
+    r"^\s*act\s+as\s+(?:a|an|the)\b",
     r"pretend\s+to\s+be",
     r"you\s+are\s+(a\s+)?developer",
     r"you\s+are\s+(a\s+)?admin",
     # Multi-tool chaining attempts
-    r"then\s+call",
+    r"\bthen\s+(call|execute|run)\b",
     r"after\s+that,?\s+(call|execute|run)",
     r"next,?\s+(call|execute|run)",
     r"and\s+then\s+(call|execute|run)",
     # System/internal method access
     r"__\w+__",  # Dunder methods
-    r"\.system",
-    r"\.internal",
-    r"\.admin",
+    r"(?:^|[^\w])\.system\b",
+    r"(?:^|[^\w])\.internal\b",
+    r"(?:^|[^\w])\.admin\b",
 ]
 
 # Compile patterns for performance

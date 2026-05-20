@@ -146,7 +146,7 @@ class APIError(Data360MCPError):
         # Check both raw and after stripping common whitespace/newlines
         text_to_check = response_text.lstrip()
         if text_to_check.startswith(
-            ("<html", "<!DOCTYPE", "<HTML", "<!doctype", "<!DOCTYPE", "<!Doctype")
+            ("<html", "<!DOCTYPE", "<HTML", "<!doctype", "<!Doctype")
         ):
             return _get_status_message(status_code)
 
