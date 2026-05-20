@@ -656,6 +656,7 @@ def select_strategy(
     urban_count = df["urbanisation"].nunique() if "urbanisation" in cols else 0
     cb1_count = df["comp_breakdown_1"].nunique() if "comp_breakdown_1" in cols else 0
     cb2_count = df["comp_breakdown_2"].nunique() if "comp_breakdown_2" in cols else 0
+    unit_count = df["unit_measure"].nunique() if "unit_measure" in cols else 0
 
     breakdown_counts = {
         k: v
@@ -665,6 +666,7 @@ def select_strategy(
             ("urbanisation", urban_count),
             ("comp_breakdown_1", cb1_count),
             ("comp_breakdown_2", cb2_count),
+            ("unit_measure", unit_count),
         ]
         if v > 1
     }
@@ -799,6 +801,22 @@ def select_strategy(
             facet_dim=facet_dim,
         )
 
+    # unit_measure with 2+ values → always scale-incompatible (Persons ≠ Percentage).
+    # Must be routed to SMALL_MULTIPLES with independent Y-axes before the general
+    # temporal-single path, which would incorrectly overlay incompatible units on one axis.
+    if "unit_measure" in breakdown_counts and n_breakdowns >= 1:
+        if country_count > 1:
+            facet_dim = "country"
+        else:
+            facet_dim = "unit_measure"
+        return StrategyResult(
+            ChartStrategy.SMALL_MULTIPLES,
+            f"unit_measure has {unit_count} incompatible units → faceted (independent Y-axes)",
+            color_dim=None,
+            facet_dim=facet_dim,
+            scale_incompatible=True,
+        )
+
     # Breakdown + multi-year → line chart with breakdown as color dim.
     # Avoids a dense grouped bar chart (e.g. 6 breakdowns × 15 years = 90 bars).
     # Exception: custom breakdowns (comp_breakdown_1/2) with wildly different
@@ -824,6 +842,7 @@ def select_strategy(
             f"1 breakdown ({color_dim}), {year_count} years → multi-series line chart",
             color_dim=color_dim,
         )
+
 
     # Breakdown comparison: 1 disaggregation, single year, ≤4 countries → grouped bar
     if n_breakdowns == 1 and country_count <= 4:

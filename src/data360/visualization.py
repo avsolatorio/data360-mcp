@@ -50,12 +50,20 @@ VizResult = dict[str, str | None]
 # Mirrors _DISAGG_DIMS_TO_DETECT from api.py but in lowercase (post-column-rename).
 # Single source of truth for the viz pipeline: _clean_single_df, color dim
 # detection, and multi-indicator join keys all reference this tuple.
+#
+# unit_measure is included last and uses a separate sentinel check (_UNIT_MEASURE_TRIVIAL)
+# because its "total" sentinel is 'U' (Unitless), not '_T'. When unit_measure has
+# 2+ distinct non-trivial values (e.g. Persons + Percentage for IPC), it is kept
+# as a discriminating column so select_strategy can route correctly instead of
+# silently mixing incompatible values on the same Y-axis.
+_UNIT_MEASURE_TRIVIAL: frozenset[str] = frozenset({"U", ""})
 _VIZ_DISAGG_DIMS: tuple[str, ...] = (
     "sex",
     "age",
     "urbanisation",
     "comp_breakdown_1",
     "comp_breakdown_2",
+    "unit_measure",
 )
 
 
@@ -191,6 +199,7 @@ def _ok(
     source_attribution: dict[str, str] | None = None,
     strategy: str | None = None,
     reason: str | None = None,
+    dimensions: dict[str, list] | None = None,
 ) -> VizResult:
     r: VizResult = {"url": url, "error": None}
     if warning:
@@ -203,6 +212,8 @@ def _ok(
         r["strategy"] = strategy
     if reason:
         r["reason"] = reason
+    if dimensions:
+        r["dimensions"] = dimensions  # type: ignore[assignment]
     attrib_for_line = {
         k: str(v)
         for k, v in r.items()
@@ -230,6 +241,39 @@ def _ok(
 
 def _err(msg: str) -> VizResult:
     return {"url": None, "error": msg}
+
+
+# Dimensions surfaced to the LLM in the tool response when they discriminate rows.
+_SURFACE_DIMS: list[str] = [
+    "unit_measure",
+    "sex",
+    "age",
+    "urbanisation",
+    "comp_breakdown_1",
+    "comp_breakdown_2",
+]
+
+
+def _extract_dimension_summary(df: pd.DataFrame) -> dict[str, list]:
+    """Return dimension -> sorted distinct values for non-trivial dims in *df*.
+
+    Only dimensions with 2+ distinct values after excluding trivial sentinels
+    ('_T', '_Z' for totals, 'U' for Unitless, '') are included. Values are
+    expected to already be resolved to human-readable labels when called.
+    The result is included in the tool response so the LLM knows what is in
+    the data without needing to parse the Vega-Lite spec.
+    """
+    _trivial: frozenset[str] = frozenset({"_T", "_Z", "U", ""})
+    result: dict[str, list] = {}
+    for dim in _SURFACE_DIMS:
+        if dim not in df.columns:
+            continue
+        vals = sorted(
+            str(v) for v in df[dim].dropna().unique() if str(v) not in _trivial
+        )
+        if len(vals) > 1:
+            result[dim] = vals
+    return result
 
 
 _SOURCE_FALLBACK = "World Bank — Data360"
@@ -361,9 +405,17 @@ def _clean_single_df(
     chart_type: str | None,
     data_frequency: str | None,
 ) -> tuple[pd.DataFrame, list[str]]:
-    """Clean + rename a single-indicator DataFrame for strategy-based specs."""
     # Trivial values for disaggregation dimensions: _T = aggregate total, _Z = not applicable.
+    # unit_measure uses a different sentinel: 'U' = Unitless (defined in _UNIT_MEASURE_TRIVIAL).
     _TRIVIAL_DIM_VALUES = ("_T", "_Z")
+
+    def _is_non_trivial(col_name: str, series: pd.Series) -> bool:
+        """Return True when a dimension column carries discriminating values."""
+        uv = series.unique()
+        if col_name == "unit_measure":
+            non_trivial = set(uv) - _UNIT_MEASURE_TRIVIAL
+            return len(non_trivial) > 1
+        return len(uv) > 1 or (len(uv) == 1 and uv[0] not in _TRIVIAL_DIM_VALUES)
 
     if relevant_fields:
         req = [f.lower() for f in relevant_fields]
@@ -375,8 +427,7 @@ def _clean_single_df(
         valid_cols = req
         for dim in ["ref_area", *_VIZ_DISAGG_DIMS]:
             if dim in data.columns and dim not in valid_cols:
-                uv = data[dim].unique()
-                if len(uv) > 1 or (len(uv) == 1 and uv[0] not in _TRIVIAL_DIM_VALUES):
+                if _is_non_trivial(dim, data[dim]):
                     valid_cols.append(dim)
         viz_data = data[valid_cols].copy()
         relevant_cols = valid_cols
@@ -387,8 +438,7 @@ def _clean_single_df(
                 relevant_cols.append(col)
         for dim in _VIZ_DISAGG_DIMS:
             if dim in data.columns:
-                uv = data[dim].unique()
-                if len(uv) > 1 or (len(uv) == 1 and uv[0] not in _TRIVIAL_DIM_VALUES):
+                if _is_non_trivial(dim, data[dim]):
                     relevant_cols.append(dim)
         viz_data = data[relevant_cols].copy() if relevant_cols else data.copy()
 
@@ -981,11 +1031,13 @@ async def get_viz_spec(
             x_label="Value",
             unit_measure=raw_unit_label or None,
         )
+        dim_summary = _extract_dimension_summary(viz_data)
         return _ok(
             await _store_spec(spec),
             source_attribution=source_attribution,
             strategy=strategy_result.strategy.value,
             reason=strategy_result.reason,
+            dimensions=dim_summary or None,
         )
     except Exception as e:
         _logger.exception("Strategy builder failed")
