@@ -1651,10 +1651,46 @@ def _build_scale_split_vconcat(
             )
             tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
 
+            mark_spec = {
+                "type": "line",
+                "strokeWidth": 3,
+                "strokeCap": "round",
+                "point": _LINE_HOVER_POINT,
+            }
+
+            chart_enc = {
+                "x": x_enc,
+                "y": {
+                    "field": "value",
+                    "type": "quantitative",
+                    "axis": y_axis,
+                    "scale": {"zero": False},
+                },
+                "tooltip": build_structured_tooltips(
+                    list(bd_data.columns),
+                    "line",
+                    indicator_labels={**lab, "value": bd_label},
+                    value_format=tt_fmt,
+                    viz_data=bd_data,
+                ),
+            }
+
+            if result.color_dim:
+                n_items = (
+                    bd_data[result.color_dim].nunique()
+                    if result.color_dim in bd_data.columns
+                    else 0
+                )
+                chart_enc["color"] = _color_encoding(
+                    result.color_dim, mark_type="line", n_items=n_items
+                )
+            else:
+                mark_spec["color"] = color
+
             charts.append({
                 "title": {
                     "text": bd_label,
-                    "color": color,
+                    "color": color if not result.color_dim else None,
                     "fontSize": 12,
                     "fontWeight": "bold",
                     "anchor": "start",
@@ -1663,37 +1699,8 @@ def _build_scale_split_vconcat(
                 "width": 680,
                 "height": 140,
                 "transform": [{"filter": {"field": facet_dim, "equal": bd_val}}],
-                "mark": {
-                    "type": "line",
-                    "strokeWidth": 3,
-                    "strokeCap": "round",
-                    "color": color,
-                    "point": _LINE_HOVER_POINT,
-                },
-                "encoding": {
-                    "x": x_enc,
-                    "y": {
-                        "field": "value",
-                        "type": "quantitative",
-                        "axis": y_axis,
-                        "scale": {"zero": False},
-                    },
-                    "tooltip": [
-                        {
-                            "field": "year",
-                            "type": "temporal",
-                            "timeUnit": "year",
-                            "title": "Year",
-                            "format": "%Y",
-                        },
-                        {
-                            "field": "value",
-                            "type": "quantitative",
-                            "title": bd_label,
-                            "format": tt_fmt,
-                        },
-                    ],
-                },
+                "mark": mark_spec,
+                "encoding": chart_enc,
             })
 
         else:
@@ -1761,26 +1768,13 @@ def _build_scale_split_vconcat(
                             "labelLimit": 200,
                         },
                     },
-                    "tooltip": [
-                        {
-                            "field": "year",
-                            "type": "temporal",
-                            "timeUnit": "year",
-                            "title": "Year",
-                            "format": "%Y",
-                        },
-                        {
-                            "field": facet_dim,
-                            "type": "nominal",
-                            "title": "Series",
-                        },
-                        {
-                            "field": "value",
-                            "type": "quantitative",
-                            "title": "Value",
-                            "format": tt_fmt,
-                        },
-                    ],
+                    "tooltip": build_structured_tooltips(
+                        list(group_data.columns),
+                        "line",
+                        indicator_labels=lab,
+                        value_format=tt_fmt,
+                        viz_data=group_data,
+                    ),
                 },
             })
 
