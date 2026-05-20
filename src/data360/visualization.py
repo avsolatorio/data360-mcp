@@ -7,8 +7,8 @@ Vega-Lite specifications, then persists them either through the optional Charts 
 
 **Public tools**
 
-- ``get_viz_spec`` — one indicator. Uses Draco where appropriate and
-  ``data360.viz_config`` strategy dispatch for patterns Draco does not handle well.
+- ``get_viz_spec`` — one indicator. Uses ``data360.viz_config`` strategy dispatch
+  to build validated Vega-Lite v5 specs directly.
 - ``get_multi_indicator_viz_spec`` — two to four indicators; merges frames and
   dispatches multi-series strategies (scatter, layered lines, connected scatter, etc.).
 
@@ -33,12 +33,9 @@ import uuid
 from datetime import date, datetime
 from urllib.parse import parse_qs, urlparse
 
-import altair as alt
 import httpx
 import numpy as np
 import pandas as pd
-from draco import Draco, answer_set_to_dict, dict_to_facts, schema_from_dataframe
-from draco.renderer import AltairRenderer
 
 from data360 import viz_config
 from data360.config import get_mcp_server_settings
@@ -46,11 +43,6 @@ from data360.http_client import get_shared_httpx_client
 from data360.providers import get_database_mapping
 
 _logger = logging.getLogger(__name__)
-
-_FALLBACK_WARNING = (
-    "Draco could not determine an optimal encoding; "
-    "a default chart was generated as fallback."
-)
 
 VizResult = dict[str, str | None]
 
@@ -369,7 +361,7 @@ def _clean_single_df(
     chart_type: str | None,
     data_frequency: str | None,
 ) -> tuple[pd.DataFrame, list[str]]:
-    """Clean + rename a single-indicator DataFrame for the Draco path."""
+    """Clean + rename a single-indicator DataFrame for strategy-based specs."""
     # Trivial values for disaggregation dimensions: _T = aggregate total, _Z = not applicable.
     _TRIVIAL_DIM_VALUES = ("_T", "_Z")
 
@@ -692,13 +684,14 @@ async def get_viz_spec(
             For trend questions ("how has X changed?", "show the evolution of Y"), omit
             chart_type entirely and let the pipeline choose the correct strategy
             (line chart, heatmap, etc.) based on data shape.
+        relevant_fields: Optional list of column names to include in the chart.
+        custom_constraints: Deprecated legacy field; ignored by strategy-based specs.
         use_default_constraints: If True (default), apply standard encoding heuristics.
         chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Male vs. Female Unemployment'). Do not leave this blank.
         series_labels: You MUST provide a dictionary mapping breakdown values to short, human-readable labels to prevent legend truncation (e.g., {"F": "Female", "M": "Male"}). Do not leave this blank if there are breakdowns.
 
     Returns:
-        Dict with "url" (chart URL on success), "error" (message on failure),
-        and optionally "warning" (if fallback was used).
+        Dict with "url" (chart URL on success) and "error" (message on failure).
     """
     from data360.api import get_data_api_url, get_disaggregation, get_metadata
 
@@ -893,7 +886,7 @@ async def get_viz_spec(
         final_title, raw_unit or None, viz_data
     )
 
-    # 7. Determine strategy — route around Draco for complex patterns
+    # 7. Determine strategy
     n_indicators = 1
     strategy_result = viz_config.select_strategy(
         viz_data,
@@ -920,173 +913,26 @@ async def get_viz_spec(
         viz_config.ChartStrategy.FALLBACK_LINE,
     }
 
-    if strategy_result.strategy in bypass_strategies:
-        try:
-            spec = viz_config.dispatch_spec(
-                strategy_result.strategy,
-                viz_data,
-                chart_title_vl,
-                strategy_result,
-                indicator_labels=series_labels,
-                y_label=raw_unit if raw_unit else "Value",
-                x_label="Value",
-                unit_measure=raw_unit or None,
-            )
-            return _ok(
-                await _store_spec(spec),
-                source_attribution=source_attribution,
-                strategy=strategy_result.strategy.value,
-                reason=strategy_result.reason,
-            )
-        except Exception as e:
-            _logger.exception("Strategy builder failed")
-            return _err(f"Chart generation failed: {e}")
-
-    # 8. Draco path (temporal_single, fallback)
     try:
-        schema = schema_from_dataframe(viz_data)
-        facts = dict_to_facts(schema)
-    except Exception as e:
-        _logger.exception("Error generating schema")
-        return _err(f"Error generating data schema: {e}")
-
-    d = Draco()
-    program_constraints = ["entity(view,root,view).", "entity(mark,view,m)."]
-
-    if use_default_constraints:
-        user_mark_type = viz_config.parse_chart_type_hint(chart_type)
-        use_temporal_x, categorical_x_field = viz_config.should_use_temporal_x_axis(
-            viz_data, chart_type, viz_data.columns.tolist()
+        spec = viz_config.dispatch_spec(
+            strategy_result.strategy,
+            viz_data,
+            chart_title_vl,
+            strategy_result,
+            indicator_labels=series_labels,
+            y_label=raw_unit if raw_unit else "Value",
+            x_label="Value",
+            unit_measure=raw_unit or None,
         )
-
-        if use_temporal_x and "year" in viz_data.columns:
-            program_constraints += [
-                "entity(encoding,m,e1).",
-                "attribute((encoding,channel),e1,x).",
-                "attribute((encoding,field),e1,year).",
-            ]
-        elif not use_temporal_x and categorical_x_field:
-            program_constraints += [
-                "entity(encoding,m,e1).",
-                "attribute((encoding,channel),e1,x).",
-                f"attribute((encoding,field),e1,{categorical_x_field}).",
-            ]
-        elif "year" in viz_data.columns:
-            program_constraints += [
-                "entity(encoding,m,e1).",
-                "attribute((encoding,channel),e1,x).",
-                "attribute((encoding,field),e1,year).",
-            ]
-
-        if "value" in viz_data.columns:
-            program_constraints += [
-                "entity(encoding,m,e2).",
-                "attribute((encoding,channel),e2,y).",
-                "attribute((encoding,field),e2,value).",
-            ]
-
-        # Color dimension: prefer country, then standard disagg dims, then custom breakdowns.
-        color_dim = strategy_result.color_dim
-        if not color_dim:
-            for dim in ["country", *_VIZ_DISAGG_DIMS]:
-                if dim in viz_data.columns and viz_data[dim].nunique() > 1:
-                    color_dim = dim
-                    break
-
-        if color_dim:
-            program_constraints += [
-                "entity(encoding,m,e3).",
-                "attribute((encoding,channel),e3,color).",
-                f"attribute((encoding,field),e3,{color_dim}).",
-            ]
-
-        if chart_type:
-            program_constraints.append(f"attribute((mark,type),m,{user_mark_type}).")
-
-    if custom_constraints:
-        program_constraints.extend(custom_constraints)
-
-    program = "\n".join(facts) + "\n" + "\n".join(program_constraints)
-
-    try:
-        model = next(d.complete_spec(program))
-        draco_spec = answer_set_to_dict(model.answer_set)
-
-        if "view" in draco_spec:
-            for view in draco_spec["view"]:
-                if "mark" in view:
-                    for mark in view["mark"]:
-                        if "encoding" in mark:
-                            for enc in mark["encoding"]:
-                                enc.pop("type", None)
-
-        full_spec = {**schema, **draco_spec}
-        renderer = AltairRenderer()
-        chart = renderer.render(spec=full_spec, data=viz_data)
-        chart = chart.properties(title=chart_title_vl).interactive()
-
-        # Structured tooltips
-        mark_type_for_tt = viz_config.parse_chart_type_hint(chart_type)
-        structured_tooltips = viz_config.build_structured_tooltips(
-            list(viz_data.columns), mark_type_for_tt, viz_data=viz_data
-        )
-        chart = chart.encode(tooltip=[alt.Tooltip(**t) for t in structured_tooltips])
-
-        vl_spec = chart.to_dict()
-
-        # Patch color type: nominal for all known categorical dims.
-        # Without this, Draco sometimes assigns 'ordinal' to breakdown/sex dims.
-        if "encoding" in vl_spec and "color" in vl_spec["encoding"]:
-            _nominal_color_dims = {"country", "ref_area", *_VIZ_DISAGG_DIMS}
-            if color_dim in _nominal_color_dims:
-                vl_spec["encoding"]["color"]["type"] = "nominal"
-
-        # Post-processing rules
-        for rule in viz_config.POST_PROCESSING_RULES:
-            vl_spec = rule.apply(vl_spec, data_frequency, raw_unit or None)
-
-        out_reason = strategy_result.reason
-        if strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE:
-            resolved_mark = viz_config.extract_top_level_mark_type(vl_spec)
-            if resolved_mark:
-                out_reason = viz_config.patch_strategy_reason_chart_phrase(
-                    strategy_result.reason, resolved_mark
-                )
-
         return _ok(
-            await _store_spec(vl_spec),
+            await _store_spec(spec),
             source_attribution=source_attribution,
             strategy=strategy_result.strategy.value,
-            reason=out_reason,
+            reason=strategy_result.reason,
         )
-
-    except StopIteration:
-        _logger.warning("Draco failed → fallback")
-        # Strategy-aware fallback
-        try:
-            spec = viz_config.dispatch_spec(
-                viz_config.ChartStrategy.FALLBACK_LINE,
-                viz_data,
-                chart_title_vl,
-                strategy_result,
-                unit_measure=raw_unit,
-            )
-            return _ok(
-                await _store_spec(spec),
-                warning=_FALLBACK_WARNING,
-                source_attribution=source_attribution,
-                strategy=strategy_result.strategy.value,
-                reason=strategy_result.reason,
-            )
-        except Exception as fallback_err:
-            _logger.exception(f"Fallback failed: {fallback_err}")
-            return _err(
-                "Error: Draco could not determine a suitable visualization, and fallback failed."
-            )
-
     except Exception as e:
-        _logger.exception(f"Draco error: {e}")
-        return _err(f"Error generating visualization: {e}")
+        _logger.exception("Strategy builder failed")
+        return _err(f"Chart generation failed: {e}")
 
 
 # ============================================================================
