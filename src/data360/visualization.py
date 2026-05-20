@@ -31,6 +31,7 @@ import os
 import re
 import uuid
 from datetime import date, datetime
+from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 import httpx
@@ -44,7 +45,7 @@ from data360.providers import get_database_mapping
 
 _logger = logging.getLogger(__name__)
 
-VizResult = dict[str, str | None]
+VizResult = dict[str, Any]
 
 # Disaggregation dimensions considered during viz data cleaning and encoding.
 # Mirrors _DISAGG_DIMS_TO_DETECT from api.py but in lowercase (post-column-rename).
