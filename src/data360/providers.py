@@ -583,37 +583,46 @@ def _make_group_note(group_code: str, info: dict) -> str:
 class CodelistManager:
     """Unified manager for all Data360 codelists.
 
-    Primary data source (startup, zero-latency):
-      Loads the bundled ``extdataportal_codelists.json`` synchronously on first
-      construction.  Covers all dimensions returned by the extdataportal metadata
-      API, including COMP_BREAKDOWN (5 191 codes), UNIT_MEASURE (769 codes),
+    Primary data source (startup fetch, then background refresh):
+      ``initialize()`` is awaited once at server startup inside the FastAPI
+      lifespan.  It fetches all dimension codelists from the extdataportal
+      metadata API in a single HTTP call and populates ``_extdataportal``.
+      Covers COMP_BREAKDOWN (5 000+ codes), UNIT_MEASURE (769 codes),
       AGE (173 codes), URBANISATION (16 codes), SEX (7 codes), FREQ (34 codes),
       and REF_AREA (532 codes).
 
-      Re-generate the bundle with::
+      After the initial fetch a background task wakes every ``_TTL`` seconds
+      (default 7 days) and atomically replaces the in-memory mapping so the
+      server always has fresh labels without restarting.
 
-          uv run python scripts/build_extdataportal_codelists.py
+    Graceful degradation:
+      If the network is unavailable at startup ``_extdataportal`` stays empty
+      and ``get_label()`` / ``get_dimension_labels()`` return the raw code
+      unchanged.  The background loop retries after the next TTL cycle.
 
     Legacy paths (kept for backward compatibility):
-      - ``find_value()`` / ``get_codelist_mapping()`` still work for REF_AREA and
-        UNIT_MEASURE via the old per-type API fetch (used by the find_codelist_value
-        MCP tool).
-      - ``STATIC_MAPPINGS`` (name→code) is kept for the ``find_value()`` search path
-        on SEX, AGE, URBANISATION, FREQ.
+      ``find_value()`` / ``get_codelist_mapping()`` still work for REF_AREA and
+      UNIT_MEASURE via the old per-type API fetch (used by the
+      ``find_codelist_value`` MCP tool).
+      ``STATIC_MAPPINGS`` (name→code) is kept for the ``find_value()`` search
+      path on SEX, AGE, URBANISATION, FREQ.
 
     New preferred path:
-      - ``get_label(dimension, code)`` — O(1) code→name lookup from bundled data.
-      - ``get_dimension_labels(dimension)`` — full {code: name} dict for a dimension.
+      ``get_label(dimension, code)`` — O(1) code→name lookup.
+      ``get_dimension_labels(dimension)`` — full {code: name} dict.
     """
 
-    # Bundled data file produced by scripts/build_extdataportal_codelists.py.
-    _EXTDATAPORTAL_FILE = Path(__file__).parent / "extdataportal_codelists.json"
+    # 7-day TTL: codelists rarely change; this mirrors GroupHierarchyManager.
+    _TTL: float = 7 * 24 * 3600.0
 
     # COMP_BREAKDOWN_1/2/3 are identical on the API — stored once under this key.
     _COMP_BREAKDOWN_DIMS: frozenset[str] = frozenset(
         {"COMP_BREAKDOWN_1", "COMP_BREAKDOWN_2", "COMP_BREAKDOWN_3"}
     )
     _COMP_BREAKDOWN_KEY = "COMP_BREAKDOWN"
+
+    # Prefix stripped from COMP_BREAKDOWN labels for chart readability.
+    _COMP_BREAKDOWN_STRIP_PREFIX = "Metric: "
 
     # Codelists available via /codelist?type=X API
     GLOBAL_CODELISTS = ["REF_AREA", "UNIT_MEASURE"]
@@ -684,53 +693,163 @@ class CodelistManager:
         },
     }
 
-    def __init__(self):
-        """Initialize the CodelistManager.
+    def __init__(self) -> None:
+        """Initialise the CodelistManager.
 
-        Loads the bundled extdataportal_codelists.json synchronously so that
-        ``get_label()`` and ``get_dimension_labels()`` are available immediately
-        without any async I/O.
+        ``_extdataportal`` starts empty.  Call ``await initialize()`` from the
+        server lifespan to populate it before the first request arrives.
         """
         self._cache: dict[str, list[dict[str, Any]]] = {}
         self._loaded: set[str] = set()
-        # Bundled extdataportal data: {dimension → {code → name}}
+        # Runtime-fetched extdataportal data: {dimension → {code → name}}.
+        # Populated by initialize(); stays empty (graceful fallback) if offline.
         self._extdataportal: dict[str, dict[str, str]] = {}
-        self._load_extdataportal_bundled()
+        self._last_fetched: float = 0.0
+        self._bg_task: asyncio.Task | None = None  # type: ignore[type-arg]
 
-    def _load_extdataportal_bundled(self) -> None:
-        """Load extdataportal_codelists.json into _extdataportal at startup.
+    # ------------------------------------------------------------------
+    # Extdataportal fetch helpers
+    # ------------------------------------------------------------------
 
-        Called once from __init__.  Failures are logged but non-fatal — the
-        manager falls back to the legacy API paths.
+    @staticmethod
+    def _parse_extdataportal_response(raw: dict) -> dict[str, dict[str, str]]:
+        """Parse the extdataportal JSON response into {dimension: {code: name}}.
+
+        Deduplicates COMP_BREAKDOWN_1/2/3 into a single COMP_BREAKDOWN key and
+        strips the ``'Metric: '`` prefix from COMP_BREAKDOWN labels.
         """
-        try:
-            with open(self._EXTDATAPORTAL_FILE, encoding="utf-8") as fh:
-                raw: dict = json.load(fh)
-            built: dict[str, dict[str, str]] = {}
-            for dim, items in raw.items():
-                if dim == "_meta" or not isinstance(items, list):
+        built: dict[str, dict[str, str]] = {}
+        strip = CodelistManager._COMP_BREAKDOWN_STRIP_PREFIX
+        cb_key = CodelistManager._COMP_BREAKDOWN_KEY
+        cb_dims = CodelistManager._COMP_BREAKDOWN_DIMS
+
+        for dim, items in raw.items():
+            if dim == "_meta" or not isinstance(items, list):
+                continue
+            # Normalise dimension key
+            norm = dim.upper()
+            target_key = cb_key if norm in cb_dims else norm
+            # Build {id: name} — strip 'Metric: ' prefix from COMP_BREAKDOWN
+            mapping: dict[str, str] = {}
+            for item in items:
+                if not isinstance(item, dict) or "id" not in item:
                     continue
-                built[dim] = {
-                    item["id"]: item.get("name", item["id"])
-                    for item in items
-                    if isinstance(item, dict) and "id" in item
-                }
-            self._extdataportal = built
-            meta = raw.get("_meta", {})
-            _logger.info(
-                "CodelistManager: loaded extdataportal codelists — %d dimensions, "
-                "COMP_BREAKDOWN=%d codes. Source: %s",
-                len(built),
-                len(built.get("COMP_BREAKDOWN", {})),
-                meta.get("source", "unknown"),
-            )
-        except FileNotFoundError:
-            _logger.warning(
-                "CodelistManager: extdataportal_codelists.json not found. "
-                "Run 'uv run python scripts/build_extdataportal_codelists.py' to generate it."
-            )
-        except Exception as exc:
-            _logger.error("CodelistManager: failed to load extdataportal codelists: %s", exc)
+                name = item.get("name", item["id"])
+                if target_key == cb_key and name.startswith(strip):
+                    name = name[len(strip):]
+                mapping[item["id"]] = name
+            # Merge into existing entry (COMP_BREAKDOWN_1/2/3 all write to cb_key)
+            if target_key in built:
+                built[target_key].update(mapping)
+            else:
+                built[target_key] = mapping
+
+        return built
+
+    async def _fetch_extdataportal(self) -> dict[str, dict[str, str]]:
+        """Fetch all dimension codelists from the extdataportal metadata API.
+
+        Returns:
+            Parsed {dimension: {code: name}} mapping.
+
+        Raises:
+            httpx.HTTPStatusError / httpx.RequestError on network failure.
+        """
+        url = data360_config.codelist_api_base_url
+        client = get_shared_httpx_client()
+        response = await client.get(url, timeout=30.0)
+        response.raise_for_status()
+        raw: dict = response.json()
+        return self._parse_extdataportal_response(raw)
+
+    def _apply_extdataportal(self, mapping: dict[str, dict[str, str]]) -> None:
+        """Atomically replace the in-memory extdataportal mapping."""
+        self._extdataportal = mapping
+        _logger.info(
+            "CodelistManager: extdataportal codelists loaded — %d dimensions, "
+            "COMP_BREAKDOWN=%d codes.",
+            len(mapping),
+            len(mapping.get(self._COMP_BREAKDOWN_KEY, {})),
+        )
+
+    # ------------------------------------------------------------------
+    # Startup initialisation
+    # ------------------------------------------------------------------
+
+    async def initialize(self) -> None:
+        """Fetch extdataportal codelists and start the background refresh loop.
+
+        Call once from the server lifespan (before the first request).
+        Safe to call multiple times — subsequent calls are no-ops if the
+        data is already loaded and the background task is running.
+        """
+        if not self._extdataportal:
+            try:
+                mapping = await self._fetch_extdataportal()
+                self._apply_extdataportal(mapping)
+                self._last_fetched = time.monotonic()
+            except Exception as exc:
+                _logger.warning(
+                    "CodelistManager: startup fetch from extdataportal failed (%s). "
+                    "Dimension codes will display as raw values until the "
+                    "background refresh succeeds.",
+                    exc,
+                )
+        self._ensure_background_refresh()
+
+    # ------------------------------------------------------------------
+    # Background refresh (mirrors GroupHierarchyManager pattern)
+    # ------------------------------------------------------------------
+
+    def _ensure_background_refresh(self) -> None:
+        """Spawn the background refresh task if not already running.
+
+        No-op outside a running event loop (e.g. in sync tests).
+        """
+        if os.environ.get("PYTEST_RUNNING"):
+            return
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            return
+        if self._bg_task is None or self._bg_task.done():
+            self._bg_task = asyncio.create_task(self._background_refresh_loop())
+
+    async def _background_refresh_loop(self) -> None:
+        """Wake every TTL seconds and refresh from extdataportal.
+
+        On success the in-memory mapping is atomically replaced.
+        On failure the existing mapping is kept and a WARNING is logged;
+        the loop sleeps another full TTL before retrying.
+        """
+        while True:
+            elapsed = time.monotonic() - self._last_fetched
+            if elapsed >= self._TTL:
+                try:
+                    mapping = await self._fetch_extdataportal()
+                    self._apply_extdataportal(mapping)
+                    self._last_fetched = time.monotonic()
+                    _logger.info(
+                        "CodelistManager: background refresh completed — "
+                        "%d dimensions, COMP_BREAKDOWN=%d codes.",
+                        len(mapping),
+                        len(mapping.get(self._COMP_BREAKDOWN_KEY, {})),
+                    )
+                except Exception as exc:
+                    _logger.warning(
+                        "CodelistManager: background refresh failed (%s). "
+                        "Next attempt in %.0f days.",
+                        exc,
+                        self._TTL / 86400,
+                    )
+                    self._last_fetched = time.monotonic()
+
+            sleep_for = max(0.0, self._TTL - (time.monotonic() - self._last_fetched))
+            await asyncio.sleep(sleep_for)
+
+    # ------------------------------------------------------------------
+    # Public label-lookup API (synchronous — reads pre-fetched dict)
+    # ------------------------------------------------------------------
 
     def _resolve_extdataportal_key(self, dimension: str) -> str:
         """Normalise dimension name for extdataportal lookup.
@@ -746,16 +865,16 @@ class CodelistManager:
     def get_label(self, dimension: str, code: str) -> str:
         """Return the human-readable label for a dimension code.
 
-        Looks up the extdataportal bundled data.  Returns the raw ``code``
-        unchanged if the dimension or code is not found (graceful degradation).
+        Reads from the in-memory ``_extdataportal`` dict populated by
+        ``initialize()``.  Returns the raw ``code`` unchanged if the
+        dimension or code is not found (graceful degradation).
 
         Args:
             dimension: Dimension name, e.g. ``"COMP_BREAKDOWN_1"``, ``"SEX"``.
             code: The raw code value, e.g. ``"WGI_EST"``, ``"F"``.
 
         Returns:
-            Human-readable label (e.g. ``"Governance estimate (approx. -2.5 to +2.5)"``)
-            or the original ``code`` if not found.
+            Human-readable label or the original ``code`` if not found.
         """
         key = self._resolve_extdataportal_key(dimension)
         return self._extdataportal.get(key, {}).get(code, code)
@@ -764,7 +883,7 @@ class CodelistManager:
         """Return a ``{code: name}`` mapping for an entire dimension.
 
         Suitable for vectorised DataFrame replacement via ``df[col].map(lookup)``.
-        Returns an empty dict if the dimension is not found in the bundle.
+        Returns an empty dict if the dimension is not found.
 
         Args:
             dimension: Dimension name, e.g. ``"COMP_BREAKDOWN_1"``, ``"UNIT_MEASURE"``.
