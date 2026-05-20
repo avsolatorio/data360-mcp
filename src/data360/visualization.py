@@ -478,19 +478,30 @@ def _clean_single_df(
                     relevant_cols.append(dim)
         viz_data = data[relevant_cols].copy() if relevant_cols else data.copy()
 
-    # Temporal preparation — detect frequency from raw values, then format accordingly.
+    # Temporal preparation — use API's FREQ code directly; fall back to
+    # inference from time_period values only when FREQ is unavailable.
+    _FREQ_TO_TEMPORAL: dict[str, viz_config.TemporalFreq] = {
+        "A": "annual",
+        "M": "monthly",
+        "Q": "quarterly",
+        "D": "daily",
+    }
     temporal_frequency: viz_config.TemporalFreq = "annual"
     if "time_period" in viz_data.columns:
         try:
-            temporal_frequency = viz_config._detect_temporal_frequency(
-                viz_data["time_period"]
-            )
+            # Prefer the FREQ code from the API (already parsed by the caller).
+            if data_frequency and data_frequency.upper() in _FREQ_TO_TEMPORAL:
+                temporal_frequency = _FREQ_TO_TEMPORAL[data_frequency.upper()]
+            else:
+                # Fallback: infer from the actual time_period values.
+                temporal_frequency = viz_config._detect_temporal_frequency(
+                    viz_data["time_period"]
+                )
             viz_data["time_period"] = viz_config._format_time_period_series(
                 viz_data["time_period"], temporal_frequency
             )
         except Exception as e:
             _logger.warning(f"time_period conversion failed: {e}")
-            # Safe fallback: extract year string to avoid raw timestamp in Vega-Lite
             try:
                 viz_data["time_period"] = (
                     pd.to_datetime(viz_data["time_period"]).dt.year.astype(str)
