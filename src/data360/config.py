@@ -70,9 +70,14 @@ class Data360Settings(BaseSettings):
         ...,
         description="Base URL for the Data360 API",
     )
-    codelist_api_base_url: str | None = Field(
-        default=None,
-        description="Base URL for the Data360 codelist API",
+    codelist_api_base_url: str = Field(
+        default="https://extdataportal.worldbank.org/api/data360/metadata/codelist",
+        description=(
+            "URL for the unified Data360 codelist API. Returns all dimension codelists "
+            "(COMP_BREAKDOWN, UNIT_MEASURE, SEX, AGE, URBANISATION, FREQ, REF_AREA, …) "
+            "in a single call. Used by scripts/build_extdataportal_codelists.py to regenerate "
+            "the bundled src/data360/extdataportal_codelists.json."
+        ),
     )
     search_url: str | None = Field(
         default=None,

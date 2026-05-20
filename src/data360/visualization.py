@@ -1210,16 +1210,11 @@ async def get_multi_indicator_viz_spec(
         keep.append(col)
         std_dfs.append(df[keep])
 
-    # 3. Map country codes (use first df's country column as reference)
-    try:
-        from data360.providers import get_codelist_mapping
-
-        country_map = await get_codelist_mapping("REF_AREA")
-        for df in std_dfs:
-            if "country" in df.columns:
-                df["country"] = df["country"].map(lambda x: country_map.get(x, x))
-    except Exception as e:
-        _logger.warning(f"Country code mapping failed: {e}")
+    # 3. Map country codes and auto-resolve dimension codes (reuse the same helpers
+    #    as get_viz_spec for consistency — no duplicate logic).
+    for i, df in enumerate(std_dfs):
+        std_dfs[i] = await _map_country_codes(df)
+        std_dfs[i] = await _map_dimension_codes(std_dfs[i])
 
     # 4. Merge on common keys
     join_keys = [
@@ -1264,6 +1259,15 @@ async def get_multi_indicator_viz_spec(
         final_chart_title = textwrap.wrap(full_title, width=80)
 
     unique_units = list(dict.fromkeys(u for u in units if u))
+    # Resolve raw unit codes (e.g. "PT") to human-readable labels (e.g. "Percent")
+    # using the same extdataportal bundle used by get_viz_spec.
+    try:
+        from data360.providers import get_codelist_manager as _get_cl_mgr
+        _cl = _get_cl_mgr()
+        units = [_cl.get_label("UNIT_MEASURE", u) if u else u for u in units]
+        unique_units = list(dict.fromkeys(u for u in units if u))
+    except Exception:
+        pass
     shared_unit = unique_units[0] if len(unique_units) == 1 else ""
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
         final_chart_title, shared_unit or None, merged

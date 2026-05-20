@@ -25,7 +25,15 @@ from pathlib import Path
 
 import httpx
 
-ENDPOINT = "https://extdataportal.worldbank.org/api/data360/metadata/codelist"
+# Read the canonical URL from the shared config so build script and runtime stay in sync.
+try:
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+    from data360.config import get_data360_settings as _get_settings
+    ENDPOINT = _get_settings().codelist_api_base_url
+except Exception:
+    ENDPOINT = "https://extdataportal.worldbank.org/api/data360/metadata/codelist"
+
 OUTPUT_FILE = (
     Path(__file__).parent.parent / "src" / "data360" / "extdataportal_codelists.json"
 )
