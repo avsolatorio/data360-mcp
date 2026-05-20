@@ -894,7 +894,7 @@ def _color_encoding(
             "orient": "top",
             "direction": "horizontal",
             "title": resolved_title,
-            "labelLimit": 100,
+            "labelLimit": 250,
             "columns": 3,
         }
         if mark_type == "line":

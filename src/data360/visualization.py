@@ -518,6 +518,18 @@ def get_supported_chart_types() -> str:
                 "when_to_use": ">8 countries, single year.",
                 "data_requirements": "obs_value + many country values.",
             },
+            {
+                "id": "area",
+                "description": "Stacked area chart for part-to-whole composition over time.",
+                "when_to_use": "User asks about composition, share, or breakdown over time.",
+                "data_requirements": "Requires multiple breakdown series or indicator_ids that sum to a whole.",
+            },
+            {
+                "id": "heatmap",
+                "description": "Heatmap matrix for high-cardinality time series.",
+                "when_to_use": ">8 countries over multiple years without breakdowns.",
+                "data_requirements": "Automatically selected for dense country x year data.",
+            },
         ],
         "multi_indicator_note": (
             "For scatter, connected_scatter, and layered_lines, use "
@@ -543,6 +555,8 @@ async def get_viz_spec(
     relevant_fields: list[str] | None = None,
     custom_constraints: list[str] | None = None,
     use_default_constraints: bool = True,
+    chart_title: str | None = None,
+    series_labels: dict[str, str] | None = None,
 ) -> VizResult:
     """Generate a Vega-Lite chart from a single Data360 indicator.
 
@@ -678,9 +692,9 @@ async def get_viz_spec(
             For trend questions ("how has X changed?", "show the evolution of Y"), omit
             chart_type entirely and let the pipeline choose the correct strategy
             (line chart, heatmap, etc.) based on data shape.
-        relevant_fields: Optional list of column names to include in the chart.
-        custom_constraints: Optional list of raw Draco ASP constraints.
         use_default_constraints: If True (default), apply standard encoding heuristics.
+        chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Male vs. Female Unemployment'). Do not leave this blank.
+        series_labels: You MUST provide a dictionary mapping breakdown values to short, human-readable labels to prevent legend truncation (e.g., {"F": "Female", "M": "Male"}). Do not leave this blank if there are breakdowns.
 
     Returns:
         Dict with "url" (chart URL on success), "error" (message on failure),
@@ -802,7 +816,7 @@ async def get_viz_spec(
         _logger.warning(f"Could not detect frequency: {e}")
 
     # 4. Fetch title and unit
-    chart_title = "Generated Visualization"
+    chart_title_auto = "Generated Visualization"
     raw_unit = ""
     try:
         parsed = urlparse(data_url)
@@ -816,7 +830,7 @@ async def get_viz_spec(
         if db_id and ind_id_param:
             meta = await get_metadata(db_id, ind_id_param)
             if meta and meta.indicator_metadata:
-                chart_title = meta.indicator_metadata.get("name", chart_title)
+                chart_title_auto = meta.indicator_metadata.get("name", chart_title_auto)
                 raw_unit = (
                     meta.indicator_metadata.get("measurement_unit")
                     or meta.indicator_metadata.get("unit_measure")
@@ -832,7 +846,7 @@ async def get_viz_spec(
         db_map = {}
     database_display = db_map.get(database_id, database_id)
     indicator_display = (
-        chart_title if chart_title != "Generated Visualization" else indicator_id
+        chart_title_auto if chart_title_auto != "Generated Visualization" else indicator_id
     )
     source_attribution: dict[str, str] = {
         "database_id": database_id,
@@ -858,14 +872,25 @@ async def get_viz_spec(
     # 6. Map country codes
     viz_data = await _map_country_codes(viz_data)
 
+    # 6.5 Apply custom series labels directly to the data dimensions
+    if series_labels and isinstance(series_labels, dict):
+        for col in _VIZ_DISAGG_DIMS:
+            if col in viz_data.columns:
+                viz_data[col] = viz_data[col].replace(series_labels)
+
     import textwrap
 
     # Apply text wrapping (Typography T3 constraint) so long single-indicator titles don't overflow
-    wrapped_title = textwrap.wrap(chart_title, width=80) if isinstance(chart_title, str) else chart_title
+    if chart_title and isinstance(chart_title, str):
+        # Allow LLM to override the title completely
+        final_title = chart_title
+    else:
+        # Wrap the auto-generated title
+        final_title = textwrap.wrap(chart_title_auto, width=80) if isinstance(chart_title_auto, str) else chart_title_auto
 
     # Vega-Lite title + subtitle (geography, year range, unit) after data is cleaned
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
-        wrapped_title, raw_unit or None, viz_data
+        final_title, raw_unit or None, viz_data
     )
 
     # 7. Determine strategy — route around Draco for complex patterns
@@ -902,7 +927,10 @@ async def get_viz_spec(
                 viz_data,
                 chart_title_vl,
                 strategy_result,
-                unit_measure=raw_unit,
+                indicator_labels=series_labels,
+                y_label=raw_unit if raw_unit else "Value",
+                x_label="Value",
+                unit_measure=raw_unit or None,
             )
             return _ok(
                 await _store_spec(spec),
@@ -1073,6 +1101,8 @@ async def get_multi_indicator_viz_spec(
     end_year: int | None = None,
     disaggregation_filters: dict[str, str | None] | None = None,
     chart_type: str | None = None,
+    chart_title: str | None = None,
+    series_labels: dict[str, str] | None = None,
 ) -> VizResult:
     """Generate a Vega-Lite chart comparing multiple Data360 indicators.
 
@@ -1186,6 +1216,9 @@ async def get_multi_indicator_viz_spec(
             For trend or comparison questions, omit chart_type and let the pipeline
             select the correct strategy (layered lines, scatter, etc.).
 
+        chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Electricity Mix by Source'). Do not leave this blank.
+        series_labels: You MUST provide a dictionary mapping indicator_ids to short, human-readable labels to prevent legend truncation (e.g., {"WB_WDI_EG_ELC_HYRO_ZS": "Hydro"}). Do not leave this blank.
+
     Returns:
         Dict with "url" (chart URL on success), "error" (on failure),
         "strategy" (which chart type was chosen), "warning" (if applicable).
@@ -1231,6 +1264,10 @@ async def get_multi_indicator_viz_spec(
             return _err(f"No data returned for indicator {ind['indicator_id']}.")
 
         ind_name = title or ind["indicator_id"]
+        # Allow LLM to override the indicator name directly in the dataframe
+        if series_labels and ind["indicator_id"] in series_labels:
+            ind_name = series_labels[ind["indicator_id"]]
+
         col_base = _slugify(ind_name)
         col = _make_unique_col(col_base, used_cols)
         used_cols.add(col)
@@ -1311,18 +1348,23 @@ async def get_multi_indicator_viz_spec(
     # 5. Build chart title (with subtitle when all indicators share the same unit)
     # GoG / AntVis guideline: Do not arbitrarily truncate strings with ellipses.
     # Instead, preserve the full text but word-wrap it so it fits the chart width.
-    if len(titles) == 2:
-        full_title = f"{titles[0]} vs. {titles[1]}"
+    if chart_title:
+        # If the LLM provided a custom title, use it directly without wrapping.
+        # We assume the LLM provides a concise, readable title.
+        final_chart_title = chart_title
     else:
-        full_title = " | ".join(titles)
+        if len(titles) == 2:
+            full_title = f"{titles[0]} vs. {titles[1]}"
+        else:
+            full_title = " | ".join(titles)
 
-    # Wrap at 80 characters to ensure it fits safely within standard chart widths
-    chart_title = textwrap.wrap(full_title, width=80)
+        # Wrap at 80 characters to ensure it fits safely within standard chart widths
+        final_chart_title = textwrap.wrap(full_title, width=80)
 
     unique_units = list(dict.fromkeys(u for u in units if u))
     shared_unit = unique_units[0] if len(unique_units) == 1 else ""
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
-        chart_title, shared_unit or None, merged
+        final_chart_title, shared_unit or None, merged
     )
 
     # 6. Build indicator_labels for axis/tooltip
@@ -1338,6 +1380,11 @@ async def get_multi_indicator_viz_spec(
         col: _format_label(title, unit)
         for col, title, unit in zip(indicator_col_names, titles, units)
     }
+
+    if series_labels:
+        for col in indicator_col_names:
+            if col in series_labels:
+                indicator_labels[col] = series_labels[col]
 
     # 7. Select strategy
     strategy_result = viz_config.select_strategy(
@@ -1399,13 +1446,17 @@ async def get_multi_indicator_viz_spec(
 
     # 8. Build spec
     try:
+        # If there is a shared unit, it makes sense to use it as the Y-axis label.
+        # Otherwise, fall back to the second indicator's name (useful for scatterplots).
+        computed_y_label = shared_unit if shared_unit else indicator_labels.get(indicator_col_names[1], "Value")
+
         spec = viz_config.dispatch_spec(
             strategy_result.strategy,
             spec_df,
             chart_title_vl,
             strategy_result,
             indicator_labels=indicator_labels,
-            y_label=indicator_labels.get(indicator_col_names[1], "Value"),
+            y_label=computed_y_label,
             x_label=indicator_labels.get(indicator_col_names[0], "Value"),
             unit_measure=shared_unit or None,
         )
