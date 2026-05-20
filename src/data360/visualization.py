@@ -200,6 +200,7 @@ def _ok(
     strategy: str | None = None,
     reason: str | None = None,
     dimensions: dict[str, list] | None = None,
+    data_summary: dict | None = None,
 ) -> VizResult:
     r: VizResult = {"url": url, "error": None}
     if warning:
@@ -214,6 +215,8 @@ def _ok(
         r["reason"] = reason
     if dimensions:
         r["dimensions"] = dimensions  # type: ignore[assignment]
+    if data_summary:
+        r["data_summary"] = data_summary  # type: ignore[assignment]
     attrib_for_line = {
         k: str(v)
         for k, v in r.items()
@@ -276,7 +279,39 @@ def _extract_dimension_summary(df: pd.DataFrame) -> dict[str, list]:
     return result
 
 
-_SOURCE_FALLBACK = "World Bank — Data360"
+def _build_data_summary(df: pd.DataFrame) -> dict:
+    """Compact structural summary of the plotted DataFrame for LLM narration.
+
+    Supplements ``_extract_dimension_summary`` (which covers categorical dims)
+    with quantitative/shape information: how many rows, what year range, which
+    countries, and the numeric value range. All fields are optional — missing
+    columns are silently skipped.
+
+    Kept deliberately small: no raw rows, no per-dimension statistics. The goal
+    is to give the LLM enough to narrate the chart without overwhelming context.
+    """
+    out: dict = {"shape": list(df.shape)}
+    if "year" in df.columns:
+        years = df["year"].dropna().astype(str)
+        # Strip time components if ISO timestamps leaked through
+        years = years.str[:4]
+        unique_years = sorted(years.unique())
+        if unique_years:
+            out["year_range"] = [unique_years[0], unique_years[-1]]
+    if "country" in df.columns:
+        countries = sorted(df["country"].dropna().unique().tolist())
+        if countries:
+            out["countries"] = countries
+    if "value" in df.columns:
+        vals = pd.to_numeric(df["value"], errors="coerce").dropna()
+        if not vals.empty:
+            out["value"] = {
+                "min": round(float(vals.min()), 4),
+                "max": round(float(vals.max()), 4),
+                "has_negatives": bool((vals < 0).any()),
+            }
+    return out
+
 
 
 def _format_source_line_from_attribution(attrib: dict[str, str]) -> str:
@@ -804,6 +839,14 @@ async def get_viz_spec(
             The pipeline handles encoding automatically per Grammar of Graphics rules —
             dimensions here are informational so you can explain the chart, not instructions
             to re-encode manually.
+        data_summary (dict | None): Structural summary of the plotted data:
+            - shape: [n_rows, n_cols] — total observations and columns in the chart data.
+            - year_range: [first_year, last_year] as strings.
+            - countries: sorted list of country names in the chart.
+            - value.min / value.max: numeric range of the plotted values (4 decimal places).
+            - value.has_negatives: True if the value axis includes negative numbers.
+            Use this to narrate scale, scope, and coverage (e.g. "data spans 2000–2022
+            across 3 countries, values ranging from 0.2% to 87.4%").
         source_line (str): Formatted attribution string.
         subtitle_line (str | None): Subtitle with strategy and warning info for the chart.
     """
@@ -1052,12 +1095,14 @@ async def get_viz_spec(
             unit_measure=raw_unit_label or None,
         )
         dim_summary = _extract_dimension_summary(viz_data)
+        data_summary = _build_data_summary(viz_data)
         return _ok(
             await _store_spec(spec),
             source_attribution=source_attribution,
             strategy=strategy_result.strategy.value,
             reason=strategy_result.reason,
             dimensions=dim_summary or None,
+            data_summary=data_summary or None,
         )
     except Exception as e:
         _logger.exception("Strategy builder failed")

@@ -15,6 +15,7 @@ import pytest
 
 from data360 import viz_config
 from data360.visualization import (
+    _build_data_summary,
     _clean_single_df,
     _extract_dimension_summary,
 )
@@ -215,3 +216,77 @@ class TestExtractDimensionSummary:
         })
         result = _extract_dimension_summary(df)
         assert "unit_measure" not in result
+
+
+# ---------------------------------------------------------------------------
+# _build_data_summary
+# ---------------------------------------------------------------------------
+
+
+class TestBuildDataSummary:
+    def _base_df(self) -> pd.DataFrame:
+        return pd.DataFrame({
+            "year": ["2019", "2020", "2021", "2022"],
+            "country": ["Ethiopia", "Ethiopia", "Ethiopia", "Ethiopia"],
+            "value": [100.0, 200.0, 150.0, 250.0],
+            "unit_measure": ["Persons"] * 4,
+        })
+
+    def test_shape_always_present(self):
+        df = self._base_df()
+        result = _build_data_summary(df)
+        assert result["shape"] == [4, 4]
+
+    def test_year_range(self):
+        df = self._base_df()
+        result = _build_data_summary(df)
+        assert result["year_range"] == ["2019", "2022"]
+
+    def test_countries_sorted(self):
+        df = pd.DataFrame({
+            "year": ["2020", "2020"],
+            "country": ["Zimbabwe", "Angola"],
+            "value": [1.0, 2.0],
+        })
+        result = _build_data_summary(df)
+        assert result["countries"] == ["Angola", "Zimbabwe"]
+
+    def test_value_range_positive(self):
+        df = self._base_df()
+        result = _build_data_summary(df)
+        assert result["value"]["min"] == 100.0
+        assert result["value"]["max"] == 250.0
+        assert result["value"]["has_negatives"] is False
+
+    def test_value_range_with_negatives(self):
+        df = pd.DataFrame({
+            "year": ["2020", "2021"],
+            "country": ["Georgia", "Georgia"],
+            "value": [-1.5, 2.3],
+        })
+        result = _build_data_summary(df)
+        assert result["value"]["has_negatives"] is True
+        assert result["value"]["min"] == -1.5
+
+    def test_missing_year_column_skipped(self):
+        df = pd.DataFrame({"country": ["A"], "value": [1.0]})
+        result = _build_data_summary(df)
+        assert "year_range" not in result
+
+    def test_missing_country_column_skipped(self):
+        df = pd.DataFrame({"year": ["2020"], "value": [1.0]})
+        result = _build_data_summary(df)
+        assert "countries" not in result
+
+    def test_missing_value_column_skipped(self):
+        df = pd.DataFrame({"year": ["2020"], "country": ["A"]})
+        result = _build_data_summary(df)
+        assert "value" not in result
+
+    def test_empty_dataframe_returns_shape_only(self):
+        df = pd.DataFrame(columns=["year", "country", "value"])
+        result = _build_data_summary(df)
+        assert result["shape"] == [0, 3]
+        assert "year_range" not in result
+        assert "countries" not in result
+        assert "value" not in result
