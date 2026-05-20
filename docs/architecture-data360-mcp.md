@@ -223,6 +223,27 @@ The server’s only persistent data source is the **World Bank Data360 HTTP API*
 
 Configuration is split into **MCP server settings** (port, transport, log file and level, optional charts API URL) and **Data360 settings** (API base URL and optional endpoint overrides, metadata search fields, confidentiality levels). Both are read from the environment (prefixes `MCP`_ and `DATA360_`) so that the same image or package can be deployed to multiple environments. In Azure, `WEBSITE_HOSTNAME` can be used when building chart or static URLs so that the client can load them from the correct host. The server is typically run via `uv run fastmcp run src/data360/server.py` (ASGI) or `python -m data360.mcp_server` (CLI); the Azure workflow (e.g. in `.github/workflows/azure.yml`) builds with Python 3.12 and deploys to an Azure Web App. Static files under `/static` (including generated viz specs) must be reachable by the client; when using an external Charts API, the returned chart URL must point to a host the client can access.
 
+### Health and readiness endpoints
+
+The FastAPI wrapper exposes HTTP probes implemented in `src/data360/health.py`:
+
+| Route | Purpose | HTTP status |
+|-------|---------|-------------|
+| `GET /mcp/health` | **Liveness** — process is running (no outbound I/O) | Always `200` |
+| `GET /mcp/ready` | **Readiness** — critical dependencies are usable | `200` when ready, `503` when not |
+
+**Critical checks** (any failure → `503`):
+
+- **`data360_api`** — minimal `POST` to the configured search endpoint (`top: 1` dataset query).
+- **`database_mapping`** — in-memory `database_id` → name map from `get_database_mapping()` must be non-empty with valid entries.
+- **`viz_storage`** — Charts API reachability when `MCP_CHARTS_API_URL` is set (with static fallback), or writable `static/viz_specs/` when Charts API is not configured.
+
+**Non-blocking check:** **`codelist_api`** — `GET` REF_AREA codelist; failures are reported with `degraded: true` but do not fail readiness alone.
+
+Environment toggles: `MCP_READINESS_ENABLED` (default `true`; set `false` to skip probes), `MCP_HEALTH_CHECK_TIMEOUT` (per-check seconds, default `5`).
+
+**Operations:** Use `/mcp/health` for liveness and `/mcp/ready` for readiness in Azure App Service, Kubernetes, or load balancers. Routes are registered on the FastMCP Starlette app with paths `/mcp/health` and `/mcp/ready` (alongside the streamable MCP endpoint at `/mcp`). If traffic passes through APIM or another gateway, allow those paths in addition to `/mcp`.
+
 ---
 
 ## 15. Related Documentation
