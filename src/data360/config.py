@@ -59,6 +59,14 @@ class MCPServerSettings(BaseSettings):
         default=None,
         description="Azure Application Insights connection string. If unset, falls back to APPLICATIONINSIGHTS_CONNECTION_STRING env var.",
     )
+    readiness_enabled: bool = Field(
+        default=True,
+        description="When false, GET /ready returns 200 with readiness_checks=disabled (no dependency probes).",
+    )
+    health_check_timeout: float = Field(
+        default=5.0,
+        description="Per-check timeout in seconds for GET /ready outbound probes.",
+    )
 
     model_config = SettingsConfigDict(env_prefix="MCP_")
 

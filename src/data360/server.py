@@ -10,8 +10,10 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request as StarletteRequest
 
 from data360.config import get_mcp_server_settings, setup_logging
+from data360.health import get_liveness_body, run_readiness
 from data360.http_client import aclose_shared_httpx_client
 from data360.otel_setup import (
     configure_open_telemetry_for_server,
@@ -65,7 +67,9 @@ class SecurityValidationMiddleware(BaseHTTPMiddleware):
     """Validate MCP tool calls to prevent prompt injection and unauthorized access."""
 
     async def dispatch(self, request: Request, call_next):
-        # Only validate MCP tool calls
+        # Only validate MCP JSON-RPC tool calls (not health probes under /mcp/*)
+        if request.url.path in ("/mcp/health", "/mcp/ready"):
+            return await call_next(request)
         if not request.url.path.startswith("/mcp"):
             return await call_next(request)
 
@@ -142,7 +146,9 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
     """Log structured audit entries for every MCP request."""
 
     async def dispatch(self, request: Request, call_next):
-        # Only audit MCP tool/resource/prompt calls
+        # Only audit MCP JSON-RPC calls (not health probes)
+        if request.url.path in ("/mcp/health", "/mcp/ready"):
+            return await call_next(request)
         if not request.url.path.startswith("/mcp"):
             return await call_next(request)
         session_id = str(uuid.uuid4())
@@ -199,6 +205,25 @@ mcp.settings.stateless_http = True
 mcp_app = mcp.http_app(path="/mcp")
 
 
+async def health_check(request: StarletteRequest) -> JSONResponse:
+    """Liveness probe under the MCP URL prefix (GET /mcp/health)."""
+    del request
+    return JSONResponse(get_liveness_body())
+
+
+async def ready_check(request: StarletteRequest) -> JSONResponse:
+    """Readiness probe under the MCP URL prefix (GET /mcp/ready)."""
+    del request
+    status_code, body = await run_readiness()
+    return JSONResponse(content=body, status_code=status_code)
+
+
+# Starlette routes on mcp_app: paths are absolute from mount root (not nested under /mcp).
+# Use /mcp/health so probes sit beside the streamable HTTP endpoint at /mcp.
+mcp_app.add_route("/mcp/health", health_check, methods=["GET", "HEAD"])
+mcp_app.add_route("/mcp/ready", ready_check, methods=["GET", "HEAD"])
+
+
 @asynccontextmanager
 async def _lifespan_with_http_cleanup(app: FastAPI):
     """Run MCP startup/shutdown, then close the shared httpx client."""
@@ -229,6 +254,17 @@ if mcp_settings.env != "local" and _connection_string:
         FastAPIInstrumentor.instrument_app(app)
     except ImportError:
         pass
+
+
+@app.get("/")
+async def root():
+    return {
+        "service": "data360-mcp",
+        "health": "/mcp/health",
+        "ready": "/mcp/ready",
+        "mcp": "/mcp",
+    }
+
 
 # Mount static files FIRST (more specific path must come before catch-all)
 static_dir = os.path.join(os.getcwd(), "static")
