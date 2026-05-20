@@ -785,7 +785,27 @@ async def get_viz_spec(
             only needed to shorten or override the auto-resolved labels.
 
     Returns:
-        Dict with "url" (chart URL on success) and "error" (message on failure).
+        Dict with the following fields:
+
+        url (str | None): Browser-accessible URL to the rendered Vega-Lite spec. None on error.
+        error (str | None): Error message. None on success.
+        strategy (str): Strategy selected by the pipeline (e.g. "small_multiples", "temporal_single").
+        reason (str): Human-readable explanation of why that strategy was chosen.
+        dimensions (dict[str, list[str]] | None): Non-trivial categorical dimensions present
+            in the plotted data, each mapped to its distinct resolved values (human-readable labels,
+            not raw codes). Example: {"unit_measure": ["Persons", "Percentage"],
+            "comp_breakdown_2": ["Phase 1 - Minimal", "Phase 2 - Stressed"]}.
+
+            When present, narrate what was plotted and how each dimension was encoded
+            (color, facet, or filtered). Then offer the user the option to re-call with
+            disaggregation_filters pinned to a specific value if they want to focus on
+            one breakdown (e.g. {"UNIT_MEASURE": "PT"} for percentage only).
+
+            The pipeline handles encoding automatically per Grammar of Graphics rules —
+            dimensions here are informational so you can explain the chart, not instructions
+            to re-encode manually.
+        source_line (str): Formatted attribution string.
+        subtitle_line (str | None): Subtitle with strategy and warning info for the chart.
     """
     from data360.api import get_data_api_url, get_disaggregation, get_metadata
 
