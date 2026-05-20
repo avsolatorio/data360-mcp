@@ -95,12 +95,6 @@ mcp_app = mcp.http_app(path="/mcp")
 async def _lifespan_with_http_cleanup(app: FastAPI):
     """Run MCP startup/shutdown, then close the shared httpx client."""
     async with mcp_app.router.lifespan_context(mcp_app):
-        # Pre-fetch extdataportal codelists so dimension codes (COMP_BREAKDOWN,
-        # SEX, AGE, URBANISATION, UNIT_MEASURE) resolve to human labels before
-        # the first chart request arrives.  Mirrors GroupHierarchyManager.
-        from data360.providers import get_codelist_manager
-
-        await get_codelist_manager().initialize()
         yield
     await aclose_shared_httpx_client()
 
