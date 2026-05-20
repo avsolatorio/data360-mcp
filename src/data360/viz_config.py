@@ -787,6 +787,36 @@ def select_strategy(
             color_dim=color_dim,
         )
 
+    # unit_measure with 2+ values → always scale-incompatible (Persons ≠ Percentage).
+    # This check MUST come before the general n_breakdowns >= 2 block: when unit_measure
+    # coexists with another breakdown (e.g. IPC comp_breakdown_2 × unit_measure), the
+    # general block would pick comp_breakdown_2 as facet and silently overlay both units
+    # on the same Y-axis within each panel.
+    # Correct GoG layout: facet by unit_measure (one panel per unit), color by the
+    # first other breakdown so phases/categories are still distinguishable within panels.
+    if "unit_measure" in breakdown_counts:
+        if country_count > 1:
+            facet_dim = "country"
+        else:
+            facet_dim = "unit_measure"
+        # Use first non-unit-measure breakdown as color dim (e.g. comp_breakdown_2 for IPC)
+        other_breakdowns = [k for k in breakdown_counts if k != "unit_measure"]
+        color_dim = other_breakdowns[0] if other_breakdowns else None
+        n_other = len(other_breakdowns)
+        reason_detail = (
+            f"unit_measure ({unit_count} units)"
+            + (f" + {n_other} other breakdown(s)" if n_other else "")
+            + f", {country_count} countr{'y' if country_count == 1 else 'ies'}"
+            + " → faceted by unit (independent Y-axes)"
+        )
+        return StrategyResult(
+            ChartStrategy.SMALL_MULTIPLES,
+            reason_detail,
+            color_dim=color_dim,
+            facet_dim=facet_dim,
+            scale_incompatible=True,
+        )
+
     # Small multiples: 2+ meaningful breakdowns, or breakdown + multiple countries.
     # With breakdown + 2+ countries, series count = country_count × breakdown_values.
     # Even 2 countries × 6 WGI metrics = 12 overlapping series on one chart — unreadable.
@@ -799,22 +829,6 @@ def select_strategy(
             f"{n_breakdowns} breakdowns, {country_count} countries → small multiples (facet={facet_dim})",
             color_dim=color_dim,
             facet_dim=facet_dim,
-        )
-
-    # unit_measure with 2+ values → always scale-incompatible (Persons ≠ Percentage).
-    # Must be routed to SMALL_MULTIPLES with independent Y-axes before the general
-    # temporal-single path, which would incorrectly overlay incompatible units on one axis.
-    if "unit_measure" in breakdown_counts and n_breakdowns >= 1:
-        if country_count > 1:
-            facet_dim = "country"
-        else:
-            facet_dim = "unit_measure"
-        return StrategyResult(
-            ChartStrategy.SMALL_MULTIPLES,
-            f"unit_measure has {unit_count} incompatible units → faceted (independent Y-axes)",
-            color_dim=None,
-            facet_dim=facet_dim,
-            scale_incompatible=True,
         )
 
     # Breakdown + multi-year → line chart with breakdown as color dim.

@@ -479,16 +479,15 @@ def _clean_single_df(
         viz_data = data[relevant_cols].copy() if relevant_cols else data.copy()
 
     # Temporal preparation
+    # Always collapse to year strings: the viz pipeline has no sub-annual axis strategy,
+    # and passing full ISO timestamps (e.g. "2019-09-01T00:00:00") causes the Vega-Lite
+    # axis to display raw millisecond timestamps. Sub-annual IPC/monthly data is
+    # intentionally aggregated to year at the chart level.
     if "time_period" in viz_data.columns:
         try:
-            user_mark = viz_config.parse_chart_type_hint(chart_type)
-            action = viz_config.get_data_preparation_action(user_mark, data_frequency)
-            if action == "year_strings":
-                viz_data["time_period"] = pd.to_datetime(
-                    viz_data["time_period"]
-                ).dt.year.astype(str)
-            else:
-                viz_data["time_period"] = pd.to_datetime(viz_data["time_period"])
+            viz_data["time_period"] = (
+                pd.to_datetime(viz_data["time_period"]).dt.year.astype(str)
+            )
         except Exception as e:
             _logger.warning(f"time_period conversion failed: {e}")
 
@@ -532,16 +531,17 @@ _EXTDATAPORTAL_DIM_MAP: dict[str, str] = {
     "sex": "SEX",
     "age": "AGE",
     "urbanisation": "URBANISATION",
+    "unit_measure": "UNIT_MEASURE",
 }
 
 
 async def _map_dimension_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
     """Replace raw dimension codes with human-readable labels from extdataportal.
 
-    Resolves COMP_BREAKDOWN_1/2/3, SEX, AGE, and URBANISATION columns using the
-    extdataportal codelist (fetched lazily on first call, same as REF_AREA).
-    Columns absent from the DataFrame are silently skipped.  Codes not found are
-    left unchanged (graceful fallback).
+    Resolves COMP_BREAKDOWN_1/2/3, SEX, AGE, URBANISATION, and UNIT_MEASURE
+    columns using the extdataportal codelist (fetched lazily on first call,
+    same as REF_AREA). Columns absent from the DataFrame are silently skipped.
+    Codes not found are left unchanged (graceful fallback).
 
     Must be called *before* the ``series_labels`` override so that LLM-supplied
     labels can still take precedence over auto-resolved ones.
