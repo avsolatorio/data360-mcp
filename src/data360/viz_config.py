@@ -293,6 +293,62 @@ def _is_homogeneous_breakdown(vals: list[str]) -> bool:
     return len(bases) == 1 and next(iter(bases)) != ""  # non-empty shared prefix
 
 
+def _detect_scale_incompatibility(
+    df: pd.DataFrame,
+    breakdown_dim: str,
+    magnitude_threshold: float = 1.5,
+) -> bool:
+    """Return True when breakdown series have incompatible Y-axis scales.
+
+    Computes the order of magnitude (log10 of max |value|) for each
+    breakdown series. If the spread between the largest and smallest
+    magnitudes exceeds *magnitude_threshold*, the series cannot share a
+    Y-axis without visually compressing the small-magnitude series.
+
+    A threshold of 1.5 corresponds to roughly a 30× difference between
+    the dominant series and the smallest (e.g., a WGI percentile rank
+    peaking at ~65 vs. a standard error peaking at ~0.2).
+
+    Only meaningful for *_CUSTOM_BREAKDOWN_DIMS*; standard demographic
+    dims (sex, age) almost always share a unit and should never fire.
+
+    Returns False when:
+    - breakdown_dim is not in df.columns or 'value' is missing
+    - fewer than 2 unique breakdown values are present
+    - all series are zero or NaN (no meaningful magnitudes to compare)
+
+    Examples::
+
+        WGI: EST max|val|≈0.6 (mag≈-0.22), SC max|val|≈65 (mag≈1.81)
+        spread = 1.81 − (−0.22) = 2.03  → True  (exceeds 1.5)
+
+        IPC phases: all person counts, max|val|∈[1000, 5000]
+        mags ≈ [3.0, 3.5, 3.7], spread = 0.7  → False
+    """
+    import math
+
+    if breakdown_dim not in df.columns or "value" not in df.columns:
+        return False
+    bd_vals = df[breakdown_dim].dropna().unique()
+    if len(bd_vals) < 2:
+        return False
+
+    mags: list[float] = []
+    for v in bd_vals:
+        series_vals = df.loc[df[breakdown_dim] == v, "value"].dropna()
+        if series_vals.empty:
+            continue
+        max_abs = float(series_vals.abs().max())
+        if max_abs == 0:
+            mags.append(0.0)
+        else:
+            mags.append(math.log10(max_abs))
+
+    if len(mags) < 2:
+        return False
+    return (max(mags) - min(mags)) >= magnitude_threshold
+
+
 def _format_breakdown_subtitle(df: pd.DataFrame, color_dim: str | None) -> str | None:
     """Return a compact subtitle note when color_dim is a heterogeneous custom breakdown.
 
@@ -572,6 +628,7 @@ class StrategyResult:
     facet_dim: str | None = None
     x_dim: str | None = None
     y_dim: str | None = None
+    scale_incompatible: bool = False  # breakdown series need independent Y-axes
 
 
 def select_strategy(
@@ -744,8 +801,24 @@ def select_strategy(
 
     # Breakdown + multi-year → line chart with breakdown as color dim.
     # Avoids a dense grouped bar chart (e.g. 6 breakdowns × 15 years = 90 bars).
+    # Exception: custom breakdowns (comp_breakdown_1/2) with wildly different
+    # value magnitudes (e.g. WGI estimate ~±2.5 vs percentile rank 0–100) cannot
+    # share a Y-axis — the dominant series compresses the rest to flat lines.
+    # Auto-route those to SMALL_MULTIPLES with facet=breakdown and independent Y-axes.
     if n_breakdowns == 1 and year_count > 1:
         color_dim = list(breakdown_counts.keys())[0]
+        if (
+            color_dim in _CUSTOM_BREAKDOWN_DIMS
+            and _detect_scale_incompatibility(df, color_dim)
+        ):
+            return StrategyResult(
+                ChartStrategy.SMALL_MULTIPLES,
+                f"1 breakdown ({color_dim}), {year_count} years, scale-incompatible "
+                f"→ faceted (independent Y-axes)",
+                color_dim=None,
+                facet_dim=color_dim,
+                scale_incompatible=True,
+            )
         return StrategyResult(
             ChartStrategy.TEMPORAL_SINGLE,
             f"1 breakdown ({color_dim}), {year_count} years → multi-series line chart",
@@ -1206,6 +1279,122 @@ def build_breakdown_comparison_spec(
     return inject_wb_config(spec)
 
 
+def _build_scale_split_vconcat(
+    df: pd.DataFrame,
+    title: str | dict,
+    result: StrategyResult,
+    indicator_labels: dict[str, str] | None = None,
+    y_label: str = "Value",
+    unit_measure: str | None = None,
+) -> dict:
+    """Vconcat layout for scale-incompatible custom breakdowns.
+
+    Produces one full-width panel (680×140) per breakdown value, each with
+    its own independent Y-axis and a WB categorical color. Panels share the
+    X (year) axis via ``resolve.scale.x = 'shared'``.
+
+    This replaces the default 180×120 facet layout when breakdown series
+    differ by more than ~30× in magnitude (detected by
+    :func:`_detect_scale_incompatibility`), preventing the visual
+    compression of small-magnitude series on a shared axis.
+    """
+    facet_dim = result.facet_dim or "comp_breakdown_1"
+    lab = indicator_labels or {}
+
+    # Cap panels using the same threshold as regular small multiples.
+    df, original_n = _cap_cardinality(
+        df, facet_dim, HIGH_CARDINALITY_THRESHOLDS["small_multiples_max_facets"]
+    )
+
+    breakdown_vals = sorted(df[facet_dim].dropna().unique(), key=str)
+    rows = df.to_dict(orient="records")
+    label_expr = _value_label_expr(unit_measure)
+
+    annotated_title = _append_trim_note(
+        title, facet_dim,
+        len(breakdown_vals),
+        original_n,
+    )
+
+    charts: list[dict] = []
+    for i, bd_val in enumerate(breakdown_vals):
+        color = WB_CAT_COLORS[i % len(WB_CAT_COLORS)]
+        bd_label = lab.get(str(bd_val), str(bd_val))
+
+        bd_data = df[df[facet_dim] == bd_val]
+        max_abs = (
+            float(bd_data["value"].abs().max())
+            if "value" in bd_data.columns and not bd_data.empty
+            else None
+        )
+        tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+
+        y_axis = {**_axis_style(), "title": None, "labelExpr": label_expr}
+        x_axis = _axis_style(temporal=True)
+        # Only show X-axis labels on the bottom-most panel.
+        if i < len(breakdown_vals) - 1:
+            x_axis["labels"] = False
+            x_axis["title"] = None
+
+        charts.append({
+            "title": {
+                "text": bd_label,
+                "color": color,
+                "fontSize": 12,
+                "fontWeight": "bold",
+                "anchor": "start",
+                "offset": 4,
+            },
+            "width": 680,
+            "height": 140,
+            "transform": [{"filter": {"field": facet_dim, "equal": bd_val}}],
+            "mark": {
+                "type": "line",
+                "strokeWidth": 3,
+                "strokeCap": "round",
+                "color": color,
+                "point": _LINE_HOVER_POINT,
+            },
+            "encoding": {
+                "x": {
+                    "field": "year",
+                    "type": "temporal",
+                    "axis": x_axis,
+                },
+                "y": {
+                    "field": "value",
+                    "type": "quantitative",
+                    "axis": y_axis,
+                    "scale": {"zero": False},
+                },
+                "tooltip": [
+                    {
+                        "field": "year",
+                        "type": "temporal",
+                        "timeUnit": "year",
+                        "title": "Year",
+                        "format": "%Y",
+                    },
+                    {
+                        "field": "value",
+                        "type": "quantitative",
+                        "title": bd_label,
+                        "format": tt_fmt,
+                    },
+                ],
+            },
+        })
+
+    spec: dict = {
+        "$schema": _vl_schema(),
+        "title": annotated_title,
+        "data": {"values": rows},
+        "vconcat": charts,
+        "resolve": {"scale": {"x": "shared"}},
+    }
+    return inject_wb_config(spec)
+
+
 def build_small_multiples_spec(
     df: pd.DataFrame,
     title: str | dict,
@@ -1220,7 +1409,20 @@ def build_small_multiples_spec(
     via the shared :func:`_cap_cardinality` utility. When trimmed, the top-N facet
     values by most-recent data point are retained and a subtitle note is injected via
     :func:`_append_trim_note` — the same logic used by build_cross_sectional_spec.
+
+    When ``result.scale_incompatible`` is True, delegates to
+    :func:`_build_scale_split_vconcat` which produces one full-width vertically
+    stacked panel per breakdown value, each with an independent Y-axis. This
+    prevents scale-dominant series from compressing smaller ones on a shared axis.
     """
+    # Scale-incompatible breakdowns: each series needs its own Y-axis to be readable.
+    # Use a vconcat layout (680×140 per panel) instead of the shared-axis facet grid
+    # (180×120 panels). See _build_scale_split_vconcat for details.
+    if result.scale_incompatible:
+        return _build_scale_split_vconcat(
+            df, title, result, indicator_labels, y_label, unit_measure
+        )
+
     facet_dim = result.facet_dim or "country"
     color_dim = result.color_dim
 
