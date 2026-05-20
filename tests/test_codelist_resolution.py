@@ -6,7 +6,7 @@ transport level so _fetch_extdataportal() sees realistic input.
 
 Covers:
   - _parse_extdataportal_response(): deduplication, prefix stripping
-  - initialize(): populates _extdataportal, idempotent
+  - _ensure_extdataportal_loaded(): populates _extdataportal, idempotent
   - get_label(): O(1) code→name, graceful fallback
   - get_dimension_labels(): full dict, returns copy
   - COMP_BREAKDOWN_1/2/3 all route to the unified COMP_BREAKDOWN key
@@ -168,46 +168,46 @@ class TestParseExtdataportalResponse:
 
 
 # ============================================================================
-# 2. initialize() — async fetch + idempotency
+# 2. _ensure_extdataportal_loaded() — lazy async fetch + idempotency
 # ============================================================================
 
 
-class TestInitialize:
+class TestEnsureExtdataportalLoaded:
     @pytest.mark.asyncio
-    async def test_initialize_populates_extdataportal(self):
+    async def test_populates_extdataportal(self):
         mgr = CodelistManager()
         assert not mgr._extdataportal
 
         mgr._fetch_extdataportal = AsyncMock(
             return_value=CodelistManager._parse_extdataportal_response(_FAKE_API)
         )
-        await mgr.initialize()
+        await mgr._ensure_extdataportal_loaded()
 
         assert mgr._extdataportal
         assert "COMP_BREAKDOWN" in mgr._extdataportal
 
     @pytest.mark.asyncio
-    async def test_initialize_is_idempotent(self):
+    async def test_is_idempotent(self):
         mgr = CodelistManager()
         mgr._fetch_extdataportal = AsyncMock(
             return_value=CodelistManager._parse_extdataportal_response(_FAKE_API)
         )
-        await mgr.initialize()
+        await mgr._ensure_extdataportal_loaded()
         call_count = mgr._fetch_extdataportal.call_count
 
-        # Second call should not re-fetch (data already populated)
-        await mgr.initialize()
+        # Second call must not re-fetch (data already populated)
+        await mgr._ensure_extdataportal_loaded()
         assert mgr._fetch_extdataportal.call_count == call_count, (
-            "initialize() should be a no-op if _extdataportal already populated"
+            "_ensure_extdataportal_loaded() should be a no-op if _extdataportal already populated"
         )
 
     @pytest.mark.asyncio
-    async def test_initialize_graceful_on_network_failure(self):
+    async def test_graceful_on_network_failure(self):
         mgr = CodelistManager()
         import httpx
         mgr._fetch_extdataportal = AsyncMock(side_effect=httpx.RequestError("timeout"))
         # Must not raise
-        await mgr.initialize()
+        await mgr._ensure_extdataportal_loaded()
         # _extdataportal stays empty — graceful fallback
         assert mgr._extdataportal == {}
 
@@ -268,7 +268,7 @@ class TestGetLabel:
             )
 
     def test_empty_extdataportal_returns_code(self):
-        """Before initialize() is called, get_label must degrade gracefully."""
+        """Before first load, get_label must degrade gracefully."""
         mgr = CodelistManager()  # _extdataportal = {}
         assert mgr.get_label("SEX", "F") == "F"
 
@@ -376,7 +376,7 @@ class TestMapDimensionCodes:
         assert "Estimate" in df["comp_breakdown_1"].values
 
     def test_empty_extdataportal_leaves_codes_unchanged(self):
-        """Before initialize(), _map_dimension_codes must degrade gracefully."""
+        """Before first load, _map_dimension_codes must degrade gracefully."""
         mgr = CodelistManager()  # empty _extdataportal
         df = pd.DataFrame({"year": YEARS[:2], "value": [1.0, 2.0], "sex": ["F", "M"]})
         result = self._run(df, mgr)

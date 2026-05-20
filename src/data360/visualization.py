@@ -453,8 +453,9 @@ async def _map_dimension_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
     """Replace raw dimension codes with human-readable labels from extdataportal.
 
     Resolves COMP_BREAKDOWN_1/2/3, SEX, AGE, and URBANISATION columns using the
-    bundled extdataportal codelist.  Columns absent from the DataFrame are silently
-    skipped.  Codes not found in the bundle are left unchanged (graceful fallback).
+    extdataportal codelist (fetched lazily on first call, same as REF_AREA).
+    Columns absent from the DataFrame are silently skipped.  Codes not found are
+    left unchanged (graceful fallback).
 
     Must be called *before* the ``series_labels`` override so that LLM-supplied
     labels can still take precedence over auto-resolved ones.
@@ -463,6 +464,8 @@ async def _map_dimension_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
         from data360.providers import get_codelist_manager
 
         manager = get_codelist_manager()
+        # Lazy-load the extdataportal mapping on first use (no startup hook needed).
+        await manager._ensure_extdataportal_loaded()
         for col, dim in _EXTDATAPORTAL_DIM_MAP.items():
             if col not in viz_data.columns:
                 continue

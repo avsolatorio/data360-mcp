@@ -773,15 +773,16 @@ class CodelistManager:
         )
 
     # ------------------------------------------------------------------
-    # Startup initialisation
+    # Lazy loader (same pattern as _ensure_loaded for REF_AREA)
     # ------------------------------------------------------------------
 
-    async def initialize(self) -> None:
-        """Fetch extdataportal codelists and start the background refresh loop.
+    async def _ensure_extdataportal_loaded(self) -> None:
+        """Fetch extdataportal codelists on first use (lazy load).
 
-        Call once from the server lifespan (before the first request).
-        Safe to call multiple times — subsequent calls are no-ops if the
-        data is already loaded and the background task is running.
+        Mirrors the pattern of ``_ensure_loaded()`` for REF_AREA: called at the
+        top of any async path that reads ``_extdataportal`` (e.g.
+        ``_map_dimension_codes``).  Subsequent calls are instant no-ops once the
+        data is populated.  Starts the background refresh loop on first call.
         """
         if not self._extdataportal:
             try:
@@ -790,9 +791,9 @@ class CodelistManager:
                 self._last_fetched = time.monotonic()
             except Exception as exc:
                 _logger.warning(
-                    "CodelistManager: startup fetch from extdataportal failed (%s). "
+                    "CodelistManager: extdataportal fetch failed (%s). "
                     "Dimension codes will display as raw values until the "
-                    "background refresh succeeds.",
+                    "next retry.",
                     exc,
                 )
         self._ensure_background_refresh()
