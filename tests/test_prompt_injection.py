@@ -1,5 +1,7 @@
 """Test prompt injection prevention."""
 
+import os
+
 import requests
 
 BASE_URL = os.getenv("DATA360_MCP_TEST_URL")
@@ -123,7 +125,7 @@ def test_prompt_injection():
                             print(
                                 f"  Message: {data['error'].get('message', '')[:100]}"
                             )
-                    except ValueError:
+                    except Exception:
                         pass
                     passed += 1
                 else:

@@ -89,7 +89,7 @@ class SecurityValidationMiddleware(BaseHTTPMiddleware):
             # Validate tools/call requests
             if method == "tools/call":
                 from data360.mcp_server.security_validator import (  # noqa: PLC0415
-                    validate_search_query,
+                    validate_search_arguments,
                     validate_tool_call,
                 )
 
@@ -112,12 +112,14 @@ class SecurityValidationMiddleware(BaseHTTPMiddleware):
                         },
                     )
 
-                # Additional validation for search queries
+                # Additional validation for all search term inputs
                 if tool_name == "data360_search_indicators":
-                    query = arguments.get("query", "")
-                    is_valid, error_msg = validate_search_query(query)
+                    is_valid, error_msg = validate_search_arguments(arguments)
                     if not is_valid:
-                        logging.warning(f"Search query blocked: {query[:100]}")
+                        logging.warning(
+                            "Search query blocked: %s",
+                            str(arguments)[:200],
+                        )
                         return JSONResponse(
                             status_code=403,
                             content={
