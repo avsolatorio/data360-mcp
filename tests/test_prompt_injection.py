@@ -123,7 +123,7 @@ def test_prompt_injection():
                             print(
                                 f"  Message: {data['error'].get('message', '')[:100]}"
                             )
-                    except:
+                    except ValueError:
                         pass
                     passed += 1
                 else:
