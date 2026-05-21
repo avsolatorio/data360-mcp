@@ -149,15 +149,18 @@ class TestStructuredTooltips:
         assert value_tip["format"] == ",.2f", "Value tooltip must use number formatting"
         assert value_tip["type"] == "quantitative"
 
-    def test_year_tooltip_nominal_for_string_years_avoids_vl_date_parse(self):
-        """Temporal tooltips on string years make Vega-Lite parse year as date for all encodings."""
+    def test_year_tooltip_temporal_for_annual_string_years(self):
+        """String years (e.g. '2018', '2019') should now produce temporal tooltips
+        with type=temporal and timeUnit=year so VL formats them as dates correctly
+        instead of falling through to the raw epoch timestamp display."""
         df = pd.DataFrame({"year": ["2018", "2019"], "value": [1.0, 2.0]})
         tips = viz_config.build_structured_tooltips(
             ["year", "value"], "line", viz_data=df
         )
         year_tip = next(t for t in tips if t["field"] == "year")
-        assert year_tip["type"] == "nominal"
-        assert "format" not in year_tip
+        assert year_tip["type"] == "temporal"
+        assert year_tip["timeUnit"] == "year"
+        assert year_tip["format"] == "%Y"
 
     def test_year_tooltip_temporal_when_column_is_datetime(self):
         df = pd.DataFrame(
@@ -171,6 +174,7 @@ class TestStructuredTooltips:
         )
         year_tip = next(t for t in tips if t["field"] == "year")
         assert year_tip["type"] == "temporal"
+        assert year_tip["timeUnit"] == "year"
         assert year_tip["format"] == "%Y"
 
     def test_country_tooltip_is_nominal(self):

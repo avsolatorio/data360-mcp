@@ -142,7 +142,7 @@ def wb_altair_config() -> dict:
             "labelFont": WB_FONT_FAMILY,
             "labelFontSize": 12,
             "labelFontWeight": "bold",
-            "labelLimit": 200,
+            "labelLimit": 300,
             "titleColor": WB_TEXT,
             "titleFont": WB_FONT_FAMILY,
             "titleFontSize": 12,
@@ -517,18 +517,44 @@ def _multi_indicator_tooltip_columns(
     return out
 
 
-def _tooltip_spec_for_time_dim(col: str, viz_data: pd.DataFrame | None) -> dict:
-    """Year/period tooltips: temporal only when the frame actually has datetime values."""
+def _tooltip_spec_for_time_dim(
+    col: str,
+    viz_data: pd.DataFrame | None,
+    temporal_freq: "TemporalFreq | None" = None,
+) -> dict:
+    """Return a Vega-Lite tooltip spec for year/time_period columns.
+
+    When a temporal frequency is known (or can be detected from the values),
+    the spec uses ``type: temporal`` with the correct timeUnit + format so that
+    Vega-Lite formats the internally-parsed epoch timestamp correctly.  Without
+    this, charts with a temporal X-axis display the raw millisecond number
+    (e.g. 1596240000000) instead of a human-readable date string.
+    """
     title = "Year" if col == "year" else "Period"
-    if viz_data is not None and col in viz_data.columns:
-        s = viz_data[col]
-        if pd.api.types.is_datetime64_any_dtype(s):
-            return {
-                "field": col,
-                "title": title,
-                "type": "temporal",
-                "format": "%Y",
-            }
+
+    # Mapping that mirrors _TEMPORAL_X_ENCODING so tooltip labels match axis labels.
+    _FREQ_TOOLTIP: dict[str, dict] = {
+        "annual":    {"timeUnit": "year",          "format": "%Y"},
+        "monthly":   {"timeUnit": "yearmonth",      "format": "%b %Y"},
+        "quarterly": {"timeUnit": "yearquarter",    "format": "Q%q %Y"},
+        "daily":     {"timeUnit": "yearmonthdate",  "format": "%Y-%m-%d"},
+    }
+
+    freq: TemporalFreq | None = temporal_freq
+    if freq is None and viz_data is not None and col in viz_data.columns:
+        # Infer from the formatted string values already in the frame.
+        freq = _detect_temporal_frequency(viz_data[col])
+
+    if freq is not None:
+        cfg = _FREQ_TOOLTIP.get(freq, _FREQ_TOOLTIP["annual"])
+        return {
+            "field": col,
+            "title": title,
+            "type": "temporal",
+            "timeUnit": cfg["timeUnit"],
+            "format": cfg["format"],
+        }
+
     return {"field": col, "title": title, "type": "nominal"}
 
 
@@ -538,15 +564,18 @@ def build_structured_tooltips(
     indicator_labels: dict[str, str] | None = None,
     value_format: str = ",.2f",
     viz_data: pd.DataFrame | None = None,
+    temporal_freq: "TemporalFreq | None" = None,
 ) -> list[dict]:
     """Build typed, labelled tooltip list for a Vega-Lite encoding.
 
     indicator_labels: optional {col_name: human_label} for indicator value columns
     in multi-indicator charts (e.g. {"gdp_per_capita": "GDP per capita (USD)"}).
     value_format: D3 format string for quantitative value fields.
-    viz_data: when set, ``year`` / ``time_period`` tooltips use ``temporal`` only if
-        that column is datetime64; otherwise ``nominal`` so VL does not parse string
-        years as dates (which breaks ordinal x-axes).
+    viz_data: when set, ``year`` / ``time_period`` frequency is detected from the
+        column values to produce correctly formatted temporal tooltip labels.
+    temporal_freq: explicit temporal frequency; overrides auto-detection from
+        viz_data. Pass ``result.temporal_frequency`` from temporal chart builders
+        so the tooltip date format matches the X-axis format exactly.
     """
     ordered = [c for c in _TOOLTIP_PRIORITY if c in columns]
     ordered += [c for c in columns if c not in _TOOLTIP_PRIORITY]
@@ -554,7 +583,7 @@ def build_structured_tooltips(
     tooltips = []
     for col in ordered:
         if col in ("year", "time_period"):
-            tooltips.append(_tooltip_spec_for_time_dim(col, viz_data))
+            tooltips.append(_tooltip_spec_for_time_dim(col, viz_data, temporal_freq))
             continue
         if indicator_labels and col in indicator_labels:
             tip = {
@@ -1227,6 +1256,7 @@ def build_temporal_single_spec(
             indicator_labels,
             value_format=tt_fmt,
             viz_data=df,
+            temporal_freq=result.temporal_frequency,
         ),
     }
     if result.color_dim:
@@ -1672,6 +1702,7 @@ def _build_scale_split_vconcat(
                     indicator_labels={**lab, "value": bd_label},
                     value_format=tt_fmt,
                     viz_data=bd_data,
+                    temporal_freq=result.temporal_frequency,
                 ),
             }
 
@@ -1715,10 +1746,15 @@ def _build_scale_split_vconcat(
 
             group_labels = [lab.get(v, v) for v in group]
 
-            # Panel title: list member labels, truncate if too long.
-            _MAX_TITLE = 80
+            # Panel title: wrap into multi-line list so Vega-Lite renders it
+            # on multiple lines instead of truncating a single long string.
+            import textwrap as _textwrap
             joined = ", ".join(group_labels)
-            panel_title = joined if len(joined) <= _MAX_TITLE else joined[:_MAX_TITLE - 1] + "\u2026"
+            wrapped = _textwrap.wrap(joined, width=80)
+            if len(wrapped) > 2:
+                wrapped = wrapped[:2]
+                wrapped[-1] = wrapped[-1].rstrip(",") + "\u2026"
+            panel_title: str | list[str] = wrapped if len(wrapped) > 1 else (wrapped[0] if wrapped else joined)
 
             # Tooltip format based on the group's aggregate max absolute value.
             group_data = df[df[facet_dim].isin(group)]
@@ -1774,6 +1810,7 @@ def _build_scale_split_vconcat(
                         indicator_labels=lab,
                         value_format=tt_fmt,
                         viz_data=group_data,
+                        temporal_freq=result.temporal_frequency,
                     ),
                 },
             })
@@ -1783,7 +1820,7 @@ def _build_scale_split_vconcat(
         "title": annotated_title,
         "data": {"values": rows},
         "vconcat": charts,
-        "resolve": {"scale": {"x": "shared"}},
+        "resolve": {"scale": {"x": "shared", "color": "independent"}},
     }
     return inject_wb_config(spec)
 
@@ -1871,6 +1908,7 @@ def build_small_multiples_spec(
                 indicator_labels,
                 value_format=tt_fmt,
                 viz_data=df,
+                temporal_freq=result.temporal_frequency,
             ),
         },
     }
@@ -2227,7 +2265,8 @@ def build_temporal_multi_indicator_spec(
             },
             "color": {"value": color},
             "tooltip": build_structured_tooltips(
-                tooltip_cols, "line", lab, value_format=tt_fmt, viz_data=df
+                tooltip_cols, "line", lab, value_format=tt_fmt, viz_data=df,
+                temporal_freq=result.temporal_frequency,
             ),
         }
         charts.append(
@@ -2304,6 +2343,7 @@ def build_fallback_line_spec(
             indicator_labels,
             value_format=tt_fmt,
             viz_data=df,
+            temporal_freq=result.temporal_frequency,
         ),
     }
     if result.color_dim and result.color_dim in cols:
