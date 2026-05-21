@@ -213,18 +213,23 @@ class TestSelectStrategyScaleIncompatibleRouting:
         )
         assert result.scale_incompatible is False
 
-    def test_wgi_multi_country_uses_country_facet_unchanged(self):
-        """WGI + 2 countries → existing SMALL_MULTIPLES with facet=country (flag stays False)."""
+    def test_wgi_multi_country_routes_to_scale_split(self):
+        """WGI + 2 countries + scale-incompatible breakdown → vconcat with facet=breakdown,
+        color=country. Previously routed to SMALL_MULTIPLES facet=country (bug: incompatible
+        series shared one Y-axis, governance estimate ±2.5 crushed against 0-100 scale)."""
         df_k = _make_df(WGI_SERIES, country="Kenya")
         df_g = _make_df(WGI_SERIES, country="Ghana")
         df = pd.concat([df_k, df_g], ignore_index=True)
         result = select_strategy(df, n_indicators=1)
         assert result.strategy == ChartStrategy.SMALL_MULTIPLES
-        assert result.facet_dim == "country", (
-            "Multi-country WGI should facet by country, not by breakdown."
+        assert result.scale_incompatible is True, (
+            "Multi-country WGI with scale-incompatible breakdown must set scale_incompatible."
         )
-        assert result.scale_incompatible is False, (
-            "Multi-country branch does not set scale_incompatible."
+        assert result.facet_dim == "comp_breakdown_1", (
+            "Facet must be the breakdown dim so each panel has a compatible Y-axis."
+        )
+        assert result.color_dim == "country", (
+            "Color must be country so Georgia vs UK are distinguishable lines within each panel."
         )
 
     def test_same_magnitude_custom_breakdown_stays_temporal_single(self):

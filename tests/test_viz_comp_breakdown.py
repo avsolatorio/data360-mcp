@@ -196,17 +196,19 @@ def test_strategy_no_false_positive_for_trivial_comp_breakdown():
 
 
 def test_tooltip_specs_include_comp_breakdown_1():
-    """_TOOLTIP_SPECS must have an entry for comp_breakdown_1."""
+    """_TOOLTIP_SPECS must have an entry for comp_breakdown_1 with a neutral fallback label."""
     assert "comp_breakdown_1" in _TOOLTIP_SPECS
     assert _TOOLTIP_SPECS["comp_breakdown_1"]["type"] == "nominal"
-    assert _TOOLTIP_SPECS["comp_breakdown_1"]["title"] == "Breakdown"
+    # Default is a generic fallback; the API-sourced label overrides this at render time.
+    assert _TOOLTIP_SPECS["comp_breakdown_1"]["title"] == "Dimension 1"
 
 
 def test_tooltip_specs_include_comp_breakdown_2():
-    """_TOOLTIP_SPECS must have an entry for comp_breakdown_2."""
+    """_TOOLTIP_SPECS must have an entry for comp_breakdown_2 with a neutral fallback label."""
     assert "comp_breakdown_2" in _TOOLTIP_SPECS
     assert _TOOLTIP_SPECS["comp_breakdown_2"]["type"] == "nominal"
-    assert _TOOLTIP_SPECS["comp_breakdown_2"]["title"] == "Sub-Breakdown"
+    # Default is a generic fallback; the API-sourced label overrides this at render time.
+    assert _TOOLTIP_SPECS["comp_breakdown_2"]["title"] == "Dimension 2"
 
 
 def test_tooltip_priority_includes_comp_breakdown():
@@ -263,7 +265,7 @@ def test_breakdown_comparison_spec_uses_temporal_year_encoding():
 
 
 def test_breakdown_comparison_spec_uses_friendly_legend_title():
-    """Legend title must use the friendly label from _TOOLTIP_SPECS, not field.title()."""
+    """Legend title must use the label from _TOOLTIP_SPECS (or API override), not field.title()."""
     from data360.viz_config import ChartStrategy, StrategyResult, build_breakdown_comparison_spec
 
     WGI_BREAKDOWNS = ["WGI_EST", "WGI_SC"]
@@ -277,7 +279,8 @@ def test_breakdown_comparison_spec_uses_friendly_legend_title():
     spec = build_breakdown_comparison_spec(df, "Test Title", result)
 
     legend_title = spec["encoding"]["color"]["legend"]["title"]
-    assert legend_title == "Breakdown", (
-        f"Legend title should be 'Breakdown' from _TOOLTIP_SPECS, got '{legend_title}'. "
+    # Without an API-sourced override, the default fallback from _TOOLTIP_SPECS is used.
+    assert legend_title == "Dimension 1", (
+        f"Legend title should be 'Dimension 1' from _TOOLTIP_SPECS fallback, got '{legend_title}'. "
         "The old code used color_dim.title() which produced 'Comp_Breakdown_1'."
     )

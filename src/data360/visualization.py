@@ -64,6 +64,7 @@ _VIZ_DISAGG_DIMS: tuple[str, ...] = (
     "urbanisation",
     "comp_breakdown_1",
     "comp_breakdown_2",
+    "comp_breakdown_3",
     "unit_measure",
 )
 
@@ -531,6 +532,119 @@ def _clean_single_df(
     return viz_data, relevant_cols, temporal_frequency
 
 
+# Inverse rename map: viz_data friendly column names → raw API column names.
+# Used by _resolve_hidden_dimension to identify which raw columns are already
+# represented in the cleaned DataFrame.
+_VIZ_TO_RAW_NAMES: dict[str, str] = {
+    "year": "time_period",
+    "value": "obs_value",
+    "country": "ref_area",
+}
+
+
+def _resolve_hidden_dimension(
+    viz_data: pd.DataFrame,
+    raw_data: pd.DataFrame,
+    max_cardinality: int = 8,
+) -> tuple[pd.DataFrame, str | None]:
+    """Detect and resolve duplicate (key → value) rows in viz_data.
+
+    After ``_clean_single_df``, columns present in the raw API data that lie
+    outside ``_VIZ_DISAGG_DIMS`` are silently dropped.  When such a column has
+    ``n_unique > 1`` it creates rows that share the same visualization key
+    (year × country × breakdowns) but carry different values, producing a
+    sawtooth / zigzag pattern in line and bar charts.
+
+    Resolution strategy
+    -------------------
+    1. **Surface**: if a hidden dimension is found with cardinality
+       ≤ *max_cardinality*, add it to ``viz_data`` under the first unused
+       ``comp_breakdown_N`` slot (N ∈ {1, 2, 3}) so that ``select_strategy``
+       naturally routes it as a chart breakdown dimension.
+    2. **Aggregate**: if no suitable hidden dimension exists, collapse
+       duplicate rows to their row-wise mean and return a warning string that
+       the caller appends to the chart subtitle.
+
+    Parameters
+    ----------
+    viz_data :
+        DataFrame produced by ``_clean_single_df`` (columns: year, value,
+        country, and any breakdown dims already surfaced).
+    raw_data :
+        Original API response DataFrame — all columns present before cleaning.
+    max_cardinality :
+        Maximum number of unique values a hidden dimension may have to be
+        surfaced as a chart series.  Higher-cardinality dims are aggregated.
+
+    Returns
+    -------
+    (resolved_df, warning_message_or_None)
+        *warning_message* is ``None`` when no duplicates were found.
+    """
+    key_cols = [c for c in viz_data.columns if c != "value"]
+
+    # Fast path: no duplicates — nothing to resolve.
+    if not viz_data.duplicated(subset=key_cols).any():
+        return viz_data, None
+
+    # Build the set of raw column names already represented in viz_data so we
+    # can find truly hidden columns (present in raw_data but absent in viz_data).
+    raw_names_in_viz: set[str] = {_VIZ_TO_RAW_NAMES.get(c, c) for c in viz_data.columns}
+
+    # Candidate hidden dimensions: in raw_data, not in viz_data, 1 < n_unique ≤ max_cardinality.
+    candidates: list[tuple[str, int]] = []
+    for col in raw_data.columns:
+        if col in raw_names_in_viz:
+            continue
+        try:
+            n_u = raw_data.loc[viz_data.index, col].dropna().nunique()
+        except (KeyError, IndexError):
+            continue
+        if 1 < n_u <= max_cardinality:
+            candidates.append((col, n_u))
+
+    # Prefer the dimension with the smallest cardinality (fewer panels / series).
+    candidates.sort(key=lambda x: x[1])
+
+    if candidates:
+        hidden_col, hidden_n = candidates[0]
+        # Assign to the first comp_breakdown_N slot not already used in viz_data.
+        target_slot: str | None = None
+        for slot in ("comp_breakdown_1", "comp_breakdown_2", "comp_breakdown_3"):
+            if slot not in viz_data.columns:
+                target_slot = slot
+                break
+
+        if target_slot is not None:
+            viz_data = viz_data.copy()
+            viz_data[target_slot] = raw_data.loc[viz_data.index, hidden_col].values
+            _logger.info(
+                "Hidden dimension '%s' (%d values) surfaced as '%s'.",
+                hidden_col,
+                hidden_n,
+                target_slot,
+            )
+            return viz_data, (
+                f"Additional dimension '{hidden_col}' ({hidden_n} values) "
+                f"detected in the source data and surfaced as a chart series."
+            )
+
+    # Fallback: aggregate duplicate rows to their mean value.
+    n_before = len(viz_data)
+    viz_data = viz_data.groupby(key_cols, sort=False)["value"].mean().reset_index()
+    n_collapsed = n_before - len(viz_data)
+    dim_hint = f" (hidden dimension: '{candidates[0][0]}'" if candidates else ""
+    _logger.warning(
+        "Collapsed %d duplicate rows to row-wise mean%s.",
+        n_collapsed,
+        (f" — hidden dim '{candidates[0][0]}' had too many values" if candidates else ""),
+    )
+    return viz_data, (
+        f"Note: {n_collapsed} duplicate data rows were averaged"
+        + (f" over hidden dimension '{candidates[0][0]}'." if candidates else ".")
+    )
+
+
 async def _map_country_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
     """Map REF_AREA / country codes to human-readable names."""
     col = "country" if "country" in viz_data.columns else None
@@ -585,6 +699,62 @@ async def _map_dimension_codes(viz_data: pd.DataFrame) -> pd.DataFrame:
     except Exception as exc:
         _logger.warning("Could not auto-resolve dimension codes: %s", exc)
     return viz_data
+
+
+def _find_common_prefix(strings: list[str]) -> str:
+    """Return the longest string that is a prefix of every element in *strings*."""
+    if not strings:
+        return ""
+    prefix = strings[0]
+    for s in strings[1:]:
+        while not s.startswith(prefix):
+            prefix = prefix[:-1]
+            if not prefix:
+                return ""
+    return prefix
+
+
+def _strip_common_prefix_in_dims(
+    df: pd.DataFrame,
+    dim_cols: list[str],
+    min_prefix_len: int = 15,
+) -> pd.DataFrame:
+    """Strip a long shared prefix from each comp_breakdown_* column.
+
+    When all values in a column share a long common prefix (e.g.
+    ``"Severity Phase of Acute Food Insecurity or Malnutrition : "``), the
+    prefix carries no information and Vega-Lite labels become indistinguishable
+    after truncation.  This function strips the prefix in-place and leaves only
+    the unique suffix (e.g. ``"Phase 1 - Minimal"``).
+
+    The ``series_labels`` override runs *after* this step, so the LLM can
+    further customise labels for heterogeneous cases (e.g. WGI breakdowns).
+
+    *min_prefix_len* guards against spurious stripping when a short coincidental
+    prefix exists (default 15 chars).
+    """
+    for col in dim_cols:
+        if col not in df.columns:
+            continue
+        unique_vals = [v for v in df[col].dropna().unique() if isinstance(v, str)]
+        if len(unique_vals) < 2:
+            continue
+        prefix = _find_common_prefix(unique_vals)
+        if len(prefix) < min_prefix_len:
+            continue
+        # Strip trailing separator characters so suffixes start cleanly.
+        stripped_prefix = prefix.rstrip(": -_/\\ ")
+        if not stripped_prefix:
+            continue
+        sep_len = len(prefix) - len(stripped_prefix)
+        cut = len(stripped_prefix) + sep_len  # includes trailing separator(s)
+        mapping = {v: v[cut:].lstrip(": -_/\\ ") for v in unique_vals}
+        df = df.copy()
+        df[col] = df[col].map(lambda x, m=mapping: m.get(x, x) if isinstance(x, str) else x)
+        _logger.debug(
+            "Stripped common prefix %r from column %r (%d values)", stripped_prefix, col, len(unique_vals)
+        )
+    return df
 
 
 def _slugify(name: str) -> str:
@@ -726,12 +896,31 @@ async def get_viz_spec(
 
       WRONG — do not pre-filter to reduce chart complexity:
         disaggregation_filters={"COMP_BREAKDOWN_1": "WGI_EST"}  # silently drops other series
-        disaggregation_filters={"SEX": "_T"}                    # unless user said "totals only"
+        disaggregation_filters={"SEX": "_T"}
 
     When a dimension has multiple meaningful values and the user has not requested a
     specific one, OMIT it from disaggregation_filters entirely. The pipeline will:
       - detect non-trivial values (anything other than "_T" or "_Z")
       - choose the correct Vega-Lite channel based on data shape (see chart strategy table)
+
+    ### UNIT_MEASURE must never be pre-filtered
+
+    UNIT_MEASURE is a first-class dimension. When an indicator has multiple units
+    (e.g. Persons + Percentage, or USD + % of GDP), the pipeline automatically
+    produces a separate panel for each unit with independent Y-axes. Pre-filtering
+    to one unit (e.g. UNIT_MEASURE="PERSONS") silently discards the other unit and
+    produces a misleading single-unit chart.
+
+      WRONG — do not pick a "preferred" unit:
+        disaggregation_filters={"UNIT_MEASURE": "PERSONS"}   # drops Percentage panel
+        disaggregation_filters={"UNIT_MEASURE": "PT"}        # drops Persons panel
+
+      CORRECT — omit UNIT_MEASURE entirely:
+        disaggregation_filters={}   # pipeline creates one panel per unit automatically
+
+    Only pin UNIT_MEASURE when the USER explicitly says "show me only percentages" or
+    "I only want the persons count". In that case, pass the exact code from the
+    disaggregation response (e.g. "PERSONS", "PT", "USD").
 
     ### Chart strategy → Vega-Lite encoding table
 
@@ -838,11 +1027,25 @@ async def get_viz_spec(
         custom_constraints: Deprecated legacy field; ignored by strategy-based specs.
         use_default_constraints: If True (default), apply standard encoding heuristics.
         chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Male vs. Female Unemployment'). Do not leave this blank.
-        series_labels: Optional. A dictionary mapping raw dimension codes to short,
-            human-readable labels (e.g., {"WGI_EST": "Estimate", "WGI_SC": "Score"}).
-            The pipeline auto-resolves COMP_BREAKDOWN, SEX, AGE, URBANISATION, and
-            UNIT_MEASURE codes from the extdataportal codelist, so series_labels is
-            only needed to shorten or override the auto-resolved labels.
+        series_labels: Optional. A dictionary mapping raw dimension codes or
+            auto-resolved labels to short, human-readable names for legends and
+            panel titles (e.g., {"WGI_EST": "Estimate", "WGI_SC": "Score"}).
+
+            The pipeline already handles two cases automatically:
+            - Code → label resolution: COMP_BREAKDOWN, SEX, AGE, URBANISATION,
+              UNIT_MEASURE codes are resolved to full labels via the extdataportal
+              codelist (e.g. "IPC_IPC_PHASE1" → full phase name).
+            - Common-prefix stripping: when all values in a dimension share a
+              long common prefix, the prefix is stripped automatically, leaving
+              only the unique suffix (e.g. all IPC phase labels share
+              "Severity Phase of Acute Food Insecurity or Malnutrition : " —
+              it is stripped so the legend shows "Phase 1 - Minimal" etc.).
+
+            Use series_labels only when the auto-resolved labels are still too
+            long or unclear after prefix stripping — typically for heterogeneous
+            dimensions like WGI breakdowns where each label describes a
+            structurally different metric (e.g. "Standard error of the governance
+            estimate" → "Std Error", "Governance score (0-100)" → "Score").
 
     Returns:
         Dict with the following fields:
@@ -1014,6 +1217,19 @@ async def get_viz_spec(
     except Exception as e:
         _logger.warning(f"Could not fetch metadata for title: {e}")
 
+    # Prefer the unit code from the actual data column over the metadata freeform string.
+    # Metadata APIs often return display labels (e.g. "Unit") rather than codelist codes
+    # (e.g. "PS" for Persons). The SDMX data column is authoritative.
+    _TRIVIAL_UNIT_CODES = {"", "_T", "_Z", "U"}  # Unitless / catch-all / not meaningful
+    if "unit_measure" in data.columns:
+        _data_units = data["unit_measure"].dropna().unique().tolist()
+        if len(_data_units) == 1 and _data_units[0] not in _TRIVIAL_UNIT_CODES:
+            raw_unit = _data_units[0]  # e.g. "PS" → will resolve to "Persons"
+        elif len(_data_units) > 1:
+            # Multi-unit datasets: keep the metadata value; _clean_single_df will
+            # retain unit_measure as a dimension and the chart will facet on it.
+            pass
+
     try:
         db_map = await get_database_mapping()
     except Exception as e:
@@ -1044,6 +1260,11 @@ async def get_viz_spec(
     if viz_data.empty:
         return _err("Error: No data available for visualization after cleaning.")
 
+    # 5.1 Detect and resolve hidden dimensions that create duplicate (key → value)
+    # rows after cleaning.  Surface as the next unused comp_breakdown_N slot when
+    # cardinality is small, or collapse to mean with a subtitle warning.
+    viz_data, _hidden_dim_warning = _resolve_hidden_dimension(viz_data, data)
+
     # 6. Map country codes
     viz_data = await _map_country_codes(viz_data)
 
@@ -1051,13 +1272,28 @@ async def get_viz_spec(
     # (COMP_BREAKDOWN_1/2/3, SEX, AGE, URBANISATION → human-readable labels).
     viz_data = await _map_dimension_codes(viz_data)
 
+    # 6.1b Strip long shared prefixes from comp_breakdown_* columns so Vega-Lite
+    # legend/panel labels are unique and readable without truncation.
+    # e.g. "Severity Phase of Acute Food Insecurity or Malnutrition : Phase 1 - Minimal"
+    # → "Phase 1 - Minimal".  The series_labels override below still takes priority.
+    _CB_DIMS = [c for c in ["comp_breakdown_1", "comp_breakdown_2", "comp_breakdown_3"] if c in viz_data.columns]
+    viz_data = _strip_common_prefix_in_dims(viz_data, _CB_DIMS)
+
     # 6.2 Resolve raw_unit code to human-readable label for axis/subtitle.
+    # get_label returns the raw input unchanged when the code is not found in the
+    # extdataportal mapping. We check: if the resolved label equals the raw code,
+    # no mapping exists and we suppress the label (show nothing rather than a raw
+    # code like "PS" or a freeform metadata string like "Unit").
+    raw_unit_label: str = ""
     try:
         from data360.providers import get_codelist_manager
         _cl_mgr = get_codelist_manager()
-        raw_unit_label: str = _cl_mgr.get_label("UNIT_MEASURE", raw_unit) if raw_unit else raw_unit
+        if raw_unit:
+            _resolved = _cl_mgr.get_label("UNIT_MEASURE", raw_unit)
+            # Only use the resolved label if get_label actually found a mapping.
+            raw_unit_label = _resolved if _resolved != raw_unit else ""
     except Exception:
-        raw_unit_label = raw_unit
+        pass  # No label; y-axis will have no title rather than a raw code
 
     # 6.5 Apply custom series labels (override auto-resolved labels).
     # series_labels is now optional — the pipeline auto-resolves the dimensions above.
@@ -1081,6 +1317,13 @@ async def get_viz_spec(
         final_title, raw_unit_label or None, viz_data
     )
 
+    # Append hidden-dimension warning to the subtitle so the user sees it.
+    if _hidden_dim_warning and isinstance(chart_title_vl, dict):
+        _sub = chart_title_vl.get("subtitle", [])
+        if isinstance(_sub, str):
+            _sub = [_sub]
+        chart_title_vl["subtitle"] = list(_sub) + [_hidden_dim_warning]
+
     # 7. Determine strategy
     n_indicators = 1
     strategy_result = viz_config.select_strategy(
@@ -1090,6 +1333,16 @@ async def get_viz_spec(
     )
     # Thread detected temporal frequency through to spec builders.
     strategy_result.temporal_frequency = temporal_frequency
+
+    # 7.1 Fetch human-readable dimension names for comp_breakdown_* from the
+    # disaggregation API (cached — no extra HTTP call if already fetched above).
+    try:
+        from data360.api import get_comp_breakdown_dim_names
+        strategy_result.dim_name_labels = await get_comp_breakdown_dim_names(
+            database_id, indicator_id
+        )
+    except Exception as _exc:
+        _logger.debug("Could not fetch comp_breakdown dim names: %s", _exc)
 
     _logger.info(
         f"Chart strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
@@ -1185,6 +1438,11 @@ async def get_multi_indicator_viz_spec(
     specific one, OMIT it from disaggregation_filters. The pipeline will detect
     non-trivial values (anything other than "_T" or "_Z") and choose the correct
     Vega-Lite channel for them.
+
+    UNIT_MEASURE must never be pre-filtered. When an indicator has multiple units
+    (e.g. Persons + Percentage), omit UNIT_MEASURE from disaggregation_filters and
+    the pipeline will create one panel per unit automatically. Only pin UNIT_MEASURE
+    when the user explicitly requests a specific unit.
 
     ### Chart strategy → Vega-Lite encoding table
 

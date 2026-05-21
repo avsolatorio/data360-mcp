@@ -151,13 +151,24 @@ class TestSelectStrategyUnitMeasure:
         assert result.facet_dim == "unit_measure"
         assert result.scale_incompatible is True
 
-    def test_multi_unit_multi_country_facets_by_country(self):
-        """With multiple countries + unit_measure, facet_dim should be 'country'."""
+    def test_multi_unit_multi_country_always_facets_by_unit_measure(self):
+        """With multiple countries + unit_measure, facet_dim should ALWAYS be 'unit_measure'.
+
+        Country goes into secondary_color_dim so the spec builder can create
+        combo shade families (breakdown × country) within each unit panel.
+        Mixing Persons and Percentage on one Y-axis is never correct regardless
+        of country count.
+        """
         df = self._make_viz_df(unit_values=["Persons", "Percentage"], n_countries=3)
         result = viz_config.select_strategy(df, n_indicators=1)
 
         assert result.strategy == viz_config.ChartStrategy.SMALL_MULTIPLES
-        assert result.facet_dim == "country"
+        assert result.facet_dim == "unit_measure", (
+            "facet_dim must be unit_measure, not country, to keep units on separate Y-axes"
+        )
+        assert result.secondary_color_dim == "country", (
+            "secondary_color_dim should carry country for combo encoding"
+        )
 
     def test_single_unit_does_not_affect_strategy(self):
         """unit_measure with a single value is not in breakdown_counts → normal routing."""

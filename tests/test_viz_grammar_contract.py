@@ -263,18 +263,29 @@ class TestHomogeneousBreakdownDetection:
         assert "Series:" in note, "Note must still list the series names."
 
     def test_wgi_subtitle_has_mixed_unit_warning(self):
-        """WGI subtitle must include 'different units/scales' warning."""
-        wgi_bds = ["WGI_EST", "WGI_SC", "WGI_SE", "WGI_SR"]
+        """WGI subtitle must include 'different units/scales' warning.
+
+        Uses realistic values: governance estimates (WGI_EST/SE/SR ≈ ±0.6)
+        vs percentile score (WGI_SC ≈ 65). The ~100× magnitude gap triggers
+        _detect_scale_incompatibility (log10 spread ≈ 2.0 > threshold 1.5).
+        """
+        wgi_values = {
+            "WGI_EST": 0.6,   # governance estimate ≈ ±2.5 range
+            "WGI_SC": 65.0,   # percentile score ≈ 0–100 range
+            "WGI_SE": 0.5,    # standard error
+            "WGI_SR": 0.7,    # strength of rule of law
+        }
         rows = [
-            {"year": pd.Timestamp("2022"), "value": 0.5, "country": "Kenya",
-             "comp_breakdown_1": b}
-            for b in wgi_bds
+            {"year": pd.Timestamp("2022"), "value": val, "country": "Kenya",
+             "comp_breakdown_1": bd}
+            for bd, val in wgi_values.items()
         ]
         df = pd.DataFrame(rows)
         note = _format_breakdown_subtitle(df, "comp_breakdown_1")
         assert note is not None
         assert "different units/scales" in note, (
-            "WGI breakdowns must show the mixed-unit warning."
+            "WGI breakdowns must show the mixed-unit warning — "
+            "governance estimate (≈0.6) and percentile score (≈65) differ by ~100×."
         )
 
     def test_standard_dim_returns_none(self):
@@ -367,8 +378,9 @@ class TestColorEncodingLegendTitle:
         enc = _color_encoding("comp_breakdown_2", mark_type="line", n_items=3)
         legend = enc.get("legend", {})
         assert legend is not None, "Legend should be present for n_items > 1."
-        assert legend.get("title") == "Sub-Breakdown", (
-            f"Legend title for comp_breakdown_2 should be 'Sub-Breakdown', "
+        # Default is the neutral "Dimension 2" fallback (no API-sourced override).
+        assert legend.get("title") == "Dimension 2", (
+            f"Legend title for comp_breakdown_2 should be 'Dimension 2' (fallback), "
             f"got {legend.get('title')!r}."
         )
 
@@ -376,8 +388,9 @@ class TestColorEncodingLegendTitle:
         from data360.viz_config import _color_encoding
         enc = _color_encoding("comp_breakdown_1", mark_type="line", n_items=6)
         legend = enc.get("legend", {})
-        assert legend.get("title") == "Breakdown", (
-            f"Legend title for comp_breakdown_1 should be 'Breakdown', "
+        # Default is the neutral "Dimension 1" fallback (no API-sourced override).
+        assert legend.get("title") == "Dimension 1", (
+            f"Legend title for comp_breakdown_1 should be 'Dimension 1' (fallback), "
             f"got {legend.get('title')!r}."
         )
 

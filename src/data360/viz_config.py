@@ -187,8 +187,9 @@ _TOOLTIP_SPECS: dict[str, dict] = {
     "sex": {"title": "Sex", "type": "nominal"},
     "age": {"title": "Age Group", "type": "nominal"},
     "urbanisation": {"title": "Urbanisation", "type": "nominal"},
-    "comp_breakdown_1": {"title": "Breakdown", "type": "nominal"},
-    "comp_breakdown_2": {"title": "Sub-Breakdown", "type": "nominal"},
+    "comp_breakdown_1": {"title": "Dimension 1", "type": "nominal"},
+    "comp_breakdown_2": {"title": "Dimension 2", "type": "nominal"},
+    "comp_breakdown_3": {"title": "Dimension 3", "type": "nominal"},
     "time_period": {"title": "Period", "type": "temporal"},
     "obs_value": {"title": "Value", "format": ",.2f", "type": "quantitative"},
     "ref_area": {"title": "Country", "type": "nominal"},
@@ -282,7 +283,94 @@ def build_chart_title_with_context(
 
 
 # Dimension codes that are custom breakdowns (not standard demographic dims).
-_CUSTOM_BREAKDOWN_DIMS = {"comp_breakdown_1", "comp_breakdown_2"}
+_CUSTOM_BREAKDOWN_DIMS = {"comp_breakdown_1", "comp_breakdown_2", "comp_breakdown_3"}
+
+
+def _generate_color_shades(hex_color: str, n: int) -> list[str]:
+    """Return n shades of hex_color spread from dark to light (HSL lightness).
+
+    n=1 → returns the base color unchanged.
+    n=2 → [dark, base] (darker shade + original).
+    n=3 → [dark, base, light].
+    n>3 → evenly distributed from 0.28 L to 0.75 L.
+    """
+    import colorsys
+    if n <= 0:
+        return []
+    if n == 1:
+        return [hex_color]
+    h_str = hex_color.lstrip("#")
+    r, g, b = (int(h_str[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
+    h, _l, s = colorsys.rgb_to_hls(r, g, b)
+    shades: list[str] = []
+    for i in range(n):
+        factor = i / (n - 1)
+        new_l = 0.28 + factor * 0.47  # 0.28 (dark) → 0.75 (light)
+        nr, ng, nb = colorsys.hls_to_rgb(h, new_l, min(s, 0.90))
+        shades.append(f"#{int(nr * 255):02x}{int(ng * 255):02x}{int(nb * 255):02x}")
+    return shades
+
+
+def _compute_legend_layout(labels: list[str], chart_width: int = 680) -> dict:
+    """Compute Vega-Lite legend config (orient/direction/columns/labelLimit) from data.
+
+    Uses the number of items, their rendered pixel width, and the chart width to
+    determine whether the legend fits in one horizontal row, needs multiple rows
+    (grid), or must fall back to a vertical list.
+
+    Approximate rendered width per item at 11 px font:
+      6.5 px/char × label_length  +  symbol (20 px)  +  padding (16 px)
+    """
+    import math
+    n = len(labels)
+    if n == 0:
+        return {"orient": "bottom", "labelFontSize": 11, "symbolSize": 80}
+    max_lbl = max(len(l) for l in labels)
+    item_px = int(max_lbl * 6.5 + 36)  # estimated rendered width per item
+    items_per_row = max(1, chart_width // item_px)
+
+    base = {"labelFontSize": 11, "symbolSize": 80}
+
+    if n <= items_per_row:
+        # Everything fits in one row → horizontal, single row
+        return {**base, "orient": "bottom", "direction": "horizontal",
+                "labelLimit": max(150, item_px - 36)}
+
+    if items_per_row >= 2:
+        # Multi-row grid — aim for ≤3 rows to keep legend compact
+        cols = min(items_per_row, max(2, math.ceil(n / 3)))
+        return {**base, "orient": "bottom", "direction": "horizontal",
+                "columns": cols, "labelLimit": max(150, item_px - 36)}
+
+    # Labels too long for horizontal → vertical list
+    return {**base, "orient": "bottom", "direction": "vertical", "labelLimit": 0}
+
+
+def _estimate_legend_height(
+    n_items: int,
+    layout: dict,
+    has_title: bool = True,
+) -> int:
+    """Estimate legend pixel height from the layout dict returned by _compute_legend_layout.
+
+    Used to shrink panel heights so the total figure height stays within budget.
+    """
+    import math
+    direction = layout.get("direction", "vertical")
+    columns = layout.get("columns", 0)
+    row_px = 22   # height per legend row (symbol + label + vertical gap)
+    title_px = 20 if has_title else 0
+    padding = 16  # top + bottom padding inside the legend box
+
+    if direction == "horizontal" and columns:
+        rows = math.ceil(n_items / columns)
+    elif direction == "horizontal":
+        rows = 1
+    else:
+        rows = n_items
+
+    return title_px + rows * row_px + padding
+
 
 
 def _is_homogeneous_breakdown(vals: list[str]) -> bool:
@@ -363,8 +451,10 @@ def _format_breakdown_subtitle(df: pd.DataFrame, color_dim: str | None) -> str |
     Returns None when:
     - color_dim is a standard dimension (country, sex, age, …)
     - there is only one unique breakdown value
-    - the breakdowns are homogeneous (ordinal categories of the same metric,
-      e.g. IPC Phase 1–5 are all person counts — no mixed-unit warning needed)
+    - series share a compatible scale (log10 magnitude spread ≤ 1.5) — the
+      unit warning is suppressed because _detect_scale_incompatibility returns
+      False.  This correctly handles summary-measure breakdowns such as
+      "Arithmetic mean" vs "Median" which share the same currency unit.
     """
     if color_dim not in _CUSTOM_BREAKDOWN_DIMS:
         return None
@@ -373,11 +463,13 @@ def _format_breakdown_subtitle(df: pd.DataFrame, color_dim: str | None) -> str |
     vals = sorted(str(v) for v in df[color_dim].dropna().unique())
     if len(vals) <= 1:
         return None
-    if _is_homogeneous_breakdown(vals):
-        # Ordinal categories of one metric — list series but omit the mixed-unit warning.
-        return f"Series: {', '.join(vals)}"
     series_list = ", ".join(vals)
-    return f"Series: {series_list} — series may have different units/scales"
+    # Use the quantitative check (log10 magnitude spread) instead of the
+    # trailing-digit string heuristic. This avoids false positives for
+    # human-readable labels that happen not to end in a digit.
+    if _detect_scale_incompatibility(df, color_dim):
+        return f"Series: {series_list} — series may have different units/scales"
+    return f"Series: {series_list}"
 
 
 def _append_breakdown_note(
@@ -469,6 +561,10 @@ def _append_trim_note(
         _TOOLTIP_SPECS.get(dim_label, {}).get("title")
         or dim_label.replace("_", " ")
     ).strip().lower()
+    # comp_breakdown_* fields use generic "Dimension N" labels in _TOOLTIP_SPECS;
+    # for trim notes, the user-facing term should be "breakdown" instead.
+    if dim_label.startswith("comp_breakdown_"):
+        dim_title = "breakdown"
     # Simple English pluralization for subtitle notes.
     if dim_title.endswith("y") and len(dim_title) > 2 and dim_title[-2] not in _VOWELS:
         dim_plural = f"{dim_title[:-1]}ies"
@@ -565,6 +661,7 @@ def build_structured_tooltips(
     value_format: str = ",.2f",
     viz_data: pd.DataFrame | None = None,
     temporal_freq: "TemporalFreq | None" = None,
+    dim_name_labels: dict[str, str] | None = None,
 ) -> list[dict]:
     """Build typed, labelled tooltip list for a Vega-Lite encoding.
 
@@ -576,6 +673,9 @@ def build_structured_tooltips(
     temporal_freq: explicit temporal frequency; overrides auto-detection from
         viz_data. Pass ``result.temporal_frequency`` from temporal chart builders
         so the tooltip date format matches the X-axis format exactly.
+    dim_name_labels: optional {col_name: human_label} for comp_breakdown_* columns
+        sourced from the disaggregation API. Overrides the generic "Dimension N"
+        fallback in ``_TOOLTIP_SPECS`` for those fields.
     """
     ordered = [c for c in _TOOLTIP_PRIORITY if c in columns]
     ordered += [c for c in columns if c not in _TOOLTIP_PRIORITY]
@@ -594,7 +694,14 @@ def build_structured_tooltips(
             }
         elif col in _TOOLTIP_SPECS:
             spec = _TOOLTIP_SPECS[col]
-            tip = {"field": col, "title": spec["title"], "type": spec["type"]}
+            # Use the API-sourced dimension name when available, otherwise the
+            # generic "Dimension N" fallback from _TOOLTIP_SPECS.
+            title = (
+                dim_name_labels.get(col)
+                if (dim_name_labels and col in dim_name_labels)
+                else spec["title"]
+            )
+            tip = {"field": col, "title": title, "type": spec["type"]}
             if "format" in spec:
                 # Use value_format for quantitative value fields
                 if col in ("value", "obs_value"):
@@ -660,10 +767,21 @@ class StrategyResult:
     )  # value columns for multi-indicator
     color_dim: str | None = None
     facet_dim: str | None = None
+    # Secondary color dimension for 3-way combo encoding:
+    # When both color_dim and secondary_color_dim are set, the spec builder
+    # creates a combo color field = color_dim_value + ' / ' + secondary_color_dim_value
+    # using shade families (e.g. IPC phases × countries: 5 shades per country).
+    secondary_color_dim: str | None = None
     x_dim: str | None = None
     y_dim: str | None = None
     scale_incompatible: bool = False  # breakdown series need independent Y-axes
     temporal_frequency: TemporalFreq = "annual"  # detected from time_period values
+    # Human-readable names for comp_breakdown_* columns sourced from the
+    # disaggregation API label_name field; used for legend/tooltip titles.
+    dim_name_labels: dict[str, str] = field(default_factory=dict)
+    # Carries the user's mark preference ("bar", "line", etc.) from select_strategy
+    # to the spec builder, so builders can switch mark type without re-routing.
+    mark_hint: str | None = None
 
 
 def select_strategy(
@@ -691,6 +809,7 @@ def select_strategy(
     urban_count = df["urbanisation"].nunique() if "urbanisation" in cols else 0
     cb1_count = df["comp_breakdown_1"].nunique() if "comp_breakdown_1" in cols else 0
     cb2_count = df["comp_breakdown_2"].nunique() if "comp_breakdown_2" in cols else 0
+    cb3_count = df["comp_breakdown_3"].nunique() if "comp_breakdown_3" in cols else 0
     unit_count = df["unit_measure"].nunique() if "unit_measure" in cols else 0
 
     breakdown_counts = {
@@ -701,6 +820,7 @@ def select_strategy(
             ("urbanisation", urban_count),
             ("comp_breakdown_1", cb1_count),
             ("comp_breakdown_2", cb2_count),
+            ("comp_breakdown_3", cb3_count),
             ("unit_measure", unit_count),
         ]
         if v > 1
@@ -785,7 +905,10 @@ def select_strategy(
     # ── Single indicator from here ──
 
     # Stacked Area: Explicit hint or Homogeneous Breakdown + multi-year + single country
-    if hint == "area" or hint == "stacked_area":
+    # Guard: skip when unit_measure has 2+ distinct values — incompatible units must be
+    # faceted into separate panels (handled by the unit_measure → SMALL_MULTIPLES block
+    # below). Mixing Persons + Percentage on one stacked axis produces nonsense output.
+    if (hint == "area" or hint == "stacked_area") and "unit_measure" not in breakdown_counts:
         if year_count > 1:
             color_dim = None
             if breakdown_counts:
@@ -830,18 +953,20 @@ def select_strategy(
     # Correct GoG layout: facet by unit_measure (one panel per unit), color by the
     # first other breakdown so phases/categories are still distinguishable within panels.
     if "unit_measure" in breakdown_counts:
-        if country_count > 1:
-            facet_dim = "country"
-        else:
-            facet_dim = "unit_measure"
-        # Use first non-unit-measure breakdown as color dim (e.g. comp_breakdown_2 for IPC)
+        # unit_measure is ALWAYS the facet dimension when it has incompatible units.
+        # Mixing Persons and Percentage on one Y-axis is never correct.
+        # For multi-country: country goes into secondary_color_dim so the spec
+        # builder creates combo shades (phase × country) within each unit panel.
+        facet_dim = "unit_measure"
         other_breakdowns = [k for k in breakdown_counts if k != "unit_measure"]
         color_dim = other_breakdowns[0] if other_breakdowns else None
+        secondary_color_dim = "country" if country_count > 1 else None
         n_other = len(other_breakdowns)
         reason_detail = (
             f"unit_measure ({unit_count} units)"
             + (f" + {n_other} other breakdown(s)" if n_other else "")
             + f", {country_count} countr{'y' if country_count == 1 else 'ies'}"
+            + (" + country combo" if secondary_color_dim else "")
             + " → faceted by unit (independent Y-axes)"
         )
         return StrategyResult(
@@ -849,19 +974,53 @@ def select_strategy(
             reason_detail,
             color_dim=color_dim,
             facet_dim=facet_dim,
+            secondary_color_dim=secondary_color_dim,
             scale_incompatible=True,
         )
+
+    # Scale-incompatible custom breakdown + multiple countries.
+    # When a single comp_breakdown_* dimension spans incompatible magnitudes (e.g. WGI
+    # estimate ±2.5 vs percentile rank 0-100) AND there are 2+ countries, the correct
+    # encoding is:
+    #   - Facet by breakdown scale groups (each panel shares a compatible Y-axis)
+    #   - Color by country (distinguishable lines within each panel)
+    # This is the generalized form of the single-country check at line ~897.
+    if n_breakdowns == 1 and country_count > 1:
+        _bd_dim = list(breakdown_counts.keys())[0]
+        if _bd_dim in _CUSTOM_BREAKDOWN_DIMS and _detect_scale_incompatibility(df, _bd_dim):
+            return StrategyResult(
+                ChartStrategy.SMALL_MULTIPLES,
+                f"1 breakdown ({_bd_dim}), {country_count} countries, scale-incompatible "
+                f"→ scale-split panels (color=country)",
+                color_dim="country",
+                facet_dim=_bd_dim,
+                scale_incompatible=True,
+            )
 
     # Small multiples: 2+ meaningful breakdowns, or breakdown + multiple countries.
     # With breakdown + 2+ countries, series count = country_count × breakdown_values.
     # Even 2 countries × 6 WGI metrics = 12 overlapping series on one chart — unreadable.
     # Facet by country so each panel shows one country's breakdown lines.
     if n_breakdowns >= 2 or (n_breakdowns >= 1 and country_count > 1):
-        facet_dim = "country" if country_count > 1 else list(breakdown_counts.keys())[0]
-        color_dim = list(breakdown_counts.keys())[0] if breakdown_counts else None
+        if country_count > 1:
+            # Multiple countries: facet by country (one panel per country),
+            # color by the first breakdown dimension.
+            facet_dim = "country"
+            color_dim = list(breakdown_counts.keys())[0] if breakdown_counts else None
+        elif n_breakdowns >= 2:
+            # Single country, multiple breakdown dims: facet by the first
+            # (fewer panels = cleaner layout), color by the second so series
+            # within each panel are visually distinguishable.
+            bd_keys = list(breakdown_counts.keys())
+            facet_dim = bd_keys[0]
+            color_dim = bd_keys[1] if len(bd_keys) >= 2 else None
+        else:
+            facet_dim = list(breakdown_counts.keys())[0]
+            color_dim = None
         return StrategyResult(
             ChartStrategy.SMALL_MULTIPLES,
-            f"{n_breakdowns} breakdowns, {country_count} countries → small multiples (facet={facet_dim})",
+            f"{n_breakdowns} breakdowns, {country_count} countr{'y' if country_count == 1 else 'ies'} "
+            f"→ small multiples (facet={facet_dim}, color={color_dim})",
             color_dim=color_dim,
             facet_dim=facet_dim,
         )
@@ -936,6 +1095,7 @@ def select_strategy(
             ChartStrategy.TEMPORAL_SINGLE,
             f"Single indicator, {year_count} years, {country_count} countries → {phrase}",
             color_dim="country" if country_count > 0 else None,
+            mark_hint=hint if hint in ("bar", "line") else None,
         )
 
     return StrategyResult(
@@ -1166,7 +1326,12 @@ def _value_label_expr(unit_measure: str | None = None) -> str:
 def _compute_tooltip_format(
     max_abs: float | None = None, unit_measure: str | None = None
 ) -> str:
-    """Returns D3 format string for tooltip quantitative fields."""
+    """Returns D3 format string for tooltip quantitative fields.
+
+    Avoids D3's SI-prefix format (~s) which uses G/M/k (giga/mega/kilo) —
+    these conflict with our axis labelExpr which uses b/m/k (billion/million/thousand).
+    Large values are formatted as plain integers with comma separators instead.
+    """
     normalized = (unit_measure or "").upper().strip()
     if unit_measure == "%":
         return ".1f"
@@ -1178,7 +1343,9 @@ def _compute_tooltip_format(
         return ".1f"
     if max_abs < 1000:
         return ",.1f"
-    return ",.3~s"
+    # Use comma-separated integers for large numbers (population, GDP, etc.)
+    # ",.0f" → "1,400,000,000"  — unambiguous, no SI prefix conflict.
+    return ",.0f"
 
 
 def _color_encoding(
@@ -1187,13 +1354,20 @@ def _color_encoding(
     mark_type: str = "point",
     n_items: int = 0,
     legend_title: str | None = None,
+    domain_labels: list[str] | None = None,
 ) -> dict:
     """Build a Vega-Lite color encoding channel.
 
     Legend title resolves in this priority order:
     1. Caller-supplied ``legend_title``
-    2. Human-readable label from ``_TOOLTIP_SPECS`` (e.g. "Sub-Breakdown")
+    2. Human-readable label from ``_TOOLTIP_SPECS`` (e.g. "Dimension 1")
     3. Title-cased field name (e.g. "Comp Breakdown 2")
+
+    Legend orientation is chosen dynamically:
+    - When the longest label in ``domain_labels`` exceeds 40 chars the legend
+      switches to ``orient: bottom`` / ``direction: vertical`` so labels are not
+      truncated and are not clipped in narrow containers (e.g. chatbot panels).
+    - Otherwise ``orient: top`` / ``direction: horizontal`` is used.
     """
     resolved_title = (
         legend_title
@@ -1207,13 +1381,27 @@ def _color_encoding(
     if n_items == 1 and field != "country":
         legend = None
     else:
-        legend: dict | None = {
-            "orient": "top",
-            "direction": "horizontal",
-            "title": resolved_title,
-            "labelLimit": 250,
-            "columns": 3,
-        }
+        _LONG_LABEL_THRESHOLD = 40
+        max_label_len = (
+            max((len(lbl) for lbl in domain_labels), default=0)
+            if domain_labels
+            else 0
+        )
+        if max_label_len > _LONG_LABEL_THRESHOLD:
+            legend: dict | None = {
+                "orient": "bottom",
+                "direction": "vertical",
+                "title": resolved_title,
+                "labelLimit": 0,
+            }
+        else:
+            legend = {
+                "orient": "top",
+                "direction": "horizontal",
+                "title": resolved_title,
+                "labelLimit": 250,
+                "columns": 3,
+            }
         if mark_type == "line":
             legend["symbolType"] = "stroke"
     return {
@@ -1232,55 +1420,88 @@ def build_temporal_single_spec(
     y_label: str = "Value",
     unit_measure: str | None = None,
 ) -> dict:
-    """Line chart: 1 indicator, multi-year, ≤8 countries."""
+    """Line or grouped-bar chart: 1 indicator, multi-year, ≤8 countries.
+
+    When result.mark_hint == "bar", renders a grouped bar chart with:
+    - x = year as temporal (same encoding as line chart, timeUnit+format ensures correct display)
+    - xOffset = country (side-by-side bars within each year band)
+    - mark = bar with rounded top corners
+    """
     rows = df.to_dict(orient="records")
     max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
     tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+    is_bar = result.mark_hint == "bar"
     y_title = None if y_label == "Value" else y_label
     y_ax = {
         **_axis_style(),
         "title": y_title,
         "labelExpr": _value_label_expr(unit_measure),
     }
+
+    # Both bar and line use the same temporal encoding — timeUnit+format handles
+    # date parsing and display (e.g. "%Y" for annual). Ordinal type was wrong
+    # because it doesn't parse dates, causing epoch-ms to render as raw numbers.
+    x_enc = _x_temporal_encoding(result.temporal_frequency)
+
     encoding: dict = {
-        "x": _x_temporal_encoding(result.temporal_frequency),
+        "x": x_enc,
         "y": {
             "field": "value",
             "type": "quantitative",
             "axis": y_ax,
-            "scale": {"zero": False},
+            "scale": {"zero": is_bar},
         },
         "tooltip": build_structured_tooltips(
             list(df.columns),
-            "line",
+            "bar" if is_bar else "line",
             indicator_labels,
             value_format=tt_fmt,
             viz_data=df,
             temporal_freq=result.temporal_frequency,
+            dim_name_labels=result.dim_name_labels,
         ),
     }
     if result.color_dim:
         n_items = (
             df[result.color_dim].nunique() if result.color_dim in df.columns else 0
         )
-        encoding["color"] = _color_encoding(
-            result.color_dim, mark_type="line", n_items=n_items
+        domain_labels = (
+            list(df[result.color_dim].unique()) if result.color_dim in df.columns else None
         )
+        legend_title = result.dim_name_labels.get(result.color_dim)
+        encoding["color"] = _color_encoding(
+            result.color_dim,
+            mark_type="bar" if is_bar else "line",
+            n_items=n_items,
+            legend_title=legend_title,
+            domain_labels=domain_labels,
+        )
+        if is_bar and result.color_dim in df.columns:
+            encoding["xOffset"] = {"field": result.color_dim, "type": "nominal"}
 
-    # Option C: annotate chart subtitle with breakdown series names when color_dim is
-    # a custom breakdown (comp_breakdown_1/2). Omits note for standard dims like country.
+    # Annotate subtitle with breakdown series names when color_dim is a custom breakdown.
     annotated_title = _append_breakdown_note(title, df, result.color_dim)
+
+    if is_bar:
+        mark_spec: dict = {
+            "type": "bar",
+            "opacity": 0.85,
+            "cornerRadiusTopLeft": 2,
+            "cornerRadiusTopRight": 2,
+        }
+    else:
+        mark_spec = {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": _LINE_HOVER_POINT,
+        }
 
     spec: dict = {
         "$schema": _vl_schema(),
         "title": annotated_title,
         "data": {"values": rows},
-        "mark": {
-            "type": "line",
-            "strokeWidth": 3,
-            "strokeCap": "round",
-            "point": _LINE_HOVER_POINT,
-        },
+        "mark": mark_spec,
         "encoding": encoding,
         "width": 600,
         "height": 350,
@@ -1652,6 +1873,72 @@ def _build_scale_split_vconcat(
     # Discover scale-compatible groups from the data — no hard-coded logic.
     groups = _group_breakdowns_by_scale(df, facet_dim, grouping_threshold)
 
+    # GoG: when the color channel encodes a variable DIFFERENT from the facet variable
+    # (e.g. IPC phases within unit panels, or countries within WGI breakdown panels),
+    # the color mapping is identical in every panel — share the scale so Vega-Lite
+    # renders exactly one legend. When color and facet are the same variable (original
+    # single-country WGI) each panel has its own color domain — keep independent.
+    #
+    # For the cross-dim multi-member case (multi-country + multi-breakdown per panel),
+    # each panel gets its own combo-color domain (country shades × breakdowns in that
+    # group), so resolve must be "independent" there. We track this and override below.
+    color_resolve = (
+        "shared"
+        if result.color_dim and result.color_dim != facet_dim
+        else "independent"
+    )
+
+    # Pre-compute a globally sorted domain for the color dimension so that
+    # color assignments are deterministic and consistent across all panels.
+    # Without a pinned domain, Vega-Lite assigns colors by first-encounter order
+    # in the data, which depends on fetch ordering and can vary between runs.
+    _color_dim_domain: list[str] | None = (
+        sorted(df[result.color_dim].dropna().unique().tolist())
+        if result.color_dim and result.color_dim in df.columns
+        else None
+    )
+
+    # ── Pre-compute legend layout and dynamic panel height ────────────────────
+    # Build the worst-case combo label list (most items any panel will show) so
+    # the layout helper can pick orient/direction/columns once for the whole spec.
+    _n_panels = len(groups)
+    _legend_target_total_px = 700  # desired total figure height in pixels
+    _base_single_px = 140          # default single-member panel height
+    _base_multi_px  = 180          # default multi-member panel height
+
+    if result.color_dim and (result.color_dim != facet_dim or result.secondary_color_dim):
+        # Combo path (Case B / secondary_color_dim): compute worst-case labels.
+        _sec_dim  = result.secondary_color_dim  # e.g. "country" or None
+        _pri_dim  = result.color_dim             # e.g. "comp_breakdown_2" or country
+        if _sec_dim:
+            # secondary_color_dim path: country | breakdown
+            _sorted_sec = sorted(df[_sec_dim].dropna().unique().tolist())
+            _sorted_pri = sorted(df[_pri_dim].dropna().unique().tolist())
+            _all_combo_labels = [
+                f"{s} | {lab.get(p, p)}"
+                for s in _sorted_sec
+                for p in _sorted_pri
+            ]
+        else:
+            # Case B multi-member: country | breakdown per panel — largest group
+            _sorted_countries = sorted(df[_pri_dim].dropna().unique().tolist())
+            _max_group = max(groups, key=len) if groups else []
+            _all_combo_labels = [
+                f"{c} | {lab.get(bd, bd)}"
+                for c in _sorted_countries
+                for bd in _max_group
+            ]
+        _legend_layout = _compute_legend_layout(_all_combo_labels)
+        _legend_h      = _estimate_legend_height(len(_all_combo_labels), _legend_layout, has_title=True)
+        _panel_h_single = max(80, (_legend_target_total_px - _legend_h) // _n_panels)
+        _panel_h_multi  = max(100, (_legend_target_total_px - _legend_h) // _n_panels)
+    else:
+        # No combo: use a small legend and default panel heights.
+        _legend_layout  = _compute_legend_layout([])
+        _legend_h       = 0
+        _panel_h_single = _base_single_px
+        _panel_h_multi  = _base_multi_px
+
     charts: list[dict] = []
     color_offset = 0  # global color index so adjacent panels never share a colour
 
@@ -1703,18 +1990,95 @@ def _build_scale_split_vconcat(
                     value_format=tt_fmt,
                     viz_data=bd_data,
                     temporal_freq=result.temporal_frequency,
+                    dim_name_labels=result.dim_name_labels,
                 ),
             }
 
-            if result.color_dim:
+            if result.color_dim and result.secondary_color_dim:
+                # 3-way encoding: facet_dim=unit_measure, color_dim=breakdown,
+                # secondary_color_dim=country → combo shade families per panel.
+                # Format: "{country} | {breakdown}" — country is primary (base color),
+                # breakdown is secondary (shade within country family).
+                _sec = result.secondary_color_dim  # country
+                _pri = result.color_dim            # comp_breakdown_2
+                sorted_secondary = sorted(
+                    df[_sec].dropna().unique().tolist()
+                ) if _sec in df.columns else []
+                sorted_primary = sorted(
+                    bd_data[_pri].dropna().unique().tolist()
+                ) if _pri in bd_data.columns else []
+                # Domain: grouped by country first, then breakdown within each country.
+                _s_combo_domain: list[str] = [
+                    f"{s} | {lab.get(p, p)}"
+                    for s in sorted_secondary    # country = outer loop
+                    for p in sorted_primary      # breakdown = inner loop
+                ]
+                # Color: each country gets a base color, breakdowns get shades.
+                _s_combo_range: list[str] = []
+                for si, _country in enumerate(sorted_secondary):
+                    base_color = WB_CAT_COLORS[si % len(WB_CAT_COLORS)]
+                    _s_combo_range.extend(_generate_color_shades(base_color, len(sorted_primary)))
+                _s_combo_field = "_s_combo_label"
+                _s_combo_calc = {
+                    "calculate": f"datum['{_sec}'] + ' | ' + datum['{_pri}']",
+                    "as": _s_combo_field,
+                }
+                _pri_title = result.dim_name_labels.get(_pri) or _pri.replace("_", " ").title()
+                _sec_title = result.dim_name_labels.get(_sec) or _sec.replace("_", " ").title()
+                # Show legend only on the last panel so it appears once at the bottom.
+                _s_legend: dict | None = (
+                    {**_legend_layout, "title": f"{_sec_title} | {_pri_title}"}
+                    if is_last_panel
+                    else None
+                )
+                chart_enc["color"] = {
+                    "field": _s_combo_field,
+                    "type": "nominal",
+                    "scale": {"domain": _s_combo_domain, "range": _s_combo_range},
+                    "legend": _s_legend,
+                }
+                charts.append({
+                    "title": {
+                        "text": bd_label,
+                        "fontSize": 12,
+                        "fontWeight": "bold",
+                        "anchor": "start",
+                        "offset": 4,
+                    },
+                    "width": 680,
+                    "height": _panel_h_single,
+                    "transform": [
+                        _s_combo_calc,
+                        {"filter": {"field": facet_dim, "equal": bd_val}},
+                    ],
+                    "mark": mark_spec,
+                    "encoding": chart_enc,
+                })
+                continue  # skip the generic charts.append below
+
+            elif result.color_dim:
                 n_items = (
                     bd_data[result.color_dim].nunique()
                     if result.color_dim in bd_data.columns
                     else 0
                 )
-                chart_enc["color"] = _color_encoding(
-                    result.color_dim, mark_type="line", n_items=n_items
+                domain_labels_for_group = (
+                    list(bd_data[result.color_dim].unique())
+                    if result.color_dim and result.color_dim in bd_data.columns
+                    else None
                 )
+                legend_title_for_group = result.dim_name_labels.get(result.color_dim) if result.color_dim else None
+                chart_enc["color"] = _color_encoding(
+                    result.color_dim,
+                    mark_type="line",
+                    n_items=n_items,
+                    legend_title=legend_title_for_group,
+                    domain_labels=domain_labels_for_group,
+                    domain=_color_dim_domain,
+                )
+                # Suppress legend on non-first panels when color is shared across units.
+                if color_resolve == "shared" and g_idx > 0:
+                    chart_enc["color"] = {**chart_enc["color"], "legend": None}
             else:
                 mark_spec["color"] = color
 
@@ -1728,7 +2092,7 @@ def _build_scale_split_vconcat(
                     "offset": 4,
                 },
                 "width": 680,
-                "height": 140,
+                "height": _panel_h_single,
                 "transform": [{"filter": {"field": facet_dim, "equal": bd_val}}],
                 "mark": mark_spec,
                 "encoding": chart_enc,
@@ -1738,25 +2102,15 @@ def _build_scale_split_vconcat(
             # ----------------------------------------------------------------
             # Multi-member group — layered lines, shared Y-axis, color legend.
             # ----------------------------------------------------------------
-            group_colors = [
-                WB_CAT_COLORS[(color_offset + j) % len(WB_CAT_COLORS)]
-                for j in range(len(group))
-            ]
-            color_offset += len(group)
-
             group_labels = [lab.get(v, v) for v in group]
-
-            # Panel title: wrap into multi-line list so Vega-Lite renders it
-            # on multiple lines instead of truncating a single long string.
             import textwrap as _textwrap
             joined = ", ".join(group_labels)
-            wrapped = _textwrap.wrap(joined, width=80)
+            wrapped = _textwrap.wrap(joined, width=100)
             if len(wrapped) > 2:
                 wrapped = wrapped[:2]
                 wrapped[-1] = wrapped[-1].rstrip(",") + "\u2026"
             panel_title: str | list[str] = wrapped if len(wrapped) > 1 else (wrapped[0] if wrapped else joined)
 
-            # Tooltip format based on the group's aggregate max absolute value.
             group_data = df[df[facet_dim].isin(group)]
             max_abs = (
                 float(group_data["value"].abs().max())
@@ -1765,24 +2119,90 @@ def _build_scale_split_vconcat(
             )
             tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
 
-            charts.append({
-                "title": {
-                    "text": panel_title,
-                    "fontSize": 12,
-                    "fontWeight": "bold",
-                    "anchor": "start",
-                    "offset": 4,
-                },
-                "width": 680,
-                "height": 180,
-                "transform": [{"filter": {"field": facet_dim, "oneOf": group}}],
-                "mark": {
-                    "type": "line",
-                    "strokeWidth": 3,
-                    "strokeCap": "round",
-                    "point": _LINE_HOVER_POINT,
-                },
-                "encoding": {
+            # Two rendering modes for multi-member groups:
+            # A. color_dim IS the facet_dim (or color_dim is None):
+            #    Original WGI single-country case — color by breakdown value within panel.
+            # B. color_dim != facet_dim (e.g. multi-country WGI, color=country):
+            #    Cross-dimension case — shade families per country.
+            #    Georgia gets N shades of blue (dark→light per breakdown),
+            #    UK gets N shades of orange. A single color channel encodes
+            #    both dimensions; strokeDash is dropped entirely.
+            _panel_extra_transforms: list[dict] = []  # e.g. calculate for combo field
+            if result.color_dim and result.color_dim != facet_dim:
+                # Case B: combo color families — format "{country} | {breakdown}".
+                # Country (color_dim) is the primary grouping (base color family).
+                # Breakdown values (facet_dim items in this group) are shades.
+                sorted_countries = sorted(
+                    df[result.color_dim].dropna().unique().tolist()
+                )
+                # Domain: all country×breakdown combos, grouped by country first.
+                combo_domain: list[str] = [
+                    f"{c} | {lab.get(bd, bd)}"
+                    for c in sorted_countries
+                    for bd in group
+                ]
+                # Range: each country gets N shades (dark→light per breakdown).
+                combo_range: list[str] = []
+                for ci, country in enumerate(sorted_countries):
+                    base_color = WB_CAT_COLORS[ci % len(WB_CAT_COLORS)]
+                    combo_range.extend(_generate_color_shades(base_color, len(group)))
+
+                # Vega-Lite calculate: "{country} | {breakdown_value}".
+                _combo_field = "_combo_label"
+                _combo_calc = {
+                    "calculate": (
+                        f"datum['{result.color_dim}'] + ' | ' + datum['{facet_dim}']"
+                    ),
+                    "as": _combo_field,
+                }
+
+                _country_title = (
+                    result.dim_name_labels.get(result.color_dim, result.color_dim.title())
+                )
+                _bd_title = (
+                    result.dim_name_labels.get(facet_dim, facet_dim.title())
+                )
+                # Show legend only on the last panel.
+                combo_legend: dict | None = (
+                    {**_legend_layout, "title": f"{_country_title} | {_bd_title}"}
+                    if is_last_panel
+                    else None
+                )
+
+                panel_encoding: dict = {
+                    "x": x_enc,
+                    "y": {
+                        "field": "value",
+                        "type": "quantitative",
+                        "axis": y_axis,
+                        "scale": {"zero": False},
+                    },
+                    "color": {
+                        "field": _combo_field,
+                        "type": "nominal",
+                        "scale": {"domain": combo_domain, "range": combo_range},
+                        "legend": combo_legend,
+                    },
+                    "tooltip": build_structured_tooltips(
+                        list(group_data.columns),
+                        "line",
+                        indicator_labels=lab,
+                        value_format=tt_fmt,
+                        viz_data=group_data,
+                        temporal_freq=result.temporal_frequency,
+                        dim_name_labels=result.dim_name_labels,
+                    ),
+                }
+                # Add the combo calculate to this panel's transforms.
+                _panel_extra_transforms = [_combo_calc]
+            else:
+                # Case A: original — color by the breakdown value within the panel.
+                group_colors = [
+                    WB_CAT_COLORS[(color_offset + j) % len(WB_CAT_COLORS)]
+                    for j in range(len(group))
+                ]
+                color_offset += len(group)
+                panel_encoding = {
                     "x": x_enc,
                     "y": {
                         "field": "value",
@@ -1798,10 +2218,14 @@ def _build_scale_split_vconcat(
                             "range": group_colors,
                         },
                         "legend": {
-                            "orient": "right",
+                            "orient": "bottom" if max((len(lbl) for lbl in group_labels), default=0) > 40 else "right",
                             "labelFontSize": 11,
                             "symbolSize": 80,
-                            "labelLimit": 200,
+                            **(
+                                {"labelLimit": 0, "direction": "vertical"}
+                                if max((len(lbl) for lbl in group_labels), default=0) > 40
+                                else {"labelLimit": 200}
+                            ),
                         },
                     },
                     "tooltip": build_structured_tooltips(
@@ -1811,8 +2235,30 @@ def _build_scale_split_vconcat(
                         value_format=tt_fmt,
                         viz_data=group_data,
                         temporal_freq=result.temporal_frequency,
+                        dim_name_labels=result.dim_name_labels,
                     ),
+                }
+
+            charts.append({
+                "title": {
+                    "text": panel_title,
+                    "fontSize": 12,
+                    "fontWeight": "bold",
+                    "anchor": "start",
+                    "offset": 4,
                 },
+                "width": 680,
+                "height": _panel_h_multi,
+                # Extra transforms (e.g. calculate for combo field) must come
+                # BEFORE the filter so the calculated field is available.
+                "transform": _panel_extra_transforms + [{"filter": {"field": facet_dim, "oneOf": group}}],
+                "mark": {
+                    "type": "line",
+                    "strokeWidth": 3,
+                    "strokeCap": "round",
+                    "point": _LINE_HOVER_POINT,
+                },
+                "encoding": panel_encoding,
             })
 
     spec: dict = {
@@ -1909,11 +2355,20 @@ def build_small_multiples_spec(
                 value_format=tt_fmt,
                 viz_data=df,
                 temporal_freq=result.temporal_frequency,
+                dim_name_labels=result.dim_name_labels,
             ),
         },
     }
     if color_dim and color_dim != facet_dim:
-        inner["encoding"]["color"] = _color_encoding(color_dim, mark_type="line")
+        _domain_labels = (
+            list(df[color_dim].unique()) if color_dim in df.columns else None
+        )
+        inner["encoding"]["color"] = _color_encoding(
+            color_dim,
+            mark_type="line",
+            legend_title=result.dim_name_labels.get(color_dim),
+            domain_labels=_domain_labels,
+        )
 
     # Option C: annotate with breakdown series names (heterogeneous → mixed-unit warning).
     annotated_title = _append_breakdown_note(title, df, color_dim)
@@ -1929,9 +2384,12 @@ def build_small_multiples_spec(
             "type": "nominal",
             "columns": columns,
             "header": {
+                # Set title to null to suppress the raw column name (e.g. "comp_breakdown_2")
+                # that Vega-Lite would otherwise render as the column group header.
+                # Individual panel labels from the facet field values already identify each panel.
+                "title": None,
                 "labelFontWeight": "bold",
                 "labelColor": WB_TEXT,
-                "titleColor": WB_TEXT,
             },
         },
         "spec": {**inner, "width": 180, "height": 120},
@@ -2267,6 +2725,7 @@ def build_temporal_multi_indicator_spec(
             "tooltip": build_structured_tooltips(
                 tooltip_cols, "line", lab, value_format=tt_fmt, viz_data=df,
                 temporal_freq=result.temporal_frequency,
+                dim_name_labels=result.dim_name_labels,
             ),
         }
         charts.append(
@@ -2344,12 +2803,18 @@ def build_fallback_line_spec(
             value_format=tt_fmt,
             viz_data=df,
             temporal_freq=result.temporal_frequency,
+            dim_name_labels=result.dim_name_labels,
         ),
     }
     if result.color_dim and result.color_dim in cols:
         n_items = df[result.color_dim].nunique()
+        _domain_labels = list(df[result.color_dim].unique())
         encoding["color"] = _color_encoding(
-            result.color_dim, mark_type="line", n_items=n_items
+            result.color_dim,
+            mark_type="line",
+            n_items=n_items,
+            legend_title=result.dim_name_labels.get(result.color_dim),
+            domain_labels=_domain_labels,
         )
 
     spec: dict = {
