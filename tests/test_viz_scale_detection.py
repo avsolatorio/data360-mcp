@@ -7,10 +7,7 @@ Covers:
   - build_small_multiples_spec() delegating when scale_incompatible=True
 """
 
-import math
-
 import pandas as pd
-import pytest
 
 from data360.viz_config import (
     ChartStrategy,

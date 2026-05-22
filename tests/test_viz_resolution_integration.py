@@ -141,7 +141,7 @@ def _viz_patches(api_rows: list[dict], meta: MagicMock | None = None, country_ma
     fake_df = pd.DataFrame(api_rows)
     fake_df.columns = [c.lower() for c in fake_df.columns]
 
-    from contextlib import AsyncExitStack, asynccontextmanager
+    from contextlib import asynccontextmanager
     from unittest.mock import patch
 
     @asynccontextmanager

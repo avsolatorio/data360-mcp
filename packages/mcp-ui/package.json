@@ -24,7 +24,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@data360/chart-payload-normalize": "0.0.1",
+    "@data360/chart-payload-normalize": "0.0.2",
     "@data360/mcp-viz-core": "0.0.3",
     "html-to-image": "^1.11.13"
   },
