@@ -47,8 +47,21 @@ function titleFromSpec(spec: Record<string, unknown>): string {
   if (typeof raw === "string") {
     return raw;
   }
-  if (isRecord(raw) && typeof raw.text === "string") {
-    return raw.text;
+  if (Array.isArray(raw)) {
+    const joined = raw.filter((s) => typeof s === "string").join("\n").trim();
+    if (joined) return joined;
+  }
+  if (isRecord(raw)) {
+    if (typeof raw.text === "string") {
+      return raw.text;
+    }
+    if (Array.isArray(raw.text)) {
+      const joined = raw.text
+        .filter((s) => typeof s === "string")
+        .join("\n")
+        .trim();
+      if (joined) return joined;
+    }
   }
   return "Chart";
 }

@@ -1,6 +1,6 @@
 {
   "name": "@data360/mcp-ui",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "React UI for presenting Data360 MCP tool output (chart card, search results card, and future surfaces).",
   "type": "module",
   "files": [
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@data360/chart-payload-normalize": "0.0.1",
-    "@data360/mcp-viz-core": "0.0.2",
+    "@data360/mcp-viz-core": "0.0.3",
     "html-to-image": "^1.11.13"
   },
   "peerDependencies": {
