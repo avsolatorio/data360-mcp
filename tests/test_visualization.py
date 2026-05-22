@@ -697,7 +697,7 @@ class TestChartTypeOverrideWarning:
             yield
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("requested_chart", ["heatmap", "map", "choropleth", "strip", "small_multiples"])
+    @pytest.mark.parametrize("requested_chart", ["strip", "small_multiples"])
     async def test_warning_injected_when_hint_overridden(self, patches, requested_chart):
         """If LLM requests an incompatible chart type, a warning should be present."""
         result = await get_viz_spec(
@@ -713,7 +713,7 @@ class TestChartTypeOverrideWarning:
         )
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("requested_chart", ["line", "bar", "scatter", "area", "stacked_area"])
+    @pytest.mark.parametrize("requested_chart", ["line", "bar", "scatter", "area", "stacked_area", "heatmap", "map", "choropleth"])
     async def test_no_warning_when_hint_matches(self, patches, requested_chart):
         """If LLM requests a chart type that the pipeline can honor, no warning is emitted."""
         result = await get_viz_spec(

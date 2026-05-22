@@ -932,6 +932,24 @@ class StackedAreaRule:
                 )
         return None
 
+class ExplicitHeatmapRule:
+    """Honour an explicit ``heatmap`` hint from the caller.
+
+    Requires multiple time periods so there is a meaningful country-x-year
+    matrix.  Single-year requests fall through to the auto-routing rules
+    (usually CrossSectional / BreakdownComparison).
+    """
+
+    def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
+        if ctx.hint == "heatmap" and ctx.year_count > 1 and ctx.country_count > 0:
+            return StrategyResult(
+                ChartStrategy.HEATMAP,
+                f"User requested heatmap; {ctx.country_count} countries, {ctx.year_count} years → heatmap",
+                color_dim="value",
+            )
+        return None
+
+
 class HeatmapRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
         if ctx.country_count > HIGH_CARDINALITY_THRESHOLDS["beeswarm_threshold"] and ctx.year_count > 1:
@@ -1108,6 +1126,7 @@ ROUTING_RULES: list[RoutingRule] = [
     ExplicitScatterRule(),
     ExplicitStackedAreaMultiIndicatorRule(),
     ExplicitMapRule(),
+    ExplicitHeatmapRule(),
     TwoIndicatorRule(),
     ThreePlusIndicatorRule(),
     StackedAreaRule(),
@@ -3056,6 +3075,10 @@ CHART_TYPE_KEYWORDS: dict[str, list[str]] = {
     "point": ["scatter", "point", "dot", "correlation", "bubble"],
     "area": ["area", "filled", "cumulative", "stacked"],
     "tick": ["tick", "strip", "beeswarm", "distribution"],
+    # NOTE: "heatmap" must be evaluated before "map" because the substring "map"
+    # appears inside "heatmap" and "heat map".  Insertion order is significant.
+    "heatmap": ["heatmap", "heat map", "heat"],
+    "map": ["map", "choropleth", "geoshape", "geographic"],
 }
 DEFAULT_CHART_TYPE: str = "line"
 
