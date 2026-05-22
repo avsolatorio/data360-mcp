@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from pydantic import ValidationError
@@ -8,11 +8,9 @@ from data360.models import (
     EnrichedSearchResponse,
     MultiQuerySearchResponse,
     QueryGroup,
-    QueryGroupResult,
     SearchResponse,
     SeriesDescription,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers

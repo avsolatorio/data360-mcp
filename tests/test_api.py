@@ -6,10 +6,10 @@ import re
 import httpx
 import pytest
 import pytest_httpx
+
 from data360.api import (
     _get_valid_disaggregations,
     _obs_value_to_float,
-    _strip_data_row,
     get_data,
     get_metadata,
     search,

@@ -11,7 +11,6 @@ Verifies that:
 from __future__ import annotations
 
 import pandas as pd
-import pytest
 
 from data360 import viz_config
 from data360.visualization import (
@@ -19,7 +18,6 @@ from data360.visualization import (
     _clean_single_df,
     _extract_dimension_summary,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers

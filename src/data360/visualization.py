@@ -476,7 +476,7 @@ def _clean_single_df(
     relevant_fields: list[str] | None,
     chart_type: str | None,
     data_frequency: str | None,
-) -> tuple[pd.DataFrame, list[str], "viz_config.TemporalFreq"]:
+) -> tuple[pd.DataFrame, list[str], viz_config.TemporalFreq]:
     # Trivial values for disaggregation dimensions: _T = aggregate total, _Z = not applicable.
     # unit_measure uses a different sentinel: 'U' = Unitless (defined in _UNIT_MEASURE_TRIVIAL).
     _TRIVIAL_DIM_VALUES = ("_T", "_Z")

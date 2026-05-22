@@ -1,12 +1,14 @@
 import pandas as pd
 import pytest
+
 from data360.viz_config import (
-    build_choropleth_spec,
     ChartStrategy,
     StrategyResult,
-    select_strategy,
+    build_choropleth_spec,
     parse_chart_type_hint,
+    select_strategy,
 )
+
 
 def test_build_choropleth_spec_multi_year_filters_latest():
     df = pd.DataFrame({

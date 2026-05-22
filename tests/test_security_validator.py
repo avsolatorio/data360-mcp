@@ -1,6 +1,5 @@
 """Unit tests for MCP security validation."""
 
-import pytest
 
 from data360.mcp_server.security_validator import (
     validate_search_arguments,

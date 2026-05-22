@@ -5,8 +5,9 @@
 import os
 import re
 import subprocess
-import yaml
 from pathlib import Path
+
+import yaml
 from github import Auth, Github
 
 REPO_SLUG = os.environ["GITHUB_REPOSITORY"]
@@ -109,7 +110,7 @@ def get_changed_task_files(todo_dir: Path) -> list[Path] | None:
     """Return task files touched in the last commit, or None to signal full sync."""
     result = subprocess.run(
         ["git", "diff", "--name-only", "HEAD~1", "HEAD", "--", str(todo_dir)],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
     )
     if result.returncode != 0:

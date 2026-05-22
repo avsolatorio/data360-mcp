@@ -168,7 +168,7 @@ class TestStrategyRouter:
         r = select_strategy(df)
         assert r.strategy == ChartStrategy.CROSS_SECTIONAL
 
-    def test_distribution_single_year_many_countries(self):
+    def test_choropleth_single_year_many_countries(self):
         df = pd.DataFrame(
             {"country": [f"C{i}" for i in range(10)], "year": [2020] * 10, "value": range(10)}
         )

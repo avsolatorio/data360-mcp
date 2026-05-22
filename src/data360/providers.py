@@ -584,8 +584,8 @@ class CodelistManager:
     """Unified manager for all Data360 codelists.
 
     Primary data source (startup fetch, then background refresh):
-      ``initialize()`` is awaited once at server startup inside the FastAPI
       lifespan.  It fetches all dimension codelists from the extdataportal
+      API lazily on first use.
       metadata API in a single HTTP call and populates ``_extdataportal``.
       Covers COMP_BREAKDOWN (5 000+ codes), UNIT_MEASURE (769 codes),
       AGE (173 codes), URBANISATION (16 codes), SEX (7 codes), FREQ (34 codes),
@@ -696,13 +696,12 @@ class CodelistManager:
     def __init__(self) -> None:
         """Initialise the CodelistManager.
 
-        ``_extdataportal`` starts empty.  Call ``await initialize()`` from the
-        server lifespan to populate it before the first request arrives.
+        ``_extdataportal`` starts empty.  It is populated lazily on first use.
         """
         self._cache: dict[str, list[dict[str, Any]]] = {}
         self._loaded: set[str] = set()
         # Runtime-fetched extdataportal data: {dimension → {code → name}}.
-        # Populated by initialize(); stays empty (graceful fallback) if offline.
+        # Populated lazily; stays empty (graceful fallback) if offline.
         self._extdataportal: dict[str, dict[str, str]] = {}
         self._last_fetched: float = 0.0
         self._bg_task: asyncio.Task | None = None  # type: ignore[type-arg]
@@ -867,7 +866,7 @@ class CodelistManager:
         """Return the human-readable label for a dimension code.
 
         Reads from the in-memory ``_extdataportal`` dict populated by
-        ``initialize()``.  Returns the raw ``code`` unchanged if the
+        extdataportal mapping (lazy-loaded).  Returns the raw ``code`` unchanged if the
         dimension or code is not found (graceful degradation).
 
         Args:

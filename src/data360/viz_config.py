@@ -12,8 +12,8 @@ Design principles:
 
 from __future__ import annotations
 
-from collections import defaultdict
 import re
+from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
 from numbers import Integral
@@ -603,7 +603,7 @@ def _multi_indicator_tooltip_columns(
 def _tooltip_spec_for_time_dim(
     col: str,
     viz_data: pd.DataFrame | None,
-    temporal_freq: "TemporalFreq | None" = None,
+    temporal_freq: TemporalFreq | None = None,
 ) -> dict:
     """Return a Vega-Lite tooltip spec for year/time_period columns.
 
@@ -647,7 +647,7 @@ def build_structured_tooltips(
     indicator_labels: dict[str, str] | None = None,
     value_format: str = ",.2f",
     viz_data: pd.DataFrame | None = None,
-    temporal_freq: "TemporalFreq | None" = None,
+    temporal_freq: TemporalFreq | None = None,
     dim_name_labels: dict[str, str] | None = None,
 ) -> list[dict]:
     """Build typed, labelled tooltip list for a Vega-Lite encoding.
@@ -774,6 +774,7 @@ class StrategyResult:
 
 from typing import Protocol
 
+
 @dataclass
 class RoutingContext:
     df: pd.DataFrame
@@ -788,7 +789,7 @@ class RoutingContext:
     n_breakdowns: int
 
     @classmethod
-    def build(cls, df: pd.DataFrame, n_indicators: int, chart_type_hint: str | None, indicator_cols: list[str] | None) -> "RoutingContext":
+    def build(cls, df: pd.DataFrame, n_indicators: int, chart_type_hint: str | None, indicator_cols: list[str] | None) -> RoutingContext:
         hint = parse_chart_type_hint(chart_type_hint)
         cols = set(df.columns)
 
