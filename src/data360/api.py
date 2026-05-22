@@ -1501,6 +1501,15 @@ async def get_disaggregation(
         )
         response.raise_for_status()
 
+        # Some indicators have no disaggregation data. The API returns HTTP 200
+        # with an empty body rather than an empty JSON array. Guard before
+        # calling .json() to avoid a JSONDecodeError logged as ERROR.
+        if not response.content or not response.text.strip():
+            empty_result: dict = {"dimensions": []}
+            with _disaggregation_cache_lock:
+                _disaggregation_cache[_disagg_cache_key] = empty_result
+            return empty_result
+
         raw_data = response.json()
         # Filter out _Z values and format response
         valid_dimensions = _get_valid_disaggregations(raw_data)
@@ -1514,6 +1523,69 @@ async def get_disaggregation(
     except Exception as e:
         mcp_err = classify_error(e, context="disaggregation")
         return {"error": mcp_err.detail}
+
+
+async def get_comp_breakdown_dim_names(
+    database_id: str,
+    indicator_id: str,
+) -> dict[str, str]:
+    """Return human-readable dimension names for comp_breakdown_1/2/3.
+
+    Re-uses the cached disaggregation response so no extra HTTP call is made.
+    Maps the column names used in the viz DataFrame (lowercase snake_case) to
+    the best available human label for use as legend/tooltip titles.
+
+    Returns a dict like::
+
+        {"comp_breakdown_1": "Analysis Period", "comp_breakdown_2": "Severity Phase"}
+
+    Only dimensions that are actually present in the disaggregation response
+    (i.e., have non-trivial values) are included.  Falls back to "Dimension N"
+    when the API echoes the field name back (e.g. WGI returns "COMP_BREAKDOWN_1"
+    as its own label_name).
+    """
+    import re as _re
+
+    # Matches generic placeholder labels that APIs sometimes echo back instead of a
+    # real human-readable name: "Custom Dimension 2", "Dimension 3", "Breakdown 1", etc.
+    # These are no more informative than the fallback, so they are rejected.
+    _GENERIC_LABEL_RE = _re.compile(
+        r"^(custom\s+)?(dimension|dim|breakdown|comp_breakdown)\s*\d*$",
+        _re.IGNORECASE,
+    )
+
+    _FIELD_TO_COL = {
+        "COMP_BREAKDOWN_1": "comp_breakdown_1",
+        "COMP_BREAKDOWN_2": "comp_breakdown_2",
+        "COMP_BREAKDOWN_3": "comp_breakdown_3",
+    }
+    _FALLBACK = {
+        "comp_breakdown_1": "Dimension 1",
+        "comp_breakdown_2": "Dimension 2",
+        "comp_breakdown_3": "Dimension 3",
+    }
+
+    result = await get_disaggregation(database_id, indicator_id)
+    dimensions = result.get("dimensions", [])
+
+    dim_names: dict[str, str] = {}
+    for dim in dimensions:
+        field_name = dim.get("field_name", "")
+        if field_name not in _FIELD_TO_COL:
+            continue
+        col = _FIELD_TO_COL[field_name]
+        label_name = (dim.get("label_name") or "").strip()
+        # Reject: (a) echoed field names e.g. "COMP_BREAKDOWN_1",
+        #         (b) generic placeholders e.g. "Custom Dimension 2", "Dimension 3".
+        # Both are no more informative than the _FALLBACK label.
+        is_generic = (
+            not label_name
+            or label_name.upper() == field_name.upper()
+            or bool(_GENERIC_LABEL_RE.match(label_name))
+        )
+        dim_names[col] = _FALLBACK[col] if is_generic else label_name
+
+    return dim_names
 
 
 async def get_data(

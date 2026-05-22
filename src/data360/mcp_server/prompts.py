@@ -124,6 +124,40 @@ Do not answer with guesses. Do not stop after describing a plan.
    - **DECIDE**: Does the frame support a chart? (e.g. time_period + obs_value for lines.)
    - If the shape does **not** support a chart, present the **table** — do not force a broken viz.
 
+   #### Grammar-of-graphics rule for disaggregation_filters
+   **Do NOT pin a dimension in disaggregation_filters to simplify a chart.**
+   Pinning collapses multi-series data into a single line and silently discards information.
+
+   | Situation | Correct action |
+   |-----------|---------------|
+   | User said "show only females" | `disaggregation_filters={"SEX": "F"}` |
+   | User said "totals only" / "aggregate" | `disaggregation_filters={"SEX": "_T"}` |
+   | Dimension not applicable | `disaggregation_filters={"SEX": "_Z"}` |
+   | Multiple values exist, user has NO preference | **OMIT the dimension entirely** — the pipeline maps it to color/facet automatically |
+
+   The pipeline auto-detects non-trivial dimensions (_T/_Z are trivial) and routes:
+   - breakdown + multi-year + 1 country → TEMPORAL_SINGLE (color = breakdown dim)
+   - breakdown + multi-country          → SMALL_MULTIPLES (facet = country, color = breakdown)
+   - no breakdown, multi-year           → TEMPORAL_SINGLE (color = country)
+
+   #### Mixed-unit breakdown warning (Option A)
+   Some indicators carry comp_breakdown_1 values that represent **structurally different
+   metric types** — not just different categories of the same quantity. Example: WGI uses
+   WGI_EST (estimate, ~−2.5 to +2.5), WGI_SC (percentile rank, 0–100), WGI_SE (standard
+   error), WGI_SR (source count), WGI_SC_LB/UB (confidence bounds). Plotting all on one
+   Y-axis is misleading because the scales are incompatible.
+
+   **When you call data360_get_disaggregation and find comp_breakdown_1 has 3+ values,
+   check if they represent different metric types** (e.g. estimate + rank + error + count).
+   If so, BEFORE calling the visualization tool:
+   1. List the available breakdown values and their meanings to the user.
+   2. Recommend the primary analytic series (e.g. WGI_EST for governance analysis,
+      WGI_SC for cross-country rank comparison).
+   3. Ask which breakdown the user wants, or proceed with the recommended one and say so.
+
+   The chart subtitle will always list all series present — users can read it to understand
+   what is shown. But proactively surfacing the choice is better than a crowded chart.
+
    ┌─ ONE indicator? ──────────────────────────────────────────────────────────┐
    │  Call data360_get_viz_spec                                                │
    │  • Multi-year, 1-8 countries  → chart_type="line"  (auto color by cntry) │
@@ -133,7 +167,6 @@ Do not answer with guesses. Do not stop after describing a plan.
    │  • Pass relevant_fields=["time_period","obs_value",...] when you must    │
    │    pin exact columns; the tool can auto-enrich dimensions when needed.   │
    │  • If the user asked for a style ("bar chart"), pass chart_type="bar".   │
-   │  • Optional: custom_constraints for Draco when the user gave layout rules. │
    └───────────────────────────────────────────────────────────────────────────┘
 
    ┌─ TWO OR MORE indicators? ─────────────────────────────────────────────────┐
@@ -145,7 +178,7 @@ Do not answer with guesses. Do not stop after describing a plan.
    │     {"database_id": "WB_WDI", "indicator_id": "WB_WDI_SP_DYN_LE00_IN"}]   │
    │  • Optional: country_code, start_year, end_year, disaggregation_filters,  │
    │    chart_type — same names as data360_get_viz_spec except there is NO     │
-   │    relevant_fields, custom_constraints, or use_default_constraints.       │
+   │    relevant_fields or custom_constraints.                                 │
    │                                                                           │
    │  Chart type selection:                                                    │
    │  • "Compare X vs Y across countries, one year"  → chart_type="scatter"  │
@@ -426,12 +459,22 @@ data360_get_data(
 **Step 5: Visualize**
 If data is suitable (time series), visualize directly.
 For multi-country, the tool auto-handles color-coding.
+
+Grammar-of-graphics rule: do NOT pin disaggregation dimensions to simplify the chart.
+If the indicator has breakdowns (sex, age, comp_breakdown_1, etc.) and the user did not
+request a specific value, OMIT those dimensions from disaggregation_filters entirely.
+The pipeline maps them to color/facet channels automatically.
+
+  WRONG: disaggregation_filters={{"COMP_BREAKDOWN_1": "WGI_EST"}}  # silently drops 5 series
+  RIGHT: (omit COMP_BREAKDOWN_1 — pipeline auto-routes to SMALL_MULTIPLES or multi-series line)
+
 data360_get_viz_spec(
     database_id=<db_id>,
     indicator_id=<ind_id>,
     country_code="<ISO: one code, or several with semicolons e.g. KEN;UGA>",
-    # If explicit breakdown needed:
-    # disaggregation_filters={{"SEX": None}}, # Explicitly ask for all sexes
+    # Only pin a dimension when the user explicitly requested it:
+    # disaggregation_filters={{"SEX": "F"}},   # user said "females only"
+    # disaggregation_filters={{"SEX": "_T"}},  # user said "totals only"
     chart_type="line"
 )
 """
