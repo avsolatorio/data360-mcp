@@ -98,7 +98,7 @@ _ENRICHMENT_SELECT_FIELDS = [
 # Based on a 16-database survey (see payload_analysis.md for full documentation).
 # Always-keep fields: the core data the LLM needs.
 _CORE_FIELDS = frozenset(
-    {"OBS_VALUE", "TIME_PERIOD", "REF_AREA", "UNIT_MEASURE", "claim_id"}
+    {"OBS_VALUE", "TIME_PERIOD", "REF_AREA", "REF_AREA_NAME", "country_name", "UNIT_MEASURE", "claim_id"}
 )
 # Conditional fields: kept only when their value is non-trivial (not _T or _Z).
 # SEX/AGE/URBANISATION carry real disaggregation in WB_HCP, WB_SSGD, OECD_IDD.
@@ -2933,6 +2933,10 @@ async def compare_countries(
     Call for PATH B (comparison) questions like "Compare GDP between Kenya and Nigeria"
     or "How does Brazil compare to its neighbors on poverty?". Returns a pre-ranked
     snapshot and optional aligned time series with convergence analysis.
+
+    IMPORTANT LIMITATION: This tool is capped at exactly 2 countries. If the user asks to
+    compare 3 or more countries (e.g. "Kenya, Nigeria, and Ghana"), you MUST NOT use this tool.
+    Instead, use rank_countries or summarize_data.
 
     The snapshot includes a year_selection_note explaining how the comparison year was
     chosen — either the user-specified year, or the latest year where all compared
