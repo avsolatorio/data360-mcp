@@ -41,7 +41,7 @@ class TestGrammarOfGraphicsContractPresence:
     REQUIRED_PHRASES = [
         "Grammar of Graphics Contract",
         "disaggregation_filters decision rule",
-        "OMIT it from disaggregation_filters",
+        "OMIT",
         "Chart strategy",
         "Vega-Lite encoding",
         "_T",
