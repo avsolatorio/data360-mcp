@@ -1785,9 +1785,16 @@ async def get_data(
         if len(raw_data) > limit:
             raw_data = raw_data[:limit]
 
-        # Add claim_id for data verification (computed on raw row)
+        from .providers import get_codelist_manager  # noqa: PLC0415
+        _cm = get_codelist_manager()
+        await _cm._ensure_extdataportal_loaded()
         for row in raw_data:
             row["claim_id"] = _short_hash(row)
+            ref_area = row.get("REF_AREA")
+            if ref_area:
+                label = _cm.get_label("REF_AREA", str(ref_area))
+                if label and label != str(ref_area):
+                    row["REF_AREA_NAME"] = label
 
         # Promote COMMENT_TS to metadata (repeats identically per row)
         if raw_data and api_metadata is not None:
