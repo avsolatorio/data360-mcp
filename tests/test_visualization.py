@@ -632,3 +632,94 @@ class TestVegaSpecJsonSafe:
         y = safe["data"]["values"][0]["year"]
         assert isinstance(y, str) and y.startswith("2020-01-01")
         assert isinstance(safe["data"]["values"][0]["v"], float)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Override Warning Injection
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestChartTypeOverrideWarning:
+    """Ensure we warn the LLM if the pipeline rejects its chart_type hint."""
+
+    @pytest.fixture
+    def sample_dataframe(self):
+        # 3 countries, 3 years -> should be temporal_single (line)
+        return pd.DataFrame(
+            {
+                "TIME_PERIOD": ["2020-01-01", "2021-01-01", "2022-01-01"] * 3,
+                "OBS_VALUE": [100, 200, 300] * 3,
+                "REF_AREA": [
+                    "KEN",
+                    "KEN",
+                    "KEN",
+                    "UGA",
+                    "UGA",
+                    "UGA",
+                    "TZA",
+                    "TZA",
+                    "TZA",
+                ],
+            }
+        )
+
+    @pytest.fixture
+    def patches(self, sample_dataframe):
+        with (
+            patch(
+                "data360.api.get_data_api_url",
+                new_callable=AsyncMock,
+                return_value="http://fake-api/data?DATABASE_ID=WB_WDI&INDICATOR=FAKE",
+            ),
+            patch(
+                "data360.visualization._fetch_data_internal",
+                new_callable=AsyncMock,
+                return_value=sample_dataframe,
+            ),
+            patch(
+                "data360.api.get_metadata", new_callable=AsyncMock, return_value=None
+            ),
+            patch(
+                "data360.visualization.save_specs_to_static",
+                return_value="http://localhost:8021/static/viz_specs/test.json",
+            ),
+            patch(
+                "data360.providers.get_codelist_mapping",
+                new_callable=AsyncMock,
+                return_value={},
+            ),
+            patch(
+                "data360.visualization.get_database_mapping",
+                new_callable=AsyncMock,
+                return_value={"WB_WDI": "World Development Indicators"},
+            ),
+        ):
+            yield
+
+    @pytest.mark.asyncio
+    async def test_warning_injected_when_hint_overridden(self, patches):
+        """If LLM requests heatmap but data cardinality triggers line chart, a warning should be present."""
+        result = await get_viz_spec(
+            database_id="WB_WDI",
+            indicator_id="FAKE_IND",
+            chart_type="heatmap",
+            chart_title="Fake Heatmap",
+        )
+        assert result["strategy"] == "temporal_single"
+        assert "warning" in result
+        assert (
+            "You requested 'heatmap', but the visualization engine selected"
+            in result["warning"]
+        )
+
+    @pytest.mark.asyncio
+    async def test_no_warning_when_hint_matches(self, patches):
+        """If LLM requests line chart and pipeline selects line chart, no warning is emitted."""
+        result = await get_viz_spec(
+            database_id="WB_WDI",
+            indicator_id="FAKE_IND",
+            chart_type="line",
+            chart_title="Fake Line Chart",
+        )
+        assert result["strategy"] == "temporal_single"
+        assert "warning" not in result or result["warning"] is None
