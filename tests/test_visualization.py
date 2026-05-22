@@ -1,7 +1,7 @@
 """Tests for data360.visualization module."""
 
 import json
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import numpy as np
 import pandas as pd
@@ -14,8 +14,8 @@ from data360.visualization import (
 )
 
 
-class TestGetVizSpecDracoFallbackWarning:
-    """Verify that a warning is surfaced when Draco fails and fallback is used."""
+class TestGetVizSpecStrategyDispatch:
+    """Verify single-indicator specs are built by strategy dispatch."""
 
     @pytest.fixture
     def sample_dataframe(self):
@@ -30,7 +30,7 @@ class TestGetVizSpecDracoFallbackWarning:
 
     @pytest.fixture
     def patches(self, sample_dataframe):
-        """Set up all the mocks needed to isolate the Draco fallback path."""
+        """Set up all the mocks needed to isolate strategy dispatch behavior."""
         with (
             patch(
                 "data360.api.get_data_api_url",
@@ -72,149 +72,28 @@ class TestGetVizSpecDracoFallbackWarning:
             }
 
     @pytest.mark.asyncio
-    async def test_fallback_returns_warning(self, patches):
-        """When Draco raises StopIteration, the response should include a warning key."""
-        with patch("data360.visualization.Draco") as MockDraco:
-            draco_instance = MagicMock()
-            draco_instance.complete_spec.return_value = iter([])
-            MockDraco.return_value = draco_instance
-
-            result = await get_viz_spec(
-                database_id="WB_WDI",
-                indicator_id="FAKE_IND",
-            )
-
-        assert result["url"] is not None, "Expected a URL from fallback generation"
-        assert result["error"] is None, "Expected no error from successful fallback"
-        assert result.get("database_name") == "World Development Indicators"
-        assert result.get("indicator_id") == "FAKE_IND"
-        assert "warning" in result, "Expected a 'warning' key when Draco falls back"
-        assert "fallback" in result["warning"].lower(), (
-            f"Warning message should mention fallback, got: {result['warning']}"
+    async def test_temporal_single_bypasses_draco_and_returns_line(self, patches):
+        """TEMPORAL_SINGLE should return a clean line spec via strategy dispatch."""
+        result = await get_viz_spec(
+            database_id="WB_WDI",
+            indicator_id="FAKE_IND",
         )
 
-    @pytest.mark.asyncio
-    async def test_draco_success_has_no_warning(self, patches):
-        """When Draco succeeds, no warning key should be present."""
-        # Build a chainable mock chart that returns a valid spec from to_dict()
-        mock_chart = MagicMock()
-        mock_vl_spec = {
-            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-            "mark": "point",
-            "encoding": {
-                "x": {"field": "year", "type": "temporal"},
-                "y": {"field": "value", "type": "quantitative"},
-            },
-        }
-        # Chain: chart.properties(...).interactive().encode(...).to_dict()
-        mock_chart.properties.return_value = mock_chart
-        mock_chart.interactive.return_value = mock_chart
-        mock_chart.encode.return_value = mock_chart
-        mock_chart.to_dict.return_value = mock_vl_spec
-
-        with (
-            patch("data360.visualization.Draco") as MockDraco,
-            patch("data360.visualization.answer_set_to_dict") as mock_as2d,
-            patch("data360.visualization.AltairRenderer") as MockRenderer,
-        ):
-            fake_model = MagicMock()
-            draco_instance = MagicMock()
-            draco_instance.complete_spec.return_value = iter([fake_model])
-            MockDraco.return_value = draco_instance
-
-            mock_as2d.return_value = {
-                "view": [{"mark": [{"type": "point", "encoding": []}]}]
-            }
-
-            renderer_instance = MagicMock()
-            renderer_instance.render.return_value = mock_chart
-            MockRenderer.return_value = renderer_instance
-
-            result = await get_viz_spec(
-                database_id="WB_WDI",
-                indicator_id="FAKE_IND",
-            )
-
+        # Must succeed cleanly — no error, no fallback warning
+        assert result["url"] is not None, "Expected a URL from strategy builder"
         assert result["error"] is None, f"Unexpected error: {result['error']}"
-        assert result["url"] is not None
         assert "warning" not in result, (
-            f"No warning expected on Draco success, got: {result.get('warning')}"
+            "TEMPORAL_SINGLE bypasses Draco, so no fallback warning is expected"
         )
+        assert result["strategy"] == "temporal_single"
 
     @pytest.mark.asyncio
-    async def test_draco_line_spec_gets_hover_points_in_postprocess(self, patches):
-        """Draco line outputs should get mark.point injected for easier tooltip hover."""
-        mock_chart = MagicMock()
-        mock_vl_spec = {
-            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-            "mark": "line",
-            "encoding": {
-                "x": {"field": "year", "type": "temporal"},
-                "y": {"field": "value", "type": "quantitative"},
-            },
-        }
-        mock_chart.properties.return_value = mock_chart
-        mock_chart.interactive.return_value = mock_chart
-        mock_chart.encode.return_value = mock_chart
-        mock_chart.to_dict.return_value = mock_vl_spec
-
-        captured_spec: dict[str, object] = {}
-
-        async def _capture_spec(spec):
-            captured_spec.clear()
-            captured_spec.update(spec)
-            return "http://localhost:8021/static/viz_specs/test-line.json"
-
-        with (
-            patch("data360.visualization.Draco") as MockDraco,
-            patch("data360.visualization.answer_set_to_dict") as mock_as2d,
-            patch("data360.visualization.AltairRenderer") as MockRenderer,
-            patch(
-                "data360.visualization._store_spec",
-                side_effect=_capture_spec,
-            ),
+    async def test_strategy_dispatch_failure_returns_error(self, patches):
+        """When dispatch_spec raises, an error is returned."""
+        with patch(
+            "data360.viz_config.dispatch_spec",
+            side_effect=RuntimeError("dispatch broke"),
         ):
-            fake_model = MagicMock()
-            draco_instance = MagicMock()
-            draco_instance.complete_spec.return_value = iter([fake_model])
-            MockDraco.return_value = draco_instance
-            mock_as2d.return_value = {
-                "view": [{"mark": [{"type": "line", "encoding": []}]}]
-            }
-
-            renderer_instance = MagicMock()
-            renderer_instance.render.return_value = mock_chart
-            MockRenderer.return_value = renderer_instance
-
-            result = await get_viz_spec(
-                database_id="WB_WDI",
-                indicator_id="FAKE_IND",
-            )
-
-        assert result["error"] is None
-        mark = captured_spec.get("mark")
-        if isinstance(mark, str):
-            pytest.fail("Expected post-processing to normalize line mark into dict")
-        assert isinstance(mark, dict)
-        assert mark.get("type") == "line"
-        point = mark.get("point")
-        assert isinstance(point, dict)
-        assert point.get("size", 0) >= 40
-
-    @pytest.mark.asyncio
-    async def test_fallback_also_fails_returns_error(self, patches):
-        """When both Draco and the dispatch_spec fallback fail, an error is returned."""
-        with (
-            patch("data360.visualization.Draco") as MockDraco,
-            patch(
-                "data360.viz_config.dispatch_spec",
-                side_effect=RuntimeError("dispatch broke"),
-            ),
-        ):
-            draco_instance = MagicMock()
-            draco_instance.complete_spec.return_value = iter([])
-            MockDraco.return_value = draco_instance
-
             result = await get_viz_spec(
                 database_id="WB_WDI",
                 indicator_id="FAKE_IND",
@@ -222,7 +101,6 @@ class TestGetVizSpecDracoFallbackWarning:
 
         assert result["url"] is None
         assert result["error"] is not None
-        assert "fallback" in result["error"].lower()
 
 
 # =============================================================================
@@ -271,15 +149,18 @@ class TestStructuredTooltips:
         assert value_tip["format"] == ",.2f", "Value tooltip must use number formatting"
         assert value_tip["type"] == "quantitative"
 
-    def test_year_tooltip_nominal_for_string_years_avoids_vl_date_parse(self):
-        """Temporal tooltips on string years make Vega-Lite parse year as date for all encodings."""
+    def test_year_tooltip_temporal_for_annual_string_years(self):
+        """String years (e.g. '2018', '2019') should now produce temporal tooltips
+        with type=temporal and timeUnit=year so VL formats them as dates correctly
+        instead of falling through to the raw epoch timestamp display."""
         df = pd.DataFrame({"year": ["2018", "2019"], "value": [1.0, 2.0]})
         tips = viz_config.build_structured_tooltips(
             ["year", "value"], "line", viz_data=df
         )
         year_tip = next(t for t in tips if t["field"] == "year")
-        assert year_tip["type"] == "nominal"
-        assert "format" not in year_tip
+        assert year_tip["type"] == "temporal"
+        assert year_tip["timeUnit"] == "year"
+        assert year_tip["format"] == "%Y"
 
     def test_year_tooltip_temporal_when_column_is_datetime(self):
         df = pd.DataFrame(
@@ -293,6 +174,7 @@ class TestStructuredTooltips:
         )
         year_tip = next(t for t in tips if t["field"] == "year")
         assert year_tip["type"] == "temporal"
+        assert year_tip["timeUnit"] == "year"
         assert year_tip["format"] == "%Y"
 
     def test_country_tooltip_is_nominal(self):
@@ -534,15 +416,10 @@ class TestObsValueNullHandling:
         with patch(
             "data360.visualization.save_specs_to_static", side_effect=capture_spec
         ):
-            with patch("data360.visualization.Draco") as MockDraco:
-                draco_instance = MagicMock()
-                draco_instance.complete_spec.return_value = iter([])
-                MockDraco.return_value = draco_instance
-
-                result = await get_viz_spec(
-                    database_id="WB_WDI",
-                    indicator_id="FAKE_IND",
-                )
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+            )
 
         # If spec was captured, verify the data values
         if "spec" in captured_data:
@@ -611,7 +488,7 @@ class TestCleanSingleDfValueNumeric:
                 "ref_area": ["KEN", "KEN"],
             }
         )
-        viz_data, _ = _clean_single_df(
+        viz_data, _, _freq = _clean_single_df(
             data,
             relevant_fields=["time_period", "value", "ref_area"],
             chart_type=None,

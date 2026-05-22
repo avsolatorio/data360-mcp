@@ -63,6 +63,12 @@ export function subtitleFromSpec(spec: Record<string, unknown>): string | undefi
   if (typeof sub === "string" && sub.trim()) {
     return sub.trim();
   }
+  if (Array.isArray(sub)) {
+    const lines = sub.filter(s => typeof s === "string" && s.trim()).map(s => s.trim());
+    if (lines.length > 0) {
+      return lines.join(" · ");
+    }
+  }
   return undefined;
 }
 
