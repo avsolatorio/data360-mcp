@@ -10,8 +10,8 @@ Covers:
 import pandas as pd
 
 from data360.viz_config import (
-    ChartStrategy,
     HIGH_CARDINALITY_THRESHOLDS,
+    ChartStrategy,
     StrategyResult,
     _build_scale_split_vconcat,
     _detect_scale_incompatibility,

@@ -19,12 +19,12 @@ Covers:
 """
 
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pandas as pd
 import pytest
 
-from data360.providers import CodelistManager, get_codelist_manager
+from data360.providers import CodelistManager
 
 # ---------------------------------------------------------------------------
 # Shared fake API payload (minimal but realistic)
@@ -307,7 +307,7 @@ class TestGetDimensionLabels:
 # 5. _map_dimension_codes() DataFrame transformation
 # ============================================================================
 
-from data360.visualization import _map_dimension_codes, _VIZ_DISAGG_DIMS  # noqa: E402
+from data360.visualization import _VIZ_DISAGG_DIMS, _map_dimension_codes  # noqa: E402
 
 
 def _patch_mgr(mgr: CodelistManager):

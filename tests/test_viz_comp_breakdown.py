@@ -8,17 +8,14 @@ Issue: https://github.com/worldbank/data360-mcp/issues/84
 from __future__ import annotations
 
 import pandas as pd
-import pytest
 
+from data360.visualization import _VIZ_DISAGG_DIMS, _clean_single_df
 from data360.viz_config import (
     _TOOLTIP_PRIORITY,
     _TOOLTIP_SPECS,
     ChartStrategy,
-    StrategyResult,
     select_strategy,
 )
-from data360.visualization import _VIZ_DISAGG_DIMS, _clean_single_df
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -141,8 +138,8 @@ def test_clean_single_df_relevant_fields_branch_keeps_comp_breakdown():
 # ---------------------------------------------------------------------------
 
 
-def test_strategy_wgi_multi_year_routes_to_temporal_single():
-    """Multi-year breakdown with compatible scales must route to TEMPORAL_SINGLE."""
+def test_strategy_compatible_scales_multi_year_routes_to_temporal_single():
+    """Verifies multi-year breakdown routing to TEMPORAL_SINGLE when scales are compatible."""
     WGI_BREAKDOWNS = ["WGI_EST", "WGI_SE", "WGI_SC", "WGI_SR", "WGI_SC_LB", "WGI_SC_UB"]
     df = _make_viz_df(WGI_BREAKDOWNS, list(range(2010, 2025)))
 
@@ -243,7 +240,11 @@ def test_viz_disagg_dims_constant_is_complete():
 
 def test_breakdown_comparison_spec_uses_temporal_year_encoding():
     """Year X axis must use type=temporal so Vega-Lite renders years, not millisecond integers."""
-    from data360.viz_config import ChartStrategy, StrategyResult, build_breakdown_comparison_spec
+    from data360.viz_config import (
+        ChartStrategy,
+        StrategyResult,
+        build_breakdown_comparison_spec,
+    )
 
     WGI_BREAKDOWNS = ["WGI_EST", "WGI_SC", "WGI_SE"]
     df = _make_viz_df(WGI_BREAKDOWNS, [2020, 2021, 2022, 2023, 2024])
@@ -266,7 +267,11 @@ def test_breakdown_comparison_spec_uses_temporal_year_encoding():
 
 def test_breakdown_comparison_spec_uses_friendly_legend_title():
     """Legend title must use the label from _TOOLTIP_SPECS (or API override), not field.title()."""
-    from data360.viz_config import ChartStrategy, StrategyResult, build_breakdown_comparison_spec
+    from data360.viz_config import (
+        ChartStrategy,
+        StrategyResult,
+        build_breakdown_comparison_spec,
+    )
 
     WGI_BREAKDOWNS = ["WGI_EST", "WGI_SC"]
     df = _make_viz_df(WGI_BREAKDOWNS, [2022, 2023])

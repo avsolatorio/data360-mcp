@@ -20,12 +20,11 @@ from data360.api import (
     _build_group_summary,
     _compute_trend_direction,
     _fetch_all_pages,
+    compare_countries,
     rank_countries,
     summarize_data,
-    compare_countries,
 )
 from data360.models import (
-    ComparisonSnapshot,
     ComparisonTimeSeries,
     CountryComparisonResponse,
     DataSummaryResponse,
@@ -35,7 +34,6 @@ from data360.models import (
     RankedCountry,
     RankingResponse,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -1277,6 +1275,7 @@ class TestCompactOutput:
     def test_compact_aggregation_serializer_produces_valid_json(self):
         """The serializer must call to_compact() and return valid JSON."""
         import json as _json
+
         from data360.mcp_server.tools import _compact_aggregation_serializer
 
         ds = DataSummaryResponse(

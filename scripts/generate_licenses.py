@@ -55,7 +55,7 @@ def main() -> int:
             "--order=license",
             "--from=mixed",
         ],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         cwd=repo_root,
     )

@@ -5,7 +5,6 @@ formats the Data360 API produces.
 """
 
 import pandas as pd
-import pytest
 
 from data360.viz_config import (
     _detect_temporal_frequency,

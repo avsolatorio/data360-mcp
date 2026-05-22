@@ -18,17 +18,15 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
+from data360.visualization import get_multi_indicator_viz_spec, get_viz_spec
 from data360.viz_config import (
     SMALL_MULTIPLES_MAX_FACETS,
     ChartStrategy,
     _append_trim_note,
     _format_breakdown_subtitle,
-
     dispatch_spec,
     select_strategy,
 )
-from data360.visualization import get_multi_indicator_viz_spec, get_viz_spec
-
 
 # ============================================================================
 # 1. Contract presence

@@ -4,6 +4,7 @@ import re
 
 import pytest
 import pytest_httpx
+
 from data360.api import _strip_data_row, get_data
 
 
