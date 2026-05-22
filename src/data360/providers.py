@@ -583,9 +583,8 @@ def _make_group_note(group_code: str, info: dict) -> str:
 class CodelistManager:
     """Unified manager for all Data360 codelists.
 
-    Primary data source (startup fetch, then background refresh):
-      lifespan.  It fetches all dimension codelists from the extdataportal
-      API lazily on first use.
+    Primary data source (lazy startup fetch, then background refresh):
+      On first use, it fetches all dimension codelists from the extdataportal
       metadata API in a single HTTP call and populates ``_extdataportal``.
       Covers COMP_BREAKDOWN (5 000+ codes), UNIT_MEASURE (769 codes),
       AGE (173 codes), URBANISATION (16 codes), SEX (7 codes), FREQ (34 codes),
