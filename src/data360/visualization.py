@@ -351,7 +351,6 @@ def _build_data_summary(df: pd.DataFrame) -> dict:
     return out
 
 
-
 def _format_source_line_from_attribution(attrib: dict[str, str]) -> str:
     """One-line \"Source\" string; matches client `formatData360VizSourceLine`."""
     db = (attrib.get("database_name") or attrib.get("database_id") or "").strip()
@@ -540,9 +539,9 @@ def _clean_single_df(
         except Exception as e:
             _logger.warning(f"time_period conversion failed: {e}")
             try:
-                viz_data["time_period"] = (
-                    pd.to_datetime(viz_data["time_period"]).dt.year.astype(str)
-                )
+                viz_data["time_period"] = pd.to_datetime(
+                    viz_data["time_period"]
+                ).dt.year.astype(str)
             except Exception:
                 pass
 
@@ -667,7 +666,11 @@ def _resolve_hidden_dimension(
     _logger.warning(
         "Collapsed %d duplicate rows to row-wise mean%s.",
         n_collapsed,
-        (f" — hidden dim '{candidates[0][0]}' had too many values" if candidates else ""),
+        (
+            f" — hidden dim '{candidates[0][0]}' had too many values"
+            if candidates
+            else ""
+        ),
     )
     return viz_data, (
         f"Note: {n_collapsed} duplicate data rows were averaged"
@@ -780,9 +783,14 @@ def _strip_common_prefix_in_dims(
         cut = len(stripped_prefix) + sep_len  # includes trailing separator(s)
         mapping = {v: v[cut:].lstrip(": -_/\\ ") for v in unique_vals}
         df = df.copy()
-        df[col] = df[col].map(lambda x, m=mapping: m.get(x, x) if isinstance(x, str) else x)
+        df[col] = df[col].map(
+            lambda x, m=mapping: m.get(x, x) if isinstance(x, str) else x
+        )
         _logger.debug(
-            "Stripped common prefix %r from column %r (%d values)", stripped_prefix, col, len(unique_vals)
+            "Stripped common prefix %r from column %r (%d values)",
+            stripped_prefix,
+            col,
+            len(unique_vals),
         )
     return df
 
@@ -1071,7 +1079,7 @@ async def get_viz_spec(
         relevant_fields: Optional list of column names to include in the chart.
         custom_constraints: Deprecated legacy field; ignored by strategy-based specs.
         use_default_constraints: If True (default), apply standard encoding heuristics.
-        chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Male vs. Female Unemployment'). Do not leave this blank.
+        chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Male vs. Female Unemployment'). Do not include chart types (e.g. 'Heatmap', 'Line Chart') in the title, as the strategy engine may override the requested chart type based on data cardinality. Do not leave this blank.
         series_labels: Optional. A dictionary mapping raw dimension codes or
             auto-resolved labels to short, human-readable names for legends and
             panel titles (e.g., {"WGI_EST": "Estimate", "WGI_SC": "Score"}).
@@ -1138,10 +1146,11 @@ async def get_viz_spec(
             if val is None:
                 try:
                     disagg = await get_disaggregation(database_id, indicator_id)
-                    for d in (disagg.get("dimensions") or []):
+                    for d in disagg.get("dimensions") or []:
                         if d.get("field_name", "").upper() == dim.upper():
                             codes = [
-                                c for c in (d.get("field_value") or [])
+                                c
+                                for c in (d.get("field_value") or [])
                                 if c not in _TRIVIAL_CODES
                             ]
                             if codes:
@@ -1156,8 +1165,7 @@ async def get_viz_spec(
         # Multi-dim expansion (e.g. SEX × AGE) would be a combinatorial explosion — skip it.
         first_dim, codes = next(iter(expand_dims.items()))
         base_filters = {
-            k: v for k, v in (disaggregation_filters or {}).items()
-            if k != first_dim
+            k: v for k, v in (disaggregation_filters or {}).items() if k != first_dim
         }
 
         async def _fetch_one(code: str) -> pd.DataFrame:
@@ -1196,7 +1204,8 @@ async def get_viz_spec(
                 start_year=start_year,
                 end_year=end_year,
                 disaggregation_filters={
-                    k: v for k, v in (disaggregation_filters or {}).items()
+                    k: v
+                    for k, v in (disaggregation_filters or {}).items()
                     if v is not None
                 },
             )
@@ -1230,7 +1239,6 @@ async def get_viz_spec(
             return _err(f"Error fetching data: {e}")
 
         data.columns = [c.lower() for c in data.columns]
-
 
     # 3. Detect frequency
     data_frequency = None
@@ -1302,7 +1310,9 @@ async def get_viz_spec(
         db_map = {}
     database_display = db_map.get(database_id, database_id)
     indicator_display = (
-        chart_title_auto if chart_title_auto != "Generated Visualization" else indicator_id
+        chart_title_auto
+        if chart_title_auto != "Generated Visualization"
+        else indicator_id
     )
     source_attribution: dict[str, str] = {
         "database_id": database_id,
@@ -1341,7 +1351,11 @@ async def get_viz_spec(
     # legend/panel labels are unique and readable without truncation.
     # e.g. "Severity Phase of Acute Food Insecurity or Malnutrition : Phase 1 - Minimal"
     # → "Phase 1 - Minimal".  The series_labels override below still takes priority.
-    _CB_DIMS = [c for c in ["comp_breakdown_1", "comp_breakdown_2", "comp_breakdown_3"] if c in viz_data.columns]
+    _CB_DIMS = [
+        c
+        for c in ["comp_breakdown_1", "comp_breakdown_2", "comp_breakdown_3"]
+        if c in viz_data.columns
+    ]
     viz_data = _strip_common_prefix_in_dims(viz_data, _CB_DIMS)
 
     # 6.2 Resolve raw_unit code to human-readable label for axis/subtitle.
@@ -1352,6 +1366,7 @@ async def get_viz_spec(
     raw_unit_label: str = ""
     try:
         from data360.providers import get_codelist_manager
+
         _cl_mgr = get_codelist_manager()
         if raw_unit:
             _resolved = _cl_mgr.get_label("UNIT_MEASURE", raw_unit)
@@ -1375,7 +1390,11 @@ async def get_viz_spec(
         final_title = chart_title
     else:
         # Wrap the auto-generated title
-        final_title = textwrap.wrap(chart_title_auto, width=80) if isinstance(chart_title_auto, str) else chart_title_auto
+        final_title = (
+            textwrap.wrap(chart_title_auto, width=80)
+            if isinstance(chart_title_auto, str)
+            else chart_title_auto
+        )
 
     # Vega-Lite title + subtitle (geography, year range, unit) after data is cleaned
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
@@ -1403,6 +1422,7 @@ async def get_viz_spec(
     # disaggregation API (cached — no extra HTTP call if already fetched above).
     try:
         from data360.api import get_comp_breakdown_dim_names
+
         strategy_result.dim_name_labels = await get_comp_breakdown_dim_names(
             database_id, indicator_id
         )
@@ -1412,7 +1432,6 @@ async def get_viz_spec(
     _logger.info(
         f"Chart strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
     )
-
 
     try:
         spec = viz_config.dispatch_spec(
@@ -1427,8 +1446,37 @@ async def get_viz_spec(
         )
         dim_summary = _extract_dimension_summary(viz_data)
         data_summary = _build_data_summary(viz_data)
+
+        warning_msg = None
+        if chart_type:
+            requested_lower = chart_type.lower()
+            core_intent = (
+                requested_lower.replace("chart", "")
+                .replace("stacked", "")
+                .replace("grouped", "")
+                .replace("_", " ")
+                .strip()
+            )
+            if core_intent == "scatter":
+                core_intent = "point"
+            elif core_intent == "strip":
+                core_intent = "beeswarm"
+
+            reason_lower = strategy_result.reason.lower()
+            reason_suffix = (
+                reason_lower.split("→")[-1] if "→" in reason_lower else reason_lower
+            )
+
+            if core_intent and core_intent not in reason_suffix:
+                warning_msg = (
+                    f"You requested '{chart_type}', but the visualization engine "
+                    f"selected a different strategy based on data cardinality: {strategy_result.reason}. "
+                    "The chart was successfully generated. Please ensure your response and the chart title reflect this actual strategy."
+                )
+
         return _ok(
             await _store_spec(spec),
+            warning=warning_msg,
             source_attribution=source_attribution,
             strategy=strategy_result.strategy.value,
             reason=strategy_result.reason,
@@ -1568,7 +1616,7 @@ async def get_multi_indicator_viz_spec(
             For trend or comparison questions, omit chart_type and let the pipeline
             select the correct strategy (layered lines, scatter, etc.).
 
-        chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Electricity Mix by Source'). Do not leave this blank.
+        chart_title: You MUST provide a custom, human-readable chart title here (e.g., 'Electricity Mix by Source'). Do not include chart types (e.g. 'Heatmap', 'Line Chart') in the title, as the strategy engine may override the requested chart type based on data cardinality. Do not leave this blank.
         series_labels: Optional. A dictionary mapping indicator IDs to short,
             human-readable labels (e.g., {"WB_WDI_EG_ELC_HYRO_ZS": "Hydro"}).
             Provide this to shorten long auto-generated indicator names in legends.
@@ -1617,7 +1665,9 @@ async def get_multi_indicator_viz_spec(
         if df.empty:
             return _err(f"No data returned for indicator {ind['indicator_id']}.")
 
-        df, _, _ = _clean_single_df(df, relevant_fields=None, chart_type=None, data_frequency=None)
+        df, _, _ = _clean_single_df(
+            df, relevant_fields=None, chart_type=None, data_frequency=None
+        )
 
         ind_name = title or ind["indicator_id"]
         # Allow LLM to override the indicator name directly in the dataframe
@@ -1644,8 +1694,7 @@ async def get_multi_indicator_viz_spec(
         # for this specific indicator. If Indicator 1 is "Male" and Indicator 2 is "Female",
         # keeping `sex` would cause the outer merge to fail (creating disjoint rows with NaNs).
         keep_dims = [
-            c for c in _VIZ_DISAGG_DIMS
-            if c in df.columns and df[c].nunique() > 1
+            c for c in _VIZ_DISAGG_DIMS if c in df.columns and df[c].nunique() > 1
         ]
         keep = ["year", "country"] + keep_dims + [col]
 
@@ -1706,6 +1755,7 @@ async def get_multi_indicator_viz_spec(
     # using the same extdataportal bundle used by get_viz_spec.
     try:
         from data360.providers import get_codelist_manager as _get_cl_mgr
+
         _cl = _get_cl_mgr()
         units = [_cl.get_label("UNIT_MEASURE", u) if u else u for u in units]
     except Exception:
@@ -1777,9 +1827,10 @@ async def get_multi_indicator_viz_spec(
     # (country, indicator) pair becomes a row with a single "value" and an
     # "indicator" label column used as the grouping/coloring key.
     elif (
-        strategy_result.strategy in (
+        strategy_result.strategy
+        in (
             viz_config.ChartStrategy.BREAKDOWN_COMPARISON,
-            viz_config.ChartStrategy.SMALL_MULTIPLES
+            viz_config.ChartStrategy.SMALL_MULTIPLES,
         )
         and strategy_result.color_dim == "indicator"
     ):
@@ -1798,7 +1849,11 @@ async def get_multi_indicator_viz_spec(
     try:
         # If there is a shared unit, it makes sense to use it as the Y-axis label.
         # Otherwise, fall back to the second indicator's name (useful for scatterplots).
-        computed_y_label = shared_unit_label if shared_unit_label else indicator_labels.get(indicator_col_names[1], "Value")
+        computed_y_label = (
+            shared_unit_label
+            if shared_unit_label
+            else indicator_labels.get(indicator_col_names[1], "Value")
+        )
 
         spec = viz_config.dispatch_spec(
             strategy_result.strategy,
@@ -1808,7 +1863,9 @@ async def get_multi_indicator_viz_spec(
             indicator_labels=indicator_labels,
             y_label=computed_y_label,
             x_label=indicator_labels.get(indicator_col_names[0], "Value"),
-            unit_measure=_unit_measure_for_formatting(shared_unit_raw, shared_unit_label),
+            unit_measure=_unit_measure_for_formatting(
+                shared_unit_raw, shared_unit_label
+            ),
         )
     except Exception as e:
         _logger.exception(f"Spec build failed: {e}")
@@ -1843,8 +1900,37 @@ async def get_multi_indicator_viz_spec(
     }
 
     url = await _store_spec(spec)
+
+    warning_msg = None
+    if chart_type:
+        requested_lower = chart_type.lower()
+        core_intent = (
+            requested_lower.replace("chart", "")
+            .replace("stacked", "")
+            .replace("grouped", "")
+            .replace("_", " ")
+            .strip()
+        )
+        if core_intent == "scatter":
+            core_intent = "point"
+        elif core_intent == "strip":
+            core_intent = "beeswarm"
+
+        reason_lower = strategy_result.reason.lower()
+        reason_suffix = (
+            reason_lower.split("→")[-1] if "→" in reason_lower else reason_lower
+        )
+
+        if core_intent and core_intent not in reason_suffix:
+            warning_msg = (
+                f"You requested '{chart_type}', but the visualization engine "
+                f"selected a different strategy based on data cardinality: {strategy_result.reason}. "
+                "The chart was successfully generated. Please ensure your response and the chart title reflect this actual strategy."
+            )
+
     return _ok(
         url,
+        warning=warning_msg,
         source_attribution=source_attribution_multi,
         strategy=strategy_result.strategy.value,
         reason=strategy_result.reason,
