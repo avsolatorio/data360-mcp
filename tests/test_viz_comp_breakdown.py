@@ -142,7 +142,7 @@ def test_clean_single_df_relevant_fields_branch_keeps_comp_breakdown():
 
 
 def test_strategy_wgi_multi_year_routes_to_temporal_single():
-    """WGI-style multi-year breakdown must route to TEMPORAL_SINGLE (multi-line), not grouped bar."""
+    """Multi-year breakdown with compatible scales must route to TEMPORAL_SINGLE."""
     WGI_BREAKDOWNS = ["WGI_EST", "WGI_SE", "WGI_SC", "WGI_SR", "WGI_SC_LB", "WGI_SC_UB"]
     df = _make_viz_df(WGI_BREAKDOWNS, list(range(2010, 2025)))
 

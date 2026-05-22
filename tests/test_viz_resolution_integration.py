@@ -268,6 +268,74 @@ async def test_get_viz_spec_unit_label_resolved_in_title():
     )
 
 
+@pytest.mark.asyncio
+async def test_get_viz_spec_passes_percent_token_to_dispatch():
+    from data360 import viz_config
+    from data360.visualization import get_viz_spec
+
+    single_rows = [r for r in _make_wgi_rows("GEO") if r["COMP_BREAKDOWN_1"] == "WGI_EST"]
+    async with _viz_patches(single_rows, meta=_fake_meta(unit="PT")):
+        with patch("data360.viz_config.dispatch_spec", wraps=viz_config.dispatch_spec) as mock_dispatch:
+            result = await get_viz_spec(
+                database_id="WB_WGI",
+                indicator_id="GOV_WGI_GE",
+                country_code="GEO",
+                disaggregation_filters={"COMP_BREAKDOWN_1": "WGI_EST"},
+            )
+
+    assert "url" in result, f"get_viz_spec returned error: {result}"
+    assert mock_dispatch.call_args.kwargs["unit_measure"] == "%"
+
+
+@pytest.mark.asyncio
+async def test_get_multi_indicator_viz_spec_passes_usd_token_to_dispatch():
+    from data360 import viz_config
+    from data360.visualization import get_multi_indicator_viz_spec
+
+    df1 = pd.DataFrame([
+        {"time_period": "2020-01-01", "ref_area": "GEO", "obs_value": "1.1", "unit_measure": "USD"},
+        {"time_period": "2021-01-01", "ref_area": "GEO", "obs_value": "1.2", "unit_measure": "USD"},
+    ])
+    df2 = pd.DataFrame([
+        {"time_period": "2020-01-01", "ref_area": "GEO", "obs_value": "2.1", "unit_measure": "USD"},
+        {"time_period": "2021-01-01", "ref_area": "GEO", "obs_value": "2.2", "unit_measure": "USD"},
+    ])
+
+    with (
+        patch(
+            "data360.visualization._fetch_single_indicator",
+            new_callable=AsyncMock,
+            side_effect=[(df1, "Series A", "USD"), (df2, "Series B", "USD")],
+        ),
+        patch(
+            "data360.providers.get_codelist_mapping",
+            new_callable=AsyncMock,
+            return_value={"GEO": "Georgia"},
+        ),
+        patch(
+            "data360.visualization.get_database_mapping",
+            new_callable=AsyncMock,
+            return_value={},
+        ),
+        patch(
+            "data360.visualization.save_specs_to_static",
+            return_value="http://localhost/spec.json",
+        ),
+        patch("data360.viz_config.dispatch_spec", wraps=viz_config.dispatch_spec) as mock_dispatch,
+    ):
+        result = await get_multi_indicator_viz_spec(
+            indicator_ids=[
+                {"database_id": "WB_WDI", "indicator_id": "IND_A"},
+                {"database_id": "WB_WDI", "indicator_id": "IND_B"},
+            ],
+            country_code="GEO",
+        )
+
+    assert result.get("error") is None, f"get_multi_indicator_viz_spec returned error: {result}"
+    assert mock_dispatch.called, f"dispatch_spec was not called. Result: {result}"
+    assert mock_dispatch.call_args.kwargs["unit_measure"] == "USD"
+
+
 # ---------------------------------------------------------------------------
 # Direct DataFrame pipeline test — fast, no file I/O, no network
 # ---------------------------------------------------------------------------

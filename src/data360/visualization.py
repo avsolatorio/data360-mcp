@@ -73,6 +73,32 @@ _VIZ_DISAGG_DIMS: tuple[str, ...] = (
 _SOURCE_FALLBACK = "World Bank — Data360"
 
 
+def _unit_measure_for_formatting(
+    raw_unit: str | None, resolved_unit_label: str | None = None
+) -> str | None:
+    """Return a formatting-friendly unit token for viz_config formatters."""
+    raw = (raw_unit or "").strip()
+    label = (resolved_unit_label or "").strip()
+    raw_norm = raw.upper()
+    label_norm = label.upper()
+
+    if raw_norm == "PT" or "PERCENT" in label_norm:
+        return "%"
+    if (
+        "$" in raw_norm
+        or "USD" in raw_norm
+        or "$" in label_norm
+        or "USD" in label_norm
+        or "DOLLAR" in label_norm
+    ):
+        return "USD"
+    if raw:
+        return raw
+    if label:
+        return label
+    return None
+
+
 # ============================================================================
 # STORAGE HELPERS
 # ============================================================================
@@ -1397,7 +1423,7 @@ async def get_viz_spec(
             indicator_labels=series_labels,
             y_label=raw_unit_label if raw_unit_label else "Value",
             x_label="Value",
-            unit_measure=raw_unit_label or None,
+            unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
         )
         dim_summary = _extract_dimension_summary(viz_data)
         data_summary = _build_data_summary(viz_data)
@@ -1675,19 +1701,20 @@ async def get_multi_indicator_viz_spec(
         # Wrap at 80 characters to ensure it fits safely within standard chart widths
         final_chart_title = textwrap.wrap(full_title, width=80)
 
-    unique_units = list(dict.fromkeys(u for u in units if u))
+    unique_raw_units = list(dict.fromkeys(u for u in units if u))
     # Resolve raw unit codes (e.g. "PT") to human-readable labels (e.g. "Percent")
     # using the same extdataportal bundle used by get_viz_spec.
     try:
         from data360.providers import get_codelist_manager as _get_cl_mgr
         _cl = _get_cl_mgr()
         units = [_cl.get_label("UNIT_MEASURE", u) if u else u for u in units]
-        unique_units = list(dict.fromkeys(u for u in units if u))
     except Exception:
         pass
-    shared_unit = unique_units[0] if len(unique_units) == 1 else ""
+    unique_label_units = list(dict.fromkeys(u for u in units if u))
+    shared_unit_raw = unique_raw_units[0] if len(unique_raw_units) == 1 else ""
+    shared_unit_label = unique_label_units[0] if len(unique_label_units) == 1 else ""
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
-        final_chart_title, shared_unit or None, merged
+        final_chart_title, shared_unit_label or None, merged
     )
 
     # 6. Build indicator_labels for axis/tooltip
@@ -1771,7 +1798,7 @@ async def get_multi_indicator_viz_spec(
     try:
         # If there is a shared unit, it makes sense to use it as the Y-axis label.
         # Otherwise, fall back to the second indicator's name (useful for scatterplots).
-        computed_y_label = shared_unit if shared_unit else indicator_labels.get(indicator_col_names[1], "Value")
+        computed_y_label = shared_unit_label if shared_unit_label else indicator_labels.get(indicator_col_names[1], "Value")
 
         spec = viz_config.dispatch_spec(
             strategy_result.strategy,
@@ -1781,7 +1808,7 @@ async def get_multi_indicator_viz_spec(
             indicator_labels=indicator_labels,
             y_label=computed_y_label,
             x_label=indicator_labels.get(indicator_col_names[0], "Value"),
-            unit_measure=shared_unit or None,
+            unit_measure=_unit_measure_for_formatting(shared_unit_raw, shared_unit_label),
         )
     except Exception as e:
         _logger.exception(f"Spec build failed: {e}")
