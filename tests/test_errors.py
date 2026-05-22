@@ -74,7 +74,7 @@ class TestSubclasses:
     def test_api_error(self):
         err = APIError(context="search", status_code=500, response_text="Internal Server Error")
         assert err.status_code == 500
-        assert "HTTP error 500" in err.detail
+        assert "HTTP 500: Internal Server Error" in err.detail
         assert err.error_code == "http_error:search"
 
     def test_data360_timeout_error(self):
