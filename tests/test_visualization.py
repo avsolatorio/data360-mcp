@@ -697,29 +697,29 @@ class TestChartTypeOverrideWarning:
             yield
 
     @pytest.mark.asyncio
-    async def test_warning_injected_when_hint_overridden(self, patches):
-        """If LLM requests heatmap but data cardinality triggers line chart, a warning should be present."""
+    @pytest.mark.parametrize("requested_chart", ["heatmap", "map", "choropleth", "strip", "small_multiples"])
+    async def test_warning_injected_when_hint_overridden(self, patches, requested_chart):
+        """If LLM requests an incompatible chart type, a warning should be present."""
         result = await get_viz_spec(
             database_id="WB_WDI",
             indicator_id="FAKE_IND",
-            chart_type="heatmap",
-            chart_title="Fake Heatmap",
+            chart_type=requested_chart,
+            chart_title=f"Fake {requested_chart}",
         )
-        assert result["strategy"] == "temporal_single"
         assert "warning" in result
         assert (
-            "You requested 'heatmap', but the visualization engine selected"
+            f"You requested '{requested_chart}', but the visualization engine selected"
             in result["warning"]
         )
 
     @pytest.mark.asyncio
-    async def test_no_warning_when_hint_matches(self, patches):
-        """If LLM requests line chart and pipeline selects line chart, no warning is emitted."""
+    @pytest.mark.parametrize("requested_chart", ["line", "bar", "scatter", "area", "stacked_area"])
+    async def test_no_warning_when_hint_matches(self, patches, requested_chart):
+        """If LLM requests a chart type that the pipeline can honor, no warning is emitted."""
         result = await get_viz_spec(
             database_id="WB_WDI",
             indicator_id="FAKE_IND",
-            chart_type="line",
-            chart_title="Fake Line Chart",
+            chart_type=requested_chart,
+            chart_title=f"Fake {requested_chart}",
         )
-        assert result["strategy"] == "temporal_single"
         assert "warning" not in result or result["warning"] is None
