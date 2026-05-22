@@ -56,8 +56,8 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
   out.width = "container";
   out.height = chartHeight;
 
-  // 3. Suppress built-in legend — card renders its own
-  if (out.encoding?.color) {
+  // 3. Suppress built-in legend — card renders its own (unless quantitative)
+  if (out.encoding?.color && out.encoding.color.type !== "quantitative") {
     out.encoding.color.legend = null;
   }
 
@@ -118,7 +118,8 @@ export function parseSpec(spec: VLSpec, palette: string[]): ParsedSpec {
       ? spec.datasets[name]
       : (spec.data?.values ?? []);
 
-  const colorField = spec.encoding?.color?.field ?? null;
+  const isQuantitative = spec.encoding?.color?.type === "quantitative";
+  const colorField = isQuantitative ? null : (spec.encoding?.color?.field ?? null);
   const specTitle =
     typeof spec.title === "string"
       ? spec.title

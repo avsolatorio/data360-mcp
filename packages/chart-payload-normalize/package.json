@@ -1,6 +1,6 @@
 {
   "name": "@data360/chart-payload-normalize",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Normalize Charts API envelopes and raw Vega-Lite JSON into spec + title for Data360 charts.",
   "type": "module",
   "main": "./dist/index.js",
