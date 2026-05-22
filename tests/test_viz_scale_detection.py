@@ -497,7 +497,7 @@ class TestBuildSmallMultiplesSpecDelegation:
         assert "facet" not in spec
 
     def test_scale_compatible_produces_vconcat(self):
-        """Normal (scale_incompatible=False) still produces the original facet layout."""
+        """Normal (scale_incompatible=False) still produces the vconcat layout."""
         rows = []
         for country in ["Kenya", "Ghana", "Nigeria"]:
             for bd in ["BD_A", "BD_B"]:
