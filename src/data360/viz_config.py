@@ -2379,6 +2379,22 @@ def build_heatmap_spec(
     has_negative = df["value"].min() < 0 if "value" in df.columns else False
     scheme = "redblue" if has_negative else "yellowgreenblue"
 
+    # Compute explicit domain so Vega-Lite cannot infer a discrete/ordinal scale
+    # from the data shape.  Without this, symbol legend entries are rendered for
+    # each unique float value instead of a continuous gradient.
+    val_series = pd.to_numeric(df["value"], errors="coerce").dropna() if "value" in df.columns else pd.Series(dtype=float)
+    if not val_series.empty:
+        val_min = float(val_series.min())
+        val_max = float(val_series.max())
+        if has_negative:
+            # Symmetric domain for diverging schemes so the midpoint is always 0.
+            abs_max = max(abs(val_min), abs(val_max))
+            color_domain = [-abs_max, abs_max]
+        else:
+            color_domain = [val_min, val_max]
+    else:
+        color_domain = [0, 1]
+
     y_enc = {
         "field": "country",
         "type": "nominal",
@@ -2390,8 +2406,20 @@ def build_heatmap_spec(
     color_enc = {
         "field": "value",
         "type": "quantitative",
-        "scale": {"scheme": scheme},
-        "legend": {"type": "gradient", "title": y_label, "orient": "top", "direction": "horizontal", "gradientLength": 200}
+        # Explicit domain forces a continuous quantitative scale; without it
+        # Vega-Lite may fall back to an ordinal scale and render symbol swatches.
+        "scale": {"scheme": scheme, "domain": color_domain},
+        "legend": {
+            "type": "gradient",
+            "title": y_label,
+            "orient": "top",
+            "direction": "horizontal",
+            "gradientLength": 200,
+            # Explicit gradient stops mirror the domain so the legend
+            # colour bar matches the cell colours exactly.
+            "gradientThickness": 12,
+            "labelFontSize": 10,
+        },
     }
 
     spec: dict = {
@@ -2414,7 +2442,15 @@ def build_heatmap_spec(
             )
         },
         "width": 600,
-        "height": {"step": 15}
+        "height": {"step": 15},
+        # Override the global config.legend for heatmaps: the WB theme default
+        # does not include symbolType/gradientLength, causing Vega-Lite to
+        # render a symbol swatch legend when the global config is merged in.
+        "config": {
+            "legend": {
+                "symbolType": "square",
+            }
+        },
     }
 
     if result.facet_dim:
