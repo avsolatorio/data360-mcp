@@ -811,3 +811,95 @@ class TestBackfillPrimaryMetadata:
         # Backfill should have replaced the secondary's 2023 with the primary's 2025.
         assert ind.latest_data == "2025"
         assert ind.time_period_range == "1960-2025"
+
+    @pytest.mark.asyncio
+    async def test_search_applies_redirect_v3_connected_entities(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Verify that SearchV3 responses map primary_source_of correctly using
+        connected_entities when a secondary indicator ID is searched.
+        """
+        search_response = {
+            "count": 1,
+            "results": [
+                {
+                    "idno": "WB_WDI_SP_POP_TOTL",
+                    "name": "Population, total",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": "Total population",
+                    "dimensions": [],
+                    "time_period": [
+                        {"start": "1960", "end": "2024", "LATEST_DATA_POINT": "2024"}
+                    ],
+                    "connected_entities": [
+                        {
+                            "type": "indicator",
+                            "idno": "WB_HNP_SP_POP_TOTL_ZS",
+                            "parent_idno": "WB_HNP",
+                            "parent_name": "Health Nutrition and Population Statistics",
+                        }
+                    ],
+                }
+            ],
+        }
+
+        httpx_mock.add_response(
+            method="POST",
+            url=_SEARCH_URL,
+            json=search_response,
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url=_METADATA_URL,
+            json=_make_metadata_response("1960", "2024", "2024"),
+        )
+
+        result = await search("WB_HNP_SP_POP_TOTL_ZS", limit=5)
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.error is None
+        assert len(result.indicators) == 1
+        ind = result.indicators[0]
+        assert ind.idno == "WB_WDI_SP_POP_TOTL"
+        assert ind.database_id == "WB_WDI"
+        assert ind.primary_source_of == "WB_HNP_SP_POP_TOTL_ZS"
+
+    @pytest.mark.asyncio
+    async def test_search_single_country_optimization(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Verify that single-country searches bypass disaggregation/dimensions checks."""
+        search_response = {
+            "count": 1,
+            "results": [
+                {
+                    "idno": "WB_WDI_SP_POP_TOTL",
+                    "name": "Population, total",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": "Total population",
+                    "dimensions": [],
+                    "time_period": [
+                        {"start": "1960", "end": "2024", "LATEST_DATA_POINT": "2024"}
+                    ],
+                }
+            ],
+        }
+
+        httpx_mock.add_response(
+            method="POST",
+            url=_SEARCH_URL,
+            json=search_response,
+        )
+
+        result = await search("population", required_country="JPN", limit=5)
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.error is None
+        assert len(result.indicators) == 1
+        ind = result.indicators[0]
+        assert ind.covers_country == {"JPN": True}
+
+        # Verify that dimensions/disaggregation endpoint was NOT called
+        for req in httpx_mock.get_requests():
+            assert "dimensions" not in str(req.url)
+            assert "disaggregation" not in str(req.url)

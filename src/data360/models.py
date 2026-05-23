@@ -133,6 +133,10 @@ class SeriesDescription(BaseModel):
         default_factory=list,
         description="Metadata links from the API's additional.metadata_link field.",
     )
+    connected_entities: list[dict[str, Any]] | None = Field(
+        default=None,
+        description="Connected secondary entities for SearchV3 redirect mapping.",
+    )
 
     @property
     def primary_source(self) -> PrimarySourceInfo | None:
