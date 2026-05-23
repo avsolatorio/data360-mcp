@@ -522,7 +522,7 @@ async def _search_raw(
     url = data360_config.search_url or f"{data360_config.api_url}/portal/v1/public_data360_search"
     payload = {
         "site": "data360",
-        "query": request.query,
+        "query_string": request.query,
         "types": ["indicator"],
         "skip": request.offset,
         "items_per_page": request.limit,
