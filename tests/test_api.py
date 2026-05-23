@@ -680,6 +680,55 @@ class TestGetData:
         assert len(result.data) == 1
 
     @pytest.mark.asyncio
+    async def test_get_data_with_empty_string_filter_uses_default(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that empty string filters are treated as unspecified and get smart defaults."""
+        mock_response = {
+            "value": [
+                {"REF_AREA": "UGA", "TIME_PERIOD": "2020", "OBS_VALUE": 1000},
+            ],
+            "count": 1,
+        }
+
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
+        )
+
+        httpx_mock.add_response(
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={
+                "dimensions": [
+                    {"field_name": "URBANISATION", "field_value": [{"code": "_T"}, {"code": "URB"}]},
+                ]
+            },
+        )
+
+        def data_callback(request: httpx.Request) -> httpx.Response | None:
+            if (
+                request.method == "GET"
+                and request.url.host == "api.test.example.com"
+                and request.url.path == "/data"
+            ):
+                assert "URBANISATION=_T" in str(request.url)
+                return httpx.Response(200, json=mock_response)
+            return None
+
+        httpx_mock.add_callback(data_callback)
+
+        result = await get_data(
+            "WB_WDI",
+            "WB_WDI_SP_POP_TOTL",
+            disaggregation_filters={"URBANISATION": ""},
+        )
+
+        assert result.data is not None
+        assert result.failed_validation is None
+
+    @pytest.mark.asyncio
     async def test_get_data_pagination(self, httpx_mock: pytest_httpx.HTTPXMock):
         """Test data retrieval with pagination."""
 
@@ -1321,15 +1370,15 @@ class TestDimensionsResilienceAndParsing:
             json=dimensions_response,
         )
 
-        # 3. Perform search with required_country="JPN"
-        result = await search(query="population", required_country="JPN")
+        # 3. Perform search with required_country="JPN;USA"
+        result = await search(query="population", required_country="JPN;USA")
 
         assert isinstance(result, EnrichedSearchResponse)
         assert result.indicators is not None
         assert len(result.indicators) == 1
         ind = result.indicators[0]
-        # covers_country should be a dictionary resolving "JPN" to True
-        assert ind.covers_country == {"JPN": True}
+        # covers_country should be a dictionary resolving JPN to True and USA to False
+        assert ind.covers_country == {"JPN": True, "USA": False}
 
     @pytest.mark.asyncio
     async def test_get_disaggregation_handles_400_gracefully(

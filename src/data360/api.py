@@ -293,6 +293,10 @@ def _validate_user_filters(
             valid_filters[dim] = None
             continue
 
+        # Treat empty or whitespace-only strings as unspecified (skip to let smart defaults apply)
+        if isinstance(val, str) and not val.strip():
+            continue
+
         # Align with country_code convention: semicolons in REF_AREA become commas for the Data API.
         if dim == "REF_AREA" and isinstance(val, str) and ";" in val:
             val = ",".join(p.strip() for p in val.split(";") if p.strip())
@@ -450,6 +454,7 @@ def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescri
                 "ref_country": value.get("ref_country"),
                 "dimensions": dimensions,
                 "metadata_link": ml or [],
+                "connected_entities": value.get("connected_entities"),
             }
 
         if (
@@ -592,6 +597,7 @@ def _enrich_search_results(
     search_result: "SearchResponse",
     country_code: str | None,
     db_mapping: dict[str, str] | None = None,
+    query: str | None = None,
 ) -> tuple[list["EnrichedIndicator"], list["EnrichedIndicator"]]:
     """Convert raw SearchResponse items into a list of EnrichedIndicator objects.
 
@@ -654,13 +660,21 @@ def _enrich_search_results(
         covers_country: dict[str, bool] | None = None
         if country_code:
             requested_codes = [c.strip() for c in country_code.split(";") if c.strip()]
-            ref_countries = set()
             ref_list = raw.get("ref_country")
-            if ref_list and isinstance(ref_list, list):
-                for rc in ref_list:
-                    if isinstance(rc, dict) and rc.get("code"):
-                        ref_countries.add(rc["code"])
-            covers_country = {code: (code in ref_countries) for code in requested_codes}
+            # Under SearchV3, ref_country is absent or None.
+            is_search_v3 = "ref_country" not in raw or raw["ref_country"] is None
+
+            if len(requested_codes) == 1 and is_search_v3:
+                # O(1) Optimization: Single-country queries filtered by economy_codes
+                # are guaranteed to cover that country under SearchV3.
+                covers_country = {requested_codes[0]: True}
+            else:
+                ref_countries = set()
+                if ref_list and isinstance(ref_list, list):
+                    for rc in ref_list:
+                        if isinstance(rc, dict) and rc.get("code"):
+                            ref_countries.add(rc["code"])
+                covers_country = {code: (code in ref_countries) for code in requested_codes}
 
         # Extract dimension names
         dimensions = raw.get("dimensions", [])
@@ -697,6 +711,20 @@ def _enrich_search_results(
                 raw.get("idno"),
                 primary.metadata_id,
             )
+        elif not primary and query and raw.get("connected_entities"):
+            # Check if query matches a connected entity (SearchV3 redirect direction is reversed)
+            clean_query = query.strip().upper()
+            for entity in raw["connected_entities"]:
+                if isinstance(entity, dict) and entity.get("idno", "").upper() == clean_query:
+                    original_idno = entity.get("idno")
+                    _logger.debug(
+                        "Mapped primary source %s -> %s/%s via connected_entities for query %s",
+                        original_idno,
+                        raw.get("database_id"),
+                        raw.get("idno"),
+                        query,
+                    )
+                    break
 
         db_id = raw.get("database_id", "")
         ind = EnrichedIndicator(
@@ -717,7 +745,9 @@ def _enrich_search_results(
 
         # Flag for verification if country_code is provided.
         if country_code and covers_country is not None:
-            indicators_to_verify.append(ind)
+            requested_codes = [c.strip() for c in country_code.split(";") if c.strip()]
+            if len(requested_codes) > 1:
+                indicators_to_verify.append(ind)
 
     # Set requested_country on all indicators
     for ind in indicators:
@@ -1136,7 +1166,7 @@ async def search(  # noqa: PLR0911
 
     db_mapping = await get_database_mapping()
     indicators, indicators_to_verify = _enrich_search_results(
-        search_result, country_code, db_mapping
+        search_result, country_code, db_mapping, query=query
     )
 
     # Backfill latest_data / time_period_range for redirected indicators so
@@ -1239,7 +1269,9 @@ async def _build_multi_query_response(
             enriched_lists.append((None, None))
             continue
 
-        enriched, to_verify = _enrich_search_results(raw_result, code_for_query, db_mapping)
+        enriched, to_verify = _enrich_search_results(
+            raw_result, code_for_query, db_mapping, query=q
+        )
         # Backfill latest_data / time_period_range for any redirected indicators.
         redirected = [ind for ind in enriched if ind.primary_source_of is not None]
         await _backfill_primary_metadata(redirected)
