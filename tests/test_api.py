@@ -395,7 +395,7 @@ class TestGetMetadata:
 
         httpx_mock.add_callback(dimensions_callback)
 
-        result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
+        result = await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
 
         EXPECTED_DISAGGREGATION_COUNT = 2
         assert isinstance(result, MetadataResponse)
@@ -431,7 +431,7 @@ class TestGetMetadata:
 
         httpx_mock.add_callback(empty_dimensions_callback)
 
-        result = await get_metadata("INVALID_ID", "WB_WDI")
+        result = await get_metadata("WB_WDI", "INVALID_ID")
 
         assert result.indicator_metadata is None
         assert result.error is not None
@@ -485,7 +485,7 @@ class TestGetMetadata:
 
         httpx_mock.add_callback(dimensions_callback)
 
-        result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
+        result = await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
 
         EXPECTED_FILTERED_COUNT = 2
         assert len(result.disaggregation_options) == EXPECTED_FILTERED_COUNT
@@ -525,7 +525,7 @@ class TestGetMetadata:
 
         httpx_mock.add_callback(empty_dimensions_callback)
 
-        result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
+        result = await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
 
         assert result.error is not None
         assert "HTTP" in result.error
@@ -566,7 +566,7 @@ class TestGetMetadata:
 
         httpx_mock.add_callback(error_dimensions_callback)
 
-        result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
+        result = await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
 
         assert result.indicator_metadata is not None
         assert result.error is not None
