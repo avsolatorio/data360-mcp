@@ -1381,6 +1381,59 @@ class TestDimensionsResilienceAndParsing:
         assert ind.covers_country == {"JPN": True, "USA": False}
 
     @pytest.mark.asyncio
+    async def test_covers_country_handles_raw_string_ref_country(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that covers_country correctly parses raw strings in ref_country list."""
+        from data360.api import search
+
+        search_response = {
+            "count": 1,
+            "results": [
+                {
+                    "idno": "WB_WDI_SP_POP_TOTL",
+                    "name": "Population, total",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": "Total population",
+                    "dimensions": [],
+                    "ref_country": ["JPN", "USA"],
+                }
+            ],
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+            json=search_response,
+        )
+
+        # Mock dimensions endpoint for verification
+        dimensions_response = {
+            "dimensions": [
+                {
+                    "field_name": "REF_AREA",
+                    "label_name": "REF_AREA",
+                    "field_value": [
+                        {"code": "JPN"},
+                        {"code": "USA"},
+                    ],
+                }
+            ]
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            json=dimensions_response,
+        )
+
+        result = await search(query="population", required_country="JPN;CAN")
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.indicators is not None
+        assert len(result.indicators) == 1
+        ind = result.indicators[0]
+        assert ind.covers_country == {"JPN": True, "CAN": False}
+
+    @pytest.mark.asyncio
     async def test_get_disaggregation_handles_400_gracefully(
         self, httpx_mock: pytest_httpx.HTTPXMock
     ):

@@ -231,7 +231,7 @@ async def _store_spec(vl_spec: dict) -> str:
             save_specs_to_static(safe)
             return url
         except Exception as e:
-            _logger.warning(f"Charts API store failed, falling back to static local: {e}")
+            _logger.warning("Charts API store failed, falling back to static local: %s", e)
 
     # Fallback to local static file
     return save_specs_to_static(safe)

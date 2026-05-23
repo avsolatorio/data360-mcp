@@ -123,7 +123,7 @@ class SeriesDescription(BaseModel):
     time_periods: list[dict[str, Any]] | None = Field(
         None, description="Time period coverage"
     )
-    ref_country: list[dict[str, Any]] | None = Field(
+    ref_country: list[dict[str, Any] | str] | None = Field(
         None, description="Countries with data"
     )
     dimensions: list[dict[str, Any]] | None = Field(

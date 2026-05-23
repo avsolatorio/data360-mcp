@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import os
+import random
 import time
 from pathlib import Path
 from typing import Any
@@ -459,7 +460,7 @@ class GroupHierarchyManager:
             except Exception as e:
                 if not self._initial_fetch_succeeded:
                     sleep_for = backoff
-                    backoff = min(backoff * 2, max_backoff)
+                    backoff = min(backoff * 2 + random.uniform(0.1, 1.0), max_backoff)
                     _logger.warning(
                         "GroupHierarchyManager: initial background FMR fetch failed (%s). "
                         "Retrying in %.1f seconds.",
@@ -868,7 +869,7 @@ class CodelistManager:
             except Exception as exc:
                 if not self._initial_fetch_succeeded:
                     sleep_for = backoff
-                    backoff = min(backoff * 2, max_backoff)
+                    backoff = min(backoff * 2 + random.uniform(0.1, 1.0), max_backoff)
                     _logger.warning(
                         "CodelistManager: initial background refresh failed (%s). "
                         "Retrying in %.1f seconds.",
