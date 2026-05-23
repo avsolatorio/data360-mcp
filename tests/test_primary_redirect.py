@@ -482,44 +482,36 @@ class TestSearchPrimaryRedirectIntegration:
         self, httpx_mock: pytest_httpx.HTTPXMock
     ):
         mock_response = {
-            "@odata.context": "...",
-            "@odata.count": 2,
-            "value": [
+            "count": 2,
+            "results": [
                 {
-                    "series_description": {
-                        "idno": "WB_HNP_SP_POP_TOTL_ZS",
-                        "name": "Population (% of total population)",
-                        "database_id": "WB_HNP",
-                        "definition_long": "Share of total population",
-                        "dimensions": [],
-                    },
-                    "additional": {
-                        "metadata_link": [
-                            {
-                                "type": "primary",
-                                "metadata_id": "META_WB_WDI_SP_POP_TOTL",
-                                "database_id": "WB_WDI",
-                                "database_name": "World Development Indicators (WDI)",
-                            }
-                        ]
-                    },
+                    "idno": "WB_HNP_SP_POP_TOTL_ZS",
+                    "name": "Population (% of total population)",
+                    "databases": [{"idno": "WB_HNP"}],
+                    "description": "Share of total population",
+                    "dimensions": [],
+                    "metadata_link": [
+                        {
+                            "type": "primary",
+                            "metadata_id": "META_WB_WDI_SP_POP_TOTL",
+                            "database_id": "WB_WDI",
+                            "database_name": "World Development Indicators (WDI)",
+                        }
+                    ],
                 },
                 {
-                    "series_description": {
-                        "idno": "WB_WDI_SP_POP_0014_MA_ZS",
-                        "name": "Population ages 0-14, male",
-                        "database_id": "WB_WDI",
-                        "definition_long": "Male pop ages 0-14",
-                        "dimensions": [],
-                    },
-                    "additional": {"metadata_link": []},
+                    "idno": "WB_WDI_SP_POP_0014_MA_ZS",
+                    "name": "Population ages 0-14, male",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": "Male pop ages 0-14",
+                    "dimensions": [],
                 },
             ],
         }
 
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
             json=mock_response,
         )
         # The redirected indicator triggers a backfill metadata fetch.
@@ -553,7 +545,7 @@ class TestSearchPrimaryRedirectIntegration:
     async def test_search_includes_metadata_link_in_select(
         self, httpx_mock: pytest_httpx.HTTPXMock
     ):
-        """Verify the select clause includes additional/metadata_link."""
+        """Verify the SearchV3 query payload contains site and types keys."""
         captured_payloads: list[dict] = []
 
         def capture_callback(request: httpx.Request) -> httpx.Response:
@@ -561,9 +553,8 @@ class TestSearchPrimaryRedirectIntegration:
             return httpx.Response(
                 200,
                 json={
-                    "@odata.context": "...",
-                    "@odata.count": 0,
-                    "value": [],
+                    "count": 0,
+                    "results": [],
                 },
             )
 
@@ -572,7 +563,8 @@ class TestSearchPrimaryRedirectIntegration:
         await search("population", limit=5)
 
         assert len(captured_payloads) == 1
-        assert "additional/metadata_link" in captured_payloads[0]["select"]
+        assert captured_payloads[0].get("site") == "data360"
+        assert captured_payloads[0].get("types") == ["indicator"]
 
     @pytest.mark.asyncio
     async def test_search_deduplicates_after_redirect(
@@ -581,51 +573,42 @@ class TestSearchPrimaryRedirectIntegration:
         """Two results redirecting to the same primary — single-query search() does not
         deduplicate; both are returned (dedup is the multi-query caller's responsibility)."""
         mock_response = {
-            "@odata.context": "...",
-            "@odata.count": 2,
-            "value": [
+            "count": 2,
+            "results": [
                 {
-                    "series_description": {
-                        "idno": "WB_HNP_SP_POP_TOTL_ZS",
-                        "name": "Pop HNP",
-                        "database_id": "WB_HNP",
-                        "definition_long": "d1",
-                        "dimensions": [],
-                    },
-                    "additional": {
-                        "metadata_link": [
-                            {
-                                "type": "primary",
-                                "metadata_id": "META_WB_WDI_SP_POP_TOTL",
-                                "database_id": "WB_WDI",
-                            }
-                        ]
-                    },
+                    "idno": "WB_HNP_SP_POP_TOTL_ZS",
+                    "name": "Pop HNP",
+                    "databases": [{"idno": "WB_HNP"}],
+                    "description": "d1",
+                    "dimensions": [],
+                    "metadata_link": [
+                        {
+                            "type": "primary",
+                            "metadata_id": "META_WB_WDI_SP_POP_TOTL",
+                            "database_id": "WB_WDI",
+                        }
+                    ],
                 },
                 {
-                    "series_description": {
-                        "idno": "WB_GS_SP_POP_TOTL",
-                        "name": "Pop GS",
-                        "database_id": "WB_GS",
-                        "definition_long": "d2",
-                        "dimensions": [],
-                    },
-                    "additional": {
-                        "metadata_link": [
-                            {
-                                "type": "primary",
-                                "metadata_id": "META_WB_WDI_SP_POP_TOTL",
-                                "database_id": "WB_WDI",
-                            }
-                        ]
-                    },
+                    "idno": "WB_GS_SP_POP_TOTL",
+                    "name": "Pop GS",
+                    "databases": [{"idno": "WB_GS"}],
+                    "description": "d2",
+                    "dimensions": [],
+                    "metadata_link": [
+                        {
+                            "type": "primary",
+                            "metadata_id": "META_WB_WDI_SP_POP_TOTL",
+                            "database_id": "WB_WDI",
+                        }
+                    ],
                 },
             ],
         }
 
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
             json=mock_response,
         )
         # One (or both) redirected indicators trigger backfill metadata fetches.
@@ -652,7 +635,7 @@ class TestSearchPrimaryRedirectIntegration:
 
 
 _METADATA_URL = "https://api.test.example.com/metadata"
-_SEARCH_URL = "https://api.test.example.com/searchv2"
+_SEARCH_URL = "https://api.test.example.com/portal/v1/public_data360_search"
 
 
 def _make_metadata_response(start: str, end: str, latest: str) -> dict:
@@ -787,29 +770,24 @@ class TestBackfillPrimaryMetadata:
     ):
         """End-to-end: search() redirects and then backfills time period from primary."""
         search_response = {
-            "@odata.context": "...",
-            "@odata.count": 1,
-            "value": [
+            "count": 1,
+            "results": [
                 {
-                    "series_description": {
-                        "idno": "WB_HNP_SP_POP_TOTL_ZS",
-                        "name": "Population (secondary)",
-                        "database_id": "WB_HNP",
-                        "definition_long": "Secondary source",
-                        "dimensions": [],
-                        "time_periods": [
-                            {"start": "1960", "end": "2023", "LATEST_DATA_POINT": "2023"}
-                        ],
-                    },
-                    "additional": {
-                        "metadata_link": [
-                            {
-                                "type": "primary",
-                                "metadata_id": "META_WB_WDI_SP_POP_TOTL",
-                                "database_id": "WB_WDI",
-                            }
-                        ]
-                    },
+                    "idno": "WB_HNP_SP_POP_TOTL_ZS",
+                    "name": "Population (secondary)",
+                    "databases": [{"idno": "WB_HNP"}],
+                    "description": "Secondary source",
+                    "dimensions": [],
+                    "time_period": [
+                        {"start": "1960", "end": "2023", "LATEST_DATA_POINT": "2023"}
+                    ],
+                    "metadata_link": [
+                        {
+                            "type": "primary",
+                            "metadata_id": "META_WB_WDI_SP_POP_TOTL",
+                            "database_id": "WB_WDI",
+                        }
+                    ],
                 }
             ],
         }

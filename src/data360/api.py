@@ -149,6 +149,31 @@ def _get_valid_disaggregations(
     return valid
 
 
+def _parse_dimensions_response(dimensions_data: dict[str, Any]) -> list[dict[str, Any]]:
+    """Translate the new dimensions API response back to the old disaggregation structure."""
+    raw_disaggregations = []
+    for dim in dimensions_data.get("dimensions", []):
+        field_name = dim.get("field_name")
+        label_name = dim.get("label_name")
+        for val in dim.get("field_value", []):
+            code = None
+            if isinstance(val, dict) and "code" in val:
+                code = val["code"]
+            elif isinstance(val, str):
+                code = val
+
+            if code is not None:
+                item = {
+                    "field_name": field_name,
+                    "field_value": [code],
+                }
+                if label_name is not None:
+                    item["label_name"] = label_name
+                raw_disaggregations.append(item)
+    return raw_disaggregations
+
+
+
 def _strip_data_row(row: dict[str, Any]) -> dict[str, Any]:
     """Strip boilerplate fields from a data row for LLM token savings.
 
@@ -365,26 +390,69 @@ def _build_disaggregation_params(
 def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescription]:
     """Extract and validate series descriptions from API response.
 
-    Also hoists ``metadata_link`` from ``additional.metadata_link`` into the
-    ``SeriesDescription`` so the enrichment pipeline can detect primary sources.
+    Supports both legacy nested SearchV2 format and flat SearchV3 format.
     """
-    values = response_data.get("value", [])
+    values = response_data.get("value")
+    if values is None:
+        values = response_data.get("results")
+    if values is None:
+        values = response_data.get("items", [])
+
     items = []
     for value in values:
-        series_description = value.get("series_description", {})
-        # Only include items that have required fields (idno, name, database_id)
+        if "series_description" in value:
+            # V2 format
+            series_description = value.get("series_description", {})
+            additional = value.get("additional")
+            if additional and isinstance(additional, dict):
+                ml = additional.get("metadata_link")
+                if ml and isinstance(ml, list):
+                    series_description["metadata_link"] = ml
+        else:
+            # V3 flat format
+            databases = value.get("databases", [])
+            db_id = None
+            if databases and isinstance(databases, list) and len(databases) > 0:
+                db_id = databases[0].get("idno") if isinstance(databases[0], dict) else None
+
+            tp = value.get("time_period")
+            time_periods = None
+            if tp:
+                time_periods = tp if isinstance(tp, list) else [tp]
+
+            dims = value.get("dimensions", [])
+            dimensions = []
+            if isinstance(dims, list):
+                for d in dims:
+                    if isinstance(d, dict):
+                        dimensions.append(d)
+                    elif isinstance(d, str):
+                        dimensions.append({"label": d})
+
+            ml = value.get("metadata_link")
+            if ml is None:
+                additional = value.get("additional")
+                if isinstance(additional, dict):
+                    ml = additional.get("metadata_link")
+
+            series_description = {
+                "idno": value.get("idno"),
+                "name": value.get("name"),
+                "database_id": db_id or value.get("database_id"),
+                "definition_long": value.get("description") or value.get("definition_long"),
+                "periodicity": value.get("frequency") or value.get("periodicity"),
+                "time_periods": time_periods,
+                "ref_country": value.get("ref_country"),
+                "dimensions": dimensions,
+                "metadata_link": ml or [],
+            }
+
         if (
             series_description
             and series_description.get("idno")
             and series_description.get("name")
             and series_description.get("database_id")
         ):
-            # Hoist metadata_link from additional -> series_description
-            additional = value.get("additional")
-            if additional and isinstance(additional, dict):
-                ml = additional.get("metadata_link")
-                if ml and isinstance(ml, list):
-                    series_description["metadata_link"] = ml
             try:
                 items.append(SeriesDescription.model_validate(series_description))
             except Exception as e:
@@ -394,28 +462,13 @@ def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescri
     return items
 
 
-def _build_search_payload(request: SearchRequest) -> dict[str, Any]:
-    """Build the search API payload from SearchRequest."""
-    payload = {
-        "search": request.query,
-        "top": request.limit,
-        "skip": request.offset,
-        "count": request.count,
-        "filter": request.filter,
-        "select": request.select,
-    }
-    if request.orderby is not None:
-        payload["orderby"] = request.orderby
-    return payload
-
-
 def _process_search_response(
     response_data: dict[str, Any], request: SearchRequest
 ) -> SearchResponse:
     """Process API response and build SearchResponse."""
     search_response_data = {
         "items": _get_items_from_response(response_data),
-        "total_count": response_data.get("@odata.count", None),
+        "total_count": response_data.get("count") or response_data.get("@odata.count"),
         "offset": request.offset,
     }
     search_response_data["count"] = len(search_response_data["items"])
@@ -441,6 +494,7 @@ async def _search_raw(
     count: bool = True,
     select_fields: list[str] | None = None,
     odata_options: dict[str, str] | None = None,
+    economy_codes: list[str] | None = None,
 ) -> SearchResponse:
     """Internal: Raw search for data360 indicators using the World Bank Data360 API.
 
@@ -451,48 +505,30 @@ async def _search_raw(
         limit: Number of results to return (default is 5)
         offset: Offset of the current page
         count: Whether to include total count in response
-        select_fields: List of fields to return (e.g., ["idno", "name", "periodicity"]).
-            Available fields: idno, name, database_id, definition_long, periodicity,
-            time_periods, dimensions, topics, ref_country
-        odata_options: DEPRECATED - kept for backward compatibility, prefer select_fields
+        select_fields: DEPRECATED - SearchV3 returns flat indicators
+        odata_options: DEPRECATED - SearchV3 returns flat indicators
+        economy_codes: Optional list of economy codes to filter the search results
 
     Returns:
         SearchResponse with raw API results.
     """
-    # Build select clause from select_fields if provided
-    # Keep defaults minimal - tools layer handles enrichment
-    if select_fields is None and not (odata_options and odata_options.get("select")):
-        select_fields = ["idno", "name", "database_id", "definition_long"]
-
-    if select_fields:
-        select_val = ", ".join(f"series_description/{f}" for f in select_fields)
-        # Always request metadata_link for primary indicator detection;
-        # it lives under additional/, not series_description/.
-        select_val += ", additional/metadata_link"
-    elif odata_options and odata_options.get("select"):
-        # Backward compatibility: use odata_options.select if provided.
-        # Note: additional/metadata_link is NOT injected here. Callers on
-        # this deprecated path will not get primary indicator redirects.
-        select_val = odata_options.get("select")
-    else:
-        select_val = None
-
-    # odata_options kept for backward compatibility but discouraged
-    filter_val = odata_options.get("filter") if odata_options else None
-    orderby_val = odata_options.get("orderby") if odata_options else None
-
     request = SearchRequest(
         query=query,
         limit=limit,
-        filter=filter_val,
-        orderby=orderby_val,
-        select=select_val,
         offset=offset,
         count=count,
     )
 
-    url = data360_config.search_url or f"{data360_config.api_url}/searchv2"
-    payload = _build_search_payload(request)
+    url = data360_config.search_url or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    payload = {
+        "site": "data360",
+        "query": request.query,
+        "types": ["indicator"],
+        "skip": request.offset,
+        "items_per_page": request.limit,
+    }
+    if economy_codes:
+        payload["economy_codes"] = economy_codes
 
     mcp_error: Data360MCPError | None = None
     try:
@@ -513,6 +549,7 @@ async def _search_raw(
     except Exception as e:
         # Convert unknown exceptions to Data360MCPError and raise
         raise classify_error(e, context="search")
+
 
 
 async def _resolve_country_code(country_query: str) -> str | None:
@@ -609,21 +646,16 @@ def _enrich_search_results(
             if start and end:
                 time_period_range = f"{start}-{end}"
 
-        # Check covers_country from ref_country — produce a per-country bool map.
-        # Regional aggregate codes (like SAS, WLD) are often absent from ref_country
-        # even when the data endpoint supports them; those entries start as False
-        # and are verified asynchronously after this loop.
         covers_country: dict[str, bool] | None = None
-        ref_country = raw.get("ref_country", [])
-        if country_code and ref_country and isinstance(ref_country, list):
-            country_codes = {
-                c.get("code") if isinstance(c, dict) else c for c in ref_country
-            }
+        if country_code:
             requested_codes = [c.strip() for c in country_code.split(";") if c.strip()]
-            covers_country = {code: code in country_codes for code in requested_codes}
-        elif country_code:
-            requested_codes = [c.strip() for c in country_code.split(";") if c.strip()]
-            covers_country = {code: False for code in requested_codes}
+            ref_countries = set()
+            ref_list = raw.get("ref_country")
+            if ref_list and isinstance(ref_list, list):
+                for rc in ref_list:
+                    if isinstance(rc, dict) and rc.get("code"):
+                        ref_countries.add(rc["code"])
+            covers_country = {code: (code in ref_countries) for code in requested_codes}
 
         # Extract dimension names
         dimensions = raw.get("dimensions", [])
@@ -678,12 +710,8 @@ def _enrich_search_results(
         )
         indicators.append(ind)
 
-        # Flag for verification if any regional code is still marked False.
-        if (
-            _regional_codes
-            and covers_country is not None
-            and any(not covers_country.get(c, True) for c in _regional_codes)
-        ):
+        # Flag for verification if country_code is provided.
+        if country_code and covers_country is not None:
             indicators_to_verify.append(ind)
 
     # Set requested_country on all indicators
@@ -951,6 +979,7 @@ async def search(  # noqa: PLR0911
                 limit=limit,
                 offset=offset,
                 select_fields=_ENRICHMENT_SELECT_FIELDS,
+                economy_codes=[c.strip() for c in country_code.split(";")] if country_code else None,
             )
             for q in clean_queries
         ]
@@ -1036,8 +1065,9 @@ async def search(  # noqa: PLR0911
                 limit=limit,
                 offset=offset,
                 select_fields=_ENRICHMENT_SELECT_FIELDS,
+                economy_codes=[c.strip() for c in code.split(";")] if code else None,
             )
-            for q in clean_queries
+            for q, code in zip(clean_queries, per_query_codes)
         ]
         raw_results = await asyncio.gather(*raw_tasks, return_exceptions=True)
 
@@ -1082,12 +1112,16 @@ async def search(  # noqa: PLR0911
         country_code = await _resolve_country_code(required_country)
 
     # Fetch all needed metadata in ONE search call
-    search_result = await _search_raw(
-        query=query,  # type: ignore[arg-type]  # validated non-None above
-        limit=limit,
-        offset=offset,
-        select_fields=_ENRICHMENT_SELECT_FIELDS,
-    )
+    try:
+        search_result = await _search_raw(
+            query=query,  # type: ignore[arg-type]  # validated non-None above
+            limit=limit,
+            offset=offset,
+            select_fields=_ENRICHMENT_SELECT_FIELDS,
+            economy_codes=[c.strip() for c in country_code.split(";")] if country_code else None,
+        )
+    except Data360MCPError as e:
+        return EnrichedSearchResponse(error=e.detail)
 
     if search_result.error:
         return EnrichedSearchResponse(error=search_result.error)
@@ -1171,13 +1205,57 @@ async def _build_multi_query_response(
     total_candidates = 0
     deduplicated_count = 0
 
+    # Collect indicators to verify concurrently
+    verify_tasks = []
+
+    # Helper to verify indicators for a specific country code
+    async def _verify_coverage(ind: EnrichedIndicator, code: str) -> None:
+        try:
+            codes = [c.strip() for c in code.split(";") if c.strip()]
+            res = await get_disaggregation(
+                ind.database_id, ind.idno, required_country=code
+            )
+            for dim in res.get("dimensions", []):
+                if dim.get("field_name") == "REF_AREA":
+                    queried = dim.get("queried", {})
+                    if ind.covers_country is not None:
+                        for c in codes:
+                            if c in ind.covers_country:
+                                ind.covers_country[c] = queried.get(c, False)
+                    break
+        except Exception as e:
+            _logger.warning("Failed to verify coverage for %s: %s", ind.idno, e)
+
+    # First pass: enrich indicators and collect verification tasks
+    enriched_lists = []
     for i, (q, raw_result) in enumerate(zip(clean_queries, raw_results)):
         code_for_query = per_query_codes[i]
+        if isinstance(raw_result, Exception) or raw_result.error or not raw_result.items:
+            enriched_lists.append((None, None))
+            continue
+
+        enriched, to_verify = _enrich_search_results(raw_result, code_for_query, db_mapping)
+        # Backfill latest_data / time_period_range for any redirected indicators.
+        redirected = [ind for ind in enriched if ind.primary_source_of is not None]
+        await _backfill_primary_metadata(redirected)
+
+        if code_for_query and to_verify:
+            for ind in to_verify:
+                verify_tasks.append(_verify_coverage(ind, code_for_query))
+
+        enriched_lists.append((enriched, code_for_query))
+
+    # Run verification tasks concurrently
+    if verify_tasks:
+        await asyncio.gather(*verify_tasks)
+
+    # Second pass: build response groups and deduplicate
+    for i, (q, raw_result) in enumerate(zip(clean_queries, raw_results)):
         if isinstance(raw_result, Exception):
             groups.append(
                 QueryGroupResult(
                     query=q,
-                    country_code=code_for_query,
+                    country_code=per_query_codes[i],
                     error=str(raw_result),
                 )
             )
@@ -1186,18 +1264,13 @@ async def _build_multi_query_response(
             groups.append(
                 QueryGroupResult(
                     query=q,
-                    country_code=code_for_query,
+                    country_code=per_query_codes[i],
                     error=raw_result.error or f"No indicators found for: '{q}'",
                 )
             )
             continue
 
-        # Multi-query uses sovereign country codes per group; regional aggregate
-        # verification is only needed for the single-query path. Discard it.
-        enriched, _ = _enrich_search_results(raw_result, code_for_query, db_mapping)
-        # Backfill latest_data / time_period_range for any redirected indicators.
-        redirected = [ind for ind in enriched if ind.primary_source_of is not None]
-        await _backfill_primary_metadata(redirected)
+        enriched, code_for_query = enriched_lists[i]
         total_candidates += len(enriched)
 
         group_indicators: list[EnrichedIndicator] = []
@@ -1217,10 +1290,7 @@ async def _build_multi_query_response(
                     existing_ind.covers_country.update(ind.covers_country)
 
                 if dedupe and result_layout == "merged":
-                    # Global deduplication: discard from subsequent groups in merged layout
                     deduplicated_count += 1
-                # In by_query layout, or if dedupe=False, we keep the indicator.
-                # But if dedupe=True, we still deduplicate WITHIN the same group.
                 elif dedupe and key in group_seen:
                     deduplicated_count += 1
                 else:
@@ -1404,19 +1474,24 @@ async def get_metadata(
         mcp_err = classify_error(e, context="metadata")
         errors.append(mcp_err.detail)
 
-    # 2. Fetch Disaggregation
+    # 2. Fetch Dimensions
     if fetch_disaggregation:
         try:
             client = get_shared_httpx_client()
-            disagg_res = await client.get(
-                disaggregation_url,
-                params={"datasetId": database_id, "indicatorId": indicator_id},
+            dimensions_url = (
+                data360_config.dimensions_url or f"{data360_config.api_url}/portal/v1/dimensions"
+            )
+            payload = {"database_id": database_id, "indicator_id": indicator_id}
+            disagg_res = await client.post(
+                dimensions_url,
+                json=payload,
                 headers=headers,
             )
             disagg_res.raise_for_status()
 
             try:
-                raw_disaggregations = disagg_res.json()
+                dimensions_json = disagg_res.json()
+                raw_disaggregations = _parse_dimensions_response(dimensions_json)
                 disaggregations = _strip_disaggregation(
                     _get_valid_disaggregations(raw_disaggregations),
                     queried_countries,
@@ -1487,16 +1562,17 @@ async def get_disaggregation(
     # Resolve country codes if provided
     queried_countries = await _resolve_queried_countries(required_country)
 
-    disaggregation_url = (
-        data360_config.disaggregation_url or f"{data360_config.api_url}/disaggregation"
+    dimensions_url = (
+        data360_config.dimensions_url or f"{data360_config.api_url}/portal/v1/dimensions"
     )
     headers = {"accept": "*/*", "Content-Type": "application/json"}
 
     try:
         client = get_shared_httpx_client()
-        response = await client.get(
-            disaggregation_url,
-            params={"datasetId": database_id, "indicatorId": indicator_id},
+        payload = {"database_id": database_id, "indicator_id": indicator_id}
+        response = await client.post(
+            dimensions_url,
+            json=payload,
             headers=headers,
         )
         response.raise_for_status()
@@ -1510,7 +1586,8 @@ async def get_disaggregation(
                 _disaggregation_cache[_disagg_cache_key] = empty_result
             return empty_result
 
-        raw_data = response.json()
+        dimensions_json = response.json()
+        raw_data = _parse_dimensions_response(dimensions_json)
         # Filter out _Z values and format response
         valid_dimensions = _get_valid_disaggregations(raw_data)
         result_disagg = {

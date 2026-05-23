@@ -89,7 +89,7 @@ class Data360Settings(BaseSettings):
     )
     search_url: str | None = Field(
         default=None,
-        description="URL for search endpoint (defaults to {api_base_url}/data360/searchv2)",
+        description="URL for search endpoint (defaults to {api_base_url}/data360/portal/v1/public_data360_search)",
     )
     metadata_url: str | None = Field(
         default=None,
@@ -98,6 +98,10 @@ class Data360Settings(BaseSettings):
     disaggregation_url: str | None = Field(
         default=None,
         description="URL for disaggregation endpoint (defaults to {api_base_url}/data360/disaggregation)",
+    )
+    dimensions_url: str | None = Field(
+        default=None,
+        description="URL for dimensions endpoint (defaults to {api_base_url}/data360/portal/v1/dimensions)",
     )
     data_url: str | None = Field(
         default=None,
