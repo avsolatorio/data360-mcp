@@ -152,9 +152,11 @@ def _get_valid_disaggregations(
 def _parse_dimensions_response(dimensions_data: dict[str, Any]) -> list[dict[str, Any]]:
     """Translate the new dimensions API response back to the old disaggregation structure."""
     raw_disaggregations = []
+    null_values = {"_Z"}
     for dim in dimensions_data.get("dimensions", []):
         field_name = dim.get("field_name")
         label_name = dim.get("label_name")
+        codes = []
         for val in dim.get("field_value", []):
             code = None
             if isinstance(val, dict) and "code" in val:
@@ -162,14 +164,17 @@ def _parse_dimensions_response(dimensions_data: dict[str, Any]) -> list[dict[str
             elif isinstance(val, str):
                 code = val
 
-            if code is not None:
-                item = {
-                    "field_name": field_name,
-                    "field_value": [code],
-                }
-                if label_name is not None:
-                    item["label_name"] = label_name
-                raw_disaggregations.append(item)
+            if code is not None and code not in null_values:
+                codes.append(code)
+
+        if field_name and codes:
+            item = {
+                "field_name": field_name,
+                "field_value": codes,
+            }
+            if label_name is not None:
+                item["label_name"] = label_name
+            raw_disaggregations.append(item)
     return raw_disaggregations
 
 
@@ -1487,18 +1492,20 @@ async def get_metadata(
                 json=payload,
                 headers=headers,
             )
-            disagg_res.raise_for_status()
-
-            try:
-                dimensions_json = disagg_res.json()
-                raw_disaggregations = _parse_dimensions_response(dimensions_json)
-                disaggregations = _strip_disaggregation(
-                    _get_valid_disaggregations(raw_disaggregations),
-                    queried_countries,
-                )
-            except ValueError as e:
-                mcp_err = ParseError(context="disaggregation", original_error=e)
-                errors.append(mcp_err.detail)
+            if disagg_res.status_code in (400, 404):
+                disaggregations = []
+            else:
+                disagg_res.raise_for_status()
+                try:
+                    dimensions_json = disagg_res.json()
+                    raw_disaggregations = _parse_dimensions_response(dimensions_json)
+                    disaggregations = _strip_disaggregation(
+                        _get_valid_disaggregations(raw_disaggregations),
+                        queried_countries,
+                    )
+                except ValueError as e:
+                    mcp_err = ParseError(context="disaggregation", original_error=e)
+                    errors.append(mcp_err.detail)
 
         except Exception as e:
             mcp_err = classify_error(e, context="disaggregation")
@@ -1575,6 +1582,12 @@ async def get_disaggregation(
             json=payload,
             headers=headers,
         )
+        if response.status_code in (400, 404):
+            empty_result: dict = {"dimensions": []}
+            with _disaggregation_cache_lock:
+                _disaggregation_cache[_disagg_cache_key] = empty_result
+            return empty_result
+
         response.raise_for_status()
 
         # Some indicators have no disaggregation data. The API returns HTTP 200

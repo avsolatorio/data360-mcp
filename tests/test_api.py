@@ -397,7 +397,7 @@ class TestGetMetadata:
 
         result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
 
-        EXPECTED_DISAGGREGATION_COUNT = 3
+        EXPECTED_DISAGGREGATION_COUNT = 2
         assert isinstance(result, MetadataResponse)
         assert result.indicator_metadata is not None
         assert result.indicator_metadata["idno"] == "WB_WDI_SP_POP_TOTL"
@@ -1269,3 +1269,133 @@ class TestDatabaseNameInMetadata:
 
         assert result.indicator_metadata is not None
         assert result.indicator_metadata.get("database_name") is None
+
+
+class TestDimensionsResilienceAndParsing:
+    """Reproduction tests for covers_country validation bug and empty dimensions resilience."""
+
+    @pytest.mark.asyncio
+    async def test_covers_country_verification_succeeds_for_group(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that covers_country resolves to True when the country is present in dimensions."""
+        from data360.api import search
+
+        # 1. Mock search results (SearchV3 structure, no ref_country)
+        search_response = {
+            "count": 1,
+            "results": [
+                {
+                    "idno": "WB_WDI_SP_POP_TOTL",
+                    "name": "Population, total",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": "Total population",
+                    "dimensions": [],
+                }
+            ],
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+            json=search_response,
+        )
+
+        # 2. Mock dimensions endpoint returning a list of country codes under REF_AREA
+        # We put JPN at the end to ensure grouping/early-termination bugs are caught.
+        dimensions_response = {
+            "dimensions": [
+                {
+                    "field_name": "REF_AREA",
+                    "label_name": "REF_AREA",
+                    "field_value": [
+                        {"code": "ABW"},
+                        {"code": "AFE"},
+                        {"code": "JPN"},
+                    ],
+                }
+            ]
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            json=dimensions_response,
+        )
+
+        # 3. Perform search with required_country="JPN"
+        result = await search(query="population", required_country="JPN")
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.indicators is not None
+        assert len(result.indicators) == 1
+        ind = result.indicators[0]
+        # covers_country should be a dictionary resolving "JPN" to True
+        assert ind.covers_country == {"JPN": True}
+
+    @pytest.mark.asyncio
+    async def test_get_disaggregation_handles_400_gracefully(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that get_disaggregation returns empty dimensions on 400 from dimensions API."""
+        from data360.api import get_disaggregation
+
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            status_code=400,
+            text='{"code":"400","message":"Error Dimensions data is empty for dataset"}',
+        )
+
+        res = await get_disaggregation("WB_WDI", "WB_WDI_SP_POP_TOTL")
+        assert res == {"dimensions": []}
+
+    @pytest.mark.asyncio
+    async def test_get_disaggregation_handles_404_gracefully(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that get_disaggregation returns empty dimensions on 404 from dimensions API."""
+        from data360.api import get_disaggregation
+
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            status_code=404,
+            text="Not Found",
+        )
+
+        res = await get_disaggregation("WB_WDI", "WB_WDI_SP_POP_TOTL")
+        assert res == {"dimensions": []}
+
+    @pytest.mark.asyncio
+    async def test_get_metadata_handles_dimensions_400_gracefully(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test that get_metadata succeeds even if dimensions API returns 400 Bad Request."""
+        from data360.api import get_metadata
+
+        metadata_response = {
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "WB_WDI_SP_POP_TOTL",
+                        "name": "Population, total",
+                        "database_id": "WB_WDI",
+                    }
+                }
+            ]
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json=metadata_response,
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            status_code=400,
+            text='{"code":"400","message":"Error Dimensions data is empty for dataset"}',
+        )
+
+        result = await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
+        assert result.indicator_metadata is not None
+        assert result.disaggregation_options == []
+        assert result.error is None
