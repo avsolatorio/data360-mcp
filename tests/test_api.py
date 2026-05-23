@@ -14,6 +14,7 @@ from data360.api import (
     get_metadata,
     search,
 )
+from data360.errors import Data360MCPError
 from data360.models import (
     EnrichedSearchResponse,
     IndicatorDataResponse,
@@ -84,33 +85,28 @@ class TestSearch:
         """Test successful search request."""
         NUM_ITEMS = 2
         mock_response = {
-            "@odata.context": "https://api.test.example.com/$metadata",
-            "@odata.count": NUM_ITEMS,
-            "value": [
+            "count": NUM_ITEMS,
+            "results": [
                 {
-                    "series_description": {
-                        "idno": "WB_WDI_SP_POP_TOTL",
-                        "name": "Population, total",
-                        "database_id": "WB_WDI",
-                        "definition_long": "Total population",
-                        "dimensions": [],
-                    }
+                    "idno": "WB_WDI_SP_POP_TOTL",
+                    "name": "Population, total",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": "Total population",
+                    "dimensions": [],
                 },
                 {
-                    "series_description": {
-                        "idno": "WB_WDI_SP_POP_GROW",
-                        "name": "Population growth",
-                        "database_id": "WB_WDI",
-                        "definition_long": "Population growth rate",
-                        "dimensions": [],
-                    }
+                    "idno": "WB_WDI_SP_POP_GROW",
+                    "name": "Population growth",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": "Population growth rate",
+                    "dimensions": [],
                 },
             ],
         }
 
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
             json=mock_response,
         )
 
@@ -133,17 +129,14 @@ class TestSearch:
         NUM_ITEMS = 10
         TOTAL_COUNT = 25
         mock_response = {
-            "@odata.context": "https://api.test.example.com/$metadata",
-            "@odata.count": TOTAL_COUNT,
-            "value": [
+            "count": TOTAL_COUNT,
+            "results": [
                 {
-                    "series_description": {
-                        "idno": f"WB_WDI_SP_POP_{i}",
-                        "name": f"Population {i}",
-                        "database_id": "WB_WDI",
-                        "definition_long": f"Population indicator {i}",
-                        "dimensions": [],
-                    }
+                    "idno": f"WB_WDI_SP_POP_{i}",
+                    "name": f"Population {i}",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": f"Population indicator {i}",
+                    "dimensions": [],
                 }
                 for i in range(NUM_ITEMS)
             ],
@@ -151,7 +144,7 @@ class TestSearch:
 
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
             json=mock_response,
         )
 
@@ -170,38 +163,31 @@ class TestSearch:
         NUM_VALID_ITEMS = 1
         TOTAL_COUNT = 3
         mock_response = {
-            "@odata.context": "https://api.test.example.com/$metadata",
-            "@odata.count": TOTAL_COUNT,
-            "value": [
+            "count": TOTAL_COUNT,
+            "results": [
                 {
-                    "series_description": {
-                        "idno": "WB_WDI_SP_POP_TOTL",
-                        "name": "Population, total",
-                        "database_id": "WB_WDI",
-                        "definition_long": "Total population",
-                        "dimensions": [],
-                    }
+                    "idno": "WB_WDI_SP_POP_TOTL",
+                    "name": "Population, total",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": "Total population",
+                    "dimensions": [],
                 },
                 {
-                    "series_description": {
-                        "idno": "WB_WDI_SP_POP_GROW",
-                        # Missing name
-                        "database_id": "WB_WDI",
-                    }
+                    "idno": "WB_WDI_SP_POP_GROW",
+                    # Missing name
+                    "databases": [{"idno": "WB_WDI"}],
                 },
                 {
-                    "series_description": {
-                        # Missing idno
-                        "name": "Some indicator",
-                        "database_id": "WB_WDI",
-                    }
+                    # Missing idno
+                    "name": "Some indicator",
+                    "databases": [{"idno": "WB_WDI"}],
                 },
             ],
         }
 
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
             json=mock_response,
         )
 
@@ -216,7 +202,7 @@ class TestSearch:
         """Test search handles HTTP errors."""
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
             status_code=500,
             text="Internal Server Error",
         )
@@ -225,14 +211,14 @@ class TestSearch:
 
         assert not result.indicators
         assert result.error is not None
-        assert "HTTP error 500" in result.error
+        assert "HTTP 500" in result.error
 
     @pytest.mark.asyncio
     async def test_search_timeout(self, httpx_mock: pytest_httpx.HTTPXMock):
         """Test search handles timeout errors."""
         httpx_mock.add_exception(
             httpx.TimeoutException("Request timeout"),
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
         )
 
         result = await search("population")
@@ -246,7 +232,7 @@ class TestSearch:
         """Test search handles invalid JSON responses."""
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
             status_code=200,
             text="Invalid JSON response",
         )
@@ -270,9 +256,8 @@ class TestSearch:
             return httpx.Response(
                 200,
                 json={
-                    "@odata.context": "https://api.test.example.com/$metadata",
-                    "@odata.count": 0,
-                    "value": [],
+                    "count": 0,
+                    "results": [],
                 },
             )
 
@@ -281,7 +266,7 @@ class TestSearch:
         await search("population", n_results=ALIAS_LIMIT)
 
         assert len(captured_payloads) == 1
-        assert captured_payloads[0]["top"] == ALIAS_LIMIT
+        assert captured_payloads[0]["items_per_page"] == ALIAS_LIMIT
 
     @pytest.mark.asyncio
     async def test_search_skip_alias_at_default_offset(
@@ -296,9 +281,8 @@ class TestSearch:
             return httpx.Response(
                 200,
                 json={
-                    "@odata.context": "https://api.test.example.com/$metadata",
-                    "@odata.count": 0,
-                    "value": [],
+                    "count": 0,
+                    "results": [],
                 },
             )
 
@@ -323,9 +307,8 @@ class TestSearch:
             return httpx.Response(
                 200,
                 json={
-                    "@odata.context": "https://api.test.example.com/$metadata",
-                    "@odata.count": 0,
-                    "value": [],
+                    "count": 0,
+                    "results": [],
                 },
             )
 
@@ -334,7 +317,7 @@ class TestSearch:
         await search("population", limit=EXPLICIT_LIMIT, n_results=ALIAS_LIMIT)
 
         assert len(captured_payloads) == 1
-        assert captured_payloads[0]["top"] == EXPLICIT_LIMIT
+        assert captured_payloads[0]["items_per_page"] == EXPLICIT_LIMIT
 
     @pytest.mark.asyncio
     async def test_search_alias_agrees_with_primary(
@@ -349,9 +332,8 @@ class TestSearch:
             return httpx.Response(
                 200,
                 json={
-                    "@odata.context": "https://api.test.example.com/$metadata",
-                    "@odata.count": 0,
-                    "value": [],
+                    "count": 0,
+                    "results": [],
                 },
             )
 
@@ -360,7 +342,7 @@ class TestSearch:
         await search("population", limit=AGREED_LIMIT, n_results=AGREED_LIMIT)
 
         assert len(captured_payloads) == 1
-        assert captured_payloads[0]["top"] == AGREED_LIMIT
+        assert captured_payloads[0]["items_per_page"] == AGREED_LIMIT
 
 
 class TestGetMetadata:
@@ -382,11 +364,18 @@ class TestGetMetadata:
             ]
         }
 
-        disaggregation_response = [
-            {"field_value": ["UGA"], "field_name": "REF_AREA"},
-            {"field_value": ["KEN"], "field_name": "REF_AREA"},
-            {"field_value": ["PT"], "field_name": "UNIT_MEASURE"},
-        ]
+        dimensions_response = {
+            "dimensions": [
+                {
+                    "field_name": "REF_AREA",
+                    "field_value": [{"code": "UGA"}, {"code": "KEN"}],
+                },
+                {
+                    "field_name": "UNIT_MEASURE",
+                    "field_value": [{"code": "PT"}],
+                },
+            ]
+        }
 
         httpx_mock.add_response(
             method="POST",
@@ -395,18 +384,16 @@ class TestGetMetadata:
         )
 
         # Match URL with query parameters using a callback
-        def disaggregation_callback(request: httpx.Request) -> httpx.Response | None:
+        def dimensions_callback(request: httpx.Request) -> httpx.Response | None:
             if (
-                request.method == "GET"
+                request.method == "POST"
                 and request.url.host == "api.test.example.com"
-                and request.url.path == "/disaggregation"
-                and "datasetId" in request.url.params
-                and "indicatorId" in request.url.params
+                and request.url.path == "/portal/v1/dimensions"
             ):
-                return httpx.Response(200, json=disaggregation_response)
+                return httpx.Response(200, json=dimensions_response)
             return None
 
-        httpx_mock.add_callback(disaggregation_callback)
+        httpx_mock.add_callback(dimensions_callback)
 
         result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
 
@@ -430,19 +417,19 @@ class TestGetMetadata:
             json=metadata_response,
         )
 
-        # Even when metadata is not found, disaggregation is still fetched
-        def empty_disaggregation_callback(
+        # Even when metadata is not found, dimensions is still fetched
+        def empty_dimensions_callback(
             request: httpx.Request,
         ) -> httpx.Response | None:
             if (
-                request.method == "GET"
+                request.method == "POST"
                 and request.url.host == "api.test.example.com"
-                and request.url.path == "/disaggregation"
+                and request.url.path == "/portal/v1/dimensions"
             ):
-                return httpx.Response(200, json=[])
+                return httpx.Response(200, json={"dimensions": []})
             return None
 
-        httpx_mock.add_callback(empty_disaggregation_callback)
+        httpx_mock.add_callback(empty_dimensions_callback)
 
         result = await get_metadata("INVALID_ID", "WB_WDI")
 
@@ -467,14 +454,18 @@ class TestGetMetadata:
             ]
         }
 
-        disaggregation_response = [
-            {"field_value": ["_Z"], "field_name": "REF_AREA"},  # Should be filtered
-            {"field_value": ["UGA"], "field_name": "REF_AREA"},
-            {
-                "field_value": ["_T"],
-                "field_name": "UNIT_MEASURE",
-            },  # Should not be filtered
-        ]
+        dimensions_response = {
+            "dimensions": [
+                {
+                    "field_name": "REF_AREA",
+                    "field_value": [{"code": "_Z"}, {"code": "UGA"}],
+                },
+                {
+                    "field_name": "UNIT_MEASURE",
+                    "field_value": [{"code": "_T"}],
+                },
+            ]
+        }
 
         httpx_mock.add_response(
             method="POST",
@@ -483,18 +474,16 @@ class TestGetMetadata:
         )
 
         # Match URL with query parameters using a callback
-        def disaggregation_callback(request: httpx.Request) -> httpx.Response | None:
+        def dimensions_callback(request: httpx.Request) -> httpx.Response | None:
             if (
-                request.method == "GET"
+                request.method == "POST"
                 and request.url.host == "api.test.example.com"
-                and request.url.path == "/disaggregation"
-                and "datasetId" in request.url.params
-                and "indicatorId" in request.url.params
+                and request.url.path == "/portal/v1/dimensions"
             ):
-                return httpx.Response(200, json=disaggregation_response)
+                return httpx.Response(200, json=dimensions_response)
             return None
 
-        httpx_mock.add_callback(disaggregation_callback)
+        httpx_mock.add_callback(dimensions_callback)
 
         result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
 
@@ -522,24 +511,24 @@ class TestGetMetadata:
             text="Internal Server Error",
         )
 
-        # Even when metadata fetch fails, disaggregation is still attempted
-        def empty_disaggregation_callback(
+        # Even when metadata fetch fails, dimensions is still attempted
+        def empty_dimensions_callback(
             request: httpx.Request,
         ) -> httpx.Response | None:
             if (
-                request.method == "GET"
+                request.method == "POST"
                 and request.url.host == "api.test.example.com"
-                and request.url.path == "/disaggregation"
+                and request.url.path == "/portal/v1/dimensions"
             ):
-                return httpx.Response(200, json=[])
+                return httpx.Response(200, json={"dimensions": []})
             return None
 
-        httpx_mock.add_callback(empty_disaggregation_callback)
+        httpx_mock.add_callback(empty_dimensions_callback)
 
         result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
 
         assert result.error is not None
-        assert "HTTP error" in result.error
+        assert "HTTP" in result.error
 
     @pytest.mark.asyncio
     async def test_get_metadata_http_error_disaggregation(
@@ -564,26 +553,24 @@ class TestGetMetadata:
             json=metadata_response,
         )
 
-        def error_disaggregation_callback(
+        def error_dimensions_callback(
             request: httpx.Request,
         ) -> httpx.Response | None:
             if (
-                request.method == "GET"
+                request.method == "POST"
                 and request.url.host == "api.test.example.com"
-                and request.url.path == "/disaggregation"
-                and "datasetId" in request.url.params
-                and "indicatorId" in request.url.params
+                and request.url.path == "/portal/v1/dimensions"
             ):
                 return httpx.Response(500, text="Internal Server Error")
             return None
 
-        httpx_mock.add_callback(error_disaggregation_callback)
+        httpx_mock.add_callback(error_dimensions_callback)
 
         result = await get_metadata("WB_WDI_SP_POP_TOTL", "WB_WDI")
 
         assert result.indicator_metadata is not None
         assert result.error is not None
-        assert "HTTP error" in result.error
+        assert "HTTP" in result.error
 
 
 class TestGetData:
@@ -616,11 +603,11 @@ class TestGetData:
             },
         )
 
-        # Mock disaggregation response (called during metadata fetch)
+        # Mock dimensions response (called during metadata fetch)
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[{"field_name": "REF_AREA", "field_value": ["UGA"]}],
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": [{"field_name": "REF_AREA", "field_value": [{"code": "UGA"}]}]},
         )
 
         # Mock data response
@@ -656,14 +643,16 @@ class TestGetData:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
 
-        # Mock disaggregation
+        # Mock dimensions
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[
-                {"field_name": "REF_AREA", "field_value": ["UGA"]},
-                {"field_name": "UNIT_MEASURE", "field_value": ["PT"]},
-            ],
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={
+                "dimensions": [
+                    {"field_name": "REF_AREA", "field_value": [{"code": "UGA"}]},
+                    {"field_name": "UNIT_MEASURE", "field_value": [{"code": "PT"}]},
+                ]
+            },
         )
 
         # Mock data response
@@ -701,7 +690,7 @@ class TestGetData:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET", url=re.compile(r".*/disaggregation.*"), json=[]
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []}
         )
 
         # First page response
@@ -751,7 +740,7 @@ class TestGetData:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET", url=re.compile(r".*/disaggregation.*"), json=[]
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []}
         )
 
         def empty_data_callback(request: httpx.Request) -> httpx.Response | None:
@@ -782,7 +771,7 @@ class TestGetData:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET", url=re.compile(r".*/disaggregation.*"), json=[]
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []}
         )
 
         # Data error
@@ -797,11 +786,9 @@ class TestGetData:
 
         httpx_mock.add_callback(error_data_callback)
 
-        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
-
-        assert result.data is None
-        assert result.error is not None
-        assert "HTTP error" in result.error
+        with pytest.raises(Data360MCPError) as exc_info:
+            await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
+        assert "HTTP 500" in str(exc_info.value)
 
     @pytest.mark.asyncio
     async def test_get_data_invalid_json(self, httpx_mock: pytest_httpx.HTTPXMock):
@@ -814,7 +801,7 @@ class TestGetData:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET", url=re.compile(r".*/disaggregation.*"), json=[]
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []}
         )
 
         def invalid_json_callback(request: httpx.Request) -> httpx.Response | None:
@@ -828,11 +815,9 @@ class TestGetData:
 
         httpx_mock.add_callback(invalid_json_callback)
 
-        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
-
-        assert result.data is None
-        assert result.error is not None
-        assert "Failed to parse" in result.error
+        with pytest.raises(Data360MCPError) as exc_info:
+            await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
+        assert "parse" in str(exc_info.value).lower()
 
 
 # NOTE: TestCodelistManager tests removed - CodelistManager was replaced with
@@ -861,9 +846,7 @@ class TestGetDataResilience:
         )
         # Disaggregation fails with 500
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            status_code=500,
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), status_code=500,
             text="Internal Server Error",
         )
         # Data fetch succeeds
@@ -893,9 +876,7 @@ class TestGetDataResilience:
         )
         # Disaggregation returns 200 empty (doesn't matter)
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
         )
 
         result = await get_data("WB_WDI", "NONEXISTENT_INDICATOR")
@@ -919,9 +900,7 @@ class TestGetDataResilience:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
         )
 
         captured_urls: list[str] = []
@@ -957,9 +936,7 @@ class TestGetDataResilience:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
         )
         httpx_mock.add_response(
             method="GET",
@@ -994,23 +971,20 @@ class TestDatabaseNameInSearch:
     ):
         """WB_GS must resolve to 'Gender Statistics', not a guess."""
         mock_response = {
-            "@odata.context": "https://api.test.example.com/$metadata",
-            "@odata.count": 1,
-            "value": [
+            "count": 1,
+            "results": [
                 {
-                    "series_description": {
-                        "idno": "WB_GS_SP_POP_TOTL",
-                        "name": "Population, total",
-                        "database_id": "WB_GS",
-                        "definition_long": "Total population",
-                        "dimensions": [],
-                    }
+                    "idno": "WB_GS_SP_POP_TOTL",
+                    "name": "Population, total",
+                    "databases": [{"idno": "WB_GS"}],
+                    "description": "Total population",
+                    "dimensions": [],
                 }
             ],
         }
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
             json=mock_response,
         )
 
@@ -1028,23 +1002,20 @@ class TestDatabaseNameInSearch:
     ):
         """An unregistered database_id must yield database_name=None, not a guessed string."""
         mock_response = {
-            "@odata.context": "https://api.test.example.com/$metadata",
-            "@odata.count": 1,
-            "value": [
+            "count": 1,
+            "results": [
                 {
-                    "series_description": {
-                        "idno": "UNKNOWN_DB_INDICATOR",
-                        "name": "Some indicator",
-                        "database_id": "UNKNOWN_DB",
-                        "definition_long": "Definition",
-                        "dimensions": [],
-                    }
+                    "idno": "UNKNOWN_DB_INDICATOR",
+                    "name": "Some indicator",
+                    "databases": [{"idno": "UNKNOWN_DB"}],
+                    "description": "Definition",
+                    "dimensions": [],
                 }
             ],
         }
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
             json=mock_response,
         )
 
@@ -1068,22 +1039,20 @@ class TestDatabaseNameInSearch:
         limit = min(len(registered_ids), 50)
         slice_ids = registered_ids[:limit]
 
-        value = [
+        results = [
             {
-                "series_description": {
-                    "idno": f"{db_id}_INDICATOR",
-                    "name": f"Indicator for {db_id}",
-                    "database_id": db_id,
-                    "definition_long": "Definition",
-                    "dimensions": [],
-                }
+                "idno": f"{db_id}_INDICATOR",
+                "name": f"Indicator for {db_id}",
+                "databases": [{"idno": db_id}],
+                "description": "Definition",
+                "dimensions": [],
             }
             for db_id in slice_ids
         ]
         httpx_mock.add_response(
             method="POST",
-            url="https://api.test.example.com/searchv2",
-            json={"@odata.count": len(value), "value": value},
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+            json={"count": len(results), "results": results},
         )
 
         result = await search("indicator", limit=limit)
@@ -1122,9 +1091,7 @@ class TestDatabaseNameInMetadata:
             json=metadata_response,
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
         )
 
         captured_urls: list[str] = []
@@ -1171,9 +1138,7 @@ class TestGetDataApiUrlResilience:
         )
         # Disaggregation fails
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            status_code=500,
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), status_code=500,
             text="Internal Server Error",
         )
 
@@ -1197,9 +1162,7 @@ class TestGetDataApiUrlResilience:
             json={"value": []},
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
         )
 
         with pytest.raises(ValueError, match="not found"):
@@ -1232,9 +1195,7 @@ class TestDatabaseNameInMetadata:
             json=metadata_response,
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
         )
 
         result = await get_metadata("WB_GS", "WB_GS_INDICATOR")
@@ -1266,9 +1227,7 @@ class TestDatabaseNameInMetadata:
             json=metadata_response,
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
         )
 
         # Only request 'name' — database_name should still be included
@@ -1303,9 +1262,7 @@ class TestDatabaseNameInMetadata:
             json=metadata_response,
         )
         httpx_mock.add_response(
-            method="GET",
-            url=re.compile(r".*/disaggregation.*"),
-            json=[],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
         )
 
         result = await get_metadata("UNKNOWN_DB", "UNKNOWN_DB_IND")

@@ -12,12 +12,39 @@ from data360.models import (
     SeriesDescription,
 )
 
+_TEST_INDICATOR_COUNTRIES: dict[str, list[str]] = {}
+
+
+@pytest.fixture(autouse=True)
+def _mock_get_disaggregation_global(monkeypatch):
+    """Mock get_disaggregation to return dummy coverage in multi-query tests."""
+    from data360 import api
+    async def fake_get_disaggregation(database_id, indicator_id, required_country=None, **kwargs):
+        allowed_countries = _TEST_INDICATOR_COUNTRIES.get(indicator_id, ["KEN"])
+        queried = {}
+        if required_country:
+            for c in required_country.split(";"):
+                c = c.strip()
+                if c:
+                    queried[c] = (c in allowed_countries)
+        return {
+            "dimensions": [
+                {
+                    "field_name": "REF_AREA",
+                    "queried": queried,
+                }
+            ]
+        }
+    monkeypatch.setattr(api, "get_disaggregation", fake_get_disaggregation)
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 
 def _make_series(idno: str = "WB_WDI_GDP", name: str = "GDP") -> SeriesDescription:
+    _TEST_INDICATOR_COUNTRIES[idno] = ["KEN"]
     return SeriesDescription(
         idno=idno,
         name=name,
@@ -760,6 +787,7 @@ def _make_series_with_countries(
     ref_country_codes: list[str],
 ) -> SeriesDescription:
     """Helper that builds a SeriesDescription with an explicit ref_country list."""
+    _TEST_INDICATOR_COUNTRIES[idno] = ref_country_codes
     return SeriesDescription(
         idno=idno,
         name=name,

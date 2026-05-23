@@ -216,18 +216,25 @@ async def _store_spec(vl_spec: dict) -> str:
     if not isinstance(safe, dict):
         raise TypeError("Vega spec must serialize to a JSON object")
 
-    # Always persist locally — the static file is needed by the viewer and
-    # for debugging regardless of whether the Charts API is also configured.
-    static_url = save_specs_to_static(safe)
+    settings = get_mcp_server_settings()
+    charts_url = settings.charts_api_url
+    env = settings.env or "local"
+    is_prod = env.lower() in ("prod", "production")
 
-    charts_url = get_mcp_server_settings().charts_api_url
     if charts_url:
         try:
-            return await post_spec_to_charts_api(safe)
+            url = await post_spec_to_charts_api(safe)
+            # In production, do not save locally if Charts API is active and succeeded
+            if is_prod:
+                return url
+            # Otherwise (local/dev), still save locally for caching/debugging
+            save_specs_to_static(safe)
+            return url
         except Exception as e:
-            _logger.warning(f"Charts API store failed, using static URL: {e}")
+            _logger.warning(f"Charts API store failed, falling back to static local: {e}")
 
-    return static_url
+    # Fallback to local static file
+    return save_specs_to_static(safe)
 
 
 def _ok(

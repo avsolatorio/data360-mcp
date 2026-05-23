@@ -140,8 +140,8 @@ class TestGetDataPrefiltering:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET", url=re.compile(r".*/disaggregation.*"),
-            json=[{"field_name": "REF_AREA", "field_value": ["KEN"]}],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": [{"field_name": "REF_AREA", "field_value": [{"code": "KEN"}]}]},
         )
         httpx_mock.add_response(
             method="GET", url=re.compile(r".*/data\\?.*"),
@@ -174,11 +174,11 @@ class TestGetDataPrefiltering:
             json={"value": [{"series_description": {"idno": "WB_HCP_EMP_2WAP_A"}}]},
         )
         httpx_mock.add_response(
-            method="GET", url=re.compile(r".*/disaggregation.*"),
-            json=[
-                {"field_name": "REF_AREA", "field_value": ["USA"]},
-                {"field_name": "SEX", "field_value": ["_T", "F"]},
-            ],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": [
+                {"field_name": "REF_AREA", "field_value": [{"code": "USA"}]},
+                {"field_name": "SEX", "field_value": [{"code": "_T"}, {"code": "F"}]},
+            ]},
         )
         httpx_mock.add_response(
             method="GET", url=re.compile(r".*/data\\?.*"),
@@ -209,8 +209,8 @@ class TestGetDataPrefiltering:
             json={"value": [{"series_description": {"idno": "WB_WDI_NY_GDP_PCAP_KD", "name": "GDP per capita"}}]},
         )
         httpx_mock.add_response(
-            method="GET", url=re.compile(r".*/disaggregation.*"),
-            json=[{"field_name": "REF_AREA", "field_value": ["PHL"]}],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": [{"field_name": "REF_AREA", "field_value": [{"code": "PHL"}]}]},
         )
         httpx_mock.add_response(
             method="GET", url=re.compile(r".*/data\\?.*"),
@@ -393,11 +393,11 @@ class TestGetDataDisaggregationIndependence:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="GET", url=re.compile(r".*/disaggregation.*"),
-            json=[
-                {"field_name": "REF_AREA", "field_value": ["KEN", "USA", "GBR"]},
-                {"field_name": "SEX", "field_value": ["_T"]},
-            ],
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": [
+                {"field_name": "REF_AREA", "field_value": [{"code": "KEN"}, {"code": "USA"}, {"code": "GBR"}]},
+                {"field_name": "SEX", "field_value": [{"code": "_T"}]},
+            ]},
         )
         httpx_mock.add_response(
             method="GET", url=re.compile(r".*/data\\?.*"),

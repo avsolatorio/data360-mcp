@@ -12,10 +12,10 @@ os.environ.setdefault(
     "DATA360_CODELIST_API_BASE_URL",
     f"{_test_api}/codelist",
 )
-# Match httpx_mock URLs in tests (short paths without /data360/).
-os.environ.setdefault("DATA360_SEARCH_URL", f"{_test_api}/searchv2")
+os.environ.setdefault("DATA360_SEARCH_URL", f"{_test_api}/portal/v1/public_data360_search")
 os.environ.setdefault("DATA360_METADATA_URL", f"{_test_api}/metadata")
 os.environ.setdefault("DATA360_DISAGGREGATION_URL", f"{_test_api}/disaggregation")
+os.environ.setdefault("DATA360_DIMENSIONS_URL", f"{_test_api}/portal/v1/dimensions")
 os.environ.setdefault("DATA360_DATA_URL", f"{_test_api}/data")
 
 import pytest
@@ -44,3 +44,15 @@ async def _isolate_data360_api_state():
         with _disaggregation_cache_lock:
             _disaggregation_cache.clear()
     await aclose_shared_httpx_client()
+
+
+@pytest.fixture(autouse=True)
+def _mock_extdataportal_global(monkeypatch):
+    """Globally mock CodelistManager._fetch_extdataportal to prevent test failures from lazy loading."""
+    from unittest.mock import AsyncMock
+    from data360.providers import CodelistManager
+    monkeypatch.setattr(
+        CodelistManager,
+        "_fetch_extdataportal",
+        AsyncMock(return_value={})
+    )

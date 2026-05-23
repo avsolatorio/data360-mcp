@@ -273,6 +273,7 @@ class GroupHierarchyManager:
         self._meta: dict[str, Any] = {}
         self._include_types = include_types
         self._loaded = False
+        self._initial_fetch_succeeded = False
         self._last_fetched: float = 0.0
         self._bg_task: asyncio.Task | None = None  # type: ignore[type-arg]
 
@@ -422,41 +423,59 @@ class GroupHierarchyManager:
         The loop is safe to cancel: cancellation propagates through
         asyncio.sleep and exits cleanly.
         """
+        backoff = 5.0
+        max_backoff = 900.0  # 15 minutes
         while True:
-            elapsed = time.monotonic() - self._last_fetched
-            if elapsed >= self._TTL:
-                try:
-                    groups, all_countries, version = await self._fetch_fmr_data()
-                    # Build a minimal data dict compatible with _apply.
-                    data = {
-                        "_meta": {
-                            "source": f"FMR H_REF_AREA_GROUPS v{version} + CL_REF_GROUPINGS (live)",
-                            "hierarchy_version": version,
-                        },
-                        "groups": groups,
-                        "all_countries": sorted(all_countries),
-                    }
-                    self._apply(data)
-                    self._last_fetched = time.monotonic()
-                    _logger.info(
-                        "GroupHierarchyManager: background refresh completed — "
-                        "%d groups (%d countries), hierarchy v%s.",
-                        len(self._groups),
-                        len(self._all_countries),
-                        version,
+            if self._initial_fetch_succeeded:
+                elapsed = time.monotonic() - self._last_fetched
+                sleep_for = max(0.0, self._TTL - elapsed)
+                if sleep_for > 0:
+                    await asyncio.sleep(sleep_for)
+                    continue
+
+            try:
+                groups, all_countries, version = await self._fetch_fmr_data()
+                # Build a minimal data dict compatible with _apply.
+                data = {
+                    "_meta": {
+                        "source": f"FMR H_REF_AREA_GROUPS v{version} + CL_REF_GROUPINGS (live)",
+                        "hierarchy_version": version,
+                    },
+                    "groups": groups,
+                    "all_countries": sorted(all_countries),
+                }
+                self._apply(data)
+                self._initial_fetch_succeeded = True
+                self._last_fetched = time.monotonic()
+                _logger.info(
+                    "GroupHierarchyManager: background refresh completed — "
+                    "%d groups (%d countries), hierarchy v%s.",
+                    len(self._groups),
+                    len(self._all_countries),
+                    version,
+                )
+                backoff = 5.0
+                sleep_for = self._TTL
+            except Exception as e:
+                if not self._initial_fetch_succeeded:
+                    sleep_for = backoff
+                    backoff = min(backoff * 2, max_backoff)
+                    _logger.warning(
+                        "GroupHierarchyManager: initial background FMR fetch failed (%s). "
+                        "Retrying in %.1f seconds.",
+                        e,
+                        sleep_for,
                     )
-                except Exception as e:
+                else:
+                    sleep_for = self._TTL
+                    self._last_fetched = time.monotonic()
                     _logger.warning(
                         "GroupHierarchyManager: background FMR fetch failed (%s). "
-                        "FMR may require VPN access. Next attempt in %.0f days.",
+                        "Next attempt in %.0f days.",
                         e,
                         self._TTL / 86400,
                     )
-                    # Wait a full TTL cycle before retrying. FMR is VPN-restricted
-                    # and non-VPN deployments should not produce repeated warnings.
-                    self._last_fetched = time.monotonic()
 
-            sleep_for = max(0.0, self._TTL - (time.monotonic() - self._last_fetched))
             await asyncio.sleep(sleep_for)
 
     async def _fetch_fmr_data(
@@ -702,6 +721,7 @@ class CodelistManager:
         # Runtime-fetched extdataportal data: {dimension → {code → name}}.
         # Populated lazily; stays empty (graceful fallback) if offline.
         self._extdataportal: dict[str, dict[str, str]] = {}
+        self._initial_fetch_succeeded = False
         self._last_fetched: float = 0.0
         self._bg_task: asyncio.Task | None = None  # type: ignore[type-arg]
 
@@ -786,6 +806,7 @@ class CodelistManager:
             try:
                 mapping = await self._fetch_extdataportal()
                 self._apply_extdataportal(mapping)
+                self._initial_fetch_succeeded = True
                 self._last_fetched = time.monotonic()
             except Exception as exc:
                 _logger.warning(
@@ -821,29 +842,49 @@ class CodelistManager:
         On failure the existing mapping is kept and a WARNING is logged;
         the loop sleeps another full TTL before retrying.
         """
+        backoff = 5.0
+        max_backoff = 900.0  # 15 minutes
         while True:
-            elapsed = time.monotonic() - self._last_fetched
-            if elapsed >= self._TTL:
-                try:
-                    mapping = await self._fetch_extdataportal()
-                    self._apply_extdataportal(mapping)
-                    self._last_fetched = time.monotonic()
-                    _logger.info(
-                        "CodelistManager: background refresh completed — "
-                        "%d dimensions, COMP_BREAKDOWN=%d codes.",
-                        len(mapping),
-                        len(mapping.get(self._COMP_BREAKDOWN_KEY, {})),
+            if self._initial_fetch_succeeded:
+                elapsed = time.monotonic() - self._last_fetched
+                sleep_for = max(0.0, self._TTL - elapsed)
+                if sleep_for > 0:
+                    await asyncio.sleep(sleep_for)
+                    continue
+
+            try:
+                mapping = await self._fetch_extdataportal()
+                self._apply_extdataportal(mapping)
+                self._initial_fetch_succeeded = True
+                self._last_fetched = time.monotonic()
+                _logger.info(
+                    "CodelistManager: background refresh completed — "
+                    "%d dimensions, COMP_BREAKDOWN=%d codes.",
+                    len(mapping),
+                    len(mapping.get(self._COMP_BREAKDOWN_KEY, {})),
+                )
+                backoff = 5.0
+                sleep_for = self._TTL
+            except Exception as exc:
+                if not self._initial_fetch_succeeded:
+                    sleep_for = backoff
+                    backoff = min(backoff * 2, max_backoff)
+                    _logger.warning(
+                        "CodelistManager: initial background refresh failed (%s). "
+                        "Retrying in %.1f seconds.",
+                        exc,
+                        sleep_for,
                     )
-                except Exception as exc:
+                else:
+                    sleep_for = self._TTL
+                    self._last_fetched = time.monotonic()
                     _logger.warning(
                         "CodelistManager: background refresh failed (%s). "
                         "Next attempt in %.0f days.",
                         exc,
                         self._TTL / 86400,
                     )
-                    self._last_fetched = time.monotonic()
 
-            sleep_for = max(0.0, self._TTL - (time.monotonic() - self._last_fetched))
             await asyncio.sleep(sleep_for)
 
     # ------------------------------------------------------------------

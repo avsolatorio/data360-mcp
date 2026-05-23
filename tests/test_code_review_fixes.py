@@ -281,3 +281,71 @@ class TestD1BypassStrategiesRemoved:
         assert "bypass_strategies" not in source, (
             "bypass_strategies is dead code and should be removed from get_viz_spec"
         )
+
+
+# ============================================================================
+# Phase 1: Startup Fetch Resilience and Spec Storage Tests
+# ============================================================================
+
+
+class TestPhase1ResilienceAndSpecStorage:
+    """Validates codelist / group hierarchy manager properties and conditional spec saving."""
+
+    def test_managers_initial_fetch_flag(self):
+        """Verify GroupHierarchyManager and CodelistManager initial fetch flags start as False."""
+        from data360.providers import GroupHierarchyManager, CodelistManager
+        ghm = GroupHierarchyManager()
+        cm = CodelistManager()
+        assert ghm._initial_fetch_succeeded is False
+        assert cm._initial_fetch_succeeded is False
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("env", ["prod", "production"])
+    async def test_store_spec_prod_saves_remote_only(self, env, monkeypatch):
+        """In production, storing spec posts to Charts API but skips local static file saving."""
+        import unittest.mock as mock
+        from data360.visualization import _store_spec
+        from data360.config import MCPServerSettings
+
+        mock_post = mock.AsyncMock(return_value="http://remote-charts-api/spec/123")
+        mock_save = mock.MagicMock(return_value="http://local-static/spec/123")
+
+        # Mock the server settings
+        monkeypatch.setattr(
+            "data360.visualization.get_mcp_server_settings",
+            lambda: MCPServerSettings(env=env, charts_api_url="http://remote-charts-api")
+        )
+        monkeypatch.setattr("data360.visualization.post_spec_to_charts_api", mock_post)
+        monkeypatch.setattr("data360.visualization.save_specs_to_static", mock_save)
+
+        spec = {"mark": "line", "encoding": {}}
+        url = await _store_spec(spec)
+
+        assert url == "http://remote-charts-api/spec/123"
+        mock_post.assert_called_once()
+        mock_save.assert_not_called()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("env", ["local", "dev", None])
+    async def test_store_spec_local_saves_both(self, env, monkeypatch):
+        """In local/dev environments, storing spec posts to Charts API and also saves locally."""
+        import unittest.mock as mock
+        from data360.visualization import _store_spec
+        from data360.config import MCPServerSettings
+
+        mock_post = mock.AsyncMock(return_value="http://remote-charts-api/spec/123")
+        mock_save = mock.MagicMock(return_value="http://local-static/spec/123")
+
+        monkeypatch.setattr(
+            "data360.visualization.get_mcp_server_settings",
+            lambda: MCPServerSettings(env=env, charts_api_url="http://remote-charts-api")
+        )
+        monkeypatch.setattr("data360.visualization.post_spec_to_charts_api", mock_post)
+        monkeypatch.setattr("data360.visualization.save_specs_to_static", mock_save)
+
+        spec = {"mark": "line", "encoding": {}}
+        url = await _store_spec(spec)
+
+        assert url == "http://remote-charts-api/spec/123"
+        mock_post.assert_called_once()
+        mock_save.assert_called_once()
