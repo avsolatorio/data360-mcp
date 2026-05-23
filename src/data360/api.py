@@ -674,6 +674,8 @@ def _enrich_search_results(
                     for rc in ref_list:
                         if isinstance(rc, dict) and rc.get("code"):
                             ref_countries.add(rc["code"])
+                        elif isinstance(rc, str):
+                            ref_countries.add(rc)
                 covers_country = {code: (code in ref_countries) for code in requested_codes}
 
         # Extract dimension names
