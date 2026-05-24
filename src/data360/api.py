@@ -1740,7 +1740,7 @@ async def get_data(
             Use value None to request all values for a dimension (e.g. {"SEX": None}). When REF_AREA
             is omitted or None, the Data API returns all geographic series—including regional aggregates
             (e.g. EAS, EMU)—mixed with member economies.
-        start_year: Optional start year (inclusive). Defaults to last 5 years if both start/end omitted.
+        start_year: Optional start year (inclusive). Defaults to last 20 years if both start/end omitted.
         end_year: Optional end year (inclusive). Defaults to current year if both start/end omitted.
         limit: Maximum records per page (default 50, max 100).
         offset: Number of records to skip for pagination (default 0).
@@ -3065,8 +3065,8 @@ async def compare_countries(
     or "How does Brazil compare to its neighbors on poverty?". Returns a pre-ranked
     snapshot and optional aligned time series with convergence analysis.
 
-    IMPORTANT LIMITATION: This tool is capped at exactly 2 countries. If the user asks to
-    compare 3 or more countries (e.g. "Kenya, Nigeria, and Ghana"), you MUST NOT use this tool.
+    IMPORTANT LIMITATION: This tool supports comparing 2 to 8 countries. If the user asks to
+    compare more than 8 countries, you MUST NOT use this tool.
     Instead, use rank_countries or summarize_data.
 
     The snapshot includes a year_selection_note explaining how the comparison year was
