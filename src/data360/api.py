@@ -413,9 +413,16 @@ def _process_search_response(
     response_data: dict[str, Any], request: SearchRequest
 ) -> SearchResponse:
     """Process API response and build SearchResponse."""
+    if "count" in response_data and response_data["count"] is not None:
+        total_count = response_data["count"]
+    elif "@odata.count" in response_data:
+        total_count = response_data["@odata.count"]
+    else:
+        total_count = None
+
     search_response_data = {
         "items": _get_items_from_response(response_data),
-        "total_count": response_data.get("@odata.count", None),
+        "total_count": total_count,
         "offset": request.offset,
     }
     search_response_data["count"] = len(search_response_data["items"])

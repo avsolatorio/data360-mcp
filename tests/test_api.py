@@ -10,6 +10,7 @@ import pytest_httpx
 from data360.api import (
     _get_valid_disaggregations,
     _obs_value_to_float,
+    _process_search_response,
     get_data,
     get_metadata,
     search,
@@ -18,6 +19,7 @@ from data360.models import (
     EnrichedSearchResponse,
     IndicatorDataResponse,
     MetadataResponse,
+    SearchRequest,
 )
 
 
@@ -161,6 +163,18 @@ class TestSearch:
         assert result.count == NUM_ITEMS
         assert result.has_more is True
         assert result.next_offset == NUM_ITEMS
+
+    def test_process_search_response_preserves_zero_total_count(self):
+        """Test zero count responses preserve total_count=0."""
+        mock_response = {"count": 0, "value": []}
+        request = SearchRequest(query="population", limit=10, offset=0)
+
+        result = _process_search_response(mock_response, request)
+
+        assert result.total_count == 0
+        assert result.count == 0
+        assert result.has_more is False
+        assert result.next_offset is None
 
     @pytest.mark.asyncio
     async def test_search_filters_invalid_items(
