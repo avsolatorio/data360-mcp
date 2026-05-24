@@ -13,6 +13,7 @@ from data360.api import (
     get_data,
     get_metadata,
     search,
+    search_datasets,
 )
 from data360.errors import Data360MCPError
 from data360.models import (
@@ -394,6 +395,88 @@ class TestSearch:
 
         assert len(captured_payloads) == 1
         assert captured_payloads[0]["items_per_page"] == AGREED_LIMIT
+
+
+class TestSearchDatasets:
+    """Tests for search_datasets() function."""
+
+    @pytest.mark.asyncio
+    async def test_search_datasets_success(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test successful dataset search request."""
+        mock_response = {
+            "count": 1,
+            "results": [
+                {
+                    "idno": "WB_FINDEX",
+                    "name": "Global Financial Inclusion Database",
+                    "description": "Findex data",
+                    "data_classification": "public",
+                    "data_last_updated": "2024-01-01",
+                    "economies_count": 150,
+                    "time_period": {"start": 2011, "end": 2021},
+                }
+            ],
+        }
+
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+            json=mock_response,
+        )
+
+        response = await search_datasets("findex")
+
+        assert response.error is None
+        assert response.count == 1
+        assert len(response.items) == 1
+        assert response.items[0].idno == "WB_FINDEX"
+        assert response.items[0].name == "Global Financial Inclusion Database"
+
+    @pytest.mark.asyncio
+    async def test_search_datasets_query_sanitization(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test that special characters are sanitized in dataset search queries."""
+        captured_payloads = []
+
+        def capture_callback(request: httpx.Request) -> httpx.Response:
+            captured_payloads.append(json.loads(request.content))
+            return httpx.Response(
+                200,
+                json={
+                    "count": 0,
+                    "results": [],
+                },
+            )
+
+        httpx_mock.add_callback(
+            capture_callback,
+            method="POST",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+        )
+
+        await search_datasets("Findex (database) $2022")
+
+        assert len(captured_payloads) == 1
+        assert captured_payloads[0].get("query_string") == "Findex database 2022"
+
+    @pytest.mark.asyncio
+    async def test_search_datasets_empty_query(self):
+        """Test search_datasets with empty query after sanitization raises validation error."""
+        response = await search_datasets("   $$$   ")
+        assert response.error is not None
+        assert "Search query cannot be empty" in response.error
+
+    @pytest.mark.asyncio
+    async def test_search_datasets_http_error(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test HTTP error handling in dataset search."""
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+            status_code=500,
+        )
+
+        response = await search_datasets("findex")
+        assert response.error is not None
+        assert "Server Error" in response.error or "500" in response.error or "Internal Server Error" in response.error
 
 
 class TestGetMetadata:

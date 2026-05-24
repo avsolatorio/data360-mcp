@@ -33,7 +33,8 @@ If the user request requires indicator lookup, metadata, codes, or data values, 
 Do not answer with guesses. Do not stop after describing a plan.
 
 ### Operating loop (repeat until done)
-1) If you need an indicator → call data360_search_indicators.
+1) If you need indicators or statistical series → call data360_search_indicators.
+   If you need high-level dataset catalogs or source databases (e.g. Findex) → call data360_search_datasets.
    - **CRITICAL**: The search API is sensitive to special characters. Strip parentheses `(`, `)` and currency signs like `$` from your query (e.g. search for "GDP per capita current US", NOT "GDP per capita (current US$)").
    - **CRITICAL** when search returns multiple results: STOP — do not loop every row.
    - Pick the **single best** indicator (relevance + coverage), then state:
@@ -193,8 +194,8 @@ Do not answer with guesses. Do not stop after describing a plan.
 Then provide the final answer to the user (after tools complete).
 
 ### Defaults
-- Time range: last 20 years unless user specifies otherwise.
-  start_year = (current_year - 19), end_year = current_year
+- Time range: last 5 years unless user specifies otherwise.
+  start_year = (current_year - 4), end_year = current_year
 - Breakdowns (e.g. by sex): use disaggregation_filters={"SEX": null} to get all groups.
 
 ### Output behavior
@@ -355,8 +356,8 @@ def indicator_search(
    - **Report**: Note your choice and alternatives (e.g. "Selecting Constant US$ (KD) for trend analysis. Current US$ (CD) also available.").
 
 4. **Validation Check**:
-   - If the user asked for a specific country (e.g. Kenya), do NOT call `get_data` without `disaggregation_filters={"REF_AREA": "KEN"}` (plus your selected dimension filters). Values must be strings or null per dimension — not JSON arrays.
-   - Multiple ISO codes in one filter: comma-separated string, e.g. `{"REF_AREA": "KEN,TZA", "UNIT_MEASURE": "KD"}`. Prefer commas in `disaggregation_filters`; the server also normalizes semicolons in REF_AREA to commas. The top-level `country_code` argument uses semicolons for multiple codes (e.g. `KEN;TZA`).
+   - If the user asked for a specific country (e.g. Kenya), do NOT call `get_data` without `disaggregation_filters={{"REF_AREA": "KEN"}}` (plus your selected dimension filters). Values must be strings or null per dimension — not JSON arrays.
+   - Multiple ISO codes in one filter: comma-separated string, e.g. `{{"REF_AREA": "KEN,TZA", "UNIT_MEASURE": "KD"}}`. Prefer commas in `disaggregation_filters`; the server also normalizes semicolons in REF_AREA to commas. The top-level `country_code` argument uses semicolons for multiple codes (e.g. `KEN;TZA`).
    - Use `null` only for a **specific** dimension when you want every value of that dimension (e.g. all sexes), not to skip geography when the user named a country.
    - Asking for `disaggregation_filters=null` returns global aggregates AND all unit variants, which ruins charts.
 
@@ -452,7 +453,7 @@ data360_get_data(
     database_id=<db_id>,
     indicator_id=<ind_id>,
     disaggregation_filters={{"REF_AREA": "<ISO comma-separated, e.g. KEN or KEN,TZA>", "UNIT_MEASURE": "..."}},
-    start_year={start_year if start_year else "None (Defaults to last 20 years)"},
+    start_year={start_year if start_year else "None (Defaults to last 5 years)"},
     end_year={end_year if end_year else "None"}
 )
 # Or omit REF_AREA in disaggregation_filters and use top-level country_code="KEN" or "KEN;MAR".
