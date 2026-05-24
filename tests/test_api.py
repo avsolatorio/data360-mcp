@@ -631,6 +631,7 @@ class TestGetData:
     ):
         """When no range is provided, get_data must default to last 5 years."""
         current_year = datetime.now().year
+        default_year_window = 5
 
         httpx_mock.add_response(
             method="POST",
@@ -647,7 +648,8 @@ class TestGetData:
                 and request.url.host == "api.test.example.com"
                 and request.url.path == "/data"
             ):
-                assert request.url.params.get("timePeriodFrom") == str(current_year - 4)
+                expected_start_year = current_year - (default_year_window - 1)
+                assert request.url.params.get("timePeriodFrom") == str(expected_start_year)
                 assert request.url.params.get("timePeriodTo") == str(current_year)
                 return httpx.Response(200, json={"value": [], "count": 0})
             return None
