@@ -85,6 +85,8 @@ _dimensions_api_cache: cachetools.TTLCache = cachetools.TTLCache(
     maxsize=256, ttl=_DIMENSIONS_API_CACHE_TTL
 )
 _dimensions_api_cache_lock = threading.Lock()
+_dimensions_api_inflight: dict[tuple[str, str], asyncio.Task] = {}
+_dimensions_api_inflight_lock = threading.Lock()
 
 # Fields fetched by _search_raw for LLM-friendly enrichment.
 # Shared between single-query and multi-query paths to ensure consistency.
@@ -184,11 +186,56 @@ def _parse_dimensions_response(dimensions_data: dict[str, Any]) -> list[dict[str
     return raw_disaggregations
 
 
+async def _fetch_dimensions_raw_uncached(
+    database_id: str,
+    indicator_id: str,
+) -> dict[str, Any]:
+    """Fetch dimensions from the API without caching, raising exceptions on failure.
+
+    Only updates the cache on success. Pops itself from inflight tasks on completion.
+    """
+    _cache_key = (database_id, indicator_id)
+    try:
+        dimensions_url = (
+            data360_config.dimensions_url or f"{data360_config.api_url}/portal/v1/dimensions"
+        )
+        headers = {"accept": "*/*", "Content-Type": "application/json"}
+        payload = {"database_id": database_id, "indicator_id": indicator_id}
+
+        client = get_shared_httpx_client()
+        response = await client.post(
+            dimensions_url,
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code in (400, 404):
+            result = {"dimensions": []}
+            with _dimensions_api_cache_lock:
+                _dimensions_api_cache[_cache_key] = result
+            return result
+
+        response.raise_for_status()
+
+        if not response.content or not response.text.strip():
+            result = {"dimensions": []}
+        else:
+            result = response.json()
+
+        with _dimensions_api_cache_lock:
+            _dimensions_api_cache[_cache_key] = result
+
+        return result
+    finally:
+        with _dimensions_api_inflight_lock:
+            _dimensions_api_inflight.pop(_cache_key, None)
+
+
 async def _fetch_dimensions_with_cache(
     database_id: str,
     indicator_id: str,
 ) -> dict[str, Any]:
-    """Fetch dimensions from the API with a 10-minute in-memory cache.
+    """Fetch dimensions from the API with a 10-minute in-memory cache and concurrent request deduplication.
 
     Only caches successful responses. Returns parsed JSON dict.
     Raises httpx.HTTPStatusError or other request exceptions on non-400/404 failures.
@@ -199,33 +246,14 @@ async def _fetch_dimensions_with_cache(
     if _cached is not None:
         return _cached
 
-    dimensions_url = (
-        data360_config.dimensions_url or f"{data360_config.api_url}/portal/v1/dimensions"
-    )
-    headers = {"accept": "*/*", "Content-Type": "application/json"}
-    payload = {"database_id": database_id, "indicator_id": indicator_id}
+    with _dimensions_api_inflight_lock:
+        task = _dimensions_api_inflight.get(_cache_key)
+        if task is None:
+            coro = _fetch_dimensions_raw_uncached(database_id, indicator_id)
+            task = asyncio.create_task(coro)
+            _dimensions_api_inflight[_cache_key] = task
 
-    client = get_shared_httpx_client()
-    response = await client.post(
-        dimensions_url,
-        json=payload,
-        headers=headers,
-    )
-
-    if response.status_code in (400, 404):
-        return {"dimensions": []}
-
-    response.raise_for_status()
-
-    if not response.content or not response.text.strip():
-        result = {"dimensions": []}
-    else:
-        result = response.json()
-
-    with _dimensions_api_cache_lock:
-        _dimensions_api_cache[_cache_key] = result
-
-    return result
+    return await task
 
 
 def _strip_data_row(row: dict[str, Any]) -> dict[str, Any]:
