@@ -53,16 +53,16 @@ async def _search_indicators(
     """Search for Data360 indicators with enriched metadata for selection.
 
     Use when the user asks for data on a development topic (e.g. GDP, poverty, education).
-    Provide query, queries, or query_groups.
+    Provide exactly one of `query`, `queries`, or `query_groups`.
 
     Args:
-        query: Single topic query (e.g. "unemployment"). Avoid special characters like parentheses () or dollar signs $ as they cause search failures.
-        required_country: Semicolon-separated ISO country codes (e.g. "KEN;USA").
+        query: Single topic query (e.g. "unemployment"). Avoid special characters like parentheses () or dollar signs $ as they cause search failures. Example: 'GDP per capita'.
+        required_country: Semicolon-separated ISO country codes (e.g. "KEN;USA"). Consider calling `data360_expand_country_group` to find country codes in regional/income groups, or `data360_find_codelist_value` to resolve country names.
         limit: Max indicators per query (default 5).
         offset: Offset for pagination.
-        queries: List of topics for multi-topic search.
-        query_groups: Grouped queries with specific country scopes.
-        result_layout: Mode to return results: "merged" or "by_query".
+        queries: List of topics for multi-topic search. Example: ['GDP per capita', 'inflation rate'].
+        query_groups: Grouped queries with specific country scopes. Example: [{'queries': ['GDP per capita'], 'country': 'Kenya'}].
+        result_layout: Mode to return results: "merged" (flat, deduped list of indicators) or "by_query" (indicators grouped by search query).
         dedupe: De-duplicate indicators across query results.
     """
     return await data360_api.search(
@@ -77,6 +77,27 @@ async def _search_indicators(
     )
 
 
+async def _search_datasets(
+    query: str,
+    limit: int = 10,
+    offset: int = 0,
+) -> Any:
+    """Search for Data360 datasets matching a query.
+
+    Use when the user asks for dataset details, catalogs, or source databases (e.g. "Findex", "WDI").
+
+    Args:
+        query: Topic or dataset search term (e.g. "findex"). Avoid special characters like parentheses () or dollar signs $ as they cause search failures.
+        limit: Max datasets to return (default 10).
+        offset: Offset for pagination.
+    """
+    return await data360_api.search_datasets(
+        query=query,
+        limit=limit,
+        offset=offset,
+    )
+
+
 async def _get_metadata(
     database_id: str,
     indicator_id: str,
@@ -87,7 +108,7 @@ async def _get_metadata(
     """Get metadata and disaggregation options for a Data360 indicator.
 
     Use when you need detailed methodology, source notes, or limitations for an indicator.
-    For basic info like definitions or frequency, prefer fields returned by search.
+    Ensure the database ID and the indicator ID are already in context (e.g., from `data360_search_indicators`) before using this tool. Do not guess or hallucinate these IDs.
 
     Args:
         database_id: Database identifier (e.g., "WB_WDI").
@@ -119,14 +140,15 @@ async def _get_data(
     """Retrieve indicator observations from the Data360 API.
 
     Use when you need actual numeric values (OBS_VALUE) for specific countries and years.
-    Call get_disaggregation first to find available breakdowns and years.
+    Ensure the database ID and the indicator ID are already in context before using this tool. Do not guess or hallucinate these IDs.
+    Call `data360_get_disaggregation` first to find available years and breakdowns for the `disaggregation_filters`.
 
     Args:
         database_id: Database identifier (e.g., "WB_WDI").
         indicator_id: Indicator ID (e.g., "WB_WDI_NY_GDP_PCAP_KD").
         country_code: Semicolon-separated ISO country codes (e.g. "KEN;USA").
-        disaggregation_filters: Optional dimension filters. Values must be strings or null.
-        start_year: Start year (inclusive). Defaults to last 20 years if omitted.
+        disaggregation_filters: Optional dimension filters. Values must be strings or null. Call `data360_get_disaggregation` first to find valid options.
+        start_year: Start year (inclusive). Defaults to last 5 years if omitted.
         end_year: End year (inclusive). Defaults to current year if omitted.
         limit: Max records per page (default 50, max 100).
         offset: Number of records to skip for pagination.
@@ -153,6 +175,7 @@ async def _get_disaggregation(
     """Get valid filter values and disaggregation options for an indicator.
 
     Use to find available dimensions (e.g., SEX, AGE) and years before querying data or charts.
+    Ensure the database ID and the indicator ID are already in context before using this tool. Do not guess or hallucinate these IDs.
 
     Args:
         database_id: Database identifier (e.g., "WB_WDI").
@@ -205,13 +228,14 @@ async def _get_data_api_url(
     """Generate the raw Data360 API URL for an indicator request.
 
     Low-level tool: use only when the caller specifically asks for the URL.
+    Ensure the database ID and the indicator ID are already in context before using this tool. Do not guess or hallucinate these IDs.
 
     Args:
         database_id: Database identifier (e.g. "WB_WDI").
         indicator_id: Indicator ID (e.g. "WB_WDI_NY_GDP_PCAP_KD").
         country_code: Semicolon-separated ISO country codes.
-        start_year: Start year (inclusive).
-        end_year: End year (inclusive).
+        start_year: Start year (inclusive). Defaults to last 5 years if omitted.
+        end_year: End year (inclusive). Defaults to current year if omitted.
         disaggregation_filters: Optional dimension filters.
     """
     return await data360_api.get_data_api_url(
@@ -241,13 +265,15 @@ async def _get_viz_spec(
     """Generate a Vega-Lite chart from a single Data360 indicator.
 
     Use when the user requests a chart or plot for a single indicator.
+    Ensure the database ID and the indicator ID are already in context before using this tool. Do not guess or hallucinate these IDs.
+    Call `data360_get_disaggregation` first to find available years and breakdowns for the `disaggregation_filters`.
 
     Args:
         database_id: Database identifier (e.g. "WB_WDI").
         indicator_id: Indicator ID (e.g. "WB_WDI_NY_GDP_PCAP_KD").
         country_code: Semicolon-separated ISO country codes (e.g. "KEN;USA").
-        start_year: Start year (inclusive).
-        end_year: End year (inclusive).
+        start_year: Start year (inclusive). Defaults to last 5 years if omitted.
+        end_year: End year (inclusive). Defaults to current year if omitted.
         disaggregation_filters: Optional dimension filters.
         chart_type: Optional chart type (e.g. "line", "bar", "strip", "heatmap").
         relevant_fields: Fields to include in visual encodings.
@@ -285,12 +311,13 @@ async def _get_multi_indicator_viz_spec(
     """Generate a Vega-Lite chart comparing multiple Data360 indicators.
 
     Use when you need to compare 2–4 indicators (e.g. via scatterplot or dual-axis line chart).
+    Ensure the database IDs and indicator IDs are already in context before using this tool. Do not guess or hallucinate these IDs.
 
     Args:
         indicator_ids: List of database/indicator dicts, e.g. [{"database_id": "WB_WDI", "indicator_id": "..."}].
         country_code: Semicolon-separated ISO country codes (e.g. "KEN;USA").
-        start_year: Start year (inclusive).
-        end_year: End year (inclusive).
+        start_year: Start year (inclusive). Defaults to last 5 years if omitted.
+        end_year: End year (inclusive). Defaults to current year if omitted.
         disaggregation_filters: Optional dimension filters.
         chart_type: Optional chart type override (e.g. "scatter", "line").
         chart_title: Title for the chart.
@@ -341,14 +368,15 @@ async def _summarize_data(
     """Compute summary statistics for indicator data, grouped by dimensions.
 
     Use when the user asks about trends, changes over time, or general statistical summaries.
+    Ensure the database ID and the indicator ID are already in context before using this tool. Do not guess or hallucinate these IDs.
 
     Args:
         database_id: Database identifier (e.g. "WB_WDI").
         indicator_id: Indicator ID (e.g. "WB_WDI_NY_GDP_PCAP_KD").
         country_code: Semicolon-separated ISO country codes (e.g. "KEN;USA").
         disaggregation_filters: Optional dimension filters.
-        start_year: Start year (inclusive).
-        end_year: End year (inclusive).
+        start_year: Start year (inclusive). Defaults to last 5 years if omitted.
+        end_year: End year (inclusive). Defaults to current year if omitted.
         group_by: Dimensions to group by (default is ["ref_area"]).
     """
     return await data360_api.summarize_data(
@@ -376,6 +404,7 @@ async def _rank_countries(
     """Rank countries by indicator value for a specific year.
 
     Use when asked to rank countries, find leaderboards, or query top/bottom performing economies.
+    Ensure the database ID and the indicator ID are already in context before using this tool. Do not guess or hallucinate these IDs.
 
     Args:
         database_id: Database identifier (e.g. "WB_WDI").
@@ -414,6 +443,8 @@ async def _compare_countries(
     """Compare an indicator across multiple countries (2 to 8).
 
     Use when asked to compare specific countries or find gaps/convergence between them.
+    Ensure the database ID and the indicator ID are already in context before using this tool. Do not guess or hallucinate these IDs.
+    Call `data360_get_disaggregation` first to find available years and breakdowns for the `disaggregation_filters`.
 
     Args:
         database_id: Database identifier (e.g. "WB_WDI").
@@ -421,8 +452,8 @@ async def _compare_countries(
         country_codes: Semicolon-separated ISO country codes (e.g. "KEN;NGA;ZAF").
         year: Snapshot comparison year. If omitted, selected automatically.
         include_time_series: Whether to return time-series data for trend comparison.
-        start_year: Start year for time-series alignment.
-        end_year: End year for time-series alignment.
+        start_year: Start year for time-series alignment. Defaults to last 5 years if omitted.
+        end_year: End year for time-series alignment. Defaults to current year if omitted.
         disaggregation_filters: Optional dimension filters.
     """
     return await data360_api.compare_countries(
@@ -444,6 +475,11 @@ async def _compare_countries(
 search_indicators = mcp.tool(
     instrument_mcp_tool(_search_indicators, tool_name="data360_search_indicators"),
     name="data360_search_indicators",
+)
+
+search_datasets = mcp.tool(
+    instrument_mcp_tool(_search_datasets, tool_name="data360_search_datasets"),
+    name="data360_search_datasets",
 )
 
 get_metadata = mcp.tool(

@@ -48,6 +48,9 @@ from .models import (
     SearchRequest,
     SearchResponse,
     SeriesDescription,
+    DatasetSearchRequest,
+    DatasetDescription,
+    DatasetSearchResponse,
 )
 from .providers import get_database_mapping
 
@@ -1466,6 +1469,75 @@ async def _build_multi_query_response(
         )
 
 
+async def search_datasets(
+    query: str,
+    limit: int = 10,
+    offset: int = 0,
+) -> DatasetSearchResponse:
+    """Search for Data360 datasets matching the query.
+
+    Use this first when the user asks for dataset details (e.g. Findex database, WDI database).
+    Sanitizes special characters from the query string to prevent Search V3 API failures.
+    """
+    try:
+        request = DatasetSearchRequest(query=query, limit=limit, offset=offset)
+    except PydanticValidationError as e:
+        return DatasetSearchResponse(error=str(e))
+
+    url = data360_config.search_url or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    payload = {
+        "site": "data360",
+        "query_string": request.query,
+        "types": ["dataset"],
+        "data_classification": ["public"],
+        "skip": request.offset,
+        "items_per_page": request.limit,
+    }
+
+    try:
+        client = get_shared_httpx_client()
+        response = await client.post(url, json=payload)
+        response.raise_for_status()
+
+        response_data = response.json()
+        results = response_data.get("results", [])
+
+        items = []
+        for value in results:
+            items.append(
+                DatasetDescription(
+                    idno=value.get("idno", ""),
+                    name=value.get("name", ""),
+                    description=value.get("description"),
+                    data_classification=value.get("data_classification"),
+                    data_last_updated=value.get("data_last_updated"),
+                    economies_count=value.get("economies_count"),
+                    time_period=value.get("time_period"),
+                )
+            )
+
+        total_count = response_data.get("count") or response_data.get("@odata.count") or len(items)
+
+        has_more = False
+        next_offset = None
+        if total_count is not None and total_count > request.offset + request.limit:
+            has_more = True
+            next_offset = request.offset + request.limit
+
+        return DatasetSearchResponse(
+            items=items,
+            count=len(items),
+            total_count=total_count,
+            offset=request.offset,
+            has_more=has_more,
+            next_offset=next_offset,
+        )
+
+    except Exception as e:
+        _logger.exception("Error searching datasets")
+        return DatasetSearchResponse(error=str(e))
+
+
 # ruff: noqa: PLR0913, PLR0912, PLR0915
 async def get_metadata(
     database_id: str,
@@ -1774,7 +1846,7 @@ async def get_data(
             Use value None to request all values for a dimension (e.g. {"SEX": None}). When REF_AREA
             is omitted or None, the Data API returns all geographic series—including regional aggregates
             (e.g. EAS, EMU)—mixed with member economies.
-        start_year: Optional start year (inclusive). Defaults to last 20 years if both start/end omitted.
+        start_year: Optional start year (inclusive). Defaults to last 5 years if both start/end omitted.
         end_year: Optional end year (inclusive). Defaults to current year if both start/end omitted.
         limit: Maximum records per page (default 50, max 100).
         offset: Number of records to skip for pagination (default 0).
@@ -1817,7 +1889,7 @@ async def get_data(
 
         current_year = datetime.now().year
         end_year = current_year
-        start_year = current_year - 19  # Last 20 years
+        start_year = current_year - 4  # Last 5 years
         _logger.info(f"Smart default: Applied time range {start_year}-{end_year}")
 
     # Validate arguments using Pydantic model
@@ -2619,7 +2691,7 @@ async def summarize_data(
             Filters specified here are honoured as-is and suppress auto-detection for
             that dimension. Pass {"SEX": "_T"} to force totals only, or {"SEX": None}
             to explicitly request all sex breakdowns.
-        start_year: Optional start year. Defaults to last 20 years.
+        start_year: Optional start year. Defaults to last 5 years.
         end_year: Optional end year. Defaults to current year.
         group_by: Dimensions to group by. Default ["ref_area"]. Valid columns: ref_area,
             time_period, sex, age, urbanisation, unit_measure, comp_breakdown_1,
@@ -3119,7 +3191,7 @@ async def compare_countries(
             Supports 2-8 countries.
         year: Comparison year. None = latest year where all countries have data.
         include_time_series: If True, include aligned time series + convergence.
-        start_year: For time series mode. Defaults to last 20 years.
+        start_year: For time series mode. Defaults to last 5 years.
         end_year: For time series mode. Defaults to current year.
         disaggregation_filters: Optional dimension filters.
 

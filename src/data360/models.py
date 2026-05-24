@@ -867,3 +867,54 @@ class DiscoveryResult(BaseModel):
     error: str | None = Field(
         default=None, description="Error message if discovery failed entirely"
     )
+
+
+class DatasetSearchRequest(BaseModel):
+    """Request model for dataset search queries. Includes V3 special character sanitization."""
+
+    query: str = Field(
+        ..., description="Search query string to find relevant datasets"
+    )
+    limit: int = Field(
+        default=10,
+        description="Number of results to return (default is 10)",
+        ge=1,
+        le=50,
+    )
+    offset: int = Field(default=0, description="Offset of the current page")
+
+    @model_validator(mode="after")
+    def validate_query(self) -> "DatasetSearchRequest":
+        """Validate search query and sanitize unsafe characters."""
+        if not self.query or not self.query.strip():
+            raise ValueError("Search query cannot be empty")
+        # Strip parentheses, dollar signs, and other punctuation that causes Search V3 to return 0 results.
+        # Preserve alphanumerics, underscores, hyphens, commas, and periods.
+        cleaned = re.sub(r"[^\w\s\-\,\.]", " ", self.query)
+        self.query = " ".join(cleaned.split())
+        if not self.query or not self.query.strip():
+            raise ValueError("Search query cannot be empty after sanitization")
+        return self
+
+
+class DatasetDescription(BaseModel):
+    """Model for dataset description in search results."""
+
+    idno: str = Field(..., description="Dataset identifier")
+    name: str = Field(..., description="Dataset name")
+    description: str | None = Field(None, description="Dataset description")
+    data_classification: str | None = Field(None, description="Data classification (e.g. public)")
+    data_last_updated: str | None = Field(None, description="Last updated timestamp")
+    economies_count: int | None = Field(None, description="Number of economies covered")
+    time_period: dict[str, Any] | None = Field(None, description="Time period range covered")
+
+
+class DatasetSearchResponse(MCPPagedResponse):
+    """Response model for data360 dataset search results."""
+
+    items: list[DatasetDescription] = Field(
+        default_factory=list, description="List of search results containing dataset information"
+    )
+    error: str | None = Field(
+        default=None, description="Error message if search failed"
+    )
