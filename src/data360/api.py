@@ -1231,6 +1231,8 @@ async def search(  # noqa: PLR0911
             offset=offset,
             economy_codes=[c.strip() for c in country_code.split(";")] if country_code else None,
         )
+    except PydanticValidationError as e:
+        return EnrichedSearchResponse(error=str(e))
     except Data360MCPError as e:
         return EnrichedSearchResponse(error=e.detail)
 
