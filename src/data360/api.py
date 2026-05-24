@@ -1537,7 +1537,8 @@ async def search_datasets(
 
     except Exception as e:
         _logger.exception("Error searching datasets")
-        return DatasetSearchResponse(error=str(e))
+        mcp_err = classify_error(e, context="dataset")
+        return DatasetSearchResponse(error=mcp_err.detail)
 
 
 # ruff: noqa: PLR0913, PLR0912, PLR0915

@@ -18,26 +18,31 @@ _logger = logging.getLogger(__name__)
 _ERROR_MESSAGES: dict[str, str] = {
     # HTTP / network errors
     "http_error:search": "The search request failed with an HTTP error. Please try again.",
+    "http_error:dataset": "The dataset search request failed with an HTTP error. Please try again.",
     "http_error:metadata": "Failed to fetch metadata due to an HTTP error. Verify the indicator_id and database_id are correct.",
     "http_error:disaggregation": "Failed to fetch disaggregation options due to an HTTP error. Verify the indicator_id and database_id are correct.",
     "http_error:data": "Failed to fetch data due to an HTTP error. Verify the indicator_id, database_id, and filters are correct.",
     # Timeouts
     "timeout:search": "The search request timed out. Please try again.",
+    "timeout:dataset": "The dataset search request timed out. Please try again.",
     "timeout:metadata": "The metadata request timed out. Please try again.",
     "timeout:disaggregation": "The disaggregation request timed out. Please try again.",
     "timeout:data": "The data request timed out. Please try again.",
     # Request errors (connection issues, DNS, etc.)
     "request_error:search": "A network error occurred during search. Check connectivity and try again.",
+    "request_error:dataset": "A network error occurred searching datasets. Check connectivity and try again.",
     "request_error:metadata": "A network error occurred fetching metadata. Check connectivity and try again.",
     "request_error:disaggregation": "A network error occurred fetching disaggregation options. Check connectivity and try again.",
     "request_error:data": "A network error occurred fetching data. Check connectivity and try again.",
     # Parse errors
     "parse_error:search": "Failed to parse the search API response. The upstream API may be returning unexpected data.",
+    "parse_error:dataset": "Failed to parse the dataset search response.",
     "parse_error:metadata": "Failed to parse the metadata API response.",
     "parse_error:disaggregation": "Failed to parse the disaggregation API response.",
     "parse_error:data": "Failed to parse the data API response.",
     # Validation errors
     "validation_error:search": "Invalid search parameters. Please check your query and filters.",
+    "validation_error:dataset": "Invalid dataset search parameters.",
     "validation_error:metadata": "Invalid metadata request parameters. Check the indicator_id and database_id.",
     "validation_error:data": "Invalid data request parameters. Check the indicator_id, database_id, and filters.",
     "validation_error:api_response": "The API response failed validation. The data format may have changed.",
@@ -46,6 +51,7 @@ _ERROR_MESSAGES: dict[str, str] = {
     "not_found:metadata": "No metadata found for the specified indicator. Verify the indicator_id is correct.",
     # Unexpected
     "unexpected:search": "An unexpected error occurred during search.",
+    "unexpected:dataset": "An unexpected error occurred searching datasets.",
     "unexpected:metadata": "An unexpected error occurred fetching metadata.",
     "unexpected:disaggregation": "An unexpected error occurred fetching disaggregation options.",
     "unexpected:data": "An unexpected error occurred fetching data.",

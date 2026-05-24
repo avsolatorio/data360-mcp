@@ -5,7 +5,7 @@ concise docstrings to reduce token context bloat, and validation schemas.
 """
 
 import json
-from typing import Any
+from typing import Any, Literal
 
 import pydantic_core
 from fastmcp.tools.tool import Tool
@@ -135,7 +135,7 @@ async def _get_data(
     end_year: int | None = None,
     limit: int = 50,
     offset: int = 0,
-    ref_area_filter: str = "member_economies_only",
+    ref_area_filter: Literal["none", "member_economies_only"] = "member_economies_only",
 ) -> Any:
     """Retrieve indicator observations from the Data360 API.
 
@@ -152,7 +152,7 @@ async def _get_data(
         end_year: End year (inclusive). Defaults to current year if omitted.
         limit: Max records per page (default 50, max 100).
         offset: Number of records to skip for pagination.
-        ref_area_filter: Filter mode: "member_economies_only" (default) or "all".
+        ref_area_filter: Filter mode: "member_economies_only" (default) or "none".
     """
     return await data360_api.get_data(
         database_id=database_id,
@@ -396,10 +396,10 @@ async def _rank_countries(
     country_group: str | None = None,
     country_codes: str | None = None,
     year: int | None = None,
-    order: str = "desc",
+    order: Literal["desc", "asc"] = "desc",
     top_n: int = 10,
     disaggregation_filters: dict[str, str | None] | None = None,
-    rank_universe: str = "explicit",
+    rank_universe: Literal["explicit", "all_member_economies"] = "explicit",
 ) -> Any:
     """Rank countries by indicator value for a specific year.
 
@@ -426,7 +426,7 @@ async def _rank_countries(
         order=order,
         top_n=top_n,
         disaggregation_filters=disaggregation_filters,
-        rank_universe=rank_universe,  # type: ignore
+        rank_universe=rank_universe,
     )
 
 

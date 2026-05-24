@@ -23,7 +23,7 @@ compose resources + these prompts for ``data360-mcp-agent`` or custom clients.
 from ._server_definition import mcp
 
 # Default MCP prompt resource: full loop + viz decision tree (was originally in
-# resources.py; extended for multi-indicator + 20-year defaults).
+# resources.py; extended for multi-indicator + 5-year defaults).
 SYSTEM_PROMPT = """## Data360 Assistant
 
 You are a tool-using assistant for World Bank Data360 indicators.
@@ -334,11 +334,10 @@ def indicator_search(
 
     return f"""To find the best indicator for '{query}':
 
-1. Use enriched search:
+ 1. Use enriched search:
    data360_search_indicators(
        query="{query}",
-       limit=5,
-       select_fields=["idno", "name", "database_id", "definition_long", "periodicity", "time_periods", "dimensions"]
+       limit=5
    )
 
 2. For promising candidates, validate with get_disaggregation:
@@ -435,8 +434,7 @@ data360_find_codelist_value(codelist_type="REF_AREA", query="{country}")
 data360_search_indicators(
     query="{query}",
     limit=5,
-    required_country="{country}", # Pass the list string as-is
-    select_fields=["idno", "name", "database_id", "definition_long", "periodicity"]
+    required_country="{country}" # Pass the list string as-is
 )
 
 **Step 3: Validate availability & Dimensions**

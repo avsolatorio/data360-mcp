@@ -485,6 +485,18 @@ class TestSearchDatasets:
         assert response.error is not None
         assert "Server Error" in response.error or "500" in response.error or "Internal Server Error" in response.error
 
+    @pytest.mark.asyncio
+    async def test_search_datasets_exception_classification(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test that other exceptions during dataset search are classified robustly."""
+        httpx_mock.add_exception(
+            httpx.ConnectError("Connection refused"),
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+        )
+
+        response = await search_datasets("findex")
+        assert response.error is not None
+        assert "connectivity" in response.error.lower()
+
 
 class TestGetMetadata:
     """Tests for get_metadata() function."""
