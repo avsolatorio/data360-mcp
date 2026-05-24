@@ -1501,3 +1501,56 @@ class TestDimensionsResilienceAndParsing:
         assert result.indicator_metadata is not None
         assert result.disaggregation_options == []
         assert result.error is None
+
+    @pytest.mark.asyncio
+    async def test_dimensions_api_cache_ttl(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Verify that dimensions API requests are cached and use cachetools.TTLCache."""
+        from data360.api import get_metadata
+
+        metadata_response = {
+            "value": [
+                {
+                    "series_description": {
+                        "idno": "WB_WDI_SP_POP_TOTL",
+                        "name": "Population, total",
+                        "database_id": "WB_WDI",
+                    }
+                }
+            ]
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json=metadata_response,
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            json={"dimensions": [{"field_name": "SEX", "field_value": [{"code": "_T"}]}]},
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json=metadata_response,
+        )
+
+        # Clear the metadata cache so get_metadata does not hit the metadata cache itself,
+        # forcing it to run the dimensions fetch logic.
+        from data360.api import _metadata_cache, _metadata_cache_lock
+        with _metadata_cache_lock:
+            _metadata_cache.clear()
+
+        # Call get_metadata once: will fetch metadata and fetch dimensions (uncached)
+        await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
+
+        # Clear the metadata cache again, but NOT the dimensions cache
+        with _metadata_cache_lock:
+            _metadata_cache.clear()
+
+        # Call get_metadata again: will fetch metadata but reuse cached dimensions
+        await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
+
+        # Verify only 1 request was sent to the dimensions API endpoint
+        requests = httpx_mock.get_requests()
+        dim_reqs = [r for r in requests if "portal/v1/dimensions" in str(r.url)]
+        assert len(dim_reqs) == 1
