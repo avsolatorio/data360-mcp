@@ -1781,7 +1781,7 @@ async def get_data(
 
         current_year = datetime.now().year
         end_year = current_year
-        start_year = current_year - 19  # Last 20 years
+        start_year = current_year - 4  # Last 5 years
         _logger.info(f"Smart default: Applied time range {start_year}-{end_year}")
 
     # Validate arguments using Pydantic model
@@ -2190,8 +2190,8 @@ async def _fetch_all_pages(
         only have the first 100 rows of a 240-row response.
 
         This distinction becomes critical when data360_expand_country_group is
-        used upstream: a group like SSF (48 countries) × 20 years = 960 rows
-        requires 10 pages. Without this helper, any aggregation on large country
+        used upstream: a group like SSF (48 countries) × 5 years = 240 rows
+        requires 3 pages. Without this helper, any aggregation on large country
         groups would silently truncate at page 1.
 
     Rule: the LLM should NEVER call this directly. It is satisfied by the
@@ -2583,7 +2583,7 @@ async def summarize_data(
             Filters specified here are honoured as-is and suppress auto-detection for
             that dimension. Pass {"SEX": "_T"} to force totals only, or {"SEX": None}
             to explicitly request all sex breakdowns.
-        start_year: Optional start year. Defaults to last 20 years.
+        start_year: Optional start year. Defaults to last 5 years.
         end_year: Optional end year. Defaults to current year.
         group_by: Dimensions to group by. Default ["ref_area"]. Valid columns: ref_area,
             time_period, sex, age, urbanisation, unit_measure, comp_breakdown_1,
@@ -3083,7 +3083,7 @@ async def compare_countries(
             Supports 2-8 countries.
         year: Comparison year. None = latest year where all countries have data.
         include_time_series: If True, include aligned time series + convergence.
-        start_year: For time series mode. Defaults to last 20 years.
+        start_year: For time series mode. Defaults to last 5 years.
         end_year: For time series mode. Defaults to current year.
         disaggregation_filters: Optional dimension filters.
 

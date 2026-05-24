@@ -2,6 +2,7 @@
 
 import json
 import re
+from datetime import datetime
 
 import httpx
 import pytest
@@ -622,6 +623,37 @@ class TestGetData:
         assert result.data is not None
         assert len(result.data) == EXPECTED_DATA_COUNT
         assert result.count == EXPECTED_DATA_COUNT
+        assert result.error is None
+
+    @pytest.mark.asyncio
+    async def test_get_data_applies_last_five_year_defaults(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """When no range is provided, get_data must default to last 5 years."""
+        current_year = datetime.now().year
+
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
+        )
+        httpx_mock.add_response(
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []}
+        )
+
+        def data_callback(request: httpx.Request) -> httpx.Response | None:
+            if (
+                request.method == "GET"
+                and request.url.host == "api.test.example.com"
+                and request.url.path == "/data"
+            ):
+                assert request.url.params.get("timePeriodFrom") == str(current_year - 4)
+                assert request.url.params.get("timePeriodTo") == str(current_year)
+                return httpx.Response(200, json={"value": [], "count": 0})
+            return None
+
+        httpx_mock.add_callback(data_callback)
+        result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
         assert result.error is None
 
     @pytest.mark.asyncio

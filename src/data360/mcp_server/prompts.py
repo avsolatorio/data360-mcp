@@ -192,8 +192,8 @@ Do not answer with guesses. Do not stop after describing a plan.
 Then provide the final answer to the user (after tools complete).
 
 ### Defaults
-- Time range: last 20 years unless user specifies otherwise.
-  start_year = (current_year - 19), end_year = current_year
+- Time range: last 5 years unless user specifies otherwise.
+  start_year = (current_year - 4), end_year = current_year
 - Breakdowns (e.g. by sex): use disaggregation_filters={"SEX": null} to get all groups.
 
 ### Output behavior
@@ -335,8 +335,7 @@ def indicator_search(
 1. Use enriched search:
    data360_search_indicators(
        query="{query}",
-       limit=5,
-       select_fields=["idno", "name", "database_id", "definition_long", "periodicity", "time_periods", "dimensions"]
+       limit=5
    )
 
 2. For promising candidates, validate with get_disaggregation:
@@ -433,8 +432,7 @@ data360_find_codelist_value(codelist_type="REF_AREA", query="{country}")
 data360_search_indicators(
     query="{query}",
     limit=5,
-    required_country="{country}", # Pass the list string as-is
-    select_fields=["idno", "name", "database_id", "definition_long", "periodicity"]
+    required_country="{country}" # Pass the list string as-is
 )
 
 **Step 3: Validate availability & Dimensions**
@@ -451,7 +449,7 @@ data360_get_data(
     database_id=<db_id>,
     indicator_id=<ind_id>,
     disaggregation_filters={{"REF_AREA": "<ISO comma-separated, e.g. KEN or KEN,TZA>", "UNIT_MEASURE": "..."}},
-    start_year={start_year if start_year else "None (Defaults to last 20 years)"},
+    start_year={start_year if start_year else "None (Defaults to last 5 years)"},
     end_year={end_year if end_year else "None"}
 )
 # Or omit REF_AREA in disaggregation_filters and use top-level country_code="KEN" or "KEN;MAR".
