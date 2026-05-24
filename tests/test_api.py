@@ -1554,3 +1554,79 @@ class TestDimensionsResilienceAndParsing:
         requests = httpx_mock.get_requests()
         dim_reqs = [r for r in requests if "portal/v1/dimensions" in str(r.url)]
         assert len(dim_reqs) == 1
+
+
+
+    @pytest.mark.asyncio
+    async def test_dimensions_api_cache_edge_cases(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Verify:
+        1. HTTP 500 status code propagation, and that it's NOT cached.
+        2. Blank/empty response body is handled and returns empty dimensions.
+        3. Concurrent calls to the same endpoint are deduplicated.
+        """
+        import asyncio
+        import httpx
+        import json
+        from data360.api import _fetch_dimensions_with_cache, _dimensions_api_cache, _dimensions_api_cache_lock
+
+        # --- 1. HTTP 500 Propagation and No Caching ---
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            status_code=500,
+        )
+
+        with pytest.raises(httpx.HTTPStatusError):
+            await _fetch_dimensions_with_cache("DB_FAIL", "IND_FAIL")
+
+        with _dimensions_api_cache_lock:
+            assert ("DB_FAIL", "IND_FAIL") not in _dimensions_api_cache
+
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            status_code=200,
+            json={"dimensions": []},
+        )
+        res = await _fetch_dimensions_with_cache("DB_FAIL", "IND_FAIL")
+        assert res == {"dimensions": []}
+
+        # --- 2. Blank / Empty Response Body ---
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            status_code=200,
+            content=b"",
+        )
+        res_empty = await _fetch_dimensions_with_cache("DB_EMPTY", "IND_EMPTY")
+        assert res_empty == {"dimensions": []}
+
+        # --- 3. Concurrent Requests Deduplication ---
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            status_code=200,
+            json={"dimensions": [{"field_name": "CONCURRENT", "field_value": ["1"]}]},
+        )
+
+        res1, res2 = await asyncio.gather(
+            _fetch_dimensions_with_cache("DB_CONC", "IND_CONC"),
+            _fetch_dimensions_with_cache("DB_CONC", "IND_CONC"),
+        )
+
+        assert res1 == res2
+        assert res1["dimensions"][0]["field_name"] == "CONCURRENT"
+
+        requests = httpx_mock.get_requests()
+        dim_reqs = [r for r in requests if "portal/v1/dimensions" in str(r.url)]
+
+        conc_reqs = []
+        for req in dim_reqs:
+            try:
+                body = json.loads(req.content.decode("utf-8"))
+                if body.get("database_id") == "DB_CONC":
+                    conc_reqs.append(req)
+            except Exception:
+                pass
+
+        assert len(conc_reqs) == 1
