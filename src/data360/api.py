@@ -80,6 +80,12 @@ _disaggregation_cache: cachetools.TTLCache = cachetools.TTLCache(
 _metadata_cache_lock = threading.Lock()
 _disaggregation_cache_lock = threading.Lock()
 
+_DIMENSIONS_API_CACHE_TTL = 600  # 10 minutes in seconds
+_dimensions_api_cache: cachetools.TTLCache = cachetools.TTLCache(
+    maxsize=256, ttl=_DIMENSIONS_API_CACHE_TTL
+)
+_dimensions_api_cache_lock = threading.Lock()
+
 # Fields fetched by _search_raw for LLM-friendly enrichment.
 # Shared between single-query and multi-query paths to ensure consistency.
 _ENRICHMENT_SELECT_FIELDS = [
@@ -177,6 +183,49 @@ def _parse_dimensions_response(dimensions_data: dict[str, Any]) -> list[dict[str
             raw_disaggregations.append(item)
     return raw_disaggregations
 
+
+async def _fetch_dimensions_with_cache(
+    database_id: str,
+    indicator_id: str,
+) -> dict[str, Any]:
+    """Fetch dimensions from the API with a 10-minute in-memory cache.
+
+    Only caches successful responses. Returns parsed JSON dict.
+    Raises httpx.HTTPStatusError or other request exceptions on non-400/404 failures.
+    """
+    _cache_key = (database_id, indicator_id)
+    with _dimensions_api_cache_lock:
+        _cached = _dimensions_api_cache.get(_cache_key)
+    if _cached is not None:
+        return _cached
+
+    dimensions_url = (
+        data360_config.dimensions_url or f"{data360_config.api_url}/portal/v1/dimensions"
+    )
+    headers = {"accept": "*/*", "Content-Type": "application/json"}
+    payload = {"database_id": database_id, "indicator_id": indicator_id}
+
+    client = get_shared_httpx_client()
+    response = await client.post(
+        dimensions_url,
+        json=payload,
+        headers=headers,
+    )
+
+    if response.status_code in (400, 404):
+        return {"dimensions": []}
+
+    response.raise_for_status()
+
+    if not response.content or not response.text.strip():
+        result = {"dimensions": []}
+    else:
+        result = response.json()
+
+    with _dimensions_api_cache_lock:
+        _dimensions_api_cache[_cache_key] = result
+
+    return result
 
 
 def _strip_data_row(row: dict[str, Any]) -> dict[str, Any]:
@@ -1510,31 +1559,14 @@ async def get_metadata(
     # 2. Fetch Dimensions
     if fetch_disaggregation:
         try:
-            client = get_shared_httpx_client()
-            dimensions_url = (
-                data360_config.dimensions_url or f"{data360_config.api_url}/portal/v1/dimensions"
+            dimensions_json = await _fetch_dimensions_with_cache(
+                database_id, indicator_id
             )
-            payload = {"database_id": database_id, "indicator_id": indicator_id}
-            disagg_res = await client.post(
-                dimensions_url,
-                json=payload,
-                headers=headers,
+            raw_disaggregations = _parse_dimensions_response(dimensions_json)
+            disaggregations = _strip_disaggregation(
+                _get_valid_disaggregations(raw_disaggregations),
+                queried_countries,
             )
-            if disagg_res.status_code in (400, 404):
-                disaggregations = []
-            else:
-                disagg_res.raise_for_status()
-                try:
-                    dimensions_json = disagg_res.json()
-                    raw_disaggregations = _parse_dimensions_response(dimensions_json)
-                    disaggregations = _strip_disaggregation(
-                        _get_valid_disaggregations(raw_disaggregations),
-                        queried_countries,
-                    )
-                except ValueError as e:
-                    mcp_err = ParseError(context="disaggregation", original_error=e)
-                    errors.append(mcp_err.detail)
-
         except Exception as e:
             mcp_err = classify_error(e, context="disaggregation")
             errors.append(mcp_err.detail)
@@ -1597,37 +1629,10 @@ async def get_disaggregation(
     # Resolve country codes if provided
     queried_countries = await _resolve_queried_countries(required_country)
 
-    dimensions_url = (
-        data360_config.dimensions_url or f"{data360_config.api_url}/portal/v1/dimensions"
-    )
-    headers = {"accept": "*/*", "Content-Type": "application/json"}
-
     try:
-        client = get_shared_httpx_client()
-        payload = {"database_id": database_id, "indicator_id": indicator_id}
-        response = await client.post(
-            dimensions_url,
-            json=payload,
-            headers=headers,
+        dimensions_json = await _fetch_dimensions_with_cache(
+            database_id, indicator_id
         )
-        if response.status_code in (400, 404):
-            empty_result: dict = {"dimensions": []}
-            with _disaggregation_cache_lock:
-                _disaggregation_cache[_disagg_cache_key] = empty_result
-            return empty_result
-
-        response.raise_for_status()
-
-        # Some indicators have no disaggregation data. The API returns HTTP 200
-        # with an empty body rather than an empty JSON array. Guard before
-        # calling .json() to avoid a JSONDecodeError logged as ERROR.
-        if not response.content or not response.text.strip():
-            empty_result: dict = {"dimensions": []}
-            with _disaggregation_cache_lock:
-                _disaggregation_cache[_disagg_cache_key] = empty_result
-            return empty_result
-
-        dimensions_json = response.json()
         raw_data = _parse_dimensions_response(dimensions_json)
         # Filter out _Z values and format response
         valid_dimensions = _get_valid_disaggregations(raw_data)

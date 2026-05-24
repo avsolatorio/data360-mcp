@@ -25,6 +25,8 @@ from data360.api import (
     _disaggregation_cache_lock,
     _metadata_cache,
     _metadata_cache_lock,
+    _dimensions_api_cache,
+    _dimensions_api_cache_lock,
 )
 from data360.http_client import aclose_shared_httpx_client
 
@@ -37,12 +39,16 @@ async def _isolate_data360_api_state():
             _metadata_cache.clear()
         with _disaggregation_cache_lock:
             _disaggregation_cache.clear()
+        with _dimensions_api_cache_lock:
+            _dimensions_api_cache.clear()
     yield
     if os.environ.get("PYTEST_RUNNING"):
         with _metadata_cache_lock:
             _metadata_cache.clear()
         with _disaggregation_cache_lock:
             _disaggregation_cache.clear()
+        with _dimensions_api_cache_lock:
+            _dimensions_api_cache.clear()
     await aclose_shared_httpx_client()
 
 
