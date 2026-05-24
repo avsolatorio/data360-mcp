@@ -109,7 +109,10 @@ def test_prompt_injection():
             response = requests.post(
                 MCP_ENDPOINT,
                 json=test["payload"],
-                headers={"Content-Type": "application/json"},
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json, text/event-stream"
+                },
                 timeout=10,
             )
 
