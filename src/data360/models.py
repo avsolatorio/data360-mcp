@@ -1,3 +1,4 @@
+import re
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
@@ -56,9 +57,15 @@ class SearchRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_query(self) -> "SearchRequest":
-        """Validate search query."""
+        """Validate search query and sanitize unsafe characters."""
         if not self.query or not self.query.strip():
             raise ValueError("Search query cannot be empty")
+        # Strip parentheses, dollar signs, and other punctuation that causes Search V3 to return 0 results.
+        # Preserve alphanumerics, underscores, hyphens, commas, and periods.
+        cleaned = re.sub(r"[^\w\s\-\,\.]", " ", self.query)
+        self.query = " ".join(cleaned.split())
+        if not self.query or not self.query.strip():
+            raise ValueError("Search query cannot be empty after sanitization")
         return self
 
     @model_validator(mode="after")
