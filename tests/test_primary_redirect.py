@@ -903,3 +903,40 @@ class TestBackfillPrimaryMetadata:
         for req in httpx_mock.get_requests():
             assert "dimensions" not in str(req.url)
             assert "disaggregation" not in str(req.url)
+
+    @pytest.mark.asyncio
+    async def test_search_handles_invalid_connected_entities_gracefully(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Verify that search handles an indicator with connected_entities being non-list
+        (e.g., None, string, dict) gracefully without raising a TypeError.
+        """
+        search_response = {
+            "count": 1,
+            "results": [
+                {
+                    "idno": "WB_WDI_SP_POP_TOTL",
+                    "name": "Population, total",
+                    "databases": [{"idno": "WB_WDI"}],
+                    "description": "Total population",
+                    "dimensions": [],
+                    "time_period": [
+                        {"start": "1960", "end": "2024", "LATEST_DATA_POINT": "2024"}
+                    ],
+                    "connected_entities": "not-a-list-but-a-string",  # Invalid type
+                }
+            ],
+        }
+
+        httpx_mock.add_response(
+            method="POST",
+            url=_SEARCH_URL,
+            json=search_response,
+        )
+
+        result = await search("WB_WDI_SP_POP_TOTL", limit=5)
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.error is None
+        assert len(result.indicators) == 1
+        assert result.indicators[0].idno == "WB_WDI_SP_POP_TOTL"
