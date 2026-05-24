@@ -266,6 +266,35 @@ class TestSearch:
         assert "Failed to parse" in result.error
 
     @pytest.mark.asyncio
+    async def test_search_query_sanitization(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test that query string is sanitized of unsafe special characters."""
+        captured_payloads = []
+
+        def capture_callback(request: httpx.Request) -> httpx.Response:
+            captured_payloads.append(json.loads(request.content))
+            return httpx.Response(
+                200,
+                json={
+                    "count": 0,
+                    "results": [],
+                },
+            )
+
+        httpx_mock.add_callback(
+            capture_callback,
+            method="POST",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+        )
+
+        # Test query with parentheses and currency symbols (unsafe) alongside safe characters (_, -, ,, .)
+        await search("GDP per capita (current US$) WB_WDI_NY_GDP_PCAP_CD-2022, test.", limit=5)
+
+        assert len(captured_payloads) == 1
+        # The parentheses and currency symbols should be replaced by spaces and collapsed,
+        # while the underscores, hyphens, commas, and periods are kept.
+        assert captured_payloads[0].get("query_string") == "GDP per capita current US WB_WDI_NY_GDP_PCAP_CD-2022, test."
+
+    @pytest.mark.asyncio
     async def test_search_n_results_alias_at_default_limit(
         self, httpx_mock: pytest_httpx.HTTPXMock
     ):
