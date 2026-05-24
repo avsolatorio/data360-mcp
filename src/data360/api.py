@@ -531,7 +531,7 @@ def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescri
                 "ref_country": value.get("ref_country"),
                 "dimensions": dimensions,
                 "metadata_link": ml or [],
-                "connected_entities": value.get("connected_entities"),
+                "connected_entities": value.get("connected_entities") if isinstance(value.get("connected_entities"), list) else None,
             }
 
         if (
@@ -787,7 +787,7 @@ def _enrich_search_results(
                 raw.get("idno"),
                 primary.metadata_id,
             )
-        elif not primary and query and raw.get("connected_entities"):
+        elif not primary and query and isinstance(raw.get("connected_entities"), list):
             # Check if query matches a connected entity (SearchV3 redirect direction is reversed)
             clean_query = query.strip().upper()
             for entity in raw["connected_entities"]:
