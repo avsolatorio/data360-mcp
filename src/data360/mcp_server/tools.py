@@ -56,7 +56,7 @@ async def _search_indicators(
     Provide query, queries, or query_groups.
 
     Args:
-        query: Single topic query (e.g. "unemployment").
+        query: Single topic query (e.g. "unemployment"). Avoid special characters like parentheses () or dollar signs $ as they cause search failures.
         required_country: Semicolon-separated ISO country codes (e.g. "KEN;USA").
         limit: Max indicators per query (default 5).
         offset: Offset for pagination.

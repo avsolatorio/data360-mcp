@@ -34,6 +34,7 @@ Do not answer with guesses. Do not stop after describing a plan.
 
 ### Operating loop (repeat until done)
 1) If you need an indicator → call data360_search_indicators.
+   - **CRITICAL**: The search API is sensitive to special characters. Strip parentheses `(`, `)` and currency signs like `$` from your query (e.g. search for "GDP per capita current US", NOT "GDP per capita (current US$)").
    - **CRITICAL** when search returns multiple results: STOP — do not loop every row.
    - Pick the **single best** indicator (relevance + coverage), then state:
      "Selected Indicator: [ID] — [Name]" and "Why: [reason]".

@@ -1,0 +1,42 @@
+<evaluation>
+  <qa_pair>
+    <question>Search for the indicator 'Gini index' in the World Development Indicators (WDI) and find the value for South Africa (ZAF) in the year 2014. What is the value? Provide only the numeric value.</question>
+    <answer>59.6</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What was the Gini index for Brazil (BRA) in the year 2021 according to the World Development Indicators (WDI)? Provide the exact numeric value.</question>
+    <answer>52.9</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Look up the 'International poverty rate ($2.15 in 2017 PPP)' in the Macro Poverty Outlook (MPO) database. What was the value for Kenya (KEN) in the year 2021? Provide the numeric value rounded to one decimal place.</question>
+    <answer>46.4</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What was the female life expectancy at birth in years for Japan (JPN) in the year 2021 according to the World Development Indicators (WDI)? Provide the exact numeric value.</question>
+    <answer>87.57</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Compare the GDP per capita (current US$) in the year 2022 between Singapore (SGP) and Qatar (QAT). Which country had the higher value? Answer Singapore or Qatar.</question>
+    <answer>Singapore</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Expand the country group 'Low income' (code: LIC) to find its member economies. How many countries are members of this income group? Provide only the numeric value.</question>
+    <answer>26</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Expand the country group 'Sub-Saharan Africa' (code: SSF) to find its member economies. How many countries are members of this regional group? Provide only the numeric value.</question>
+    <answer>48</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What was the inflation rate for consumer prices (annual % growth) in the United States (USA) in the year 2022 according to the World Development Indicators (WDI)? Provide the value rounded to one decimal place.</question>
+    <answer>8.0</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What was the GNI per capita, Atlas method (current US$) for India (IND) in the year 2022 according to the World Development Indicators (WDI)? Provide the exact numeric value.</question>
+    <answer>2390</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What was the total population of Iceland (ISL) in the year 2022 according to the World Development Indicators (WDI)? Provide the exact numeric value.</question>
+    <answer>382003</answer>
+  </qa_pair>
+</evaluation>
