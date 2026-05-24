@@ -502,8 +502,6 @@ async def _search_raw(
     limit: int = 5,
     offset: int = 0,
     count: bool = True,
-    select_fields: list[str] | None = None,
-    odata_options: dict[str, str] | None = None,
     economy_codes: list[str] | None = None,
 ) -> SearchResponse:
     """Internal: Raw search for data360 indicators using the World Bank Data360 API.
@@ -515,8 +513,6 @@ async def _search_raw(
         limit: Number of results to return (default is 5)
         offset: Offset of the current page
         count: Whether to include total count in response
-        select_fields: DEPRECATED - SearchV3 returns flat indicators
-        odata_options: DEPRECATED - SearchV3 returns flat indicators
         economy_codes: Optional list of economy codes to filter the search results
 
     Returns:
@@ -534,6 +530,7 @@ async def _search_raw(
         "site": "data360",
         "query_string": request.query,
         "types": ["indicator"],
+        "data_classification": ["public"],
         "skip": request.offset,
         "items_per_page": request.limit,
     }
@@ -1015,7 +1012,6 @@ async def search(  # noqa: PLR0911
                 query=q,
                 limit=limit,
                 offset=offset,
-                select_fields=_ENRICHMENT_SELECT_FIELDS,
                 economy_codes=[c.strip() for c in country_code.split(";")] if country_code else None,
             )
             for q in clean_queries
@@ -1101,7 +1097,6 @@ async def search(  # noqa: PLR0911
                 query=q,
                 limit=limit,
                 offset=offset,
-                select_fields=_ENRICHMENT_SELECT_FIELDS,
                 economy_codes=[c.strip() for c in code.split(";")] if code else None,
             )
             for q, code in zip(clean_queries, per_query_codes)
@@ -1154,7 +1149,6 @@ async def search(  # noqa: PLR0911
             query=query,  # type: ignore[arg-type]  # validated non-None above
             limit=limit,
             offset=offset,
-            select_fields=_ENRICHMENT_SELECT_FIELDS,
             economy_codes=[c.strip() for c in country_code.split(";")] if country_code else None,
         )
     except Data360MCPError as e:
