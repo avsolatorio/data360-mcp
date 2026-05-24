@@ -555,7 +555,7 @@ def _process_search_response(
     """Process API response and build SearchResponse."""
     search_response_data = {
         "items": _get_items_from_response(response_data),
-        "total_count": response_data.get("count") or response_data.get("@odata.count"),
+        "total_count": response_data.get("count") if "count" in response_data else response_data.get("@odata.count"),
         "offset": request.offset,
     }
     search_response_data["count"] = len(search_response_data["items"])
@@ -1235,7 +1235,14 @@ async def search(  # noqa: PLR0911
         return EnrichedSearchResponse(error=search_result.error)
 
     if not search_result.items:
-        return EnrichedSearchResponse(error=f"No indicators found for: '{query}'")
+        return EnrichedSearchResponse(
+            error=f"No indicators found for: '{query}'",
+            total_count=search_result.total_count,
+            count=0,
+            offset=search_result.offset,
+            has_more=search_result.has_more,
+            next_offset=search_result.next_offset,
+        )
 
     db_mapping = await get_database_mapping()
     indicators, indicators_to_verify = _enrich_search_results(

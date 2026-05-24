@@ -124,6 +124,28 @@ class TestSearch:
         assert result.error is None
 
     @pytest.mark.asyncio
+    async def test_search_empty_result_preserves_count_zero(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test that search with empty results preserves count=0 and does not resolve to None."""
+        mock_response = {
+            "count": 0,
+            "results": [],
+        }
+
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+            json=mock_response,
+        )
+
+        result = await search("nonexistent_indicator", limit=10)
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.total_count == 0
+        assert result.count == 0
+        assert result.has_more is False
+        assert result.error == "No indicators found for: 'nonexistent_indicator'"
+
+    @pytest.mark.asyncio
     async def test_search_with_pagination(self, httpx_mock: pytest_httpx.HTTPXMock):
         """Test search with pagination."""
         NUM_ITEMS = 10
