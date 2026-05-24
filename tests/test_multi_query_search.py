@@ -464,39 +464,12 @@ class TestEnrichmentSelectFields:
         assert "idno" in _ENRICHMENT_SELECT_FIELDS
         assert "database_id" in _ENRICHMENT_SELECT_FIELDS
 
-    @pytest.mark.asyncio
-    async def test_single_query_path_uses_constant(self):
-        """_search_raw should receive the _ENRICHMENT_SELECT_FIELDS list."""
-        from data360.api import _ENRICHMENT_SELECT_FIELDS
-
-        mock_raw = AsyncMock(return_value=_make_search_response())
-        with (
-            patch("data360.api._search_raw", new=mock_raw),
-            patch("data360.api._resolve_country_code", new=AsyncMock(return_value=None)),
-        ):
-            await search(query="GDP")
-
-        mock_raw.assert_awaited_once()
-        _, kwargs = mock_raw.call_args
-        assert kwargs.get("select_fields") == _ENRICHMENT_SELECT_FIELDS
-
-    @pytest.mark.asyncio
-    async def test_multi_query_path_uses_constant(self):
-        """Each _search_raw call in multi-query path should receive _ENRICHMENT_SELECT_FIELDS."""
-        from data360.api import _ENRICHMENT_SELECT_FIELDS
-
-        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
-        inf_resp = _make_search_response(idno="WB_WDI_INF", name="Inflation")
-        mock_raw = AsyncMock(side_effect=[gdp_resp, inf_resp])
-        with (
-            patch("data360.api._search_raw", new=mock_raw),
-            patch("data360.api._resolve_country_code", new=AsyncMock(return_value=None)),
-        ):
-            await search(queries=["GDP", "inflation"])
-
-        for call in mock_raw.call_args_list:
-            _, kwargs = call
-            assert kwargs.get("select_fields") == _ENRICHMENT_SELECT_FIELDS
+    def test_search_raw_signature(self):
+        import inspect
+        from data360.api import _search_raw
+        sig = inspect.signature(_search_raw)
+        assert "select_fields" not in sig.parameters
+        assert "odata_options" not in sig.parameters
 
 
 # ---------------------------------------------------------------------------
