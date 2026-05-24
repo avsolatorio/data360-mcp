@@ -296,6 +296,13 @@ class TestSearch:
         assert captured_payloads[0].get("query_string") == "GDP per capita current US WB_WDI_NY_GDP_PCAP_CD-2022, test."
 
     @pytest.mark.asyncio
+    async def test_search_empty_query_after_sanitization(self):
+        """Test search with query that becomes empty after sanitization returns clean error."""
+        response = await search("   $$$   ")
+        assert response.error is not None
+        assert "Search query cannot be empty" in response.error
+
+    @pytest.mark.asyncio
     async def test_search_n_results_alias_at_default_limit(
         self, httpx_mock: pytest_httpx.HTTPXMock
     ):

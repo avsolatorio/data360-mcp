@@ -8,6 +8,20 @@ from pydantic import BaseModel, Field, model_validator
 _META_ID_PREFIX = "META_"
 
 
+def sanitize_search_query(query: str) -> str:
+    """Validate search query and sanitize unsafe characters for Search V3."""
+    if not query or not query.strip():
+        raise ValueError("Search query cannot be empty")
+    # Strip parentheses, dollar signs, and other punctuation that causes Search V3 to return 0 results.
+    # Preserve alphanumerics, underscores, hyphens, commas, and periods.
+    cleaned = re.sub(r"[^\w\s\-\,\.]", " ", query)
+    sanitized = " ".join(cleaned.split())
+    if not sanitized or not sanitized.strip():
+        raise ValueError("Search query cannot be empty after sanitization")
+    return sanitized
+
+
+
 class MCPPagedResponse(BaseModel):
     """Response model for MCP paged results.
     For more information, see: https://github.com/anthropics/skills/blob/main/skills/mcp-builder/reference/mcp_best_practices.md#pagination
@@ -58,14 +72,7 @@ class SearchRequest(BaseModel):
     @model_validator(mode="after")
     def validate_query(self) -> "SearchRequest":
         """Validate search query and sanitize unsafe characters."""
-        if not self.query or not self.query.strip():
-            raise ValueError("Search query cannot be empty")
-        # Strip parentheses, dollar signs, and other punctuation that causes Search V3 to return 0 results.
-        # Preserve alphanumerics, underscores, hyphens, commas, and periods.
-        cleaned = re.sub(r"[^\w\s\-\,\.]", " ", self.query)
-        self.query = " ".join(cleaned.split())
-        if not self.query or not self.query.strip():
-            raise ValueError("Search query cannot be empty after sanitization")
+        self.query = sanitize_search_query(self.query)
         return self
 
     @model_validator(mode="after")
@@ -886,14 +893,7 @@ class DatasetSearchRequest(BaseModel):
     @model_validator(mode="after")
     def validate_query(self) -> "DatasetSearchRequest":
         """Validate search query and sanitize unsafe characters."""
-        if not self.query or not self.query.strip():
-            raise ValueError("Search query cannot be empty")
-        # Strip parentheses, dollar signs, and other punctuation that causes Search V3 to return 0 results.
-        # Preserve alphanumerics, underscores, hyphens, commas, and periods.
-        cleaned = re.sub(r"[^\w\s\-\,\.]", " ", self.query)
-        self.query = " ".join(cleaned.split())
-        if not self.query or not self.query.strip():
-            raise ValueError("Search query cannot be empty after sanitization")
+        self.query = sanitize_search_query(self.query)
         return self
 
 
