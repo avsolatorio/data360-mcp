@@ -481,6 +481,92 @@ class TestRankCountriesTieHandling:
         assert result.excluded[0].ref_area == "B"
 
 
+class TestRankCountriesAutoYearSelection:
+    """Unit tests for automatic year selection prioritizing recency in rank_countries."""
+
+    @pytest.mark.asyncio
+    async def test_auto_year_selection_selects_latest_year_with_caveat(self):
+        """Should select 2024 (recency) and flag that 2023 has broader coverage."""
+        rows = [
+            _make_row("A", "2022", 10.0),
+            _make_row("B", "2022", 20.0),
+            _make_row("C", "2022", 30.0),
+            _make_row("D", "2022", 40.0),
+
+            _make_row("A", "2023", 15.0),
+            _make_row("B", "2023", 25.0),
+            _make_row("C", "2023", 35.0),
+            _make_row("D", "2023", 45.0),
+
+            _make_row("A", "2024", 18.0),
+            _make_row("B", "2024", 28.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            return {c: c for c in codes}
+
+        async def fake_disagg(**kwargs):
+            return {"dimensions": []}
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+        ):
+            result = await rank_countries(
+                "WB_WDI", "IND_ID",
+                country_codes="A;B;C;D",
+                top_n=5,
+            )
+
+        assert result.error is None
+        assert result.year == "2024"
+        assert "Latest available year: 2024" in result.year_selection_note
+        assert "Coverage is partial/incomplete" in result.year_selection_note
+        assert "2023" in result.year_selection_note
+
+    @pytest.mark.asyncio
+    async def test_auto_year_selection_selects_latest_year_when_matches_broadest(self):
+        """Should select 2023 and note it as the latest available year."""
+        rows = [
+            _make_row("A", "2022", 10.0),
+            _make_row("B", "2022", 20.0),
+
+            _make_row("A", "2023", 15.0),
+            _make_row("B", "2023", 25.0),
+            _make_row("C", "2023", 35.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            return {c: c for c in codes}
+
+        async def fake_disagg(**kwargs):
+            return {"dimensions": []}
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+        ):
+            result = await rank_countries(
+                "WB_WDI", "IND_ID",
+                country_codes="A;B;C",
+                top_n=5,
+            )
+
+        assert result.error is None
+        assert result.year == "2023"
+        assert "Latest available year (2023)" in result.year_selection_note
+
+
 # ---------------------------------------------------------------------------
 # summarize_data
 # ---------------------------------------------------------------------------
@@ -1001,6 +1087,112 @@ class TestCompareCountries:
         assert result.error is None
         assert result.time_series is not None
         assert result.time_series.cagr.get("KEN") is None
+
+    @pytest.mark.asyncio
+    async def test_compare_countries_year_selection_note_user_specified(self):
+        """Should select user-specified year and set the correct selection note."""
+        rows = [
+            _make_row("KEN", "2021", 100.0),
+            _make_row("NGA", "2021", 110.0),
+            _make_row("KEN", "2022", 120.0),
+            _make_row("NGA", "2022", 130.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            return {c: c for c in codes}
+
+        async def fake_disagg(**kwargs):
+            return {"dimensions": []}
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+        ):
+            result = await compare_countries(
+                "WB_WDI", "IND_ID",
+                country_codes="KEN;NGA",
+                year=2021,
+            )
+
+        assert result.error is None
+        assert result.snapshot is not None
+        assert result.snapshot.year == "2021"
+        assert result.snapshot.year_selection_note == "User-specified year: 2021"
+
+    @pytest.mark.asyncio
+    async def test_compare_countries_year_selection_note_common_year(self):
+        """Should select the latest common year and set the correct selection note."""
+        rows = [
+            _make_row("KEN", "2021", 100.0),
+            _make_row("NGA", "2021", 110.0),
+            _make_row("KEN", "2022", 120.0),
+            _make_row("NGA", "2022", 130.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            return {c: c for c in codes}
+
+        async def fake_disagg(**kwargs):
+            return {"dimensions": []}
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+        ):
+            result = await compare_countries(
+                "WB_WDI", "IND_ID",
+                country_codes="KEN;NGA",
+            )
+
+        assert result.error is None
+        assert result.snapshot is not None
+        assert result.snapshot.year == "2022"
+        assert "Latest year with data for all compared countries: 2022" in result.snapshot.year_selection_note
+        assert "2/2 countries" in result.snapshot.year_selection_note
+
+    @pytest.mark.asyncio
+    async def test_compare_countries_year_selection_note_fallback(self):
+        """Should fallback to the latest year of any country when no common year exists."""
+        rows = [
+            _make_row("KEN", "2021", 100.0),
+            _make_row("NGA", "2022", 110.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            return {c: c for c in codes}
+
+        async def fake_disagg(**kwargs):
+            return {"dimensions": []}
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+        ):
+            result = await compare_countries(
+                "WB_WDI", "IND_ID",
+                country_codes="KEN;NGA",
+            )
+
+        assert result.error is None
+        assert result.snapshot is not None
+        assert result.snapshot.year == "2022"
+        assert "Latest year with data (partial coverage): 2022" in result.snapshot.year_selection_note
+        assert "1/2 countries" in result.snapshot.year_selection_note
 
 
 # ---------------------------------------------------------------------------
