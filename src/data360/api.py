@@ -3280,8 +3280,10 @@ async def compare_countries(
         all_years.update(yrs.keys())
     common_years = sorted(all_years)
     for c in codes:
-        if c in country_year_map:
-            common_years = [y for y in common_years if y in country_year_map[c]]
+        if c not in country_year_map:
+            common_years = []
+            break
+        common_years = [y for y in common_years if y in country_year_map[c]]
 
     year_selection_note = None
     if year:
@@ -3289,9 +3291,12 @@ async def compare_countries(
         year_selection_note = f"User-specified year: {year}"
     elif common_years:
         snap_year = common_years[-1]  # Latest common year
+        n_countries = sum(
+            1 for c in codes if c in country_year_map and snap_year in country_year_map[c]
+        )
         year_selection_note = (
             f"Latest year with data for all compared countries: {snap_year} "
-            f"({len(codes)}/{len(codes)} countries)"
+            f"({n_countries}/{len(codes)} countries)"
         )
     else:
         # Fallback: latest year from any country

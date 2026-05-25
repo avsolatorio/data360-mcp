@@ -1194,6 +1194,41 @@ class TestCompareCountries:
         assert "Latest year with data (partial coverage): 2022" in result.snapshot.year_selection_note
         assert "1/2 countries" in result.snapshot.year_selection_note
 
+    @pytest.mark.asyncio
+    async def test_compare_countries_year_selection_note_missing_country(self):
+        """Should handle one country completely missing from results (empty years) and fall back with correct note."""
+        # KEN has data for 2022, but NGA is completely missing from rows/response.
+        rows = [
+            _make_row("KEN", "2022", 100.0),
+        ]
+        full_page = _make_data_page(rows, has_more=False)
+
+        async def fake_fetch_all(**kwargs):
+            return full_page
+
+        async def fake_resolve(codes):
+            return {c: c for c in codes}
+
+        async def fake_disagg(**kwargs):
+            return {"dimensions": []}
+
+        with (
+            patch("data360.api._fetch_all_pages", side_effect=fake_fetch_all),
+            patch("data360.api._resolve_country_names", side_effect=fake_resolve),
+            patch("data360.api.get_disaggregation", side_effect=fake_disagg),
+        ):
+            result = await compare_countries(
+                "WB_WDI", "IND_ID",
+                country_codes="KEN;NGA",
+            )
+
+        assert result.error is None
+        assert result.snapshot is not None
+        assert result.snapshot.year == "2022"
+        # NGA is completely missing, so common_years should be empty and fallback note used
+        assert "Latest year with data (partial coverage): 2022" in result.snapshot.year_selection_note
+        assert "1/2 countries" in result.snapshot.year_selection_note
+
 
 # ---------------------------------------------------------------------------
 # to_compact() output — PCN + size invariants
