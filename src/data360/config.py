@@ -78,6 +78,14 @@ class Data360Settings(BaseSettings):
         ...,
         description="Base URL for the Data360 API",
     )
+    indicators_v2_base_url: str = Field(
+        default="https://api.worldbank.org/v2",
+        description=(
+            "Base URL for the legacy World Bank Indicators v2 API. Used by "
+            "data360_get_timeseries_v2 as a stable fallback for WDI-family "
+            "indicators when the Data360 API returns an empty or 5xx response."
+        ),
+    )
     codelist_api_base_url: str = Field(
         default="https://extdataportal.worldbank.org/api/data360/metadata/codelist",
         description=(

@@ -17,7 +17,6 @@ from data360 import visualization as data360_viz
 from ._server_definition import mcp
 from .tool_spans import instrument_mcp_tool
 
-
 # ---------------------------------------------------------------------------
 # Serializer for aggregation tools
 # ---------------------------------------------------------------------------
@@ -164,6 +163,40 @@ async def _get_data(
         limit=limit,
         offset=offset,
         ref_area_filter=ref_area_filter,
+    )
+
+
+async def _get_timeseries_v2(
+    indicator_id: str,
+    country_code: str,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    per_page: int = 200,
+) -> Any:
+    """Fetch a time series from the legacy World Bank Indicators v2 API.
+
+    Use as a fallback when `data360_get_data` returns no observations or
+    errors out for an indicator the legacy API still serves. The v2 API has
+    been stable for years and covers most WDI-classic series.
+
+    The v2 API uses a different indicator code format than Data360: dotted
+    codes like "SP.POP.TOTL", NOT "WB_WDI_SP_POP_TOTL". For most WDI
+    indicators, strip the "WB_WDI_" prefix and replace underscores with dots.
+
+    Args:
+        indicator_id: Classic WB indicator code in dotted form (e.g. "SP.POP.TOTL").
+        country_code: ISO 3166-1 alpha-2 or alpha-3 code (e.g. "AR" or "ARG"),
+            or a semicolon-separated list for multiple countries.
+        start_year: Optional start year (inclusive).
+        end_year: Optional end year (inclusive).
+        per_page: Max records per page (default 200).
+    """
+    return await data360_api.get_timeseries_v2(
+        indicator_id=indicator_id,
+        country_code=country_code,
+        start_year=start_year,
+        end_year=end_year,
+        per_page=per_page,
     )
 
 
@@ -492,31 +525,28 @@ get_data = mcp.tool(
     name="data360_get_data",
 )
 
+get_timeseries_v2 = mcp.tool(
+    instrument_mcp_tool(_get_timeseries_v2, tool_name="data360_get_timeseries_v2"),
+    name="data360_get_timeseries_v2",
+)
+
 get_disaggregation = mcp.tool(
-    instrument_mcp_tool(
-        _get_disaggregation, tool_name="data360_get_disaggregation"
-    ),
+    instrument_mcp_tool(_get_disaggregation, tool_name="data360_get_disaggregation"),
     name="data360_get_disaggregation",
 )
 
 find_codelist_value = mcp.tool(
-    instrument_mcp_tool(
-        _find_codelist_value, tool_name="data360_find_codelist_value"
-    ),
+    instrument_mcp_tool(_find_codelist_value, tool_name="data360_find_codelist_value"),
     name="data360_find_codelist_value",
 )
 
 list_indicators = mcp.tool(
-    instrument_mcp_tool(
-        _list_indicators, tool_name="data360_list_indicators"
-    ),
+    instrument_mcp_tool(_list_indicators, tool_name="data360_list_indicators"),
     name="data360_list_indicators",
 )
 
 get_data_api_url = mcp.tool(
-    instrument_mcp_tool(
-        _get_data_api_url, tool_name="data360_get_data_api_url"
-    ),
+    instrument_mcp_tool(_get_data_api_url, tool_name="data360_get_data_api_url"),
     name="data360_get_data_api_url",
 )
 
@@ -554,9 +584,7 @@ expand_country_group = mcp.tool(
 
 summarize_data = mcp.add_tool(
     Tool.from_function(
-        instrument_mcp_tool(
-            _summarize_data, tool_name="data360_summarize_data"
-        ),
+        instrument_mcp_tool(_summarize_data, tool_name="data360_summarize_data"),
         name="data360_summarize_data",
         serializer=_compact_aggregation_serializer,
     )
@@ -564,9 +592,7 @@ summarize_data = mcp.add_tool(
 
 rank_countries = mcp.add_tool(
     Tool.from_function(
-        instrument_mcp_tool(
-            _rank_countries, tool_name="data360_rank_countries"
-        ),
+        instrument_mcp_tool(_rank_countries, tool_name="data360_rank_countries"),
         name="data360_rank_countries",
         serializer=_compact_aggregation_serializer,
     )
@@ -574,9 +600,7 @@ rank_countries = mcp.add_tool(
 
 compare_countries = mcp.add_tool(
     Tool.from_function(
-        instrument_mcp_tool(
-            _compare_countries, tool_name="data360_compare_countries"
-        ),
+        instrument_mcp_tool(_compare_countries, tool_name="data360_compare_countries"),
         name="data360_compare_countries",
         serializer=_compact_aggregation_serializer,
     )

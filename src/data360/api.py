@@ -27,6 +27,9 @@ from .models import (
     ComparisonSnapshot,
     ComparisonTimeSeries,
     CountryComparisonResponse,
+    DatasetDescription,
+    DatasetSearchRequest,
+    DatasetSearchResponse,
     DataSummaryResponse,
     DerivedDataResponse,
     DiagnosticSummaryResponse,
@@ -48,9 +51,6 @@ from .models import (
     SearchRequest,
     SearchResponse,
     SeriesDescription,
-    DatasetSearchRequest,
-    DatasetDescription,
-    DatasetSearchResponse,
 )
 from .providers import get_database_mapping
 
@@ -109,7 +109,15 @@ _ENRICHMENT_SELECT_FIELDS = [
 # Based on a 16-database survey (see payload_analysis.md for full documentation).
 # Always-keep fields: the core data the LLM needs.
 _CORE_FIELDS = frozenset(
-    {"OBS_VALUE", "TIME_PERIOD", "REF_AREA", "REF_AREA_NAME", "country_name", "UNIT_MEASURE", "claim_id"}
+    {
+        "OBS_VALUE",
+        "TIME_PERIOD",
+        "REF_AREA",
+        "REF_AREA_NAME",
+        "country_name",
+        "UNIT_MEASURE",
+        "claim_id",
+    }
 )
 # Conditional fields: kept only when their value is non-trivial (not _T or _Z).
 # SEX/AGE/URBANISATION carry real disaggregation in WB_HCP, WB_SSGD, OECD_IDD.
@@ -200,7 +208,8 @@ async def _fetch_dimensions_raw_uncached(
     _cache_key = (database_id, indicator_id)
     try:
         dimensions_url = (
-            data360_config.dimensions_url or f"{data360_config.api_url}/portal/v1/dimensions"
+            data360_config.dimensions_url
+            or f"{data360_config.api_url}/portal/v1/dimensions"
         )
         headers = {"accept": "*/*", "Content-Type": "application/json"}
         payload = {"database_id": database_id, "indicator_id": indicator_id}
@@ -502,7 +511,9 @@ def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescri
             databases = value.get("databases", [])
             db_id = None
             if databases and isinstance(databases, list) and len(databases) > 0:
-                db_id = databases[0].get("idno") if isinstance(databases[0], dict) else None
+                db_id = (
+                    databases[0].get("idno") if isinstance(databases[0], dict) else None
+                )
 
             tp = value.get("time_period")
             time_periods = None
@@ -528,13 +539,16 @@ def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescri
                 "idno": value.get("idno"),
                 "name": value.get("name"),
                 "database_id": db_id or value.get("database_id"),
-                "definition_long": value.get("description") or value.get("definition_long"),
+                "definition_long": value.get("description")
+                or value.get("definition_long"),
                 "periodicity": value.get("frequency") or value.get("periodicity"),
                 "time_periods": time_periods,
                 "ref_country": value.get("ref_country"),
                 "dimensions": dimensions,
                 "metadata_link": ml or [],
-                "connected_entities": value.get("connected_entities") if isinstance(value.get("connected_entities"), list) else None,
+                "connected_entities": value.get("connected_entities")
+                if isinstance(value.get("connected_entities"), list)
+                else None,
             }
 
         if (
@@ -558,7 +572,9 @@ def _process_search_response(
     """Process API response and build SearchResponse."""
     search_response_data = {
         "items": _get_items_from_response(response_data),
-        "total_count": response_data.get("count") if "count" in response_data else response_data.get("@odata.count"),
+        "total_count": response_data.get("count")
+        if "count" in response_data
+        else response_data.get("@odata.count"),
         "offset": request.offset,
     }
     search_response_data["count"] = len(search_response_data["items"])
@@ -605,7 +621,10 @@ async def _search_raw(
         count=count,
     )
 
-    url = data360_config.search_url or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    url = (
+        data360_config.search_url
+        or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    )
     payload = {
         "site": "data360",
         "query_string": request.query,
@@ -636,7 +655,6 @@ async def _search_raw(
     except Exception as e:
         # Convert unknown exceptions to Data360MCPError and raise
         raise classify_error(e, context="search")
-
 
 
 async def _resolve_country_code(country_query: str) -> str | None:
@@ -753,7 +771,9 @@ def _enrich_search_results(
                             ref_countries.add(rc["code"])
                         elif isinstance(rc, str):
                             ref_countries.add(rc)
-                covers_country = {code: (code in ref_countries) for code in requested_codes}
+                covers_country = {
+                    code: (code in ref_countries) for code in requested_codes
+                }
 
         # Extract dimension names
         dimensions = raw.get("dimensions", [])
@@ -794,7 +814,10 @@ def _enrich_search_results(
             # Check if query matches a connected entity (SearchV3 redirect direction is reversed)
             clean_query = query.strip().upper()
             for entity in raw["connected_entities"]:
-                if isinstance(entity, dict) and entity.get("idno", "").upper() == clean_query:
+                if (
+                    isinstance(entity, dict)
+                    and entity.get("idno", "").upper() == clean_query
+                ):
                     original_idno = entity.get("idno")
                     _logger.debug(
                         "Mapped primary source %s -> %s/%s via connected_entities for query %s",
@@ -1092,7 +1115,9 @@ async def search(  # noqa: PLR0911
                 query=q,
                 limit=limit,
                 offset=offset,
-                economy_codes=[c.strip() for c in country_code.split(";")] if country_code else None,
+                economy_codes=[c.strip() for c in country_code.split(";")]
+                if country_code
+                else None,
             )
             for q in clean_queries
         ]
@@ -1229,7 +1254,9 @@ async def search(  # noqa: PLR0911
             query=query,  # type: ignore[arg-type]  # validated non-None above
             limit=limit,
             offset=offset,
-            economy_codes=[c.strip() for c in country_code.split(";")] if country_code else None,
+            economy_codes=[c.strip() for c in country_code.split(";")]
+            if country_code
+            else None,
         )
     except PydanticValidationError as e:
         return EnrichedSearchResponse(error=str(e))
@@ -1350,7 +1377,11 @@ async def _build_multi_query_response(
     enriched_lists = []
     for i, (q, raw_result) in enumerate(zip(clean_queries, raw_results)):
         code_for_query = per_query_codes[i]
-        if isinstance(raw_result, Exception) or raw_result.error or not raw_result.items:
+        if (
+            isinstance(raw_result, Exception)
+            or raw_result.error
+            or not raw_result.items
+        ):
             enriched_lists.append((None, None))
             continue
 
@@ -1486,7 +1517,10 @@ async def search_datasets(
     except PydanticValidationError as e:
         return DatasetSearchResponse(error=str(e))
 
-    url = data360_config.search_url or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    url = (
+        data360_config.search_url
+        or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    )
     payload = {
         "site": "data360",
         "query_string": request.query,
@@ -1518,7 +1552,11 @@ async def search_datasets(
                 )
             )
 
-        total_count = response_data.get("count") or response_data.get("@odata.count") or len(items)
+        total_count = (
+            response_data.get("count")
+            or response_data.get("@odata.count")
+            or len(items)
+        )
 
         has_more = False
         next_offset = None
@@ -1740,9 +1778,7 @@ async def get_disaggregation(
     queried_countries = await _resolve_queried_countries(required_country)
 
     try:
-        dimensions_json = await _fetch_dimensions_with_cache(
-            database_id, indicator_id
-        )
+        dimensions_json = await _fetch_dimensions_with_cache(database_id, indicator_id)
         raw_data = _parse_dimensions_response(dimensions_json)
         # Filter out _Z values and format response
         valid_dimensions = _get_valid_disaggregations(raw_data)
@@ -2019,6 +2055,7 @@ async def get_data(
             raw_data = raw_data[:limit]
 
         from .providers import get_codelist_manager  # noqa: PLC0415
+
         _cm = get_codelist_manager()
         await _cm._ensure_extdataportal_loaded()
         for row in raw_data:
@@ -2266,6 +2303,132 @@ async def get_data_api_url(
 
     query_string = urlencode(params, safe=",")
     return f"{base}?{query_string}"
+
+
+# ---------------------------------------------------------------------------
+# Indicators v2 fallback (legacy World Bank Indicators API)
+# ---------------------------------------------------------------------------
+
+
+async def get_timeseries_v2(
+    indicator_id: str,
+    country_code: str,
+    start_year: int | None = None,
+    end_year: int | None = None,
+    per_page: int = 200,
+) -> IndicatorDataResponse:
+    """Fetch a time series from the legacy World Bank Indicators v2 API.
+
+    Use as a fallback when ``data360_get_data`` returns no observations,
+    errors out, or covers an indicator that has only the older v2 endpoint.
+    The v2 API has been stable for years and covers most WDI-classic series.
+
+    The v2 API uses a different indicator code format than Data360: dotted
+    codes like ``SP.POP.TOTL`` or ``NY.GDP.PCAP.CD``, **not** the Data360
+    underscored form ``WB_WDI_SP_POP_TOTL``. For most WDI indicators you can
+    derive the v2 code by stripping the ``WB_WDI_`` prefix and replacing
+    underscores with dots.
+
+    Args:
+        indicator_id: Classic WB indicator code in dotted form (e.g.
+            ``SP.POP.TOTL``).
+        country_code: ISO 3166-1 alpha-2 or alpha-3 country code (e.g. ``AR``
+            or ``ARG``). Multiple countries can be passed as a
+            semicolon-separated list (e.g. ``ARG;BRA``).
+        start_year: Optional start year (inclusive).
+        end_year: Optional end year (inclusive). If both years are omitted
+            the v2 API returns its full available range for the indicator.
+        per_page: Max records returned in one page (default 200).
+
+    Returns:
+        IndicatorDataResponse:
+            data: list of observation dicts with ``date``, ``value``,
+                ``country_code``, ``country_name``, ``indicator_id``,
+                ``unit``, ``decimal``.
+            metadata: ``source_id``, ``last_updated``, ``page``, ``pages``,
+                ``per_page``, ``total``.
+            count: number of records returned in this response.
+            total_count: total records reported by the v2 API.
+            has_more / next_offset: pagination cursors (v2 paginates by
+                ``page``; ``next_offset`` carries the next page number).
+            error: error message if the call failed, otherwise None.
+    """
+    from datetime import datetime  # noqa: PLC0415
+
+    settings = get_data360_settings()
+    base = settings.indicators_v2_base_url.rstrip("/")
+    url = f"{base}/country/{country_code}/indicator/{indicator_id}"
+
+    params: dict[str, Any] = {"format": "json", "per_page": per_page}
+    if start_year is not None and end_year is not None:
+        params["date"] = f"{start_year}:{end_year}"
+    elif start_year is not None:
+        params["date"] = f"{start_year}:{datetime.now().year}"
+    elif end_year is not None:
+        params["date"] = f"1960:{end_year}"
+
+    client = get_shared_httpx_client()
+    try:
+        response = await client.get(url, params=params)
+        response.raise_for_status()
+        payload = response.json()
+    except Exception as exc:  # noqa: BLE001
+        _logger.warning("Indicators v2 fetch failed: %s", exc)
+        return IndicatorDataResponse(error=f"Indicators v2 API error: {exc}")
+
+    # The v2 API always returns a two-element list: [pagination_meta, observations].
+    _V2_PAYLOAD_LEN = 2
+    if not isinstance(payload, list) or len(payload) < _V2_PAYLOAD_LEN:
+        return IndicatorDataResponse(
+            error="Unexpected Indicators v2 response shape (expected [metadata, data]).",
+        )
+
+    meta_block, raw_points = payload[0], payload[1] or []
+    if not isinstance(meta_block, dict):
+        meta_block = {}
+    if not isinstance(raw_points, list):
+        raw_points = []
+
+    points: list[dict[str, Any]] = []
+    for row in raw_points:
+        if not isinstance(row, dict):
+            continue
+        indicator_obj = row.get("indicator") or {}
+        country_obj = row.get("country") or {}
+        points.append(
+            {
+                "date": row.get("date"),
+                "value": row.get("value"),
+                "country_code": row.get("countryiso3code") or country_obj.get("id"),
+                "country_name": country_obj.get("value"),
+                "indicator_id": indicator_obj.get("id"),
+                "unit": row.get("unit") or "",
+                "decimal": row.get("decimal"),
+            }
+        )
+
+    page = meta_block.get("page")
+    pages = meta_block.get("pages")
+    total = meta_block.get("total")
+    has_more = bool(page and pages and page < pages)
+    next_offset = (page + 1) if has_more else None
+
+    return IndicatorDataResponse(
+        data=points,
+        metadata={
+            "source_id": meta_block.get("sourceid"),
+            "last_updated": meta_block.get("lastupdated"),
+            "page": page,
+            "pages": pages,
+            "per_page": meta_block.get("per_page"),
+            "total": total,
+        },
+        count=len(points),
+        total_count=total if isinstance(total, int) else None,
+        offset=page,
+        has_more=has_more,
+        next_offset=next_offset,
+    )
 
 
 # ---------------------------------------------------------------------------
