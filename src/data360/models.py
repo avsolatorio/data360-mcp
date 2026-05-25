@@ -631,6 +631,11 @@ class ComparisonSnapshot(BaseModel):
     """Single-year comparison snapshot across countries."""
 
     year: str = Field(..., description="The comparison year")
+    year_selection_note: str | None = Field(
+        None,
+        description="Explains how the comparison year was chosen. "
+        "E.g. 'User-specified year: 2022' or 'Latest year with data for all compared countries: 2023'.",
+    )
     rankings: list[RankedCountry] = Field(
         default_factory=list,
         description="Countries sorted by obs_value with rank and gap_to_leader",
@@ -650,6 +655,7 @@ class ComparisonSnapshot(BaseModel):
         """
         return {
             "year": self.year,
+            "year_selection_note": self.year_selection_note,
             "rankings": [r.to_compact() for r in self.rankings],
             "spread": self.spread,
         }

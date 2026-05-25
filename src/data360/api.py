@@ -3065,25 +3065,33 @@ async def rank_countries(
                     total_requested=total_requested,
                 )
     else:
-        # Auto-select: find the year with broadest coverage, tie-break by recency
+        # Auto-select: find the latest available year with data
+        latest_year = max(year_country_map.keys())
+        ranking_year = latest_year
+
+        # Find the year with the broadest coverage for comparison/caveat
         best_year = max(
             year_country_map.keys(),
             key=lambda y: (len(year_country_map[y]), y),
         )
-        latest_year = max(year_country_map.keys())
-        ranking_year = best_year
-        if best_year == latest_year:
+
+        latest_coverage = len(year_country_map[latest_year])
+        best_coverage = len(year_country_map[best_year])
+
+        if latest_year == best_year:
             year_selection_note = (
-                f"Latest year with broadest coverage ({best_year}, "
-                f"{len(year_country_map[best_year])}/{total_requested} countries)"
+                f"Latest available year ({latest_year}) with "
+                f"{latest_coverage}/{total_requested} countries."
             )
         else:
             year_selection_note = (
-                f"Year with broadest coverage: {best_year} "
-                f"({len(year_country_map[best_year])}/{total_requested} countries). "
-                f"Most recent year {latest_year} has "
-                f"{len(year_country_map.get(latest_year, {}))}/{total_requested} countries."
+                f"Latest available year: {latest_year} "
+                f"({latest_coverage}/{total_requested} countries). "
+                f"Note: Coverage is partial/incomplete for this year. "
+                f"An older year ({best_year}) has broader coverage with "
+                f"{best_coverage}/{total_requested} countries."
             )
+
 
     # Build ranking from selected year
     year_data = year_country_map.get(ranking_year, {})
@@ -3275,13 +3283,29 @@ async def compare_countries(
         if c in country_year_map:
             common_years = [y for y in common_years if y in country_year_map[c]]
 
+    year_selection_note = None
     if year:
         snap_year = str(year)
+        year_selection_note = f"User-specified year: {year}"
     elif common_years:
         snap_year = common_years[-1]  # Latest common year
+        year_selection_note = (
+            f"Latest year with data for all compared countries: {snap_year} "
+            f"({len(codes)}/{len(codes)} countries)"
+        )
     else:
         # Fallback: latest year from any country
         snap_year = max(all_years) if all_years else None
+        if snap_year:
+            n_countries = sum(
+                1 for c in codes if c in country_year_map and snap_year in country_year_map[c]
+            )
+            year_selection_note = (
+                f"Latest year with data (partial coverage): {snap_year} "
+                f"({n_countries}/{len(codes)} countries)"
+            )
+        else:
+            year_selection_note = "No data available for any country."
 
     # Build snapshot
     snapshot = None
@@ -3329,6 +3353,7 @@ async def compare_countries(
 
         snapshot = ComparisonSnapshot(
             year=snap_year,
+            year_selection_note=year_selection_note,
             rankings=ranked,
             spread=spread,
         )
