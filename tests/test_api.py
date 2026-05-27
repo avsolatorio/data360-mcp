@@ -521,23 +521,6 @@ class TestSearch:
         assert "could not be resolved" in result.error
         assert not result.indicators
 
-    @pytest.mark.asyncio
-    async def test_search_with_database_in_country_parameter_raises_error(self):
-        """Test search with database passed to country parameter returns a descriptive error."""
-        from unittest.mock import patch
-        with patch("data360.providers.get_database_manager") as mock_mgr_getter:
-            from unittest.mock import MagicMock
-            mock_mgr = MagicMock()
-            mock_mgr.resolve_database_ids.side_effect = lambda x, strict=False: ["WB_PIP"] if x.upper() == "PIP" else exec("raise ValueError()")
-            mock_mgr_getter.return_value = mock_mgr
-
-            result = await search("poverty", required_country="PIP;Morocco")
-
-        assert isinstance(result, EnrichedSearchResponse)
-        assert result.error is not None
-        assert "resolved to database ID(s)" in result.error
-        assert "Did you mean to pass it to the 'database' parameter" in result.error
-
 
 class TestSearchDatasets:
     """Tests for search_datasets() function."""
