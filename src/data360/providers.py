@@ -59,27 +59,13 @@ class DatabaseManager:
         self._ensure_background_sync()
         return self._cache
 
-    def resolve_database_ids(self, query: str | None) -> list[str]:
-        """Resolve database search terms (comma or semicolon separated) to database IDs from the cache.
+    def resolve_database_id(self, query: str | None) -> str | None:
+        """Resolve a database search term to a database ID from the cache.
 
         Matches by exact ID, exact name, substring of ID, or substring of name.
-        Raises ValueError if any term cannot be resolved.
         """
         if not query:
-            return []
-        import re
-        tokens = [t.strip() for t in re.split(r'[,;]', query) if t.strip()]
-        resolved_ids = []
-        for token in tokens:
-            resolved = self._resolve_single_database_id(token)
-            if resolved:
-                if resolved not in resolved_ids:
-                    resolved_ids.append(resolved)
-            else:
-                raise ValueError(f"Database '{token}' could not be resolved.")
-        return resolved_ids
-
-    def _resolve_single_database_id(self, query: str) -> str | None:
+            return None
         query_lower = query.lower().strip()
 
         # 1. Exact match on database ID (key)
@@ -103,17 +89,6 @@ class DatabaseManager:
                 return db_id
 
         return None
-
-    def resolve_database_id(self, query: str | None) -> str | None:
-        """Resolve a database search term to a single database ID from the cache.
-
-        Deprecated: use resolve_database_ids instead.
-        """
-        try:
-            ids = self.resolve_database_ids(query)
-            return ids[0] if ids else None
-        except ValueError:
-            return None
 
     # ------------------------------------------------------------------
     # Background sync machinery
