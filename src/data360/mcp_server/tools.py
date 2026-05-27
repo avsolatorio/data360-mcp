@@ -53,11 +53,11 @@ async def _search_indicators(
     """Search for Data360 indicators with enriched metadata for selection.
 
     Use when the user asks for data on a development topic (e.g. GDP, poverty, education).
-    To optimize search efficiency and prevent sequential round-trips, always default to using the `queries` or `query_groups` parameters when a request involves multiple topics or scopes.
+    Default to using the single `query` parameter for any single topic/indicator search. Use the `queries` or `query_groups` parameters ONLY when the request involves multiple topics or scopes (2 or more).
     Provide exactly one of `query`, `queries`, or `query_groups`. One of these is strictly required.
 
     ### Parameter Selection Decision Tree (CRITICAL):
-    1. **Exactly 1 Topic** (e.g., "life expectancy") for any number of countries → use `query` + `required_country`. Do NOT combine multiple topics with 'and' or 'or' here.
+    1. **Exactly 1 Topic** (e.g., "life expectancy" or "mortality rate") for any number of countries → you MUST use the single `query` parameter + `required_country`. Do NOT use `queries` with only one element, as it will fail. Do NOT combine multiple topics with 'and' or 'or' in `query` (e.g. do NOT use query="GDP and inflation").
     2. **Multiple Topics, Same Country/Countries** (e.g., "life expectancy and GDP per capita" for Japan) → you MUST use the `queries` list parameter (e.g. `queries=["life expectancy", "GDP per capita"]`) + `required_country`. Do NOT make multiple tool calls. Do NOT pass multiple topics as a single query string (e.g., query="life expectancy and GDP per capita" is invalid).
     3. **Different Topics targeting Different Countries** (e.g., "life expectancy for Japan, but GDP and mortality rate for Korea") → you MUST use the `query_groups` parameter. Do NOT use `queries`.
 
@@ -66,7 +66,7 @@ async def _search_indicators(
         required_country: Semicolon-separated ISO country codes (e.g. "KEN;USA"). Shared across all queries in 'query' or 'queries'. Consider calling `data360_expand_country_group` to find country codes in regional/income groups, or `data360_find_codelist_value` to resolve country names.
         limit: Max indicators per query (default 5).
         offset: Offset for pagination.
-        queries: List of topics for multi-topic search. Use ONLY when 2 or more topics target the SAME countries/geographic scope (e.g. ['GDP per capita', 'inflation rate']).
+        queries: List of topics for multi-topic search (must contain at least 2 non-empty search strings). Use ONLY when 2 or more topics target the SAME countries/geographic scope (e.g. ['GDP per capita', 'inflation rate']).
         query_groups: Grouped queries with specific country scopes. Use ONLY when different topics/queries target different country scopes. Example: [{'queries': ['life expectancy'], 'country': 'JPN'}, {'queries': ['GDP per capita'], 'country': 'KOR'}].
         result_layout: Mode to return results: "merged" (flat, deduped list of indicators) or "by_query" (indicators grouped by search query).
         dedupe: De-duplicate indicators across query results.
