@@ -54,20 +54,16 @@ async def _search_indicators(
     """Search for Data360 indicators with enriched metadata for selection.
 
     Use when the user asks for data on a development topic (e.g. GDP, poverty, education).
-    Provide exactly one of `query`, `queries`, or `query_groups`. One of these is strictly required.
-
-    ### Parameter Selection Decision Tree (CRITICAL):
-    1. **Exactly 1 Topic** (e.g., "life expectancy") for any number of countries → use `query` + `required_country`.
-    2. **Multiple Topics, Same Country/Countries** (e.g., "life expectancy and GDP per capita" for Japan) → you MUST use the `queries` list parameter (e.g. `queries=["life expectancy", "GDP per capita"]`) + `required_country`. Do NOT make multiple tool calls. Do NOT pass multiple topics as a single query string.
-    3. **Different Topics targeting Different Countries** (e.g., "life expectancy for Japan, but GDP and mortality rate for Korea") → you MUST use the `query_groups` parameter. Do NOT use `queries`.
+    Provide exactly one of `query`, `queries`, or `query_groups`. One of these is strictly required; search will fail with an error if all of them are omitted.
+    For multiple topics, pass them as `queries=["poverty", "population"]` instead of making separate calls. For multiple databases, pass them as `database="pip; wdi"`.
 
     Args:
-        query: Single topic query (e.g. "unemployment"). Use ONLY for a single topic. Avoid special characters like parentheses () or dollar signs $. Example: 'GDP per capita'.
-        required_country: Semicolon-separated ISO country codes (e.g. "KEN;USA"). Shared across all queries in 'query' or 'queries'. Consider calling `data360_expand_country_group` to find country codes in regional/income groups, or `data360_find_codelist_value` to resolve country names.
+        query: Single topic query (e.g. "unemployment"). Avoid special characters like parentheses () or dollar signs $ as they cause search failures. Example: 'GDP per capita'.
+        required_country: Semicolon-separated ISO country codes (e.g. "KEN;USA"). Consider calling `data360_expand_country_group` to find country codes in regional/income groups, or `data360_find_codelist_value` to resolve country names.
         limit: Max indicators per query (default 5).
         offset: Offset for pagination.
-        queries: List of topics for multi-topic search. Use ONLY when 2 or more topics target the SAME countries/geographic scope (e.g. ['GDP per capita', 'inflation rate']).
-        query_groups: Grouped queries with specific country scopes. Use ONLY when different topics/queries target different country scopes. Example: [{'queries': ['life expectancy'], 'country': 'JPN'}, {'queries': ['GDP per capita'], 'country': 'KOR'}].
+        queries: List of topics for multi-topic search. Example: ['GDP per capita', 'inflation rate'].
+        query_groups: Grouped queries with specific country scopes. Example: [{'queries': ['GDP per capita'], 'country': 'Kenya'}].
         result_layout: Mode to return results: "merged" (flat, deduped list of indicators) or "by_query" (indicators grouped by search query).
         dedupe: De-duplicate indicators across query results.
         database: Optional database name or ID to filter search results (e.g. "wdi", "wgi", "World Development Indicators"). Multiple databases can be queried at once by separating them with a semicolon (e.g. "pip; lpgd; sgi").
