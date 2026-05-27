@@ -103,6 +103,17 @@ async def test_mcp_prompts_render_successfully() -> None:
     assert "['SEX', 'AGE']" in res_search[0].content.text
     assert 'disaggregation_filters={"REF_AREA": "KEN"}' in res_search[0].content.text
 
+    # Test indicator_search with database parameter
+    res_search_db = await prompts["indicator_search"].render(
+        arguments={
+            "query": "poverty rate",
+            "country": "Kenya",
+            "required_dimensions": "SEX,AGE",
+            "database": "wdi",
+        }
+    )
+    assert 'database="wdi"' in res_search_db[0].content.text
+
     # 4. indicator_details
     assert "indicator_details" in prompts
     res_details = await prompts["indicator_details"].render(
@@ -127,6 +138,18 @@ async def test_mcp_prompts_render_successfully() -> None:
     )
     assert "GDP growth" in res_country[0].content.text
     assert "Kenya, Uganda" in res_country[0].content.text
+
+    # Test country_data with database parameter
+    res_country_db = await prompts["country_data"].render(
+        arguments={
+            "query": "GDP growth",
+            "country": "Kenya, Uganda",
+            "start_year": "2018",
+            "end_year": "2023",
+            "database": "wdi",
+        }
+    )
+    assert 'database="wdi"' in res_country_db[0].content.text
 
     # 6. k360_research_compiler
     assert "k360_research_compiler" in prompts
