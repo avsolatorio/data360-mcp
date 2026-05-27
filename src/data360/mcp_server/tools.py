@@ -58,14 +58,14 @@ async def _search_indicators(
 
     Args:
         query: Single topic query (e.g. "unemployment"). Avoid special characters like parentheses () or dollar signs $ as they cause search failures. Example: 'GDP per capita'.
-        required_country: Semicolon-separated ISO country codes (e.g. "KEN;USA"). Do NOT pass database names/acronyms (like PIP, LPGD, WDI) here; use the 'database' parameter instead. Consider calling `data360_expand_country_group` to find country codes in regional/income groups, or `data360_find_codelist_value` to resolve country names.
+        required_country: Semicolon-separated ISO country codes (e.g. "KEN;USA"). Consider calling `data360_expand_country_group` to find country codes in regional/income groups, or `data360_find_codelist_value` to resolve country names.
         limit: Max indicators per query (default 5).
         offset: Offset for pagination.
         queries: List of topics for multi-topic search. Example: ['GDP per capita', 'inflation rate'].
         query_groups: Grouped queries with specific country scopes. Example: [{'queries': ['GDP per capita'], 'country': 'Kenya'}].
         result_layout: Mode to return results: "merged" (flat, deduped list of indicators) or "by_query" (indicators grouped by search query).
         dedupe: De-duplicate indicators across query results.
-        database: Optional database name or ID to filter search results (e.g. "wdi", "wgi", "World Development Indicators"). Multiple databases can be queried at once by separating them with a semicolon (e.g. "pip; lpgd; sgi"). Do NOT pass country codes here.
+        database: Optional database name or ID to filter search results (e.g. "wdi", "wgi", "World Development Indicators").
     """
     return await data360_api.search(
         query=query,
