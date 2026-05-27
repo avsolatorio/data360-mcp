@@ -1876,6 +1876,13 @@ def _resolve_time_range(
     current_year = datetime.now().year
     span = _DEFAULT_TIME_WINDOW_YEARS - 1
 
+    if start_year is not None:
+        # TODO: Handle invalid start year, e.g., "2020-01-01" or float
+        start_year = int(start_year)
+    if end_year is not None:
+        # TODO: Handle invalid end year, e.g., "2020-01-01"
+        end_year = int(end_year)
+
     if start_year is None and end_year is None:
         return current_year - span, current_year
 
