@@ -59,37 +59,6 @@ class DatabaseManager:
         self._ensure_background_sync()
         return self._cache
 
-    def resolve_database_id(self, query: str | None) -> str | None:
-        """Resolve a database search term to a database ID from the cache.
-
-        Matches by exact ID, exact name, substring of ID, or substring of name.
-        """
-        if not query:
-            return None
-        query_lower = query.lower().strip()
-
-        # 1. Exact match on database ID (key)
-        for db_id in self._cache:
-            if query_lower == db_id.lower():
-                return db_id
-
-        # 2. Exact match on database name (value)
-        for db_id, name in self._cache.items():
-            if query_lower == name.lower():
-                return db_id
-
-        # 3. Substring match on database ID
-        for db_id in self._cache:
-            if query_lower in db_id.lower():
-                return db_id
-
-        # 4. Substring match on database name
-        for db_id, name in self._cache.items():
-            if query_lower in name.lower():
-                return db_id
-
-        return None
-
     # ------------------------------------------------------------------
     # Background sync machinery
     # ------------------------------------------------------------------
