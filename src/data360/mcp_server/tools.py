@@ -54,7 +54,7 @@ async def _search_indicators(
     """Search for Data360 indicators with enriched metadata for selection.
 
     Use when the user asks for data on a development topic (e.g. GDP, poverty, education).
-    Provide exactly one of `query`, `queries`, or `query_groups`. One of these is strictly required; search will fail with an error if all of them are omitted.
+    Provide exactly one of `query`, `queries`, or `query_groups`.
 
     Args:
         query: Single topic query (e.g. "unemployment"). Avoid special characters like parentheses () or dollar signs $ as they cause search failures. Example: 'GDP per capita'.
