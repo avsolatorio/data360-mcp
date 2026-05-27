@@ -53,3 +53,20 @@ class TestDatabaseResolution:
         with pytest.raises(ValueError) as exc:
             db_mgr.resolve_database_ids("wdi; nonexistent_db")
         assert "nonexistent_db" in str(exc.value)
+
+    @pytest.mark.asyncio
+    async def test_resolve_database_ids_fuzzy(self):
+        db_mgr = DatabaseManager()
+        db_mgr._cache = {
+            "WB_WDI": "World Development Indicators",
+            "WB_WGI": "Worldwide Governance Indicators",
+            "WB_GS": "Gender Statistics"
+        }
+
+        # Fuzzy names with typos or variations that satisfy the 0.7 threshold
+        assert db_mgr.resolve_database_id("world development indicator") == "WB_WDI"
+        assert db_mgr.resolve_database_id("worldwide governd") == "WB_WGI"
+        assert db_mgr.resolve_database_id("gender stats") == "WB_GS"
+
+        # Under the threshold (nonexistent/completely different)
+        assert db_mgr.resolve_database_id("some random stuff") is None
