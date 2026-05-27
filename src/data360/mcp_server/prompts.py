@@ -34,7 +34,6 @@ Do not answer with guesses. Do not stop after describing a plan.
 
 ### Operating loop (repeat until done)
 1) If you need indicators or statistical series → call data360_search_indicators.
-   - **Database filter**: If the user's request specifies or strongly implies a specific database (e.g. "World Development Indicators", "WDI", "Worldwide Governance Indicators", "WGI"), pass it to the `database` argument (e.g. `database="wdi"`).
    If you need high-level dataset catalogs or source databases (e.g. Findex) → call data360_search_datasets.
    - **CRITICAL**: The search API is sensitive to special characters. Strip parentheses `(`, `)` and currency signs like `$` from your query (e.g. search for "GDP per capita current US", NOT "GDP per capita (current US$)").
    - **CRITICAL** when search returns multiple results: STOP — do not loop every row.
@@ -323,7 +322,6 @@ def indicator_search(
     query: str,
     country: str = "",
     required_dimensions: str = "",
-    database: str = "",
 ) -> str:
     """Guide LLM to find and select the best indicator for a query.
 
@@ -331,18 +329,16 @@ def indicator_search(
         query: Search query (e.g., "unemployment rate", "poverty")
         country: Optional country to validate (e.g., "Kenya")
         required_dimensions: Optional comma-separated dimensions (e.g., "SEX,AGE")
-        database: Optional database filter (e.g., "wdi", "World Development Indicators")
     """
     dims_list = required_dimensions.split(",") if required_dimensions else []
-    db_arg = f',\n       database="{database}"' if database else ""
 
     return f"""To find the best indicator for '{query}':
 
  1. Use enriched search:
-    data360_search_indicators(
-        query="{query}",
-        limit=5{db_arg}
-    )
+   data360_search_indicators(
+       query="{query}",
+       limit=5
+   )
 
 2. For promising candidates, validate with get_disaggregation:
    - Check TIME_PERIOD for actual years (may have gaps)
@@ -412,7 +408,6 @@ def country_data(
     country: str,
     start_year: str = "",
     end_year: str = "",
-    database: str = "",
 ) -> str:
     """Guide LLM through end-to-end data retrieval for a country.
 
@@ -421,9 +416,7 @@ def country_data(
         country: Country name or comma-separated list (e.g., "Kenya" or "Kenya, Uganda")
         start_year: Optional start year
         end_year: Optional end year
-        database: Optional database filter (e.g., "wdi", "World Development Indicators")
     """
-    db_arg = f',\n    database="{database}"' if database else ""
     return f"""To get {query} data for {country}:
 
 <thinking>
@@ -441,7 +434,7 @@ data360_find_codelist_value(codelist_type="REF_AREA", query="{country}")
 data360_search_indicators(
     query="{query}",
     limit=5,
-    required_country="{country}"{db_arg} # Pass the list string as-is
+    required_country="{country}" # Pass the list string as-is
 )
 
 **Step 3: Validate availability & Dimensions**
