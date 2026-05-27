@@ -55,7 +55,6 @@ async def _search_indicators(
 
     Use when the user asks for data on a development topic (e.g. GDP, poverty, education).
     Provide exactly one of `query`, `queries`, or `query_groups`. One of these is strictly required; search will fail with an error if all of them are omitted.
-    For multiple topics, pass them as `queries=["poverty", "population"]` instead of making separate calls. For multiple databases, pass them as `database="pip; wdi"`.
 
     Args:
         query: Single topic query (e.g. "unemployment"). Avoid special characters like parentheses () or dollar signs $ as they cause search failures. Example: 'GDP per capita'.
