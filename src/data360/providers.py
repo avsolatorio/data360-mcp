@@ -108,7 +108,50 @@ class DatabaseManager:
                 if query_lower in name.lower():
                     return db_id
 
+            # 6. Fuzzy prefix/character match on ID and name as fallback
+            best_match = None
+            best_score = 0.70
+            for db_id, name in self._cache.items():
+                score_id = self._calculate_similarity(query_lower, db_id.lower())
+                score_name = self._calculate_similarity(query_lower, name.lower())
+                max_score = max(score_id, score_name)
+                if max_score > best_score:
+                    best_score = max_score
+                    best_match = db_id
+            if best_match:
+                return best_match
+
         return None
+
+    def _calculate_similarity(self, s1: str, s2: str) -> float:
+        """Calculate similarity ratio between two strings."""
+        if not s1 or not s2:
+            return 0.0
+
+        if len(s1) <= 3:
+            if s1 in s2 or s2.startswith(s1):
+                return 0.8
+            return 0.0
+
+        len1, len2 = len(s1), len(s2)
+        if abs(len1 - len2) > max(len1, len2) * 0.5:
+            return 0.0
+
+        s1_chars = set(s1)
+        s2_chars = set(s2)
+        common = len(s1_chars & s2_chars)
+        total = len(s1_chars | s2_chars)
+        char_similarity = common / total if total > 0 else 0
+
+        prefix_len = 0
+        for c1, c2 in zip(s1, s2):
+            if c1 == c2:
+                prefix_len += 1
+            else:
+                break
+        prefix_ratio = prefix_len / min(len1, len2)
+
+        return (char_similarity * 0.4) + (prefix_ratio * 0.6)
 
     def resolve_database_id(self, query: str | None) -> str | None:
         """Resolve a database search term to a single database ID from the cache.
