@@ -54,16 +54,15 @@ async def _search_indicators(
     """Search for Data360 indicators with enriched metadata for selection.
 
     Use when the user asks for data on a development topic (e.g. GDP, poverty, education).
-    To optimize search efficiency and prevent sequential round-trips, always default to using the `queries` or `query_groups` parameters when a request involves multiple topics or scopes.
     Provide exactly one of `query`, `queries`, or `query_groups`. One of these is strictly required.
 
     ### Parameter Selection Decision Tree (CRITICAL):
-    1. **Exactly 1 Topic** (e.g., "life expectancy") for any number of countries → use `query` + `required_country`. Do NOT combine multiple topics with 'and' or 'or' here.
-    2. **Multiple Topics, Same Country/Countries** (e.g., "life expectancy and GDP per capita" for Japan) → you MUST use the `queries` list parameter (e.g. `queries=["life expectancy", "GDP per capita"]`) + `required_country`. Do NOT make multiple tool calls. Do NOT pass multiple topics as a single query string (e.g., query="life expectancy and GDP per capita" is invalid).
+    1. **Exactly 1 Topic** (e.g., "life expectancy") for any number of countries → use `query` + `required_country`.
+    2. **Multiple Topics, Same Country/Countries** (e.g., "life expectancy and GDP per capita" for Japan) → you MUST use the `queries` list parameter (e.g. `queries=["life expectancy", "GDP per capita"]`) + `required_country`. Do NOT make multiple tool calls. Do NOT pass multiple topics as a single query string.
     3. **Different Topics targeting Different Countries** (e.g., "life expectancy for Japan, but GDP and mortality rate for Korea") → you MUST use the `query_groups` parameter. Do NOT use `queries`.
 
     Args:
-        query: Single topic query (e.g. "unemployment"). Use ONLY for a single topic. Do NOT combine multiple topics with 'and' or 'or' (e.g. do NOT use query="population and life expectancy"). Avoid special characters like parentheses () or dollar signs $. Example: 'GDP per capita'.
+        query: Single topic query (e.g. "unemployment"). Use ONLY for a single topic. Avoid special characters like parentheses () or dollar signs $. Example: 'GDP per capita'.
         required_country: Semicolon-separated ISO country codes (e.g. "KEN;USA"). Shared across all queries in 'query' or 'queries'. Consider calling `data360_expand_country_group` to find country codes in regional/income groups, or `data360_find_codelist_value` to resolve country names.
         limit: Max indicators per query (default 5).
         offset: Offset for pagination.
