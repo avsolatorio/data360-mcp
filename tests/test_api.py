@@ -125,7 +125,9 @@ class TestSearch:
         assert result.error is None
 
     @pytest.mark.asyncio
-    async def test_search_empty_result_preserves_count_zero(self, httpx_mock: pytest_httpx.HTTPXMock):
+    async def test_search_empty_result_preserves_count_zero(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
         """Test that search with empty results preserves count=0 and does not resolve to None."""
         mock_response = {
             "count": 0,
@@ -288,12 +290,17 @@ class TestSearch:
         )
 
         # Test query with parentheses and currency symbols (unsafe) alongside safe characters (_, -, ,, .)
-        await search("GDP per capita (current US$) WB_WDI_NY_GDP_PCAP_CD-2022, test.", limit=5)
+        await search(
+            "GDP per capita (current US$) WB_WDI_NY_GDP_PCAP_CD-2022, test.", limit=5
+        )
 
         assert len(captured_payloads) == 1
         # The parentheses and currency symbols should be replaced by spaces and collapsed,
         # while the underscores, hyphens, commas, and periods are kept.
-        assert captured_payloads[0].get("query_string") == "GDP per capita current US WB_WDI_NY_GDP_PCAP_CD-2022, test."
+        assert (
+            captured_payloads[0].get("query_string")
+            == "GDP per capita current US WB_WDI_NY_GDP_PCAP_CD-2022, test."
+        )
 
     @pytest.mark.asyncio
     async def test_search_empty_query_after_sanitization(self):
@@ -440,7 +447,9 @@ class TestSearchDatasets:
         assert response.items[0].name == "Global Financial Inclusion Database"
 
     @pytest.mark.asyncio
-    async def test_search_datasets_query_sanitization(self, httpx_mock: pytest_httpx.HTTPXMock):
+    async def test_search_datasets_query_sanitization(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
         """Test that special characters are sanitized in dataset search queries."""
         captured_payloads = []
 
@@ -483,10 +492,16 @@ class TestSearchDatasets:
 
         response = await search_datasets("findex")
         assert response.error is not None
-        assert "Server Error" in response.error or "500" in response.error or "Internal Server Error" in response.error
+        assert (
+            "Server Error" in response.error
+            or "500" in response.error
+            or "Internal Server Error" in response.error
+        )
 
     @pytest.mark.asyncio
-    async def test_search_datasets_exception_classification(self, httpx_mock: pytest_httpx.HTTPXMock):
+    async def test_search_datasets_exception_classification(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
         """Test that other exceptions during dataset search are classified robustly."""
         httpx_mock.add_exception(
             httpx.ConnectError("Connection refused"),
@@ -645,11 +660,19 @@ class TestGetMetadata:
         # Verify _Z was filtered out by _get_valid_disaggregations
         field_names = [opt["field_name"] for opt in result.disaggregation_options]
         # REF_AREA is summarized by _strip_disaggregation (count + sample)
-        ref_area = next(opt for opt in result.disaggregation_options if opt["field_name"] == "REF_AREA")
+        ref_area = next(
+            opt
+            for opt in result.disaggregation_options
+            if opt["field_name"] == "REF_AREA"
+        )
         assert ref_area["count"] == 1
         assert "UGA" in ref_area["sample"]
         # UNIT_MEASURE is preserved as-is
-        unit = next(opt for opt in result.disaggregation_options if opt["field_name"] == "UNIT_MEASURE")
+        unit = next(
+            opt
+            for opt in result.disaggregation_options
+            if opt["field_name"] == "UNIT_MEASURE"
+        )
         assert unit["field_value"] == ["_T"]
 
     @pytest.mark.asyncio
@@ -760,7 +783,11 @@ class TestGetData:
         httpx_mock.add_response(
             method="POST",
             url=re.compile(r".*/portal/v1/dimensions.*"),
-            json={"dimensions": [{"field_name": "REF_AREA", "field_value": [{"code": "UGA"}]}]},
+            json={
+                "dimensions": [
+                    {"field_name": "REF_AREA", "field_value": [{"code": "UGA"}]}
+                ]
+            },
         )
 
         # Mock data response
@@ -855,7 +882,10 @@ class TestGetData:
             url=re.compile(r".*/portal/v1/dimensions.*"),
             json={
                 "dimensions": [
-                    {"field_name": "URBANISATION", "field_value": [{"code": "_T"}, {"code": "URB"}]},
+                    {
+                        "field_name": "URBANISATION",
+                        "field_value": [{"code": "_T"}, {"code": "URB"}],
+                    },
                 ]
             },
         )
@@ -892,7 +922,9 @@ class TestGetData:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []}
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         # First page response
@@ -942,7 +974,9 @@ class TestGetData:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []}
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         def empty_data_callback(request: httpx.Request) -> httpx.Response | None:
@@ -973,7 +1007,9 @@ class TestGetData:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []}
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         # Data error
@@ -1003,7 +1039,9 @@ class TestGetData:
             json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL"}}]},
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []}
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         def invalid_json_callback(request: httpx.Request) -> httpx.Response | None:
@@ -1044,18 +1082,31 @@ class TestGetDataResilience:
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
+            json={
+                "value": [
+                    {
+                        "series_description": {
+                            "idno": "WB_WDI_SP_POP_TOTL",
+                            "name": "Pop",
+                        }
+                    }
+                ]
+            },
         )
         # Disaggregation fails with 500
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), status_code=500,
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            status_code=500,
             text="Internal Server Error",
         )
         # Data fetch succeeds
         httpx_mock.add_response(
             method="GET",
             url=re.compile(r".*/data\?.*"),
-            json={"value": [{"REF_AREA": "KEN", "TIME_PERIOD": "2020", "OBS_VALUE": 5000}]},
+            json={
+                "value": [{"REF_AREA": "KEN", "TIME_PERIOD": "2020", "OBS_VALUE": 5000}]
+            },
         )
 
         result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL")
@@ -1078,7 +1129,9 @@ class TestGetDataResilience:
         )
         # Disaggregation returns 200 empty (doesn't matter)
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         result = await get_data("WB_WDI", "NONEXISTENT_INDICATOR")
@@ -1092,17 +1145,28 @@ class TestGetDataResilience:
     # ---------------------------------------------------------------------------
 
     @pytest.mark.asyncio
-    async def test_get_data_country_code_param_sets_ref_area(
+    async def test_get_data_end_year_only_resolves_five_year_window(
         self, httpx_mock: pytest_httpx.HTTPXMock
     ):
-        """country_code parameter should be passed as REF_AREA in the data request URL."""
+        """Only end_year should not send timePeriodFrom=None; use 5-year window ending at end_year."""
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
+            json={
+                "value": [
+                    {
+                        "series_description": {
+                            "idno": "WB_WDI_SP_POP_TOTL",
+                            "name": "Pop",
+                        }
+                    }
+                ]
+            },
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         captured_urls: list[str] = []
@@ -1112,10 +1176,79 @@ class TestGetDataResilience:
                 captured_urls.append(str(request.url))
                 return httpx.Response(
                     200,
-                    json={"value": [
-                        {"REF_AREA": "KEN", "TIME_PERIOD": "2020", "OBS_VALUE": 100},
-                        {"REF_AREA": "MAR", "TIME_PERIOD": "2020", "OBS_VALUE": 200},
-                    ]},
+                    json={
+                        "value": [
+                            {
+                                "REF_AREA": "PHL",
+                                "TIME_PERIOD": "2018",
+                                "OBS_VALUE": 16.7,
+                            }
+                        ]
+                    },
+                )
+            return None
+
+        httpx_mock.add_callback(data_callback)
+
+        result = await get_data(
+            "WB_WDI",
+            "WB_WDI_SP_POP_TOTL",
+            country_code="PHL",
+            end_year=2019,
+        )
+
+        assert len(captured_urls) == 1
+        assert "timePeriodFrom=2015" in captured_urls[0]
+        assert "timePeriodTo=2019" in captured_urls[0]
+        assert result.error is None
+        assert result.data is not None
+
+    @pytest.mark.asyncio
+    async def test_get_data_country_code_param_sets_ref_area(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """country_code parameter should be passed as REF_AREA in the data request URL."""
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/metadata",
+            json={
+                "value": [
+                    {
+                        "series_description": {
+                            "idno": "WB_WDI_SP_POP_TOTL",
+                            "name": "Pop",
+                        }
+                    }
+                ]
+            },
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
+        )
+
+        captured_urls: list[str] = []
+
+        def data_callback(request: httpx.Request) -> httpx.Response | None:
+            if request.method == "GET" and request.url.path == "/data":
+                captured_urls.append(str(request.url))
+                return httpx.Response(
+                    200,
+                    json={
+                        "value": [
+                            {
+                                "REF_AREA": "KEN",
+                                "TIME_PERIOD": "2020",
+                                "OBS_VALUE": 100,
+                            },
+                            {
+                                "REF_AREA": "MAR",
+                                "TIME_PERIOD": "2020",
+                                "OBS_VALUE": 200,
+                            },
+                        ]
+                    },
                 )
             return None
 
@@ -1124,7 +1257,10 @@ class TestGetDataResilience:
         result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL", country_code="KEN;MAR")
 
         assert len(captured_urls) == 1
-        assert "REF_AREA=KEN%2CMAR" in captured_urls[0] or "REF_AREA=KEN,MAR" in captured_urls[0]
+        assert (
+            "REF_AREA=KEN%2CMAR" in captured_urls[0]
+            or "REF_AREA=KEN,MAR" in captured_urls[0]
+        )
         assert result.data is not None
 
     @pytest.mark.asyncio
@@ -1135,10 +1271,21 @@ class TestGetDataResilience:
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
+            json={
+                "value": [
+                    {
+                        "series_description": {
+                            "idno": "WB_WDI_SP_POP_TOTL",
+                            "name": "Pop",
+                        }
+                    }
+                ]
+            },
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
         httpx_mock.add_response(
             method="GET",
@@ -1293,7 +1440,9 @@ class TestDatabaseNameInMetadata:
             json=metadata_response,
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         captured_urls: list[str] = []
@@ -1303,10 +1452,20 @@ class TestDatabaseNameInMetadata:
                 captured_urls.append(str(request.url))
                 return httpx.Response(
                     200,
-                    json={"value": [
-                        {"REF_AREA": "KEN", "TIME_PERIOD": "2020", "OBS_VALUE": 100},
-                        {"REF_AREA": "MAR", "TIME_PERIOD": "2020", "OBS_VALUE": 200},
-                    ]},
+                    json={
+                        "value": [
+                            {
+                                "REF_AREA": "KEN",
+                                "TIME_PERIOD": "2020",
+                                "OBS_VALUE": 100,
+                            },
+                            {
+                                "REF_AREA": "MAR",
+                                "TIME_PERIOD": "2020",
+                                "OBS_VALUE": 200,
+                            },
+                        ]
+                    },
                 )
             return None
 
@@ -1315,7 +1474,10 @@ class TestDatabaseNameInMetadata:
         result = await get_data("WB_WDI", "WB_WDI_SP_POP_TOTL", country_code="KEN,MAR")
 
         assert len(captured_urls) == 1
-        assert "REF_AREA=KEN%2CMAR" in captured_urls[0] or "REF_AREA=KEN,MAR" in captured_urls[0]
+        assert (
+            "REF_AREA=KEN%2CMAR" in captured_urls[0]
+            or "REF_AREA=KEN,MAR" in captured_urls[0]
+        )
         assert result.data is not None
 
 
@@ -1336,11 +1498,22 @@ class TestGetDataApiUrlResilience:
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/metadata",
-            json={"value": [{"series_description": {"idno": "WB_WDI_SP_POP_TOTL", "name": "Pop"}}]},
+            json={
+                "value": [
+                    {
+                        "series_description": {
+                            "idno": "WB_WDI_SP_POP_TOTL",
+                            "name": "Pop",
+                        }
+                    }
+                ]
+            },
         )
         # Disaggregation fails
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), status_code=500,
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            status_code=500,
             text="Internal Server Error",
         )
 
@@ -1364,7 +1537,9 @@ class TestGetDataApiUrlResilience:
             json={"value": []},
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         with pytest.raises(ValueError, match="not found"):
@@ -1397,7 +1572,9 @@ class TestDatabaseNameInMetadata:
             json=metadata_response,
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         result = await get_metadata("WB_GS", "WB_GS_INDICATOR")
@@ -1429,13 +1606,13 @@ class TestDatabaseNameInMetadata:
             json=metadata_response,
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         # Only request 'name' — database_name should still be included
-        result = await get_metadata(
-            "WB_GS", "WB_GS_INDICATOR", select_fields=["name"]
-        )
+        result = await get_metadata("WB_GS", "WB_GS_INDICATOR", select_fields=["name"])
 
         assert result.indicator_metadata is not None
         assert "name" in result.indicator_metadata
@@ -1464,7 +1641,9 @@ class TestDatabaseNameInMetadata:
             json=metadata_response,
         )
         httpx_mock.add_response(
-            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"), json={"dimensions": []},
+            method="POST",
+            url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": []},
         )
 
         result = await get_metadata("UNKNOWN_DB", "UNKNOWN_DB_IND")
@@ -1679,7 +1858,9 @@ class TestDimensionsResilienceAndParsing:
         httpx_mock.add_response(
             method="POST",
             url="https://api.test.example.com/portal/v1/dimensions",
-            json={"dimensions": [{"field_name": "SEX", "field_value": [{"code": "_T"}]}]},
+            json={
+                "dimensions": [{"field_name": "SEX", "field_value": [{"code": "_T"}]}]
+            },
         )
         httpx_mock.add_response(
             method="POST",
@@ -1690,6 +1871,7 @@ class TestDimensionsResilienceAndParsing:
         # Clear the metadata cache so get_metadata does not hit the metadata cache itself,
         # forcing it to run the dimensions fetch logic.
         from data360.api import _metadata_cache, _metadata_cache_lock
+
         with _metadata_cache_lock:
             _metadata_cache.clear()
 
@@ -1708,19 +1890,25 @@ class TestDimensionsResilienceAndParsing:
         dim_reqs = [r for r in requests if "portal/v1/dimensions" in str(r.url)]
         assert len(dim_reqs) == 1
 
-
-
     @pytest.mark.asyncio
-    async def test_dimensions_api_cache_edge_cases(self, httpx_mock: pytest_httpx.HTTPXMock):
+    async def test_dimensions_api_cache_edge_cases(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
         """Verify:
         1. HTTP 500 status code propagation, and that it's NOT cached.
         2. Blank/empty response body is handled and returns empty dimensions.
         3. Concurrent calls to the same endpoint are deduplicated.
         """
         import asyncio
-        import httpx
         import json
-        from data360.api import _fetch_dimensions_with_cache, _dimensions_api_cache, _dimensions_api_cache_lock
+
+        import httpx
+
+        from data360.api import (
+            _dimensions_api_cache,
+            _dimensions_api_cache_lock,
+            _fetch_dimensions_with_cache,
+        )
 
         # --- 1. HTTP 500 Propagation and No Caching ---
         httpx_mock.add_response(

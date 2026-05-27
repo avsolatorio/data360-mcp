@@ -27,6 +27,9 @@ from .models import (
     ComparisonSnapshot,
     ComparisonTimeSeries,
     CountryComparisonResponse,
+    DatasetDescription,
+    DatasetSearchRequest,
+    DatasetSearchResponse,
     DataSummaryResponse,
     DerivedDataResponse,
     DiagnosticSummaryResponse,
@@ -48,9 +51,6 @@ from .models import (
     SearchRequest,
     SearchResponse,
     SeriesDescription,
-    DatasetSearchRequest,
-    DatasetDescription,
-    DatasetSearchResponse,
 )
 from .providers import get_database_mapping
 
@@ -109,7 +109,15 @@ _ENRICHMENT_SELECT_FIELDS = [
 # Based on a 16-database survey (see payload_analysis.md for full documentation).
 # Always-keep fields: the core data the LLM needs.
 _CORE_FIELDS = frozenset(
-    {"OBS_VALUE", "TIME_PERIOD", "REF_AREA", "REF_AREA_NAME", "country_name", "UNIT_MEASURE", "claim_id"}
+    {
+        "OBS_VALUE",
+        "TIME_PERIOD",
+        "REF_AREA",
+        "REF_AREA_NAME",
+        "country_name",
+        "UNIT_MEASURE",
+        "claim_id",
+    }
 )
 # Conditional fields: kept only when their value is non-trivial (not _T or _Z).
 # SEX/AGE/URBANISATION carry real disaggregation in WB_HCP, WB_SSGD, OECD_IDD.
@@ -200,7 +208,8 @@ async def _fetch_dimensions_raw_uncached(
     _cache_key = (database_id, indicator_id)
     try:
         dimensions_url = (
-            data360_config.dimensions_url or f"{data360_config.api_url}/portal/v1/dimensions"
+            data360_config.dimensions_url
+            or f"{data360_config.api_url}/portal/v1/dimensions"
         )
         headers = {"accept": "*/*", "Content-Type": "application/json"}
         payload = {"database_id": database_id, "indicator_id": indicator_id}
@@ -502,7 +511,9 @@ def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescri
             databases = value.get("databases", [])
             db_id = None
             if databases and isinstance(databases, list) and len(databases) > 0:
-                db_id = databases[0].get("idno") if isinstance(databases[0], dict) else None
+                db_id = (
+                    databases[0].get("idno") if isinstance(databases[0], dict) else None
+                )
 
             tp = value.get("time_period")
             time_periods = None
@@ -528,13 +539,16 @@ def _get_items_from_response(response_data: dict[str, Any]) -> list[SeriesDescri
                 "idno": value.get("idno"),
                 "name": value.get("name"),
                 "database_id": db_id or value.get("database_id"),
-                "definition_long": value.get("description") or value.get("definition_long"),
+                "definition_long": value.get("description")
+                or value.get("definition_long"),
                 "periodicity": value.get("frequency") or value.get("periodicity"),
                 "time_periods": time_periods,
                 "ref_country": value.get("ref_country"),
                 "dimensions": dimensions,
                 "metadata_link": ml or [],
-                "connected_entities": value.get("connected_entities") if isinstance(value.get("connected_entities"), list) else None,
+                "connected_entities": value.get("connected_entities")
+                if isinstance(value.get("connected_entities"), list)
+                else None,
             }
 
         if (
@@ -558,7 +572,9 @@ def _process_search_response(
     """Process API response and build SearchResponse."""
     search_response_data = {
         "items": _get_items_from_response(response_data),
-        "total_count": response_data.get("count") if "count" in response_data else response_data.get("@odata.count"),
+        "total_count": response_data.get("count")
+        if "count" in response_data
+        else response_data.get("@odata.count"),
         "offset": request.offset,
     }
     search_response_data["count"] = len(search_response_data["items"])
@@ -605,7 +621,10 @@ async def _search_raw(
         count=count,
     )
 
-    url = data360_config.search_url or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    url = (
+        data360_config.search_url
+        or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    )
     payload = {
         "site": "data360",
         "query_string": request.query,
@@ -636,7 +655,6 @@ async def _search_raw(
     except Exception as e:
         # Convert unknown exceptions to Data360MCPError and raise
         raise classify_error(e, context="search")
-
 
 
 async def _resolve_country_code(country_query: str) -> str | None:
@@ -753,7 +771,9 @@ def _enrich_search_results(
                             ref_countries.add(rc["code"])
                         elif isinstance(rc, str):
                             ref_countries.add(rc)
-                covers_country = {code: (code in ref_countries) for code in requested_codes}
+                covers_country = {
+                    code: (code in ref_countries) for code in requested_codes
+                }
 
         # Extract dimension names
         dimensions = raw.get("dimensions", [])
@@ -794,7 +814,10 @@ def _enrich_search_results(
             # Check if query matches a connected entity (SearchV3 redirect direction is reversed)
             clean_query = query.strip().upper()
             for entity in raw["connected_entities"]:
-                if isinstance(entity, dict) and entity.get("idno", "").upper() == clean_query:
+                if (
+                    isinstance(entity, dict)
+                    and entity.get("idno", "").upper() == clean_query
+                ):
                     original_idno = entity.get("idno")
                     _logger.debug(
                         "Mapped primary source %s -> %s/%s via connected_entities for query %s",
@@ -1092,7 +1115,9 @@ async def search(  # noqa: PLR0911
                 query=q,
                 limit=limit,
                 offset=offset,
-                economy_codes=[c.strip() for c in country_code.split(";")] if country_code else None,
+                economy_codes=[c.strip() for c in country_code.split(";")]
+                if country_code
+                else None,
             )
             for q in clean_queries
         ]
@@ -1229,7 +1254,9 @@ async def search(  # noqa: PLR0911
             query=query,  # type: ignore[arg-type]  # validated non-None above
             limit=limit,
             offset=offset,
-            economy_codes=[c.strip() for c in country_code.split(";")] if country_code else None,
+            economy_codes=[c.strip() for c in country_code.split(";")]
+            if country_code
+            else None,
         )
     except PydanticValidationError as e:
         return EnrichedSearchResponse(error=str(e))
@@ -1350,7 +1377,11 @@ async def _build_multi_query_response(
     enriched_lists = []
     for i, (q, raw_result) in enumerate(zip(clean_queries, raw_results)):
         code_for_query = per_query_codes[i]
-        if isinstance(raw_result, Exception) or raw_result.error or not raw_result.items:
+        if (
+            isinstance(raw_result, Exception)
+            or raw_result.error
+            or not raw_result.items
+        ):
             enriched_lists.append((None, None))
             continue
 
@@ -1486,7 +1517,10 @@ async def search_datasets(
     except PydanticValidationError as e:
         return DatasetSearchResponse(error=str(e))
 
-    url = data360_config.search_url or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    url = (
+        data360_config.search_url
+        or f"{data360_config.api_url}/portal/v1/public_data360_search"
+    )
     payload = {
         "site": "data360",
         "query_string": request.query,
@@ -1518,7 +1552,11 @@ async def search_datasets(
                 )
             )
 
-        total_count = response_data.get("count") or response_data.get("@odata.count") or len(items)
+        total_count = (
+            response_data.get("count")
+            or response_data.get("@odata.count")
+            or len(items)
+        )
 
         has_more = False
         next_offset = None
@@ -1740,9 +1778,7 @@ async def get_disaggregation(
     queried_countries = await _resolve_queried_countries(required_country)
 
     try:
-        dimensions_json = await _fetch_dimensions_with_cache(
-            database_id, indicator_id
-        )
+        dimensions_json = await _fetch_dimensions_with_cache(database_id, indicator_id)
         raw_data = _parse_dimensions_response(dimensions_json)
         # Filter out _Z values and format response
         valid_dimensions = _get_valid_disaggregations(raw_data)
@@ -1821,6 +1857,40 @@ async def get_comp_breakdown_dim_names(
     return dim_names
 
 
+_DEFAULT_TIME_WINDOW_YEARS = 5
+
+
+def _resolve_time_range(
+    start_year: int | None,
+    end_year: int | None,
+) -> tuple[int, int]:
+    """Resolve inclusive [start_year, end_year] for Data API timePeriodFrom/To.
+
+    - Neither bound: last ``_DEFAULT_TIME_WINDOW_YEARS`` calendar years through today.
+    - Only ``end_year``: same-width window ending at ``end_year``.
+    - Only ``start_year``: from ``start_year`` through the current calendar year.
+    - Both: use as given (swapped if reversed).
+    """
+    from datetime import datetime  # noqa: PLC0415
+
+    current_year = datetime.now().year
+    span = _DEFAULT_TIME_WINDOW_YEARS - 1
+
+    if start_year is None and end_year is None:
+        return current_year - span, current_year
+
+    if start_year is None:
+        return end_year - span, end_year
+
+    if end_year is None:
+        return start_year, max(start_year, current_year)
+
+    if start_year > end_year:
+        return end_year, start_year
+
+    return start_year, end_year
+
+
 async def get_data(
     database_id: str,
     indicator_id: str,
@@ -1849,8 +1919,10 @@ async def get_data(
             Use value None to request all values for a dimension (e.g. {"SEX": None}). When REF_AREA
             is omitted or None, the Data API returns all geographic series—including regional aggregates
             (e.g. EAS, EMU)—mixed with member economies.
-        start_year: Optional start year (inclusive). Defaults to last 5 years if both start/end omitted.
-        end_year: Optional end year (inclusive). Defaults to current year if both start/end omitted.
+        start_year: Optional start year (inclusive). With neither bound, defaults to last 5 years.
+            With only ``end_year``, defaults to a 5-year window ending at ``end_year``.
+            With only ``start_year``, defaults through the current calendar year.
+        end_year: Optional end year (inclusive). See ``start_year`` for partial-bound behavior.
         limit: Maximum records per page (default 50, max 100).
         offset: Number of records to skip for pagination (default 0).
         ref_area_filter: When ``member_economies_only``, drop rows whose ``REF_AREA`` is not an FMR
@@ -1886,14 +1958,16 @@ async def get_data(
     # Cap limit to prevent token overflow
     limit = min(limit, 100)
 
-    # Smart time defaults: if no time range specified, default to last 5 years
-    if start_year is None and end_year is None:
-        from datetime import datetime  # noqa: PLC0415
-
-        current_year = datetime.now().year
-        end_year = current_year
-        start_year = current_year - 4  # Last 5 years
-        _logger.info(f"Smart default: Applied time range {start_year}-{end_year}")
+    resolved_start, resolved_end = _resolve_time_range(start_year, end_year)
+    if (start_year, end_year) != (resolved_start, resolved_end):
+        _logger.info(
+            "Resolved time range %s-%s from start_year=%s end_year=%s",
+            resolved_start,
+            resolved_end,
+            start_year,
+            end_year,
+        )
+    start_year, end_year = resolved_start, resolved_end
 
     # Validate arguments using Pydantic model
     try:
@@ -1914,8 +1988,8 @@ async def get_data(
     params: dict[str, Any] = {
         "DATABASE_ID": database_id,
         "INDICATOR": indicator_id,
-        "timePeriodFrom": str(start_year),
-        "timePeriodTo": str(end_year),
+        "timePeriodFrom": start_year,
+        "timePeriodTo": end_year,
         "skip": offset,
         # Request one extra to detect if there are more results
         # Note: API uses "top" not "$top" (OData style would be URL-encoded to %24top which API ignores)
@@ -2019,6 +2093,7 @@ async def get_data(
             raw_data = raw_data[:limit]
 
         from .providers import get_codelist_manager  # noqa: PLC0415
+
         _cm = get_codelist_manager()
         await _cm._ensure_extdataportal_loaded()
         for row in raw_data:
@@ -3092,7 +3167,6 @@ async def rank_countries(
                 f"{best_coverage}/{total_requested} countries."
             )
 
-
     # Build ranking from selected year
     year_data = year_country_map.get(ranking_year, {})
     unit_measure = None
@@ -3292,7 +3366,9 @@ async def compare_countries(
     elif common_years:
         snap_year = common_years[-1]  # Latest common year
         n_countries = sum(
-            1 for c in codes if c in country_year_map and snap_year in country_year_map[c]
+            1
+            for c in codes
+            if c in country_year_map and snap_year in country_year_map[c]
         )
         year_selection_note = (
             f"Latest year with data for all compared countries: {snap_year} "
@@ -3303,7 +3379,9 @@ async def compare_countries(
         snap_year = max(all_years) if all_years else None
         if snap_year:
             n_countries = sum(
-                1 for c in codes if c in country_year_map and snap_year in country_year_map[c]
+                1
+                for c in codes
+                if c in country_year_map and snap_year in country_year_map[c]
             )
             year_selection_note = (
                 f"Latest year with data (partial coverage): {snap_year} "
