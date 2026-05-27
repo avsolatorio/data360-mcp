@@ -49,6 +49,7 @@ async def _search_indicators(
     query_groups: list[dict[str, Any]] | None = None,
     result_layout: str = "merged",
     dedupe: bool = True,
+    database: str | None = None,
 ) -> Any:
     """Search for Data360 indicators with enriched metadata for selection.
 
@@ -64,6 +65,7 @@ async def _search_indicators(
         query_groups: Grouped queries with specific country scopes. Example: [{'queries': ['GDP per capita'], 'country': 'Kenya'}].
         result_layout: Mode to return results: "merged" (flat, deduped list of indicators) or "by_query" (indicators grouped by search query).
         dedupe: De-duplicate indicators across query results.
+        database: Optional database name or ID to filter search results (e.g. "wdi", "wgi", "World Development Indicators").
     """
     return await data360_api.search(
         query=query,
@@ -74,6 +76,7 @@ async def _search_indicators(
         query_groups=query_groups,
         result_layout=result_layout,
         dedupe=dedupe,
+        database=database,
     )
 
 
