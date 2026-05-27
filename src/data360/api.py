@@ -116,6 +116,7 @@ _CORE_FIELDS = frozenset(
         "REF_AREA_NAME",
         "country_name",
         "UNIT_MEASURE",
+        "UNIT_MEASURE_NAME",
         "claim_id",
     }
 )
@@ -1372,9 +1373,14 @@ async def search(  # noqa: PLR0911
             )
         )
 
+    name_map = None
+    if country_code:
+        name_map = await _resolve_country_names([c.strip() for c in country_code.split(";") if c.strip()])
+
     return EnrichedSearchResponse(
         indicators=indicators,
         required_country=country_code,
+        country_names=name_map,
         # Map pagination fields from underlying search result
         count=search_result.count,
         total_count=search_result.total_count,
@@ -1517,6 +1523,12 @@ async def _build_multi_query_response(
     all_codes = sorted({c for c in per_query_codes if c})
     response_country = ";".join(all_codes) if all_codes else None
 
+    # Resolve all individual codes from all queries
+    individual_codes = set()
+    for code in all_codes:
+        individual_codes.update(c.strip() for c in code.split(";") if c.strip())
+    name_map = await _resolve_country_names(list(individual_codes)) if individual_codes else None
+
     if result_layout == "merged":
         merged_indicators: list[EnrichedIndicator] = [
             ind for g in groups for ind in g.indicators
@@ -1538,6 +1550,7 @@ async def _build_multi_query_response(
             result_layout="merged",
             queries=clean_queries,
             required_country=response_country,
+            country_names=name_map,
             total_candidates=total_candidates,
             deduplicated_count=deduplicated_count if dedupe else None,
         )
@@ -1547,6 +1560,7 @@ async def _build_multi_query_response(
             result_layout="by_query",
             queries=clean_queries,
             required_country=response_country,
+            country_names=name_map,
             total_candidates=total_candidates,
             deduplicated_count=deduplicated_count if dedupe else None,
         )
@@ -2160,6 +2174,11 @@ async def get_data(
                 label = _cm.get_label("REF_AREA", str(ref_area))
                 if label and label != str(ref_area):
                     row["REF_AREA_NAME"] = label
+            unit_measure = row.get("UNIT_MEASURE")
+            if unit_measure:
+                unit_label = _cm.get_label("UNIT_MEASURE", str(unit_measure))
+                if unit_label and unit_label != str(unit_measure):
+                    row["UNIT_MEASURE_NAME"] = unit_label
 
         # Promote COMMENT_TS to metadata (repeats identically per row)
         if raw_data and api_metadata is not None:
@@ -2513,21 +2532,19 @@ async def _fetch_all_pages(
 
 
 async def _resolve_country_names(codes: list[str]) -> dict[str, str]:
-    """Batch-resolve country codes to display names in a single codelist call.
+    """Batch-resolve country codes to display names.
 
-    Uses find_codelist_value's native comma-separated query support to resolve
-    all codes in one call. Silently returns an empty dict on any error since
-    country names are optional enrichment — the codes themselves are always valid.
+    Uses the in-memory CodelistManager to lookup human-readable country names
+    from the REF_AREA codelist. Silently returns empty names on any error.
     """
-    from .providers import find_codelist_value  # noqa: PLC0415
+    from .providers import get_codelist_manager  # noqa: PLC0415
 
     if not codes:
         return {}
     try:
-        batch_query = ",".join(codes)
-        results = await find_codelist_value("REF_AREA", batch_query, limit=1)
-        # find_value returns one best match per comma-separated part
-        return {r["id"]: r.get("name", r["id"]) for r in results}
+        _cm = get_codelist_manager()
+        await _cm._ensure_extdataportal_loaded()
+        return {code: _cm.get_label("REF_AREA", code) for code in codes}
     except Exception:
         return {}
 
@@ -2932,7 +2949,12 @@ async def summarize_data(
     # Extract unit_measure from first row
     unit_measure = None
     if data_response.data:
-        unit_measure = data_response.data[0].get("UNIT_MEASURE")
+        raw_unit = data_response.data[0].get("UNIT_MEASURE")
+        if raw_unit:
+            from .providers import get_codelist_manager  # noqa: PLC0415
+            _cm = get_codelist_manager()
+            await _cm._ensure_extdataportal_loaded()
+            unit_measure = _cm.get_label("UNIT_MEASURE", str(raw_unit))
 
     # Group rows by the specified dimensions
     raw_field_names = [_GROUPBY_FIELD_MAP[c.lower()] for c in group_by]
@@ -3228,7 +3250,12 @@ async def rank_countries(
     year_data = year_country_map.get(ranking_year, {})
     unit_measure = None
     if data_response.data:
-        unit_measure = data_response.data[0].get("UNIT_MEASURE")
+        raw_unit = data_response.data[0].get("UNIT_MEASURE")
+        if raw_unit:
+            from .providers import get_codelist_manager  # noqa: PLC0415
+            _cm = get_codelist_manager()
+            await _cm._ensure_extdataportal_loaded()
+            unit_measure = _cm.get_label("UNIT_MEASURE", str(raw_unit))
 
     # Batch-resolve country names in a single call
     name_map = await _resolve_country_names(resolved_codes)
@@ -3401,9 +3428,14 @@ async def compare_countries(
     # Batch-resolve country names in a single call
     name_map = await _resolve_country_names(codes)
 
-    unit_measure = (
-        data_response.data[0].get("UNIT_MEASURE") if data_response.data else None
-    )
+    unit_measure = None
+    if data_response.data:
+        raw_unit = data_response.data[0].get("UNIT_MEASURE")
+        if raw_unit:
+            from .providers import get_codelist_manager  # noqa: PLC0415
+            _cm = get_codelist_manager()
+            await _cm._ensure_extdataportal_loaded()
+            unit_measure = _cm.get_label("UNIT_MEASURE", str(raw_unit))
 
     # Determine snapshot year
     all_years = set()
@@ -3585,6 +3617,7 @@ async def compare_countries(
         time_series=ts_response,
         metadata=data_response.metadata,
         unit_measure=unit_measure,
+        country_names=name_map,
     )
 
 

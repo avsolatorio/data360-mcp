@@ -57,6 +57,8 @@ export const data360SearchToolResultSchema = z
     indicators: z.array(enrichedIndicatorSchema),
     /** Resolved 3-letter country code used for coverage checks (e.g. "KEN"). */
     required_country: z.string().nullable().optional(),
+    /** Resolved country names mapping codes to display names. */
+    country_names: z.record(z.string(), z.string()).nullable().optional(),
     /** Error message if the search failed; otherwise null/absent. */
     error: z.string().nullable().optional(),
     /** Total indicators available (before page limit). */
@@ -118,6 +120,8 @@ export const data360MultiQuerySearchToolResultSchema = z
     queries: z.array(z.string()),
     /** Resolved country code(s) shared across all sub-queries. */
     required_country: z.string().nullable().optional(),
+    /** Resolved country names mapping codes to display names. */
+    country_names: z.record(z.string(), z.string()).nullable().optional(),
     /** Total indicators found before deduplication. */
     total_candidates: z.number(),
     /** Number of duplicates removed (merged layout only). */
