@@ -60,15 +60,14 @@ class DatabaseManager:
         return self._cache
 
     def resolve_database_ids(self, query: str | None) -> list[str]:
-        """Resolve database search terms (comma or semicolon separated) to database IDs from the cache.
+        """Resolve database search terms (semicolon separated) to database IDs from the cache.
 
         Matches by exact ID, exact name, substring of ID, or substring of name.
         Raises ValueError if any term cannot be resolved.
         """
         if not query:
             return []
-        import re
-        tokens = [t.strip() for t in re.split(r'[,;]', query) if t.strip()]
+        tokens = [t.strip() for t in query.split(';') if t.strip()]
         resolved_ids = []
         for token in tokens:
             resolved = self._resolve_single_database_id(token)
