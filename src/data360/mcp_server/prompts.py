@@ -34,12 +34,11 @@ Do not answer with guesses. Do not stop after describing a plan.
 
 ### Operating loop (repeat until done)
 1) If you need indicators or statistical series → call data360_search_indicators.
-   - **CRITICAL: Search query is required**: You must always provide a search topic/term in `query`, `queries`, or `query_groups`. Do not omit it or pass empty values, even when filtering by database.
-   - **CRITICAL: Parameter Selection Decision Tree**: If the user request involves multiple topics, databases, or country scopes, do NOT make separate sequential search tool calls. Combine them into a single call:
-     - **Exactly 1 Topic** (e.g. "life expectancy") for any number of countries → use `query` (e.g. `query="life expectancy"`) + `required_country`.
-     - **Multiple Topics, Same Geographic Scope** (e.g. "life expectancy and GDP per capita" for Japan) → you MUST use the `queries` list parameter (e.g. `queries=["life expectancy", "GDP per capita"]`) + `required_country`. Do NOT make multiple tool calls. Do NOT pass multiple topics as a single `query` string.
-     - **Different Topics targeting Different Country/Regional Scopes** (e.g. "life expectancy for Japan, but GDP and mortality rate for Korea") → you MUST use the `query_groups` list parameter. Example: `query_groups=[{"queries": ["life expectancy"], "country": "JPN"}, {"queries": ["GDP", "mortality rate"], "country": "KOR"}]`.
-     - **Multiple Databases**: Use a semicolon-separated string for `database` (e.g., `database="pip; wdi"`).
+   - **CRITICAL: Search query is required**: You must always provide a search topic/term in `query` (e.g. `query="poverty"`), `queries`, or `query_groups`. Do not omit it or pass empty values, even when filtering by database.
+   - **CRITICAL: Consolidate search requests**: If the user request involves multiple topics, databases, or country scopes, do NOT make separate sequential search tool calls. Combine them into a single call:
+     - **Multiple search terms**: Use the `queries` parameter (e.g., `queries=["population", "poverty"]`) instead of `query`.
+     - **Multiple databases**: Use a semicolon-separated string for `database` (e.g., `database="pip; wdi"`).
+     - **Different countries per query**: Use `query_groups` only if each query targets a different country. Example: `query_groups=[{"queries": ["GDP"], "country": "KEN"}, {"queries": ["inflation"], "country": "UGA"}]`.
      Example: `data360_search_indicators(queries=["population", "poverty"], database="pip; wdi")`
    - **Database filter**: If the user's request specifies or strongly implies a specific database (e.g. "World Development Indicators", "WDI", "Worldwide Governance Indicators", "WGI"), pass it to the `database` argument (e.g. `database="wdi"`). Multiple databases can be filtered at once by passing a semicolon-separated string (e.g. `database="mpo; pip; lpgd"`).
    If you need high-level dataset catalogs or source databases (e.g. Findex) → call data360_search_datasets.
