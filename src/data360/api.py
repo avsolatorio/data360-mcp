@@ -599,6 +599,7 @@ async def _search_raw(
     offset: int = 0,
     count: bool = True,
     economy_codes: list[str] | None = None,
+    database: str | None = None,
 ) -> SearchResponse:
     """Internal: Raw search for data360 indicators using the World Bank Data360 API.
 
@@ -610,10 +611,30 @@ async def _search_raw(
         offset: Offset of the current page
         count: Whether to include total count in response
         economy_codes: Optional list of economy codes to filter the search results
+        database: Optional database filter name or ID
 
     Returns:
         SearchResponse with raw API results.
     """
+    database_names = []
+    if database:
+        from .providers import get_database_manager
+        db_mgr = get_database_manager()
+        try:
+            db_ids = db_mgr.resolve_database_ids(database)
+            mapping = await db_mgr.get_mapping()
+            for db_id in db_ids:
+                db_name = mapping.get(db_id)
+                if db_name:
+                    database_names.append(db_name)
+        except ValueError as e:
+            return SearchResponse(
+                error=str(e),
+                items=[],
+                total_count=0,
+                count=0,
+            )
+
     request = SearchRequest(
         query=query,
         limit=limit,
@@ -635,6 +656,8 @@ async def _search_raw(
     }
     if economy_codes:
         payload["economy_codes"] = economy_codes
+    if database_names:
+        payload["database_names"] = database_names
 
     mcp_error: Data360MCPError | None = None
     try:
@@ -942,6 +965,7 @@ async def search(  # noqa: PLR0911
     query_groups: list[QueryGroup] | None = None,
     result_layout: str = "merged",
     dedupe: bool = True,
+    database: str | None = None,
     # The following parameters are accepted for robustness; LLM clients sometimes
     # hallucinate them from the internal SearchRequest model.
     # n_results/skip are treated as aliases for limit/offset when the primary
@@ -1042,6 +1066,29 @@ async def search(  # noqa: PLR0911
     if queries is not None and not any(q and q.strip() for q in queries):
         _logger.debug("queries=%r normalised to None (all entries empty)", queries)
         queries = None
+    if query_groups is not None and not query_groups:
+        _logger.debug("query_groups=%r normalised to None (empty list)", query_groups)
+        query_groups = None
+
+    if query_groups is not None:
+        parsed_groups = []
+        for g in query_groups:
+            if isinstance(g, dict):
+                try:
+                    parsed_groups.append(QueryGroup(**g))
+                except Exception as e:
+                    return MultiQuerySearchResponse(
+                        error=f"Invalid QueryGroup structure: {e}",
+                        queries=[],
+                    )
+            elif isinstance(g, QueryGroup):
+                parsed_groups.append(g)
+            else:
+                return MultiQuerySearchResponse(
+                    error="query_groups must be a list of QueryGroup objects or dictionaries.",
+                    queries=[],
+                )
+        query_groups = parsed_groups
 
     active_modes = sum(
         (
@@ -1056,7 +1103,7 @@ async def search(  # noqa: PLR0911
         )
     if active_modes == 0:
         return EnrichedSearchResponse(
-            error="One of 'query', 'queries', or 'query_groups' must be provided."
+            error="Missing search term. You must provide exactly one of 'query', 'queries', or 'query_groups' to search for indicators, even when filtering by database."
         )
 
     # --- Multi-query path (queries= flat list) ---
@@ -1118,6 +1165,7 @@ async def search(  # noqa: PLR0911
                 economy_codes=[c.strip() for c in country_code.split(";")]
                 if country_code
                 else None,
+                database=database,
             )
             for q in clean_queries
         ]
@@ -1203,6 +1251,7 @@ async def search(  # noqa: PLR0911
                 limit=limit,
                 offset=offset,
                 economy_codes=[c.strip() for c in code.split(";")] if code else None,
+                database=database,
             )
             for q, code in zip(clean_queries, per_query_codes)
         ]
@@ -1257,6 +1306,7 @@ async def search(  # noqa: PLR0911
             economy_codes=[c.strip() for c in country_code.split(";")]
             if country_code
             else None,
+            database=database,
         )
     except PydanticValidationError as e:
         return EnrichedSearchResponse(error=str(e))

@@ -59,6 +59,68 @@ class DatabaseManager:
         self._ensure_background_sync()
         return self._cache
 
+    def resolve_database_ids(self, query: str | None, strict: bool = False) -> list[str]:
+        """Resolve database search terms (semicolon separated) to database IDs from the cache.
+
+        Matches by exact ID, exact acronym suffix, exact name, or substring (if not strict).
+        Raises ValueError if any term cannot be resolved.
+        """
+        if not query:
+            return []
+        tokens = [t.strip() for t in query.split(';') if t.strip()]
+        resolved_ids = []
+        for token in tokens:
+            resolved = self._resolve_single_database_id(token, strict=strict)
+            if resolved:
+                if resolved not in resolved_ids:
+                    resolved_ids.append(resolved)
+            else:
+                raise ValueError(f"Database '{token}' could not be resolved.")
+        return resolved_ids
+
+    def _resolve_single_database_id(self, query: str, strict: bool = False) -> str | None:
+        query_lower = query.lower().strip()
+
+        # 1. Exact match on database ID (key)
+        for db_id in self._cache:
+            if query_lower == db_id.lower():
+                return db_id
+
+        # 2. Exact match on database ID acronym suffix (e.g. "wdi" matches "wb_wdi")
+        for db_id in self._cache:
+            parts = db_id.split('_')
+            if len(parts) > 1 and query_lower == parts[-1].lower():
+                return db_id
+
+        # 3. Exact match on database name (value)
+        for db_id, name in self._cache.items():
+            if query_lower == name.lower():
+                return db_id
+
+        if not strict:
+            # 4. Substring match on database ID
+            for db_id in self._cache:
+                if query_lower in db_id.lower():
+                    return db_id
+
+            # 5. Substring match on database name
+            for db_id, name in self._cache.items():
+                if query_lower in name.lower():
+                    return db_id
+
+        return None
+
+    def resolve_database_id(self, query: str | None) -> str | None:
+        """Resolve a database search term to a single database ID from the cache.
+
+        Deprecated: use resolve_database_ids instead.
+        """
+        try:
+            ids = self.resolve_database_ids(query)
+            return ids[0] if ids else None
+        except ValueError:
+            return None
+
     # ------------------------------------------------------------------
     # Background sync machinery
     # ------------------------------------------------------------------

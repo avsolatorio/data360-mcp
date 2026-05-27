@@ -34,6 +34,14 @@ Do not answer with guesses. Do not stop after describing a plan.
 
 ### Operating loop (repeat until done)
 1) If you need indicators or statistical series → call data360_search_indicators.
+   - **CRITICAL: Search query is required**: You must always provide a search topic/term in `query`, `queries`, or `query_groups`. Do not omit it or pass empty values, even when filtering by database.
+   - **CRITICAL: Parameter Selection Decision Tree**: To optimize search efficiency and prevent sequential round-trips, always default to using the `queries` or `query_groups` parameters when a request involves multiple topics or scopes:
+     - **Exactly 1 Topic** (e.g. "life expectancy") for any number of countries → use `query` (e.g. `query="life expectancy"`) + `required_country`. Do NOT combine multiple topics with 'and' or 'or' here.
+     - **Multiple Topics, Same Geographic Scope** (e.g. "life expectancy and GDP per capita" for Japan) → you MUST use the `queries` list parameter (e.g. `queries=["life expectancy", "GDP per capita"]`) + `required_country`. Do NOT make multiple tool calls. Do NOT pass multiple topics combined as a single `query` string (e.g. `query="life expectancy and GDP per capita"` is invalid).
+     - **Different Topics targeting Different Country/Regional Scopes** (e.g. "life expectancy for Japan, but GDP and mortality rate for Korea") → you MUST use the `query_groups` list parameter. Example: `query_groups=[{"queries": ["life expectancy"], "country": "JPN"}, {"queries": ["GDP", "mortality rate"], "country": "KOR"}]`.
+     - **Multiple Databases**: Use a semicolon-separated string for `database` (e.g., `database="pip; wdi"`).
+     Example: `data360_search_indicators(queries=["population", "poverty"], database="pip; wdi")`
+   - **Database filter**: If the user's request specifies or strongly implies a specific database (e.g. "World Development Indicators", "WDI", "Worldwide Governance Indicators", "WGI"), pass it to the `database` argument (e.g. `database="wdi"`). Multiple databases can be filtered at once by passing a semicolon-separated string (e.g. `database="mpo; pip; lpgd"`).
    If you need high-level dataset catalogs or source databases (e.g. Findex) → call data360_search_datasets.
    - **CRITICAL**: The search API is sensitive to special characters. Strip parentheses `(`, `)` and currency signs like `$` from your query (e.g. search for "GDP per capita current US", NOT "GDP per capita (current US$)").
    - **CRITICAL** when search returns multiple results: STOP — do not loop every row.
@@ -322,6 +330,7 @@ def indicator_search(
     query: str,
     country: str = "",
     required_dimensions: str = "",
+    database: str = "",
 ) -> str:
     """Guide LLM to find and select the best indicator for a query.
 
@@ -329,16 +338,18 @@ def indicator_search(
         query: Search query (e.g., "unemployment rate", "poverty")
         country: Optional country to validate (e.g., "Kenya")
         required_dimensions: Optional comma-separated dimensions (e.g., "SEX,AGE")
+        database: Optional database filter (e.g., "wdi", "World Development Indicators"). Multiple databases can be filtered at once by separating them with a semicolon (e.g. "pip; lpgd; sgi").
     """
     dims_list = required_dimensions.split(",") if required_dimensions else []
+    db_arg = f',\n       database="{database}"' if database else ""
 
     return f"""To find the best indicator for '{query}':
 
  1. Use enriched search:
-   data360_search_indicators(
-       query="{query}",
-       limit=5
-   )
+    data360_search_indicators(
+        query="{query}",
+        limit=5{db_arg}
+    )
 
 2. For promising candidates, validate with get_disaggregation:
    - Check TIME_PERIOD for actual years (may have gaps)
@@ -408,6 +419,7 @@ def country_data(
     country: str,
     start_year: str = "",
     end_year: str = "",
+    database: str = "",
 ) -> str:
     """Guide LLM through end-to-end data retrieval for a country.
 
@@ -416,7 +428,9 @@ def country_data(
         country: Country name or comma-separated list (e.g., "Kenya" or "Kenya, Uganda")
         start_year: Optional start year
         end_year: Optional end year
+        database: Optional database filter (e.g., "wdi", "World Development Indicators"). Multiple databases can be filtered at once by separating them with a semicolon (e.g. "pip; lpgd; sgi").
     """
+    db_arg = f',\n    database="{database}"' if database else ""
     return f"""To get {query} data for {country}:
 
 <thinking>
@@ -434,7 +448,7 @@ data360_find_codelist_value(codelist_type="REF_AREA", query="{country}")
 data360_search_indicators(
     query="{query}",
     limit=5,
-    required_country="{country}" # Pass the list string as-is
+    required_country="{country}"{db_arg} # Pass the list string as-is
 )
 
 **Step 3: Validate availability & Dimensions**
