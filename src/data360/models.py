@@ -230,6 +230,9 @@ class EnrichedSearchResponse(MCPPagedResponse):
         description="Resolved country code(s). Semicolon-separated for multiple countries "
         "(e.g. 'KEN' or 'KEN;GHA').",
     )
+    country_names: dict[str, str] | None = Field(
+        None, description="Resolved names of requested countries"
+    )
     error: str | None = Field(None, description="Error message if search failed")
 
 
@@ -306,6 +309,9 @@ class MultiQuerySearchResponse(BaseModel):
         None,
         description="Resolved country code(s) used for all sub-queries. "
         "Semicolon-separated for multiple countries (e.g. 'KEN;GHA').",
+    )
+    country_names: dict[str, str] | None = Field(
+        None, description="Resolved names of requested countries"
     )
     total_candidates: int = Field(
         0,
@@ -732,6 +738,7 @@ class CountryComparisonResponse(BaseModel):
     metadata: dict[str, Any] | None = Field(None, description="Indicator metadata")
     unit_measure: str | None = Field(None, description="Unit of measurement")
     error: str | None = Field(None, description="Error message if request failed")
+    country_names: dict[str, str] | None = Field(None, description="Resolved names of compared countries")
 
     def to_compact(self) -> dict[str, Any]:
         """Return a slimmed dict for LLM context.
@@ -745,6 +752,7 @@ class CountryComparisonResponse(BaseModel):
             "unit": self.unit_measure,
             "snapshot": self.snapshot.to_compact() if self.snapshot else None,
             "time_series": self.time_series.to_compact() if self.time_series else None,
+            "country_names": self.country_names,
             "error": self.error,
         }
 

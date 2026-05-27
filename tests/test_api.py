@@ -1429,6 +1429,50 @@ class TestGetDataResilience:
         assert "KEN" in areas
 
 
+class TestCountryNamesInSearch:
+    """Tests that search results carry resolved country_names mapping."""
+
+    @pytest.mark.asyncio
+    async def test_search_resolves_country_names(
+        self, httpx_mock: pytest_httpx.HTTPXMock, monkeypatch
+    ):
+        mock_response = {
+            "count": 1,
+            "results": [
+                {
+                    "idno": "WB_GS_SP_POP_TOTL",
+                    "name": "Population, total",
+                    "databases": [{"idno": "WB_GS"}],
+                    "description": "Total population",
+                    "dimensions": [],
+                }
+            ],
+        }
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+            json=mock_response,
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url="https://api.test.example.com/portal/v1/dimensions",
+            json={"dimensions": []},
+        )
+
+        # Mock CodelistManager.get_label to return custom names
+        from data360.providers import CodelistManager
+        monkeypatch.setattr(
+            CodelistManager,
+            "get_label",
+            lambda self, dim, code: "Japan" if code == "JPN" else "Philippines" if code == "PHL" else code
+        )
+
+        result = await search("population", required_country="JPN;PHL")
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert result.country_names == {"JPN": "Japan", "PHL": "Philippines"}
+
+
 class TestDatabaseNameInSearch:
     """Tests that search results carry the correct database_name for each indicator."""
 

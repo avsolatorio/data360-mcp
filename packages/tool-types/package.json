@@ -1,6 +1,6 @@
 {
   "name": "@data360/tool-types",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "TypeScript types and runtime guards for Data360 MCP tool JSON payloads.",
   "type": "module",
   "main": "./dist/index.js",

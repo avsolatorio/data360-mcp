@@ -705,6 +705,19 @@ def _make_group_note(group_code: str, info: dict) -> str:
     )
 
 
+_UNIT_MEASURE_FALLBACKS = {
+    "ZS": "Percent",
+    "PS": "Persons",
+    "USD": "US Dollars",
+    "LCU": "Local Currency Unit",
+    "DY": "Days",
+    "YR": "Years",
+    "MR": "Meters",
+    "KG": "Kilograms",
+    "TN": "Tonnes",
+}
+
+
 class CodelistManager:
     """Unified manager for all Data360 codelists.
 
@@ -1023,6 +1036,8 @@ class CodelistManager:
             Human-readable label or the original ``code`` if not found.
         """
         key = self._resolve_extdataportal_key(dimension)
+        if key == "UNIT_MEASURE" and code in _UNIT_MEASURE_FALLBACKS:
+            return _UNIT_MEASURE_FALLBACKS[code]
         return self._extdataportal.get(key, {}).get(code, code)
 
     def get_dimension_labels(self, dimension: str) -> dict[str, str]:
