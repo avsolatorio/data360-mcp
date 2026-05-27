@@ -1092,7 +1092,7 @@ async def search(  # noqa: PLR0911
         )
     if active_modes == 0:
         return EnrichedSearchResponse(
-            error="One of 'query', 'queries', or 'query_groups' must be provided."
+            error="Missing search term. You must provide exactly one of 'query', 'queries', or 'query_groups' to search for indicators, even when filtering by database."
         )
 
     # --- Multi-query path (queries= flat list) ---
