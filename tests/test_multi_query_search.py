@@ -748,6 +748,35 @@ class TestQueryGroups:
         # Only 2 unique countries resolved despite 3 queries
         assert set(resolve_calls) == {"Kenya", "Morocco"}
 
+    @pytest.mark.asyncio
+    async def test_query_groups_dict_coercion(self):
+        """Passing raw dictionaries for query_groups should be coerced to QueryGroup instances and succeed."""
+        gdp_resp = _make_search_response(idno="WB_WDI_GDP", name="GDP")
+        gini_resp = _make_search_response(idno="WB_WDI_GINI", name="Gini")
+        mock_raw = AsyncMock(side_effect=[gdp_resp, gini_resp])
+
+        async def _resolve(country):
+            return {"Kenya": "KEN", "Morocco": "MAR"}.get(country)
+
+        with (
+            patch("data360.api._search_raw", new=mock_raw),
+            patch("data360.api._resolve_country_code", new=AsyncMock(side_effect=_resolve)),
+        ):
+            result = await search(
+                query_groups=[
+                    {"queries": ["GDP"], "country": "Kenya"},
+                    {"queries": ["Gini"], "country": "Morocco"},
+                ],
+                result_layout="by_query",
+            )
+
+        assert isinstance(result, MultiQuerySearchResponse)
+        assert result.error is None
+        assert result.results is not None
+        assert len(result.results) == 2
+        assert result.results[0].country_code == "KEN"
+        assert result.results[1].country_code == "MAR"
+
 
 # ---------------------------------------------------------------------------
 # Semicolon delimiter + covers_country dict
