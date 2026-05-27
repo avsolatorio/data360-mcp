@@ -103,6 +103,17 @@ async def test_mcp_prompts_render_successfully() -> None:
     assert "['SEX', 'AGE']" in res_search[0].content.text
     assert 'disaggregation_filters={"REF_AREA": "KEN"}' in res_search[0].content.text
 
+    # Test indicator_search with database parameter
+    res_search_db = await prompts["indicator_search"].render(
+        arguments={
+            "query": "poverty rate",
+            "country": "Kenya",
+            "required_dimensions": "SEX,AGE",
+            "database": "wdi",
+        }
+    )
+    assert 'database="wdi"' in res_search_db[0].content.text
+
     # 4. indicator_details
     assert "indicator_details" in prompts
     res_details = await prompts["indicator_details"].render(
@@ -127,6 +138,18 @@ async def test_mcp_prompts_render_successfully() -> None:
     )
     assert "GDP growth" in res_country[0].content.text
     assert "Kenya, Uganda" in res_country[0].content.text
+
+    # Test country_data with database parameter
+    res_country_db = await prompts["country_data"].render(
+        arguments={
+            "query": "GDP growth",
+            "country": "Kenya, Uganda",
+            "start_year": "2018",
+            "end_year": "2023",
+            "database": "wdi",
+        }
+    )
+    assert 'database="wdi"' in res_country_db[0].content.text
 
     # 6. k360_research_compiler
     assert "k360_research_compiler" in prompts
@@ -158,3 +181,16 @@ async def test_mcp_tools_registered() -> None:
     """Verify that the search_datasets tool is registered on the MCP server."""
     tools = await mcp.get_tools()
     assert "data360_search_datasets" in tools
+
+
+@pytest.mark.asyncio
+async def test_search_indicators_tool_schema() -> None:
+    """Verify that the search_indicators tool has the database parameter in its schema."""
+    tools = await mcp.get_tools()
+    assert "data360_search_indicators" in tools
+    tool = tools["data360_search_indicators"]
+    properties = tool.parameters.get("properties", {})
+    assert "database" in properties, "database parameter not found in tool schema"
+    db_schema = properties["database"]
+    assert "anyOf" in db_schema
+    assert any(opt.get("type") == "string" for opt in db_schema["anyOf"])
