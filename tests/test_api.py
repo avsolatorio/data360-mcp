@@ -438,7 +438,7 @@ class TestSearch:
         with patch("data360.providers.get_database_manager") as mock_mgr_getter:
             from unittest.mock import MagicMock
             mock_mgr = MagicMock()
-            mock_mgr.resolve_database_id.return_value = "WB_WDI"
+            mock_mgr.resolve_database_ids.return_value = ["WB_WDI"]
             mock_mgr.get_mapping = AsyncMock(return_value={"WB_WDI": "World Development Indicators"})
             mock_mgr_getter.return_value = mock_mgr
 
@@ -451,13 +451,67 @@ class TestSearch:
         assert result.error is None
 
     @pytest.mark.asyncio
+    async def test_search_with_multiple_database_filters(
+        self, httpx_mock: pytest_httpx.HTTPXMock
+    ):
+        """Test search with multiple database filters that get resolved."""
+        captured_payloads = []
+
+        def capture_callback(request: httpx.Request) -> httpx.Response:
+            captured_payloads.append(json.loads(request.content))
+            return httpx.Response(
+                200,
+                json={
+                    "count": 1,
+                    "results": [
+                        {
+                            "idno": "WB_WDI_SP_POP_TOTL",
+                            "name": "Population, total",
+                            "databases": [{"idno": "WB_WDI"}],
+                            "description": "Total population",
+                            "dimensions": [],
+                        }
+                    ],
+                },
+            )
+
+        httpx_mock.add_callback(
+            capture_callback,
+            method="POST",
+            url="https://api.test.example.com/portal/v1/public_data360_search",
+        )
+
+        from unittest.mock import patch, AsyncMock
+        with patch("data360.providers.get_database_manager") as mock_mgr_getter:
+            from unittest.mock import MagicMock
+            mock_mgr = MagicMock()
+            mock_mgr.resolve_database_ids.return_value = ["WB_WDI", "WB_WGI"]
+            mock_mgr.get_mapping = AsyncMock(return_value={
+                "WB_WDI": "World Development Indicators",
+                "WB_WGI": "Worldwide Governance Indicators"
+            })
+            mock_mgr_getter.return_value = mock_mgr
+
+            result = await search("population", database="wdi, wgi")
+
+        assert isinstance(result, EnrichedSearchResponse)
+        assert len(result.indicators) == 1
+        assert len(captured_payloads) == 1
+        assert captured_payloads[0].get("database_names") == [
+            "World Development Indicators",
+            "Worldwide Governance Indicators"
+        ]
+        assert result.error is None
+
+    @pytest.mark.asyncio
     async def test_search_with_unresolved_database_filter(self):
         """Test search with a database filter that cannot be resolved returns an error."""
         from unittest.mock import patch
         with patch("data360.providers.get_database_manager") as mock_mgr_getter:
-            from unittest.mock import MagicMock
+            from unittest.mock import MagicMock, AsyncMock
             mock_mgr = MagicMock()
-            mock_mgr.resolve_database_id.return_value = None
+            mock_mgr.resolve_database_ids.side_effect = ValueError("Database 'InvalidDB' could not be resolved.")
+            mock_mgr.get_mapping = AsyncMock(return_value={})
             mock_mgr_getter.return_value = mock_mgr
 
             result = await search("population", database="InvalidDB")
