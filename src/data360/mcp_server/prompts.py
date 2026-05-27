@@ -40,7 +40,7 @@ Do not answer with guesses. Do not stop after describing a plan.
      - **Multiple databases**: Use a semicolon-separated string for `database` (e.g., `database="pip; wdi"`).
      - **Different countries per query**: Use `query_groups` only if each query targets a different country. Example: `query_groups=[{"queries": ["GDP"], "country": "KEN"}, {"queries": ["inflation"], "country": "UGA"}]`.
      Example: `data360_search_indicators(queries=["population", "poverty"], database="pip; wdi")`
-   - **Database filter**: If the user's request specifies or strongly implies a specific database (e.g. "World Development Indicators", "WDI", "Worldwide Governance Indicators", "WGI"), pass it to the `database` argument (e.g. `database="wdi"`). Multiple databases can be filtered at once by passing a semicolon-separated string (e.g. `database="mpo; pip; lpgd"`).
+   - **Database filter**: If the user's request specifies or strongly implies a specific database (e.g. "World Development Indicators", "WDI", "Worldwide Governance Indicators", "WGI"), pass it to the `database` argument (e.g. `database="wdi"`). Multiple databases can be filtered at once by passing a semicolon-separated string (e.g. `database="mpo; pip; lpgd"`). Do NOT pass database IDs to the `required_country` parameter.
    If you need high-level dataset catalogs or source databases (e.g. Findex) → call data360_search_datasets.
    - **CRITICAL**: The search API is sensitive to special characters. Strip parentheses `(`, `)` and currency signs like `$` from your query (e.g. search for "GDP per capita current US", NOT "GDP per capita (current US$)").
    - **CRITICAL** when search returns multiple results: STOP — do not loop every row.
@@ -337,7 +337,7 @@ def indicator_search(
         query: Search query (e.g., "unemployment rate", "poverty")
         country: Optional country to validate (e.g., "Kenya")
         required_dimensions: Optional comma-separated dimensions (e.g., "SEX,AGE")
-        database: Optional database filter (e.g., "wdi", "World Development Indicators"). Multiple databases can be filtered at once by separating them with a semicolon (e.g. "pip; lpgd; sgi").
+        database: Optional database filter (e.g., "wdi", "World Development Indicators"). Multiple databases can be filtered at once by separating them with a semicolon (e.g. "pip; lpgd; sgi"). Do NOT pass database IDs to the 'country' or 'required_country' parameters.
     """
     dims_list = required_dimensions.split(",") if required_dimensions else []
     db_arg = f',\n       database="{database}"' if database else ""
@@ -427,7 +427,7 @@ def country_data(
         country: Country name or comma-separated list (e.g., "Kenya" or "Kenya, Uganda")
         start_year: Optional start year
         end_year: Optional end year
-        database: Optional database filter (e.g., "wdi", "World Development Indicators"). Multiple databases can be filtered at once by separating them with a semicolon (e.g. "pip; lpgd; sgi").
+        database: Optional database filter (e.g., "wdi", "World Development Indicators"). Multiple databases can be filtered at once by separating them with a semicolon (e.g. "pip; lpgd; sgi"). Do NOT pass database IDs to the 'country' or 'required_country' parameters.
     """
     db_arg = f',\n    database="{database}"' if database else ""
     return f"""To get {query} data for {country}:
