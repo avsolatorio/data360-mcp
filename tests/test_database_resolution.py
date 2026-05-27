@@ -38,12 +38,18 @@ class TestDatabaseResolution:
         db_mgr._cache = {
             "WB_WDI": "World Development Indicators",
             "WB_GS": "Gender Statistics",
-            "WB_HNP": "Health Nutrition and Population Statistics"
+            "WB_HNP": "Health Nutrition and Population Statistics",
+            "WB_ESG": "Environment, Social & Governance (ESG)"
         }
 
-        assert db_mgr.resolve_database_ids("wb_wdi, wb_gs") == ["WB_WDI", "WB_GS"]
+        assert db_mgr.resolve_database_ids("wb_wdi; wb_gs") == ["WB_WDI", "WB_GS"]
         assert db_mgr.resolve_database_ids("world development indicators; Gender") == ["WB_WDI", "WB_GS"]
         assert db_mgr.resolve_database_ids("  WDI ;  gender statistics ") == ["WB_WDI", "WB_GS"]
+
+        # Test database containing a comma is resolved as a single unit
+        assert db_mgr.resolve_database_ids("Environment, Social & Governance (ESG)") == ["WB_ESG"]
+        assert db_mgr.resolve_database_ids("wdi; Environment, Social & Governance (ESG)") == ["WB_WDI", "WB_ESG"]
+
         with pytest.raises(ValueError) as exc:
-            db_mgr.resolve_database_ids("wdi, nonexistent_db")
+            db_mgr.resolve_database_ids("wdi; nonexistent_db")
         assert "nonexistent_db" in str(exc.value)
