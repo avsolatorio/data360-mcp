@@ -1043,29 +1043,6 @@ async def search(  # noqa: PLR0911
     if queries is not None and not any(q and q.strip() for q in queries):
         _logger.debug("queries=%r normalised to None (all entries empty)", queries)
         queries = None
-    if query_groups is not None and not query_groups:
-        _logger.debug("query_groups=%r normalised to None (empty list)", query_groups)
-        query_groups = None
-
-    if query_groups is not None:
-        parsed_groups = []
-        for g in query_groups:
-            if isinstance(g, dict):
-                try:
-                    parsed_groups.append(QueryGroup(**g))
-                except Exception as e:
-                    return MultiQuerySearchResponse(
-                        error=f"Invalid QueryGroup structure: {e}",
-                        queries=[],
-                    )
-            elif isinstance(g, QueryGroup):
-                parsed_groups.append(g)
-            else:
-                return MultiQuerySearchResponse(
-                    error="query_groups must be a list of QueryGroup objects or dictionaries.",
-                    queries=[],
-                )
-        query_groups = parsed_groups
 
     active_modes = sum(
         (
