@@ -1034,41 +1034,6 @@ async def search(  # noqa: PLR0911
     """
 
     # --- Validation ---
-    # Guard: Detect if database IDs/acronyms were mistakenly passed as country codes
-    if required_country:
-        from .providers import get_database_manager
-        db_mgr = get_database_manager()
-        country_tokens = [c.strip() for c in required_country.split(";") if c.strip()]
-        for token in country_tokens:
-            try:
-                db_ids = db_mgr.resolve_database_ids(token, strict=True)
-                if db_ids:
-                    err_msg = (
-                        f"Token '{token}' in required_country resolved to database ID(s) {db_ids}. "
-                        "Did you mean to pass it to the 'database' parameter instead of 'required_country'?"
-                    )
-                    if queries is not None:
-                        return MultiQuerySearchResponse(error=err_msg, queries=queries)
-                    return EnrichedSearchResponse(error=err_msg)
-            except ValueError:
-                pass
-
-    if query_groups:
-        from .providers import get_database_manager
-        db_mgr = get_database_manager()
-        for i, group in enumerate(query_groups):
-            if group.country:
-                country_tokens = [c.strip() for c in group.country.split(";") if c.strip()]
-                for token in country_tokens:
-                    try:
-                        db_ids = db_mgr.resolve_database_ids(token, strict=True)
-                        if db_ids:
-                            return EnrichedSearchResponse(
-                                error=f"Token '{token}' in query_groups[{i}].country resolved to database ID(s) {db_ids}. "
-                                      "Did you mean to pass it to the 'database' parameter instead?"
-                            )
-                    except ValueError:
-                        pass
     # Normalise LLM-hallucinated empty defaults before mode detection.
     # When a client sends query="" or queries=[] alongside the real parameter
     # (e.g. query_groups), treat these as "not provided" — identical to None.
