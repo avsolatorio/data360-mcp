@@ -492,7 +492,7 @@ class TestSearch:
             })
             mock_mgr_getter.return_value = mock_mgr
 
-            result = await search("population", database="wdi; wgi")
+            result = await search("population", database="wdi, wgi")
 
         assert isinstance(result, EnrichedSearchResponse)
         assert len(result.indicators) == 1
