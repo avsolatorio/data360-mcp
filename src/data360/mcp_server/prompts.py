@@ -34,7 +34,6 @@ Do not answer with guesses. Do not stop after describing a plan.
 
 ### Operating loop (repeat until done)
 1) If you need indicators or statistical series → call data360_search_indicators.
-   - **CRITICAL: Search query is required**: You must always provide a search topic/term in `query` (e.g. `query="poverty"`), `queries`, or `query_groups`. Do not omit it or pass empty values, even when filtering by database.
    - **Database filter**: If the user's request specifies or strongly implies a specific database (e.g. "World Development Indicators", "WDI", "Worldwide Governance Indicators", "WGI"), pass it to the `database` argument (e.g. `database="wdi"`). Multiple databases can be filtered at once by passing a semicolon-separated string (e.g. `database="mpo; pip; lpgd"`). Do NOT pass database IDs to the `required_country` parameter.
    If you need high-level dataset catalogs or source databases (e.g. Findex) → call data360_search_datasets.
    - **CRITICAL**: The search API is sensitive to special characters. Strip parentheses `(`, `)` and currency signs like `$` from your query (e.g. search for "GDP per capita current US", NOT "GDP per capita (current US$)").
