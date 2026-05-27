@@ -158,3 +158,16 @@ async def test_mcp_tools_registered() -> None:
     """Verify that the search_datasets tool is registered on the MCP server."""
     tools = await mcp.get_tools()
     assert "data360_search_datasets" in tools
+
+
+@pytest.mark.asyncio
+async def test_search_indicators_tool_schema() -> None:
+    """Verify that the search_indicators tool has the database parameter in its schema."""
+    tools = await mcp.get_tools()
+    assert "data360_search_indicators" in tools
+    tool = tools["data360_search_indicators"]
+    properties = tool.parameters.get("properties", {})
+    assert "database" in properties, "database parameter not found in tool schema"
+    db_schema = properties["database"]
+    assert "anyOf" in db_schema
+    assert any(opt.get("type") == "string" for opt in db_schema["anyOf"])
