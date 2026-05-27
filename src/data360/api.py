@@ -604,16 +604,15 @@ async def _search_raw(
     if database:
         from .providers import get_database_manager
         db_mgr = get_database_manager()
-        try:
-            db_ids = db_mgr.resolve_database_ids(database)
+        db_id = db_mgr.resolve_database_id(database)
+        if db_id:
             mapping = await db_mgr.get_mapping()
-            for db_id in db_ids:
-                db_name = mapping.get(db_id)
-                if db_name:
-                    database_names.append(db_name)
-        except ValueError as e:
+            db_name = mapping.get(db_id)
+            if db_name:
+                database_names = [db_name]
+        else:
             return SearchResponse(
-                error=str(e),
+                error=f"Database '{database}' could not be resolved to a known database ID.",
                 items=[],
                 total_count=0,
                 count=0,
