@@ -76,6 +76,7 @@
               <li><a href="#capabilities">Capabilities</a></li>
               <li><a href="#tools">Tools</a></li>
               <li><a href="#resources">Resources</a></li>
+              <li><a href="#prompts">Prompts</a></li>
               <li><a href="#architecture">Architecture</a></li>
               <li><a href="#mcp-apps">MCP Apps</a></li>
               <li><a href="#packages">Client libraries</a></li>
@@ -232,15 +233,19 @@
                 Charts and visualizations
               </h2>
               <p class="section__intro">
-                For charts, the agent calls visualization tools. The server loads
-                the series from Data360 and returns a Vega-Lite spec and chart URL.
-                For tables or numbers in text, it uses the data tools listed under
-                Technical reference.
+                For charts, the agent calls
+                <code>data360_get_viz_spec</code> (single indicator) or
+                <code>data360_get_multi_indicator_viz_spec</code> (2–4 indicators).
+                The server loads series from Data360 and returns Vega-Lite JSON plus a
+                chart URL. For tables or numbers in text, use
+                <code>data360_get_data</code> or the aggregation tools listed under
+                Technical reference—they are separate calls.
               </p>
               <div class="viz-panel">
                 <p class="viz-panel__lead">
-                  <strong>Chart flow:</strong> Search for the indicator, confirm
-                  available years and countries, then request the chart.
+                  <strong>Chart flow:</strong> Search for the indicator, call
+                  <code>data360_get_disaggregation</code> for valid years and
+                  breakdowns, then request the chart spec.
                 </p>
                 <ul>
                   <li>
@@ -357,6 +362,16 @@
                     columns for LLM consumption.
                   </p>
                 </li>
+                <li class="feature-card">
+                  <h3>Aggregation helpers</h3>
+                  <p>
+                    <code>data360_summarize_data</code>,
+                    <code>data360_rank_countries</code>, and
+                    <code>data360_compare_countries</code> return compact summaries
+                    instead of raw series when the question is about trends, rankings,
+                    or cross-country comparison.
+                  </p>
+                </li>
               </ul>
             </section>
           </div>
@@ -433,9 +448,12 @@
             >
               <h3 id="tools-heading" class="section__title">MCP tools</h3>
               <p class="section__intro">
-                Typical order: search, optional disaggregation, then get_data or
-                get_viz_spec.
+                Typical order: search (or search datasets), optional disaggregation,
+                then get_data, aggregation tools, or viz specs. Do not guess
+                <code>database_id</code> or <code>indicator_id</code>—obtain them
+                from search results first.
               </p>
+              <h4 class="section__title section__title--sub">Discovery and data</h4>
               <div class="table-wrap">
                 <table>
                   <thead>
@@ -448,31 +466,41 @@
                     <tr>
                       <td><code>data360_search_indicators</code></td>
                       <td>
-                        Search with enriched metadata; use
-                        <code>required_country</code> for coverage. Returns
+                        Search indicators with enriched metadata. Use
+                        <code>required_country</code> for coverage checks. Supports
+                        single <code>query</code>, multi-topic
+                        <code>queries</code>, or scoped
+                        <code>query_groups</code>. Returns
                         <code>covers_country</code>, <code>latest_data</code>,
                         <code>dimensions</code>.
                       </td>
                     </tr>
                     <tr>
-                      <td><code>data360_get_data</code></td>
+                      <td><code>data360_search_datasets</code></td>
                       <td>
-                        Fetch data points with filters (country, time period, SEX,
-                        AGE, etc.).
+                        Search Data360 dataset catalogs (e.g. WDI, Findex) when the
+                        user asks about sources or databases by name.
                       </td>
                     </tr>
                     <tr>
                       <td><code>data360_get_metadata</code></td>
                       <td>
-                        Indicator metadata; use <code>select_fields</code> to limit
-                        payload.
+                        Indicator metadata and optional disaggregation preview; use
+                        <code>select_fields</code> to limit payload.
                       </td>
                     </tr>
                     <tr>
                       <td><code>data360_get_disaggregation</code></td>
                       <td>
                         Available filter values (countries, years, dimensions) per
-                        indicator.
+                        indicator. Call before <code>get_data</code> or chart tools.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_get_data</code></td>
+                      <td>
+                        Fetch observations with country, year, and dimension filters
+                        (SEX, AGE, URBANISATION, etc.). Paginated.
                       </td>
                     </tr>
                     <tr>
@@ -483,24 +511,76 @@
                       </td>
                     </tr>
                     <tr>
+                      <td><code>data360_expand_country_group</code></td>
+                      <td>
+                        Expand a REF_AREA group (region, income, lending) into
+                        constituent country codes (e.g. <code>SAS</code>,
+                        <code>LIC</code>).
+                      </td>
+                    </tr>
+                    <tr>
                       <td><code>data360_list_indicators</code></td>
-                      <td>List all indicators for a database.</td>
+                      <td>List all indicator IDs for a database.</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_get_data_api_url</code></td>
+                      <td>Low-level: build a direct Data360 data API URL.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h4 class="section__title section__title--sub">
+                Analysis and visualization
+              </h4>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Tool</th>
+                      <th scope="col">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>data360_summarize_data</code></td>
+                      <td>
+                        Summary statistics grouped by dimensions—use for trend or
+                        change-over-time questions without pulling full series.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_rank_countries</code></td>
+                      <td>
+                        Rank countries by indicator value for a year (top/bottom
+                        performers, leaderboards).
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_compare_countries</code></td>
+                      <td>
+                        Compare 2–8 countries on one indicator (snapshot or aligned
+                        time series).
+                      </td>
                     </tr>
                     <tr>
                       <td><code>data360_get_viz_spec</code></td>
                       <td>
-                        Fetch a series and return a Vega-Lite spec and chart URL.
-                        Call get_disaggregation first for valid filters. Does not
-                        consume get_data output.
+                        Vega-Lite spec and chart URL for one indicator. Call
+                        <code>get_disaggregation</code> first. Fetches its own data;
+                        does not consume <code>get_data</code> output.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_get_multi_indicator_viz_spec</code></td>
+                      <td>
+                        Chart comparing 2–4 indicators (scatter, dual-axis line,
+                        etc.).
                       </td>
                     </tr>
                     <tr>
                       <td><code>data360_get_supported_chart_types</code></td>
                       <td>List supported chart types and data requirements.</td>
-                    </tr>
-                    <tr>
-                      <td><code>data360_get_data_api_url</code></td>
-                      <td>Low-level: direct Data360 data API URL helper.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -511,14 +591,22 @@
               </h4>
               <pre class="workflow-box">Tables / numbers in text:
 1. data360_search_indicators(query, required_country="Kenya")
-2. data360_get_disaggregation(database_id, indicator_id)  — optional; years and dimensions
-3. data360_get_data(database_id, indicator_id, filters)
+2. data360_get_disaggregation(database_id, indicator_id)  — years and dimensions
+3. data360_get_data(database_id, indicator_id, country_code="KEN", ...)
 
-Charts:
+Rankings / comparisons (prefer over raw get_data when possible):
 1. data360_search_indicators(...)
-2. data360_get_disaggregation(...)  — recommended before get_viz_spec
-3. data360_get_viz_spec(database_id, indicator_id, country_code, start_year, end_year, ...)
-   Fetches data internally; does not take get_data output.</pre>
+2. data360_get_disaggregation(...)
+3. data360_rank_countries(...) or data360_compare_countries(...)
+
+Charts (single indicator):
+1. data360_search_indicators(...)
+2. data360_get_disaggregation(...)
+3. data360_get_viz_spec(database_id, indicator_id, country_code, ...)
+
+Charts (multiple indicators):
+1. data360_search_indicators(...) for each topic
+2. data360_get_multi_indicator_viz_spec(indicator_ids=[...], ...)</pre>
             </section>
 
             <section
@@ -528,9 +616,10 @@ Charts:
             >
               <h3 id="resources-heading" class="section__title">MCP resources</h3>
               <p class="section__intro">
-                Read-only URIs for prompts and reference data. Load
-                <code>data360://system-prompt</code> in the system message for most
-                integrations.
+                Read-only URIs for prompts and reference data. Most integrations load
+                <code>data360://system-prompt</code> and
+                <code>data360://context</code> in the system message; larger
+                references can be fetched on demand.
               </p>
               <div class="table-wrap">
                 <table>
@@ -543,19 +632,40 @@ Charts:
                   <tbody>
                     <tr>
                       <td><code>data360://system-prompt</code></td>
-                      <td>Workflow and tool-use guidance for the system message</td>
+                      <td>
+                        <strong>Required.</strong> Workflow and tool-use guidance for
+                        the system message.
+                      </td>
                     </tr>
                     <tr>
                       <td><code>data360://context</code></td>
-                      <td>Runtime context (e.g. current date/year) for time-aware queries</td>
+                      <td>
+                        <strong>Recommended.</strong> Runtime context (current date
+                        and year) for time-aware queries.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360://agent-recipe</code></td>
+                      <td>
+                        Host integration recipe for LangGraph /
+                        <code>data360-mcp-agent</code> (resource + prompt
+                        composition).
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360://k360-narrative-style</code></td>
+                      <td>
+                        Optional markdown response contract for staged narrative
+                        renderers.
+                      </td>
                     </tr>
                     <tr>
                       <td><code>data360://databases</code></td>
-                      <td>Available databases (WB_WDI, WB_SSGD, …)</td>
+                      <td>Available databases (live mapping from Data360)</td>
                     </tr>
                     <tr>
                       <td><code>data360://codelists</code></td>
-                      <td>Codelist reference (REF_AREA, SEX, AGE, …)</td>
+                      <td>Codelist reference (REF_AREA, SEX, AGE, UNIT_MEASURE, …)</td>
                     </tr>
                     <tr>
                       <td><code>data360://metadata-fields</code></td>
@@ -576,6 +686,64 @@ Charts:
                   </tbody>
                 </table>
               </div>
+            </section>
+
+            <section
+              id="prompts"
+              class="section section--in-technical"
+              aria-labelledby="prompts-heading"
+            >
+              <h3 id="prompts-heading" class="section__title">MCP prompts</h3>
+              <p class="section__intro">
+                Parameterized playbooks registered with
+                <code>prompts/list</code> and <code>prompts/get</code>. Hosts fetch
+                a prompt by name and prepend the returned text to the conversation
+                for a specific user turn.
+              </p>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Prompt</th>
+                      <th scope="col">When to use</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>indicator_search</code></td>
+                      <td>Pick one indicator among search hits</td>
+                    </tr>
+                    <tr>
+                      <td><code>indicator_details</code></td>
+                      <td>Methodology, definition, or limitation questions</td>
+                    </tr>
+                    <tr>
+                      <td><code>country_data</code></td>
+                      <td>One country + theme → data and optional chart</td>
+                    </tr>
+                    <tr>
+                      <td><code>gate_classifier</code></td>
+                      <td>Decide in/out of scope before the tool loop</td>
+                    </tr>
+                    <tr>
+                      <td><code>thematic_to_data</code></td>
+                      <td>Rewrite a broad development question into a data task</td>
+                    </tr>
+                    <tr>
+                      <td><code>k360_research_compiler</code></td>
+                      <td>Build a JSON content packet from a tool trace</td>
+                    </tr>
+                    <tr>
+                      <td><code>k360_narrative</code></td>
+                      <td>Convert a content packet into narrative markdown</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="section__intro section__intro--after-table">
+                See <code>data360://agent-recipe</code> for recommended composition
+                order with LangGraph and <code>data360-mcp-agent</code>.
+              </p>
             </section>
 
             <section
@@ -749,7 +917,7 @@ Charts:
                 </li>
                 <li>
                   <strong><code>@data360/mcp-ui</code></strong> — React components
-                  for MCP tool output (Vega charts, tool parsers).
+                  for MCP tool output (Vega charts, search results).
                   <a
                     href="https://github.com/worldbank/data360-mcp/tree/main/packages/mcp-ui"
                     rel="noopener noreferrer"
@@ -762,6 +930,26 @@ Charts:
                   counterpart for host-embeddable chart UI.
                   <a
                     href="https://github.com/worldbank/data360-mcp/tree/main/packages/mcp-ui-angular"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    >Package README</a
+                  >
+                </li>
+                <li>
+                  <strong><code>@data360/mcp-viz-core</code></strong> — Shared
+                  Vega-Lite prep and World Bank chart theme.
+                  <a
+                    href="https://github.com/worldbank/data360-mcp/tree/main/packages/mcp-viz-core"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    >Package README</a
+                  >
+                </li>
+                <li>
+                  <strong><code>@data360/tool-types</code></strong> — Zod schemas
+                  and parsers for MCP tool JSON contracts.
+                  <a
+                    href="https://github.com/worldbank/data360-mcp/tree/main/packages/tool-types"
                     rel="noopener noreferrer"
                     target="_blank"
                     >Package README</a
@@ -915,18 +1103,22 @@ Charts:
                   </h4>
                   <ol class="connect-step__list">
                     <li>
-                      Subscribe to <code>data360://system-prompt</code> in your
-                      agent system context (required for reliable tool use).
+                      Load <code>data360://system-prompt</code> in your agent system
+                      context (required for reliable tool use).
                     </li>
                     <li>
-                      Optionally load <code>data360://search-usage</code> and
-                      <code>data360://codelists</code> for discovery and code
-                      resolution.
+                      Load <code>data360://context</code> for current date/year
+                      (recommended).
                     </li>
                     <li>
-                      Tables: search → get_disaggregation (optional) → get_data.
-                      Charts: search → get_disaggregation → get_viz_spec (fetches
-                      its own data).
+                      Optionally load <code>data360://search-usage</code>,
+                      <code>data360://codelists</code>, or
+                      <code>data360://agent-recipe</code> for LangGraph hosts.
+                    </li>
+                    <li>
+                      Tables: search → get_disaggregation → get_data (or aggregation
+                      tools). Charts: search → get_disaggregation → get_viz_spec /
+                      get_multi_indicator_viz_spec.
                     </li>
                   </ol>
                 </article>
