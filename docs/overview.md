@@ -13,14 +13,18 @@ The Data360 MCP Server bridges the gap between Large Language Models and the Wor
 - Researchers and analysts who want to integrate World Bank data into LLM workflows
 - Teams building data-driven applications on top of the MCP ecosystem
 
-For a complete guide — including example questions, charts, architecture, MCP Apps, and connection steps — see the [project site](https://worldbank.github.io/data360-mcp).
+For a complete guide — including example questions, charts, architecture, MCP Apps, prompts, and connection steps — see the [project site](https://worldbank.github.io/data360-mcp).
 
 ## Key Features
 
 - **Indicator discovery** — search hundreds of indicators with metadata and country coverage checks
+- **Dataset search** — find Data360 source databases by name
 - **Rich metadata** — retrieve methodology, definitions, limitations, and statistical concepts
 - **Time-series data** — query historical data with filters for country, time period, sex, age, and urbanization
+- **Aggregation tools** — summarize, rank, and compare countries without raw series payloads
+- **Charts** — Vega-Lite specs for single- and multi-indicator visualizations
 - **LLM resources** — built-in system prompts, codelists, and chain-of-thought reasoning guidance
+- **MCP prompts** — parameterized playbooks for search, country data, gating, and narrative flows
 - **Agent-safe design** — composable tools with guardrails that prevent common LLM data errors
 
 ## Getting Started
@@ -42,14 +46,36 @@ The server starts at `http://localhost:8000/mcp`.
 
 | Tool | What it does |
 |---|---|
-| `data360_search_indicators` | Search indicators with country coverage check |
-| `data360_get_data` | Fetch time-series data with filters |
+| `data360_search_indicators` | Search indicators with coverage checks; supports multi-query |
+| `data360_search_datasets` | Search dataset catalogs |
+| `data360_get_data` | Fetch time-series observations |
 | `data360_get_metadata` | Get indicator methodology and definitions |
 | `data360_get_disaggregation` | Check available filter values |
 | `data360_find_codelist_value` | Resolve names to standard codes |
+| `data360_expand_country_group` | Expand region/income group codes to countries |
 | `data360_list_indicators` | List all indicators in a database |
-| `data360_get_viz_spec` | Generate Vega-Lite chart specs |
+| `data360_summarize_data` | Summary statistics by dimension |
+| `data360_rank_countries` | Rank countries for a year |
+| `data360_compare_countries` | Compare 2–8 countries on one indicator |
+| `data360_get_viz_spec` | Generate Vega-Lite chart for one indicator |
+| `data360_get_multi_indicator_viz_spec` | Chart comparing 2–4 indicators |
 | `data360_get_supported_chart_types` | List supported chart types |
+| `data360_get_data_api_url` | Build a direct Data360 data API URL |
+
+## Available Resources
+
+| Resource | Role |
+|---|---|
+| `data360://system-prompt` | **Required** — tool workflow and reasoning guidance |
+| `data360://context` | **Recommended** — current date/year |
+| `data360://agent-recipe` | LangGraph / host integration recipe |
+| `data360://k360-narrative-style` | Optional narrative formatting contract |
+| `data360://databases` | Database list |
+| `data360://codelists` | Code reference |
+| `data360://metadata-fields` | Field routing map |
+| `data360://data-filters` | Filter usage guidance |
+| `data360://data-schema` | Column definitions |
+| `data360://search-usage` | Search examples |
 
 ## Available Databases
 
@@ -59,14 +85,11 @@ The server supports all databases on the Data360 Platform, including:
 - **WB_SSGD** — Social Sustainability and Global Database
 - **WB_POVERTY** — Poverty and inequality indicators
 - **IPC_IPC** — International Poverty Comparison
-- And many more accessible via `data360_list_indicators`
+- And many more accessible via `data360_list_indicators` or `data360://databases`
 
 ## Agent Integration
 
-For agent integration, retrieve the `data360://system-prompt` resource and include it in your system prompt. It provides:
-- Chain-of-thought reasoning templates for data queries
-- Step-by-step workflow guidance
-- Filter do's and don'ts
+Load `data360://system-prompt` and `data360://context` into your system message. Optionally fetch MCP prompts (`indicator_search`, `country_data`, `gate_classifier`, etc.) for specific user turns.
 
 See the [Connect your agent](https://worldbank.github.io/data360-mcp#connect) section on the project site for Cursor, Claude Desktop, LangGraph, and custom client setup.
 
