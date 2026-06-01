@@ -29,7 +29,7 @@ For a complete guide — including example questions, charts, architecture, MCP 
 
 ## Getting Started
 
-See the [README](https://github.com/worldbank/data360-mcp#readme) for full installation and usage instructions.
+See the [README](https://github.com/worldbank/data360-mcp/tree/dev#readme) for full installation and usage instructions.
 
 **Quick start:**
 ```bash
@@ -96,9 +96,9 @@ See the [Connect your agent](https://worldbank.github.io/data360-mcp#connect) se
 ## Development
 
 For local development setup, testing, and architecture details, see:
-- [DEVELOPMENT.md](https://github.com/worldbank/data360-mcp/blob/main/DEVELOPMENT.md)
-- [docs/architecture-data360-mcp.md](https://github.com/worldbank/data360-mcp/blob/main/docs/architecture-data360-mcp.md)
-- [docs/mcp-apps-implementation-notes.md](https://github.com/worldbank/data360-mcp/blob/main/docs/mcp-apps-implementation-notes.md)
+- [DEVELOPMENT.md](https://github.com/worldbank/data360-mcp/blob/dev/DEVELOPMENT.md)
+- [docs/architecture-data360-mcp.md](https://github.com/worldbank/data360-mcp/blob/dev/docs/architecture-data360-mcp.md)
+- [docs/mcp-apps-implementation-notes.md](https://github.com/worldbank/data360-mcp/blob/dev/docs/mcp-apps-implementation-notes.md)
 
 ## Contact
 
@@ -113,4 +113,4 @@ The Rider is purely procedural: it reserves all privileges and immunities enjoye
 World Bank, without adding restrictions to the MIT permissions. Please review both files
 before using, distributing or contributing.
 
-See [LICENSE](https://github.com/worldbank/data360-mcp/blob/main/LICENSE) and [WB-IGO-RIDER.md](https://github.com/worldbank/data360-mcp/blob/main/WB-IGO-RIDER.md).
+See [LICENSE](https://github.com/worldbank/data360-mcp/blob/dev/LICENSE) and [WB-IGO-RIDER.md](https://github.com/worldbank/data360-mcp/blob/dev/WB-IGO-RIDER.md).
