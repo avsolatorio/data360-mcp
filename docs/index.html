@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Data360 MCP — ask development questions with confidence: World Bank indicators, charts, and agent-safe tools."
+      content="Data360 MCP server — World Bank indicators, metadata, and charts for Cursor, VS Code, and custom agents."
     />
     <title>Data360 MCP Server · World Bank</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,468 +19,1064 @@
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
 
-    <header class="site-header">
-      <div class="site-header__inner">
-        <nav class="site-nav" aria-label="Primary">
-          <a class="site-brand" href="#">Data360 MCP</a>
-          <ul class="site-nav__links">
-            <li><a href="#value">What you can do</a></li>
-            <li><a href="#questions">Example questions</a></li>
-            <li><a href="#charts">Charts</a></li>
-            <li><a href="#technical">Technical</a></li>
-            <li><a href="#start">Install</a></li>
-          </ul>
-        </nav>
-
-        <div class="hero">
-          <span class="hero__eyebrow">World Bank · Development Data Group</span>
-          <h1>Ask development questions—get answers grounded in real data</h1>
-          <p class="hero__lead">
-            Power assistants and agents with trustworthy World Bank indicators:
-            poverty, growth, gender, climate, health, and more—pulled from the
-            <a href="https://data360.worldbank.org">Data360 Platform</a>, not
-            invented by the model.
-          </p>
-          <p class="hero__sub">
-            Built on the
-            <a href="https://modelcontextprotocol.io">Model Context Protocol (MCP)</a>
-            so your chatbot or IDE can search, validate, retrieve series, and
-            even build charts from the same pipeline.
-          </p>
-          <div class="hero__actions">
-            <a class="btn btn--primary" href="#questions">See example questions</a>
-            <a class="btn btn--ghost" href="#start">Install the server</a>
+    <header class="site-topbar">
+      <div class="site-topbar__inner">
+        <span class="site-brand">Data360 MCP</span>
+        <ul class="site-topbar__links">
+          <li><a href="#connect">Connect</a></li>
+          <li>
             <a
-              class="btn btn--ghost"
               href="https://github.com/worldbank/data360-mcp"
-              >Source code</a
+              rel="noopener noreferrer"
+              target="_blank"
+              >GitHub</a
             >
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <main id="main">
-      <div class="section--user">
-        <section id="value" class="section" aria-labelledby="value-heading">
-          <h2 id="value-heading" class="section__title">What this enables for you</h2>
-          <p class="section__intro">
-            Whether you are prototyping a policy assistant or embedding data in
-            an internal tool, the server is designed so the model can
-            <strong>look up</strong> facts instead of guessing numbers or mixing
-            units.
-          </p>
-          <ul class="outcome-grid">
-            <li class="outcome-card">
-              <h3>Country and regional insight</h3>
-              <p>
-                Compare economies, track SDG-related series, and see whether an
-                indicator actually covers the places you care about.
-              </p>
-            </li>
-            <li class="outcome-card">
-              <h3>Trends over time</h3>
-              <p>
-                Request years or periods you need—then reason over consistent
-                time series instead of a vague “recent” snapshot.
-              </p>
-            </li>
-            <li class="outcome-card">
-              <h3>Definitions you can cite</h3>
-              <p>
-                Pull methodology, limitations, and field meanings so answers can
-                explain <em>what</em> the number measures—not only its value.
-              </p>
-            </li>
-            <li class="outcome-card">
-              <h3>Charts when it helps</h3>
-              <p>
-                Turn suitable series into visualization specs (for example
-                Vega-Lite) so assistants can show trends, not only tables.
-              </p>
-            </li>
-          </ul>
-        </section>
-
-        <section id="questions" class="section" aria-labelledby="questions-heading">
-          <h2 id="questions-heading" class="section__title">
-            Questions your assistant can support
-          </h2>
-          <p class="section__intro">
-            The tools are built for natural, analyst-style questions. Your agent
-            resolves countries to standard codes, picks indicators, applies
-            filters (sex, age, urbanization, etc.), and checks coverage before
-            answering.
-          </p>
-          <ul class="question-list">
-            <li>
-              How has GDP per capita changed in Kenya over the last two decades?
-              <span class="question__note"
-                >Search, confirm coverage, then return a time series.</span
-              >
-            </li>
-            <li>
-              Which indicators in WDI relate to female labor force participation,
-              and do they include Bangladesh?
-              <span class="question__note"
-                >Discovery plus metadata and disaggregation checks.</span
-              >
-            </li>
-            <li>
-              What is the official definition and source for this indicator—and
-              what footnotes should I mention?
-              <span class="question__note"
-                >Metadata retrieval for transparency and reporting.</span
-              >
-            </li>
-            <li>
-              Plot a line chart comparing access to electricity in three
-              countries since 2010.
-              <span class="question__note"
-                >Data first, then visualization specs when the series fits.</span
-              >
-            </li>
-          </ul>
-        </section>
-
-        <section id="charts" class="section" aria-labelledby="charts-heading">
-          <h2 id="charts-heading" class="section__title">Charts and visualizations</h2>
-          <p class="section__intro">
-            Beyond tables, the server can help agents produce chart-ready output
-            for time series and comparisons—so “show me the trend” becomes a
-            structured spec your client can render.
-          </p>
-          <div class="viz-panel">
-            <p class="viz-panel__lead">
-              <strong>Typical flow:</strong> fetch data with clear columns (for
-              example time period and observed value), then ask for a
-              visualization specification. Chart type hints such as line, bar,
-              or scatter are mapped to supported views; the agent can discover
-              valid options and constraints via dedicated tools.
-            </p>
-            <ul>
-              <li>
-                <strong>Line and area</strong> — trends over years or periods
-              </li>
-              <li>
-                <strong>Bar</strong> — discrete periods or categories when
-                appropriate
-              </li>
-              <li>
-                <strong>Scatter / point</strong> — relationships when the data
-                supports it
-              </li>
-            </ul>
-            <p class="viz-panel__footnote">
-              Specs are produced in a standard chart grammar (Vega-Lite) so
-              compatible hosts can render them consistently. If you operate a
-              separate chart rendering service, you can point the server at it
-              with environment configuration for integration.
-            </p>
-            <p class="viz-panel__tools">
-              Related tools:
-              <code>data360_get_viz_spec</code>,
-              <code>data360_get_supported_chart_types</code>
-            </p>
-          </div>
-        </section>
-      </div>
-
-      <section
-        id="technical"
-        class="section section--technical-intro"
-        aria-labelledby="technical-heading"
-      >
-        <h2 id="technical-heading" class="section__title section__title--technical">
-          Technical reference
-        </h2>
-        <p class="section__technical-lede">
-          The sections below are for <strong>developers</strong> wiring an MCP
-          client, IDE, or custom agent: capabilities summary, tool and resource
-          tables, install steps, and connection URLs.
-        </p>
-      </section>
-
-      <section id="capabilities" class="section" aria-labelledby="capabilities-heading">
-        <h2 id="capabilities-heading" class="section__title">Server capabilities</h2>
-        <p class="section__intro">
-          Implementation details behind the user-facing outcomes above—search,
-          metadata, series retrieval, codes, and LLM-oriented resources.
-        </p>
-        <ul class="feature-grid">
-          <li class="feature-card">
-            <h3>Smart indicator discovery</h3>
-            <p>
-              Search hundreds of indicators with enriched metadata and optional
-              country coverage checks.
-            </p>
-          </li>
-          <li class="feature-card">
-            <h3>Rich metadata</h3>
-            <p>
-              Methodology, definitions, limitations, and statistical concepts
-              on demand.
-            </p>
-          </li>
-          <li class="feature-card">
-            <h3>Reliable time series</h3>
-            <p>
-              Historical data with filters for country, period, sex, age,
-              urbanization, and more.
-            </p>
-          </li>
-          <li class="feature-card">
-            <h3>LLM-oriented resources</h3>
-            <p>
-              System prompts, codelists, and chain-of-thought guidance for
-              chatbot integration.
-            </p>
-          </li>
-          <li class="feature-card">
-            <h3>Agent-friendly design</h3>
-            <p>
-              Composable tools and guardrails that reduce common data retrieval
-              mistakes.
-            </p>
           </li>
         </ul>
-      </section>
-
-      <section id="tools" class="section" aria-labelledby="tools-heading">
-        <h2 id="tools-heading" class="section__title">MCP tools</h2>
-        <p class="section__intro">
-          Use these tools in sequence: search, then fetch data with the right
-          codes and filters.
+      </div>
+    </header>
+    <div class="site-hero">
+      <div class="site-hero__inner">
+        <span class="hero__eyebrow">World Bank · Development Data Group</span>
+        <h1>World Bank development data through Data360 MCP</h1>
+        <p class="hero__lead">
+          Poverty, growth, gender, climate, health, and thousands of other
+          indicators come from the
+          <a href="https://data360.worldbank.org">Data360 Platform</a>—the
+          Bank's catalog for development data.
         </p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Tool</th>
-                <th scope="col">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>data360_search_indicators</code></td>
-                <td>
-                  Search with enriched metadata; use
-                  <code>required_country</code> for coverage. Returns
-                  <code>covers_country</code>, <code>latest_data</code>,
-                  <code>dimensions</code>.
-                </td>
-              </tr>
-              <tr>
-                <td><code>data360_get_data</code></td>
-                <td>
-                  Fetch data points with filters (country, time period, SEX,
-                  AGE, etc.).
-                </td>
-              </tr>
-              <tr>
-                <td><code>data360_get_metadata</code></td>
-                <td>
-                  Indicator metadata; use <code>select_fields</code> to limit
-                  payload.
-                </td>
-              </tr>
-              <tr>
-                <td><code>data360_get_disaggregation</code></td>
-                <td>
-                  Available filter values (countries, years, dimensions) per
-                  indicator.
-                </td>
-              </tr>
-              <tr>
-                <td><code>data360_find_codelist_value</code></td>
-                <td>
-                  Resolve names to codes (e.g. “Kenya” →
-                  <code>KEN</code>, “female” → <code>F</code>).
-                </td>
-              </tr>
-              <tr>
-                <td><code>data360_list_indicators</code></td>
-                <td>List all indicators for a database.</td>
-              </tr>
-              <tr>
-                <td><code>data360_get_viz_spec</code></td>
-                <td>
-                  Build a chart specification from retrieved data (e.g. Vega-Lite).
-                </td>
-              </tr>
-              <tr>
-                <td><code>data360_get_supported_chart_types</code></td>
-                <td>List supported chart types and data requirements.</td>
-              </tr>
-              <tr>
-                <td><code>data360_get_data_api_url</code></td>
-                <td>Low-level: direct Data360 data API URL helper.</td>
-              </tr>
-            </tbody>
-          </table>
+        <p class="hero__sub">
+          The server uses the
+          <a href="https://modelcontextprotocol.io">Model Context Protocol (MCP)</a>.
+          Point Cursor, VS Code, or a custom app at this server so an AI agent
+          can search indicators, pull time series, read definitions, and request
+          chart specs on your behalf.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#value">What agents can do</a>
+          <a class="btn btn--secondary" href="#connect">Connect your agent</a>
         </div>
+      </div>
+    </div>
 
-        <h3 class="section__title section__title--sub">
-          Recommended agent workflow
-        </h3>
-        <pre class="workflow-box" id="workflow-example">1. Search → data360_search_indicators(query, required_country="Kenya")
-             Returns: covers_country, latest_data, dimensions per indicator
-
-2. Get data → data360_get_data(database_id, indicator_id, filters)
-             Use REF_AREA from search; add time period filters</pre>
-      </section>
-
-      <section id="resources" class="section" aria-labelledby="resources-heading">
-        <h2 id="resources-heading" class="section__title">MCP resources</h2>
-        <p class="section__intro">
-          Subscribe to these URIs for prompts and reference data. For chatbots,
-          include <code>data360://system-prompt</code> in your system prompt.
-        </p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Resource</th>
-                <th scope="col">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>data360://system-prompt</code></td>
-                <td>Chain-of-thought guidance for chatbot integration</td>
-              </tr>
-              <tr>
-                <td><code>data360://databases</code></td>
-                <td>Available databases (WB_WDI, WB_SSGD, …)</td>
-              </tr>
-              <tr>
-                <td><code>data360://codelists</code></td>
-                <td>Codelist reference (REF_AREA, SEX, AGE, …)</td>
-              </tr>
-              <tr>
-                <td><code>data360://metadata-fields</code></td>
-                <td>Field mapping for smart question routing</td>
-              </tr>
-              <tr>
-                <td><code>data360://data-filters</code></td>
-                <td>Available filters and usage guidance</td>
-              </tr>
-              <tr>
-                <td><code>data360://search-usage</code></td>
-                <td>Search examples and best practices</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="start" class="section" aria-labelledby="start-heading">
-        <h2 id="start-heading" class="section__title">Get started</h2>
-        <p class="section__intro">
-          Requires <strong>Python 3.11+</strong> and
-          <a href="https://github.com/astral-sh/uv">uv</a> (recommended) or
-          <code>pip</code>. Copy <code>.env.example</code> to <code>.env</code>
-          and adjust API URL or port as needed.
-        </p>
-
-        <h3 class="section__title section__title--compact">Install &amp; run</h3>
-        <pre class="code-block" aria-label="Install commands"><span class="comment"># Clone and install (uv)</span>
-git clone https://github.com/worldbank/data360-mcp.git
-cd data360-mcp
-uv sync
-cp .env.example .env
-uv run poe serve
-<span class="comment"># Server: http://localhost:8000/mcp</span></pre>
-
-        <h3 class="section__title section__title--compact">Configuration</h3>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Variable</th>
-                <th scope="col">Description</th>
-                <th scope="col">Default</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>DATA360_API_BASE_URL</code></td>
-                <td>Data360 API base URL</td>
-                <td><code>https://data360api.worldbank.org</code></td>
-              </tr>
-              <tr>
-                <td><code>MCP_PORT</code></td>
-                <td>MCP server port</td>
-                <td><code>8000</code></td>
-              </tr>
-              <tr>
-                <td><code>MCP_TRANSPORT</code></td>
-                <td><code>http</code> or <code>sse</code></td>
-                <td><code>http</code></td>
-              </tr>
-              <tr>
-                <td><code>MCP_CHARTS_API_URL</code></td>
-                <td>Optional chart rendering API URL</td>
-                <td>—</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p class="section__intro section__intro--after-table">
-          Try the bundled demo:
-          <code>uv run scripts/llm_mcp_demo.py</code> (use
-          <code>DEBUG=true</code> for verbose logs).
-        </p>
-      </section>
-
-      <section id="connect" class="section" aria-labelledby="connect-heading">
-        <h2 id="connect-heading" class="section__title">Connect your agent</h2>
-        <p class="section__intro">
-          Point your MCP client at the local HTTP or SSE endpoint. Use
-          <code>host.docker.internal</code> instead of
-          <code>localhost</code> from containers.
-        </p>
-        <div class="connect-grid">
-          <div class="panel">
-            <h3>Endpoints</h3>
-            <div class="table-wrap table-wrap--flush">
-              <table>
-                <tbody>
-                  <tr>
-                    <th scope="row">Transport</th>
-                    <td><code>http</code> (default) or <code>sse</code></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">URL (HTTP)</th>
-                    <td><code>http://localhost:8000/mcp</code></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">URL (SSE)</th>
-                    <td>
-                      <code>http://localhost:8021/sse</code> (example port)
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="panel">
-            <h3>Databases (examples)</h3>
-            <p class="panel__text">
-              All Data360 databases are supported; list indicators with
-              <code>data360_list_indicators</code>.
-            </p>
-            <ul class="panel__list">
-              <li><strong>WB_WDI</strong> — World Development Indicators</li>
-              <li>
-                <strong>WB_SSGD</strong> — Social Sustainability and Global
-                Database
-              </li>
+    <main id="main">
+      <div class="docs-layout">
+        <aside aria-label="On this page" class="docs-toc">
+          <p class="docs-toc__label">On this page</p>
+          <nav>
+            <ul class="docs-toc__list">
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#audience">Who this is for</a></li>
+              <li><a href="#value">What agents can do</a></li>
+              <li><a href="#questions">Example questions</a></li>
+              <li><a href="#charts">Charts</a></li>
+              <li><a href="#data-sources">Data sources</a></li>
+              <li><a href="#agent-safe">Agent-safe design</a></li>
+              <li><a href="#technical">Technical reference</a></li>
+              <li><a href="#capabilities">Capabilities</a></li>
+              <li><a href="#tools">Tools</a></li>
+              <li><a href="#resources">Resources</a></li>
+              <li><a href="#architecture">Architecture</a></li>
+              <li><a href="#mcp-apps">MCP Apps</a></li>
+              <li><a href="#packages">Client libraries</a></li>
+              <li><a href="#connect">Connect</a></li>
+              <li><a href="#health">Health &amp; ops</a></li>
             </ul>
+          </nav>
+        </aside>
+
+        <div class="docs-content">
+          <div class="section--user">
+            <section
+              id="overview"
+              class="section"
+              aria-labelledby="overview-heading"
+            >
+              <h2 id="overview-heading" class="section__title">Overview</h2>
+              <p class="section__intro">
+                The Data360 MCP Server exposes the World Bank's
+                <a href="https://data360.worldbank.org">Data360 Platform</a> to
+                any MCP-capable client. LLMs and agents need a structured way to
+                search indicators, check metadata and disaggregation, fetch
+                time-series data, and produce charts—without embedding
+                Data360-specific logic inside each client. This server fills that
+                role: it implements the
+                <a href="https://modelcontextprotocol.io">Model Context Protocol</a>
+                so clients can discover and call a fixed set of tools, read
+                contextual resources (system prompts, codelists, schemas), and
+                optionally render tool results in interactive app UIs.
+              </p>
+              <p class="section__intro">
+                Every value returned by the server comes from the Data360
+                platform. The server is stateless with respect to user sessions—it
+                acts as a bridge between MCP clients and the Data360 HTTP API.
+              </p>
+            </section>
+
+            <section
+              id="audience"
+              class="section"
+              aria-labelledby="audience-heading"
+            >
+              <h2 id="audience-heading" class="section__title">
+                Who this is for
+              </h2>
+              <ul class="audience-list">
+                <li>
+                  <strong>Agent builders</strong> — developers wiring Cursor,
+                  Claude Desktop, LangGraph, or custom apps to official World Bank
+                  data
+                </li>
+                <li>
+                  <strong>Researchers and analysts</strong> — teams integrating
+                  development indicators into LLM workflows with verified sources
+                </li>
+                <li>
+                  <strong>Platform teams</strong> — organizations embedding
+                  Data360 data in chatbots, dashboards, or research assistants via
+                  MCP
+                </li>
+              </ul>
+            </section>
+
+            <section id="value" class="section" aria-labelledby="value-heading">
+              <h2 id="value-heading" class="section__title">
+                What your agent can do
+              </h2>
+              <p class="section__intro">
+                An AI agent connected over MCP can query official World Bank series
+                from Data360: search the catalog, pull time series, read indicator
+                metadata, and request charts. Every value comes from the Data360
+                platform, mitigating the risk of hallucination.
+              </p>
+              <ul class="outcome-grid">
+                <li class="outcome-card">
+                  <h3>Countries</h3>
+                  <p>
+                    Search indicators and confirm coverage for the countries named
+                    in the prompt.
+                  </p>
+                </li>
+                <li class="outcome-card">
+                  <h3>Time series</h3>
+                  <p>
+                    Retrieve values by country, year, and breakdowns such as sex,
+                    age, or urban/rural.
+                  </p>
+                </li>
+                <li class="outcome-card">
+                  <h3>Metadata</h3>
+                  <p>
+                    Surface source, definition, methodology, and known limitations
+                    for an indicator.
+                  </p>
+                </li>
+                <li class="outcome-card">
+                  <h3>Charts</h3>
+                  <p>
+                    Build line, bar, or other charts and return a URL the MCP
+                    client can display.
+                  </p>
+                </li>
+              </ul>
+            </section>
+
+            <section
+              id="questions"
+              class="section"
+              aria-labelledby="questions-heading"
+            >
+              <h2 id="questions-heading" class="section__title">
+                Example questions
+              </h2>
+              <p class="section__intro">
+                Sample prompts for a connected agent in Cursor, VS Code, or another
+                MCP client. The agent resolves countries, selects indicators, and
+                checks coverage before answering.
+              </p>
+              <ul class="question-list">
+                <li>
+                  How has GDP per capita changed in Kenya over the last two
+                  decades?
+                  <span class="question__note"
+                    >Catalog search, Kenya coverage check, then the time
+                    series.</span
+                  >
+                </li>
+                <li>
+                  Which indicators in WDI relate to female labor force
+                  participation, and do they include Bangladesh?
+                  <span class="question__note"
+                    >WDI search with a Bangladesh coverage filter.</span
+                  >
+                </li>
+                <li>
+                  What is the official definition and source of PPP adjusted GDP
+                  per capita, and what methodology should I use to calculate it?
+                  <span class="question__note"
+                    >Metadata fields for definition, source, and methodology.</span
+                  >
+                </li>
+                <li>
+                  Plot a line chart comparing access to electricity in three
+                  countries since 2010.
+                  <span class="question__note"
+                    >Indicator lookup, disaggregation check, then chart spec.</span
+                  >
+                </li>
+              </ul>
+            </section>
+
+            <section id="charts" class="section" aria-labelledby="charts-heading">
+              <h2 id="charts-heading" class="section__title">
+                Charts and visualizations
+              </h2>
+              <p class="section__intro">
+                For charts, the agent calls visualization tools. The server loads
+                the series from Data360 and returns a Vega-Lite spec and chart URL.
+                For tables or numbers in text, it uses the data tools listed under
+                Technical reference.
+              </p>
+              <div class="viz-panel">
+                <p class="viz-panel__lead">
+                  <strong>Chart flow:</strong> Search for the indicator, confirm
+                  available years and countries, then request the chart.
+                </p>
+                <ul>
+                  <li>
+                    <strong>Line and area</strong> — trends over years or periods
+                  </li>
+                  <li>
+                    <strong>Bar</strong> — discrete periods or categories when
+                    appropriate
+                  </li>
+                  <li>
+                    <strong>Scatter / point</strong> — relationships when the data
+                    supports it
+                  </li>
+                </ul>
+                <p class="viz-panel__footnote">
+                  Charts use Vega-Lite. Your MCP client opens the URL the server
+                  returns.
+                </p>
+              </div>
+            </section>
+
+            <section
+              id="data-sources"
+              class="section"
+              aria-labelledby="data-sources-heading"
+            >
+              <h2 id="data-sources-heading" class="section__title">
+                Data sources and databases
+              </h2>
+              <p class="section__intro">
+                The server's only persistent data source is the World Bank Data360
+                HTTP API. All indicator search, metadata, disaggregation, and
+                time-series data are fetched from Data360 endpoints. There is no
+                local database—the server is stateless aside from in-memory caches
+                (e.g. codelists).
+              </p>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Database ID</th>
+                      <th scope="col">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>WB_WDI</code></td>
+                      <td>World Development Indicators</td>
+                    </tr>
+                    <tr>
+                      <td><code>WB_SSGD</code></td>
+                      <td>Social Sustainability and Global Database</td>
+                    </tr>
+                    <tr>
+                      <td><code>WB_POVERTY</code></td>
+                      <td>Poverty and inequality indicators</td>
+                    </tr>
+                    <tr>
+                      <td><code>IPC_IPC</code></td>
+                      <td>International Poverty Comparison</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="section__intro section__intro--after-table">
+                All Data360 databases are supported. Use
+                <code>data360_list_indicators</code> to discover indicators in any
+                database, or load <code>data360://databases</code> for a reference
+                list.
+              </p>
+            </section>
+
+            <section
+              id="agent-safe"
+              class="section"
+              aria-labelledby="agent-safe-heading"
+            >
+              <h2 id="agent-safe-heading" class="section__title">
+                Agent-safe design
+              </h2>
+              <p class="section__intro">
+                The server is designed to reduce common LLM data errors through
+                composable tools, coverage validation, and curated resources.
+              </p>
+              <ul class="feature-grid">
+                <li class="feature-card">
+                  <h3>Coverage checks</h3>
+                  <p>
+                    Use <code>required_country</code> in search and
+                    <code>data360_get_disaggregation</code> before fetching data so
+                    the agent only requests series that exist.
+                  </p>
+                </li>
+                <li class="feature-card">
+                  <h3>Composable tools</h3>
+                  <p>
+                    Small, focused tools validate codes, filters, and dimensions
+                    before returning data—search first, then refine.
+                  </p>
+                </li>
+                <li class="feature-card">
+                  <h3>Bundled resources</h3>
+                  <p>
+                    System prompt, codelists, and usage notes under
+                    <code>data360://</code> keep client logic in sync with server
+                    conventions.
+                  </p>
+                </li>
+                <li class="feature-card">
+                  <h3>Payload trimming</h3>
+                  <p>
+                    Use <code>select_fields</code> on metadata calls to limit
+                    response size; data payloads are pre-filtered to essential
+                    columns for LLM consumption.
+                  </p>
+                </li>
+              </ul>
+            </section>
+          </div>
+
+          <div class="docs-technical" id="technical">
+            <div class="docs-technical__header">
+              <h2
+                id="technical-heading"
+                class="section__title section__title--technical"
+              >
+                Technical reference
+              </h2>
+              <p class="section__technical-lede">
+                MCP tools, bundled resources, and connection details for developers
+                wiring Cursor, Claude Desktop, LangGraph, or a custom client.
+              </p>
+            </div>
+
+            <section
+              id="capabilities"
+              class="section section--in-technical"
+              aria-labelledby="capabilities-heading"
+            >
+              <h3 id="capabilities-heading" class="section__title">
+                Server capabilities
+              </h3>
+              <p class="section__intro">
+                Search, metadata, series retrieval, code lists, and bundled prompt
+                resources exposed to MCP clients.
+              </p>
+              <ul class="feature-grid">
+                <li class="feature-card">
+                  <h3>Indicator search</h3>
+                  <p>
+                    Full-text search with metadata; optional country filter to
+                    limit results to series that actually exist.
+                  </p>
+                </li>
+                <li class="feature-card">
+                  <h3>Metadata</h3>
+                  <p>
+                    Methodology, definitions, limitations, and statistical concepts
+                    for each indicator.
+                  </p>
+                </li>
+                <li class="feature-card">
+                  <h3>Time series</h3>
+                  <p>
+                    Historical values with filters for country, period, sex, age,
+                    urbanization, and other dimensions.
+                  </p>
+                </li>
+                <li class="feature-card">
+                  <h3>Bundled resources</h3>
+                  <p>
+                    System prompt, codelists, and usage notes exposed as MCP
+                    resources under <code>data360://</code>.
+                  </p>
+                </li>
+                <li class="feature-card">
+                  <h3>Composable tools</h3>
+                  <p>
+                    Small, focused tools that validate coverage, codes, and filters
+                    before returning data.
+                  </p>
+                </li>
+              </ul>
+            </section>
+
+            <section
+              id="tools"
+              class="section section--in-technical"
+              aria-labelledby="tools-heading"
+            >
+              <h3 id="tools-heading" class="section__title">MCP tools</h3>
+              <p class="section__intro">
+                Typical order: search, optional disaggregation, then get_data or
+                get_viz_spec.
+              </p>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Tool</th>
+                      <th scope="col">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>data360_search_indicators</code></td>
+                      <td>
+                        Search with enriched metadata; use
+                        <code>required_country</code> for coverage. Returns
+                        <code>covers_country</code>, <code>latest_data</code>,
+                        <code>dimensions</code>.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_get_data</code></td>
+                      <td>
+                        Fetch data points with filters (country, time period, SEX,
+                        AGE, etc.).
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_get_metadata</code></td>
+                      <td>
+                        Indicator metadata; use <code>select_fields</code> to limit
+                        payload.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_get_disaggregation</code></td>
+                      <td>
+                        Available filter values (countries, years, dimensions) per
+                        indicator.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_find_codelist_value</code></td>
+                      <td>
+                        Resolve names to codes (e.g. "Kenya" →
+                        <code>KEN</code>, "female" → <code>F</code>).
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_list_indicators</code></td>
+                      <td>List all indicators for a database.</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_get_viz_spec</code></td>
+                      <td>
+                        Fetch a series and return a Vega-Lite spec and chart URL.
+                        Call get_disaggregation first for valid filters. Does not
+                        consume get_data output.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_get_supported_chart_types</code></td>
+                      <td>List supported chart types and data requirements.</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360_get_data_api_url</code></td>
+                      <td>Low-level: direct Data360 data API URL helper.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h4 class="section__title section__title--sub">
+                Recommended agent workflow
+              </h4>
+              <pre class="workflow-box">Tables / numbers in text:
+1. data360_search_indicators(query, required_country="Kenya")
+2. data360_get_disaggregation(database_id, indicator_id)  — optional; years and dimensions
+3. data360_get_data(database_id, indicator_id, filters)
+
+Charts:
+1. data360_search_indicators(...)
+2. data360_get_disaggregation(...)  — recommended before get_viz_spec
+3. data360_get_viz_spec(database_id, indicator_id, country_code, start_year, end_year, ...)
+   Fetches data internally; does not take get_data output.</pre>
+            </section>
+
+            <section
+              id="resources"
+              class="section section--in-technical"
+              aria-labelledby="resources-heading"
+            >
+              <h3 id="resources-heading" class="section__title">MCP resources</h3>
+              <p class="section__intro">
+                Read-only URIs for prompts and reference data. Load
+                <code>data360://system-prompt</code> in the system message for most
+                integrations.
+              </p>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Resource</th>
+                      <th scope="col">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>data360://system-prompt</code></td>
+                      <td>Workflow and tool-use guidance for the system message</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360://context</code></td>
+                      <td>Runtime context (e.g. current date/year) for time-aware queries</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360://databases</code></td>
+                      <td>Available databases (WB_WDI, WB_SSGD, …)</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360://codelists</code></td>
+                      <td>Codelist reference (REF_AREA, SEX, AGE, …)</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360://metadata-fields</code></td>
+                      <td>Field mapping for smart question routing</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360://data-filters</code></td>
+                      <td>Available filters and usage guidance</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360://data-schema</code></td>
+                      <td>Standard columns and visualization guidance</td>
+                    </tr>
+                    <tr>
+                      <td><code>data360://search-usage</code></td>
+                      <td>Search examples and best practices</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section
+              id="architecture"
+              class="section section--in-technical"
+              aria-labelledby="architecture-heading"
+            >
+              <h3 id="architecture-heading" class="section__title">
+                How the server works
+              </h3>
+              <p class="section__intro">
+                MCP clients connect to the Data360 MCP server over streamable HTTP.
+                The server does not store user sessions; each request is independent.
+                It calls the Data360 API for search, metadata, disaggregation, and
+                data, and optionally an external Charts API for persisting Vega-Lite
+                specs.
+              </p>
+              <pre class="architecture-diagram" aria-label="System architecture diagram">  MCP clients (Cursor, LangGraph, custom apps)
+              │
+              ▼ streamable HTTP /mcp
+  ┌───────────────────────────────┐
+  │     Data360 MCP Server        │
+  │  FastMCP · Tools · Resources  │
+  │  · Prompts · MCP Apps         │
+  └───────────┬───────────────────┘
+              │
+     ┌────────┴────────┐
+     ▼                 ▼
+ Data360 HTTP API   Charts API (optional)
+ search · metadata  Vega-Lite spec storage
+ disagg · data</pre>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Layer</th>
+                      <th scope="col">Technology</th>
+                      <th scope="col">Purpose</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>MCP</td>
+                      <td>FastMCP, MCP SDK</td>
+                      <td>Tools, resources, prompts, apps</td>
+                    </tr>
+                    <tr>
+                      <td>Transport</td>
+                      <td>Streamable HTTP (stateless)</td>
+                      <td>Production and local development</td>
+                    </tr>
+                    <tr>
+                      <td>API client</td>
+                      <td>httpx (async)</td>
+                      <td>Data360 search, metadata, data, codelists</td>
+                    </tr>
+                    <tr>
+                      <td>Visualization</td>
+                      <td>Draco, Altair, Vega-Lite</td>
+                      <td>Chart generation from time-series data</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="section__intro section__intro--after-table">
+                For the full architecture document, see
+                <a
+                  href="https://github.com/worldbank/data360-mcp/blob/main/docs/architecture-data360-mcp.md"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  >architecture-data360-mcp.md</a
+                >.
+              </p>
+            </section>
+
+            <section
+              id="mcp-apps"
+              class="section section--in-technical"
+              aria-labelledby="mcp-apps-heading"
+            >
+              <h3 id="mcp-apps-heading" class="section__title">MCP Apps</h3>
+              <p class="section__intro">
+                MCP Apps allow hosts to render tool results in interactive iframes
+                instead of plain JSON. Tools attach a <code>resourceUri</code> in
+                their metadata so the host can open the corresponding app and pass
+                the tool result.
+              </p>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">App</th>
+                      <th scope="col">URI</th>
+                      <th scope="col">Tool</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Chart view</td>
+                      <td><code>ui://data360/chart-view.html</code></td>
+                      <td><code>data360_get_viz_spec</code></td>
+                    </tr>
+                    <tr>
+                      <td>Search results</td>
+                      <td><code>ui://data360/search-results.html</code></td>
+                      <td><code>data360_search_indicators</code></td>
+                    </tr>
+                    <tr>
+                      <td>QR view</td>
+                      <td><code>ui://data360/qr-view.html</code></td>
+                      <td>(example)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="section__intro section__intro--after-table">
+                See
+                <a
+                  href="https://github.com/worldbank/data360-mcp/blob/main/docs/mcp-apps-implementation-notes.md"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  >MCP Apps implementation notes</a
+                >
+                for alignment with the official MCP ext-apps extension.
+              </p>
+            </section>
+
+            <section
+              id="packages"
+              class="section section--in-technical"
+              aria-labelledby="packages-heading"
+            >
+              <h3 id="packages-heading" class="section__title">
+                Client libraries and examples
+              </h3>
+              <p class="section__intro">
+                The repository includes packages and examples for common integration
+                patterns.
+              </p>
+              <ul class="package-list">
+                <li>
+                  <strong><code>data360-mcp-agent</code></strong> — Python client
+                  for LangGraph agents; load
+                  <code>data360://agent-recipe</code> for multi-agent nodes.
+                  <a
+                    href="https://github.com/worldbank/data360-mcp/tree/main/packages/data360-mcp-agent"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    >Package README</a
+                  >
+                </li>
+                <li>
+                  <strong>LangChain minimal example</strong> — one-shot agent with
+                  <code>data360://system-prompt</code>.
+                  <a
+                    href="https://github.com/worldbank/data360-mcp/tree/main/examples/agents/langchain-minimal"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    >Example</a
+                  >
+                </li>
+                <li>
+                  <strong>LangGraph multi-agent example</strong> — gated tool node
+                  with relevance check.
+                  <a
+                    href="https://github.com/worldbank/data360-mcp/tree/main/examples/agents/langchain-graph"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    >Example</a
+                  >
+                </li>
+                <li>
+                  <strong><code>@data360/mcp-ui</code></strong> — React components
+                  for MCP tool output (Vega charts, tool parsers).
+                  <a
+                    href="https://github.com/worldbank/data360-mcp/tree/main/packages/mcp-ui"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    >Package README</a
+                  >
+                </li>
+                <li>
+                  <strong><code>@data360/mcp-ui-angular</code></strong> — Angular
+                  counterpart for host-embeddable chart UI.
+                  <a
+                    href="https://github.com/worldbank/data360-mcp/tree/main/packages/mcp-ui-angular"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    >Package README</a
+                  >
+                </li>
+              </ul>
+            </section>
+
+            <section
+              id="connect"
+              class="section section--in-technical"
+              aria-labelledby="connect-heading"
+            >
+              <h3 id="connect-heading" class="section__title">
+                Connect your agent
+              </h3>
+              <p class="section__intro">
+                Required for external MCP clients (Cursor, Claude Desktop,
+                LangGraph, and similar). Follow the steps below to wire your client
+                to the public endpoint or a self-hosted instance.
+              </p>
+
+              <div class="connect-steps">
+                <article class="connect-step">
+                  <h4 class="connect-step__title">1. Choose an endpoint</h4>
+                  <p class="section__intro">
+                    Use streamable HTTP at the <code>/mcp</code> path (default). For
+                    SSE, set <code>MCP_TRANSPORT=sse</code> on the server and point
+                    clients at <code>/sse</code> (example:
+                    <code>http://localhost:8021/sse</code>). Other org-specific
+                    hosts and paths are documented in the
+                    <a
+                      href="https://github.com/worldbank/data360-mcp"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      >GitHub repository</a
+                    >.
+                  </p>
+                  <div class="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th scope="col">Environment</th>
+                          <th scope="col">HTTP URL</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Public (external)</td>
+                          <td>
+                            <code>https://maimcpext.worldbank.org/ext/data360/mcp</code>
+                            <p class="panel__text">
+                              Recommended for Cursor, Claude Desktop, and custom
+                              agents.
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Local dev</td>
+                          <td>
+                            <code>http://localhost:8000/mcp</code>
+                            <p class="panel__text">
+                              Port matches your server (see README).
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+
+                <article class="connect-step">
+                  <h4 class="connect-step__title">2. Configure your MCP client</h4>
+                  <p class="section__intro">
+                    Add the server to your client config. Streamable HTTP
+                    (<code>type: "http"</code>) is the recommended transport for
+                    Cursor and compatible hosts.
+                  </p>
+                  <div
+                    aria-label="MCP client configuration examples"
+                    class="connect-tabs"
+                    role="tablist"
+                  >
+                    <button
+                      type="button"
+                      role="tab"
+                      class="connect-tab connect-tab--active"
+                      data-connect-tab="cursor"
+                      aria-selected="true"
+                    >
+                      Cursor / VS Code
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      class="connect-tab"
+                      data-connect-tab="claude"
+                      aria-selected="false"
+                    >
+                      Claude Desktop
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      class="connect-tab"
+                      data-connect-tab="local"
+                      aria-selected="false"
+                    >
+                      Local server
+                    </button>
+                  </div>
+                  <div role="tabpanel" data-connect-panel="cursor">
+                    <pre class="code-block" aria-label="Cursor mcp.json example">{
+  "mcpServers": {
+    "data360-mcp": {
+      "url": "https://maimcpext.worldbank.org/ext/data360/mcp",
+      "type": "http"
+    }
+  }
+}</pre>
+                  </div>
+                  <div role="tabpanel" data-connect-panel="claude" hidden>
+                    <pre class="code-block" aria-label="Claude Desktop mcp.json example">{
+  "mcpServers": {
+    "data360-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://maimcpext.worldbank.org/ext/data360/mcp"
+      ]
+    }
+  }
+}</pre>
+                  </div>
+                  <div role="tabpanel" data-connect-panel="local" hidden>
+                    <pre class="code-block" aria-label="Local server mcp.json example">{
+  "mcpServers": {
+    "data360-mcp": {
+      "url": "http://localhost:8000/mcp",
+      "type": "http"
+    }
+  }
+}</pre>
+                  </div>
+                </article>
+
+                <article class="connect-step">
+                  <h4 class="connect-step__title">
+                    3. Load MCP resources in your agent
+                  </h4>
+                  <ol class="connect-step__list">
+                    <li>
+                      Subscribe to <code>data360://system-prompt</code> in your
+                      agent system context (required for reliable tool use).
+                    </li>
+                    <li>
+                      Optionally load <code>data360://search-usage</code> and
+                      <code>data360://codelists</code> for discovery and code
+                      resolution.
+                    </li>
+                    <li>
+                      Tables: search → get_disaggregation (optional) → get_data.
+                      Charts: search → get_disaggregation → get_viz_spec (fetches
+                      its own data).
+                    </li>
+                  </ol>
+                </article>
+
+                <article class="connect-step">
+                  <h4 class="connect-step__title">
+                    4. Authentication (hosted / APIM)
+                  </h4>
+                  <p class="section__intro">
+                    World Bank–hosted endpoints may require a Bearer token or Azure
+                    AD client credentials. On the server, set
+                    <code>MCP_INTERNAL=true</code> and
+                    <code>MCP_AUTH_SCOPE</code> for APIM; clients may pass an
+                    <code>Authorization</code> header in <code>mcp.json</code> when
+                    required. See
+                    <a
+                      href="https://github.com/worldbank/data360-mcp/blob/main/DEVELOPMENT.md"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      >DEVELOPMENT.md</a
+                    >
+                    for environment-specific setup.
+                  </p>
+                </article>
+
+                <article class="connect-step">
+                  <h4 class="connect-step__title">5. Verify the connection</h4>
+                  <p class="section__intro">
+                    Use the
+                    <a
+                      href="https://modelcontextprotocol.io"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      >MCP Inspector</a
+                    >
+                    or your IDE's MCP panel to list tools. From the repo:
+                    <code>scripts/test_mcp_client.py</code>
+                    (<a
+                      href="https://github.com/worldbank/data360-mcp"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      >data360-mcp on GitHub</a
+                    >).
+                  </p>
+                </article>
+
+                <article class="connect-step">
+                  <h4 class="connect-step__title">6. Docker and containers</h4>
+                  <p class="section__intro">
+                    From a container, use <code>host.docker.internal</code> instead
+                    of <code>localhost</code> to reach an MCP server on the host
+                    machine.
+                  </p>
+                </article>
+
+                <article class="connect-step">
+                  <h4 class="connect-step__title">7. LangGraph / Python agents</h4>
+                  <p class="section__intro">
+                    Set environment variables before running your agent (see
+                    <code>data360-mcp-agent</code> package in the repo):
+                  </p>
+                  <pre class="code-block" aria-label="LangGraph environment variables">DATA360_MCP_URL=https://maimcpext.worldbank.org/ext/data360/mcp
+DATA360_MCP_TRANSPORT=streamable_http
+OPENAI_API_KEY=your-key</pre>
+                </article>
+
+                <article class="connect-step">
+                  <h4 class="connect-step__title">8. Self-host locally</h4>
+                  <p class="section__intro">
+                    Install and run the server on your machine: see the
+                    <a
+                      href="https://github.com/worldbank/data360-mcp#readme"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      >GitHub README</a
+                    >.
+                  </p>
+                </article>
+
+                <div class="panel connect-step__panel">
+                  <h4 class="connect-step__title">Databases (examples)</h4>
+                  <p class="panel__text">
+                    All Data360 databases are supported; list indicators with
+                    <code>data360_list_indicators</code>.
+                  </p>
+                  <ul class="panel__list">
+                    <li><strong>WB_WDI</strong> — World Development Indicators</li>
+                    <li>
+                      <strong>WB_SSGD</strong> — Social Sustainability and Global
+                      Database
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="health"
+              class="section section--in-technical"
+              aria-labelledby="health-heading"
+            >
+              <h3 id="health-heading" class="section__title">
+                Health and operations
+              </h3>
+              <p class="section__intro">
+                The FastAPI wrapper exposes HTTP probes for deployment and load
+                balancers. See
+                <a
+                  href="https://github.com/worldbank/data360-mcp/blob/main/DEVELOPMENT.md"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  >DEVELOPMENT.md</a
+                >
+                for environment variables and configuration.
+              </p>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Route</th>
+                      <th scope="col">Purpose</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>GET /mcp/health</code></td>
+                      <td>Liveness — process is running (no outbound I/O)</td>
+                      <td>Always <code>200</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>GET /mcp/ready</code></td>
+                      <td>
+                        Readiness — Data360 API, database mapping, and viz storage
+                        are usable
+                      </td>
+                      <td><code>200</code> or <code>503</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="section__intro section__intro--after-table">
+                Toggle readiness checks with <code>MCP_READINESS_ENABLED</code>
+                (default <code>true</code>). Per-check timeout:
+                <code>MCP_HEALTH_CHECK_TIMEOUT</code> (default 5 seconds).
+              </p>
+            </section>
           </div>
         </div>
-      </section>
+      </div>
     </main>
 
     <footer class="site-footer">
@@ -498,6 +1094,13 @@ uv run poe serve
             rel="noopener noreferrer"
             target="_blank"
             >Documentation (markdown overview)</a
+          >
+          ·
+          <a
+            href="https://github.com/worldbank/data360-mcp/blob/main/docs/architecture-data360-mcp.md"
+            rel="noopener noreferrer"
+            target="_blank"
+            >Architecture</a
           >
           ·
           <a
@@ -545,5 +1148,7 @@ uv run poe serve
         </p>
       </div>
     </footer>
+
+    <script src="assets/js/docs.js"></script>
   </body>
 </html>

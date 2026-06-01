@@ -1,17 +1,19 @@
 # Data360 MCP Server
 
-> **Project site:** The marketing landing page for this repository is published at **[https://worldbank.github.io/data360-mcp](https://worldbank.github.io/data360-mcp)** (`docs/index.html`). This file is the markdown overview for readers browsing the repo on GitHub.
+> **Project site:** The full documentation for this repository is published at **[https://worldbank.github.io/data360-mcp](https://worldbank.github.io/data360-mcp)** (`docs/index.html`). This file is a markdown overview for readers browsing the repo on GitHub.
 
 A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gives LLM agents direct access to the World Bank's [Data360 Platform](https://data360.worldbank.org/).
 
 ## Overview
 
-The Data360 MCP Server bridges the gap between Large Language Models and the World Bank's development data infrastructure. It allows AI agents and chatbots to search, validate, and retrieve precise development indicators — covering topics such as GDP, poverty, gender equality, health, and climate — without hallucinating data values.
+The Data360 MCP Server bridges the gap between Large Language Models and the World Bank's development data infrastructure. It allows AI agents to search, validate, and retrieve precise development indicators — covering topics such as GDP, poverty, gender equality, health, and climate — without hallucinating data values.
 
 **Who is this for?**
-- Developers building AI agents or chatbots that need reliable access to World Bank development data
+- Developers building AI agents that need reliable access to World Bank development data
 - Researchers and analysts who want to integrate World Bank data into LLM workflows
 - Teams building data-driven applications on top of the MCP ecosystem
+
+For a complete guide — including example questions, charts, architecture, MCP Apps, and connection steps — see the [project site](https://worldbank.github.io/data360-mcp).
 
 ## Key Features
 
@@ -46,6 +48,8 @@ The server starts at `http://localhost:8000/mcp`.
 | `data360_get_disaggregation` | Check available filter values |
 | `data360_find_codelist_value` | Resolve names to standard codes |
 | `data360_list_indicators` | List all indicators in a database |
+| `data360_get_viz_spec` | Generate Vega-Lite chart specs |
+| `data360_get_supported_chart_types` | List supported chart types |
 
 ## Available Databases
 
@@ -53,21 +57,25 @@ The server supports all databases on the Data360 Platform, including:
 
 - **WB_WDI** — World Development Indicators
 - **WB_SSGD** — Social Sustainability and Global Database
+- **WB_POVERTY** — Poverty and inequality indicators
+- **IPC_IPC** — International Poverty Comparison
 - And many more accessible via `data360_list_indicators`
 
-## Chatbot Integration
+## Agent Integration
 
-For chatbot integration, retrieve the `data360://system-prompt` resource and include it in your system prompt. It provides:
+For agent integration, retrieve the `data360://system-prompt` resource and include it in your system prompt. It provides:
 - Chain-of-thought reasoning templates for data queries
 - Step-by-step workflow guidance
 - Filter do's and don'ts
+
+See the [Connect your agent](https://worldbank.github.io/data360-mcp#connect) section on the project site for Cursor, Claude Desktop, LangGraph, and custom client setup.
 
 ## Development
 
 For local development setup, testing, and architecture details, see:
 - [DEVELOPMENT.md](https://github.com/worldbank/data360-mcp/blob/main/DEVELOPMENT.md)
 - [docs/architecture-data360-mcp.md](https://github.com/worldbank/data360-mcp/blob/main/docs/architecture-data360-mcp.md)
-- [docs/open-source-application.md](https://github.com/worldbank/data360-mcp/blob/main/docs/open-source-application.md) — Open-source application checklist for WBG submission
+- [docs/mcp-apps-implementation-notes.md](https://github.com/worldbank/data360-mcp/blob/main/docs/mcp-apps-implementation-notes.md)
 
 ## Contact
 
