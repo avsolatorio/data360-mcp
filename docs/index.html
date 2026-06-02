@@ -426,38 +426,7 @@
                 HTTP API. All indicator search, metadata, disaggregation, and
                 time-series data are fetched from Data360 endpoints. There is no
                 local database—the server is stateless aside from in-memory caches
-                (e.g. codelists).
-              </p>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th scope="col">Database ID</th>
-                      <th scope="col">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><code>WB_WDI</code></td>
-                      <td>World Development Indicators</td>
-                    </tr>
-                    <tr>
-                      <td><code>WB_SSGD</code></td>
-                      <td>Social Sustainability and Global Database</td>
-                    </tr>
-                    <tr>
-                      <td><code>WB_POVERTY</code></td>
-                      <td>Poverty and inequality indicators</td>
-                    </tr>
-                    <tr>
-                      <td><code>IPC_IPC</code></td>
-                      <td>International Poverty Comparison</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="section__intro section__intro--after-table">
-                All Data360 databases are supported. Use
+                (e.g. codelists). All Data360 databases are supported. Use
                 <code>data360_list_indicators</code> to discover indicators in any
                 database, or load <code>data360://databases</code> for a reference
                 list.
@@ -1356,6 +1325,12 @@ OPENAI_API_KEY=your-key</pre>
                       <strong>WB_SSGD</strong> — Social Sustainability and Global
                       Database
                     </li>
+                    <li>
+                      <strong>WB_POVERTY</strong> — Poverty and inequality indicators
+                    </li>
+                    <li>
+                      <strong>IPC_IPC</strong> — International Poverty Comparison
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -1419,70 +1394,76 @@ OPENAI_API_KEY=your-key</pre>
 
     <footer class="site-footer">
       <div class="site-footer__inner">
-        <p>
-          <strong>AI for Data - Data for AI Team</strong><br />
-          <a href="mailto:ai4data@worldbank.org">ai4data@worldbank.org</a><br />
-          Development Data Group / Office of the World Bank Group Chief
-          Statistician<br />
-          World Bank Group
-        </p>
-        <p>
-          <a
-            href="https://github.com/worldbank/data360-mcp/blob/dev/docs/overview.md"
-            rel="noopener noreferrer"
-            target="_blank"
-            >Documentation (markdown overview)</a
-          >
-          ·
-          <a
-            href="https://github.com/worldbank/data360-mcp/blob/dev/docs/architecture-data360-mcp.md"
-            rel="noopener noreferrer"
-            target="_blank"
-            >Architecture</a
-          >
-          ·
-          <a
-            href="https://github.com/worldbank/data360-mcp/blob/dev/DEVELOPMENT.md"
-            rel="noopener noreferrer"
-            target="_blank"
-            >DEVELOPMENT.md</a
-          >
-          ·
-          <a
-            href="https://github.com/worldbank/data360-mcp/blob/dev/LICENSE"
-            rel="noopener noreferrer"
-            target="_blank"
-            >License</a
-          >
-          ·
-          <a
-            href="https://github.com/worldbank/data360-mcp/blob/dev/WB-IGO-RIDER.md"
-            rel="noopener noreferrer"
-            target="_blank"
-            >IGO Rider</a
-          >
-        </p>
-        <p class="site-footer__meta">
-          This project is licensed under the MIT License together with the World
-          Bank IGO Rider. The Rider is procedural: it reserves World Bank
-          privileges and immunities without adding restrictions to MIT
-          permissions.
-        </p>
-        <p class="site-footer__built">
-          Built with
+        <div class="site-footer__main">
+          <div class="site-footer__contact">
+            <p class="site-footer__team">
+              <strong>AI for Data – Data for AI</strong>
+              <span class="site-footer__org"
+                >Development Data Group · World Bank Group</span
+              >
+            </p>
+            <a href="mailto:ai4data@worldbank.org">ai4data@worldbank.org</a>
+          </div>
+          <nav aria-label="Related documentation" class="site-footer__nav">
+            <ul class="site-footer__links">
+              <li>
+                <a
+                  href="https://github.com/worldbank/data360-mcp/blob/dev/docs/overview.md"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  >Overview</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/worldbank/data360-mcp/blob/dev/docs/architecture-data360-mcp.md"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  >Architecture</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/worldbank/data360-mcp/blob/dev/DEVELOPMENT.md"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  >Development</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/worldbank/data360-mcp/blob/dev/LICENSE"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  >License</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/worldbank/data360-mcp/blob/dev/WB-IGO-RIDER.md"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  >IGO Rider</a
+                >
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <p class="site-footer__fine-print">
+          MIT License with World Bank IGO Rider · Built with
           <a
             href="https://github.com/jlowin/fastmcp"
             rel="noopener noreferrer"
             target="_blank"
             >FastMCP</a
           >
-          and the
+          &amp;
           <a
             href="https://modelcontextprotocol.io"
             rel="noopener noreferrer"
             target="_blank"
-            >Model Context Protocol</a
-          >.
+            >MCP</a
+          >
         </p>
       </div>
     </footer>
