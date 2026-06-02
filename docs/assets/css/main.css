@@ -1209,16 +1209,80 @@ tr:last-child td {
 
 /* Footer */
 .site-footer {
-  margin-top: var(--space-xl);
-  padding: var(--space-lg) var(--space-md);
+  margin-top: var(--space-lg);
+  padding: var(--space-md) var(--space-md);
   background: var(--wb-navy-deep);
   color: var(--wb-text-on-dark-muted);
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
 }
 
 .site-footer__inner {
   max-width: var(--max-width);
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.site-footer__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-lg);
+}
+
+.site-footer__contact {
+  min-width: min(100%, 16rem);
+}
+
+.site-footer__team {
+  margin: 0 0 0.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.site-footer__team strong {
+  color: var(--wb-text-on-dark);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.site-footer__org {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.site-footer__contact > a {
+  font-size: 0.8125rem;
+}
+
+.site-footer__nav {
+  flex: 1 1 auto;
+  min-width: min(100%, 12rem);
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  justify-content: flex-start;
+}
+
+@media (min-width: 640px) {
+  .site-footer__links {
+    justify-content: flex-end;
+  }
+}
+
+.site-footer__links a {
+  font-size: 0.8125rem;
+  white-space: nowrap;
 }
 
 .site-footer a {
@@ -1231,19 +1295,10 @@ tr:last-child td {
   color: var(--wb-footer-link-hover);
 }
 
-.site-footer p {
-  margin: 0 0 var(--space-sm);
-}
-
-.site-footer__meta {
-  margin-top: var(--space-md);
-  padding-top: var(--space-md);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.site-footer__built {
-  margin-top: var(--space-sm);
-  font-size: 0.8125rem;
+.site-footer__fine-print {
+  margin: 0;
+  padding-top: var(--space-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.58);
 }
