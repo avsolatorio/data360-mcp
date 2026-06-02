@@ -1,6 +1,7 @@
 (function () {
   initConnectTabs();
   initQuestionFlows();
+  initTocScrollSpy();
 })();
 
 function initConnectTabs() {
@@ -240,4 +241,105 @@ function initQuestionFlows() {
       activeTrigger = trigger;
     });
   }
+}
+
+function initTocScrollSpy() {
+  const links = document.querySelectorAll('.docs-toc__list a[href^="#"]');
+  const sections = [];
+
+  for (const link of links) {
+    const href = link.getAttribute("href");
+    if (!href || href.length < 2) {
+      continue;
+    }
+
+    const id = href.slice(1);
+    const target = getTocSpyTarget(id);
+    if (target) {
+      sections.push({ id, link, target });
+    }
+  }
+
+  if (sections.length === 0) {
+    return;
+  }
+
+  let ticking = false;
+
+  function getHeaderOffset() {
+    const rootStyles = getComputedStyle(document.documentElement);
+    const offset = Number.parseFloat(rootStyles.getPropertyValue("--scroll-offset"));
+    return Number.isFinite(offset) ? offset : 80;
+  }
+
+  /** Line below the sticky header; section headings above this line are "passed". */
+  function getScrollMarker() {
+    const headerOffset = getHeaderOffset();
+    const viewportBand = Math.min(window.innerHeight * 0.28, 220);
+    return headerOffset + viewportBand;
+  }
+
+  function setActiveLink(activeId) {
+    for (const { id, link } of sections) {
+      const isActive = id === activeId;
+      link.classList.toggle("docs-toc__link--active", isActive);
+      if (isActive) {
+        link.setAttribute("aria-current", "location");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    }
+  }
+
+  function updateActiveLink() {
+    ticking = false;
+
+    const nearBottom =
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight - 48;
+
+    if (nearBottom) {
+      setActiveLink(sections.at(-1).id);
+      return;
+    }
+
+    const marker = getScrollMarker();
+    let activeId = sections[0].id;
+
+    for (const { id, target } of sections) {
+      if (target.getBoundingClientRect().top <= marker) {
+        activeId = id;
+      }
+    }
+
+    setActiveLink(activeId);
+  }
+
+  function scheduleUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActiveLink);
+    }
+  }
+
+  window.addEventListener("scroll", scheduleUpdate, { passive: true });
+  window.addEventListener("resize", scheduleUpdate, { passive: true });
+  updateActiveLink();
+}
+
+/** Use section headings as spy targets (not wrapper divs like #technical). */
+function getTocSpyTarget(id) {
+  const element = document.getElementById(id);
+  if (!element) {
+    return null;
+  }
+
+  if (id === "technical") {
+    return document.getElementById("technical-heading") ?? element;
+  }
+
+  const heading = element.querySelector(
+    ":scope > h2, :scope > h3, :scope > .section__title",
+  );
+  return heading ?? element;
 }
