@@ -195,35 +195,118 @@
                 MCP client. The agent resolves countries, selects indicators, and
                 checks coverage before answering.
               </p>
+              <p class="question-list__hint">
+                Click a question to see the likely MCP tool sequence an agent
+                would run.
+              </p>
               <ul class="question-list">
-                <li>
-                  How has GDP per capita changed in Kenya over the last two
-                  decades?
-                  <span class="question__note"
-                    >Catalog search, Kenya coverage check, then the time
-                    series.</span
+                <li class="question-item">
+                  <button
+                    type="button"
+                    class="question-item__trigger"
+                    aria-expanded="false"
+                    aria-controls="question-flow-1"
+                    data-question-id="1"
                   >
+                    <span class="question-item__text">
+                      How has GDP per capita changed in Kenya over the last two
+                      decades?
+                    </span>
+                    <span class="question__note"
+                      >Catalog search, Kenya coverage check, then the time
+                      series.</span
+                    >
+                  </button>
+                  <div
+                    id="question-flow-1"
+                    class="question-flow"
+                    hidden
+                    aria-live="polite"
+                  >
+                    <p class="question-flow__label">Likely tool sequence</p>
+                    <ol class="question-flow__steps"></ol>
+                  </div>
                 </li>
-                <li>
-                  Which indicators in WDI relate to female labor force
-                  participation, and do they include Bangladesh?
-                  <span class="question__note"
-                    >WDI search with a Bangladesh coverage filter.</span
+                <li class="question-item">
+                  <button
+                    type="button"
+                    class="question-item__trigger"
+                    aria-expanded="false"
+                    aria-controls="question-flow-2"
+                    data-question-id="2"
                   >
+                    <span class="question-item__text">
+                      Which indicators in WDI relate to female labor force
+                      participation, and do they include Bangladesh?
+                    </span>
+                    <span class="question__note"
+                      >WDI search with a Bangladesh coverage filter.</span
+                    >
+                  </button>
+                  <div
+                    id="question-flow-2"
+                    class="question-flow"
+                    hidden
+                    aria-live="polite"
+                  >
+                    <p class="question-flow__label">Likely tool sequence</p>
+                    <ol class="question-flow__steps"></ol>
+                  </div>
                 </li>
-                <li>
-                  What is the official definition and source of PPP adjusted GDP
-                  per capita, and what methodology should I use to calculate it?
-                  <span class="question__note"
-                    >Metadata fields for definition, source, and methodology.</span
+                <li class="question-item">
+                  <button
+                    type="button"
+                    class="question-item__trigger"
+                    aria-expanded="false"
+                    aria-controls="question-flow-3"
+                    data-question-id="3"
                   >
+                    <span class="question-item__text">
+                      What is the official definition and source of PPP adjusted
+                      GDP per capita, and what methodology should I use to
+                      calculate it?
+                    </span>
+                    <span class="question__note"
+                      >Metadata fields for definition, source, and
+                      methodology.</span
+                    >
+                  </button>
+                  <div
+                    id="question-flow-3"
+                    class="question-flow"
+                    hidden
+                    aria-live="polite"
+                  >
+                    <p class="question-flow__label">Likely tool sequence</p>
+                    <ol class="question-flow__steps"></ol>
+                  </div>
                 </li>
-                <li>
-                  Plot a line chart comparing access to electricity in three
-                  countries since 2010.
-                  <span class="question__note"
-                    >Indicator lookup, disaggregation check, then chart spec.</span
+                <li class="question-item">
+                  <button
+                    type="button"
+                    class="question-item__trigger"
+                    aria-expanded="false"
+                    aria-controls="question-flow-4"
+                    data-question-id="4"
                   >
+                    <span class="question-item__text">
+                      Plot a line chart comparing access to electricity in three
+                      countries since 2010.
+                    </span>
+                    <span class="question__note"
+                      >Indicator lookup, disaggregation check, then chart
+                      spec.</span
+                    >
+                  </button>
+                  <div
+                    id="question-flow-4"
+                    class="question-flow"
+                    hidden
+                    aria-live="polite"
+                  >
+                    <p class="question-flow__label">Likely tool sequence</p>
+                    <ol class="question-flow__steps"></ol>
+                  </div>
                 </li>
               </ul>
             </section>
