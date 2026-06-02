@@ -21,7 +21,7 @@
 
     <header class="site-topbar">
       <div class="site-topbar__inner">
-        <span class="site-brand">Data360 MCP</span>
+        <a class="site-brand" href="#">Data360 MCP</a>
         <ul class="site-topbar__links">
           <li><a href="#connect">Connect</a></li>
           <li>
@@ -37,7 +37,7 @@
     </header>
     <div class="site-hero">
       <div class="site-hero__inner">
-        <span class="hero__eyebrow">World Bank · Development Data Group</span>
+        <!-- <span class="hero__eyebrow">World Bank · Development Data Group</span> -->
         <h1>World Bank development data through Data360 MCP</h1>
         <p class="hero__lead">
           Poverty, growth, gender, climate, health, and thousands of other
@@ -122,20 +122,83 @@
               <h2 id="audience-heading" class="section__title">
                 Who this is for
               </h2>
+              <p class="audience-list__hint">
+                Click an audience to see typical setup, tools, and resources.
+              </p>
               <ul class="audience-list">
-                <li>
-                  <strong>Agent builders</strong> — developers wiring Cursor,
-                  Claude Desktop, LangGraph, or custom apps to official World Bank
-                  data
+                <li class="audience-item">
+                  <button
+                    type="button"
+                    class="audience-item__trigger"
+                    aria-expanded="false"
+                    aria-controls="audience-flow-1"
+                    data-audience-id="1"
+                  >
+                    <span class="audience-item__text">Agent builders</span>
+                    <span class="audience-item__note"
+                      >Developers wiring Cursor, Claude Desktop, LangGraph, or
+                      custom apps to official World Bank data.</span
+                    >
+                  </button>
+                  <div
+                    id="audience-flow-1"
+                    class="question-flow"
+                    hidden
+                    aria-live="polite"
+                  >
+                    <p class="question-flow__label">How they use it</p>
+                    <ol class="question-flow__steps"></ol>
+                  </div>
                 </li>
-                <li>
-                  <strong>Researchers and analysts</strong> — teams integrating
-                  development indicators into LLM workflows with verified sources
+                <li class="audience-item">
+                  <button
+                    type="button"
+                    class="audience-item__trigger"
+                    aria-expanded="false"
+                    aria-controls="audience-flow-2"
+                    data-audience-id="2"
+                  >
+                    <span class="audience-item__text"
+                      >Researchers and analysts</span
+                    >
+                    <span class="audience-item__note"
+                      >Teams integrating development indicators into LLM
+                      workflows with verified sources.</span
+                    >
+                  </button>
+                  <div
+                    id="audience-flow-2"
+                    class="question-flow"
+                    hidden
+                    aria-live="polite"
+                  >
+                    <p class="question-flow__label">How they use it</p>
+                    <ol class="question-flow__steps"></ol>
+                  </div>
                 </li>
-                <li>
-                  <strong>Platform teams</strong> — organizations embedding
-                  Data360 data in chatbots, dashboards, or research assistants via
-                  MCP
+                <li class="audience-item">
+                  <button
+                    type="button"
+                    class="audience-item__trigger"
+                    aria-expanded="false"
+                    aria-controls="audience-flow-3"
+                    data-audience-id="3"
+                  >
+                    <span class="audience-item__text">Platform teams</span>
+                    <span class="audience-item__note"
+                      >Organizations embedding Data360 data in chatbots,
+                      dashboards, or research assistants via MCP.</span
+                    >
+                  </button>
+                  <div
+                    id="audience-flow-3"
+                    class="question-flow"
+                    hidden
+                    aria-live="polite"
+                  >
+                    <p class="question-flow__label">How they use it</p>
+                    <ol class="question-flow__steps"></ol>
+                  </div>
                 </li>
               </ul>
             </section>

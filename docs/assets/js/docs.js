@@ -1,9 +1,3 @@
-(function () {
-  initConnectTabs();
-  initQuestionFlows();
-  initTocScrollSpy();
-})();
-
 function initConnectTabs() {
   const tabs = document.querySelectorAll("[data-connect-tab]");
   const panels = document.querySelectorAll("[data-connect-panel]");
@@ -114,8 +108,76 @@ const QUESTION_TOOL_FLOWS = {
 
 const FLOW_STEP_DELAY_MS = 420;
 
-function initQuestionFlows() {
-  const triggers = document.querySelectorAll(".question-item__trigger");
+const AUDIENCE_DETAILS = {
+  1: [
+    {
+      title: "MCP clients",
+      detail:
+        "Cursor, Claude Desktop, VS Code, or a LangGraph agent wired to the hosted MCP URL.",
+    },
+    {
+      title: "Bootstrap resources",
+      detail:
+        "Load data360://context and data360://agent-recipe before calling tools.",
+    },
+    {
+      title: "Core workflow",
+      detail:
+        "search_indicators → get_disaggregation → get_data or get_viz_spec.",
+    },
+    {
+      title: "Examples in repo",
+      detail:
+        "langchain-minimal, langchain-graph, and demo_web for local testing.",
+    },
+  ],
+  2: [
+    {
+      title: "Verified answers",
+      detail:
+        "Every value and definition comes from Data360—not from model memory.",
+    },
+    {
+      title: "Citation-ready metadata",
+      detail:
+        "get_metadata for source, methodology, limitations, and statistical concepts.",
+    },
+    {
+      title: "Coverage checks",
+      detail:
+        "required_country filters and get_disaggregation before drawing conclusions.",
+    },
+    {
+      title: "Compact summaries",
+      detail:
+        "summarize_data, rank_countries, and compare_countries for report-ready output.",
+    },
+  ],
+  3: [
+    {
+      title: "Hosted MCP",
+      detail:
+        "Point production clients at the public MCP endpoint (APIM) with subscription key when required.",
+    },
+    {
+      title: "Embed charts",
+      detail:
+        "@data360/mcp-ui and @data360/mcp-ui-angular for Vega chart cards in your UI.",
+    },
+    {
+      title: "Agent graphs",
+      detail:
+        "data360-mcp-agent LangGraph nodes with optional gating and streaming events.",
+    },
+    {
+      title: "Operations",
+      detail: "GET /health and GET /ready for load balancers and uptime monitors.",
+    },
+  ],
+};
+
+function initExpandCardList(config) {
+  const triggers = document.querySelectorAll(config.triggerSelector);
 
   if (triggers.length === 0) {
     return;
@@ -124,68 +186,21 @@ function initQuestionFlows() {
   let activeTrigger = null;
   let animationToken = 0;
 
-  function closeFlow(trigger) {
-    const item = trigger.closest(".question-item");
+  function closePanel(trigger) {
+    const item = trigger.closest(config.itemSelector);
     const panel = document.getElementById(trigger.getAttribute("aria-controls"));
 
     trigger.setAttribute("aria-expanded", "false");
-    item?.classList.remove("question-item--open");
+    item?.classList.remove(config.openClass);
 
     if (panel) {
       panel.hidden = true;
-      clearFlowSteps(panel);
+      const stepsList = panel.querySelector(".question-flow__steps");
+      stepsList?.replaceChildren();
     }
   }
 
-  function clearFlowSteps(panel) {
-    const stepsList = panel.querySelector(".question-flow__steps");
-    if (stepsList) {
-      stepsList.replaceChildren();
-    }
-  }
-
-  function renderFlowSteps(panel, questionId) {
-    const steps = QUESTION_TOOL_FLOWS[questionId];
-    const stepsList = panel.querySelector(".question-flow__steps");
-
-    if (!steps || !stepsList) {
-      return;
-    }
-
-    clearFlowSteps(panel);
-
-    for (const [index, step] of steps.entries()) {
-      const stepItem = document.createElement("li");
-      stepItem.className = "question-flow__step";
-
-      const stepIndex = document.createElement("span");
-      stepIndex.className = "question-flow__step-index";
-      stepIndex.textContent = String(index + 1);
-
-      const stepBody = document.createElement("span");
-      stepBody.className = "question-flow__step-body";
-
-      const toolName = document.createElement("span");
-      toolName.className = "question-flow__tool";
-      toolName.textContent = step.tool;
-
-      const detail = document.createElement("span");
-      detail.className = "question-flow__detail";
-      detail.textContent = step.detail;
-
-      const status = document.createElement("span");
-      status.className = "question-flow__status";
-      status.textContent = "Complete";
-
-      stepBody.append(toolName, detail, status);
-      stepItem.append(stepIndex, stepBody);
-      stepsList.append(stepItem);
-    }
-
-    return stepsList.querySelectorAll(".question-flow__step");
-  }
-
-  function animateFlowSteps(stepElements, token) {
+  function animateSteps(stepElements, token) {
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -201,12 +216,14 @@ function initQuestionFlows() {
     }
   }
 
-  function openFlow(trigger) {
-    const questionId = trigger.dataset.questionId;
+  function openPanel(trigger) {
+    const contentId = trigger.dataset[config.idDatasetKey];
     const panel = document.getElementById(trigger.getAttribute("aria-controls"));
-    const item = trigger.closest(".question-item");
+    const item = trigger.closest(config.itemSelector);
+    const steps = config.contentMap[contentId];
+    const stepsList = panel?.querySelector(".question-flow__steps");
 
-    if (!panel || !questionId) {
+    if (!panel || !contentId || !steps || !stepsList) {
       return;
     }
 
@@ -214,13 +231,30 @@ function initQuestionFlows() {
     const token = animationToken;
 
     trigger.setAttribute("aria-expanded", "true");
-    item?.classList.add("question-item--open");
+    item?.classList.add(config.openClass);
     panel.hidden = false;
+    stepsList.replaceChildren();
 
-    const stepElements = renderFlowSteps(panel, questionId);
-    if (stepElements) {
-      animateFlowSteps(stepElements, token);
+    const stepElements = [];
+
+    for (const [index, step] of steps.entries()) {
+      const stepItem = document.createElement("li");
+      stepItem.className = "question-flow__step";
+
+      const stepIndex = document.createElement("span");
+      stepIndex.className = "question-flow__step-index";
+      stepIndex.textContent = String(index + 1);
+
+      const stepBody = document.createElement("span");
+      stepBody.className = "question-flow__step-body";
+      config.renderStep(step, stepBody);
+
+      stepItem.append(stepIndex, stepBody);
+      stepsList.append(stepItem);
+      stepElements.push(stepItem);
     }
+
+    animateSteps(stepElements, token);
   }
 
   for (const trigger of triggers) {
@@ -228,19 +262,65 @@ function initQuestionFlows() {
       const isOpen = trigger.getAttribute("aria-expanded") === "true";
 
       if (activeTrigger && activeTrigger !== trigger) {
-        closeFlow(activeTrigger);
+        closePanel(activeTrigger);
       }
 
       if (isOpen) {
-        closeFlow(trigger);
+        closePanel(trigger);
         activeTrigger = null;
         return;
       }
 
-      openFlow(trigger);
+      openPanel(trigger);
       activeTrigger = trigger;
     });
   }
+}
+
+function initQuestionFlows() {
+  initExpandCardList({
+    triggerSelector: ".question-item__trigger",
+    itemSelector: ".question-item",
+    openClass: "question-item--open",
+    idDatasetKey: "questionId",
+    contentMap: QUESTION_TOOL_FLOWS,
+    renderStep(step, stepBody) {
+      const toolName = document.createElement("span");
+      toolName.className = "question-flow__tool";
+      toolName.textContent = step.tool;
+
+      const detail = document.createElement("span");
+      detail.className = "question-flow__detail";
+      detail.textContent = step.detail;
+
+      const status = document.createElement("span");
+      status.className = "question-flow__status";
+      status.textContent = "Complete";
+
+      stepBody.append(toolName, detail, status);
+    },
+  });
+}
+
+function initAudienceCards() {
+  initExpandCardList({
+    triggerSelector: ".audience-item__trigger",
+    itemSelector: ".audience-item",
+    openClass: "audience-item--open",
+    idDatasetKey: "audienceId",
+    contentMap: AUDIENCE_DETAILS,
+    renderStep(step, stepBody) {
+      const title = document.createElement("span");
+      title.className = "question-flow__heading";
+      title.textContent = step.title;
+
+      const detail = document.createElement("span");
+      detail.className = "question-flow__detail";
+      detail.textContent = step.detail;
+
+      stepBody.append(title, detail);
+    },
+  });
 }
 
 function initTocScrollSpy() {
@@ -343,3 +423,10 @@ function getTocSpyTarget(id) {
   );
   return heading ?? element;
 }
+
+(function () {
+  initConnectTabs();
+  initQuestionFlows();
+  initAudienceCards();
+  initTocScrollSpy();
+})();
