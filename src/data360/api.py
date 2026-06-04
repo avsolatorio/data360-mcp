@@ -117,6 +117,7 @@ _CORE_FIELDS = frozenset(
         "country_name",
         "UNIT_MEASURE",
         "UNIT_MEASURE_NAME",
+        "UNIT_MULT",
         "claim_id",
     }
 )
@@ -133,6 +134,39 @@ _TRIVIAL_VALUES = frozenset({"_T", "_Z"})
 def _short_hash(data: dict[str, Any]) -> str:
     """PCN claim_id 8-character hash for data verification."""
     return f"{zlib.crc32(json.dumps(data, sort_keys=True).encode()) & 0xFFFFFFFF:08x}"
+
+
+def _qualify_unit_name(unit_name: str | None, unit_mult: Any, unit_code: str | None = None) -> str | None:
+    """Qualify a unit name/label using its unit multiplier (e.g. 'million people')."""
+    if not unit_mult:
+        return unit_name
+    try:
+        mult = int(unit_mult)
+    except (ValueError, TypeError):
+        return unit_name
+
+    if mult == 0:
+        return unit_name
+
+    mult_map = {
+        3: "thousand",
+        6: "million",
+        9: "billion",
+        12: "trillion"
+    }
+    qualifier = mult_map.get(mult)
+    if not qualifier:
+        return unit_name
+
+    if not unit_name:
+        return qualifier
+
+    unit_norm = unit_name.strip().lower()
+    is_people = (unit_code and unit_code.upper() == "PS") or (unit_norm in ("persons", "people"))
+    if is_people:
+        return f"{qualifier} people"
+
+    return f"{qualifier} {unit_name}"
 
 
 def _obs_value_to_float(val: Any) -> float | None:
@@ -2177,8 +2211,10 @@ async def get_data(
             unit_measure = row.get("UNIT_MEASURE")
             if unit_measure:
                 unit_label = _cm.get_label("UNIT_MEASURE", str(unit_measure))
-                if unit_label and unit_label != str(unit_measure):
-                    row["UNIT_MEASURE_NAME"] = unit_label
+                unit_name = unit_label if unit_label else str(unit_measure)
+                qualified_unit = _qualify_unit_name(unit_name, row.get("UNIT_MULT"), str(unit_measure))
+                if qualified_unit:
+                    row["UNIT_MEASURE_NAME"] = qualified_unit
 
         # Promote COMMENT_TS to metadata (repeats identically per row)
         if raw_data and api_metadata is not None:

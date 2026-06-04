@@ -44,13 +44,13 @@ class TestStripDataRow:
         return row
 
     def test_core_fields_only(self):
-        """Test that trivial disaggregation returns only 5 core fields."""
-        EXPECTED_FIELD_COUNT = 5
+        """Test that trivial disaggregation returns only 6 core fields."""
+        EXPECTED_FIELD_COUNT = 6
         row = self._make_full_row()
         result = _strip_data_row(row)
         assert len(result) == EXPECTED_FIELD_COUNT
         assert set(result.keys()) == {
-            "OBS_VALUE", "TIME_PERIOD", "REF_AREA", "UNIT_MEASURE", "claim_id",
+            "OBS_VALUE", "TIME_PERIOD", "REF_AREA", "UNIT_MEASURE", "UNIT_MULT", "claim_id",
         }
 
     def test_preserves_sex(self):
@@ -94,7 +94,7 @@ class TestStripDataRow:
         row = self._make_full_row()
         result = _strip_data_row(row)
         boilerplate = {
-            "TIME_FORMAT", "UNIT_MULT", "COMMENT_OBS", "OBS_STATUS", "OBS_CONF",
+            "TIME_FORMAT", "COMMENT_OBS", "OBS_STATUS", "OBS_CONF",
             "AGG_METHOD", "DECIMALS", "COMMENT_TS", "DATA_SOURCE", "LATEST_DATA",
             "DATABASE_ID", "INDICATOR", "FREQ", "UNIT_TYPE", "COMP_BREAKDOWN_3",
         }
@@ -409,3 +409,61 @@ class TestGetDataDisaggregationIndependence:
         assert result.error is None
         assert result.data is not None
         assert len(result.data) == 1
+
+
+class TestUnitMeasureQualification:
+    """Tests for unit measure qualification using UNIT_MULT."""
+
+    def test_qualify_unit_name_helper(self):
+        """Test _qualify_unit_name helper function directly."""
+        from data360.api import _qualify_unit_name
+
+        # Test PS (Persons/people) with UNIT_MULT=6 (million)
+        assert _qualify_unit_name("Persons", 6, "PS") == "million people"
+        assert _qualify_unit_name("people", 6, "PS") == "million people"
+        assert _qualify_unit_name(None, 6, "PS") == "million"
+
+        # Test other units and multipliers
+        assert _qualify_unit_name("US Dollars", 6, "USD") == "million US Dollars"
+        assert _qualify_unit_name("US Dollars", 3, "USD") == "thousand US Dollars"
+        assert _qualify_unit_name("US Dollars", 9, "USD") == "billion US Dollars"
+        assert _qualify_unit_name("US Dollars", 0, "USD") == "US Dollars"
+        assert _qualify_unit_name("US Dollars", None, "USD") == "US Dollars"
+        assert _qualify_unit_name("US Dollars", "invalid", "USD") == "US Dollars"
+
+    @pytest.mark.asyncio
+    async def test_get_data_qualifies_unit_measure_name(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test that get_data qualifies UNIT_MEASURE_NAME using UNIT_MULT."""
+        mock_data_response = {
+            "value": [{
+                "OBS_VALUE": "86.0392",
+                "TIME_PERIOD": "2022",
+                "REF_AREA": "NGA",
+                "UNIT_MEASURE": "PS",
+                "UNIT_MULT": 6,
+                "SEX": "_T",
+                "AGE": "_T",
+                "URBANISATION": "_T",
+            }],
+        }
+        httpx_mock.add_response(
+            method="POST", url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_PIP_NPOOR_IPL"}}]},
+        )
+        httpx_mock.add_response(
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": [{"field_name": "REF_AREA", "field_value": [{"code": "NGA"}]}]},
+        )
+        httpx_mock.add_response(
+            method="GET", url=re.compile(r".*/data\\?.*"),
+            json=mock_data_response,
+        )
+        result = await get_data("WB_PIP", "WB_PIP_NPOOR_IPL")
+        assert result.error is None
+        assert result.data is not None
+        assert len(result.data) == 1
+        row = result.data[0]
+        # UNIT_MULT should be preserved
+        assert row["UNIT_MULT"] == 6
+        # UNIT_MEASURE_NAME should be qualified as "million people" instead of "Persons"
+        assert row["UNIT_MEASURE_NAME"] == "million people"
