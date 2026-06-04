@@ -470,6 +470,41 @@ async def _fetch_single_indicator(
     except Exception as e:
         _logger.warning(f"Could not fetch metadata for {indicator_id}: {e}")
 
+    # Qualify unit using unit_mult if present
+    raw_unit = ""
+    raw_unit_mult = 0
+    if not df.empty:
+        if "unit_measure" in df.columns:
+            _units = df["unit_measure"].dropna().unique().tolist()
+            if len(_units) == 1:
+                raw_unit = _units[0]
+        if "unit_mult" in df.columns:
+            _mults = df["unit_mult"].dropna().unique().tolist()
+            if len(_mults) == 1:
+                try:
+                    raw_unit_mult = int(_mults[0])
+                except (ValueError, TypeError):
+                    pass
+
+    try:
+        from data360.providers import get_codelist_manager
+        _cl_mgr = get_codelist_manager()
+        await _cl_mgr._ensure_extdataportal_loaded()
+
+        resolved_label = ""
+        if raw_unit:
+            _resolved = _cl_mgr.get_label("UNIT_MEASURE", raw_unit)
+            resolved_label = _resolved if _resolved != raw_unit else ""
+
+        unit_name = resolved_label or unit or raw_unit
+
+        from data360.api import _qualify_unit_name
+        has_mapping = bool(resolved_label or unit)
+        if raw_unit_mult > 0 or has_mapping:
+            unit = _qualify_unit_name(unit_name, raw_unit_mult, raw_unit)
+    except Exception as e:
+        _logger.warning(f"Could not qualify unit for {indicator_id}: {e}")
+
     return df, title, unit
 
 
@@ -1371,6 +1406,15 @@ async def get_viz_spec(
     # no mapping exists and we suppress the label (show nothing rather than a raw
     # code like "PS" or a freeform metadata string like "Unit").
     raw_unit_label: str = ""
+    raw_unit_mult = 0
+    if "unit_mult" in data.columns:
+        _data_mults = data["unit_mult"].dropna().unique().tolist()
+        if len(_data_mults) == 1:
+            try:
+                raw_unit_mult = int(_data_mults[0])
+            except (ValueError, TypeError):
+                pass
+
     try:
         from data360.providers import get_codelist_manager
 
@@ -1378,7 +1422,13 @@ async def get_viz_spec(
         if raw_unit:
             _resolved = _cl_mgr.get_label("UNIT_MEASURE", raw_unit)
             # Only use the resolved label if get_label actually found a mapping.
-            raw_unit_label = _resolved if _resolved != raw_unit else ""
+            has_mapping = _resolved != raw_unit
+            raw_unit_label = _resolved if has_mapping else ""
+
+            from data360.api import _qualify_unit_name
+            if raw_unit_mult > 0 or has_mapping:
+                unit_name = raw_unit_label if raw_unit_label else raw_unit
+                raw_unit_label = _qualify_unit_name(unit_name, raw_unit_mult, raw_unit) or ""
     except Exception:
         pass  # No label; y-axis will have no title rather than a raw code
 
