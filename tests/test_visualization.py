@@ -723,3 +723,62 @@ class TestChartTypeOverrideWarning:
             chart_title=f"Fake {requested_chart}",
         )
         assert "warning" not in result or result["warning"] is None
+
+
+class TestVisualizationUnitQualification:
+    """Tests for unit qualification and suppression in visualization pipelines."""
+
+    @pytest.mark.asyncio
+    async def test_fetch_single_indicator_suppresses_unmapped_unit(self):
+        """Verify that an unmapped unit measure (other than PS) is suppressed (None) in visualizations."""
+        df = pd.DataFrame({
+            "TIME_PERIOD": ["2020", "2021"],
+            "OBS_VALUE": [100.0, 200.0],
+            "REF_AREA": ["KEN", "KEN"],
+            "unit_measure": ["XYZ", "XYZ"],
+            "unit_mult": ["6", "6"],
+        })
+
+        with (
+            patch("data360.api.get_data_api_url", new_callable=AsyncMock, return_value="http://fake-api/data?DATABASE_ID=WB_WDI&INDICATOR=FAKE"),
+            patch("data360.visualization._fetch_data_internal", new_callable=AsyncMock, return_value=df),
+            patch("data360.api.get_metadata", new_callable=AsyncMock, return_value=None),
+        ):
+            from data360.visualization import _fetch_single_indicator
+            _, _, unit = await _fetch_single_indicator(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+                country_code=None,
+                start_year=None,
+                end_year=None,
+                disaggregation_filters=None,
+            )
+            # XYZ is unmapped and not PS, so it must be suppressed to None
+            assert unit is None
+
+    @pytest.mark.asyncio
+    async def test_fetch_single_indicator_qualifies_unmapped_ps(self):
+        """Verify that the unmapped special case PS is qualified to 'million people'."""
+        df = pd.DataFrame({
+            "TIME_PERIOD": ["2020", "2021"],
+            "OBS_VALUE": [100.0, 200.0],
+            "REF_AREA": ["KEN", "KEN"],
+            "unit_measure": ["PS", "PS"],
+            "unit_mult": ["6", "6"],
+        })
+
+        with (
+            patch("data360.api.get_data_api_url", new_callable=AsyncMock, return_value="http://fake-api/data?DATABASE_ID=WB_WDI&INDICATOR=FAKE"),
+            patch("data360.visualization._fetch_data_internal", new_callable=AsyncMock, return_value=df),
+            patch("data360.api.get_metadata", new_callable=AsyncMock, return_value=None),
+        ):
+            from data360.visualization import _fetch_single_indicator
+            _, _, unit = await _fetch_single_indicator(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+                country_code=None,
+                start_year=None,
+                end_year=None,
+                disaggregation_filters=None,
+            )
+            assert unit == "million people"

@@ -500,8 +500,12 @@ async def _fetch_single_indicator(
 
         from data360.api import _qualify_unit_name
         has_mapping = bool(resolved_label or unit)
-        if raw_unit_mult > 0 or has_mapping:
+        is_special_ps = bool(raw_unit and raw_unit.upper() == "PS" and raw_unit_mult > 0)
+        if has_mapping or is_special_ps:
             unit = _qualify_unit_name(unit_name, raw_unit_mult, raw_unit)
+        else:
+            unit = None
+
     except Exception as e:
         _logger.warning(f"Could not qualify unit for {indicator_id}: {e}")
 
@@ -1426,9 +1430,11 @@ async def get_viz_spec(
             raw_unit_label = _resolved if has_mapping else ""
 
             from data360.api import _qualify_unit_name
-            if raw_unit_mult > 0 or has_mapping:
+            is_special_ps = bool(raw_unit and raw_unit.upper() == "PS" and raw_unit_mult > 0)
+            if has_mapping or is_special_ps:
                 unit_name = raw_unit_label if raw_unit_label else raw_unit
                 raw_unit_label = _qualify_unit_name(unit_name, raw_unit_mult, raw_unit) or ""
+
     except Exception:
         pass  # No label; y-axis will have no title rather than a raw code
 
