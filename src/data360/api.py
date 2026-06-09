@@ -2211,10 +2211,22 @@ async def get_data(
             unit_measure = row.get("UNIT_MEASURE")
             if unit_measure:
                 unit_label = _cm.get_label("UNIT_MEASURE", str(unit_measure))
-                unit_name = unit_label if unit_label else str(unit_measure)
-                qualified_unit = _qualify_unit_name(unit_name, row.get("UNIT_MULT"), str(unit_measure))
-                if qualified_unit:
-                    row["UNIT_MEASURE_NAME"] = qualified_unit
+                has_mapping = bool(unit_label and unit_label != str(unit_measure))
+
+                # Check if we have a valid multiplier that warrants qualification
+                unit_mult = row.get("UNIT_MULT")
+                try:
+                    mult = int(unit_mult) if unit_mult is not None else 0
+                except (ValueError, TypeError):
+                    mult = 0
+                has_valid_mult = mult in (3, 6, 9, 12)
+
+                if has_mapping or has_valid_mult:
+                    base_unit = unit_label if has_mapping else row.get("UNIT_MEASURE_NAME") or str(unit_measure)
+                    qualified_unit = _qualify_unit_name(base_unit, unit_mult, str(unit_measure))
+                    if qualified_unit:
+                        row["UNIT_MEASURE_NAME"] = qualified_unit
+
 
         # Promote COMMENT_TS to metadata (repeats identically per row)
         if raw_data and api_metadata is not None:

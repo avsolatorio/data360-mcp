@@ -467,3 +467,39 @@ class TestUnitMeasureQualification:
         assert row["UNIT_MULT"] == 6
         # UNIT_MEASURE_NAME should be qualified as "million people" instead of "Persons"
         assert row["UNIT_MEASURE_NAME"] == "million people"
+
+    @pytest.mark.asyncio
+    async def test_get_data_preserves_unmapped_unit_measure_name_without_multiplier(self, httpx_mock: pytest_httpx.HTTPXMock):
+        """Test that get_data does not overwrite UNIT_MEASURE_NAME if no mapping exists and UNIT_MULT is 0."""
+        mock_data_response = {
+            "value": [{
+                "OBS_VALUE": "86.0392",
+                "TIME_PERIOD": "2022",
+                "REF_AREA": "NGA",
+                "UNIT_MEASURE": "XYZ",
+                "UNIT_MEASURE_NAME": "Descriptive XYZ Label",
+                "UNIT_MULT": 0,
+                "SEX": "_T",
+                "AGE": "_T",
+                "URBANISATION": "_T",
+            }],
+        }
+        httpx_mock.add_response(
+            method="POST", url="https://api.test.example.com/metadata",
+            json={"value": [{"series_description": {"idno": "WB_PIP_NPOOR_IPL"}}]},
+        )
+        httpx_mock.add_response(
+            method="POST", url=re.compile(r".*/portal/v1/dimensions.*"),
+            json={"dimensions": [{"field_name": "REF_AREA", "field_value": [{"code": "NGA"}]}]},
+        )
+        httpx_mock.add_response(
+            method="GET", url=re.compile(r".*/data\\?.*"),
+            json=mock_data_response,
+        )
+        result = await get_data("WB_PIP", "WB_PIP_NPOOR_IPL")
+        assert result.error is None
+        assert result.data is not None
+        assert len(result.data) == 1
+        row = result.data[0]
+        # UNIT_MEASURE_NAME should be preserved as "Descriptive XYZ Label" instead of being overwritten with raw code "XYZ"
+        assert row["UNIT_MEASURE_NAME"] == "Descriptive XYZ Label"
