@@ -1507,6 +1507,22 @@ async def get_viz_spec(
             x_label="Value",
             unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
         )
+        # Apply post-processing rules
+        for rule in viz_config.POST_PROCESSING_RULES:
+            spec = rule.apply(
+                spec,
+                data_frequency=data_frequency,
+                unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
+            )
+
+        out_reason = strategy_result.reason
+        if strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE:
+            resolved_mark = viz_config.extract_top_level_mark_type(spec)
+            if resolved_mark:
+                out_reason = viz_config.patch_strategy_reason_chart_phrase(
+                    strategy_result.reason, resolved_mark
+                )
+
         dim_summary = _extract_dimension_summary(viz_data)
         data_summary = _build_data_summary(viz_data)
 
@@ -1542,7 +1558,7 @@ async def get_viz_spec(
             warning=warning_msg,
             source_attribution=source_attribution,
             strategy=strategy_result.strategy.value,
-            reason=strategy_result.reason,
+            reason=out_reason,
             dimensions=dim_summary or None,
             data_summary=data_summary or None,
         )
@@ -1962,6 +1978,24 @@ async def get_multi_indicator_viz_spec(
         "indicator_name": indicator_display_multi,
     }
 
+    # Apply post-processing rules
+    for rule in viz_config.POST_PROCESSING_RULES:
+        spec = rule.apply(
+            spec,
+            data_frequency=None,
+            unit_measure=_unit_measure_for_formatting(
+                shared_unit_raw, shared_unit_label
+            ),
+        )
+
+    out_reason = strategy_result.reason
+    if strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE:
+        resolved_mark = viz_config.extract_top_level_mark_type(spec)
+        if resolved_mark:
+            out_reason = viz_config.patch_strategy_reason_chart_phrase(
+                strategy_result.reason, resolved_mark
+            )
+
     url = await _store_spec(spec)
 
     warning_msg = None
@@ -1996,5 +2030,5 @@ async def get_multi_indicator_viz_spec(
         warning=warning_msg,
         source_attribution=source_attribution_multi,
         strategy=strategy_result.strategy.value,
-        reason=strategy_result.reason,
+        reason=out_reason,
     )

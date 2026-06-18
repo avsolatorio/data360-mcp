@@ -102,6 +102,45 @@ class TestGetVizSpecStrategyDispatch:
         assert result["url"] is None
         assert result["error"] is not None
 
+    @pytest.mark.asyncio
+    async def test_get_viz_spec_applies_post_processing_rules(self, patches):
+        """get_viz_spec should automatically apply post-processing rules (e.g. LineYearGapStrokeDashRule)."""
+        df_gap = pd.DataFrame(
+            {
+                "TIME_PERIOD": ["2020-01-01", "2023-01-01"],
+                "OBS_VALUE": [100.0, 300.0],
+                "REF_AREA": ["KEN", "KEN"],
+            }
+        )
+
+        captured_spec = {}
+        def fake_save(spec):
+            captured_spec["spec"] = spec
+            return "http://localhost:8021/static/viz_specs/test.json"
+
+        with (
+            patch(
+                "data360.visualization._fetch_data_internal",
+                new_callable=AsyncMock,
+                return_value=df_gap,
+            ),
+            patch(
+                "data360.visualization.save_specs_to_static",
+                side_effect=fake_save,
+            )
+        ):
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+            )
+
+        assert result["error"] is None
+        spec = captured_spec.get("spec")
+        assert spec is not None
+        assert "strokeDash" in spec["encoding"]
+        assert spec["encoding"]["detail"]["field"] == "_d360_lseg"
+
+
 
 # =============================================================================
 # New tests for improvements: MCP-002, MCP-003, MCP-004 + WB style + null guard
