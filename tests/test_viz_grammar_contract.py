@@ -607,13 +607,13 @@ def _make_many_country_multiyr_df(n_countries: int, n_years: int = 3) -> pd.Data
 
 
 class TestHeatmapStrategyRouting:
-    """HEATMAP is selected for >8 countries + multi-year + 0 breakdowns."""
+    """HEATMAP is selected for >20 countries + multi-year + 0 breakdowns."""
 
     def test_routes_to_heatmap_above_threshold(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         assert result.strategy == ChartStrategy.HEATMAP, (
-            f"Expected HEATMAP for 10 countries x multi-year, got {result.strategy}."
+            f"Expected HEATMAP for 25 countries x multi-year, got {result.strategy}."
         )
 
     def test_does_not_route_to_heatmap_below_threshold(self):
@@ -626,10 +626,10 @@ class TestHeatmapStrategyRouting:
     def test_does_not_route_to_heatmap_with_breakdown(self):
         """Presence of a meaningful breakdown (>1 unique value) must route to SMALL_MULTIPLES."""
         rows = []
-        for i in range(10):
+        for i in range(25):
             for yr in [2020, 2021]:
                 for bd in ["A", "B"]:  # 2 unique values → n_breakdowns = 1
-                    rows.append(
+                     rows.append(
                         {
                             "country": f"C{i:02d}",
                             "year": pd.Timestamp(str(yr)),
@@ -640,12 +640,12 @@ class TestHeatmapStrategyRouting:
         df = pd.DataFrame(rows)
         result = select_strategy(df, n_indicators=1)
         assert result.strategy == ChartStrategy.SMALL_MULTIPLES, (
-            f"With a breakdown (2+ unique values), 10-country multi-year data must route to "
+            f"With a breakdown (2+ unique values), 25-country multi-year data must route to "
             f"SMALL_MULTIPLES, got {result.strategy}."
         )
 
     def test_heatmap_color_dim_is_value(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         assert result.color_dim == "value", (
             f"HEATMAP color_dim must be 'value' (the quantity to encode as cell color), "
@@ -653,7 +653,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_spec_mark_is_rect(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         mark = spec.get("mark", {})
@@ -663,7 +663,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_spec_has_tooltip(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         enc = spec.get("encoding", {})
@@ -679,7 +679,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_x_axis_is_temporal(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         x = spec.get("encoding", {}).get("x", {})
@@ -688,7 +688,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_y_axis_is_country_nominal(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         y = spec.get("encoding", {}).get("y", {})
@@ -700,7 +700,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_color_encodes_value(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         color = spec.get("encoding", {}).get("color", {})
@@ -712,7 +712,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_uses_sequential_palette_for_positive_data(self):
-        df = _make_many_country_multiyr_df(n_countries=10)  # all values >= 0
+        df = _make_many_country_multiyr_df(n_countries=25)  # all values >= 0
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         color = spec.get("encoding", {}).get("color", {})
@@ -723,13 +723,13 @@ class TestHeatmapStrategyRouting:
 
     def test_heatmap_uses_divergent_palette_for_negative_data(self):
         rows = []
-        for i in range(10):
+        for i in range(25):
             for yr in [2020, 2021]:
                 rows.append(
                     {
                         "country": f"C{i:02d}",
                         "year": pd.Timestamp(str(yr)),
-                        "value": float(i - 5),  # includes negatives
+                        "value": float(i - 12),  # includes negatives
                     }
                 )
         df = pd.DataFrame(rows)
@@ -742,7 +742,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_has_wb_config(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         assert "config" in spec, "HEATMAP spec must have WB config injected."

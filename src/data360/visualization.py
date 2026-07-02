@@ -1455,6 +1455,18 @@ async def get_viz_spec(
             if col in viz_data.columns:
                 viz_data[col] = viz_data[col].replace(series_labels)
 
+    # 6.6 If a cross-sectional chart type is explicitly requested but years are omitted,
+    # default to the latest available year in the dataset.
+    is_cross_sectional_hint = chart_type and any(
+        kw in chart_type.lower() and not (kw == "map" and "heatmap" in chart_type.lower())
+        for kw in ("bar", "column", "ranking", "map", "choropleth", "tick", "strip", "beeswarm", "distribution")
+    )
+    if is_cross_sectional_hint and start_year is None and end_year is None:
+        if "year" in viz_data.columns and not viz_data.empty:
+            latest_year = viz_data["year"].max()
+            viz_data = viz_data[viz_data["year"] == latest_year].copy()
+            _logger.info(f"[get_viz_spec] chart_type={chart_type} with no year specified: filtered data to latest year {latest_year}")
+
     import textwrap
 
     # Apply text wrapping (Typography T3 constraint) so long single-indicator titles don't overflow

@@ -3011,9 +3011,9 @@ def dispatch_spec(
 HIGH_CARDINALITY_THRESHOLDS: dict[str, int] = {
     # Maximum color series in a TEMPORAL_SINGLE line chart.
     # Strategy routing enforces this before the builder is called.
-    "line_max_series": 8,
+    "line_max_series": 15,
     # Minimum country count to switch from line to strip (beeswarm) in single-year views.
-    "beeswarm_threshold": 8,
+    "beeswarm_threshold": 20,
     # Minimum breakdown count to prefer SMALL_MULTIPLES over BREAKDOWN_COMPARISON.
     "facet_threshold": 4,
     # Maximum color series in any context where the strategy router can’t pre-filter.

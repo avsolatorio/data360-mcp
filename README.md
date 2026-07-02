@@ -115,6 +115,18 @@ DEBUG=true uv run scripts/llm_mcp_demo.py
 
 ---
 
+## Visualization & Chart Strategies
+
+The server includes visualization spec generation tools (`data360_get_viz_spec` and `data360_get_multi_indicator_viz_spec`) that return validated Vega-Lite v5 specifications. The visualization engine automatically selects the best chart strategy based on the shape and cardinality of the data:
+
+- **Time Series (Few Series)** ($\le 8$ economies/breakdowns over multiple years): Selects `TEMPORAL_SINGLE` (standard line chart).
+- **Time Series (High Series Count)** ($> 8$ series over multiple years): Selects `HEATMAP` (a 2D rect grid) to avoid visual clutter.
+- **Single Year (Few Series)** ($\le 8$ series): Selects `CROSS_SECTIONAL` (horizontal bar chart).
+- **Single Year (Many Series)** ($> 8$ series): Selects `DISTRIBUTION` (tick/strip chart) capped to 20 items.
+- **Multiple Breakdowns**: Selects `SMALL_MULTIPLES` (faceted panel grid) capped to 6 panels.
+
+---
+
 ## MCP Resources
 
 | Resource | Description |

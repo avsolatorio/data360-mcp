@@ -140,6 +140,19 @@ class TestGetVizSpecStrategyDispatch:
         assert "strokeDash" in spec["encoding"]
         assert spec["encoding"]["detail"]["field"] == "_d360_lseg"
 
+    @pytest.mark.asyncio
+    async def test_bar_chart_without_years_defaults_to_latest_year(self, patches):
+        """Cross-sectional chart requested without years must filter to latest year."""
+        result = await get_viz_spec(
+            database_id="WB_WDI",
+            indicator_id="FAKE_IND",
+            chart_type="bar",
+        )
+
+        assert result["error"] is None
+        assert result["strategy"] == "cross_sectional"  # routed to bar chart instead of temporal line
+        assert result["data_summary"]["year_range"] == ["2022", "2022"]
+
 
 
 # =============================================================================
@@ -255,7 +268,7 @@ class TestHighCardinalityChartSelection:
         return _make_df(n_countries=n_countries, single_year=single_year)
 
     def test_above_threshold_single_year_triggers_beeswarm(self):
-        df = self._df(n_countries=12, single_year=True)
+        df = self._df(n_countries=25, single_year=True)
         assert viz_config.should_use_beeswarm(df, chart_type=None, color_dim="country")
 
     def test_below_threshold_does_not_trigger_beeswarm(self):
@@ -265,26 +278,26 @@ class TestHighCardinalityChartSelection:
         )
 
     def test_above_threshold_multi_year_does_not_trigger(self):
-        df = self._df(n_countries=15, single_year=False)
+        df = self._df(n_countries=25, single_year=False)
         assert not viz_config.should_use_beeswarm(
             df, chart_type=None, color_dim="country"
         )
 
     def test_explicit_bar_chart_type_does_not_trigger_beeswarm(self):
-        df = self._df(n_countries=20, single_year=True)
+        df = self._df(n_countries=25, single_year=True)
         assert not viz_config.should_use_beeswarm(
             df, chart_type="bar", color_dim="country"
         )
 
     def test_beeswarm_spec_uses_tick_mark(self):
-        df = self._df(n_countries=15, single_year=True)
+        df = self._df(n_countries=25, single_year=True)
         spec = viz_config.build_beeswarm_spec(df, title="Test Chart")
         mark = spec["mark"]
         mark_type = mark["type"] if isinstance(mark, dict) else mark
         assert mark_type == "tick", f"Expected tick mark for beeswarm, got {mark_type}"
 
     def test_beeswarm_spec_sorts_y_by_value(self):
-        df = self._df(n_countries=15, single_year=True)
+        df = self._df(n_countries=25, single_year=True)
         spec = viz_config.build_beeswarm_spec(df, title="Test")
         assert spec["encoding"]["y"]["sort"] == "-x"
 
