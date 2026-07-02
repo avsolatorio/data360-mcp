@@ -26,9 +26,14 @@ export function formatData360VizSourceLine(result: unknown): string {
   const db =
     readOptionalString(r, "database_name") ||
     readOptionalString(r, "database_id");
-  const ind =
-    readOptionalString(r, "indicator_name") ||
-    readOptionalString(r, "indicator_id");
+  const indName = readOptionalString(r, "indicator_name");
+  const indId = readOptionalString(r, "indicator_id");
+  let ind = "";
+  if (indName && indId && indName !== indId) {
+    ind = `${indName} (${indId})`;
+  } else {
+    ind = indName || indId || "";
+  }
   if (db && ind) {
     return `World Bank — ${db} — ${ind}`;
   }

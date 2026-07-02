@@ -181,6 +181,16 @@ class TestGetVizSpecStrategyDispatch:
         assert result["strategy"] == "cross_sectional"  # routed to bar chart instead of temporal line/heatmap
         assert result["data_summary"]["year_range"] == ["2022", "2022"]
 
+    def test_format_source_line_includes_indicator_id(self):
+        from data360.visualization import _format_source_line_from_attribution
+        attrib = {
+            "database_name": "World Development Indicators (WDI)",
+            "indicator_name": "GDP (current US$)",
+            "indicator_id": "NY.GDP.MKTP.CD",
+        }
+        res = _format_source_line_from_attribution(attrib)
+        assert res == "World Bank — World Development Indicators (WDI) — GDP (current US$) (NY.GDP.MKTP.CD)"
+
 
 
 # =============================================================================
