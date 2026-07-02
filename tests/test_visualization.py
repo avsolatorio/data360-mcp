@@ -153,6 +153,34 @@ class TestGetVizSpecStrategyDispatch:
         assert result["strategy"] == "cross_sectional"  # routed to bar chart instead of temporal line
         assert result["data_summary"]["year_range"] == ["2022", "2022"]
 
+    @pytest.mark.asyncio
+    async def test_bar_chart_with_specified_years_filters_to_latest_year_if_multi_country(self, patches):
+        """Cross-sectional chart with multiple years and multiple countries must filter to latest year."""
+        df_multi = pd.DataFrame(
+            {
+                "TIME_PERIOD": ["2020-01-01", "2021-01-01", "2022-01-01", "2020-01-01", "2021-01-01", "2022-01-01"],
+                "OBS_VALUE": [100, 200, 300, 150, 250, 350],
+                "REF_AREA": ["KEN", "KEN", "KEN", "UGA", "UGA", "UGA"],
+            }
+        )
+
+        with patch(
+            "data360.visualization._fetch_data_internal",
+            new_callable=AsyncMock,
+            return_value=df_multi,
+        ):
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+                chart_type="bar",
+                start_year=2020,
+                end_year=2022,
+            )
+
+        assert result["error"] is None
+        assert result["strategy"] == "cross_sectional"  # routed to bar chart instead of temporal line/heatmap
+        assert result["data_summary"]["year_range"] == ["2022", "2022"]
+
 
 
 # =============================================================================

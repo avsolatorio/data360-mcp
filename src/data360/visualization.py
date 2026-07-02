@@ -1455,17 +1455,24 @@ async def get_viz_spec(
             if col in viz_data.columns:
                 viz_data[col] = viz_data[col].replace(series_labels)
 
-    # 6.6 If a cross-sectional chart type is explicitly requested but years are omitted,
-    # default to the latest available year in the dataset.
+    # 6.6 If a cross-sectional chart type is explicitly requested (bar, map, tick) but years are omitted
+    # or a multi-year/multi-country dataset is passed, default to the latest available year to prevent
+    # a cluttered "bar chart for time series".
     is_cross_sectional_hint = chart_type and any(
         kw in chart_type.lower() and not (kw == "map" and "heatmap" in chart_type.lower())
         for kw in ("bar", "column", "ranking", "map", "choropleth", "tick", "strip", "beeswarm", "distribution")
     )
-    if is_cross_sectional_hint and start_year is None and end_year is None:
-        if "year" in viz_data.columns and not viz_data.empty:
-            latest_year = viz_data["year"].max()
-            viz_data = viz_data[viz_data["year"] == latest_year].copy()
-            _logger.info(f"[get_viz_spec] chart_type={chart_type} with no year specified: filtered data to latest year {latest_year}")
+    if is_cross_sectional_hint and not viz_data.empty:
+        unique_years = viz_data["year"].nunique() if "year" in viz_data.columns else 0
+        unique_countries = viz_data["country"].nunique() if "country" in viz_data.columns else 0
+        if (start_year is None and end_year is None) or (unique_years > 1 and unique_countries > 1):
+            if "year" in viz_data.columns:
+                latest_year = viz_data["year"].max()
+                viz_data = viz_data[viz_data["year"] == latest_year].copy()
+                _logger.info(
+                    f"[get_viz_spec] chart_type={chart_type}: filtered data to latest year {latest_year} "
+                    f"to prevent cluttered cross-sectional time-series."
+                )
 
     import textwrap
 
