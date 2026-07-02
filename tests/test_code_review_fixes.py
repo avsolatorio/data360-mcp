@@ -55,7 +55,6 @@ class TestB1SourceFallback:
         assert isinstance(result, str)
         assert "World Bank" in result
 
-
 # ============================================================================
 # B3: dispatch_spec must pass y_label/unit_measure to HEATMAP
 # ============================================================================

@@ -119,7 +119,13 @@ export function parseSpec(spec: VLSpec, palette: string[]): ParsedSpec {
       : (spec.data?.values ?? []);
 
   const isQuantitative = spec.encoding?.color?.type === "quantitative";
-  const colorField = isQuantitative ? null : (spec.encoding?.color?.field ?? null);
+  const legendVal = spec.encoding?.color?.legend as any;
+  const xField = spec.encoding?.x?.field ?? null;
+  const yField = spec.encoding?.y?.field ?? null;
+  const colorFieldVal = spec.encoding?.color?.field ?? null;
+  const isRepresentedOnAxis = colorFieldVal !== null && (colorFieldVal === xField || colorFieldVal === yField);
+  const hasNoLegend = legendVal === null || legendVal === false || isRepresentedOnAxis;
+  const colorField = (isQuantitative || hasNoLegend) ? null : colorFieldVal;
   const specTitle =
     typeof spec.title === "string"
       ? spec.title

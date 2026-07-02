@@ -383,7 +383,7 @@ class TestColorEncodingLegendTitle:
         from data360.viz_config import _color_encoding
         enc = _color_encoding("country", mark_type="line", n_items=3)
         legend = enc.get("legend", {})
-        assert legend.get("title") == "Country"
+        assert legend.get("title") == "Economy"
 
     def test_caller_supplied_title_takes_priority(self):
         from data360.viz_config import _color_encoding

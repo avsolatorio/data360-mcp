@@ -268,7 +268,7 @@ async def _get_viz_spec(
     relevant_fields: list[str] | None = None,
     custom_constraints: list[str] | None = None,
     use_default_constraints: bool = True,
-    chart_title: str | None = None,
+    chart_title: str | dict | None = None,
     series_labels: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Generate a Vega-Lite chart from a single Data360 indicator.
@@ -314,7 +314,7 @@ async def _get_multi_indicator_viz_spec(
     end_year: int | None = None,
     disaggregation_filters: dict[str, str | None] | None = None,
     chart_type: str | None = None,
-    chart_title: str | None = None,
+    chart_title: str | dict | None = None,
     series_labels: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Generate a Vega-Lite chart comparing multiple Data360 indicators.

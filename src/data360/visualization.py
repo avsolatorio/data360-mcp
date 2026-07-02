@@ -523,6 +523,16 @@ def _clean_single_df(
     chart_type: str | None,
     data_frequency: str | None,
 ) -> tuple[pd.DataFrame, list[str], viz_config.TemporalFreq]:
+    if "ref_area" in data.columns:
+        try:
+            from data360.providers import get_group_hierarchy_manager
+            _ghm = get_group_hierarchy_manager()
+            has_leaf = data["ref_area"].apply(lambda x: _ghm.is_country(str(x))).any()
+            if has_leaf:
+                data = data[data["ref_area"].apply(lambda x: not _ghm.is_group(str(x)))]
+        except Exception as e:
+            _logger.warning(f"Could not filter FMR leaf economies: {e}")
+
     # Trivial values for disaggregation dimensions: _T = aggregate total, _Z = not applicable.
     # unit_measure uses a different sentinel: 'U' = Unitless (defined in _UNIT_MEASURE_TRIVIAL).
     _TRIVIAL_DIM_VALUES = ("_T", "_Z")
@@ -1458,7 +1468,6 @@ async def get_viz_spec(
             if isinstance(chart_title_auto, str)
             else chart_title_auto
         )
-
     # Vega-Lite title + subtitle (geography, year range, unit) after data is cleaned
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
         final_title, raw_unit_label or None, viz_data
@@ -1541,15 +1550,16 @@ async def get_viz_spec(
             elif core_intent == "strip":
                 core_intent = "beeswarm"
 
-            reason_lower = strategy_result.reason.lower()
+            reason_lower = out_reason.lower()
             reason_suffix = (
                 reason_lower.split("→")[-1] if "→" in reason_lower else reason_lower
             )
 
-            if core_intent and core_intent not in reason_suffix:
+            is_point_fallback_to_line = (core_intent == "point" and "line" in reason_suffix)
+            if core_intent and core_intent not in reason_suffix and not is_point_fallback_to_line:
                 warning_msg = (
                     f"You requested '{chart_type}', but the visualization engine "
-                    f"selected a different strategy based on data cardinality: {strategy_result.reason}. "
+                    f"selected a different strategy based on data cardinality: {out_reason}. "
                     "The chart was successfully generated. Please ensure your response and the chart title reflect this actual strategy."
                 )
 

@@ -183,7 +183,7 @@ def inject_wb_config(vl_spec: dict) -> dict:
 # the field as dates for all encodings, so an ordinal x-axis shows epoch milliseconds.
 _TOOLTIP_SPECS: dict[str, dict] = {
     "value": {"title": "Value", "format": ",.2f", "type": "quantitative"},
-    "country": {"title": "Country", "type": "nominal"},
+    "country": {"title": "Economy", "type": "nominal"},
     "sex": {"title": "Sex", "type": "nominal"},
     "age": {"title": "Age Group", "type": "nominal"},
     "urbanisation": {"title": "Urbanisation", "type": "nominal"},
@@ -192,7 +192,7 @@ _TOOLTIP_SPECS: dict[str, dict] = {
     "comp_breakdown_3": {"title": "Dimension 3", "type": "nominal"},
     "time_period": {"title": "Period", "type": "temporal"},
     "obs_value": {"title": "Value", "format": ",.2f", "type": "quantitative"},
-    "ref_area": {"title": "Country", "type": "nominal"},
+    "ref_area": {"title": "Economy", "type": "nominal"},
     "region": {"title": "Region", "type": "nominal"},
 }
 
@@ -244,11 +244,7 @@ def format_chart_context_subtitle(df: pd.DataFrame) -> str | None:
             key=str.casefold,
         )
         if vals:
-            cap = 12
-            if len(vals) > cap:
-                shown = ", ".join(vals[:10])
-                parts.append(f"{shown}, … (+{len(vals) - 10} more)")
-            else:
+            if len(vals) <= 3:
                 parts.append(", ".join(vals))
     year_lbl = None
     if "year" in df.columns:
@@ -261,7 +257,7 @@ def format_chart_context_subtitle(df: pd.DataFrame) -> str | None:
 
 
 def build_chart_title_with_context(
-    main_title: str | list[str],
+    main_title: str | list[str] | dict,
     unit_subtitle: str | None,
     df: pd.DataFrame,
 ) -> str | dict | list:
@@ -271,6 +267,15 @@ def build_chart_title_with_context(
     part on its own line. This prevents the single-line overflow that occurs
     when country names, year ranges, units, and trim notes are concatenated.
     """
+    if isinstance(main_title, str) and main_title.strip().startswith("{"):
+        try:
+            import json
+            main_title = json.loads(main_title)
+        except Exception:
+            pass
+
+    if isinstance(main_title, dict):
+        return main_title
     ctx = format_chart_context_subtitle(df)
     subtitle_parts: list[str] = []
     if ctx:
@@ -868,10 +873,12 @@ class ExplicitMapRule:
             if ctx.country_count > 0:
                 return StrategyResult(
                     ChartStrategy.CHOROPLETH,
-                    f"User requested map; {ctx.country_count} countries → choropleth map",
+                    f"User requested map; {ctx.country_count} economies → choropleth map",
                     indicator_cols=ctx.ind_cols,
                 )
         return None
+
+
 
 class TwoIndicatorRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
@@ -880,13 +887,13 @@ class TwoIndicatorRule:
                 if ctx.hint == "bar":
                     return StrategyResult(
                         ChartStrategy.BREAKDOWN_COMPARISON,
-                        f"User requested bar; 2 indicators, {ctx.country_count} countries, single year → grouped bar",
+                        f"User requested bar; 2 indicators, {ctx.country_count} economies, single year → grouped bar",
                         indicator_cols=ctx.ind_cols,
                         color_dim="indicator",
                     )
                 return StrategyResult(
                     ChartStrategy.CORRELATION,
-                    f"2 indicators, {ctx.country_count} countries, single year → scatterplot",
+                    f"2 indicators, {ctx.country_count} economies, single year → scatterplot",
                     indicator_cols=ctx.ind_cols,
                     color_dim="country",
                     x_dim=ctx.ind_cols[0],
@@ -895,7 +902,7 @@ class TwoIndicatorRule:
             if ctx.year_count > 1 and ctx.country_count > 1:
                 return StrategyResult(
                     ChartStrategy.SMALL_MULTIPLES,
-                    f"2 indicators, {ctx.country_count} countries, {ctx.year_count} years → small multiples",
+                    f"2 indicators, {ctx.country_count} economies, {ctx.year_count} years → small multiples",
                     indicator_cols=ctx.ind_cols,
                     color_dim="indicator",
                     facet_dim="country",
@@ -945,7 +952,7 @@ class ExplicitHeatmapRule:
         if ctx.hint == "heatmap" and ctx.year_count > 1 and ctx.country_count > 0:
             return StrategyResult(
                 ChartStrategy.HEATMAP,
-                f"User requested heatmap; {ctx.country_count} countries, {ctx.year_count} years → heatmap",
+                f"User requested heatmap; {ctx.country_count} economies, {ctx.year_count} years → heatmap",
                 color_dim="value",
             )
         return None
@@ -957,7 +964,7 @@ class HeatmapRule:
             if ctx.n_breakdowns == 0:
                 return StrategyResult(
                     ChartStrategy.HEATMAP,
-                    f"{ctx.country_count} countries, {ctx.year_count} years → heatmap",
+                    f"{ctx.country_count} economies, {ctx.year_count} years → heatmap",
                     color_dim="value",
                 )
         return None
@@ -968,7 +975,7 @@ class ExplicitBarBreakdownRule:
             color_dim = list(ctx.breakdown_counts.keys())[0]
             return StrategyResult(
                 ChartStrategy.BREAKDOWN_COMPARISON,
-                f"User requested bar; 1 breakdown ({color_dim}), {ctx.country_count} countries → grouped bar",
+                f"User requested bar; 1 breakdown ({color_dim}), {ctx.country_count} economies → grouped bar",
                 color_dim=color_dim,
             )
         return None
@@ -986,7 +993,7 @@ class IncompatibleUnitsRule:
             reason_detail = (
                 f"unit_measure ({unit_count} units)"
                 + (f" + {n_other} other breakdown(s)" if n_other else "")
-                + f", {ctx.country_count} countr{'y' if ctx.country_count == 1 else 'ies'}"
+                + f", {ctx.country_count} econom{'y' if ctx.country_count == 1 else 'ies'}"
                 + (" + country combo" if secondary_color_dim else "")
                 + " → faceted by unit (independent Y-axes)"
             )
@@ -1007,8 +1014,8 @@ class IncompatibleCustomBreakdownRule:
             if bd_dim in _CUSTOM_BREAKDOWN_DIMS and _detect_scale_incompatibility(ctx.df, bd_dim):
                 return StrategyResult(
                     ChartStrategy.SMALL_MULTIPLES,
-                    f"1 breakdown ({bd_dim}), {ctx.country_count} countries, scale-incompatible "
-                    f"→ scale-split panels (color=country)",
+                    f"1 breakdown ({bd_dim}), {ctx.country_count} economies, scale-incompatible "
+                    f"→ scale-split panels (color=economy)",
                     color_dim="country",
                     facet_dim=bd_dim,
                     scale_incompatible=True,
@@ -1030,7 +1037,7 @@ class GenericSmallMultiplesRule:
                 color_dim = None
             return StrategyResult(
                 ChartStrategy.SMALL_MULTIPLES,
-                f"{ctx.n_breakdowns} breakdowns, {ctx.country_count} countr{'y' if ctx.country_count == 1 else 'ies'} "
+                f"{ctx.n_breakdowns} breakdowns, {ctx.country_count} econom{'y' if ctx.country_count == 1 else 'ies'} "
                 f"→ small multiples (facet={facet_dim}, color={color_dim})",
                 color_dim=color_dim,
                 facet_dim=facet_dim,
@@ -1073,7 +1080,7 @@ class ExplicitBarCrossSectionalRule:
         if ctx.hint == "bar" and ctx.year_count <= 1 and ctx.country_count > 0:
             return StrategyResult(
                 ChartStrategy.CROSS_SECTIONAL,
-                f"User requested bar; {ctx.country_count} countries, single year → horizontal bar",
+                f"User requested bar; {ctx.country_count} economies, single year → horizontal bar",
                 color_dim="country",
             )
         return None
@@ -1084,12 +1091,12 @@ class HighCardinalityCrossSectionalRule:
             if ctx.hint in ("strip", "beeswarm", "tick", "distribution"):
                 return StrategyResult(
                     ChartStrategy.DISTRIBUTION,
-                    f"User requested strip/beeswarm; {ctx.country_count} countries, single year → strip/beeswarm",
+                    f"User requested strip/beeswarm; {ctx.country_count} economies, single year → strip/beeswarm",
                     color_dim="country",
                 )
             return StrategyResult(
                 ChartStrategy.CHOROPLETH,
-                f"{ctx.country_count} countries, single year → default to choropleth map",
+                f"{ctx.country_count} economies, single year → default to choropleth map",
             )
         return None
 
@@ -1098,7 +1105,7 @@ class CrossSectionalRule:
         if ctx.year_count <= 1 and ctx.country_count > 0:
             return StrategyResult(
                 ChartStrategy.CROSS_SECTIONAL,
-                f"{ctx.country_count} countries, single year → horizontal bar",
+                f"{ctx.country_count} economies, single year → horizontal bar",
                 color_dim="country",
             )
         return None
@@ -1109,7 +1116,7 @@ class TemporalSingleRule:
             phrase = chart_type_phrase_for_reason(ctx.hint)
             return StrategyResult(
                 ChartStrategy.TEMPORAL_SINGLE,
-                f"Single indicator, {ctx.year_count} years, {ctx.country_count} countries → {phrase}",
+                f"Single indicator, {ctx.year_count} years, {ctx.country_count} economies → {phrase}",
                 color_dim="country" if ctx.country_count > 0 else None,
                 mark_hint=ctx.hint if ctx.hint in ("bar", "line") else None,
             )
@@ -2948,6 +2955,9 @@ def build_fallback_line_spec(
     return inject_wb_config(spec)
 
 
+
+
+
 # Dispatch table: strategy → builder function
 STRATEGY_BUILDERS: dict[ChartStrategy, callable] = {
     ChartStrategy.TEMPORAL_SINGLE: build_temporal_single_spec,
@@ -3052,6 +3062,9 @@ def build_beeswarm_spec(
     if value_col != "value" and value_col in df.columns:
         df = df.rename(columns={value_col: "value"})
     return build_distribution_spec(df, title, r)
+
+
+
 
 
 # ============================================================================
