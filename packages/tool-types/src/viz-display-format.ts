@@ -23,9 +23,6 @@ export function formatData360VizSourceLine(result: unknown): string {
   if (fromServer) {
     return fromServer;
   }
-  const db =
-    readOptionalString(r, "database_name") ||
-    readOptionalString(r, "database_id");
   const indName = readOptionalString(r, "indicator_name");
   const indId = readOptionalString(r, "indicator_id");
   let ind = "";
@@ -34,14 +31,8 @@ export function formatData360VizSourceLine(result: unknown): string {
   } else {
     ind = indName || indId || "";
   }
-  if (db && ind) {
-    return `World Bank — ${db} — ${ind}`;
-  }
   if (ind) {
     return `World Bank — ${ind}`;
-  }
-  if (db) {
-    return `World Bank — ${db}`;
   }
   return DATA360_CHART_SOURCE_FALLBACK;
 }

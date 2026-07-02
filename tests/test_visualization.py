@@ -189,7 +189,7 @@ class TestGetVizSpecStrategyDispatch:
             "indicator_id": "NY.GDP.MKTP.CD",
         }
         res = _format_source_line_from_attribution(attrib)
-        assert res == "World Bank — World Development Indicators (WDI) — GDP (current US$) (NY.GDP.MKTP.CD)"
+        assert res == "World Bank — GDP (current US$) (NY.GDP.MKTP.CD)"
 
 
 

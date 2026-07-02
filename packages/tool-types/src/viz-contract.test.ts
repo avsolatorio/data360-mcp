@@ -57,6 +57,6 @@ describe("formatData360VizSourceLine", () => {
       indicator_id: "NY.GDP.MKTP.CD",
     };
     const res = formatData360VizSourceLine(raw);
-    expect(res).toBe("World Bank — World Development Indicators (WDI) — GDP (current US$) (NY.GDP.MKTP.CD)");
+    expect(res).toBe("World Bank — GDP (current US$) (NY.GDP.MKTP.CD)");
   });
 });

@@ -360,7 +360,6 @@ def _build_data_summary(df: pd.DataFrame) -> dict:
 
 def _format_source_line_from_attribution(attrib: dict[str, str]) -> str:
     """One-line \"Source\" string; matches client `formatData360VizSourceLine`."""
-    db = (attrib.get("database_name") or attrib.get("database_id") or "").strip()
     ind_name = (attrib.get("indicator_name") or "").strip()
     ind_id = (attrib.get("indicator_id") or "").strip()
 
@@ -369,12 +368,8 @@ def _format_source_line_from_attribution(attrib: dict[str, str]) -> str:
     else:
         ind = ind_name or ind_id
 
-    if db and ind:
-        return f"World Bank — {db} — {ind}"
     if ind:
         return f"World Bank — {ind}"
-    if db:
-        return f"World Bank — {db}"
     return _SOURCE_FALLBACK
 
 
