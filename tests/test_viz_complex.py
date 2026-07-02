@@ -170,7 +170,7 @@ class TestStrategyRouter:
 
     def test_choropleth_single_year_many_countries(self):
         df = pd.DataFrame(
-            {"country": [f"C{i}" for i in range(10)], "year": [2020] * 10, "value": range(10)}
+            {"country": [f"C{i}" for i in range(25)], "year": [2020] * 25, "value": range(25)}
         )
         r = select_strategy(df)
         assert r.strategy == ChartStrategy.CHOROPLETH
