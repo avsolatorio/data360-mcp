@@ -4844,16 +4844,27 @@ class SkewnessLogScaleRule(PostProcessingRule):
                 if is_explicit:
                     should_log = True
                 else:
-                    skewness = val_series.skew()
-                    if not pd.isna(skewness):
-                        median = val_series.median()
-                        val_max = val_series.max()
-                        val_min = val_series.min()
-                        ratio = val_max / (median or 1)
-                        min_max_ratio = val_max / (val_min or 1)
-                        # Apply log scale if highly skewed or dynamic range is wide (> 30x)
-                        if (skewness > 0.5 and ratio > 5.0) or min_max_ratio > 30.0:
-                            should_log = True
+                    # Check if the data represents percentages, proportions, indices or ratios
+                    is_percentage = False
+                    if df is not None:
+                        if "unit_measure" in df.columns:
+                            units = df["unit_measure"].dropna().astype(str).str.upper().unique()
+                            if any(any(x in u for x in ["%", "PERCENT", "PROP", "SHARE", "RATIO", "INDEX"]) for u in units):
+                                is_percentage = True
+                        if not is_percentage and val_series.min() >= 0 and val_series.max() <= 1.0:
+                            is_percentage = True
+
+                    if not is_percentage:
+                        skewness = val_series.skew()
+                        if not pd.isna(skewness):
+                            median = val_series.median()
+                            val_max = val_series.max()
+                            val_min = val_series.min()
+                            ratio = val_max / (median or 1)
+                            min_max_ratio = val_max / (val_min or 1)
+                            # Apply log scale if highly skewed or dynamic range is wide (> 30x)
+                            if (skewness > 0.5 and ratio > 5.0) or min_max_ratio > 30.0:
+                                should_log = True
 
                 if should_log:
                     ch_enc.setdefault("scale", {})

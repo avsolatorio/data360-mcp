@@ -896,3 +896,44 @@ async def test_detect_missing_countries():
     # 3. None/empty checks
     assert await _detect_missing_countries(None, {"USA"}) == []
     assert await _detect_missing_countries("", {"USA"}) == []
+
+
+def test_log_scale_guard_percentage():
+    """Verify that auto-log-scaling is bypassed for percentage/proportion indicators unless explicitly requested."""
+    from data360.viz_config import SkewnessLogScaleRule
+
+    rule = SkewnessLogScaleRule()
+
+    # 1. Non-percentage highly skewed/wide-range data should get log scale
+    df = pd.DataFrame({
+        "value": [1.0, 10.0, 100.0, 1000.0],
+        "unit_measure": ["USD", "USD", "USD", "USD"]
+    })
+    spec = {
+        "mark": "line",
+        "encoding": {
+            "x": {"field": "year", "type": "temporal"},
+            "y": {"field": "value", "type": "quantitative"}
+        }
+    }
+    result = rule.apply(spec, df=df, raw_hint=None)
+    assert result["encoding"]["y"]["scale"]["type"] == "log"
+
+    # 2. Percentage unit highly skewed/wide-range data should NOT get log scale automatically
+    df_pct = pd.DataFrame({
+        "value": [0.01, 0.05, 0.2, 0.8],
+        "unit_measure": ["%", "%", "%", "%"]
+    })
+    spec_pct = {
+        "mark": "line",
+        "encoding": {
+            "x": {"field": "year", "type": "temporal"},
+            "y": {"field": "value", "type": "quantitative"}
+        }
+    }
+    result_pct = rule.apply(spec_pct, df=df_pct, raw_hint=None)
+    assert "scale" not in result_pct["encoding"]["y"]
+
+    # 3. Explicit log hint should override the percentage safety guard
+    result_explicit = rule.apply(spec_pct, df=df_pct, raw_hint="log scale please")
+    assert result_explicit["encoding"]["y"]["scale"]["type"] == "log"
