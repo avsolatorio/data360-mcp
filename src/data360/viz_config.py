@@ -1744,6 +1744,11 @@ def build_temporal_single_spec(
     - xOffset = country (side-by-side bars within each year band)
     - mark = bar with rounded top corners
     """
+    color_dim = result.color_dim
+    original_n = None
+    if color_dim and color_dim in df.columns:
+        df, original_n = _cap_cardinality(df, color_dim, HIGH_CARDINALITY_THRESHOLDS["line_max_series"])
+
     rows = df.to_dict(orient="records")
     max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
     tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
@@ -1799,6 +1804,7 @@ def build_temporal_single_spec(
 
     # Annotate subtitle with breakdown series names when color_dim is a custom breakdown.
     annotated_title = _append_breakdown_note(title, df, result.color_dim)
+    annotated_title = _append_trim_note(annotated_title, color_dim, df[color_dim].nunique() if color_dim in df.columns else 0, original_n)
 
     if is_bar:
         mark_spec: dict = {
@@ -1856,6 +1862,9 @@ def build_temporal_single_spec(
         # the top-level $schema, title, data, width, and height from the
         # outer container; the individual layers only need mark + encoding.
         main_layer: dict = {"mark": spec.pop("mark"), "encoding": spec.pop("encoding")}
+        if needs_end_labels:
+            if "color" in main_layer["encoding"] and isinstance(main_layer["encoding"]["color"], dict):
+                main_layer["encoding"]["color"]["legend"] = None
         layers: list[dict] = [main_layer]
 
         if needs_zero_line:
@@ -3750,7 +3759,7 @@ def dispatch_spec(
 HIGH_CARDINALITY_THRESHOLDS: dict[str, int] = {
     # Maximum color series in a TEMPORAL_SINGLE line chart.
     # Strategy routing enforces this before the builder is called.
-    "line_max_series": 15,
+    "line_max_series": 12,
     # Minimum country count to switch from line to strip (beeswarm) in single-year views.
     "beeswarm_threshold": 20,
     # Minimum breakdown count to prefer SMALL_MULTIPLES over BREAKDOWN_COMPARISON.
@@ -3772,7 +3781,7 @@ SMALL_MULTIPLES_MAX_FACETS: int = HIGH_CARDINALITY_THRESHOLDS["small_multiples_m
 # Maximum series count for direct end labels on multi-series line charts.
 # At 680px width, 8 labels of ~10px font fit without overlap when series are spread.
 # Above this threshold the color legend is cleaner than cramped end labels.
-MAX_END_LABEL_SERIES: int = 8
+MAX_END_LABEL_SERIES: int = 10
 
 # Auto-routing threshold for CORRELATION_TEMPORAL (connected scatter).
 # When 2 indicators are present with ≤ these many countries and years,
