@@ -2750,6 +2750,23 @@ def build_small_multiples_spec(
         if facet_sort:
             facet_config["sort"] = facet_sort
 
+        # Dynamic color encoding: if color_dim is specified and differs from facet_dim,
+        # color by color_dim and show the legend. Otherwise color by facet_dim and hide the legend.
+        color_dim = result.color_dim
+        if color_dim and color_dim != facet_dim:
+            n_items = df[color_dim].nunique() if color_dim in df.columns else 0
+            domain_labels = list(df[color_dim].unique()) if color_dim in df.columns else None
+            legend_title = result.dim_name_labels.get(color_dim) if color_dim else None
+            color_enc = _color_encoding(
+                color_dim,
+                mark_type="line",
+                n_items=n_items,
+                legend_title=legend_title,
+                domain_labels=domain_labels,
+            )
+        else:
+            color_enc = {"field": facet_dim, "type": "nominal", "legend": None}
+
         spec = {
             "$schema": _vl_schema(),
             "title": title,
@@ -2764,7 +2781,7 @@ def build_small_multiples_spec(
                         "type": "quantitative",
                         "axis": _axis_style(_resolve_axis_title(y_label, indicator_name)),
                     },
-                    "color": {"field": facet_dim, "type": "nominal", "legend": None},
+                    "color": color_enc,
                     "tooltip": build_structured_tooltips(
                         list(df.columns),
                         "line",
