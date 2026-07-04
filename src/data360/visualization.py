@@ -62,6 +62,7 @@ _VIZ_DISAGG_DIMS: tuple[str, ...] = (
     "sex",
     "age",
     "urbanisation",
+    "residence",
     "comp_breakdown_1",
     "comp_breakdown_2",
     "comp_breakdown_3",
@@ -448,6 +449,17 @@ async def _fetch_single_indicator(
         )
         df = await _fetch_data_internal(data_url)
         df.columns = [c.lower() for c in df.columns]
+        if "urbanisation" in df.columns:
+            df = df.rename(columns={"urbanisation": "residence"})
+        elif "urbanization" in df.columns:
+            df = df.rename(columns={"urbanization": "residence"})
+
+        # Filter out total sentinels if breakdown values exist
+        for col in ["sex", "age", "residence", "comp_breakdown_1", "comp_breakdown_2", "comp_breakdown_3"]:
+            if col in df.columns:
+                uv = df[col].dropna().unique()
+                if len(uv) > 1 and "_T" in uv:
+                    df = df[df[col] != "_T"].copy()
     except Exception as e:
         _logger.error(f"Failed to fetch {indicator_id}: {e}")
         return pd.DataFrame(), None, None
@@ -760,6 +772,7 @@ _EXTDATAPORTAL_DIM_MAP: dict[str, str] = {
     "sex": "SEX",
     "age": "AGE",
     "urbanisation": "URBANISATION",
+    "residence": "URBANISATION",
     "unit_measure": "UNIT_MEASURE",
 }
 
@@ -831,6 +844,11 @@ def _strip_common_prefix_in_dims(
         if len(unique_vals) < 2:
             continue
         prefix = _find_common_prefix(unique_vals)
+        if prefix and prefix[-1].isalnum():
+            # Find the last space or punctuation character to avoid cutting a word in half
+            match = re.search(r'[^a-zA-Z0-9][a-zA-Z0-9]+$', prefix)
+            if match:
+                prefix = prefix[:match.start() + 1]
         if len(prefix) < min_prefix_len:
             continue
         # Strip trailing separator characters so suffixes start cleanly.
@@ -1457,6 +1475,10 @@ async def get_viz_spec(
             if col in viz_data.columns:
                 viz_data[col] = viz_data[col].replace(series_labels)
 
+    # 6.5b Pre-filter for confidence interval error bands if present
+    from data360.viz_config import _filter_df_for_error_band
+    viz_data = _filter_df_for_error_band(viz_data)
+
     # 6.6 If a cross-sectional chart type is explicitly requested (bar, map, tick) but years are omitted
     # or a multi-year/multi-country dataset is passed, default to the latest available year to prevent
     # a cluttered "bar chart for time series".
@@ -1507,9 +1529,28 @@ async def get_viz_spec(
         viz_data,
         n_indicators=n_indicators,
         chart_type_hint=chart_type,
+        raw_unit=raw_unit,
+        raw_unit_mult=raw_unit_mult,
     )
     # Thread detected temporal frequency through to spec builders.
     strategy_result.temporal_frequency = temporal_frequency
+
+    # If the strategy is CROSS_SECTIONAL, keep only the latest available year per country
+    if strategy_result.strategy == viz_config.ChartStrategy.CROSS_SECTIONAL and not viz_data.empty:
+        if "country" in viz_data.columns and "year" in viz_data.columns:
+            try:
+                valid_data = viz_data.dropna(subset=["country", "year"])
+                if not valid_data.empty:
+                    years_numeric = pd.to_numeric(valid_data["year"], errors="coerce")
+                    if years_numeric.notna().any():
+                        valid_data = valid_data.assign(_years_num=years_numeric)
+                        idx = valid_data.groupby("country")["_years_num"].idxmax()
+                    else:
+                        idx = valid_data.groupby("country")["year"].idxmax()
+                    viz_data = viz_data.loc[idx].copy()
+                    _logger.info("[get_viz_spec] CROSS_SECTIONAL strategy: filtered to latest year per country.")
+            except Exception as e:
+                _logger.warning(f"Failed to filter cross-sectional data to latest year per country: {e}")
 
     # 7.1 Fetch human-readable dimension names for comp_breakdown_* from the
     # disaggregation API (cached — no extra HTTP call if already fetched above).
@@ -1536,13 +1577,27 @@ async def get_viz_spec(
             y_label=raw_unit_label if raw_unit_label else "Value",
             x_label="Value",
             unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
+            indicator_name=indicator_display or None,
         )
         # Apply post-processing rules
+        import inspect
         for rule in viz_config.POST_PROCESSING_RULES:
+            sig = inspect.signature(rule.apply)
+            kwargs = {}
+            if "scale_type" in sig.parameters:
+                kwargs["scale_type"] = strategy_result.scale_type
+            if "unit_mult" in sig.parameters:
+                kwargs["unit_mult"] = strategy_result.unit_mult
+            if "df" in sig.parameters:
+                kwargs["df"] = viz_data
+            if "raw_hint" in sig.parameters:
+                kwargs["raw_hint"] = strategy_result.raw_hint
+
             spec = rule.apply(
                 spec,
                 data_frequency=data_frequency,
                 unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
+                **kwargs
             )
 
         out_reason = strategy_result.reason
@@ -2010,13 +2065,26 @@ async def get_multi_indicator_viz_spec(
     }
 
     # Apply post-processing rules
+    import inspect
     for rule in viz_config.POST_PROCESSING_RULES:
+        sig = inspect.signature(rule.apply)
+        kwargs = {}
+        if "scale_type" in sig.parameters:
+            kwargs["scale_type"] = strategy_result.scale_type
+        if "unit_mult" in sig.parameters:
+            kwargs["unit_mult"] = strategy_result.unit_mult
+        if "df" in sig.parameters:
+            kwargs["df"] = spec_df
+        if "raw_hint" in sig.parameters:
+            kwargs["raw_hint"] = strategy_result.raw_hint
+
         spec = rule.apply(
             spec,
             data_frequency=None,
             unit_measure=_unit_measure_for_formatting(
                 shared_unit_raw, shared_unit_label
             ),
+            **kwargs
         )
 
     out_reason = strategy_result.reason

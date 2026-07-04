@@ -96,6 +96,63 @@ WB_FONT_FAMILY = "Noto Sans, Arial, sans-serif"
 
 
 # ============================================================================
+# ORDINAL SORT ORDERS FOR HIGH-DIMENSIONAL INDICATORS
+# ============================================================================
+
+KNOWN_ORDINAL_SORT_ORDERS: dict[str, list[str]] = {
+    "sex": ["female", "male", "_T"],
+    "gender": ["female", "male", "total"],
+    "ipc_phase": ["Minimal", "Stressed", "Crisis", "Emergency", "Famine"],
+    "income_group": ["Low income", "Lower middle income", "Upper middle income", "High income"],
+    "development_stage": ["Pre-transition", "Transition", "Post-transition"],
+    "age": [
+        "80 years old and over", "80+", "80-84", "85-89", "90-94", "95-99", "100+",
+        "75 to 79 years old", "75-79",
+        "70 to 74 years old", "70-74",
+        "65 to 69 years old", "65-69",
+        "60 to 64 years old", "60-64",
+        "55 to 59 years old", "55-59",
+        "50 to 54 years old", "50-54",
+        "45 to 49 years old", "45-49",
+        "40 to 44 years old", "40-44",
+        "35 to 39 years old", "35-39",
+        "30 to 34 years old", "30-34",
+        "25 to 29 years old", "25-29",
+        "20 to 24 years old", "20-24",
+        "15 to 19 years old", "15-19",
+        "10 to 14 years old", "10-14",
+        "5 to 9 years old", "5-9",
+        "under 5 years old", "0-4"
+    ]
+}
+
+def _get_dimension_sort_order(field_name: str, values: list[str]) -> list[str] | None:
+    """Return an explicit sorting list if the field or values match a known ordinal dimension."""
+    normalized_field = (field_name or "").strip().lower()
+    if normalized_field in KNOWN_ORDINAL_SORT_ORDERS:
+        return KNOWN_ORDINAL_SORT_ORDERS[normalized_field]
+
+    # Check value-based matching (e.g. if the values contain IPC phases or income groups)
+    val_set = {str(v).strip().lower() for v in values}
+    for key, order in KNOWN_ORDINAL_SORT_ORDERS.items():
+        order_set = {str(o).strip().lower() for o in order}
+        if val_set.intersection(order_set) and len(val_set.intersection(order_set)) >= 2:
+            sorted_avail = []
+            for o in order:
+                o_norm = o.strip().lower()
+                matched_val = None
+                for val in values:
+                    if str(val).strip().lower() == o_norm:
+                        matched_val = val
+                        break
+                if matched_val is not None:
+                    sorted_avail.append(matched_val)
+            return sorted_avail
+
+    return None
+
+
+# ============================================================================
 # WB ALTAIR THEME CONFIG
 # ============================================================================
 
@@ -187,6 +244,7 @@ _TOOLTIP_SPECS: dict[str, dict] = {
     "sex": {"title": "Sex", "type": "nominal"},
     "age": {"title": "Age Group", "type": "nominal"},
     "urbanisation": {"title": "Urbanisation", "type": "nominal"},
+    "residence": {"title": "Residence", "type": "nominal"},
     "comp_breakdown_1": {"title": "Dimension 1", "type": "nominal"},
     "comp_breakdown_2": {"title": "Dimension 2", "type": "nominal"},
     "comp_breakdown_3": {"title": "Dimension 3", "type": "nominal"},
@@ -207,6 +265,7 @@ _TOOLTIP_PRIORITY = [
     "sex",
     "age",
     "urbanisation",
+    "residence",
     "comp_breakdown_1",
     "comp_breakdown_2",
 ]
@@ -586,6 +645,7 @@ _MULTI_IND_TOOLTIP_DIMS: tuple[str, ...] = (
     "sex",
     "age",
     "urbanisation",
+    "residence",
 )
 
 # Visible points widen the Vega hit target for line tooltips without a spec API change.
@@ -622,11 +682,16 @@ def _tooltip_spec_for_time_dim(
 
     # Mapping that mirrors _TEMPORAL_X_ENCODING so tooltip labels match axis labels.
     _FREQ_TOOLTIP: dict[str, dict] = {
-        "annual":    {"timeUnit": "year",          "format": "%Y"},
-        "monthly":   {"timeUnit": "yearmonth",      "format": "%b %Y"},
-        "quarterly": {"timeUnit": "yearquarter",    "format": "Q%q %Y"},
-        "daily":     {"timeUnit": "yearmonthdate",  "format": "%Y-%m-%d"},
+        "annual":    {"timeUnit": "utcyear",          "format": "%Y"},
+        "monthly":   {"timeUnit": "utcyearmonth",      "format": "%b %Y"},
+        "quarterly": {"timeUnit": "utcyearquarter",    "format": "Q%q %Y"},
+        "daily":     {"timeUnit": "utcyearmonthdate",  "format": "%Y-%m-%d"},
     }
+
+    # If the time column contains only 1 unique value, return nominal type
+    # to prevent Vega-Lite from auto-parsing the field as a Date object.
+    if viz_data is not None and col in viz_data.columns and viz_data[col].nunique() <= 1:
+        return {"field": col, "title": title, "type": "nominal"}
 
     freq: TemporalFreq | None = temporal_freq
     if freq is None and viz_data is not None and col in viz_data.columns:
@@ -654,6 +719,7 @@ def build_structured_tooltips(
     viz_data: pd.DataFrame | None = None,
     temporal_freq: TemporalFreq | None = None,
     dim_name_labels: dict[str, str] | None = None,
+    indicator_name: str | None = None,
 ) -> list[dict]:
     """Build typed, labelled tooltip list for a Vega-Lite encoding.
 
@@ -668,6 +734,9 @@ def build_structured_tooltips(
     dim_name_labels: optional {col_name: human_label} for comp_breakdown_* columns
         sourced from the disaggregation API. Overrides the generic "Dimension N"
         fallback in ``_TOOLTIP_SPECS`` for those fields.
+    indicator_name: human-readable indicator title. When provided, appended as a
+        constant tooltip entry (``{"value": indicator_name, "title": "Indicator"}``)
+        so hovering always shows which indicator is displayed.
     """
     ordered = [c for c in _TOOLTIP_PRIORITY if c in columns]
     ordered += [c for c in columns if c not in _TOOLTIP_PRIORITY]
@@ -677,7 +746,13 @@ def build_structured_tooltips(
         if col in ("year", "time_period"):
             tooltips.append(_tooltip_spec_for_time_dim(col, viz_data, temporal_freq))
             continue
-        if indicator_labels and col in indicator_labels:
+        if dim_name_labels and col in dim_name_labels:
+            title = dim_name_labels[col]
+            col_type = "quantitative" if "value" in col.lower() else "nominal"
+            tip = {"field": col, "title": title, "type": col_type}
+            if col_type == "quantitative":
+                tip["format"] = value_format
+        elif indicator_labels and col in indicator_labels:
             tip = {
                 "field": col,
                 "title": indicator_labels[col],
@@ -703,6 +778,13 @@ def build_structured_tooltips(
         else:
             tip = {"field": col, "title": col.replace("_", " ").title()}
         tooltips.append(tip)
+
+    # Append the indicator name as a constant tooltip entry when provided.
+    # Vega-Lite supports {"value": <literal>} in the tooltip array to display
+    # static text alongside dynamic field values.
+    if indicator_name:
+        tooltips.append({"value": indicator_name, "title": "Indicator"})
+
     return tooltips
 
 
@@ -775,6 +857,9 @@ class StrategyResult:
     # Carries the user's mark preference ("bar", "line", etc.) from select_strategy
     # to the spec builder, so builders can switch mark type without re-routing.
     mark_hint: str | None = None
+    scale_type: str | None = None
+    unit_mult: int = 0
+    raw_hint: str | None = None
 
 
 from typing import Protocol
@@ -785,6 +870,7 @@ class RoutingContext:
     df: pd.DataFrame
     n_indicators: int
     hint: str | None
+    raw_hint: str | None
     ind_cols: list[str]
 
     # Pre-computed metrics
@@ -792,18 +878,41 @@ class RoutingContext:
     country_count: int
     breakdown_counts: dict[str, int]
     n_breakdowns: int
+    max_years_per_country: int = 1
+    avg_years_per_country: float = 0.0
+    scale_type: str | None = None
+    unit_mult: int = 0
+    skewness: float = 0.0
 
     @classmethod
-    def build(cls, df: pd.DataFrame, n_indicators: int, chart_type_hint: str | None, indicator_cols: list[str] | None) -> RoutingContext:
+    def build(
+        cls,
+        df: pd.DataFrame,
+        n_indicators: int,
+        chart_type_hint: str | None,
+        indicator_cols: list[str] | None,
+        raw_unit: str | None = None,
+        raw_unit_mult: int = 0,
+    ) -> RoutingContext:
         hint = parse_chart_type_hint(chart_type_hint)
         cols = set(df.columns)
 
         year_count = df["year"].nunique() if "year" in cols else 0
         country_count = df["country"].nunique() if "country" in cols else 0
 
+        max_years_per_country = 1
+        avg_years_per_country = 0.0
+        if country_count > 0 and "country" in cols and "year" in cols and not df.empty:
+            try:
+                max_years_per_country = int(df.groupby("country")["year"].nunique().max())
+                avg_years_per_country = float(len(df) / country_count)
+            except Exception:
+                pass
+
         sex_count = df["sex"].nunique() if "sex" in cols else 0
         age_count = df["age"].nunique() if "age" in cols else 0
         urban_count = df["urbanisation"].nunique() if "urbanisation" in cols else 0
+        residence_count = df["residence"].nunique() if "residence" in cols else 0
         cb1_count = df["comp_breakdown_1"].nunique() if "comp_breakdown_1" in cols else 0
         cb2_count = df["comp_breakdown_2"].nunique() if "comp_breakdown_2" in cols else 0
         cb3_count = df["comp_breakdown_3"].nunique() if "comp_breakdown_3" in cols else 0
@@ -815,6 +924,7 @@ class RoutingContext:
                 ("sex", sex_count),
                 ("age", age_count),
                 ("urbanisation", urban_count),
+                ("residence", residence_count),
                 ("comp_breakdown_1", cb1_count),
                 ("comp_breakdown_2", cb2_count),
                 ("comp_breakdown_3", cb3_count),
@@ -823,15 +933,50 @@ class RoutingContext:
             if v > 1
         }
 
+        # Derive scale type
+        normalized = (raw_unit or "").upper().strip()
+        if "$" in normalized or "USD" in normalized or "CURRENCY" in normalized or "DOLLARS" in normalized:
+            scale_type = "currency"
+        elif "%" in normalized or "PERCENT" in normalized or "RATE" in normalized or "SHARE" in normalized or "PROPORTION" in normalized:
+            scale_type = "percentage"
+        elif normalized == "PS" or "PEOPLE" in normalized or "PERSONS" in normalized or "COUNT" in normalized or "HEADCOUNT" in normalized:
+            scale_type = "persons"
+        else:
+            scale_type = "index"
+
+        # Multiplier
+        unit_mult = raw_unit_mult
+        if "unit_mult" in df.columns:
+            _mults = df["unit_mult"].dropna().unique()
+            if len(_mults) == 1:
+                try:
+                    unit_mult = int(_mults[0])
+                except (ValueError, TypeError):
+                    pass
+
+        # Skewness
+        skewness = 0.0
+        if "value" in df.columns:
+            val_series = pd.to_numeric(df["value"], errors="coerce").dropna()
+            if not val_series.empty:
+                skew = val_series.skew()
+                skewness = float(skew) if not pd.isna(skew) else 0.0
+
         return cls(
             df=df,
             n_indicators=n_indicators,
             hint=hint,
+            raw_hint=chart_type_hint,
             ind_cols=indicator_cols or [],
             year_count=year_count,
             country_count=country_count,
+            max_years_per_country=max_years_per_country,
+            avg_years_per_country=avg_years_per_country,
             breakdown_counts=breakdown_counts,
-            n_breakdowns=len(breakdown_counts)
+            n_breakdowns=len(breakdown_counts),
+            scale_type=scale_type,
+            unit_mult=unit_mult,
+            skewness=skewness,
         )
 
 class RoutingRule(Protocol):
@@ -880,6 +1025,31 @@ class ExplicitMapRule:
 
 
 
+class ExplicitSmallMultiplesRule:
+    def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
+        if ctx.hint in ("facet", "small_multiples"):
+            facet_dim = None
+            color_dim = None
+            if ctx.n_breakdowns >= 1:
+                facet_dim = list(ctx.breakdown_counts.keys())[0]
+                if ctx.n_breakdowns >= 2:
+                    color_dim = list(ctx.breakdown_counts.keys())[1]
+            elif ctx.country_count > 1:
+                facet_dim = "country"
+            elif ctx.year_count > 1:
+                facet_dim = "year"
+
+            if facet_dim:
+                return StrategyResult(
+                    ChartStrategy.SMALL_MULTIPLES,
+                    f"User requested small multiples; faceting by {facet_dim}",
+                    facet_dim=facet_dim,
+                    color_dim=color_dim,
+                )
+        return None
+
+
+
 class TwoIndicatorRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
         if ctx.n_indicators == 2 and len(ctx.ind_cols) == 2:
@@ -907,6 +1077,13 @@ class TwoIndicatorRule:
                     color_dim="indicator",
                     facet_dim="country",
                 )
+            if ctx.year_count <= 1:
+                return StrategyResult(
+                    ChartStrategy.TEMPORAL_MULTI_IND,
+                    "2 indicators, 1 country, single year → multi-axis bars",
+                    indicator_cols=ctx.ind_cols,
+                    mark_hint="bar",
+                )
             return StrategyResult(
                 ChartStrategy.TEMPORAL_MULTI_IND,
                 f"2 indicators, 1 country, {ctx.year_count} years → layered lines",
@@ -917,10 +1094,12 @@ class TwoIndicatorRule:
 class ThreePlusIndicatorRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
         if ctx.n_indicators >= 2 and len(ctx.ind_cols) >= 2:
+            mark_hint = "bar" if ctx.year_count <= 1 else "line"
             return StrategyResult(
                 ChartStrategy.TEMPORAL_MULTI_IND,
-                f"{ctx.n_indicators} indicators → layered lines",
+                f"{ctx.n_indicators} indicators → multi-axis {mark_hint}s",
                 indicator_cols=ctx.ind_cols,
+                mark_hint=mark_hint,
             )
         return None
 
@@ -1102,17 +1281,17 @@ class HighCardinalityCrossSectionalRule:
 
 class CrossSectionalRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
-        if ctx.year_count <= 1 and ctx.country_count > 0:
+        if (ctx.year_count <= 1 or ctx.avg_years_per_country < 1.7) and ctx.country_count > 0:
             return StrategyResult(
                 ChartStrategy.CROSS_SECTIONAL,
-                f"{ctx.country_count} economies, single year → horizontal bar",
+                f"{ctx.country_count} economies, sparse or single year (avg {ctx.avg_years_per_country:.2f} yrs) → horizontal bar",
                 color_dim="country",
             )
         return None
 
 class TemporalSingleRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
-        if ctx.year_count > 1:
+        if ctx.year_count > 1 and ctx.avg_years_per_country >= 1.7:
             phrase = chart_type_phrase_for_reason(ctx.hint)
             return StrategyResult(
                 ChartStrategy.TEMPORAL_SINGLE,
@@ -1134,6 +1313,7 @@ ROUTING_RULES: list[RoutingRule] = [
     ExplicitScatterRule(),
     ExplicitStackedAreaMultiIndicatorRule(),
     ExplicitMapRule(),
+    ExplicitSmallMultiplesRule(),
     ExplicitHeatmapRule(),
     TwoIndicatorRule(),
     ThreePlusIndicatorRule(),
@@ -1156,16 +1336,32 @@ def select_strategy(
     n_indicators: int = 1,
     chart_type_hint: str | None = None,
     indicator_cols: list[str] | None = None,
+    raw_unit: str | None = None,
+    raw_unit_mult: int = 0,
 ) -> StrategyResult:
     """
     Applies the Rule Engine to select the correct ChartStrategy.
     """
-    ctx = RoutingContext.build(df, n_indicators, chart_type_hint, indicator_cols)
+    ctx = RoutingContext.build(
+        df,
+        n_indicators,
+        chart_type_hint,
+        indicator_cols,
+        raw_unit=raw_unit,
+        raw_unit_mult=raw_unit_mult
+    )
     for rule in ROUTING_RULES:
         res = rule.evaluate(ctx)
         if res is not None:
+            res.scale_type = ctx.scale_type
+            res.unit_mult = ctx.unit_mult
+            res.raw_hint = ctx.raw_hint
             return res
-    return FallbackRule().evaluate(ctx)
+    res = FallbackRule().evaluate(ctx)
+    res.scale_type = ctx.scale_type
+    res.unit_mult = ctx.unit_mult
+    res.raw_hint = ctx.raw_hint
+    return res
 
 # ============================================================================
 # SPEC BUILDERS — one per strategy, pure functions returning raw VL dicts
@@ -1266,7 +1462,7 @@ def _format_time_period_series(
     Values that fail parsing are left as-is (graceful fallback).
     """
     try:
-        parsed = pd.to_datetime(series, errors="coerce")
+        parsed = pd.to_datetime(series.astype(str), errors="coerce")
     except Exception:
         return series
 
@@ -1287,7 +1483,7 @@ _TEMPORAL_X_ENCODING: dict[TemporalFreq, dict] = {
     "annual": {
         "field": "year",
         "type": "temporal",
-        "timeUnit": "year",
+        "timeUnit": "utcyear",
         "axis": {
             "title": None,
             "format": "%Y",
@@ -1303,7 +1499,7 @@ _TEMPORAL_X_ENCODING: dict[TemporalFreq, dict] = {
     "monthly": {
         "field": "year",
         "type": "temporal",
-        "timeUnit": "yearmonth",
+        "timeUnit": "utcyearmonth",
         "axis": {
             "title": None,
             "format": "%b %Y",
@@ -1319,7 +1515,7 @@ _TEMPORAL_X_ENCODING: dict[TemporalFreq, dict] = {
     "quarterly": {
         "field": "year",
         "type": "temporal",
-        "timeUnit": "yearquarter",
+        "timeUnit": "utcyearquarter",
         "axis": {
             "title": None,
             "format": "Q%q %Y",
@@ -1335,6 +1531,7 @@ _TEMPORAL_X_ENCODING: dict[TemporalFreq, dict] = {
     "daily": {
         "field": "year",
         "type": "temporal",
+        "timeUnit": "utcyearmonthdate",
         "axis": {
             "title": None,
             "format": "%d %b %Y",
@@ -1360,11 +1557,14 @@ def _x_temporal_encoding(freq: TemporalFreq = "annual") -> dict:
     return copy.deepcopy(_TEMPORAL_X_ENCODING.get(freq, _TEMPORAL_X_ENCODING["annual"]))
 
 
-def _value_label_expr(unit_measure: str | None = None) -> str:
+def _value_label_expr(unit_measure: str | None = None, scale_type: str | None = None) -> str:
     """Vega expression for custom k/m/b/t axis label formatting."""
     normalized = (unit_measure or "").upper().strip()
-    is_currency = "$" in normalized or "USD" in normalized
+    is_currency = scale_type == "currency" or "$" in normalized or "USD" in normalized
     prefix = "$" if is_currency else ""
+    is_percentage = scale_type == "percentage" or "%" in normalized or "PERCENT" in normalized
+    if is_percentage:
+        return "format(datum.value, '.1f') + '%'"
     if unit_measure == "T":
         tiers = [("1e12", "Gt"), ("1e9", "Mt"), ("1e6", "Kt")]
     elif unit_measure == "W_POP":
@@ -1438,6 +1638,9 @@ def _color_encoding(
     )
     scale = {"range": WB_CAT_COLORS}
     if domain:
+        sort_order = _get_dimension_sort_order(field, [str(d) for d in domain])
+        if sort_order:
+            domain = sorted(domain, key=lambda x: sort_order.index(str(x)) if str(x) in sort_order else len(sort_order))
         scale["domain"] = domain
     # Keep a legend for geography even with one series (product expectation).
     if n_items == 1 and field != "country":
@@ -1481,6 +1684,7 @@ def build_temporal_single_spec(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Line or grouped-bar chart: 1 indicator, multi-year, ≤8 countries.
 
@@ -1521,6 +1725,7 @@ def build_temporal_single_spec(
             viz_data=df,
             temporal_freq=result.temporal_frequency,
             dim_name_labels=result.dim_name_labels,
+            indicator_name=indicator_name,
         ),
     }
     if result.color_dim:
@@ -1578,6 +1783,7 @@ def build_cross_sectional_spec(
     indicator_labels: dict[str, str] | None = None,
     x_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Horizontal bar: 1 indicator, single year.
 
@@ -1644,6 +1850,7 @@ def build_cross_sectional_spec(
                 "bar",
                 indicator_labels,
                 value_format=tt_fmt,
+                indicator_name=indicator_name,
             ),
         },
         "width": 500,
@@ -1659,6 +1866,7 @@ def build_distribution_spec(
     indicator_labels: dict[str, str] | None = None,
     x_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Strip/beeswarm: 1 indicator, >8 countries, single year."""
     df, original_n = _cap_cardinality(
@@ -1705,6 +1913,7 @@ def build_distribution_spec(
                 "tick",
                 indicator_labels,
                 value_format=tt_fmt,
+                indicator_name=indicator_name,
             ),
         },
         "width": 500,
@@ -1720,6 +1929,7 @@ def build_breakdown_comparison_spec(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Grouped bar: 1 indicator, 1 breakdown (sex/age/urban), 2-4 values, ≤4 countries."""
     rows = df.to_dict(orient="records")
@@ -1735,7 +1945,9 @@ def build_breakdown_comparison_spec(
         color_scale = {"range": WB_CAT_COLORS}
 
     x_field = "country" if df.get("country", pd.Series()).nunique() > 1 else "year"
-    # Use temporal type for year so Vega-Lite formats ISO strings as years, not raw ms integers.
+    if x_field == "year" and df.get("year", pd.Series()).nunique() <= 1:
+        x_field = color_dim
+
     x_enc: dict
     if x_field == "year":
         x_enc = _x_temporal_encoding(result.temporal_frequency)
@@ -1761,7 +1973,6 @@ def build_breakdown_comparison_spec(
         "mark": {"type": "bar"},
         "encoding": {
             "x": x_enc,
-            "xOffset": {"field": color_dim, "type": "nominal"},
             "y": {
                 "field": "value",
                 "type": "quantitative",
@@ -1789,6 +2000,8 @@ def build_breakdown_comparison_spec(
         "width": max(300, df[x_field].nunique() * 80),
         "height": 320,
     }
+    if x_field != color_dim:
+        spec["encoding"]["xOffset"] = {"field": color_dim, "type": "nominal"}
     return inject_wb_config(spec)
 
 
@@ -2363,6 +2576,7 @@ def build_small_multiples_spec(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Faceted small multiples: 1 indicator, 2+ breakdowns or breakdown+many countries.
 
@@ -2376,10 +2590,61 @@ def build_small_multiples_spec(
     stacked panel per breakdown value, each with an independent Y-axis. This
     prevents scale-dominant series from compressing smaller ones on a shared axis.
     """
-    # We now unconditionally use the vconcat layout (680×140 per panel) instead
-    # of the shared-axis facet grid (180×120 panels) to improve visual spacing,
-    # as the facet grid produces tiny charts that resemble seaborn grids.
-    # When not scale-incompatible, we force each facet value into its own panel.
+    facet_dim = result.facet_dim or "comp_breakdown_1"
+    breakdown_vals = sorted(df[facet_dim].dropna().unique(), key=str) if facet_dim in df.columns else []
+
+    if not result.scale_incompatible and len(breakdown_vals) > 3:
+        df, original_n = _cap_cardinality(
+            df, facet_dim, HIGH_CARDINALITY_THRESHOLDS["small_multiples_max_facets"]
+        )
+        title = _append_trim_note(title, facet_dim, df[facet_dim].nunique() if facet_dim in df.columns else 0, original_n)
+        rows = df.to_dict(orient="records")
+        tt_fmt = _compute_tooltip_format(float(df["value"].abs().max()) if "value" in df.columns else None, unit_measure)
+
+        x_freq = _detect_temporal_frequency(df["year"]) if "year" in df.columns else "annual"
+        x_enc = _x_temporal_encoding(x_freq)
+
+        facet_sort = _get_dimension_sort_order(facet_dim, [str(v) for v in breakdown_vals])
+        facet_config = {
+            "field": facet_dim,
+            "type": "nominal",
+            "columns": 2,
+            "header": {"title": None, "labelFontWeight": "bold"}
+        }
+        if facet_sort:
+            facet_config["sort"] = facet_sort
+
+        spec = {
+            "$schema": _vl_schema(),
+            "title": title,
+            "data": {"values": rows},
+            "facet": facet_config,
+            "spec": {
+                "mark": {"type": "line", "tooltip": True, "interpolate": "monotone"},
+                "encoding": {
+                    "x": x_enc,
+                    "y": {
+                        "field": "value",
+                        "type": "quantitative",
+                        "axis": _axis_style(y_label),
+                    },
+                    "color": {"field": facet_dim, "type": "nominal", "legend": None},
+                    "tooltip": build_structured_tooltips(
+                        list(df.columns),
+                        "line",
+                        indicator_labels,
+                        value_format=tt_fmt,
+                        viz_data=df,
+                        temporal_freq=result.temporal_frequency,
+                        dim_name_labels=result.dim_name_labels,
+                    )
+                },
+                "width": 300,
+                "height": 180
+            }
+        }
+        return inject_wb_config(spec)
+
     return _build_scale_split_vconcat(
         df, title, result, indicator_labels, y_label, unit_measure,
         force_separate_panels=not result.scale_incompatible
@@ -2394,6 +2659,7 @@ def build_heatmap_spec(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Heatmap chart: >8 countries, multi-year matrix."""
     df, original_n = _cap_cardinality(df, "country", 50)
@@ -2466,6 +2732,7 @@ def build_heatmap_spec(
                 viz_data=df,
                 temporal_freq=result.temporal_frequency,
                 dim_name_labels=result.dim_name_labels,
+                indicator_name=indicator_name,
             )
         },
         "width": 600,
@@ -2507,6 +2774,7 @@ def build_choropleth_spec(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Choropleth map chart: single indicator, geographic display."""
     # Maps display a single point in time. If data is multi-year, filter to the latest year.
@@ -2578,6 +2846,7 @@ def build_choropleth_spec(
                         indicator_labels,
                         value_format=tt_fmt,
                         dim_name_labels=result.dim_name_labels,
+                        indicator_name=indicator_name,
                     )
                 }
             }
@@ -2594,6 +2863,7 @@ def build_stacked_area_spec(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Stacked Area chart: multi-year, multiple series (part-to-whole)."""
     color_dim = result.color_dim or "country"
@@ -2612,6 +2882,7 @@ def build_stacked_area_spec(
     tt_fmt = _compute_tooltip_format(float(df["value"].abs().max()) if "value" in df.columns else None, unit_measure)
 
     legend_title = _TOOLTIP_SPECS.get(color_dim, {}).get("title") or color_dim.replace("_", " ").title()
+    domain = sorted(df[color_dim].dropna().unique().tolist(), key=str) if color_dim in df.columns else None
 
     spec: dict = {
         "$schema": _vl_schema(),
@@ -2626,7 +2897,7 @@ def build_stacked_area_spec(
                 "stack": "zero",
                 "axis": {**_axis_style(), "title": None, "labelExpr": _value_label_expr(unit_measure)}
             },
-            "color": _color_encoding(color_dim, domain=None, mark_type="area", legend_title=legend_title),
+            "color": _color_encoding(color_dim, domain=domain, mark_type="area", legend_title=legend_title),
             "tooltip": build_structured_tooltips(
                 list(df.columns),
                 "area",
@@ -2635,6 +2906,7 @@ def build_stacked_area_spec(
                 viz_data=df,
                 temporal_freq=result.temporal_frequency,
                 dim_name_labels=result.dim_name_labels,
+                indicator_name=indicator_name,
             )
         },
         "width": 600,
@@ -2650,6 +2922,7 @@ def build_correlation_spec(
     title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Scatterplot: 2 indicators, single year, multi-country."""
     ind_cols = result.indicator_cols
@@ -2739,6 +3012,7 @@ def build_correlation_temporal_spec(
     title: str | dict,
     result: StrategyResult,
     indicator_labels: dict[str, str] | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Connected scatterplot: 2 indicators, multi-country, multi-year."""
     ind_cols = result.indicator_cols
@@ -2801,6 +3075,7 @@ def build_temporal_multi_indicator_spec(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Faceted (Small Multiples) multi-axis line chart: 2-4 indicators, multi-year.
 
@@ -2813,14 +3088,195 @@ def build_temporal_multi_indicator_spec(
         raise ValueError("temporal_multi_indicator spec requires indicator_cols")
 
     lab = indicator_labels or {}
-    rows = df.to_dict(orient="records")
+    df_copy = df.copy()
+
+    # Determine if we should layer the indicators in a single panel instead of using vconcat
+    should_layer = False
+    fold_cols = [col for col in ind_cols if col in df_copy.columns]
+    if len(fold_cols) >= 2:
+        try:
+            max_vals = []
+            for col in fold_cols:
+                max_vals.append(df_copy[col].abs().max())
+            if len(max_vals) == len(fold_cols) and all(v is not None and not pd.isna(v) for v in max_vals):
+                max_val = max(max_vals)
+                min_val = min(max_vals)
+                # If both are valid positive values and scale difference is within 10x, layer them
+                if min_val > 0 and (max_val / min_val) <= 10.0:
+                    should_layer = True
+        except Exception:
+            pass
+
+    if should_layer:
+        # Extract clean legend labels by stripping common prefix and suffix
+        raw_titles = [lab.get(col, col) for col in fold_cols]
+        col_to_legend = dict(zip(fold_cols, raw_titles))
+        if len(raw_titles) >= 2:
+            try:
+                import os
+                common_pref = os.path.commonprefix(raw_titles)
+                common_pref_stripped = common_pref.strip()
+                while common_pref_stripped and common_pref_stripped[-1] in (",", "-", " ", "|", ":", ";", "("):
+                    common_pref_stripped = common_pref_stripped[:-1].strip()
+
+                temp_cleaned = []
+                for t in raw_titles:
+                    part = t[len(common_pref):].strip()
+                    while part and part[0] in (",", "-", " ", "|", ":", ";", "("):
+                        part = part[1:].strip()
+                    first_segment = part
+                    for sep in (",", "(", " - ", " | "):
+                        if sep in part:
+                            candidate = part.split(sep)[0].strip()
+                            if len(candidate) >= 3:
+                                first_segment = candidate
+                                break
+                    temp_cleaned.append(first_segment.title())
+
+                if len(set(temp_cleaned)) == len(temp_cleaned) and all(len(x) >= 2 for x in temp_cleaned):
+                    col_to_legend = dict(zip(fold_cols, temp_cleaned))
+            except Exception:
+                pass
+
+        # Determine y-axis title: if generic or defaults, try to use common prefix
+        final_y_label = y_label
+        if final_y_label in ("Value", "obs_value", None) or len(final_y_label) > 60:
+            try:
+                import os
+                common_pref = os.path.commonprefix(raw_titles)
+                common_pref_stripped = common_pref.strip()
+                while common_pref_stripped and common_pref_stripped[-1] in (",", "-", " ", "|", ":", ";", "("):
+                    common_pref_stripped = common_pref_stripped[:-1].strip()
+                if len(common_pref_stripped) >= 8:
+                    is_pct = any("%" in u.lower() or "percent" in u.lower() or "rate" in u.lower() or "share" in u.lower() for u in (unit_measure or "", *raw_titles))
+                    if is_pct and not common_pref_stripped.endswith("(%)") and "%" not in common_pref_stripped:
+                        final_y_label = f"{common_pref_stripped} (%)"
+                    else:
+                        final_y_label = common_pref_stripped
+            except Exception:
+                pass
+
+        # Melt to long format for single-panel multi-series visualization
+        melted_df = df_copy.melt(
+            id_vars=[c for c in df_copy.columns if c not in fold_cols],
+            value_vars=fold_cols,
+            var_name="indicator_name_melted",
+            value_name="indicator_value_melted",
+        )
+        # Apply friendly legend labels
+        melted_df["indicator_name_melted"] = melted_df["indicator_name_melted"].map(col_to_legend)
+
+        # Cast year to clean string
+        if "year" in melted_df.columns:
+            try:
+                parsed_years = pd.to_datetime(melted_df["year"].astype(str), errors="coerce")
+                if parsed_years.notna().any():
+                    if result.temporal_frequency == "monthly":
+                        melted_df["year"] = parsed_years.dt.strftime("%Y-%m")
+                    else:
+                        melted_df["year"] = parsed_years.dt.strftime("%Y")
+                else:
+                    melted_df["year"] = melted_df["year"].astype(str)
+            except Exception:
+                melted_df["year"] = melted_df["year"].astype(str)
+
+        rows = melted_df.to_dict(orient="records")
+        label_expr = _value_label_expr(unit_measure)
+
+        x_enc = _x_temporal_encoding(result.temporal_frequency)
+        max_abs = float(melted_df["indicator_value_melted"].abs().max())
+        tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+        color_scale_range = WB_CAT_COLORS[:len(fold_cols)]
+
+        y_axis = {
+            **_axis_style(),
+            "title": final_y_label or "Value",
+            "labelExpr": label_expr,
+        }
+
+        tooltip_cols = ["year", "indicator_name_melted", "indicator_value_melted"]
+        if "country" in melted_df.columns:
+            tooltip_cols.append("country")
+
+        encoding = {
+            "x": x_enc,
+            "y": {
+                "field": "indicator_value_melted",
+                "type": "quantitative",
+                "axis": y_axis,
+                "scale": {"zero": False},
+            },
+            "color": {
+                "field": "indicator_name_melted",
+                "type": "nominal",
+                "scale": {
+                    "range": color_scale_range
+                },
+                "legend": {
+                    "title": None,
+                    "orient": "bottom",
+                    "offset": 12,
+                }
+            },
+            "tooltip": build_structured_tooltips(
+                tooltip_cols, "line", lab, value_format=tt_fmt, viz_data=melted_df,
+                temporal_freq=result.temporal_frequency,
+                dim_name_labels={
+                    "indicator_name_melted": "Indicator",
+                    "indicator_value_melted": "Value",
+                },
+            ),
+        }
+
+        mark_spec = {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": _LINE_HOVER_POINT,
+            "tooltip": True
+        }
+
+        data_spec = {"values": rows}
+        if melted_df["year"].nunique() <= 1 if "year" in melted_df.columns else True:
+            data_spec["format"] = {"parse": {"year": "string"}}
+
+        return {
+            "$schema": _vl_schema(),
+            "title": title,
+            "data": data_spec,
+            "width": 680,
+            "height": 350,
+            "mark": mark_spec,
+            "encoding": encoding,
+        }
+
+    # Cast year to clean string format if present to avoid millisecond/integer formatting on nominal axes.
+    # We parse using pd.to_datetime first since the parent pipeline's JSON sanitizer
+    # converts datetime columns to ISO strings (like "2022-01-01T00:00:00") which need formatting.
+    if "year" in df_copy.columns:
+        try:
+            parsed_years = pd.to_datetime(df_copy["year"].astype(str), errors="coerce")
+            if parsed_years.notna().any():
+                if result.temporal_frequency == "monthly":
+                    df_copy["year"] = parsed_years.dt.strftime("%Y-%m")
+                else:
+                    df_copy["year"] = parsed_years.dt.strftime("%Y")
+            else:
+                df_copy["year"] = df_copy["year"].astype(str)
+        except Exception:
+            df_copy["year"] = df_copy["year"].astype(str)
+
+    rows = df_copy.to_dict(orient="records")
 
     label_expr = _value_label_expr(unit_measure)
     charts = []
+
+    is_bar_chart = (result.mark_hint == "bar") or (df_copy["year"].nunique() <= 1 if "year" in df_copy.columns else True)
+
     for i, col in enumerate(ind_cols):
         color = WB_CAT_COLORS[i % len(WB_CAT_COLORS)]
         col_label = lab.get(col, col.replace("_", " ").title())
-        max_abs = float(df[col].abs().max()) if col in df.columns else None
+        max_abs = float(df_copy[col].abs().max()) if col in df_copy.columns else None
         tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
         y_axis = {
             **_axis_style(),
@@ -2828,27 +3284,63 @@ def build_temporal_multi_indicator_spec(
             "labelExpr": label_expr,
         }
 
+
+        # Handle X encoding: nominal for single-year to center label, temporal for multi-year trends
+        if df_copy["year"].nunique() <= 1 if "year" in df_copy.columns else True:
+            if df_copy["country"].nunique() > 1 if "country" in df_copy.columns else False:
+                x_enc = {
+                    "field": "country",
+                    "type": "nominal",
+                    "axis": {"title": "Country"}
+                }
+            else:
+                x_enc = {
+                    "field": "year" if "year" in df_copy.columns else "TIME_PERIOD",
+                    "type": "nominal",
+                    "axis": {"title": None}
+                }
+        else:
+            x_enc = _x_temporal_encoding(result.temporal_frequency)
+
         # Only show X-axis labels on the bottom-most chart to reduce clutter
-        x_enc = _x_temporal_encoding(result.temporal_frequency)
         if i < len(ind_cols) - 1:
             x_enc = {**x_enc, "axis": {**x_enc.get("axis", {}), "labels": False, "title": None}}
 
-        tooltip_cols = _multi_indicator_tooltip_columns(list(df.columns), col)
+        tooltip_cols = _multi_indicator_tooltip_columns(list(df_copy.columns), col)
         layer_enc: dict = {
             "x": x_enc,
             "y": {
                 "field": col,
                 "type": "quantitative",
                 "axis": y_axis,
-                "scale": {"zero": False},
+                "scale": {"zero": is_bar_chart},  # Bars should zero-align
             },
             "color": {"value": color},
             "tooltip": build_structured_tooltips(
-                tooltip_cols, "line", lab, value_format=tt_fmt, viz_data=df,
+                tooltip_cols, "bar" if is_bar_chart else "line", lab, value_format=tt_fmt, viz_data=df_copy,
                 temporal_freq=result.temporal_frequency,
                 dim_name_labels=result.dim_name_labels,
             ),
         }
+
+        # Build clean mark dict depending on type
+        if is_bar_chart:
+            mark_spec = {
+                "type": "bar",
+                "color": color,
+                "size": 40,  # Fixed width so bar doesn't stretch to fill full chart width
+                "tooltip": True
+            }
+        else:
+            mark_spec = {
+                "type": "line",
+                "strokeWidth": 3,
+                "strokeCap": "round",
+                "color": color,
+                "point": _LINE_HOVER_POINT,
+                "tooltip": True
+            }
+
         charts.append(
             {
                 "title": {
@@ -2861,23 +3353,24 @@ def build_temporal_multi_indicator_spec(
                 },
                 "width": 680,
                 "height": 140,  # Fixed height per small multiple
-                "mark": {
-                    "type": "line",
-                    "strokeWidth": 3,
-                    "strokeCap": "round",
-                    "color": color,
-                    "point": _LINE_HOVER_POINT,
-                },
+                "mark": mark_spec,
                 "encoding": layer_enc,
             }
         )
 
+    data_spec: dict = {"values": rows}
+    if df_copy["year"].nunique() <= 1 if "year" in df_copy.columns else True:
+        data_spec["format"] = {"parse": {"year": "string"}}
+
     spec: dict = {
         "$schema": _vl_schema(),
         "title": title,
-        "data": {"values": rows},
+        "data": data_spec,
         "vconcat": charts,
-        "resolve": {"scale": {"x": "shared"}},
+        "resolve": {
+            "scale": {"x": "shared"},
+            "axis": {"x": "independent"}
+        },
     }
     return inject_wb_config(spec)
 
@@ -2889,6 +3382,7 @@ def build_fallback_line_spec(
     indicator_labels: dict[str, str] | None = None,
     y_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Fallback: best-effort line chart for unclassified data shapes."""
     cols = set(df.columns)
@@ -2975,6 +3469,90 @@ STRATEGY_BUILDERS: dict[ChartStrategy, callable] = {
 }
 
 
+def resolve_unmapped_disaggregations(df: pd.DataFrame, result: StrategyResult) -> pd.DataFrame:
+    """Filter or collapse disaggregation dimensions that are not mapped in the strategy."""
+    if df.empty:
+        return df
+
+    mapped_dims = {
+        "year",
+        "value",
+        "country",
+        result.color_dim,
+        result.facet_dim,
+        result.secondary_color_dim,
+        result.x_dim,
+        result.y_dim,
+    }
+
+    # Identify unmapped disaggregation dimensions present in df
+    disagg_dims = [
+        "sex",
+        "age",
+        "urbanisation",
+        "residence",
+        "comp_breakdown_1",
+        "comp_breakdown_2",
+        "comp_breakdown_3",
+        "unit_measure",
+    ]
+    unmapped_dims = [
+        c for c in df.columns if c in disagg_dims and c not in mapped_dims
+    ]
+
+    if not unmapped_dims:
+        return df
+
+    import logging
+    logger = logging.getLogger("data360.viz_config")
+
+    df_resolved = df.copy()
+    key_cols = [c for c in df_resolved.columns if c not in unmapped_dims and c != "value"]
+
+    for dim in unmapped_dims:
+        if df_resolved[dim].nunique() <= 1:
+            continue
+
+        # Try to filter by total/aggregate sentinels first
+        sentinels = {
+            "_t",
+            "_z",
+            "total",
+            "all",
+            "overall",
+            "u",
+            "not applicable",
+            "not_applicable",
+            "notapplicable",
+        }
+        unique_vals = df_resolved[dim].dropna().unique()
+        sentinel_found = None
+        for val in unique_vals:
+            val_str = str(val).strip().lower()
+            if val_str in sentinels:
+                sentinel_found = val
+                break
+
+        if sentinel_found is not None:
+            df_resolved = df_resolved[df_resolved[dim] == sentinel_found]
+            logger.info("Filtered unmapped dimension '%s' to sentinel '%s'", dim, sentinel_found)
+
+    # After filtering, check if duplicates still exist
+    if df_resolved.duplicated(subset=key_cols).any():
+        n_before = len(df_resolved)
+        df_resolved = (
+            df_resolved.groupby(key_cols, sort=False)["value"].mean().reset_index()
+        )
+        n_collapsed = n_before - len(df_resolved)
+        logger.warning(
+            "Collapsed %d duplicate rows on unmapped dimensions %s",
+            n_collapsed,
+            unmapped_dims,
+        )
+
+    return df_resolved
+
+
 def dispatch_spec(
     strategy: ChartStrategy,
     df: pd.DataFrame,
@@ -2984,8 +3562,10 @@ def dispatch_spec(
     y_label: str = "Value",
     x_label: str = "Value",
     unit_measure: str | None = None,
+    indicator_name: str | None = None,
 ) -> dict:
     """Call the right spec builder for the given strategy."""
+    df = resolve_unmapped_disaggregations(df, result)
     builder = STRATEGY_BUILDERS[strategy]
     if strategy in (
         ChartStrategy.TEMPORAL_SINGLE,
@@ -2997,11 +3577,11 @@ def dispatch_spec(
         ChartStrategy.FALLBACK_LINE,
         ChartStrategy.HEATMAP,
     ):
-        return builder(df, title, result, indicator_labels, y_label, unit_measure)
+        return builder(df, title, result, indicator_labels, y_label, unit_measure, indicator_name=indicator_name)
     elif strategy in (ChartStrategy.CROSS_SECTIONAL, ChartStrategy.DISTRIBUTION):
-        return builder(df, title, result, indicator_labels, x_label, unit_measure)
+        return builder(df, title, result, indicator_labels, x_label, unit_measure, indicator_name=indicator_name)
     else:
-        return builder(df, title, result, indicator_labels)
+        return builder(df, title, result, indicator_labels, indicator_name=indicator_name)
 
 
 # ============================================================================
@@ -3072,9 +3652,9 @@ def build_beeswarm_spec(
 # ============================================================================
 
 FREQUENCY_TO_TIMEUNIT: dict[str, str] = {
-    "A": "year",
-    "M": "yearmonth",
-    "Q": "yearquarter",
+    "A": "utcyear",
+    "M": "utcyearmonth",
+    "Q": "utcyearquarter",
 }
 
 PERIODICITY_KEYWORDS: dict[str, list[str]] = {
@@ -3093,6 +3673,7 @@ CHART_TYPE_KEYWORDS: dict[str, list[str]] = {
     # appears inside "heatmap" and "heat map".  Insertion order is significant.
     "heatmap": ["heatmap", "heat map", "heat"],
     "map": ["map", "choropleth", "geoshape", "geographic"],
+    "small_multiples": ["facet", "small multiples", "small_multiples", "grid"],
 }
 DEFAULT_CHART_TYPE: str = "line"
 
@@ -3171,7 +3752,7 @@ def should_use_temporal_x_axis(
 
 
 def _select_categorical_dimension(available_dimensions: list[str]) -> str | None:
-    for dim in ["country", "sex", "age", "urbanisation", "education", "income_group"]:
+    for dim in ["country", "sex", "age", "urbanisation", "residence", "education", "income_group"]:
         if dim in available_dimensions:
             return dim
     for dim in available_dimensions:
@@ -3250,7 +3831,7 @@ def _clone_year_field(y_int: int, sample: Any) -> Any:
 def _coerce_year_column_to_int(series: pd.Series) -> pd.Series:
     if pd.api.types.is_datetime64_any_dtype(series):
         return series.dt.year.astype("Int64")
-    parsed = pd.to_datetime(series, errors="coerce")
+    parsed = pd.to_datetime(series.astype(str), errors="coerce")
     if parsed.notna().mean() >= 0.99 and parsed.notna().any():
         return parsed.dt.year.astype("Int64")
     num = pd.to_numeric(series, errors="coerce")
@@ -3658,12 +4239,12 @@ class ValueAxisLabelFormatRule(PostProcessingRule):
             "obs_value",
         }
 
-    def apply(self, spec, data_frequency=None, unit_measure=None):
+    def apply(self, spec, data_frequency=None, unit_measure=None, scale_type=None, **kwargs):
         if not self.should_apply(spec, data_frequency):
             return spec
         y = spec["encoding"]["y"]
         y.setdefault("axis", {})
-        y["axis"]["labelExpr"] = _value_label_expr(unit_measure)
+        y["axis"]["labelExpr"] = _value_label_expr(unit_measure, scale_type=scale_type)
         return spec
 
 
@@ -3687,7 +4268,7 @@ class LineYearGapStrokeDashRule(PostProcessingRule):
             "Dashed line segments where consecutive points differ by >1 calendar year",
         )
 
-    def apply(self, spec, data_frequency=None, unit_measure=None):
+    def apply(self, spec, data_frequency=None, unit_measure=None, **kwargs):
         if not isinstance(spec, dict):
             return spec
         if "layer" in spec and isinstance(spec["layer"], list):
@@ -3728,9 +4309,10 @@ class LineYearGapStrokeDashRule(PostProcessingRule):
         return None
 
     def _is_candidate_line_spec(self, enc_spec: dict) -> bool:
-        if self._mark_type(enc_spec) != "line":
-            return False
+        mt = self._mark_type(enc_spec)
         enc = enc_spec.get("encoding")
+        if mt != "line":
+            return False
         if not isinstance(enc, dict):
             return False
         x = enc.get("x", {})
@@ -3763,9 +4345,9 @@ class LineYearGapStrokeDashRule(PostProcessingRule):
         if tu is None:
             return True
         if isinstance(tu, str):
-            return tu == "year"
+            return tu in ("year", "utcyear")
         if isinstance(tu, dict):
-            return tu.get("unit") == "year"
+            return tu.get("unit") in ("year", "utcyear")
         return False
 
     def _find_inline_values_holder(self, line_spec: dict, data_root: dict) -> dict | None:
@@ -3898,6 +4480,7 @@ class LineYearGapStrokeDashRule(PostProcessingRule):
             return
         x = enc.get("x", {})
         x_field = x.get("field") if isinstance(x, dict) else None
+        print(f"!!! _maybe_transform_line_spec: x_field={x_field}, encoding_x={x}", flush=True)
         if x_field not in ("year", "time_period"):
             return
 
@@ -4014,6 +4597,436 @@ class ZeroLineRule(PostProcessingRule):
         return spec
 
 
+class SkewnessLogScaleRule(PostProcessingRule):
+    def __init__(self):
+        super().__init__(
+            "skewness_log_scale",
+            ["line", "bar", "point", "area", "circle", "text"],
+            "Automatically apply log scale if values are highly positive skewed and positive"
+        )
+
+    def should_apply(self, spec, data_frequency=None, df=None, raw_hint=None, **kwargs):
+        return True
+
+    def apply(self, spec, data_frequency=None, unit_measure=None, df=None, raw_hint=None, **kwargs):
+        def _apply_log_scale_to_spec(subspec):
+            if not isinstance(subspec, dict):
+                return subspec
+
+            # Recurse into sub-specs
+            if "spec" in subspec:
+                _apply_log_scale_to_spec(subspec["spec"])
+            if "layer" in subspec and isinstance(subspec["layer"], list):
+                for child in subspec["layer"]:
+                    _apply_log_scale_to_spec(child)
+            if "vconcat" in subspec and isinstance(subspec["vconcat"], list):
+                for child in subspec["vconcat"]:
+                    _apply_log_scale_to_spec(child)
+            if "hconcat" in subspec and isinstance(subspec["hconcat"], list):
+                for child in subspec["hconcat"]:
+                    _apply_log_scale_to_spec(child)
+
+            # Apply to the current spec's encodings
+            enc = subspec.get("encoding", {})
+            if not isinstance(enc, dict):
+                return subspec
+
+            applied_log = False
+            for channel in ("x", "y"):
+                ch_enc = enc.get(channel)
+                if not isinstance(ch_enc, dict) or ch_enc.get("type") != "quantitative":
+                    continue
+
+                field_name = ch_enc.get("field")
+                if not field_name or df is None or field_name not in df.columns:
+                    continue
+
+                # Check explicit request or skewness condition
+                hint_str = (raw_hint or "").lower().strip()
+                is_explicit = "log" in hint_str or "logarithmic" in hint_str
+
+                # Compute metrics
+                val_series = pd.to_numeric(df[field_name], errors="coerce").dropna()
+                if val_series.empty or val_series.min() <= 0:
+                    continue
+
+                should_log = False
+                if is_explicit:
+                    should_log = True
+                else:
+                    skewness = val_series.skew()
+                    if not pd.isna(skewness):
+                        median = val_series.median()
+                        val_max = val_series.max()
+                        val_min = val_series.min()
+                        ratio = val_max / (median or 1)
+                        min_max_ratio = val_max / (val_min or 1)
+                        # Apply log scale if highly skewed or dynamic range is wide (> 30x)
+                        if (skewness > 0.5 and ratio > 5.0) or min_max_ratio > 30.0:
+                            should_log = True
+
+                if should_log:
+                    ch_enc.setdefault("scale", {})
+                    ch_enc["scale"]["type"] = "log"
+                    ch_enc["scale"]["zero"] = False
+                    applied_log = True
+
+            if applied_log:
+                mark_val = subspec.get("mark")
+                if isinstance(mark_val, dict):
+                    if mark_val.get("type") == "bar":
+                        mark_val["type"] = "circle"
+                        mark_val.setdefault("size", 80)
+                elif mark_val == "bar":
+                    subspec["mark"] = {"type": "circle", "size": 80}
+
+            return subspec
+
+        return _apply_log_scale_to_spec(spec)
+
+
+class PercentageBoundaryClampingRule(PostProcessingRule):
+    def __init__(self):
+        super().__init__(
+            "percentage_boundary_clamping",
+            ["line", "bar", "area"],
+            "Clamps percentage axes to 0-100 or 0-1 standard bounds"
+        )
+
+    def should_apply(self, spec, scale_type=None, df=None, **kwargs):
+        if scale_type != "percentage":
+            return False
+        if df is not None and "value" in df.columns:
+            max_val = df["value"].max()
+            if not pd.isna(max_val) and max_val > 100:
+                return False
+        return True
+
+    def apply(self, spec, data_frequency=None, unit_measure=None, scale_type=None, df=None, **kwargs):
+        if not self.should_apply(spec, scale_type=scale_type, df=df):
+            return spec
+
+        enc = spec.get("encoding", {})
+        for channel in ("x", "y"):
+            ch_enc = enc.get(channel)
+            if isinstance(ch_enc, dict) and ch_enc.get("type") == "quantitative":
+                ch_enc.setdefault("scale", {})
+                ch_enc["scale"]["domain"] = [0, 100]
+
+        if "spec" in spec:
+            self.apply(spec["spec"], data_frequency, unit_measure, scale_type=scale_type, df=df, **kwargs)
+
+        return spec
+
+
+def _filter_df_for_error_band(df: pd.DataFrame) -> pd.DataFrame:
+    """Pre-filters the dataframe to keep only the best errorband triplet/pair if present."""
+    if "comp_breakdown_1" not in df.columns or "value" not in df.columns:
+        return df
+
+    cb1_vals = df["comp_breakdown_1"].dropna().unique().tolist()
+
+    # Classify each unique category value
+    lower_keywords = {"lower", "lb", "min", "minimum", "low"}
+    upper_keywords = {"upper", "ub", "max", "maximum", "high"}
+    se_keywords = {"se", "std_err", "stderr", "error"}
+    est_keywords = {"estimate", "score", "value", "val", "est"}
+
+    classified = {}
+    for v in cb1_vals:
+        v_lower = str(v).lower().strip()
+        parts = set(v_lower.replace("-", "_").replace(" ", "_").split("_"))
+
+        if parts.intersection(lower_keywords):
+            classified[v] = "lower"
+        elif parts.intersection(upper_keywords):
+            classified[v] = "upper"
+        elif parts.intersection(se_keywords) or "standard error" in v_lower:
+            classified[v] = "se"
+        elif parts.intersection(est_keywords):
+            classified[v] = "est"
+
+    # Try to find a matching triplet (est, lower, upper)
+    lower_vals = [k for k, val in classified.items() if val == "lower"]
+    upper_vals = [k for k, val in classified.items() if val == "upper"]
+    est_vals = [k for k, val in classified.items() if val == "est"]
+    se_vals = [k for k, val in classified.items() if val == "se"]
+
+    best_triplet = None
+    for est in est_vals:
+        est_base = str(est).lower().replace("_sc", "").replace("_est", "").strip()
+        matching_lower = [l for l in lower_vals if est_base in str(l).lower() or est_base == str(l).lower().replace("_lb", "").replace("_lower", "").strip()]
+        matching_upper = [u for u in upper_vals if est_base in str(u).lower() or est_base == str(u).lower().replace("_ub", "").replace("_upper", "").strip()]
+        if matching_lower and matching_upper:
+            best_triplet = (est, matching_lower[0], matching_upper[0])
+            break
+
+    if best_triplet:
+        return df[df["comp_breakdown_1"].isin(best_triplet)].copy()
+
+    # Try to find a matching estimate + se pair
+    best_pair = None
+    for est in est_vals:
+        est_base = str(est).lower().replace("_est", "").strip()
+        matching_se = [s for s in se_vals if est_base in str(s).lower() or "se" in str(s).lower() or "standard error" in str(s).lower()]
+        if matching_se:
+            best_pair = (est, matching_se[0])
+            break
+
+    if best_pair:
+        return df[df["comp_breakdown_1"].isin(best_pair)].copy()
+
+    # Fallback to any triplet or pair if no prefix-matching succeeded
+    if est_vals and lower_vals and upper_vals:
+        return df[df["comp_breakdown_1"].isin([est_vals[0], lower_vals[0], upper_vals[0]])].copy()
+    if est_vals and se_vals:
+        return df[df["comp_breakdown_1"].isin([est_vals[0], se_vals[0]])].copy()
+
+    return df
+
+
+class GeneralErrorBandRule(PostProcessingRule):
+    def __init__(self):
+        super().__init__(
+            "general_error_band",
+            ["line"],
+            "Layer estimate lines with lower/upper bound area error bands when confidence intervals or standard errors are detected"
+        )
+
+    def _classify_values(self, unique_vals: list[str]) -> tuple[dict[str, str], set[str]]:
+        """Maps each unique category label to a normalized key: 'est', 'lower', 'upper', or 'se'."""
+        mapping = {}
+        unclassified = []
+
+        lower_keywords = {"lower", "lb", "min", "minimum", "low"}
+        upper_keywords = {"upper", "ub", "max", "maximum", "high"}
+        se_keywords = {"se", "std_err", "stderr", "error"}
+        est_keywords = {"estimate", "score", "value", "val", "est"}
+
+        for v in unique_vals:
+            v_lower = str(v).lower().strip()
+            parts = set(v_lower.replace("-", "_").replace(" ", "_").split("_"))
+
+            # Lower bound check
+            if parts.intersection(lower_keywords):
+                mapping[v] = "lower"
+            # Upper bound check
+            elif parts.intersection(upper_keywords):
+                mapping[v] = "upper"
+            # Standard error check
+            elif parts.intersection(se_keywords) or "standard error" in v_lower:
+                mapping[v] = "se"
+            # Explicit estimate check
+            elif parts.intersection(est_keywords):
+                mapping[v] = "est"
+            else:
+                unclassified.append(v)
+
+        # Resolve unclassified value if it's the third-wheel in a triplet or pair
+        classified_keys = set(mapping.values())
+        if len(unclassified) == 1:
+            if "lower" in classified_keys and "upper" in classified_keys and "est" not in classified_keys:
+                mapping[unclassified[0]] = "est"
+            elif "se" in classified_keys and "est" not in classified_keys:
+                mapping[unclassified[0]] = "est"
+
+        return mapping, set(mapping.values())
+
+    def should_apply(self, spec, df=None, **kwargs):
+        if df is None or "comp_breakdown_1" not in df.columns or "value" not in df.columns:
+            return False
+        cb1_vals = df["comp_breakdown_1"].dropna().unique().tolist()
+        _, mapped_keys = self._classify_values(cb1_vals)
+        has_triplet = {"est", "lower", "upper"}.issubset(mapped_keys)
+        has_pair = {"est", "se"}.issubset(mapped_keys)
+        return has_triplet or has_pair
+
+    def apply(self, spec, data_frequency=None, unit_measure=None, df=None, **kwargs):
+        if not self.should_apply(spec, df=df):
+            return spec
+
+        df_copy = df.copy()
+        cb1_vals = df_copy["comp_breakdown_1"].dropna().unique().tolist()
+        mapping, _ = self._classify_values(cb1_vals)
+
+        # Map values to the normalized keys
+        df_copy["comp_breakdown_1"] = df_copy["comp_breakdown_1"].map(mapping).fillna(df_copy["comp_breakdown_1"])
+        unique_vals = set(df_copy["comp_breakdown_1"].dropna().unique())
+
+        groupby_cols = ["year", "TIME_PERIOD"] + [col for col in ["country", "REF_AREA", "REF_AREA_NAME"] if col in df.columns]
+
+        if {"est", "lower", "upper"}.issubset(unique_vals):
+            transforms = [
+                {
+                    "pivot": "comp_breakdown_1",
+                    "value": "value",
+                    "groupby": groupby_cols
+                }
+            ]
+            lb_field = "lower"
+            ub_field = "upper"
+        elif {"est", "se"}.issubset(unique_vals):
+            transforms = [
+                {
+                    "pivot": "comp_breakdown_1",
+                    "value": "value",
+                    "groupby": groupby_cols
+                },
+                {
+                    "calculate": "datum.est - 1.645 * datum.se",
+                    "as": "lower"
+                },
+                {
+                    "calculate": "datum.est + 1.645 * datum.se",
+                    "as": "upper"
+                }
+            ]
+            lb_field = "lower"
+            ub_field = "upper"
+        else:
+            return spec
+
+        enc = spec.get("encoding", {})
+        if not enc:
+            return spec
+
+        x_enc = enc.get("x", {})
+        color_enc = enc.get("color", {})
+
+        errorband_layer = {
+            "transform": transforms,
+            "mark": {"type": "area", "opacity": 0.2, "color": "#34A7F2"},
+            "encoding": {
+                "x": x_enc,
+                "y": {
+                    "field": lb_field,
+                    "type": "quantitative",
+                    "scale": {"zero": False}
+                },
+                "y2": {
+                    "field": ub_field
+                }
+            }
+        }
+
+        # Clean up line encoding to only filter and draw the 'est' line
+        line_enc = enc.copy()
+        if isinstance(color_enc, dict) and color_enc.get("field") == "comp_breakdown_1":
+            if "color" in line_enc:
+                del line_enc["color"]
+
+        line_layer = {
+            "transform": [
+                {
+                    "filter": "datum.comp_breakdown_1 == 'est'"
+                }
+            ],
+            "mark": spec.get("mark", "line"),
+            "encoding": line_enc
+        }
+
+        layered_spec = {
+            "$schema": spec.get("$schema", "https://vega.github.io/schema/vega-lite/v5.json"),
+            "title": spec.get("title"),
+            "width": spec.get("width", 600),
+            "height": spec.get("height", 350),
+            "config": spec.get("config", {}),
+            "data": {"values": df_copy.to_dict(orient="records")},
+            "layer": [errorband_layer, line_layer]
+        }
+        return layered_spec
+
+
+class PopulationPyramidRule(PostProcessingRule):
+    def __init__(self):
+        super().__init__(
+            "population_pyramid",
+            ["*"],
+            "Transform bar chart into a diverging population pyramid when age and sex dimensions are present"
+        )
+
+    def should_apply(self, spec, df=None, raw_hint=None, **kwargs):
+        hint_str = (raw_hint or "").lower().strip()
+        if not ("pyramid" in hint_str or "population_pyramid" in hint_str):
+            return False
+        if df is None:
+            return False
+        cols = {c.lower() for c in df.columns}
+        return "sex" in cols and "age" in cols
+
+    def apply(self, spec, data_frequency=None, unit_measure=None, df=None, raw_hint=None, **kwargs):
+        if not self.should_apply(spec, df=df, raw_hint=raw_hint):
+            return spec
+
+        sex_col = [c for c in df.columns if c.lower() == "sex"][0]
+        age_col = [c for c in df.columns if c.lower() == "age"][0]
+
+        unique_ages = df[age_col].dropna().unique().tolist()
+        sort_order = _get_dimension_sort_order(age_col, unique_ages)
+
+        y_enc = {
+            "field": age_col,
+            "type": "nominal",
+            "axis": {
+                "title": "Age Group",
+                "grid": True
+            }
+        }
+        if sort_order:
+            y_enc["sort"] = sort_order
+
+        unique_sexes = df[sex_col].dropna().unique().tolist()
+        domain = [s for s in ["Male", "Female", "M", "F"] if s in unique_sexes]
+        range_colors = []
+        for s in domain:
+            if s in ("Male", "M"):
+                range_colors.append("#34A7F2")
+            else:
+                range_colors.append("#F3578E")
+
+        pyramid_spec = {
+            "$schema": spec.get("$schema", "https://vega.github.io/schema/vega-lite/v5.json"),
+            "title": spec.get("title"),
+            "width": spec.get("width", 600),
+            "height": spec.get("height", 350),
+            "config": spec.get("config", {}),
+            "data": spec.get("data", {}),
+            "transform": [
+                {
+                    "calculate": f"datum.{sex_col} == 'Male' || datum.{sex_col} == 'M' ? -datum.value : datum.value",
+                    "as": "signed_value"
+                }
+            ],
+            "mark": {
+                "type": "bar",
+                "tooltip": True
+            },
+            "encoding": {
+                "y": y_enc,
+                "x": {
+                    "field": "signed_value",
+                    "type": "quantitative",
+                    "axis": {
+                        "title": "Population",
+                        "labelExpr": "abs(datum.value)"
+                    }
+                },
+                "color": {
+                    "field": sex_col,
+                    "type": "nominal",
+                    "scale": {
+                        "domain": domain,
+                        "range": range_colors
+                    },
+                    "legend": {
+                        "title": "Sex"
+                    }
+                }
+            }
+        }
+        return pyramid_spec
+
+
 class ApplyWBStyleRule(PostProcessingRule):
     def __init__(self):
         super().__init__("apply_wb_style", ["*"], "Inject WB style config")
@@ -4021,7 +5034,7 @@ class ApplyWBStyleRule(PostProcessingRule):
     def should_apply(self, spec, data_frequency=None):
         return True
 
-    def apply(self, spec, data_frequency=None, unit_measure=None):
+    def apply(self, spec, data_frequency=None, unit_measure=None, **kwargs):
         return inject_wb_config(spec)
 
 
@@ -4032,9 +5045,13 @@ POST_PROCESSING_RULES: list[PostProcessingRule] = [
     ContiguousCalendarYearDomainRule(),
     TemporalAxisCleanupRule(),
     DiscreteYearBarXAxisRule(),
+    SkewnessLogScaleRule(),
+    PercentageBoundaryClampingRule(),
     ValueAxisLabelFormatRule(),
     LineYearGapStrokeDashRule(),
     LineChartPointHoverRule(),
+    GeneralErrorBandRule(),
+    PopulationPyramidRule(),
     ZeroLineRule(),
     ApplyWBStyleRule(),
 ]
@@ -4053,8 +5070,8 @@ class DracoConstraintConfig:
 
     def __init__(self):
         self.base_constraints = ["entity(view,root,view).", "entity(mark,view,m)."]
-        self.nominal_color_fields = ["country", "sex", "urbanisation", "ref_area"]
-        self.color_dimension_priority = ["country", "sex", "age", "urbanisation"]
+        self.nominal_color_fields = ["country", "sex", "urbanisation", "residence", "ref_area"]
+        self.color_dimension_priority = ["country", "sex", "age", "urbanisation", "residence"]
 
 
 DEFAULT_DRACO_CONFIG = DracoConstraintConfig()
