@@ -241,7 +241,7 @@ class TestStructuredTooltips:
 
     def test_year_tooltip_temporal_for_annual_string_years(self):
         """String years (e.g. '2018', '2019') should now produce temporal tooltips
-        with type=temporal and timeUnit=year so VL formats them as dates correctly
+        with type=temporal and timeUnit=utcyear so VL formats them as dates correctly
         instead of falling through to the raw epoch timestamp display."""
         df = pd.DataFrame({"year": ["2018", "2019"], "value": [1.0, 2.0]})
         tips = viz_config.build_structured_tooltips(
@@ -249,7 +249,7 @@ class TestStructuredTooltips:
         )
         year_tip = next(t for t in tips if t["field"] == "year")
         assert year_tip["type"] == "temporal"
-        assert year_tip["timeUnit"] == "year"
+        assert year_tip["timeUnit"] == "utcyear"
         assert year_tip["format"] == "%Y"
 
     def test_year_tooltip_temporal_when_column_is_datetime(self):
@@ -264,7 +264,7 @@ class TestStructuredTooltips:
         )
         year_tip = next(t for t in tips if t["field"] == "year")
         assert year_tip["type"] == "temporal"
-        assert year_tip["timeUnit"] == "year"
+        assert year_tip["timeUnit"] == "utcyear"
         assert year_tip["format"] == "%Y"
 
     def test_country_tooltip_is_nominal(self):
@@ -368,6 +368,12 @@ class TestHighCardinalityChartSelection:
 
 class TestWBStyleInjection:
     """Every spec must receive WB color palette, typography, and grid settings."""
+
+    def test_temporal_encoding_has_no_grid(self):
+        """Temporal X-axis encodings must explicitly set grid=False to avoid vertical gridline clutter."""
+        for freq in ["annual", "monthly", "quarterly", "daily"]:
+            enc = viz_config._x_temporal_encoding(freq)
+            assert enc["axis"]["grid"] is False, f"Temporal freq {freq} must disable grid"
 
     def test_inject_adds_config_when_absent(self):
         spec = {"mark": "line"}
@@ -787,7 +793,7 @@ class TestChartTypeOverrideWarning:
             yield
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("requested_chart", ["strip", "small_multiples"])
+    @pytest.mark.parametrize("requested_chart", ["strip"])
     async def test_warning_injected_when_hint_overridden(self, patches, requested_chart):
         """If LLM requests an incompatible chart type, a warning should be present."""
         result = await get_viz_spec(
@@ -803,7 +809,7 @@ class TestChartTypeOverrideWarning:
         )
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("requested_chart", ["line", "bar", "scatter", "area", "stacked_area", "heatmap", "map", "choropleth"])
+    @pytest.mark.parametrize("requested_chart", ["line", "bar", "scatter", "area", "stacked_area", "heatmap", "map", "choropleth", "small_multiples"])
     async def test_no_warning_when_hint_matches(self, patches, requested_chart):
         """If LLM requests a chart type that the pipeline can honor, no warning is emitted."""
         result = await get_viz_spec(
