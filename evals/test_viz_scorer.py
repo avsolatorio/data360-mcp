@@ -1315,8 +1315,8 @@ SCENARIOS: list[dict] = [
     },
     {
         "id": "41_energy_vs_co2_china",
-        "label": "Renewable Energy vs CO2 Emissions — China (2010–2022)",
-        "description": "Multi-indicator temporal trend for a single country. GDP/ESG indicators on different scales. Expected: dual Y-axis or faceted subplots.",
+        "label": "CO2 Emissions vs Forest Coverage — China (2010–2022)",
+        "description": "Multi-indicator temporal trend for a single country. CO2 emissions and forest coverage indicators on different scales. Expected: dual Y-axis or faceted subplots.",
         "database_ids": ["WB_ESG", "WB_ESG"],
         "indicator_ids": ["WB_ESG_EN_ATM_CO2E_PC", "WB_ESG_AG_LND_FRST_ZS"],
         "country_code": "CHN",

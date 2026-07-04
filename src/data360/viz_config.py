@@ -3261,7 +3261,7 @@ def build_temporal_multi_indicator_spec(
     # Determine if we should layer the indicators in a single panel instead of using vconcat
     should_layer = False
     fold_cols = [col for col in ind_cols if col in df_copy.columns]
-    if len(fold_cols) >= 2:
+    if len(fold_cols) >= 2 and unit_measure:
         try:
             max_vals = []
             for col in fold_cols:
