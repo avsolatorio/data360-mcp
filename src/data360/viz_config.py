@@ -179,6 +179,7 @@ def wb_altair_config() -> dict:
             "subtitleLineHeight": 18,
         },
         "axis": {
+            "grid": False,
             "labelColor": WB_TEXT_SUBTLE,
             "labelFontSize": 12,
             "labelFont": WB_FONT_FAMILY,
@@ -1392,6 +1393,7 @@ def _vl_schema() -> str:
 
 def _axis_style(title: str | None = None, temporal: bool = False) -> dict:
     ax: dict = {
+        "grid": False,
         "gridColor": WB_GRID_COLOR,
         "gridDash": [4, 2],
         "labelColor": WB_TEXT_SUBTLE,
