@@ -1285,11 +1285,11 @@ SCENARIOS: list[dict] = [
         "label": "Secondary School Enrollment — South Asia (2010–2022)",
         "description": "Multi-country education trend. Expected: line chart of gross secondary enrollment rates.",
         "database_id": "WB_WDI",
-        "indicator_id": "WB_WDI_SE_SEC_ENRL",
+        "indicator_id": "WB_WDI_SE_SEC_ENRR",
         "country_code": "IND;PAK;BGD",
         "start_year": 2010,
         "end_year": 2022,
-        "chart_title": "Secondary Education Enrollment (Total Pupils)",
+        "chart_title": "Secondary Education Enrollment (Gross %)",
     },
     {
         "id": "39_urban_population_share",
