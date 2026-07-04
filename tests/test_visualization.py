@@ -878,3 +878,21 @@ class TestVisualizationUnitQualification:
                 disaggregation_filters=None,
             )
             assert unit == "million people"
+
+
+@pytest.mark.asyncio
+async def test_detect_missing_countries():
+    """Verify that _detect_missing_countries correctly detects and flags missing country codes/names."""
+    from data360.visualization import _detect_missing_countries
+
+    # 1. Base check
+    missing = await _detect_missing_countries("USA,IND,PAK", {"USA", "IND"})
+    assert missing == ["Pakistan"]
+
+    # 2. Case insensitivity and whitespace check
+    missing = await _detect_missing_countries(" usa;  ind; pak ", {"USA", "IND"})
+    assert missing == ["Pakistan"]
+
+    # 3. None/empty checks
+    assert await _detect_missing_countries(None, {"USA"}) == []
+    assert await _detect_missing_countries("", {"USA"}) == []

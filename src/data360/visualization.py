@@ -976,6 +976,28 @@ def get_supported_chart_types() -> str:
 # ============================================================================
 
 
+async def _detect_missing_countries(country_code: str | None, present_countries: set[str]) -> list[str]:
+    """Identify which of the requested country codes are missing from the returned set."""
+    if not country_code:
+        return []
+    requested_list = [c.strip().upper() for c in country_code.replace(";", ",").split(",") if c.strip()]
+    if not requested_list:
+        return []
+    try:
+        from data360.providers import get_codelist_mapping
+        country_map = await get_codelist_mapping("REF_AREA")
+    except Exception:
+        country_map = {}
+
+    missing_names = []
+    present_upper = {str(c).upper() for c in present_countries}
+    for code in requested_list:
+        name = country_map.get(code, code)
+        if code not in present_upper and name.upper() not in present_upper:
+            missing_names.append(name)
+    return missing_names
+
+
 async def get_viz_spec(
     database_id: str,
     indicator_id: str,
@@ -1516,12 +1538,35 @@ async def get_viz_spec(
         final_title, raw_unit_label or None, viz_data
     )
 
-    # Append hidden-dimension warning to the subtitle so the user sees it.
-    if _hidden_dim_warning and isinstance(chart_title_vl, dict):
+    # Append missing-country warning and hidden-dimension warning to the subtitle so the user sees it.
+    if isinstance(chart_title_vl, dict):
         _sub = chart_title_vl.get("subtitle", [])
         if isinstance(_sub, str):
             _sub = [_sub]
-        chart_title_vl["subtitle"] = list(_sub) + [_hidden_dim_warning]
+        else:
+            _sub = list(_sub)
+
+        present_set = set(viz_data["country"].dropna().unique()) if "country" in viz_data.columns else set()
+        missing_names = await _detect_missing_countries(country_code, present_set)
+        if missing_names:
+            missing_str = ", ".join(missing_names)
+            _sub.append(f"Note: Data unavailable for {missing_str}.")
+
+        if _hidden_dim_warning:
+            _sub.append(_hidden_dim_warning)
+
+        chart_title_vl["subtitle"] = _sub
+    elif isinstance(chart_title_vl, str):
+        present_set = set(viz_data["country"].dropna().unique()) if "country" in viz_data.columns else set()
+        missing_names = await _detect_missing_countries(country_code, present_set)
+        _sub = []
+        if missing_names:
+            missing_str = ", ".join(missing_names)
+            _sub.append(f"Note: Data unavailable for {missing_str}.")
+        if _hidden_dim_warning:
+            _sub.append(_hidden_dim_warning)
+        if _sub:
+            chart_title_vl = {"text": chart_title_vl, "subtitle": _sub}
 
     # 7. Determine strategy
     n_indicators = 1
@@ -1931,6 +1976,31 @@ async def get_multi_indicator_viz_spec(
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
         final_chart_title, shared_unit_label or None, merged
     )
+
+    # Append missing-country warning to the subtitle so the user sees it.
+    if isinstance(chart_title_vl, dict):
+        _sub = chart_title_vl.get("subtitle", [])
+        if isinstance(_sub, str):
+            _sub = [_sub]
+        else:
+            _sub = list(_sub)
+
+        present_set = set(merged["country"].dropna().unique()) if "country" in merged.columns else set()
+        missing_names = await _detect_missing_countries(country_code, present_set)
+        if missing_names:
+            missing_str = ", ".join(missing_names)
+            _sub.append(f"Note: Data unavailable for {missing_str}.")
+
+        chart_title_vl["subtitle"] = _sub
+    elif isinstance(chart_title_vl, str):
+        present_set = set(merged["country"].dropna().unique()) if "country" in merged.columns else set()
+        missing_names = await _detect_missing_countries(country_code, present_set)
+        if missing_names:
+            missing_str = ", ".join(missing_names)
+            chart_title_vl = {
+                "text": chart_title_vl,
+                "subtitle": [f"Note: Data unavailable for {missing_str}."]
+            }
 
     # 6. Build indicator_labels for axis/tooltip
     def _format_label(t: str, u: str | None) -> str:
