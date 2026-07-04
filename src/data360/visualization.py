@@ -998,6 +998,84 @@ async def _detect_missing_countries(country_code: str | None, present_countries:
     return missing_names
 
 
+def _apply_post_processing_rules(
+    spec: dict,
+    data_frequency: str | None,
+    unit_measure: str | None,
+    strategy_result: "viz_config.StrategyResult",
+    df: pd.DataFrame
+) -> dict:
+    """Recursively applies post-processing rules to all sub-views/panels in a Vega-Lite spec."""
+    import inspect
+
+    def _apply_rule_recursively(rule, subspec, data_root=None, **kwargs):
+        if not isinstance(subspec, dict):
+            return subspec
+
+        # Structural rules must be run at the top-level
+        is_structural = rule.name in ("general_error_band", "population_pyramid", "apply_wb_style")
+        if is_structural:
+            return rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **kwargs)
+
+        current_data_root = data_root if data_root is not None else subspec
+
+        # Recurse into composite views
+        if "vconcat" in subspec and isinstance(subspec["vconcat"], list):
+            subspec["vconcat"] = [
+                _apply_rule_recursively(rule, child, current_data_root, **kwargs)
+                for child in subspec["vconcat"]
+            ]
+            return subspec
+        elif "hconcat" in subspec and isinstance(subspec["hconcat"], list):
+            subspec["hconcat"] = [
+                _apply_rule_recursively(rule, child, current_data_root, **kwargs)
+                for child in subspec["hconcat"]
+            ]
+            return subspec
+        elif "layer" in subspec and isinstance(subspec["layer"], list):
+            subspec["layer"] = [
+                _apply_rule_recursively(rule, child, current_data_root, **kwargs)
+                for child in subspec["layer"]
+            ]
+            return subspec
+        elif "spec" in subspec and isinstance(subspec["spec"], dict):
+            subspec["spec"] = _apply_rule_recursively(rule, subspec["spec"], current_data_root, **kwargs)
+            return subspec
+
+        # Leaf view: temporarily inject data/datasets from root if missing
+        has_local_data = "data" in subspec
+        if not has_local_data and current_data_root and "data" in current_data_root:
+            subspec["data"] = current_data_root["data"]
+        if not has_local_data and current_data_root and "datasets" in current_data_root:
+            subspec["datasets"] = current_data_root["datasets"]
+
+        # Apply the rule
+        subspec = rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **kwargs)
+
+        # Cleanup injected data
+        if not has_local_data:
+            subspec.pop("data", None)
+            subspec.pop("datasets", None)
+
+        return subspec
+
+    for rule in viz_config.POST_PROCESSING_RULES:
+        sig = inspect.signature(rule.apply)
+        kwargs = {}
+        if "scale_type" in sig.parameters:
+            kwargs["scale_type"] = strategy_result.scale_type
+        if "unit_mult" in sig.parameters:
+            kwargs["unit_mult"] = strategy_result.unit_mult
+        if "df" in sig.parameters:
+            kwargs["df"] = df
+        if "raw_hint" in sig.parameters:
+            kwargs["raw_hint"] = strategy_result.raw_hint
+
+        spec = _apply_rule_recursively(rule, spec, **kwargs)
+
+    return spec
+
+
 async def get_viz_spec(
     database_id: str,
     indicator_id: str,
@@ -1625,25 +1703,13 @@ async def get_viz_spec(
             indicator_name=indicator_display or None,
         )
         # Apply post-processing rules
-        import inspect
-        for rule in viz_config.POST_PROCESSING_RULES:
-            sig = inspect.signature(rule.apply)
-            kwargs = {}
-            if "scale_type" in sig.parameters:
-                kwargs["scale_type"] = strategy_result.scale_type
-            if "unit_mult" in sig.parameters:
-                kwargs["unit_mult"] = strategy_result.unit_mult
-            if "df" in sig.parameters:
-                kwargs["df"] = viz_data
-            if "raw_hint" in sig.parameters:
-                kwargs["raw_hint"] = strategy_result.raw_hint
-
-            spec = rule.apply(
-                spec,
-                data_frequency=data_frequency,
-                unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
-                **kwargs
-            )
+        spec = _apply_post_processing_rules(
+            spec,
+            data_frequency=data_frequency,
+            unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
+            strategy_result=strategy_result,
+            df=viz_data
+        )
 
         out_reason = strategy_result.reason
         if strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE:
@@ -2135,27 +2201,15 @@ async def get_multi_indicator_viz_spec(
     }
 
     # Apply post-processing rules
-    import inspect
-    for rule in viz_config.POST_PROCESSING_RULES:
-        sig = inspect.signature(rule.apply)
-        kwargs = {}
-        if "scale_type" in sig.parameters:
-            kwargs["scale_type"] = strategy_result.scale_type
-        if "unit_mult" in sig.parameters:
-            kwargs["unit_mult"] = strategy_result.unit_mult
-        if "df" in sig.parameters:
-            kwargs["df"] = spec_df
-        if "raw_hint" in sig.parameters:
-            kwargs["raw_hint"] = strategy_result.raw_hint
-
-        spec = rule.apply(
-            spec,
-            data_frequency=None,
-            unit_measure=_unit_measure_for_formatting(
-                shared_unit_raw, shared_unit_label
-            ),
-            **kwargs
-        )
+    spec = _apply_post_processing_rules(
+        spec,
+        data_frequency=None,
+        unit_measure=_unit_measure_for_formatting(
+            shared_unit_raw, shared_unit_label
+        ),
+        strategy_result=strategy_result,
+        df=spec_df
+    )
 
     out_reason = strategy_result.reason
     if strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE:
