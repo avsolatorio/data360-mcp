@@ -204,10 +204,35 @@ class TestStrategyRouter:
         assert r.indicator_cols == ind_cols
 
     def test_small_multiples_two_indicators_multi_year(self):
-        df = _two_ind_ts_df()
+        """Phase 8: small 2-indicator multi-year datasets now route to CORRELATION_TEMPORAL.
+
+        The old SMALL_MULTIPLES routing was sub-optimal for ≤8 countries × ≤8 years —
+        a connected scatter is far more informative for tracking relationship evolution.
+        """
+        df = _two_ind_ts_df()  # 2 countries × 6 years — within threshold
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = select_strategy(df, n_indicators=2, indicator_cols=ind_cols)
-        assert r.strategy == ChartStrategy.SMALL_MULTIPLES
+        assert r.strategy == ChartStrategy.CORRELATION_TEMPORAL, (
+            f"2 countries × 6 years with 2 indicators should now route to "
+            f"CORRELATION_TEMPORAL (connected scatter), not SMALL_MULTIPLES. "
+            f"Got: {r.strategy.value!r}"
+        )
+
+    def test_small_multiples_two_indicators_large_dataset(self):
+        """Large 2-indicator datasets still route to SMALL_MULTIPLES (Phase 8 threshold exceeded)."""
+        rows = []
+        for c in [f"Country{i}" for i in range(12)]:   # 12 > 8 threshold
+            for y in range(2018, 2024):
+                rows.append({
+                    "country": c, "year": pd.Timestamp(f"{y}-01-01"),
+                    "gdp_per_capita": float(hash((c, y)) % 10000),
+                    "life_expectancy": float(60 + hash((c, y, "l")) % 20),
+                })
+        df = pd.DataFrame(rows)
+        r = select_strategy(df, n_indicators=2, indicator_cols=["gdp_per_capita", "life_expectancy"])
+        assert r.strategy == ChartStrategy.SMALL_MULTIPLES, (
+            "12-country 2-indicator data must still route to SMALL_MULTIPLES (exceeds threshold)."
+        )
 
     def test_temporal_multi_indicator_single_country(self):
         df = _two_ind_ts_df()

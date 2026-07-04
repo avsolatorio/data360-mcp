@@ -1070,6 +1070,24 @@ class TwoIndicatorRule:
                     y_dim=ctx.ind_cols[1],
                 )
             if ctx.year_count > 1 and ctx.country_count > 1:
+                # Phase 8: for small datasets, connected scatter reveals relationship
+                # evolution far better than N small-multiples panels.
+                # Beyond thresholds the dot paths overlap and panels stay readable.
+                if (
+                    ctx.country_count <= CORRELATION_TEMPORAL_AUTO_MAX_COUNTRIES
+                    and ctx.year_count <= CORRELATION_TEMPORAL_AUTO_MAX_YEARS
+                ):
+                    return StrategyResult(
+                        ChartStrategy.CORRELATION_TEMPORAL,
+                        (
+                            f"2 indicators, {ctx.country_count} economies, "
+                            f"{ctx.year_count} years → connected scatter "
+                            f"(≤{CORRELATION_TEMPORAL_AUTO_MAX_COUNTRIES} countries "
+                            f"× ≤{CORRELATION_TEMPORAL_AUTO_MAX_YEARS} years threshold)"
+                        ),
+                        indicator_cols=ctx.ind_cols,
+                        color_dim="country",
+                    )
                 return StrategyResult(
                     ChartStrategy.SMALL_MULTIPLES,
                     f"2 indicators, {ctx.country_count} economies, {ctx.year_count} years → small multiples",
@@ -3732,6 +3750,14 @@ SMALL_MULTIPLES_MAX_FACETS: int = HIGH_CARDINALITY_THRESHOLDS["small_multiples_m
 # At 680px width, 8 labels of ~10px font fit without overlap when series are spread.
 # Above this threshold the color legend is cleaner than cramped end labels.
 MAX_END_LABEL_SERIES: int = 8
+
+# Auto-routing threshold for CORRELATION_TEMPORAL (connected scatter).
+# When 2 indicators are present with ≤ these many countries and years,
+# a connected scatter reveals relationship evolution better than SMALL_MULTIPLES.
+# Beyond these thresholds, SMALL_MULTIPLES remains the better choice (panels
+# become unreadable and the dot paths overlap catastrophically).
+CORRELATION_TEMPORAL_AUTO_MAX_COUNTRIES: int = 8
+CORRELATION_TEMPORAL_AUTO_MAX_YEARS: int = 8
 
 
 
