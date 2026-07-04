@@ -330,7 +330,9 @@ def _build_score_metric() -> GEval:
         1. DATA RELEVANCE (0-2)
            Does the chart show the right data for the stated scenario?
            Are the correct countries, time range, and indicator represented?
-           Deduct if the data is suspiciously sparse or clearly mismatched.
+           Deduct if the indicator or countries are clearly mismatched from the input request.
+           Do NOT deduct points for sparse, missing, or incomplete years/countries if that data
+           is simply not present in the upstream database (focus on how the retrieved data is charted).
 
         2. CHART TYPE FIT (0-2)
            Is the auto-selected chart type appropriate for the data shape?
@@ -567,9 +569,11 @@ def _build_chained_score_metric() -> GEval:
         1. DATA ALIGNMENT (0-2)
            Did the chart plot the exact same set of countries and years returned
            by the data retrieval step?
-           - 2 pts: perfect match of countries and temporal ranges.
-           - 1 pt: minor deviations (e.g. one missing country or year).
+           - 2 pts: perfect match of countries and temporal ranges returned by the data retrieval step.
+           - 1 pt: minor deviations (e.g. one missing country or year compared to the retrieved set).
            - 0 pts: major mismatch or empty data.
+           Do NOT penalize if the retrieved set is small/sparse compared to the original request
+           due to upstream database limitations (score only the alignment between retrieval and chart).
 
         2. SORTING COHERENCE (0-2)
            Does the visual encoding preserve the sorting or comparisons calculated
