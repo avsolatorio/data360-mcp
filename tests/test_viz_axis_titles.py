@@ -20,6 +20,7 @@ from data360.viz_config import (
     ChartStrategy,
     StrategyResult,
     _resolve_axis_title,
+    get_main_data_layer,
     build_choropleth_spec,
     build_cross_sectional_spec,
     build_distribution_spec,
@@ -103,7 +104,7 @@ class TestAxisTitleNeverBlankWithIndicatorName:
             indicator_name="Total Population",
         )
 
-        y_title = spec.get("encoding", {}).get("y", {}).get("axis", {}).get("title")
+        y_title = get_main_data_layer(spec).get("encoding", {}).get("y", {}).get("axis", {}).get("title")
         assert y_title is not None, (
             "temporal_single: y-axis title must not be None when indicator_name is known"
         )

@@ -1800,6 +1800,95 @@ def build_temporal_single_spec(
         "width": 600,
         "height": 350,
     }
+
+    # ------------------------------------------------------------------
+    # Phase 6 — Zero reference line for signed-value line/area charts.
+    # When the value domain spans negative and positive (e.g. GDP growth,
+    # inflation, current account balance) add a thin gray rule at y=0 so
+    # the growth/contraction boundary is always visible.
+    # ------------------------------------------------------------------
+    needs_zero_line = (
+        not is_bar
+        and "value" in df.columns
+        and df["value"].min() < 0 < df["value"].max()
+    )
+
+    # ------------------------------------------------------------------
+    # Phase 7 — Direct end labels for 2–MAX_END_LABEL_SERIES series.
+    # Eliminates legend look-away on multi-country line charts.
+    # Not applied to bar charts (bars are already labeled on the axis).
+    # ------------------------------------------------------------------
+    color_dim = result.color_dim
+    n_series = df[color_dim].nunique() if (color_dim and color_dim in df.columns) else 0
+    needs_end_labels = (
+        not is_bar
+        and color_dim
+        and 2 <= n_series <= MAX_END_LABEL_SERIES
+        and "year" in df.columns
+    )
+
+    if needs_zero_line or needs_end_labels:
+        # Convert flat spec to a layered spec.  The main mark layer inherits
+        # the top-level $schema, title, data, width, and height from the
+        # outer container; the individual layers only need mark + encoding.
+        main_layer: dict = {"mark": spec.pop("mark"), "encoding": spec.pop("encoding")}
+        layers: list[dict] = [main_layer]
+
+        if needs_zero_line:
+            zero_layer: dict = {
+                "mark": {
+                    "type": "rule",
+                    "color": "#999999",
+                    "strokeWidth": 1.0,
+                    "strokeDash": [4, 3],
+                    "opacity": 0.8,
+                    "tooltip": False,
+                },
+                "encoding": {"y": {"datum": 0}},
+            }
+            layers.append(zero_layer)
+
+        if needs_end_labels:
+            # Identify last year per series via argmax transform.
+            # This produces exactly one row per series — the point with the
+            # maximum year value — to anchor the label.
+            year_type = "temporal" if df["year"].dtype == "datetime64[ns]" else "ordinal"
+            end_label_layer: dict = {
+                "transform": [
+                    {
+                        "aggregate": [
+                            {"op": "argmax", "field": "year", "as": "_last"}
+                        ],
+                        "groupby": [color_dim],
+                    },
+                    {
+                        "calculate": f"datum._last.value",
+                        "as": "_end_value",
+                    },
+                    {
+                        "calculate": f"datum._last.year",
+                        "as": "_end_year",
+                    },
+                ],
+                "mark": {
+                    "type": "text",
+                    "align": "left",
+                    "dx": 5,
+                    "fontSize": 10,
+                    "fontWeight": "normal",
+                    "tooltip": False,
+                },
+                "encoding": {
+                    "x": {"field": "_end_year", "type": year_type},
+                    "y": {"field": "_end_value", "type": "quantitative"},
+                    "text": {"field": color_dim, "type": "nominal"},
+                    "color": encoding.get("color", {}),
+                },
+            }
+            layers.append(end_label_layer)
+
+        spec["layer"] = layers
+
     return inject_wb_config(spec)
 
 
@@ -3639,6 +3728,12 @@ HIGH_CARDINALITY_THRESHOLDS: dict[str, int] = {
 # Keep the standalone constant as a typed alias for backward compat with existing tests.
 SMALL_MULTIPLES_MAX_FACETS: int = HIGH_CARDINALITY_THRESHOLDS["small_multiples_max_facets"]
 
+# Maximum series count for direct end labels on multi-series line charts.
+# At 680px width, 8 labels of ~10px font fit without overlap when series are spread.
+# Above this threshold the color legend is cleaner than cramped end labels.
+MAX_END_LABEL_SERIES: int = 8
+
+
 
 # Keep legacy aliases for backward compat with existing tests
 def should_use_beeswarm(
@@ -3752,6 +3847,25 @@ def extract_top_level_mark_type(vl_spec: dict) -> str | None:
         t = mark.get("type")
         return t if isinstance(t, str) else None
     return None
+
+
+def get_main_data_layer(spec: dict) -> dict:
+    """Return the primary data-bearing layer from a flat or layered Vega-Lite spec.
+
+    Phase 6 and Phase 7 may convert a flat ``{mark, encoding}`` spec into a
+    layered spec ``{layer: [{mark, encoding}, ...]}`` by appending a zero-line
+    rule and/or a text end-label layer.  Tests and post-processing code that
+    inspect ``spec["mark"]`` or ``spec["encoding"]`` must call this helper to
+    get the correct sub-spec regardless of whether the wrapping occurred.
+
+    Convention: the first layer ``layer[0]`` is always the primary data mark.
+    Decoration layers (rule, text) are appended after it.
+    """
+    if "layer" in spec:
+        layers = spec["layer"]
+        if layers:
+            return layers[0]
+    return spec
 
 
 def infer_frequency_from_periodicity(periodicity: str) -> str | None:

@@ -20,6 +20,7 @@ import pytest
 
 from data360.visualization import get_multi_indicator_viz_spec, get_viz_spec
 from data360.viz_config import (
+    get_main_data_layer,
     SMALL_MULTIPLES_MAX_FACETS,
     ChartStrategy,
     _append_trim_note,
@@ -859,7 +860,8 @@ class TestStackedAreaStrategyRouting:
         result = select_strategy(df, n_indicators=1, chart_type_hint="area")
         spec = dispatch_spec(result.strategy, df, "Negative Test", result)
         # The builder should fall back to temporal_single (line) mark
-        mark = spec.get("mark", {})
+        _main = get_main_data_layer(spec)
+        mark = _main.get("mark", {})
         mark_type = mark.get("type") if isinstance(mark, dict) else mark
         assert mark_type == "line", (
             f"STACKED_AREA must fall back to 'line' mark for negative data, got {mark_type!r}."
