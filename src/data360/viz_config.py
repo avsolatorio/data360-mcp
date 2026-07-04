@@ -1158,7 +1158,7 @@ class ExplicitHeatmapRule:
 
 class HeatmapRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
-        if ctx.country_count > HIGH_CARDINALITY_THRESHOLDS["beeswarm_threshold"] and ctx.year_count > 1:
+        if ctx.country_count >= HIGH_CARDINALITY_THRESHOLDS["heatmap_threshold"] and ctx.year_count > 1:
             if ctx.n_breakdowns == 0:
                 return StrategyResult(
                     ChartStrategy.HEATMAP,
@@ -3773,6 +3773,8 @@ HIGH_CARDINALITY_THRESHOLDS: dict[str, int] = {
     # Maximum bar rows in CROSS_SECTIONAL horizontal bar charts.
     # Beyond this, bars become hair-thin and labels collide.
     "cross_sectional_max_items": 20,
+    # Minimum country count to automatically route to a heatmap when multi-year data is present.
+    "heatmap_threshold": 12,
 }
 
 # Keep the standalone constant as a typed alias for backward compat with existing tests.
