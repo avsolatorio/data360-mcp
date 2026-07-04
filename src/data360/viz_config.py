@@ -2374,9 +2374,11 @@ def _build_scale_split_vconcat(
                     domain_labels=domain_labels_for_group,
                     domain=_color_dim_domain,
                 )
-                # Suppress legend on non-first panels when color is shared across units.
-                if color_resolve == "shared" and g_idx > 0:
-                    chart_enc["color"] = {**chart_enc["color"], "legend": None}
+                # Previously we suppressed legend on non-first panels when color_resolve
+                # == "shared" to reduce visual repetition. This breaks in chat embed
+                # contexts where panels scroll independently: users cannot scroll back to
+                # panel 0's legend when reading panel 2. Every panel must carry its own
+                # legend. The domain is pinned globally so colors are consistent.
             else:
                 mark_spec["color"] = color
 
