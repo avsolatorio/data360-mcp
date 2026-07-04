@@ -727,6 +727,39 @@ async def run_scenario(scenario: dict) -> dict:
             country_codes = scenario.get("country_code")
             start_year = scenario.get("start_year")
             end_year = scenario.get("end_year")
+            ts_dict = {}
+            if isinstance(data, str):
+                try:
+                    data_parsed = json.loads(data)
+                    if isinstance(data_parsed, dict):
+                        ts_dict = data_parsed.get("time_series", {}).get("series") or {}
+                except Exception:
+                    pass
+            elif isinstance(data, dict):
+                ts_dict = data.get("time_series", {}).get("series") or {}
+            elif data is not None:
+                ts_ts = getattr(data, "time_series", None)
+                if ts_ts:
+                    ts_dict = getattr(ts_ts, "series", None) or {}
+
+            if ts_dict:
+                years = []
+                for country_series in ts_dict.values():
+                    # Handle if country_series is a list of dicts/objects
+                    for entry in country_series:
+                        y = None
+                        if isinstance(entry, dict):
+                            y = entry.get("time_period")
+                        elif entry is not None:
+                            y = getattr(entry, "time_period", None)
+                        if y:
+                            try:
+                                years.append(int(y))
+                            except ValueError:
+                                pass
+                if years:
+                    start_year = min(years)
+                    end_year = max(years)
 
         else: # summarize
             tool_result = await asyncio.wait_for(summarize_pipeline(scenario), timeout=60)
