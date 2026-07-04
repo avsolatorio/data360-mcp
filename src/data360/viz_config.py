@@ -5067,7 +5067,7 @@ class GeneralErrorBandRule(PostProcessingRule):
         df_copy["comp_breakdown_1"] = df_copy["comp_breakdown_1"].map(mapping).fillna(df_copy["comp_breakdown_1"])
         unique_vals = set(df_copy["comp_breakdown_1"].dropna().unique())
 
-        groupby_cols = ["year", "TIME_PERIOD"] + [col for col in ["country", "REF_AREA", "REF_AREA_NAME"] if col in df.columns]
+        groupby_cols = [c for c in ["year", "time_period", "country", "ref_area", "ref_area_name"] if c in df_copy.columns]
 
         if {"est", "lower", "upper"}.issubset(unique_vals):
             transforms = [
@@ -5100,7 +5100,22 @@ class GeneralErrorBandRule(PostProcessingRule):
         else:
             return spec
 
-        enc = spec.get("encoding", {})
+        is_layered = "layer" in spec
+        if is_layered:
+            # Find the main layer (usually the first one with encoding and color/line)
+            main_layer = None
+            for layer in spec["layer"]:
+                if "encoding" in layer and "y" in layer["encoding"]:
+                    main_layer = layer
+                    break
+            if main_layer is None:
+                return spec
+            enc = main_layer["encoding"]
+            mark_spec = main_layer.get("mark", "line")
+        else:
+            enc = spec.get("encoding", {})
+            mark_spec = spec.get("mark", "line")
+
         if not enc:
             return spec
 
@@ -5135,20 +5150,40 @@ class GeneralErrorBandRule(PostProcessingRule):
                     "filter": "datum.comp_breakdown_1 == 'est'"
                 }
             ],
-            "mark": spec.get("mark", "line"),
+            "mark": mark_spec,
             "encoding": line_enc
         }
 
-        layered_spec = {
-            "$schema": spec.get("$schema", "https://vega.github.io/schema/vega-lite/v5.json"),
-            "title": spec.get("title"),
-            "width": spec.get("width", 600),
-            "height": spec.get("height", 350),
-            "config": spec.get("config", {}),
-            "data": {"values": df_copy.to_dict(orient="records")},
-            "layer": [errorband_layer, line_layer]
-        }
-        return layered_spec
+        if is_layered:
+            new_layers = [errorband_layer]
+            for layer in spec["layer"]:
+                # Suppress the end label layer for comp_breakdown_1 in confidence interval charts
+                is_text = False
+                mark = layer.get("mark", {})
+                mark_type = mark.get("type") if isinstance(mark, dict) else mark
+                if mark_type == "text":
+                    is_text = True
+
+                if layer is main_layer:
+                    new_layers.append(line_layer)
+                elif is_text:
+                    continue
+                else:
+                    new_layers.append(layer)
+            spec["layer"] = new_layers
+            spec["data"] = {"values": df_copy.to_dict(orient="records")}
+            return spec
+        else:
+            layered_spec = {
+                "$schema": spec.get("$schema", "https://vega.github.io/schema/vega-lite/v5.json"),
+                "title": spec.get("title"),
+                "width": spec.get("width", 600),
+                "height": spec.get("height", 350),
+                "config": spec.get("config", {}),
+                "data": {"values": df_copy.to_dict(orient="records")},
+                "layer": [errorband_layer, line_layer]
+            }
+            return layered_spec
 
 
 class PopulationPyramidRule(PostProcessingRule):
