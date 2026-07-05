@@ -430,8 +430,8 @@ def _validate_user_filters(
             valid_values = available_disaggregations[dim]
             is_valid = True
 
-            # Special handling for REF_AREA which supports comma-separated list
-            if dim == "REF_AREA" and "," in val:
+            # Support comma-separated lists for any dimension
+            if "," in val:
                 parts = [p.strip() for p in val.split(",") if p.strip()]
                 for part in parts:
                     if part not in valid_values:
@@ -2006,6 +2006,7 @@ async def get_data(
     limit: int = 50,
     offset: int = 0,
     ref_area_filter: Literal["none", "member_economies_only"] = "none",
+    auto_resolve_time_range: bool = True,
 ) -> IndicatorDataResponse:
     """Fetch indicator data from the Data360 API with pagination.
 
@@ -2063,16 +2064,17 @@ async def get_data(
     # Cap limit to prevent token overflow
     limit = min(limit, 100)
 
-    resolved_start, resolved_end = _resolve_time_range(start_year, end_year)
-    if (start_year, end_year) != (resolved_start, resolved_end):
-        _logger.info(
-            "Resolved time range %s-%s from start_year=%s end_year=%s",
-            resolved_start,
-            resolved_end,
-            start_year,
-            end_year,
-        )
-    start_year, end_year = resolved_start, resolved_end
+    if auto_resolve_time_range:
+        resolved_start, resolved_end = _resolve_time_range(start_year, end_year)
+        if (start_year, end_year) != (resolved_start, resolved_end):
+            _logger.info(
+                "Resolved time range %s-%s from start_year=%s end_year=%s",
+                resolved_start,
+                resolved_end,
+                start_year,
+                end_year,
+            )
+        start_year, end_year = resolved_start, resolved_end
 
     # Validate arguments using Pydantic model
     try:
@@ -2542,6 +2544,7 @@ async def _fetch_all_pages(
             end_year=end_year,
             limit=_PAGE_SIZE,
             offset=offset,
+            auto_resolve_time_range=False,
         )
 
         if page.error:
@@ -2842,10 +2845,13 @@ def _build_group_summary(
 # Mapping from lowercase group_by column names to raw API field names.
 _GROUPBY_FIELD_MAP: dict[str, str] = {
     "ref_area": "REF_AREA",
+    "region": "REGION",
+    "income_group": "INCOME_GROUP",
     "time_period": "TIME_PERIOD",
     "sex": "SEX",
     "age": "AGE",
     "urbanisation": "URBANISATION",
+    "residence": "URBANISATION",
     "unit_measure": "UNIT_MEASURE",
     "comp_breakdown_1": "COMP_BREAKDOWN_1",
     "comp_breakdown_2": "COMP_BREAKDOWN_2",
@@ -3008,25 +3014,44 @@ async def summarize_data(
     raw_field_names = [_GROUPBY_FIELD_MAP[c.lower()] for c in group_by]
     groups_dict: dict[tuple[str, ...], list[dict[str, Any]]] = {}
 
+    # Region and Income mapping helpers
+    from .providers import get_group_hierarchy_manager  # noqa: PLC0415
+    ghm = get_group_hierarchy_manager()
+    def get_country_group(country: str, group_type: str) -> str:
+        country_upper = country.upper()
+        if ghm.is_group(country_upper) and ghm.get_group_type(country_upper) == group_type:
+            return country_upper
+        for gid, info in ghm._groups.items():
+            if info.get("type") == group_type and country_upper in info.get("countries", []):
+                return gid
+        return "_MISSING"
+
     for row in data_response.data:
         key_parts = []
         for f in raw_field_names:
             val = row.get(f)
             if val is None:
-                # The upstream API omits disaggregation keys when their value is
-                # the default aggregate total (_T).
-                val = (
-                    "_T"
-                    if f
-                    in (
-                        "SEX",
-                        "AGE",
-                        "URBANISATION",
-                        "COMP_BREAKDOWN_1",
-                        "COMP_BREAKDOWN_2",
+                if f == "REGION":
+                    ref_area = row.get("REF_AREA")
+                    val = get_country_group(ref_area, "REGION") if ref_area else "_MISSING"
+                elif f == "INCOME_GROUP":
+                    ref_area = row.get("REF_AREA")
+                    val = get_country_group(ref_area, "INCOME") if ref_area else "_MISSING"
+                else:
+                    # The upstream API omits disaggregation keys when their value is
+                    # the default aggregate total (_T).
+                    val = (
+                        "_T"
+                        if f
+                        in (
+                            "SEX",
+                            "AGE",
+                            "URBANISATION",
+                            "COMP_BREAKDOWN_1",
+                            "COMP_BREAKDOWN_2",
+                        )
+                        else "_MISSING"
                     )
-                    else "_MISSING"
-                )
             key_parts.append(str(val))
         key = tuple(key_parts)
         groups_dict.setdefault(key, []).append(row)

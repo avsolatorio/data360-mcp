@@ -261,7 +261,7 @@ def test_breakdown_comparison_spec_uses_temporal_year_encoding():
         "X encoding must use type=temporal for year, not ordinal — "
         "ordinal causes Vega-Lite to render ISO timestamps as raw millisecond integers"
     )
-    assert x_enc.get("timeUnit") == "year"
+    assert x_enc.get("timeUnit") == "utcyear"
     assert x_enc.get("axis", {}).get("format") == "%Y"
 
 

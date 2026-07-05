@@ -47,6 +47,13 @@ _logger = logging.getLogger(__name__)
 
 VizResult = dict[str, Any]
 
+
+class VizInsufficientDataError(Exception):
+    """Raised when data returned from the API is too sparse to render a meaningful chart.
+
+    Prefer a clear, actionable error over a misleading visualization.
+    """
+
 # Disaggregation dimensions considered during viz data cleaning and encoding.
 # Mirrors _DISAGG_DIMS_TO_DETECT from api.py but in lowercase (post-column-rename).
 # Single source of truth for the viz pipeline: _clean_single_df, color dim
@@ -93,6 +100,10 @@ def _unit_measure_for_formatting(
         or "DOLLAR" in label_norm
     ):
         return "USD"
+    # If the label has descriptive keywords like PROPORTION or SHARE, return the label
+    # so downstream rules can detect proportion formatting.
+    if "PROPORTION" in label_norm or "SHARE" in label_norm:
+        return label
     if raw:
         return raw
     if label:
@@ -1658,6 +1669,36 @@ async def get_viz_spec(
     # Thread detected temporal frequency through to spec builders.
     strategy_result.temporal_frequency = temporal_frequency
 
+    # 7.02 Sparse country filter for time-series:
+    # If a country has < 2 unique years with data, we cannot draw a line for it.
+    # Filter it out so it falls back to the missing countries list in the subtitle,
+    # rather than rendering as a single floating point in its own panel.
+    if strategy_result.strategy in (
+        viz_config.ChartStrategy.TEMPORAL_SINGLE,
+        viz_config.ChartStrategy.SMALL_MULTIPLES,
+    ) and not viz_data.empty and "country" in viz_data.columns and "year" in viz_data.columns:
+        try:
+            _year_counts = viz_data.groupby("country")["year"].nunique()
+            _sparse_countries = _year_counts[_year_counts < 2].index.tolist()
+            if _sparse_countries:
+                _logger.info(f"[get_viz_spec] Dropping countries with < 2 data points for line chart: {_sparse_countries}")
+                viz_data = viz_data[~viz_data["country"].isin(_sparse_countries)].copy()
+
+                # Re-run strategy selection since the set of countries changed
+                strategy_result = viz_config.select_strategy(
+                    viz_data,
+                    n_indicators=n_indicators,
+                    chart_type_hint=chart_type,
+                    raw_unit=raw_unit,
+                    raw_unit_mult=raw_unit_mult,
+                )
+                strategy_result.temporal_frequency = temporal_frequency
+        except Exception as e:
+            _logger.warning(f"Failed to filter out sparse countries: {e}")
+
+    if viz_data.empty:
+        return _err("Error: No data available for visualization after filtering sparse countries.")
+
     # If the strategy is CROSS_SECTIONAL, keep only the latest available year per country
     if strategy_result.strategy == viz_config.ChartStrategy.CROSS_SECTIONAL and not viz_data.empty:
         if "country" in viz_data.columns and "year" in viz_data.columns:
@@ -1674,6 +1715,53 @@ async def get_viz_spec(
                     _logger.info("[get_viz_spec] CROSS_SECTIONAL strategy: filtered to latest year per country.")
             except Exception as e:
                 _logger.warning(f"Failed to filter cross-sectional data to latest year per country: {e}")
+
+    # 7.05  Data sufficiency guards — return error before chart dispatch rather
+    # than produce a misleading visualization with too little data.
+    #
+    # Minimum country counts per strategy:
+    #   - CROSS_SECTIONAL: ≥3 bars needed for a meaningful comparison
+    #   - DISTRIBUTION:    ≥10 required so tick/strip chart has visual density
+    #   - BREAKDOWN_COMPARISON / SMALL_MULTIPLES: ≥2 countries to show contrast
+    _MIN_COUNTRIES_BY_STRATEGY: dict[viz_config.ChartStrategy, int] = {
+        viz_config.ChartStrategy.CROSS_SECTIONAL:      3,
+        viz_config.ChartStrategy.DISTRIBUTION:         10,
+        viz_config.ChartStrategy.BREAKDOWN_COMPARISON: 2,
+        viz_config.ChartStrategy.SMALL_MULTIPLES:      2,
+    }
+    if strategy_result.strategy in _MIN_COUNTRIES_BY_STRATEGY:
+        _actual_countries = (
+            int(viz_data["country"].nunique()) if "country" in viz_data.columns else 0
+        )
+        _minimum = _MIN_COUNTRIES_BY_STRATEGY[strategy_result.strategy]
+        if _actual_countries < _minimum:
+            return _err(
+                f"Insufficient data for a {strategy_result.strategy.value} chart: "
+                f"only {_actual_countries} country/countries returned data "
+                f"(minimum required: {_minimum}). "
+                f"The requested countries/indicator/time period combination had too "
+                f"few values in the Data360 API."
+            )
+
+    # Sparse time-series guard: if average data points per country < 3,
+    # lines will be jagged and disconnected — return error instead.
+    # Count unique year points per country to avoid inflation by breakdown rows.
+    if strategy_result.strategy in (
+        viz_config.ChartStrategy.SMALL_MULTIPLES,
+        viz_config.ChartStrategy.TEMPORAL_SINGLE,
+    ) and not viz_data.empty and "country" in viz_data.columns:
+        _n_series = max(int(viz_data["country"].nunique()), 1)
+        if "year" in viz_data.columns:
+            _avg_pts = float(viz_data.groupby("country")["year"].nunique().mean())
+        else:
+            _avg_pts = len(viz_data) / _n_series
+        if _avg_pts < 3:
+            return _err(
+                f"Data too sparse for a time-series chart: average "
+                f"{_avg_pts:.1f} data point(s) per country "
+                f"(minimum 3 required for a meaningful line). "
+                f"Consider a wider year range or a different indicator."
+            )
 
     # 7.1 Fetch human-readable dimension names for comp_breakdown_* from the
     # disaggregation API (cached — no extra HTTP call if already fetched above).

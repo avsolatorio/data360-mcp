@@ -13,6 +13,7 @@ from fastmcp.tools.tool import Tool
 from data360 import api as data360_api
 from data360 import providers as data360_providers
 from data360 import visualization as data360_viz
+from data360 import viz_config as data360_viz_config
 
 from ._server_definition import mcp
 from .tool_spans import instrument_mcp_tool
@@ -352,6 +353,67 @@ def _get_supported_chart_types() -> str:
     return data360_viz.get_supported_chart_types()
 
 
+def _explain_chart_routing(
+    n_indicators: int,
+    country_count: int,
+    year_count: int,
+    avg_years_per_country: float,
+    breakdown_dims: list[str] | None = None,
+    chart_type_hint: str | None = None,
+    scale_type: str | None = None,
+    indicator_scales: list[dict] | None = None,
+) -> dict:
+    """Explain which chart type the routing engine would select for the described data shape.
+
+    Call this BEFORE calling data360_get_viz_spec or data360_get_multi_indicator_viz_spec
+    when you are uncertain about: (a) which viz tool to use, (b) what chart_type to pass,
+    or (c) whether two indicators can share a Y-axis or need separate panels.
+
+    The tool runs the live routing engine — the same logic used internally by the viz tools —
+    on a synthetic dataset that matches the described shape, and returns the predicted strategy
+    plus concrete guidance on how to call the viz tools.
+
+    ### When to use:
+    - You have 2 indicators and want to know if they should share a panel or be split.
+    - The data has breakdowns (sex, age, urbanisation) and you're unsure whether to facet.
+    - You have many countries and want to know if the engine will auto-select a map or heatmap.
+    - The user asked for a specific chart type and you want to validate it fits the data.
+
+    Args:
+        n_indicators: Number of distinct indicators (1, 2, or 3+).
+        country_count: Number of unique countries in the data.
+        year_count: Total number of unique time periods (years/months) in the data.
+        avg_years_per_country: Mean number of unique time periods per country.
+            Use year_count for single-country data. Use a lower value if coverage is sparse
+            (e.g. 2.5 if most countries have ~2-3 data points but some have more).
+        breakdown_dims: Disaggregation dimensions present in the data, e.g. ["sex"],
+            ["age", "urbanisation"]. Pass [] or omit if there are no breakdowns.
+        chart_type_hint: Optional chart type explicitly requested by the user
+            (e.g. "heatmap", "bar", "scatter", "strip"). Pass null to let auto-routing decide.
+        scale_type: Shared unit type for single-indicator data.
+            One of: "percentage", "currency", "persons", "index", or a raw unit string.
+        indicator_scales: Per-indicator scale metadata for multi-indicator requests.
+            Required to get an accurate single-panel vs stacked-panel recommendation.
+            Each entry is a dict with keys:
+                label      : Human-readable indicator name (e.g. "Female LFPR")
+                scale_type : Unit type (e.g. "percentage", "currency")
+                approx_max : Approximate maximum value (e.g. 80.0 for ~80%)
+            Example for female vs male LFPR:
+                [{"label": "Female LFPR", "scale_type": "percentage", "approx_max": 27},
+                 {"label": "Male LFPR",   "scale_type": "percentage", "approx_max": 80}]
+    """
+    return data360_viz_config.explain_chart_routing(
+        n_indicators=n_indicators,
+        country_count=country_count,
+        year_count=year_count,
+        avg_years_per_country=avg_years_per_country,
+        breakdown_dims=breakdown_dims,
+        chart_type_hint=chart_type_hint,
+        scale_type=scale_type,
+        indicator_scales=indicator_scales,
+    )
+
+
 async def _expand_country_group(
     group_code: str,
 ) -> dict[str, Any]:
@@ -540,6 +602,14 @@ get_supported_chart_types = mcp.tool(
         tool_name="data360_get_supported_chart_types",
     ),
     name="data360_get_supported_chart_types",
+)
+
+explain_chart_routing = mcp.tool(
+    instrument_mcp_tool(
+        _explain_chart_routing,
+        tool_name="data360_explain_chart_routing",
+    ),
+    name="data360_explain_chart_routing",
 )
 
 expand_country_group = mcp.tool(
