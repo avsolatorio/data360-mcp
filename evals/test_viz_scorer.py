@@ -1507,6 +1507,34 @@ SCENARIOS: list[dict] = [
         "chart_type": "stacked_bar",
         "chart_title": "GDP Shares by Economic Sector in Germany (2022)",
     },
+    {
+        "id": "54_china_urban_rural_long_stacked_area",
+        "label": "Urban vs Rural Population Split — China (1960–2022)",
+        "description": "Long-range multi-indicator temporal trend representing mutually exclusive additive parts of a whole over 60+ years. Expected: stacked area chart.",
+        "database_ids": ["WB_WDI", "WB_WDI"],
+        "indicator_ids": ["WB_WDI_SP_URB_TOTL", "WB_WDI_SP_RUR_TOTL"],
+        "country_code": "CHN",
+        "start_year": 1960,
+        "end_year": 2022,
+        "chart_type": "stacked_area",
+        "chart_title": "Urban vs Rural Population Trend in China (1960–2022)",
+    },
+    {
+        "id": "55_europe_gdp_sectors_multi_country_stacked_bar",
+        "label": "GDP Shares by Economic Sector — European Countries (2022)",
+        "description": "Multi-country vertical stacked bar comparison of economic sectors (% of GDP). Expected: dynamically sized vertical stacked bar chart.",
+        "database_ids": ["WB_WDI", "WB_WDI", "WB_WDI"],
+        "indicator_ids": [
+            "WB_WDI_NV_AGR_TOTL_ZS",
+            "WB_WDI_NV_IND_TOTL_ZS",
+            "WB_WDI_NV_SRV_TOTL_ZS",
+        ],
+        "country_code": "DEU,FRA,ITA,ESP,NLD,BEL,SWE,POL,AUT,CHE,DNK,NOR",
+        "start_year": 2022,
+        "end_year": 2022,
+        "chart_type": "stacked_bar",
+        "chart_title": "GDP Shares by Economic Sector across European Countries (2022)",
+    },
 ]
 
 
