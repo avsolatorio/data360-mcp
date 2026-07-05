@@ -2142,11 +2142,18 @@ def build_breakdown_comparison_spec(
     # Resolve a friendly legend title: prefer _TOOLTIP_SPECS label, fall back to title-cased field.
     legend_title = _TOOLTIP_SPECS.get(color_dim, {}).get("title") or color_dim.replace("_", " ").title()
 
+    n_categories = df[x_field].nunique() if x_field in df.columns else 1
+    mark_spec: dict = {"type": "bar"}
+    if n_categories == 1:
+        mark_spec["size"] = 30
+    elif n_categories == 2:
+        mark_spec["size"] = 35
+
     spec: dict = {
         "$schema": _vl_schema(),
         "title": title,
         "data": {"values": rows},
-        "mark": {"type": "bar"},
+        "mark": mark_spec,
         "encoding": {
             "x": x_enc,
             "y": {
@@ -3163,11 +3170,18 @@ def build_stacked_bar_spec(
             "axis": {"title": None, "labelFontWeight": "bold"},
         }
 
+    n_categories = df[x_field].nunique() if x_field in df.columns else 1
+    mark_spec: dict = {"type": "bar", "tooltip": True}
+    if n_categories == 1:
+        mark_spec["size"] = 40
+    elif n_categories == 2:
+        mark_spec["size"] = 45
+
     spec: dict = {
         "$schema": _vl_schema(),
         "title": annotated_title,
         "data": {"values": rows},
-        "mark": {"type": "bar", "tooltip": True},
+        "mark": mark_spec,
         "encoding": {
             "x": x_enc,
             "y": {
