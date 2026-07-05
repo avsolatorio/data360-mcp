@@ -271,6 +271,8 @@ async def run_viz_pipeline(
                 viz_args["end_year"] = end_year
             if chart_title:
                 viz_args["chart_title"] = chart_title
+            if chart_type:
+                viz_args["chart_type"] = chart_type
             viz_result = await _call_mcp("data360_get_multi_indicator_viz_spec", viz_args)
         else:
             # Single-indicator path
@@ -1464,6 +1466,46 @@ SCENARIOS: list[dict] = [
         "start_year": 2015,
         "end_year": 2023,
         "chart_title": "EIU Democracy Index — Southeast Asia (2015–2023)",
+    },
+    {
+        "id": "51_egypt_population_area",
+        "label": "Total Population Trend — Egypt (2010–2020)",
+        "description": "Single-indicator temporal trend for a single country. User requested area chart. Expected: area chart.",
+        "database_id": "WB_WDI",
+        "indicator_id": "WB_WDI_SP_POP_TOTL",
+        "country_code": "EGY",
+        "start_year": 2010,
+        "end_year": 2020,
+        "chart_type": "area",
+        "chart_title": "Total Population Trend in Egypt (2010–2020)",
+    },
+    {
+        "id": "52_india_urban_rural_stacked_area",
+        "label": "Urban vs Rural Population Split — India (2000–2020)",
+        "description": "Multi-indicator temporal trend representing mutually exclusive additive parts of a whole (urban headcount + rural headcount = total population). Expected: stacked area chart.",
+        "database_ids": ["WB_WDI", "WB_WDI"],
+        "indicator_ids": ["WB_WDI_SP_URB_TOTL", "WB_WDI_SP_RUR_TOTL"],
+        "country_code": "IND",
+        "start_year": 2000,
+        "end_year": 2020,
+        "chart_type": "stacked_area",
+        "chart_title": "Urban vs Rural Population Headcount in India (2000–2020)",
+    },
+    {
+        "id": "53_germany_gdp_sectors_stacked_bar",
+        "label": "GDP Shares by Economic Sector — Germany (2022)",
+        "description": "Multi-indicator cross-sectional snapshot of economic sectors (% of GDP). Expected: vertical stacked bar chart.",
+        "database_ids": ["WB_WDI", "WB_WDI", "WB_WDI"],
+        "indicator_ids": [
+            "WB_WDI_NV_AGR_TOTL_ZS",
+            "WB_WDI_NV_IND_TOTL_ZS",
+            "WB_WDI_NV_SRV_TOTL_ZS",
+        ],
+        "country_code": "DEU",
+        "start_year": 2022,
+        "end_year": 2022,
+        "chart_type": "stacked_bar",
+        "chart_title": "GDP Shares by Economic Sector in Germany (2022)",
     },
 ]
 

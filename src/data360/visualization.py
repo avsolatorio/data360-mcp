@@ -2098,11 +2098,11 @@ async def get_multi_indicator_viz_spec(
         f"Multi-indicator strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
     )
 
-    # 7b. Reshape for stacked area: melt wide → long
-    # build_stacked_area_spec expects a DataFrame with a single "value" column and a
+    # 7b. Reshape for stacked area / stacked bar: melt wide → long
+    # build_stacked_area_spec and build_stacked_bar_spec expect a DataFrame with a single "value" column and a
     # "indicator" color column, not the wide merged layout produced by the join above.
     spec_df = merged
-    if strategy_result.strategy == viz_config.ChartStrategy.STACKED_AREA:
+    if strategy_result.strategy in (viz_config.ChartStrategy.STACKED_AREA, viz_config.ChartStrategy.STACKED_BAR):
         id_cols = [c for c in merged.columns if c not in indicator_col_names]
         spec_df = merged.melt(
             id_vars=id_cols,
@@ -2116,7 +2116,7 @@ async def get_multi_indicator_viz_spec(
         spec_df = spec_df.dropna(subset=["value"])
         # Propagate the color_dim so the builder picks up the indicator column
         strategy_result = viz_config.StrategyResult(
-            viz_config.ChartStrategy.STACKED_AREA,
+            strategy_result.strategy,
             strategy_result.reason,
             indicator_cols=strategy_result.indicator_cols,
             color_dim="indicator",

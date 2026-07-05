@@ -829,6 +829,7 @@ class ChartStrategy(str, Enum):
     )
     HEATMAP = "heatmap"  # dense country x year matrix
     STACKED_AREA = "stacked_area"  # part-to-whole over time
+    STACKED_BAR = "stacked_bar"  # part-to-whole snapshot/bar
     CHOROPLETH = "choropleth"  # geographic map
     FALLBACK_LINE = "fallback_line"  # anything else
 
@@ -1010,6 +1011,31 @@ class ExplicitStackedAreaMultiIndicatorRule:
                     f"User requested stacked area; {ctx.n_indicators} indicators, {ctx.year_count} years → stacked area chart",
                     indicator_cols=ctx.ind_cols,
                     color_dim="indicator",
+                )
+        return None
+
+class ExplicitStackedBarRule:
+    def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
+        if ctx.hint == "stacked_bar":
+            if ctx.n_indicators >= 2 and len(ctx.ind_cols) >= 2:
+                return StrategyResult(
+                    ChartStrategy.STACKED_BAR,
+                    f"User requested stacked bar; {ctx.n_indicators} indicators → stacked bar chart",
+                    indicator_cols=ctx.ind_cols,
+                    color_dim="indicator",
+                )
+            elif ctx.n_breakdowns == 1:
+                color_dim = list(ctx.breakdown_counts.keys())[0]
+                return StrategyResult(
+                    ChartStrategy.STACKED_BAR,
+                    f"User requested stacked bar; 1 breakdown ({color_dim}) → stacked bar chart",
+                    color_dim=color_dim,
+                )
+            elif ctx.country_count > 1:
+                return StrategyResult(
+                    ChartStrategy.STACKED_BAR,
+                    f"User requested stacked bar; {ctx.country_count} economies → stacked bar chart",
+                    color_dim="country",
                 )
         return None
 
@@ -1331,6 +1357,7 @@ class FallbackRule:
 ROUTING_RULES: list[RoutingRule] = [
     ExplicitScatterRule(),
     ExplicitStackedAreaMultiIndicatorRule(),
+    ExplicitStackedBarRule(),
     ExplicitMapRule(),
     ExplicitSmallMultiplesRule(),
     ExplicitHeatmapRule(),
@@ -3084,6 +3111,100 @@ def build_stacked_area_spec(
     return inject_wb_config(spec)
 
 
+def build_stacked_bar_spec(
+    df: pd.DataFrame,
+    title: str | dict,
+    result: StrategyResult,
+    indicator_labels: dict[str, str] | None = None,
+    y_label: str = "Value",
+    unit_measure: str | None = None,
+    indicator_name: str | None = None,
+) -> dict:
+    """Stacked Bar chart (part-to-whole / snapshot comparisons)."""
+    color_dim = result.color_dim or "sex"
+
+    # Fallback if mixed signs, as stacked bar expects same-sign data per category
+    has_negative = df["value"].min() < 0 if "value" in df.columns else False
+    if has_negative:
+        return build_breakdown_comparison_spec(df, title, result, indicator_labels, y_label, unit_measure, indicator_name)
+
+    df, original_n = _cap_cardinality(df, color_dim, HIGH_CARDINALITY_THRESHOLDS["line_max_series"])
+
+    annotated_title = _append_breakdown_note(title, df, color_dim)
+    annotated_title = _append_trim_note(annotated_title, color_dim, df[color_dim].nunique() if color_dim in df.columns else 0, original_n)
+
+    rows = df.to_dict(orient="records")
+    tt_fmt = _compute_tooltip_format(float(df["value"].abs().max()) if "value" in df.columns else None, unit_measure)
+
+    legend_title = _TOOLTIP_SPECS.get(color_dim, {}).get("title") or color_dim.replace("_", " ").title()
+    domain = sorted(df[color_dim].dropna().unique().tolist(), key=str) if color_dim in df.columns else None
+
+    if color_dim == "sex":
+        domain_colors = [k for k in WB_GENDER_COLORS if k in df[color_dim].unique()]
+        color_range = [WB_GENDER_COLORS[k] for k in domain_colors]
+        color_scale = {"domain": domain_colors, "range": color_range}
+    else:
+        color_scale = {"range": WB_CAT_COLORS}
+        if domain:
+            color_scale["domain"] = domain
+
+    # Determine x-axis field: prefer country if multiple countries, otherwise year
+    x_field = "country" if df.get("country", pd.Series()).nunique() > 1 else "year"
+    if x_field == "year" and df.get("year", pd.Series()).nunique() <= 1:
+        x_field = "country"
+
+    x_enc: dict
+    if x_field == "year":
+        x_enc = _x_temporal_encoding(result.temporal_frequency)
+    else:
+        x_enc = {
+            "field": x_field,
+            "type": "nominal",
+            "axis": {"title": None, "labelFontWeight": "bold"},
+        }
+
+    spec: dict = {
+        "$schema": _vl_schema(),
+        "title": annotated_title,
+        "data": {"values": rows},
+        "mark": {"type": "bar", "tooltip": True},
+        "encoding": {
+            "x": x_enc,
+            "y": {
+                "field": "value",
+                "type": "quantitative",
+                "stack": "zero",
+                "axis": {**_axis_style(), "title": _resolve_axis_title(y_label, indicator_name), "labelExpr": _value_label_expr(unit_measure)}
+            },
+            "color": {
+                "field": color_dim,
+                "type": "nominal",
+                "scale": color_scale,
+                "legend": {
+                    "orient": "top",
+                    "title": legend_title,
+                    "labelLimit": 100,
+                    "columns": 3,
+                },
+            },
+            "tooltip": build_structured_tooltips(
+                list(df.columns),
+                "bar",
+                indicator_labels,
+                value_format=tt_fmt,
+                viz_data=df,
+                temporal_freq=result.temporal_frequency,
+                dim_name_labels=result.dim_name_labels,
+                indicator_name=indicator_name,
+            )
+        },
+        "width": max(300, df[x_field].nunique() * 80),
+        "height": 320
+    }
+
+    return inject_wb_config(spec)
+
+
 
 def build_correlation_spec(
     df: pd.DataFrame,
@@ -3620,7 +3741,6 @@ def build_fallback_line_spec(
 
 
 
-# Dispatch table: strategy → builder function
 STRATEGY_BUILDERS: dict[ChartStrategy, callable] = {
     ChartStrategy.TEMPORAL_SINGLE: build_temporal_single_spec,
     ChartStrategy.CROSS_SECTIONAL: build_cross_sectional_spec,
@@ -3629,6 +3749,7 @@ STRATEGY_BUILDERS: dict[ChartStrategy, callable] = {
     ChartStrategy.SMALL_MULTIPLES: build_small_multiples_spec,
     ChartStrategy.HEATMAP: build_heatmap_spec,
     ChartStrategy.STACKED_AREA: build_stacked_area_spec,
+    ChartStrategy.STACKED_BAR: build_stacked_bar_spec,
     ChartStrategy.CHOROPLETH: build_choropleth_spec,
     ChartStrategy.CORRELATION: build_correlation_spec,
     ChartStrategy.CORRELATION_TEMPORAL: build_correlation_temporal_spec,
@@ -3741,6 +3862,7 @@ def dispatch_spec(
         ChartStrategy.BREAKDOWN_COMPARISON,
         ChartStrategy.SMALL_MULTIPLES,
         ChartStrategy.STACKED_AREA,
+        ChartStrategy.STACKED_BAR,
         ChartStrategy.CHOROPLETH,
         ChartStrategy.FALLBACK_LINE,
         ChartStrategy.HEATMAP,
@@ -3849,6 +3971,7 @@ PERIODICITY_KEYWORDS: dict[str, list[str]] = {
 
 CHART_TYPE_KEYWORDS: dict[str, list[str]] = {
     "line": ["line", "trend", "time series", "over time"],
+    "stacked_bar": ["stacked_bar", "stacked_column", "stacked bar", "stacked column"],
     "bar": ["bar", "column", "ranking", "compare", "histogram"],
     "point": ["scatter", "point", "dot", "correlation", "bubble"],
     "area": ["area", "filled", "cumulative", "stacked"],
@@ -3875,6 +3998,7 @@ def parse_chart_type_hint(chart_type: str | None) -> str:
 _REASON_CHART_PHRASES: dict[str, str] = {
     "line": "line chart",
     "bar": "bar chart",
+    "stacked_bar": "stacked bar chart",
     "area": "area chart",
     "point": "point chart",
     "tick": "strip chart",
@@ -4838,6 +4962,8 @@ class SkewnessLogScaleRule(PostProcessingRule):
             for channel in ("x", "y"):
                 ch_enc = enc.get(channel)
                 if not isinstance(ch_enc, dict) or ch_enc.get("type") != "quantitative":
+                    continue
+                if "stack" in ch_enc:
                     continue
 
                 field_name = ch_enc.get("field")
