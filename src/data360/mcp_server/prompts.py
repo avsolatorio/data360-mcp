@@ -202,8 +202,9 @@ Do not answer with guesses. Do not stop after describing a plan.
 Then provide the final answer to the user (after tools complete).
 
 ### Defaults
-- Time range: last 5 years unless user specifies otherwise.
-  start_year = (current_year - 4), end_year = current_year
+- Time range:
+  * For trend/evolution queries (e.g. "over time", "trend", "since 2010"): last 5 years (start_year = current_year - 4, end_year = current_year).
+  * For cross-sectional comparisons or rankings (e.g. "compare GDP", "rank countries"): latest available/comparable year only (start_year = latest_year, end_year = latest_year).
 - Breakdowns (e.g. by sex): use disaggregation_filters={"SEX": null} to get all groups.
 
 ### Output behavior

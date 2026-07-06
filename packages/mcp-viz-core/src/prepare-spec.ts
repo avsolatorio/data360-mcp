@@ -28,6 +28,22 @@ function mergeConfig(
   return { ...base, ...specConfig };
 }
 
+function checkAndApplyLogScale(encodingChannel: any, valField: string, rows: Record<string, unknown>[]): void {
+  if (!encodingChannel || encodingChannel.type !== "quantitative" || !valField || !Array.isArray(rows)) return;
+  const values = rows
+    .map((r: any) => parseFloat(r[valField]))
+    .filter((v: number) => !isNaN(v));
+  if (values.length > 0 && values.every((v: number) => v > 0)) {
+    const minVal = Math.min(...values);
+    const maxVal = Math.max(...values);
+    // Auto-apply log scale if values span more than 2 orders of magnitude (max/min > 100)
+    if (minVal > 0 && maxVal / minVal > 100) {
+      if (!encodingChannel.scale) encodingChannel.scale = {};
+      encodingChannel.scale.type = "log";
+    }
+  }
+}
+
 // ─── prepareSpec ─────────────────────────────────────────────────────────────
 
 /**
@@ -44,6 +60,8 @@ function mergeConfig(
  *  6. Merge WB theme into config
  *  7. scale.zero — false for line/area/point/tick, true for bar
  *  8. x-axis format — %Y only for temporal; dropped for ordinal/nominal
+ *  9. Dynamic outlier log-scale (auto-detect wide positive ranges)
+ *  10. Chronological timeline check (enforce chronological sort for timeline dimensions)
  */
 export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
   let out: VLSpec = JSON.parse(JSON.stringify(spec));
@@ -51,6 +69,8 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
 
   // 1. Inline named dataset
   out = inlineDataset(out);
+
+  const rows: Record<string, unknown>[] = out.data?.values ?? [];
 
   // 2. Responsive sizing
   out.width = "container";
@@ -94,6 +114,32 @@ export function prepareSpec(spec: VLSpec, chartHeight = 260): VLSpec {
     }
   }
 
+  // 9. Dynamic outlier log-scale (X and Y quantitative axes)
+  if (out.encoding?.y?.field) {
+    checkAndApplyLogScale(out.encoding.y, out.encoding.y.field, rows);
+  }
+  if (out.encoding?.x?.field) {
+    checkAndApplyLogScale(out.encoding.x, out.encoding.x.field, rows);
+  }
+
+  // 10. Chronological timeline check (ensure time period fields are sorted chronologically if nominal/ordinal)
+  if (out.encoding?.x) {
+    const xField = out.encoding.x.field;
+    if (xField === "year" || xField === "time_period") {
+      if (out.encoding.x.type === "ordinal" || out.encoding.x.type === "nominal") {
+        out.encoding.x.sort = "ascending";
+      }
+    }
+  }
+  if (out.encoding?.y) {
+    const yField = out.encoding.y.field;
+    if (yField === "year" || yField === "time_period") {
+      if (out.encoding.y.type === "ordinal" || out.encoding.y.type === "nominal") {
+        out.encoding.y.sort = "ascending";
+      }
+    }
+  }
+
   return out;
 }
 
@@ -119,15 +165,28 @@ export function parseSpec(spec: VLSpec, palette: string[]): ParsedSpec {
       : (spec.data?.values ?? []);
 
   const isQuantitative = spec.encoding?.color?.type === "quantitative";
-  const colorField = isQuantitative ? null : (spec.encoding?.color?.field ?? null);
+  const legendVal = spec.encoding?.color?.legend as any;
+  const xField = spec.encoding?.x?.field ?? null;
+  const yField = spec.encoding?.y?.field ?? null;
+  const colorFieldVal = spec.encoding?.color?.field ?? null;
+  const isRepresentedOnAxis = colorFieldVal !== null && (colorFieldVal === xField || colorFieldVal === yField);
+  const hasNoLegend = legendVal === null || legendVal === false || isRepresentedOnAxis;
+
+  const rawGroups: string[] = colorFieldVal
+    ? [...new Set(rows.map((r) => String(r[colorFieldVal])))]
+    : [];
+
+  // Legend-Linter Rule: Suppress card legends if categories exceed 8 to avoid legend-overload clutter.
+  // Hover tooltips remain active for identifying individual series.
+  const tooManyGroups = rawGroups.length > 8;
+  const colorField = (isQuantitative || hasNoLegend || tooManyGroups) ? null : colorFieldVal;
+
   const specTitle =
     typeof spec.title === "string"
       ? spec.title
       : (spec.title as { text?: string } | undefined)?.text ?? null;
 
-  const distinctGroups: string[] = colorField
-    ? [...new Set(rows.map((r) => String(r[colorField])))]
-    : [];
+  const distinctGroups: string[] = colorField ? rawGroups : [];
 
   const colorMap: Record<string, string> = {};
   distinctGroups.forEach((g, i) => {

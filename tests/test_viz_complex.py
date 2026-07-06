@@ -34,8 +34,14 @@ from data360.viz_config import (
     build_temporal_single_spec,
     dispatch_spec,
     format_chart_context_subtitle,
+    get_main_data_layer,
     select_strategy,
 )
+
+# Shorthand: get main data layer from flat-or-layered spec.
+# Phase 6/7 may wrap temporal_single into a layered spec; all tests that
+# check _ms(spec)["mark"] or _ms(spec)["encoding"] must go through this helper.
+_ms = get_main_data_layer
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Fixtures
@@ -170,7 +176,7 @@ class TestStrategyRouter:
 
     def test_choropleth_single_year_many_countries(self):
         df = pd.DataFrame(
-            {"country": [f"C{i}" for i in range(10)], "year": [2020] * 10, "value": range(10)}
+            {"country": [f"C{i}" for i in range(25)], "year": [2020] * 25, "value": range(25)}
         )
         r = select_strategy(df)
         assert r.strategy == ChartStrategy.CHOROPLETH
@@ -198,10 +204,35 @@ class TestStrategyRouter:
         assert r.indicator_cols == ind_cols
 
     def test_small_multiples_two_indicators_multi_year(self):
-        df = _two_ind_ts_df()
+        """Phase 8: small 2-indicator multi-year datasets now route to CORRELATION_TEMPORAL.
+
+        The old SMALL_MULTIPLES routing was sub-optimal for ≤8 countries × ≤8 years —
+        a connected scatter is far more informative for tracking relationship evolution.
+        """
+        df = _two_ind_ts_df()  # 2 countries × 6 years — within threshold
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = select_strategy(df, n_indicators=2, indicator_cols=ind_cols)
-        assert r.strategy == ChartStrategy.SMALL_MULTIPLES
+        assert r.strategy == ChartStrategy.CORRELATION_TEMPORAL, (
+            f"2 countries × 6 years with 2 indicators should now route to "
+            f"CORRELATION_TEMPORAL (connected scatter), not SMALL_MULTIPLES. "
+            f"Got: {r.strategy.value!r}"
+        )
+
+    def test_small_multiples_two_indicators_large_dataset(self):
+        """Large 2-indicator datasets still route to SMALL_MULTIPLES (Phase 8 threshold exceeded)."""
+        rows = []
+        for c in [f"Country{i}" for i in range(12)]:   # 12 > 8 threshold
+            for y in range(2018, 2024):
+                rows.append({
+                    "country": c, "year": pd.Timestamp(f"{y}-01-01"),
+                    "gdp_per_capita": float(hash((c, y)) % 10000),
+                    "life_expectancy": float(60 + hash((c, y, "l")) % 20),
+                })
+        df = pd.DataFrame(rows)
+        r = select_strategy(df, n_indicators=2, indicator_cols=["gdp_per_capita", "life_expectancy"])
+        assert r.strategy == ChartStrategy.SMALL_MULTIPLES, (
+            "12-country 2-indicator data must still route to SMALL_MULTIPLES (exceeds threshold)."
+        )
 
     def test_temporal_multi_indicator_single_country(self):
         df = _two_ind_ts_df()
@@ -290,31 +321,31 @@ class TestSpecBuilders:
         df = _ts_df()
         r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
         spec = build_temporal_single_spec(df, "Test", r)
-        assert spec["mark"]["type"] == "line"
+        assert _ms(spec)["mark"]["type"] == "line"
 
     def test_temporal_single_x_is_temporal(self):
         df = _ts_df()
         r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
         spec = build_temporal_single_spec(df, "Test", r)
-        assert spec["encoding"]["x"]["type"] == "temporal"
+        assert _ms(spec)["encoding"]["x"]["type"] == "temporal"
 
     def test_temporal_single_x_axis_title_is_none(self):
         df = _ts_df()
         r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
         spec = build_temporal_single_spec(df, "Test", r)
-        assert spec["encoding"]["x"]["axis"]["title"] is None
+        assert _ms(spec)["encoding"]["x"]["axis"]["title"] is None
 
     def test_temporal_single_y_label_propagates(self):
         df = _ts_df()
         r = self._result(ChartStrategy.TEMPORAL_SINGLE)
         spec = build_temporal_single_spec(df, "Test", r, y_label="GDP (USD)")
-        assert spec["encoding"]["y"]["axis"]["title"] == "GDP (USD)"
+        assert _ms(spec)["encoding"]["y"]["axis"]["title"] == "GDP (USD)"
 
     def test_temporal_single_currency_axis_labels_have_dollar_prefix(self):
         df = _ts_df()
         r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
         spec = build_temporal_single_spec(df, "Test", r, unit_measure="current US$")
-        expr = spec["encoding"]["y"]["axis"]["labelExpr"]
+        expr = _ms(spec)["encoding"]["y"]["axis"]["labelExpr"]
         assert "'$'+format" in expr
 
     def test_temporal_single_currency_tooltip_accepts_current_usd_unit(self):
@@ -322,7 +353,7 @@ class TestSpecBuilders:
         r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
         spec = build_temporal_single_spec(df, "Test", r, unit_measure="current US$")
         value_tip = next(
-            tip for tip in spec["encoding"]["tooltip"] if tip.get("field") == "value"
+            tip for tip in _ms(spec)["encoding"]["tooltip"] if tip.get("field") == "value"
         )
         assert value_tip["format"] == "$,.2f"
 
@@ -330,21 +361,21 @@ class TestSpecBuilders:
         df = _ts_df(n_countries=3)
         r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
         spec = build_temporal_single_spec(df, "Test", r)
-        assert "color" in spec["encoding"]
-        assert spec["encoding"]["color"]["field"] == "country"
+        assert "color" in _ms(spec)["encoding"]
+        assert _ms(spec)["encoding"]["color"]["field"] == "country"
 
     def test_temporal_single_one_country_keeps_legend(self):
         df = _ts_df(n_countries=1, n_years=4)
         r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
         spec = build_temporal_single_spec(df, "Test", r)
-        leg = spec["encoding"]["color"]["legend"]
+        leg = _ms(spec)["encoding"]["color"]["legend"]
         assert leg is not None
 
     def test_temporal_single_line_has_hover_points(self):
         df = _ts_df()
         r = self._result(ChartStrategy.TEMPORAL_SINGLE, color_dim="country")
         spec = build_temporal_single_spec(df, "Test", r)
-        pt = spec["mark"]["point"]
+        pt = _ms(spec)["mark"]["point"]
         assert isinstance(pt, dict)
         assert pt.get("size", 0) >= 40
 
@@ -353,20 +384,20 @@ class TestSpecBuilders:
         df = _cs_df()
         r = self._result(ChartStrategy.CROSS_SECTIONAL, color_dim="country")
         spec = build_cross_sectional_spec(df, "Test", r)
-        assert spec["mark"]["type"] == "bar"
+        assert _ms(spec)["mark"]["type"] == "bar"
 
     def test_cross_sectional_y_is_country_nominal(self):
         df = _cs_df()
         r = self._result(ChartStrategy.CROSS_SECTIONAL, color_dim="country")
         spec = build_cross_sectional_spec(df, "Test", r)
-        assert spec["encoding"]["y"]["field"] == "country"
-        assert spec["encoding"]["y"]["type"] == "nominal"
+        assert _ms(spec)["encoding"]["y"]["field"] == "country"
+        assert _ms(spec)["encoding"]["y"]["type"] == "nominal"
 
     def test_cross_sectional_sorted_desc(self):
         df = _cs_df()
         r = self._result(ChartStrategy.CROSS_SECTIONAL)
         spec = build_cross_sectional_spec(df, "Test", r)
-        assert spec["encoding"]["y"]["sort"] == "-x"
+        assert _ms(spec)["encoding"]["y"]["sort"] == "-x"
 
     def test_cross_sectional_x_label_sets_axis_title_when_not_default(self):
         df = _cs_df()
@@ -374,14 +405,14 @@ class TestSpecBuilders:
         spec = build_cross_sectional_spec(
             df, "Test", r, x_label="GDP (current US$)"
         )
-        assert spec["encoding"]["x"]["axis"]["title"] == "GDP (current US$)"
+        assert _ms(spec)["encoding"]["x"]["axis"]["title"] == "GDP (current US$)"
 
     # distribution
-    def test_distribution_mark_is_tick(self):
+    def test_distribution_mark_is_bar(self):
         df = _cs_df(n_countries=15)
         r = self._result(ChartStrategy.DISTRIBUTION, color_dim="country")
         spec = build_distribution_spec(df, "Test", r)
-        assert spec["mark"]["type"] == "tick"
+        assert _ms(spec)["mark"]["type"] == "bar"
 
     def test_distribution_limits_rows(self):
         df = _cs_df(n_countries=20)
@@ -390,30 +421,30 @@ class TestSpecBuilders:
         top_n = viz_config.HIGH_CARDINALITY_THRESHOLDS["top_n_series"]
         assert len(spec["data"]["values"]) <= top_n
 
-    def test_distribution_uses_wb_colors(self):
+    def test_distribution_does_not_encode_color(self):
         df = _cs_df(n_countries=15)
         r = self._result(ChartStrategy.DISTRIBUTION, color_dim="country")
         spec = build_distribution_spec(df, "Test", r)
-        assert spec["encoding"]["color"]["scale"]["range"] == WB_CAT_COLORS
+        assert "color" not in _ms(spec)["encoding"]
 
     # breakdown_comparison
     def test_breakdown_has_xoffset_for_grouped_bars(self):
         df = _sex_df(countries=2)
         r = self._result(ChartStrategy.BREAKDOWN_COMPARISON, color_dim="sex")
         spec = build_breakdown_comparison_spec(df, "Test", r)
-        assert "xOffset" in spec["encoding"]
+        assert "xOffset" in _ms(spec)["encoding"]
 
     def test_breakdown_gender_colors_for_sex(self):
         df = _sex_df(countries=2)
         r = self._result(ChartStrategy.BREAKDOWN_COMPARISON, color_dim="sex")
         spec = build_breakdown_comparison_spec(df, "Test", r)
         # Female color should be in the range
-        color_range = spec["encoding"]["color"]["scale"]["range"]
+        color_range = _ms(spec)["encoding"]["color"]["scale"]["range"]
         assert viz_config.WB_GENDER_COLORS["F"] in color_range
 
     # small_multiples
     def test_small_multiples_has_vconcat_key(self):
-        df = _sex_df(countries=6)
+        df = _sex_df(countries=2)
         r = self._result(
             ChartStrategy.SMALL_MULTIPLES, color_dim="sex", facet_dim="country"
         )
@@ -421,13 +452,22 @@ class TestSpecBuilders:
         assert "vconcat" in spec
 
     def test_small_multiples_panels_capped(self):
-        df = _sex_df(countries=6)
+        df = _sex_df(countries=2)
         r = self._result(
             ChartStrategy.SMALL_MULTIPLES, color_dim="sex", facet_dim="country"
         )
         spec = build_small_multiples_spec(df, "Test", r)
         # Verify it limits panels (12 is the cap)
         assert len(spec.get("vconcat", [])) <= 12
+
+    def test_small_multiples_2d_facet_grid(self):
+        df = _sex_df(countries=6)
+        r = self._result(
+            ChartStrategy.SMALL_MULTIPLES, color_dim="sex", facet_dim="country"
+        )
+        spec = build_small_multiples_spec(df, "Test", r)
+        assert "facet" in spec
+        assert spec["facet"]["columns"] == 2
 
     # correlation
     def test_correlation_mark_is_circle(self):
@@ -545,6 +585,8 @@ class TestSpecBuilders:
 
     def test_temporal_multi_indicator_four_series_stacked(self):
         df = _four_ind_ts_df()
+        df["ind_b"] = df["ind_b"] * 100
+        df["ind_c"] = df["ind_c"] * 10000
         ind_cols = ["ind_a", "ind_b", "ind_c", "ind_d"]
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         spec = build_temporal_multi_indicator_spec(df, "Test", r)
@@ -558,7 +600,7 @@ class TestSpecBuilders:
         df = pd.DataFrame({"year": [pd.Timestamp("2020")], "value": [42.0]})
         r = StrategyResult(ChartStrategy.FALLBACK_LINE, "test")
         spec = build_fallback_line_spec(df, "Test", r)
-        assert spec["mark"]["type"] == "line"
+        assert _ms(spec)["mark"]["type"] == "line"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -960,7 +1002,7 @@ class TestAxisLabelThreading:
         spec = build_temporal_single_spec(
             df, "T", r, y_label="GDP per capita (2017 USD)"
         )
-        assert "GDP per capita" in spec["encoding"]["y"]["axis"]["title"]
+        assert "GDP per capita" in _ms(spec)["encoding"]["y"]["axis"]["title"]
 
     def test_correlation_x_label_from_indicator_labels(self):
         df = _two_ind_df()
@@ -1092,7 +1134,7 @@ class TestLineChartGoGRobustness:
         """Y-axis must NOT force zero baseline — trend differences would be compressed."""
         df = _ts_df(n_countries=2)
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        assert spec["encoding"]["y"]["scale"]["zero"] is False, (
+        assert _ms(spec)["encoding"]["y"]["scale"]["zero"] is False, (
             "TEMPORAL_SINGLE Y scale must set zero=False. "
             "Forcing Y to start at 0 compresses small trend variations into noise."
         )
@@ -1103,7 +1145,7 @@ class TestLineChartGoGRobustness:
         """Year axis must be temporal, not ordinal."""
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        assert spec["encoding"]["x"]["type"] == "temporal", (
+        assert _ms(spec)["encoding"]["x"]["type"] == "temporal", (
             "X axis must be type='temporal'. Ordinal encoding maps ISO timestamps "
             "to raw millisecond integers on the axis."
         )
@@ -1111,12 +1153,12 @@ class TestLineChartGoGRobustness:
     def test_y_axis_type_is_quantitative(self):
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        assert spec["encoding"]["y"]["type"] == "quantitative"
+        assert _ms(spec)["encoding"]["y"]["type"] == "quantitative"
 
     def test_color_field_type_is_nominal(self):
         df = _ts_df(n_countries=3)
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        assert spec["encoding"]["color"]["type"] == "nominal", (
+        assert _ms(spec)["encoding"]["color"]["type"] == "nominal", (
             "Color channel for country/breakdown must be nominal, not ordinal or quantitative."
         )
 
@@ -1126,7 +1168,7 @@ class TestLineChartGoGRobustness:
         """Year axis title must be suppressed — year is self-evident."""
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        x_axis = spec["encoding"]["x"]["axis"]
+        x_axis = _ms(spec)["encoding"]["x"]["axis"]
         assert x_axis.get("title") is None, (
             "X axis title must be None. 'Year' clutters the axis without adding information."
         )
@@ -1135,7 +1177,7 @@ class TestLineChartGoGRobustness:
         """When y_label is the default 'Value', Y title must be None."""
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(), y_label="Value")
-        assert spec["encoding"]["y"]["axis"]["title"] is None, (
+        assert _ms(spec)["encoding"]["y"]["axis"]["title"] is None, (
             "Y axis must suppress title when y_label='Value' — generic labels add no information."
         )
 
@@ -1143,12 +1185,12 @@ class TestLineChartGoGRobustness:
         """Custom y_label must propagate to axis title."""
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(), y_label="GDP (USD)")
-        assert spec["encoding"]["y"]["axis"]["title"] == "GDP (USD)"
+        assert _ms(spec)["encoding"]["y"]["axis"]["title"] == "GDP (USD)"
 
     def test_y_axis_has_label_expr_for_currency(self):
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"), unit_measure="current US$")
-        expr = spec["encoding"]["y"]["axis"]["labelExpr"]
+        expr = _ms(spec)["encoding"]["y"]["axis"]["labelExpr"]
         assert "$" in expr, (
             "Currency units must produce a dollar-prefixed labelExpr for compact large number formatting."
         )
@@ -1158,13 +1200,13 @@ class TestLineChartGoGRobustness:
     def test_mark_type_is_line(self):
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        assert spec["mark"]["type"] == "line"
+        assert _ms(spec)["mark"]["type"] == "line"
 
     def test_line_stroke_width_is_readable(self):
         """Thin lines are unreadable in small embeds — minimum 2px."""
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        assert spec["mark"].get("strokeWidth", 0) >= 2, (
+        assert _ms(spec)["mark"].get("strokeWidth", 0) >= 2, (
             "Line strokeWidth must be >= 2. Lines thinner than 2px are unreadable in embeds."
         )
 
@@ -1172,7 +1214,7 @@ class TestLineChartGoGRobustness:
         """Hover points are required for interactive value lookup."""
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        pt = spec["mark"].get("point", {})
+        pt = _ms(spec)["mark"].get("point", {})
         assert isinstance(pt, dict) and pt.get("size", 0) >= 40, (
             "Line mark must include hover points (size >= 40) for interactive value lookup."
         )
@@ -1182,25 +1224,25 @@ class TestLineChartGoGRobustness:
     def test_tooltip_has_year_field(self):
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        fields = {t["field"] for t in _ms(spec)["encoding"]["tooltip"]}
         assert "year" in fields, "Tooltip must include 'year' field."
 
     def test_tooltip_has_value_field(self):
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        fields = {t["field"] for t in _ms(spec)["encoding"]["tooltip"]}
         assert "value" in fields, "Tooltip must include 'value' field."
 
     def test_tooltip_has_country_field(self):
         df = _ts_df(n_countries=3)
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        fields = {t["field"] for t in _ms(spec)["encoding"]["tooltip"]}
         assert "country" in fields, "Tooltip must include 'country' field."
 
     def test_tooltip_year_type_is_temporal(self):
         df = _ts_df()
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        year_tip = next(t for t in spec["encoding"]["tooltip"] if t["field"] == "year")
+        year_tip = next(t for t in _ms(spec)["encoding"]["tooltip"] if t["field"] == "year")
         assert year_tip["type"] == "temporal", (
             "Tooltip year field must be type='temporal' to render as a human-readable date."
         )
@@ -1231,7 +1273,7 @@ class TestLineChartGoGRobustness:
     def test_color_uses_wb_categorical_palette(self):
         df = _ts_df(n_countries=3)
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        palette = spec["encoding"]["color"]["scale"]["range"]
+        palette = _ms(spec)["encoding"]["color"]["scale"]["range"]
         assert palette == WB_CAT_COLORS, (
             "Line chart must use the WB categorical color palette for country series."
         )
@@ -1240,8 +1282,8 @@ class TestLineChartGoGRobustness:
         """Edge case: 8 countries is the max before HEATMAP — must still render cleanly."""
         df = _ts_df(n_countries=8)
         spec = build_temporal_single_spec(df, "Test", _make_line_result(color_dim="country"))
-        assert "color" in spec["encoding"]
-        palette = spec["encoding"]["color"]["scale"]["range"]
+        assert "color" in _ms(spec)["encoding"]
+        palette = _ms(spec)["encoding"]["color"]["scale"]["range"]
         assert len(palette) >= 8, (
             "WB categorical palette must support at least 8 colors for the max line-chart country count."
         )
@@ -1269,7 +1311,7 @@ class TestBarChartGoGRobustness:
         """Bar chart X-axis MUST start at zero — non-zero baseline is deceptive."""
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
-        assert spec["encoding"]["x"]["scale"]["zero"] is True, (
+        assert _ms(spec)["encoding"]["x"]["scale"]["zero"] is True, (
             "CROSS_SECTIONAL X scale must set zero=True. "
             "Bars that don't start at 0 make small differences look large — a classic deception."
         )
@@ -1280,14 +1322,14 @@ class TestBarChartGoGRobustness:
         """Country axis must be nominal, not ordinal."""
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
-        assert spec["encoding"]["y"]["type"] == "nominal", (
+        assert _ms(spec)["encoding"]["y"]["type"] == "nominal", (
             "Country axis must be nominal. Ordinal implies a meaningful rank order in the data."
         )
 
     def test_x_axis_type_is_quantitative(self):
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
-        assert spec["encoding"]["x"]["type"] == "quantitative"
+        assert _ms(spec)["encoding"]["x"]["type"] == "quantitative"
 
     # ── Sort order ─────────────────────────────────────────────────────────
 
@@ -1295,7 +1337,7 @@ class TestBarChartGoGRobustness:
         """Highest value must appear at the top for immediate visual ranking."""
         df = _cs_df(n_countries=5)
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
-        assert spec["encoding"]["y"]["sort"] == "-x", (
+        assert _ms(spec)["encoding"]["y"]["sort"] == "-x", (
             "Bars must be sorted descending (sort='-x') so the highest value appears at top."
         )
 
@@ -1314,7 +1356,7 @@ class TestBarChartGoGRobustness:
         """Country names are self-evident — no axis title needed."""
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
-        assert spec["encoding"]["y"]["axis"]["title"] is None, (
+        assert _ms(spec)["encoding"]["y"]["axis"]["title"] is None, (
             "Y axis (country names) must have title=None — the country names are self-labeling."
         )
 
@@ -1322,19 +1364,19 @@ class TestBarChartGoGRobustness:
         """Default x_label='Value' must not appear as axis title."""
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result(), x_label="Value")
-        assert spec["encoding"]["x"]["axis"]["title"] is None, (
+        assert _ms(spec)["encoding"]["x"]["axis"]["title"] is None, (
             "Generic x_label='Value' must be suppressed from axis title."
         )
 
     def test_x_axis_title_set_when_custom(self):
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result(), x_label="GDP (USD)")
-        assert spec["encoding"]["x"]["axis"]["title"] == "GDP (USD)"
+        assert _ms(spec)["encoding"]["x"]["axis"]["title"] == "GDP (USD)"
 
     def test_x_axis_has_label_expr_for_currency(self):
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result(), unit_measure="current US$")
-        expr = spec["encoding"]["x"]["axis"]["labelExpr"]
+        expr = _ms(spec)["encoding"]["x"]["axis"]["labelExpr"]
         assert "$" in expr, (
             "Currency units must produce a dollar-prefixed compact number format on the bar axis."
         )
@@ -1344,13 +1386,13 @@ class TestBarChartGoGRobustness:
     def test_mark_type_is_bar(self):
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
-        assert spec["mark"]["type"] == "bar"
+        assert _ms(spec)["mark"]["type"] == "bar"
 
     def test_bar_has_corner_radius(self):
         """Rounded bar ends are a WB visual standard and improve readability."""
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
-        mark = spec["mark"]
+        mark = _ms(spec)["mark"]
         has_radius = (
             mark.get("cornerRadiusTopRight", 0) > 0
             or mark.get("cornerRadiusBottomRight", 0) > 0
@@ -1374,7 +1416,7 @@ class TestBarChartGoGRobustness:
         """Long country names must not be truncated to ellipsis."""
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result())
-        label_limit = spec["encoding"]["y"]["axis"]["labelLimit"]
+        label_limit = _ms(spec)["encoding"]["y"]["axis"]["labelLimit"]
         assert label_limit >= 130, (
             f"Y axis labelLimit must be >= 130 to accommodate long country names, got {label_limit}."
         )
@@ -1384,19 +1426,19 @@ class TestBarChartGoGRobustness:
     def test_tooltip_has_country_field(self):
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
-        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        fields = {t["field"] for t in _ms(spec)["encoding"]["tooltip"]}
         assert "country" in fields, "Bar tooltip must include 'country' field."
 
     def test_tooltip_has_value_field(self):
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
-        fields = {t["field"] for t in spec["encoding"]["tooltip"]}
+        fields = {t["field"] for t in _ms(spec)["encoding"]["tooltip"]}
         assert "value" in fields, "Bar tooltip must include 'value' field."
 
     def test_tooltip_value_type_is_quantitative(self):
         df = _cs_df()
         spec = build_cross_sectional_spec(df, "Test", _make_bar_result(color_dim="country"))
-        val_tip = next(t for t in spec["encoding"]["tooltip"] if t["field"] == "value")
+        val_tip = next(t for t in _ms(spec)["encoding"]["tooltip"] if t["field"] == "value")
         assert val_tip["type"] == "quantitative"
 
     # ── Cardinality cap ─────────────────────────────────────────────────────
@@ -1575,7 +1617,7 @@ class TestNegativeValuePassthrough:
         })
         result = _make_line_result(color_dim="country")
         spec = build_temporal_single_spec(df, "GDP Growth", result)
-        assert spec["encoding"]["y"]["scale"]["zero"] is False, (
+        assert _ms(spec)["encoding"]["y"]["scale"]["zero"] is False, (
             "Y scale must not be forced to zero for line charts. "
             "Negative GDP growth (-3.5%) would be invisible if zero=True."
         )
@@ -1610,7 +1652,7 @@ class TestNegativeValuePassthrough:
         })
         result = _make_bar_result(color_dim="country")
         spec = build_cross_sectional_spec(df, "GDP Growth", result)
-        assert spec["encoding"]["x"]["scale"]["zero"] is True, (
+        assert _ms(spec)["encoding"]["x"]["scale"]["zero"] is True, (
             "Bar X scale must have zero=True so negative bars extend left of 0 "
             "rather than disappearing. Got zero=False."
         )

@@ -237,3 +237,108 @@ async def search_usage_resource() -> str:
 async def k360_narrative_style_resource() -> str:
     """Narrative formatting contract for K360 staged agent hosts."""
     return json.dumps(K360_NARRATIVE_STYLE, indent=2)
+
+
+# ---------------------------------------------------------------------------
+# Chart Grammar Resource — grammar-of-graphics decision rules
+# ---------------------------------------------------------------------------
+
+CHART_GRAMMAR = """# Data360 Chart Grammar — Decision Rules for Visualization
+
+This resource teaches you how to reason about data shapes and select the correct
+chart strategy. The visualization engine applies these rules automatically, but
+understanding them lets you make better upstream decisions (which tool to call,
+what chart_type to pass, and how to narrate the result).
+
+## 1. Strategy Selection Rules
+
+The engine selects a strategy based on the **data shape** after fetching:
+
+| Condition | Strategy | Chart type |
+|-----------|----------|-----------|
+| 1 indicator, temporal, 1–8 countries | `temporal_single` | Line chart (color=country) |
+| 1 indicator, temporal, >8 countries, no breakdowns | `heatmap` | Heatmap matrix (country × year) |
+| 1 indicator, single year, ≤8 countries | `cross_sectional` | Horizontal bar chart |
+| 1 indicator, single year, >8 countries | `distribution` | Strip/beeswarm chart |
+| 1 indicator, breakdown dimensions present | `breakdown_comparison` or `small_multiples` | Grouped bar or faceted panels |
+| 2+ indicators, temporal, 1 country | `temporal_multi_indicator` | Layered lines or stacked panels |
+| 2+ indicators, single year, multiple countries | `scatter` or `cross_sectional` | Scatter or grouped bar |
+| Composition data (parts sum to ~100%) | `stacked_area` or `stacked_bar` | Stacked marks |
+
+## 2. Layout Composition Rules (Multi-Indicator)
+
+When comparing 2+ indicators, the engine decides whether to use a **single shared
+panel** or **vertically stacked panels with independent Y-axes**.
+
+The decision is based on the `data_profile.scale_compatibility` in the tool response:
+
+| Condition | Layout | Reason |
+|-----------|--------|--------|
+| Same scale type AND value ratio ≤ 10× | Single panel, shared Y-axis | Values are comparable |
+| Same scale type BUT value ratio > 10× | vconcat panels, independent Y-axes | Large magnitude difference distorts one series |
+| Different scale types (e.g. % vs USD) | vconcat panels, independent Y-axes | Incomparable units |
+| All values are percentages in [0, 100] | Single panel | Natural shared range |
+
+**How to use**: After calling `data360_get_multi_indicator_viz_spec`, read
+`data_profile.scale_compatibility.can_share_axis` and `data_profile.indicators`
+to understand the layout decision and narrate it to the user.
+
+## 3. Encoding Grammar
+
+The engine maps data dimensions to visual channels:
+
+| Data dimension | Vega-Lite encoding | When used |
+|---|---|---|
+| year / time_period | `x` (temporal) | Time-series charts |
+| country | `color` (nominal) | Multi-country lines; `y` for cross-sectional bars |
+| value / obs_value | `y` (quantitative) | Always the measurement axis |
+| indicator | `color` (nominal) | Multi-indicator overlays |
+| breakdown dim (sex, age, etc.) | `color` or `facet` | Disaggregation present |
+
+## 4. Data Profile Fields
+
+Every viz tool response now includes a `data_profile` with these sections:
+
+- **indicators**: Per-indicator value ranges (min/max/median), unit codes, scale
+  types (percentage/currency/persons/index), and whether values are proportions.
+- **scale_compatibility** (multi-indicator): Whether indicators can share a Y-axis.
+- **structure**: Country list, year range, temporal density (dense/moderate/sparse).
+- **breakdowns**: Available disaggregation dimensions with actual values and meanings.
+- **composition_hint**: Whether data looks like parts-of-a-whole (suitable for stacked).
+
+Use these fields to:
+1. **Narrate accurately**: "GDP ranges from $1,200 to $63,000" instead of guessing.
+2. **Assess chart quality**: If `temporal_density` is "sparse", note potential gaps.
+3. **Suggest alternatives**: If `composition_hint.suitable_for_stacked` is true,
+   suggest a stacked area view.
+
+## 5. When NOT to Pass chart_type
+
+Let the engine auto-select when:
+- The data shape is unambiguous (single indicator, clear temporal or cross-sectional)
+- You are unsure which chart fits the data
+
+Only override chart_type when:
+- The user explicitly asked for a style ("show me a bar chart")
+- You need a specific multi-indicator layout ("scatter", "connected_scatter")
+
+## 6. Tool Selection
+
+| Scenario | Tool |
+|----------|------|
+| 1 indicator | `data360_get_viz_spec` |
+| 2–4 indicators to compare | `data360_get_multi_indicator_viz_spec` |
+| Need to summarize without a chart | `data360_summarize_data` |
+"""
+
+
+@mcp.resource("data360://viz/chart-grammar")
+async def chart_grammar_resource() -> str:
+    """Grammar-of-graphics decision rules for Data360 visualization.
+
+    Teaches the LLM how to reason about data shapes, scale compatibility,
+    encoding rules, and layout decisions. Read this resource to understand
+    how the visualization engine selects strategies and how to interpret
+    the data_profile in tool responses.
+    """
+    return CHART_GRAMMAR

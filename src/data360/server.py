@@ -24,7 +24,15 @@ _audit_logger = logging.getLogger("audit")
 _telemetry_client = None
 
 # Setup logging from configuration
+import sys
 mcp_settings = get_mcp_server_settings()
+if "--port" in sys.argv:
+    try:
+        _port_idx = sys.argv.index("--port")
+        mcp_settings.port = int(sys.argv[_port_idx + 1])
+    except (ValueError, IndexError):
+        pass
+
 setup_logging(
     log_file=mcp_settings.log_file,
     log_level=mcp_settings.log_level,
@@ -264,6 +272,140 @@ async def root():
         "ready": "/mcp/ready",
         "mcp": "/mcp",
     }
+
+
+from pydantic import BaseModel
+from typing import Any, Optional, Dict, List
+
+class VizSpecRequest(BaseModel):
+    database_id: str
+    indicator_id: str
+    country_code: Optional[str] = None
+    start_year: Optional[int] = None
+    end_year: Optional[int] = None
+    disaggregation_filters: Optional[Dict[str, Optional[str]]] = None
+    chart_type: Optional[str] = None
+    relevant_fields: Optional[List[str]] = None
+    chart_title: Optional[str] = None
+    series_labels: Optional[Dict[str, str]] = None
+
+class CritiqueRequest(BaseModel):
+    spec: Dict[str, Any]
+    query: str
+    expected_description: str
+    openai_api_key: Optional[str] = None
+
+
+@app.post("/api/viz-spec")
+async def get_viz_spec_endpoint(req: VizSpecRequest):
+    from data360 import visualization as data360_viz
+    from data360.config import get_mcp_server_settings
+
+    # Temporarily disable Charts API URL to force local static file storage
+    settings = get_mcp_server_settings()
+    old_charts_url = settings.charts_api_url
+    settings.charts_api_url = None
+
+    try:
+        res = await data360_viz.get_viz_spec(
+            database_id=req.database_id,
+            indicator_id=req.indicator_id,
+            country_code=req.country_code,
+            start_year=req.start_year,
+            end_year=req.end_year,
+            disaggregation_filters=req.disaggregation_filters,
+            chart_type=req.chart_type,
+            relevant_fields=req.relevant_fields,
+            chart_title=req.chart_title,
+            series_labels=req.series_labels,
+        )
+    finally:
+        # Restore Charts API URL setting
+        settings.charts_api_url = old_charts_url
+
+    if res.get("error"):
+        return JSONResponse(status_code=400, content={"error": res.get("error")})
+
+    url_str = res.get("url")
+    spec = None
+    if url_str:
+        try:
+            spec_id = url_str.split("/")[-1].replace("_vega.json", "")
+            specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+            vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
+            if os.path.exists(vega_path):
+                with open(vega_path, "r") as f:
+                    spec = json.load(f)
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"error": f"Failed to read generated spec: {str(e)}"})
+
+    if not spec:
+        return JSONResponse(status_code=500, content={"error": "Spec was generated but could not be retrieved from disk."})
+
+    return {
+        "spec": spec,
+        "reason": res.get("reason"),
+        "strategy": res.get("strategy")
+    }
+
+
+@app.post("/api/critique")
+async def critique_endpoint(req: CritiqueRequest):
+    old_api_key = os.environ.get("OPENAI_API_KEY")
+    if req.openai_api_key:
+        os.environ["OPENAI_API_KEY"] = req.openai_api_key
+
+    if not os.environ.get("OPENAI_API_KEY"):
+        return JSONResponse(
+            status_code=400,
+            content={"error": "OpenAI API key not configured. Please supply an openai_api_key in the request."}
+        )
+
+    try:
+        from deepeval.test_case import LLMTestCase, SingleTurnParams
+        from deepeval.metrics import GEval
+
+        grammar_of_graphics_metric = GEval(
+            name="Grammar of Graphics & FT Visual Vocabulary Correctness",
+            criteria="""
+            Determine if the Vega-Lite JSON specification maps optimally to the retrieved data shape based on the Financial Times Visual Vocabulary:
+            1. Single-indicator multi-year trends MUST map to a continuous line chart.
+            2. Multi-indicator datasets with incompatible units MUST map to separate vertical subplot panels sharing a synchronized timeline.
+            3. Single-year multi-country datasets MUST map to horizontal bars to allow label space, or route X-axis to country to avoid summing values.
+            4. Gaps in reporting years MUST use dashed lines.
+            5. Single-year nominal charts MUST have their 'year' field parsed as a string to prevent JS Date auto-parsing errors.
+            """,
+            evaluation_params=[SingleTurnParams.ACTUAL_OUTPUT, SingleTurnParams.INPUT],
+            evaluation_steps=[
+                "Inspect the input query and simulated dataframe shape (number of indicators, countries, years, and breakdowns).",
+                "Inspect the actual output Vega-Lite JSON specification.",
+                "Check if the X/Y encoding channels, mark types, facets, and resolving settings are optimal.",
+                "Deduct points if values are overlaid in a single bar on a nominal X-axis without proper country separation.",
+                "Verify that scale formatting, title styling, and tooltips match standard specifications."
+            ],
+            threshold=0.8
+        )
+
+        test_case = LLMTestCase(
+            input=f"Query: '{req.query}' | Expected layout: {req.expected_description}",
+            actual_output=json.dumps(req.spec, indent=2)
+        )
+
+        grammar_of_graphics_metric.measure(test_case)
+
+        return {
+            "score": grammar_of_graphics_metric.score,
+            "reason": grammar_of_graphics_metric.reason,
+            "success": grammar_of_graphics_metric.is_successful()
+        }
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": f"Evaluation failed: {str(e)}"})
+    finally:
+        if req.openai_api_key:
+            if old_api_key:
+                os.environ["OPENAI_API_KEY"] = old_api_key
+            else:
+                os.environ.pop("OPENAI_API_KEY", None)
 
 
 # Mount static files FIRST (more specific path must come before catch-all)

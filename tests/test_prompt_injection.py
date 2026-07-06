@@ -4,10 +4,13 @@ import os
 
 import requests
 
+import pytest
+
 BASE_URL = os.getenv("DATA360_MCP_TEST_URL")
 if not BASE_URL:
-    raise ValueError("DATA360_MCP_TEST_URL is not set")
-MCP_ENDPOINT = f"{BASE_URL}/mcp"
+    pytest.skip("DATA360_MCP_TEST_URL is not set", allow_module_level=True)
+else:
+    MCP_ENDPOINT = f"{BASE_URL}/mcp"
 
 # Test cases for prompt injection
 TEST_CASES = [

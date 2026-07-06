@@ -47,6 +47,13 @@ _logger = logging.getLogger(__name__)
 
 VizResult = dict[str, Any]
 
+
+class VizInsufficientDataError(Exception):
+    """Raised when data returned from the API is too sparse to render a meaningful chart.
+
+    Prefer a clear, actionable error over a misleading visualization.
+    """
+
 # Disaggregation dimensions considered during viz data cleaning and encoding.
 # Mirrors _DISAGG_DIMS_TO_DETECT from api.py but in lowercase (post-column-rename).
 # Single source of truth for the viz pipeline: _clean_single_df, color dim
@@ -62,6 +69,7 @@ _VIZ_DISAGG_DIMS: tuple[str, ...] = (
     "sex",
     "age",
     "urbanisation",
+    "residence",
     "comp_breakdown_1",
     "comp_breakdown_2",
     "comp_breakdown_3",
@@ -92,6 +100,10 @@ def _unit_measure_for_formatting(
         or "DOLLAR" in label_norm
     ):
         return "USD"
+    # If the label has descriptive keywords like PROPORTION or SHARE, return the label
+    # so downstream rules can detect proportion formatting.
+    if "PROPORTION" in label_norm or "SHARE" in label_norm:
+        return label
     if raw:
         return raw
     if label:
@@ -246,6 +258,7 @@ def _ok(
     reason: str | None = None,
     dimensions: dict[str, list] | None = None,
     data_summary: dict | None = None,
+    data_profile: dict | None = None,
 ) -> VizResult:
     r: VizResult = {"url": url, "error": None}
     if warning:
@@ -262,6 +275,8 @@ def _ok(
         r["dimensions"] = dimensions  # type: ignore[assignment]
     if data_summary:
         r["data_summary"] = data_summary  # type: ignore[assignment]
+    if data_profile:
+        r["data_profile"] = data_profile  # type: ignore[assignment]
     attrib_for_line = {
         k: str(v)
         for k, v in r.items()
@@ -358,16 +373,513 @@ def _build_data_summary(df: pd.DataFrame) -> dict:
     return out
 
 
+# ---------------------------------------------------------------------------
+# Scale-type inference from unit codes / labels
+# ---------------------------------------------------------------------------
+
+_PERCENTAGE_TOKENS: frozenset[str] = frozenset({
+    "PT", "PC", "PERCENT", "PERCENTAGE", "%", "RATE", "SHARE", "PROPORTION",
+    "PC_GDP", "PC_GNI", "PC_TOT",
+})
+
+_CURRENCY_TOKENS: frozenset[str] = frozenset({
+    "$", "USD", "CURRENCY", "DOLLARS", "LCU", "EUR", "GBP",
+})
+
+_PERSONS_TOKENS: frozenset[str] = frozenset({
+    "PS", "PEOPLE", "PERSONS", "COUNT", "HEADCOUNT", "NR", "NUMBER",
+})
+
+
+def _infer_scale_type(unit_code: str | None, unit_label: str | None = None) -> str:
+    """Infer a semantic scale type from a unit code or label string.
+
+    Returns one of: ``"percentage"``, ``"currency"``, ``"persons"``, ``"index"``.
+    """
+    tokens: set[str] = set()
+    for raw in (unit_code, unit_label):
+        if raw:
+            normalised = raw.upper().strip()
+            tokens.add(normalised)
+            tokens.update(normalised.replace("_", " ").split())
+
+    if tokens & _PERCENTAGE_TOKENS:
+        return "percentage"
+    if tokens & _CURRENCY_TOKENS:
+        return "currency"
+    if tokens & _PERSONS_TOKENS:
+        return "persons"
+    return "index"
+
+
+# ---------------------------------------------------------------------------
+# Comprehensive data profile for LLM reasoning
+# ---------------------------------------------------------------------------
+
+
+def _build_data_profile(
+    df: pd.DataFrame,
+    *,
+    scale_type: str | None = None,
+    indicator_cols: list[str] | None = None,
+    indicator_names: list[str] | None = None,
+    units_raw: list[str] | None = None,
+    units_label: list[str] | None = None,
+    dim_name_labels: dict[str, str] | None = None,
+) -> dict:
+    """Build a comprehensive data profile for LLM charting reasoning.
+
+    Computed **before routing**, so signals flow into strategy selection and
+    spec building — not just post-hoc narration.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The cleaned DataFrame (post-_clean_single_df, post-country-mapping).
+    scale_type : str | None
+        Semantic unit type: ``"percentage"``, ``"currency"``, ``"persons"``,
+        ``"index"``.  Derived from unit codes when omitted.
+    indicator_cols : list[str] | None
+        Wide-format column names for multi-indicator charts.
+    indicator_names : list[str] | None
+        Human-readable display names aligned with indicator_cols.
+    units_raw : list[str] | None
+        Raw unit codes, e.g. ``["PT", "USD_K_2015"]``.
+    units_label : list[str] | None
+        Resolved unit labels, e.g. ``["Percent", "Constant 2015 USD"]``.
+    dim_name_labels : dict[str, str] | None
+        API-sourced human-readable names for comp_breakdown_* columns.
+
+    Sections returned
+    -----------------
+    indicators
+        Per-indicator: name, unit, scale_type, value_range (with skewness,
+        p25/p75, null_count/null_pct), all_positive, is_proportion.
+    scale_compatibility   (multi-indicator only)
+        Whether indicators can share a Y-axis.
+    structure
+        Year range, temporal density, gaps.
+    coverage_quality
+        Completeness pct, sparse countries (< 3 years), missing years.
+    temporal_trend   (temporal data, single-indicator)
+        Direction, total pct change, monotonicity, per-country when divergent.
+    cross_country    (multi-country only)
+        Spread, leader/laggard at latest year, convergence signal.
+    breakdowns
+        Disaggregation dimensions with actual values, cardinality, meaning,
+        codelist name, and value_labels dict.
+    composition_hint
+        Whether data looks like parts-of-a-whole.
+    """
+    profile: dict[str, Any] = {}
+
+    # ── helpers ────────────────────────────────────────────────────────────────
+    def _series_stats(series: pd.Series) -> dict:
+        """Full numeric stats including nulls, percentiles, skewness."""
+        raw = pd.to_numeric(series, errors="coerce")
+        null_count = int(raw.isna().sum())
+        total = len(raw)
+        null_pct = round(null_count / total * 100, 1) if total else 0.0
+        clean = raw.dropna()
+        if clean.empty:
+            return {
+                "min": None, "max": None, "median": None,
+                "p25": None, "p75": None, "skewness": None,
+                "null_count": null_count, "null_pct": null_pct,
+            }
+        try:
+            skew = float(clean.skew())
+            skew = round(skew, 3) if not pd.isna(skew) else None
+        except Exception:
+            skew = None
+        return {
+            "min": round(float(clean.min()), 4),
+            "max": round(float(clean.max()), 4),
+            "median": round(float(clean.median()), 4),
+            "p25": round(float(clean.quantile(0.25)), 4),
+            "p75": round(float(clean.quantile(0.75)), 4),
+            "skewness": skew,
+            "null_count": null_count,
+            "null_pct": null_pct,
+        }
+
+    # ── 1.  Indicator profiles ─────────────────────────────────────────────────
+    ind_profiles: list[dict] = []
+
+    if indicator_cols and len(indicator_cols) >= 2:
+        # Multi-indicator (wide-format columns)
+        for i, col in enumerate(indicator_cols):
+            if col not in df.columns:
+                continue
+            name = (indicator_names[i] if indicator_names and i < len(indicator_names) else col)
+            unit_raw = (units_raw[i] if units_raw and i < len(units_raw) else None)
+            unit_lbl = (units_label[i] if units_label and i < len(units_label) else None)
+            sc = _infer_scale_type(unit_raw, unit_lbl)
+            stats = _series_stats(df[col])
+            clean = pd.to_numeric(df[col], errors="coerce").dropna()
+            ind_profiles.append({
+                "name": name,
+                "unit_code": unit_raw or None,
+                "unit_label": unit_lbl or None,
+                "scale_type": sc,
+                "value_range": stats,
+                "all_positive": bool(clean.ge(0).all()) if not clean.empty else None,
+                "is_proportion": sc == "percentage" and stats["max"] is not None and stats["max"] <= 100,
+            })
+    elif "value" in df.columns:
+        # Single-indicator (long-format value column)
+        sc = scale_type or _infer_scale_type(
+            units_raw[0] if units_raw else None,
+            units_label[0] if units_label else None,
+        )
+        stats = _series_stats(df["value"])
+        clean = pd.to_numeric(df["value"], errors="coerce").dropna()
+        ind_profiles.append({
+            "name": (indicator_names[0] if indicator_names else None),
+            "unit_code": (units_raw[0] if units_raw else None),
+            "unit_label": (units_label[0] if units_label else None),
+            "scale_type": sc,
+            "value_range": stats,
+            "all_positive": bool(clean.ge(0).all()) if not clean.empty else None,
+            "is_proportion": sc == "percentage" and stats["max"] is not None and stats["max"] <= 100,
+        })
+
+    if ind_profiles:
+        profile["indicators"] = ind_profiles
+
+    # ── 2.  Scale compatibility (multi-indicator only) ─────────────────────────
+    if len(ind_profiles) >= 2:
+        maxes = [
+            p["value_range"]["max"] for p in ind_profiles
+            if p["value_range"].get("max") and p["value_range"]["max"] > 0
+        ]
+        mins_nonzero = [
+            p["value_range"]["min"] for p in ind_profiles
+            if p["value_range"].get("min") and p["value_range"]["min"] > 0
+        ]
+        all_same_unit = len(set(p.get("unit_code") for p in ind_profiles if p.get("unit_code"))) <= 1
+        all_same_scale = len(set(p["scale_type"] for p in ind_profiles)) == 1
+
+        if maxes and mins_nonzero:
+            ratio = max(maxes) / min(mins_nonzero)
+            can_share = all_same_scale and ratio <= 10.0
+            reason_parts = []
+            if all_same_scale:
+                reason_parts.append(f"same scale type ({ind_profiles[0]['scale_type']})")
+            else:
+                types = ", ".join(p["scale_type"] for p in ind_profiles)
+                reason_parts.append(f"different scale types ({types})")
+            reason_parts.append(f"value ratio {ratio:.1f}x")
+            reason_parts.append(f"{'within' if ratio <= 10 else 'exceeds'} 10x threshold")
+            profile["scale_compatibility"] = {
+                "same_unit": all_same_unit,
+                "same_scale_type": all_same_scale,
+                "max_min_ratio": round(ratio, 2),
+                "can_share_axis": can_share,
+                "reason": ", ".join(reason_parts),
+            }
+        else:
+            profile["scale_compatibility"] = {
+                "same_unit": all_same_unit,
+                "same_scale_type": all_same_scale,
+                "max_min_ratio": None,
+                "can_share_axis": False,
+                "reason": "Could not compute ratio — zero or missing values",
+            }
+
+    # ── 3.  Structure (temporal + geographic shape) ────────────────────────────
+    structure: dict[str, Any] = {}
+    unique_years: list[str] = []
+    if "country" in df.columns:
+        countries = sorted(df["country"].dropna().unique().tolist())
+        structure["countries"] = countries
+        structure["country_count"] = len(countries)
+    if "year" in df.columns:
+        years_str = df["year"].dropna().astype(str).str[:4]
+        unique_years = sorted(years_str.unique().tolist())
+        if unique_years:
+            structure["year_range"] = [unique_years[0], unique_years[-1]]
+            structure["year_count"] = len(unique_years)
+        if "country" in df.columns and not df.empty:
+            try:
+                ypc = df.groupby("country")["year"].nunique()
+                avg = float(ypc.mean())
+                structure["avg_years_per_country"] = round(avg, 1)
+                expected = len(unique_years)
+                structure["temporal_density"] = (
+                    "dense" if avg >= expected * 0.8
+                    else "moderate" if avg >= expected * 0.5
+                    else "sparse"
+                )
+                structure["has_gaps"] = avg < expected
+            except Exception:
+                pass
+    if structure:
+        profile["structure"] = structure
+
+    if "country" in df.columns and "year" in df.columns and not df.empty:
+        try:
+            # Use the first available value column for null filtering
+            _val_col = indicator_cols[0] if indicator_cols else "value"
+            _val_col = _val_col if _val_col in df.columns else None
+
+            _subset = df
+            if _val_col:
+                _subset = df[pd.to_numeric(df[_val_col], errors="coerce").notna()]
+
+            ypc = _subset.groupby("country")["year"].nunique()
+            n_countries = len(ypc)
+            expected_years = len(unique_years) if unique_years else (int(ypc.max()) if not ypc.empty else 1)
+            _SPARSE_THRESHOLD_YEARS = 3 if expected_years >= 3 else 1
+
+            total_expected = n_countries * expected_years
+            total_filled = int(ypc.sum())
+            completeness_pct = round(total_filled / total_expected * 100, 1) if total_expected > 0 else 100.0
+
+            sparse = sorted(ypc[ypc < _SPARSE_THRESHOLD_YEARS].index.tolist())
+
+            # Per-country missing years
+            all_years_set = set(unique_years)
+            per_country_missing: dict[str, list[str]] = {}
+            if unique_years:
+                for country, grp in _subset.groupby("country"):
+                    country_years = set(grp["year"].astype(str).str[:4].unique())
+                    missing = sorted(all_years_set - country_years)
+                    if missing:
+                        per_country_missing[str(country)] = missing
+
+            cq: dict[str, Any] = {
+                "total_expected_cells": total_expected,
+                "total_filled_cells": total_filled,
+                "completeness_pct": completeness_pct,
+                "sparse_threshold_years": _SPARSE_THRESHOLD_YEARS,
+                "sparse_countries": sparse,
+            }
+            if per_country_missing:
+                cq["missing_years_by_country"] = per_country_missing
+            profile["coverage_quality"] = cq
+        except Exception:
+            pass
+
+    # ── 5.  Temporal trend (single-indicator, temporal data) ───────────────────
+    if "year" in df.columns and "value" in df.columns and len(unique_years) >= 2:
+        try:
+            _df_t = df.copy()
+            _df_t["_year_int"] = pd.to_numeric(df["year"].astype(str).str[:4], errors="coerce")
+            _df_t["_val"] = pd.to_numeric(df["value"], errors="coerce")
+            _df_t = _df_t.dropna(subset=["_year_int", "_val"])
+
+            if not _df_t.empty and _df_t["_year_int"].nunique() >= 2:
+                # Aggregate: mean across countries per year
+                agg = _df_t.groupby("_year_int")["_val"].mean().sort_index()
+                first_yr, last_yr = int(agg.index.min()), int(agg.index.max())
+                first_val, last_val = float(agg.iloc[0]), float(agg.iloc[-1])
+
+                pct_change = (
+                    round((last_val - first_val) / abs(first_val) * 100, 1)
+                    if first_val != 0 else None
+                )
+
+                diffs = agg.diff().dropna()
+                pos = int((diffs > 0).sum())
+                neg = int((diffs < 0).sum())
+                if pos == 0 and neg == 0:
+                    direction = "flat"
+                elif pos >= len(diffs) * 0.75:
+                    direction = "increasing"
+                elif neg >= len(diffs) * 0.75:
+                    direction = "decreasing"
+                else:
+                    direction = "volatile"
+
+                monotonic = (pos == len(diffs)) or (neg == len(diffs))
+                multi_country = "country" in df.columns and df["country"].nunique() > 1
+
+                trend: dict[str, Any] = {
+                    "direction": direction,
+                    "pct_change_total": pct_change,
+                    "monotonic": monotonic,
+                }
+                if multi_country:
+                    trend["note"] = "Averaged across all countries"
+
+                # Per-country directions when countries diverge
+                if multi_country:
+                    per_country: dict[str, str] = {}
+                    for ctry, grp in _df_t.groupby("country"):
+                        c_agg = grp.groupby("_year_int")["_val"].mean().sort_index()
+                        if c_agg.nunique() < 2:
+                            continue
+                        c_diffs = c_agg.diff().dropna()
+                        c_pos = int((c_diffs > 0).sum())
+                        c_neg = int((c_diffs < 0).sum())
+                        n = len(c_diffs)
+                        if c_pos >= n * 0.75:
+                            per_country[str(ctry)] = "increasing"
+                        elif c_neg >= n * 0.75:
+                            per_country[str(ctry)] = "decreasing"
+                        else:
+                            per_country[str(ctry)] = "volatile"
+                    # Only include per-country if directions differ across countries
+                    if len(set(per_country.values())) > 1:
+                        trend["per_country"] = per_country
+
+                profile["temporal_trend"] = {k: v for k, v in trend.items() if v is not None}
+        except Exception:
+            pass
+
+    # ── 6.  Cross-country divergence (multi-country only) ─────────────────────
+    if "country" in df.columns and "year" in df.columns and "value" in df.columns:
+        try:
+            _df_cc = df.copy()
+            _df_cc["_val"] = pd.to_numeric(df["value"], errors="coerce")
+            _df_cc["_year_int"] = pd.to_numeric(df["year"].astype(str).str[:4], errors="coerce")
+            _df_cc = _df_cc.dropna(subset=["country", "_year_int", "_val"])
+
+            if _df_cc["country"].nunique() >= 2 and not _df_cc.empty:
+                latest_year = int(_df_cc["_year_int"].max())
+                earliest_year = int(_df_cc["_year_int"].min())
+
+                latest_agg = _df_cc[_df_cc["_year_int"] == latest_year].groupby("country")["_val"].mean()
+                earliest_agg = _df_cc[_df_cc["_year_int"] == earliest_year].groupby("country")["_val"].mean()
+
+                if len(latest_agg) >= 2:
+                    spread_latest = round(float(latest_agg.max() - latest_agg.min()), 4)
+                    leader = str(latest_agg.idxmax())
+                    laggard = str(latest_agg.idxmin())
+
+                    cc: dict[str, Any] = {
+                        "latest_year": str(latest_year),
+                        "spread": spread_latest,
+                        "leader": {"country": leader, "value": round(float(latest_agg[leader]), 4)},
+                        "laggard": {"country": laggard, "value": round(float(latest_agg[laggard]), 4)},
+                    }
+
+                    # Convergence: spread narrowing?
+                    common = list(set(latest_agg.index) & set(earliest_agg.index))
+                    if len(common) >= 2:
+                        spread_earliest = float(
+                            earliest_agg[common].max() - earliest_agg[common].min()
+                        )
+                        converging = spread_latest < spread_earliest
+                        cc["converging"] = converging
+                        cc["spread_note"] = (
+                            f"Spread {'narrowed' if converging else 'widened'} from "
+                            f"{round(spread_earliest, 2)} ({earliest_year}) to "
+                            f"{round(spread_latest, 2)} ({latest_year})"
+                        )
+
+                    profile["cross_country"] = cc
+        except Exception:
+            pass
+
+    # ── 7.  Breakdowns with values, labels, and codelist definitions ───────────
+    _trivial: frozenset[str] = frozenset({"_T", "_Z", "U", ""})
+    _DIM_MEANINGS: dict[str, str] = {
+        "sex": "Gender breakdown",
+        "age": "Age group breakdown",
+        "urbanisation": "Urban/rural breakdown",
+        "residence": "Residence type",
+        "comp_breakdown_1": "Indicator subtype",
+        "comp_breakdown_2": "Secondary breakdown",
+        "comp_breakdown_3": "Tertiary breakdown",
+        "unit_measure": "Unit of measurement",
+    }
+    _DIM_TO_CODELIST: dict[str, str] = {
+        "sex": "SEX",
+        "age": "AGE",
+        "urbanisation": "URBANISATION",
+        "residence": "RESIDENCE",
+        "comp_breakdown_1": "COMP_BREAKDOWN_1",
+        "comp_breakdown_2": "COMP_BREAKDOWN_2",
+        "comp_breakdown_3": "COMP_BREAKDOWN_3",
+        "unit_measure": "UNIT_MEASURE",
+    }
+    _cl: Any = None
+    try:
+        from data360.providers import get_codelist_manager as _get_cl_mgr
+        _cl = _get_cl_mgr()
+    except Exception:
+        pass
+
+    breakdowns: dict[str, dict] = {}
+    for dim in _SURFACE_DIMS:
+        if dim not in df.columns:
+            continue
+        vals = sorted(str(v) for v in df[dim].dropna().unique() if str(v) not in _trivial)
+        if len(vals) > 1:
+            meaning = _DIM_MEANINGS.get(dim, dim.replace("_", " ").title())
+            if dim_name_labels and dim in dim_name_labels:
+                meaning = dim_name_labels[dim]
+            bd_entry: dict[str, Any] = {
+                "values": vals,
+                "cardinality": len(vals),
+                "meaning": meaning,
+            }
+            if _cl and dim in _DIM_TO_CODELIST:
+                try:
+                    all_labels = _cl.get_dimension_labels(_DIM_TO_CODELIST[dim])
+                    code_vals = [v for v in df[dim].dropna().unique() if str(v) not in _trivial]
+                    val_labels = {
+                        str(code): all_labels[str(code)]
+                        for code in code_vals
+                        if str(code) in all_labels and all_labels[str(code)] != str(code)
+                    }
+                    if val_labels:
+                        bd_entry["value_labels"] = val_labels
+                        bd_entry["codelist"] = _DIM_TO_CODELIST[dim]
+                except Exception:
+                    pass
+            breakdowns[dim] = bd_entry
+
+    if breakdowns:
+        profile["breakdowns"] = breakdowns
+
+    # ── 8.  Composition hint ───────────────────────────────────────────────────
+    composition: dict[str, Any] = {"suitable_for_stacked": False}
+    if "value" in df.columns:
+        val_series = pd.to_numeric(df["value"], errors="coerce").dropna()
+        if not val_series.empty:
+            composition["all_positive"] = bool((val_series >= 0).all())
+            group_cols = [c for c in ("country", "year") if c in df.columns]
+            if group_cols and breakdowns:
+                try:
+                    sums = df.assign(
+                        _val=pd.to_numeric(df["value"], errors="coerce")
+                    ).groupby(group_cols)["_val"].sum()
+                    non_null_sums = sums.dropna()
+                    if not non_null_sums.empty:
+                        mean_sum = float(non_null_sums.mean())
+                        composition["sums_to_100"] = 90 <= mean_sum <= 110
+                        if composition["sums_to_100"] and composition["all_positive"]:
+                            composition["suitable_for_stacked"] = True
+                            composition["reason"] = (
+                                f"Values within groups average {mean_sum:.0f} "
+                                "— looks like parts summing to ~100%"
+                            )
+                except Exception:
+                    composition["sums_to_100"] = False
+            if not composition.get("reason"):
+                composition["reason"] = (
+                    "Independent values — not parts of a whole"
+                    if not composition.get("suitable_for_stacked")
+                    else ""
+                )
+    profile["composition_hint"] = composition
+    return profile
+
 def _format_source_line_from_attribution(attrib: dict[str, str]) -> str:
     """One-line \"Source\" string; matches client `formatData360VizSourceLine`."""
-    db = (attrib.get("database_name") or attrib.get("database_id") or "").strip()
-    ind = (attrib.get("indicator_name") or attrib.get("indicator_id") or "").strip()
-    if db and ind:
-        return f"World Bank — {db} — {ind}"
+    ind_name = (attrib.get("indicator_name") or "").strip()
+    ind_id = (attrib.get("indicator_id") or "").strip()
+
+    if ind_name and ind_id and ind_name != ind_id:
+        ind = f"{ind_name} ({ind_id})"
+    else:
+        ind = ind_name or ind_id
+
     if ind:
         return f"World Bank — {ind}"
-    if db:
-        return f"World Bank — {db}"
     return _SOURCE_FALLBACK
 
 
@@ -446,6 +958,17 @@ async def _fetch_single_indicator(
         )
         df = await _fetch_data_internal(data_url)
         df.columns = [c.lower() for c in df.columns]
+        if "urbanisation" in df.columns:
+            df = df.rename(columns={"urbanisation": "residence"})
+        elif "urbanization" in df.columns:
+            df = df.rename(columns={"urbanization": "residence"})
+
+        # Filter out total sentinels if breakdown values exist
+        for col in ["sex", "age", "residence", "comp_breakdown_1", "comp_breakdown_2", "comp_breakdown_3"]:
+            if col in df.columns:
+                uv = df[col].dropna().unique()
+                if len(uv) > 1 and "_T" in uv:
+                    df = df[df[col] != "_T"].copy()
     except Exception as e:
         _logger.error(f"Failed to fetch {indicator_id}: {e}")
         return pd.DataFrame(), None, None
@@ -523,6 +1046,16 @@ def _clean_single_df(
     chart_type: str | None,
     data_frequency: str | None,
 ) -> tuple[pd.DataFrame, list[str], viz_config.TemporalFreq]:
+    if "ref_area" in data.columns:
+        try:
+            from data360.providers import get_group_hierarchy_manager
+            _ghm = get_group_hierarchy_manager()
+            has_leaf = data["ref_area"].apply(lambda x: _ghm.is_country(str(x))).any()
+            if has_leaf:
+                data = data[data["ref_area"].apply(lambda x: not _ghm.is_group(str(x)))]
+        except Exception as e:
+            _logger.warning(f"Could not filter FMR leaf economies: {e}")
+
     # Trivial values for disaggregation dimensions: _T = aggregate total, _Z = not applicable.
     # unit_measure uses a different sentinel: 'U' = Unitless (defined in _UNIT_MEASURE_TRIVIAL).
     _TRIVIAL_DIM_VALUES = ("_T", "_Z")
@@ -748,6 +1281,7 @@ _EXTDATAPORTAL_DIM_MAP: dict[str, str] = {
     "sex": "SEX",
     "age": "AGE",
     "urbanisation": "URBANISATION",
+    "residence": "URBANISATION",
     "unit_measure": "UNIT_MEASURE",
 }
 
@@ -819,6 +1353,11 @@ def _strip_common_prefix_in_dims(
         if len(unique_vals) < 2:
             continue
         prefix = _find_common_prefix(unique_vals)
+        if prefix and prefix[-1].isalnum():
+            # Find the last space or punctuation character to avoid cutting a word in half
+            match = re.search(r'[^a-zA-Z0-9][a-zA-Z0-9]+$', prefix)
+            if match:
+                prefix = prefix[:match.start() + 1]
         if len(prefix) < min_prefix_len:
             continue
         # Strip trailing separator characters so suffixes start cleanly.
@@ -946,6 +1485,106 @@ def get_supported_chart_types() -> str:
 # ============================================================================
 
 
+async def _detect_missing_countries(country_code: str | None, present_countries: set[str]) -> list[str]:
+    """Identify which of the requested country codes are missing from the returned set."""
+    if not country_code:
+        return []
+    requested_list = [c.strip().upper() for c in country_code.replace(";", ",").split(",") if c.strip()]
+    if not requested_list:
+        return []
+    try:
+        from data360.providers import get_codelist_mapping
+        country_map = await get_codelist_mapping("REF_AREA")
+    except Exception:
+        country_map = {}
+
+    missing_names = []
+    present_upper = {str(c).upper() for c in present_countries}
+    for code in requested_list:
+        name = country_map.get(code, code)
+        if code not in present_upper and name.upper() not in present_upper:
+            missing_names.append(name)
+    return missing_names
+
+
+def _apply_post_processing_rules(
+    spec: dict,
+    data_frequency: str | None,
+    unit_measure: str | None,
+    strategy_result: "viz_config.StrategyResult",
+    df: pd.DataFrame
+) -> dict:
+    """Recursively applies post-processing rules to all sub-views/panels in a Vega-Lite spec."""
+    import inspect
+
+    def _apply_rule_recursively(rule, subspec, data_root=None, **kwargs):
+        if not isinstance(subspec, dict):
+            return subspec
+
+        # Structural rules must be run at the top-level
+        is_structural = rule.name in ("general_error_band", "population_pyramid", "apply_wb_style")
+        if is_structural:
+            return rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **kwargs)
+
+        current_data_root = data_root if data_root is not None else subspec
+
+        # Recurse into composite views
+        if "vconcat" in subspec and isinstance(subspec["vconcat"], list):
+            subspec["vconcat"] = [
+                _apply_rule_recursively(rule, child, current_data_root, **kwargs)
+                for child in subspec["vconcat"]
+            ]
+            return subspec
+        elif "hconcat" in subspec and isinstance(subspec["hconcat"], list):
+            subspec["hconcat"] = [
+                _apply_rule_recursively(rule, child, current_data_root, **kwargs)
+                for child in subspec["hconcat"]
+            ]
+            return subspec
+        elif "layer" in subspec and isinstance(subspec["layer"], list):
+            subspec["layer"] = [
+                _apply_rule_recursively(rule, child, current_data_root, **kwargs)
+                for child in subspec["layer"]
+            ]
+            return subspec
+        elif "spec" in subspec and isinstance(subspec["spec"], dict):
+            subspec["spec"] = _apply_rule_recursively(rule, subspec["spec"], current_data_root, **kwargs)
+            return subspec
+
+        # Leaf view: temporarily inject data/datasets from root if missing
+        has_local_data = "data" in subspec
+        if not has_local_data and current_data_root and "data" in current_data_root:
+            subspec["data"] = current_data_root["data"]
+        if not has_local_data and current_data_root and "datasets" in current_data_root:
+            subspec["datasets"] = current_data_root["datasets"]
+
+        # Apply the rule
+        subspec = rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **kwargs)
+
+        # Cleanup injected data
+        if not has_local_data:
+            subspec.pop("data", None)
+            subspec.pop("datasets", None)
+
+        return subspec
+
+    for rule in viz_config.POST_PROCESSING_RULES:
+        sig = inspect.signature(rule.apply)
+        kwargs = {}
+        if "scale_type" in sig.parameters:
+            kwargs["scale_type"] = strategy_result.scale_type
+        if "unit_mult" in sig.parameters:
+            kwargs["unit_mult"] = strategy_result.unit_mult
+        if "df" in sig.parameters:
+            kwargs["df"] = df
+        if "raw_hint" in sig.parameters:
+            kwargs["raw_hint"] = strategy_result.raw_hint
+
+        spec = _apply_rule_recursively(rule, spec, **kwargs)
+
+    return spec
+
+
 async def get_viz_spec(
     database_id: str,
     indicator_id: str,
@@ -959,6 +1598,7 @@ async def get_viz_spec(
     use_default_constraints: bool = True,
     chart_title: str | None = None,
     series_labels: dict[str, str] | None = None,
+    strategy_override: str | None = None,
 ) -> VizResult:
     """Generate a Vega-Lite chart from a single Data360 indicator.
 
@@ -1445,6 +2085,34 @@ async def get_viz_spec(
             if col in viz_data.columns:
                 viz_data[col] = viz_data[col].replace(series_labels)
 
+    # 6.5b Pre-filter for confidence interval error bands if present
+    from data360.viz_config import _filter_df_for_error_band
+    viz_data = _filter_df_for_error_band(viz_data)
+
+    # 6.6 If a cross-sectional chart type is explicitly requested (bar, map, tick) but years are omitted
+    # or a multi-year/multi-country dataset is passed, default to the latest available year to prevent
+    # a cluttered "bar chart for time series".
+    # Exclusions:
+    #   - "stacked_bar" is always temporal — never strip its years.
+    #   - Any hint when start_year AND end_year were both explicitly provided — the caller
+    #     requested a time range; routing (not this pre-filter) decides what to do with it.
+    is_cross_sectional_hint = chart_type and any(
+        kw in chart_type.lower() and not (kw == "map" and "heatmap" in chart_type.lower())
+        for kw in ("bar", "column", "ranking", "map", "choropleth", "tick", "strip", "beeswarm", "distribution")
+    ) and chart_type.lower() != "stacked_bar"
+    caller_set_year_range = start_year is not None and end_year is not None
+    if is_cross_sectional_hint and not caller_set_year_range and not viz_data.empty:
+        unique_years = viz_data["year"].nunique() if "year" in viz_data.columns else 0
+        unique_countries = viz_data["country"].nunique() if "country" in viz_data.columns else 0
+        if unique_years > 1 and unique_countries > 1:
+            if "year" in viz_data.columns:
+                latest_year = viz_data["year"].max()
+                viz_data = viz_data[viz_data["year"] == latest_year].copy()
+                _logger.info(
+                    f"[get_viz_spec] chart_type={chart_type}: filtered data to latest year {latest_year} "
+                    f"to prevent cluttered cross-sectional time-series."
+                )
+
     import textwrap
 
     # Apply text wrapping (Typography T3 constraint) so long single-indicator titles don't overflow
@@ -1458,39 +2126,191 @@ async def get_viz_spec(
             if isinstance(chart_title_auto, str)
             else chart_title_auto
         )
-
     # Vega-Lite title + subtitle (geography, year range, unit) after data is cleaned
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
         final_title, raw_unit_label or None, viz_data
     )
 
-    # Append hidden-dimension warning to the subtitle so the user sees it.
-    if _hidden_dim_warning and isinstance(chart_title_vl, dict):
+    # Append missing-country warning and hidden-dimension warning to the subtitle so the user sees it.
+    if isinstance(chart_title_vl, dict):
         _sub = chart_title_vl.get("subtitle", [])
         if isinstance(_sub, str):
             _sub = [_sub]
-        chart_title_vl["subtitle"] = list(_sub) + [_hidden_dim_warning]
+        else:
+            _sub = list(_sub)
 
-    # 7. Determine strategy
+        present_set = set(viz_data["country"].dropna().unique()) if "country" in viz_data.columns else set()
+        missing_names = await _detect_missing_countries(country_code, present_set)
+        if missing_names:
+            missing_str = ", ".join(missing_names)
+            _sub.append(f"Note: Data unavailable for {missing_str}.")
+
+        if _hidden_dim_warning:
+            _sub.append(_hidden_dim_warning)
+
+        chart_title_vl["subtitle"] = _sub
+    elif isinstance(chart_title_vl, str):
+        present_set = set(viz_data["country"].dropna().unique()) if "country" in viz_data.columns else set()
+        missing_names = await _detect_missing_countries(country_code, present_set)
+        _sub = []
+        if missing_names:
+            missing_str = ", ".join(missing_names)
+            _sub.append(f"Note: Data unavailable for {missing_str}.")
+        if _hidden_dim_warning:
+            _sub.append(_hidden_dim_warning)
+        if _sub:
+            chart_title_vl = {"text": chart_title_vl, "subtitle": _sub}
+
+    # 7. Fetch dim labels + build data profile BEFORE routing
+    # dim_name_labels must be fetched first so the profile can include codelist-
+    # resolved breakdown names.
+    _pre_dim_name_labels: dict[str, str] = {}
+    try:
+        from data360.api import get_comp_breakdown_dim_names
+        _pre_dim_name_labels = await get_comp_breakdown_dim_names(database_id, indicator_id)
+    except Exception as _exc:
+        _logger.debug("Could not fetch comp_breakdown dim names: %s", _exc)
+
+    # Build comprehensive data profile from real cleaned data.
+    # This runs BEFORE select_strategy so coverage signals (sparse countries,
+    # completeness %) can inform routing decisions and so that the profile is
+    # available for spec builders — not just post-hoc narration.
+    data_profile = _build_data_profile(
+        viz_data,
+        scale_type=_infer_scale_type(raw_unit, raw_unit_label) if (raw_unit or raw_unit_label) else None,
+        indicator_names=[indicator_display] if indicator_display else None,
+        units_raw=[raw_unit] if raw_unit else None,
+        units_label=[raw_unit_label] if raw_unit_label else None,
+        dim_name_labels=_pre_dim_name_labels or None,
+    )
+
+    # Determine strategy (informed by data_profile coverage signals)
     n_indicators = 1
     strategy_result = viz_config.select_strategy(
         viz_data,
         n_indicators=n_indicators,
         chart_type_hint=chart_type,
+        raw_unit=raw_unit,
+        raw_unit_mult=raw_unit_mult,
+        data_profile=data_profile,
+        strategy_override=strategy_override,
     )
+
+    # Post-routing sparsity filtering: Only drop countries with sparse data points
+    # if the strategy is temporal (which requires drawing line segments).
+    # Cross-sectional and distribution charts only require 1 data point per country,
+    # so dropping them is incorrect.
+    is_temporal = strategy_result.strategy in (
+        viz_config.ChartStrategy.TEMPORAL_SINGLE,
+        viz_config.ChartStrategy.TEMPORAL_MULTI_IND,
+        viz_config.ChartStrategy.SMALL_MULTIPLES,
+    )
+    if is_temporal:
+        _sparse_from_profile = (
+            data_profile.get("coverage_quality", {}).get("sparse_countries", [])
+        )
+        _n_countries_in_data = (
+            viz_data["country"].nunique() if "country" in viz_data.columns else 0
+        )
+        if _sparse_from_profile and _n_countries_in_data >= 2:
+            _logger.info(
+                f"[get_viz_spec] Dropping sparse countries (< 3 years) for temporal strategy: {_sparse_from_profile}"
+            )
+            viz_data = viz_data[~viz_data["country"].isin(_sparse_from_profile)].copy()
+            if viz_data.empty:
+                return _err("Error: No data available for visualization after filtering sparse countries.")
+
+            # Rebuild profile and re-run strategy selection to reflect pruned data shape
+            data_profile = _build_data_profile(
+                viz_data,
+                scale_type=_infer_scale_type(raw_unit, raw_unit_label) if (raw_unit or raw_unit_label) else None,
+                indicator_names=[indicator_display] if indicator_display else None,
+                units_raw=[raw_unit] if raw_unit else None,
+                units_label=[raw_unit_label] if raw_unit_label else None,
+                dim_name_labels=_pre_dim_name_labels or None,
+            )
+            strategy_result = viz_config.select_strategy(
+                viz_data,
+                n_indicators=n_indicators,
+                chart_type_hint=chart_type,
+                raw_unit=raw_unit,
+                raw_unit_mult=raw_unit_mult,
+                data_profile=data_profile,
+                strategy_override=strategy_override,
+            )
+
     # Thread detected temporal frequency through to spec builders.
     strategy_result.temporal_frequency = temporal_frequency
+    # Thread dim_name_labels into result for spec builders.
+    strategy_result.dim_name_labels = _pre_dim_name_labels
 
-    # 7.1 Fetch human-readable dimension names for comp_breakdown_* from the
-    # disaggregation API (cached — no extra HTTP call if already fetched above).
-    try:
-        from data360.api import get_comp_breakdown_dim_names
+    # If the strategy is CROSS_SECTIONAL, keep only the latest available year per country
+    if strategy_result.strategy == viz_config.ChartStrategy.CROSS_SECTIONAL and not viz_data.empty:
+        if "country" in viz_data.columns and "year" in viz_data.columns:
+            try:
+                valid_data = viz_data.dropna(subset=["country", "year"])
+                if not valid_data.empty:
+                    years_numeric = pd.to_numeric(valid_data["year"], errors="coerce")
+                    if years_numeric.notna().any():
+                        valid_data = valid_data.assign(_years_num=years_numeric)
+                        idx = valid_data.groupby("country")["_years_num"].idxmax()
+                    else:
+                        idx = valid_data.groupby("country")["year"].idxmax()
+                    viz_data = viz_data.loc[idx].copy()
+                    _logger.info("[get_viz_spec] CROSS_SECTIONAL strategy: filtered to latest year per country.")
+            except Exception as e:
+                _logger.warning(f"Failed to filter cross-sectional data to latest year per country: {e}")
 
-        strategy_result.dim_name_labels = await get_comp_breakdown_dim_names(
-            database_id, indicator_id
+    # 7.05  Data sufficiency guards — return error before chart dispatch rather
+    # than produce a misleading visualization with too little data.
+    #
+    # Minimum country counts per strategy:
+    #   - CROSS_SECTIONAL: ≥3 bars needed for a meaningful comparison
+    #   - DISTRIBUTION:    ≥10 required so tick/strip chart has visual density
+    #   - BREAKDOWN_COMPARISON / SMALL_MULTIPLES: ≥2 countries to show contrast
+    _MIN_COUNTRIES_BY_STRATEGY: dict[viz_config.ChartStrategy, int] = {
+        viz_config.ChartStrategy.CROSS_SECTIONAL:      1,  # 1+ bars always valid
+        viz_config.ChartStrategy.DISTRIBUTION:         10,
+        viz_config.ChartStrategy.BREAKDOWN_COMPARISON: 2,
+        viz_config.ChartStrategy.SMALL_MULTIPLES:      2,
+    }
+    if strategy_result.strategy in _MIN_COUNTRIES_BY_STRATEGY:
+        _actual_countries = (
+            int(viz_data["country"].nunique()) if "country" in viz_data.columns else 0
         )
-    except Exception as _exc:
-        _logger.debug("Could not fetch comp_breakdown dim names: %s", _exc)
+        _minimum = _MIN_COUNTRIES_BY_STRATEGY[strategy_result.strategy]
+        if _actual_countries < _minimum:
+            return _err(
+                f"Insufficient data for a {strategy_result.strategy.value} chart: "
+                f"only {_actual_countries} country/countries returned data "
+                f"(minimum required: {_minimum}). "
+                f"The requested countries/indicator/time period combination had too "
+                f"few values in the Data360 API."
+            )
+
+    # Sparse time-series guard: if average data points per country < 3,
+    # lines will be jagged and disconnected — fall back to cross_sectional bar
+    # instead of raising an error.  A single-year request is always valid as a
+    # bar chart; only raise if we cannot produce any useful visualization at all.
+    if strategy_result.strategy in (
+        viz_config.ChartStrategy.SMALL_MULTIPLES,
+        viz_config.ChartStrategy.TEMPORAL_SINGLE,
+    ) and not viz_data.empty and "country" in viz_data.columns:
+        _n_series = max(int(viz_data["country"].nunique()), 1)
+        if "year" in viz_data.columns:
+            _avg_pts = float(viz_data.groupby("country")["year"].nunique().mean())
+        else:
+            _avg_pts = len(viz_data) / _n_series
+        if _avg_pts < 3:
+            _logger.info(
+                f"[get_viz_spec] Sparse data ({_avg_pts:.1f} pts/country) — "
+                f"falling back from {strategy_result.strategy.value} to cross_sectional bar."
+            )
+            strategy_result = viz_config.StrategyResult(
+                viz_config.ChartStrategy.CROSS_SECTIONAL,
+                f"Sparse data ({_avg_pts:.1f} pts/country) → bar chart",
+                mark_hint="bar",
+            )
 
     _logger.info(
         f"Chart strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
@@ -1506,14 +2326,16 @@ async def get_viz_spec(
             y_label=raw_unit_label if raw_unit_label else "Value",
             x_label="Value",
             unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
+            indicator_name=indicator_display or None,
         )
         # Apply post-processing rules
-        for rule in viz_config.POST_PROCESSING_RULES:
-            spec = rule.apply(
-                spec,
-                data_frequency=data_frequency,
-                unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
-            )
+        spec = _apply_post_processing_rules(
+            spec,
+            data_frequency=data_frequency,
+            unit_measure=_unit_measure_for_formatting(raw_unit, raw_unit_label),
+            strategy_result=strategy_result,
+            df=viz_data
+        )
 
         out_reason = strategy_result.reason
         if strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE:
@@ -1525,6 +2347,8 @@ async def get_viz_spec(
 
         dim_summary = _extract_dimension_summary(viz_data)
         data_summary = _build_data_summary(viz_data)
+        # data_profile was built before routing — read from strategy_result
+        data_profile = strategy_result.data_profile or {}
 
         warning_msg = None
         if chart_type:
@@ -1541,15 +2365,16 @@ async def get_viz_spec(
             elif core_intent == "strip":
                 core_intent = "beeswarm"
 
-            reason_lower = strategy_result.reason.lower()
+            reason_lower = out_reason.lower()
             reason_suffix = (
                 reason_lower.split("→")[-1] if "→" in reason_lower else reason_lower
             )
 
-            if core_intent and core_intent not in reason_suffix:
+            is_point_fallback_to_line = (core_intent == "point" and "line" in reason_suffix)
+            if core_intent and core_intent not in reason_suffix and not is_point_fallback_to_line:
                 warning_msg = (
                     f"You requested '{chart_type}', but the visualization engine "
-                    f"selected a different strategy based on data cardinality: {strategy_result.reason}. "
+                    f"selected a different strategy based on data cardinality: {out_reason}. "
                     "The chart was successfully generated. Please ensure your response and the chart title reflect this actual strategy."
                 )
 
@@ -1561,6 +2386,7 @@ async def get_viz_spec(
             reason=out_reason,
             dimensions=dim_summary or None,
             data_summary=data_summary or None,
+            data_profile=data_profile or None,
         )
     except Exception as e:
         _logger.exception("Strategy builder failed")
@@ -1581,6 +2407,7 @@ async def get_multi_indicator_viz_spec(
     chart_type: str | None = None,
     chart_title: str | None = None,
     series_labels: dict[str, str] | None = None,
+    strategy_override: str | None = None,
 ) -> VizResult:
     """Generate a Vega-Lite chart comparing multiple Data360 indicators.
 
@@ -1829,6 +2656,7 @@ async def get_multi_indicator_viz_spec(
         # Wrap at 80 characters to ensure it fits safely within standard chart widths
         final_chart_title = textwrap.wrap(full_title, width=80)
 
+    units_raw_per_indicator = list(units)  # preserve raw codes before label resolution
     unique_raw_units = list(dict.fromkeys(u for u in units if u))
     # Resolve raw unit codes (e.g. "PT") to human-readable labels (e.g. "Percent")
     # using the same extdataportal bundle used by get_viz_spec.
@@ -1845,6 +2673,31 @@ async def get_multi_indicator_viz_spec(
     chart_title_vl: str | dict = viz_config.build_chart_title_with_context(
         final_chart_title, shared_unit_label or None, merged
     )
+
+    # Append missing-country warning to the subtitle so the user sees it.
+    if isinstance(chart_title_vl, dict):
+        _sub = chart_title_vl.get("subtitle", [])
+        if isinstance(_sub, str):
+            _sub = [_sub]
+        else:
+            _sub = list(_sub)
+
+        present_set = set(merged["country"].dropna().unique()) if "country" in merged.columns else set()
+        missing_names = await _detect_missing_countries(country_code, present_set)
+        if missing_names:
+            missing_str = ", ".join(missing_names)
+            _sub.append(f"Note: Data unavailable for {missing_str}.")
+
+        chart_title_vl["subtitle"] = _sub
+    elif isinstance(chart_title_vl, str):
+        present_set = set(merged["country"].dropna().unique()) if "country" in merged.columns else set()
+        missing_names = await _detect_missing_countries(country_code, present_set)
+        if missing_names:
+            missing_str = ", ".join(missing_names)
+            chart_title_vl = {
+                "text": chart_title_vl,
+                "subtitle": [f"Note: Data unavailable for {missing_str}."]
+            }
 
     # 6. Build indicator_labels for axis/tooltip
     def _format_label(t: str, u: str | None) -> str:
@@ -1865,22 +2718,33 @@ async def get_multi_indicator_viz_spec(
             if col in series_labels:
                 indicator_labels[col] = series_labels[col]
 
-    # 7. Select strategy
+    # 7. Build data profile BEFORE routing so coverage signals inform strategy selection
+    data_profile = _build_data_profile(
+        merged,
+        indicator_cols=indicator_col_names,
+        indicator_names=titles,
+        units_raw=units_raw_per_indicator,
+        units_label=list(units),
+    )
+
+    # Select strategy (informed by data_profile coverage signals)
     strategy_result = viz_config.select_strategy(
         merged,
         n_indicators=len(indicator_ids),
         chart_type_hint=chart_type,
         indicator_cols=indicator_col_names,
+        data_profile=data_profile,
+        strategy_override=strategy_override,
     )
     _logger.info(
         f"Multi-indicator strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
     )
 
-    # 7b. Reshape for stacked area: melt wide → long
-    # build_stacked_area_spec expects a DataFrame with a single "value" column and a
+    # 7b. Reshape for stacked area / stacked bar: melt wide → long
+    # build_stacked_area_spec and build_stacked_bar_spec expect a DataFrame with a single "value" column and a
     # "indicator" color column, not the wide merged layout produced by the join above.
     spec_df = merged
-    if strategy_result.strategy == viz_config.ChartStrategy.STACKED_AREA:
+    if strategy_result.strategy in (viz_config.ChartStrategy.STACKED_AREA, viz_config.ChartStrategy.STACKED_BAR):
         id_cols = [c for c in merged.columns if c not in indicator_col_names]
         spec_df = merged.melt(
             id_vars=id_cols,
@@ -1894,7 +2758,7 @@ async def get_multi_indicator_viz_spec(
         spec_df = spec_df.dropna(subset=["value"])
         # Propagate the color_dim so the builder picks up the indicator column
         strategy_result = viz_config.StrategyResult(
-            viz_config.ChartStrategy.STACKED_AREA,
+            strategy_result.strategy,
             strategy_result.reason,
             indicator_cols=strategy_result.indicator_cols,
             color_dim="indicator",
@@ -1911,7 +2775,7 @@ async def get_multi_indicator_viz_spec(
             viz_config.ChartStrategy.BREAKDOWN_COMPARISON,
             viz_config.ChartStrategy.SMALL_MULTIPLES,
         )
-        and strategy_result.color_dim == "indicator"
+        and (strategy_result.color_dim == "indicator" or strategy_result.facet_dim == "indicator")
     ):
         id_cols = [c for c in merged.columns if c not in indicator_col_names]
         spec_df = merged.melt(
@@ -1979,14 +2843,15 @@ async def get_multi_indicator_viz_spec(
     }
 
     # Apply post-processing rules
-    for rule in viz_config.POST_PROCESSING_RULES:
-        spec = rule.apply(
-            spec,
-            data_frequency=None,
-            unit_measure=_unit_measure_for_formatting(
-                shared_unit_raw, shared_unit_label
-            ),
-        )
+    spec = _apply_post_processing_rules(
+        spec,
+        data_frequency=None,
+        unit_measure=_unit_measure_for_formatting(
+            shared_unit_raw, shared_unit_label
+        ),
+        strategy_result=strategy_result,
+        df=spec_df
+    )
 
     out_reason = strategy_result.reason
     if strategy_result.strategy == viz_config.ChartStrategy.TEMPORAL_SINGLE:
@@ -1997,6 +2862,9 @@ async def get_multi_indicator_viz_spec(
             )
 
     url = await _store_spec(spec)
+
+    # data_profile was built before routing — read from strategy_result
+    data_profile = strategy_result.data_profile or {}
 
     warning_msg = None
     if chart_type:
@@ -2031,4 +2899,5 @@ async def get_multi_indicator_viz_spec(
         source_attribution=source_attribution_multi,
         strategy=strategy_result.strategy.value,
         reason=out_reason,
+        data_profile=data_profile or None,
     )

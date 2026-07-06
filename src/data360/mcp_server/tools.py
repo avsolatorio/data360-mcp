@@ -13,6 +13,7 @@ from fastmcp.tools.tool import Tool
 from data360 import api as data360_api
 from data360 import providers as data360_providers
 from data360 import visualization as data360_viz
+from data360 import viz_config as data360_viz_config
 
 from ._server_definition import mcp
 from .tool_spans import instrument_mcp_tool
@@ -268,8 +269,9 @@ async def _get_viz_spec(
     relevant_fields: list[str] | None = None,
     custom_constraints: list[str] | None = None,
     use_default_constraints: bool = True,
-    chart_title: str | None = None,
+    chart_title: str | dict | None = None,
     series_labels: dict[str, str] | None = None,
+    strategy_override: str | None = None,
 ) -> dict[str, Any]:
     """Generate a Vega-Lite chart from a single Data360 indicator.
 
@@ -290,6 +292,7 @@ async def _get_viz_spec(
         use_default_constraints: Whether to apply default Draco design constraints.
         chart_title: Title for the chart.
         series_labels: Rename dimension codes for legend (e.g. {"WGI_EST": "Estimate"}).
+        strategy_override: Explicitly force a chart strategy (e.g. "stacked_bar", "temporal_single").
     """
     return await data360_viz.get_viz_spec(
         database_id=database_id,
@@ -304,6 +307,7 @@ async def _get_viz_spec(
         use_default_constraints=use_default_constraints,
         chart_title=chart_title,
         series_labels=series_labels,
+        strategy_override=strategy_override,
     )
 
 
@@ -314,8 +318,9 @@ async def _get_multi_indicator_viz_spec(
     end_year: int | None = None,
     disaggregation_filters: dict[str, str | None] | None = None,
     chart_type: str | None = None,
-    chart_title: str | None = None,
+    chart_title: str | dict | None = None,
     series_labels: dict[str, str] | None = None,
+    strategy_override: str | None = None,
 ) -> dict[str, Any]:
     """Generate a Vega-Lite chart comparing multiple Data360 indicators.
 
@@ -331,6 +336,7 @@ async def _get_multi_indicator_viz_spec(
         chart_type: Optional chart type override (e.g. "scatter", "line").
         chart_title: Title for the chart.
         series_labels: Rename dimension codes for legend.
+        strategy_override: Explicitly force a chart strategy (e.g. "stacked_bar", "vconcat_panels").
     """
     return await data360_viz.get_multi_indicator_viz_spec(
         indicator_ids=indicator_ids,
@@ -341,15 +347,27 @@ async def _get_multi_indicator_viz_spec(
         chart_type=chart_type,
         chart_title=chart_title,
         series_labels=series_labels,
+        strategy_override=strategy_override,
     )
 
 
 def _get_supported_chart_types() -> str:
     """Return supported chart types and their data requirements as JSON.
 
-    Use when deciding which chart_type value to pass to visualization tools.
+    **DEPRECATED**: Read the ``data360://viz/chart-grammar`` resource instead.
+    This tool is preserved for backward compatibility.
     """
-    return data360_viz.get_supported_chart_types()
+    import json
+
+    result = data360_viz.get_supported_chart_types()
+    parsed = json.loads(result)
+    parsed["_deprecation_notice"] = (
+        "This tool is deprecated. Read the data360://viz/chart-grammar resource "
+        "for comprehensive chart strategy rules. The data_profile in every viz "
+        "response now includes per-indicator ranges and scale compatibility."
+    )
+    return json.dumps(parsed, indent=2)
+
 
 
 async def _expand_country_group(
