@@ -375,7 +375,7 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
 
       const app = new App({ name: "Data360 Vega-Lite Renderer", version: "1.0.0" });
 
-      app.ontoolresult = (result) => {
+      app.ontoolresult = async (result) => {
         if (result.isError) {
           document.getElementById('vis').innerHTML = `<p style="color:red;">Error: ${result.content || "Failed to render chart"}</p>`;
           return;
