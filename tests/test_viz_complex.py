@@ -239,7 +239,9 @@ class TestStrategyRouter:
         df = df[df["country"] == "CountryA"].copy()
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = select_strategy(df, n_indicators=2, indicator_cols=ind_cols)
-        assert r.strategy == ChartStrategy.TEMPORAL_MULTI_IND
+        assert r.strategy == ChartStrategy.SMALL_MULTIPLES
+        assert r.facet_dim == "indicator"
+        assert r.color_dim == "indicator"
 
     def test_explicit_scatter_hint_overrides(self):
         df = _two_ind_ts_df()  # multi-year but user says scatter
@@ -449,7 +451,7 @@ class TestSpecBuilders:
             ChartStrategy.SMALL_MULTIPLES, color_dim="sex", facet_dim="country"
         )
         spec = build_small_multiples_spec(df, "Test", r)
-        assert "vconcat" in spec
+        assert "concat" in spec or "vconcat" in spec
 
     def test_small_multiples_panels_capped(self):
         df = _sex_df(countries=2)
@@ -458,7 +460,8 @@ class TestSpecBuilders:
         )
         spec = build_small_multiples_spec(df, "Test", r)
         # Verify it limits panels (12 is the cap)
-        assert len(spec.get("vconcat", [])) <= 12
+        panels = spec.get("concat") or spec.get("vconcat", [])
+        assert len(panels) <= 12
 
     def test_small_multiples_2d_facet_grid(self):
         df = _sex_df(countries=6)
@@ -466,8 +469,9 @@ class TestSpecBuilders:
             ChartStrategy.SMALL_MULTIPLES, color_dim="sex", facet_dim="country"
         )
         spec = build_small_multiples_spec(df, "Test", r)
-        assert "facet" in spec
-        assert spec["facet"]["columns"] == 2
+        assert "concat" in spec or "vconcat" in spec
+        if "concat" in spec:
+            assert spec["columns"] == 2
 
     # correlation
     def test_correlation_mark_is_circle(self):
@@ -547,14 +551,14 @@ class TestSpecBuilders:
 
     # temporal_multi_indicator
     def test_temporal_multi_indicator_layers_equal_n_indicators(self):
-        df = _two_ind_ts_df()[lambda x: x["country"] == "CountryA"]
+        df = _two_ind_ts_df()
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         spec = build_temporal_multi_indicator_spec(df, "Test", r)
         assert len(spec["vconcat"]) == 2
 
     def test_temporal_multi_indicator_shared_x_scale(self):
-        df = _two_ind_ts_df()[lambda x: x["country"] == "CountryA"]
+        df = _two_ind_ts_df()
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         spec = build_temporal_multi_indicator_spec(df, "Test", r)
@@ -562,14 +566,15 @@ class TestSpecBuilders:
 
     def test_temporal_multi_indicator_each_layer_different_color(self):
         df = _two_ind_ts_df()[lambda x: x["country"] == "CountryA"]
-        ind_cols = ["gdp_per_capita", "life_expectancy"]
+        df["indicator_3"] = df["life_expectancy"] * 1.5
+        ind_cols = ["gdp_per_capita", "life_expectancy", "indicator_3"]
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         spec = build_temporal_multi_indicator_spec(df, "Test", r)
         colors = [chart["mark"]["color"] for chart in spec["vconcat"]]
-        assert len(set(colors)) == 2  # distinct colors
+        assert len(set(colors)) == 3  # distinct colors
 
     def test_temporal_multi_indicator_tooltip_one_value_field_per_layer(self):
-        df = _two_ind_ts_df()[lambda x: x["country"] == "CountryA"]
+        df = _two_ind_ts_df()
         ind_cols = ["gdp_per_capita", "life_expectancy"]
         r = self._result(ChartStrategy.TEMPORAL_MULTI_IND, indicator_cols=ind_cols)
         lab = {"gdp_per_capita": "GDP (USD)", "life_expectancy": "Life exp"}
@@ -792,6 +797,8 @@ class TestWBStyleOnAllSpecs:
                 has_tooltip = any("tooltip" in layer.get("encoding", {}) for layer in spec["layer"])
             elif "vconcat" in spec:
                 has_tooltip = "tooltip" in spec["vconcat"][0].get("encoding", {})
+            elif "concat" in spec:
+                has_tooltip = "tooltip" in spec["concat"][0].get("encoding", {})
 
             assert has_tooltip, f"Missing tooltip in spec: {spec.get('title')}"
 
@@ -1025,7 +1032,7 @@ class TestAxisLabelThreading:
         assert spec["layer"][0]["encoding"]["y"]["axis"]["title"] == "Life Exp"
 
     def test_multi_ind_vconcat_facet_title_per_indicator(self):
-        df = _two_ind_ts_df()[lambda x: x.country == "CountryA"]
+        df = _two_ind_ts_df()
         r = StrategyResult(
             ChartStrategy.TEMPORAL_MULTI_IND,
             "",

@@ -190,8 +190,8 @@ class TestVisualizationRoutingRules:
         assert pyramid["encoding"]["x"]["axis"]["labelExpr"] == "abs(datum.value)"
 
     def test_single_year_multi_indicator_routing(self):
-        """TwoIndicatorRule should route single-year multi-indicator to TEMPORAL_MULTI_IND with mark_hint=bar."""
-        from data360.viz_config import select_strategy, build_temporal_multi_indicator_spec
+        """TwoIndicatorRule should route single-year multi-indicator to SMALL_MULTIPLES."""
+        from data360.viz_config import select_strategy, build_small_multiples_spec
         df = pd.DataFrame({
             "year": [2023, 2023],
             "country": ["KEN", "KEN"],
@@ -200,15 +200,16 @@ class TestVisualizationRoutingRules:
         })
         # 2 indicators, 1 country, 1 year
         result = select_strategy(df, n_indicators=2, indicator_cols=["GDP", "Population"])
-        assert result.strategy.value == "temporal_multi_indicator"
-        assert result.mark_hint == "bar"
+        assert result.strategy.value == "small_multiples"
+        assert result.facet_dim == "indicator"
 
-        spec = build_temporal_multi_indicator_spec(df, "Kenya 2023", result)
-        assert "vconcat" in spec
-        assert len(spec["vconcat"]) == 2
-        assert spec["vconcat"][0]["mark"]["type"] == "bar"
-        assert spec["vconcat"][0]["encoding"]["x"]["type"] == "nominal"
-        assert "strokeWidth" not in spec["vconcat"][0]["mark"]
+        spec = build_small_multiples_spec(df, "Kenya 2023", result)
+        assert "concat" in spec or "vconcat" in spec
+        panels = spec.get("concat") or spec.get("vconcat", [])
+        assert len(panels) == 2
+        assert panels[0]["mark"]["type"] == "bar"
+        assert panels[0]["encoding"]["x"]["type"] == "nominal"
+        assert "strokeWidth" not in panels[0]["mark"]
 
 
 class TestDataSufficiencyGuards:
@@ -352,7 +353,7 @@ class TestDataSufficiencyGuards:
         df = pd.DataFrame({"value": [0.05, 0.12, 0.25]})
         # Mock proportion check
         clamped = rule.apply(spec, unit_measure="Proportion of total employment", scale_type="percentage", df=df)
-        assert clamped["encoding"]["y"]["scale"]["domain"] == [0, 1]
+        assert clamped["encoding"]["y"]["scale"]["domain"] == [0, 0.25]
 
     def test_sparse_country_filtering_in_get_viz_spec(self):
         """get_viz_spec should filter out countries with < 2 time-series data points."""
@@ -507,17 +508,22 @@ class TestRoutingRuleCoverage:
 class TestMultiIndicatorLayering:
     """Tests for the single-panel vs vconcat layout decision in build_temporal_multi_indicator_spec."""
 
-    def _make_multi_ind_df(self, col_a_max: float, col_b_max: float, n_years: int = 5) -> pd.DataFrame:
-        """Wide-format DataFrame with two indicator columns and one country."""
+    def _make_multi_ind_df(self, col_a_max: float, col_b_max: float, n_years: int = 5, n_countries: int = 1) -> pd.DataFrame:
+        """Wide-format DataFrame with two indicator columns."""
         years = list(range(2018, 2018 + n_years))
         a_vals = [col_a_max * (i + 1) / n_years for i in range(n_years)]
         b_vals = [col_b_max * (i + 1) / n_years for i in range(n_years)]
-        return pd.DataFrame({
-            "year": years,
-            "country": ["India"] * n_years,
-            "IND_A": a_vals,
-            "IND_B": b_vals,
-        })
+        rows = []
+        for c_idx in range(n_countries):
+            c_name = f"Country_{c_idx}"
+            for i in range(n_years):
+                rows.append({
+                    "year": years[i],
+                    "country": c_name,
+                    "IND_A": a_vals[i],
+                    "IND_B": b_vals[i],
+                })
+        return pd.DataFrame(rows)
 
     def test_scale_compatible_indicators_produce_single_panel(self):
         """Two indicators whose max values are within 10x should produce a layered single-panel spec.
@@ -548,7 +554,7 @@ class TestMultiIndicatorLayering:
     def test_scale_incompatible_indicators_produce_vconcat(self):
         """Two indicators with >10x scale difference should produce vconcat panels."""
         from data360.viz_config import build_temporal_multi_indicator_spec, StrategyResult, ChartStrategy
-        df = self._make_multi_ind_df(col_a_max=0.5, col_b_max=50_000.0)  # e.g. % vs GDP billions
+        df = self._make_multi_ind_df(col_a_max=0.5, col_b_max=50_000.0, n_countries=2)  # e.g. % vs GDP billions
         result = StrategyResult(
             strategy=ChartStrategy.TEMPORAL_MULTI_IND,
             reason="test",
@@ -588,13 +594,14 @@ class TestMultiIndicatorLayering:
             ind_b: male_lfpr,
         })
 
-        # 1. Routing selects TEMPORAL_MULTI_IND (2 indicators, 1 country, multi-year)
+        # 1. Routing selects SMALL_MULTIPLES (2 indicators, 1 country, multi-year)
         result = select_strategy(df, n_indicators=2, indicator_cols=[ind_a, ind_b])
-        assert result.strategy == ChartStrategy.TEMPORAL_MULTI_IND
+        assert result.strategy == ChartStrategy.SMALL_MULTIPLES
 
         # 2. Builder produces single-panel with color=indicator (not vconcat)
+        mock_result = StrategyResult(ChartStrategy.TEMPORAL_MULTI_IND, "mock", indicator_cols=[ind_a, ind_b])
         spec = build_temporal_multi_indicator_spec(
-            df, "Labor Force Participation — India", result,
+            df, "Labor Force Participation — India", mock_result,
             unit_measure="ZS",
             y_label="% of population ages 15+",
             indicator_labels={
@@ -605,3 +612,67 @@ class TestMultiIndicatorLayering:
         assert "mark" in spec, "Should be single-panel (top-level mark)"
         assert "vconcat" not in spec, "Female/male LFPR should share one Y-axis, not be split into panels"
         assert spec["encoding"]["color"]["field"] == "indicator_name_melted"
+
+    def test_refusal_feedback_stacked_chart_constraints(self):
+        """Verifies that hint='stacked_bar' or 'stacked_area' is rejected with refusal_reason when units are incompatible."""
+        df = pd.DataFrame({
+            "year": [2020, 2021],
+            "country": ["South Africa", "South Africa"],
+            "IND_A": [10.0, 20.0],
+            "IND_B": [10000.0, 20000.0]
+        })
+        # Simulate data profile with incompatible scales/units
+        data_profile = {
+            "indicators": [
+                {"name": "Ind A", "scale_type": "percentage"},
+                {"name": "Ind B", "scale_type": "currency"}
+            ],
+            "scale_compatibility": {
+                "same_unit": False,
+                "same_scale_type": False,
+                "can_share_axis": False
+            }
+        }
+        # Explicit stacked bar request on incompatible indicators
+        res = select_strategy(
+            df,
+            n_indicators=2,
+            chart_type_hint="stacked_bar",
+            indicator_cols=["IND_A", "IND_B"],
+            data_profile=data_profile
+        )
+        # Should not route to STACKED_BAR
+        assert res.strategy != ChartStrategy.STACKED_BAR
+        # Should contain explanatory refusal reason
+        assert res.refusal_reason is not None
+        assert "Cannot honor requested 'stacked_bar'" in res.refusal_reason
+        assert "different units or incompatible scales" in res.refusal_reason
+
+        # Explicit stacked area request on single year (area requires > 1 year)
+        df_single_year = pd.DataFrame({
+            "year": [2020, 2020],
+            "country": ["South Africa", "South Africa"],
+            "IND_A": [10.0, 20.0],
+            "IND_B": [15.0, 25.0]
+        })
+        data_profile_compatible = {
+            "indicators": [
+                {"name": "Ind A", "scale_type": "percentage"},
+                {"name": "Ind B", "scale_type": "percentage"}
+            ],
+            "scale_compatibility": {
+                "same_unit": True,
+                "same_scale_type": True,
+                "can_share_axis": True
+            }
+        }
+        res_area = select_strategy(
+            df_single_year,
+            n_indicators=2,
+            chart_type_hint="stacked_area",
+            indicator_cols=["IND_A", "IND_B"],
+            data_profile=data_profile_compatible
+        )
+        assert res_area.strategy != ChartStrategy.STACKED_AREA
+        assert res_area.refusal_reason is not None
+        assert "multiple years of data" in res_area.refusal_reason

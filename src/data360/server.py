@@ -337,7 +337,8 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
                 with open(vega_path, "r") as f:
                     spec = json.load(f)
         except Exception as e:
-            return JSONResponse(status_code=500, content={"error": f"Failed to read generated spec: {str(e)}"})
+            _audit_logger.exception("Failed to read generated spec")
+            return JSONResponse(status_code=500, content={"error": "Failed to read generated spec"})
 
     if not spec:
         return JSONResponse(status_code=500, content={"error": "Spec was generated but could not be retrieved from disk."})
@@ -399,7 +400,8 @@ async def critique_endpoint(req: CritiqueRequest):
             "success": grammar_of_graphics_metric.is_successful()
         }
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": f"Evaluation failed: {str(e)}"})
+        _audit_logger.exception("Evaluation failed")
+        return JSONResponse(status_code=500, content={"error": "Evaluation failed"})
     finally:
         if req.openai_api_key:
             if old_api_key:

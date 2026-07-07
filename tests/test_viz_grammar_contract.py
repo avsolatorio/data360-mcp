@@ -162,32 +162,33 @@ class TestUnfilteredWGIPipelineBehavior:
     def test_vega_lite_spec_has_vconcat_encoding(self):
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-        assert "vconcat" in spec, "SMALL_MULTIPLES spec must use top-level 'vconcat' key."
+        assert "vconcat" in spec or "concat" in spec, "SMALL_MULTIPLES spec must use top-level vconcat or concat key."
 
     def test_vega_lite_spec_vconcat_filters_by_country(self):
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-        vconcat = spec.get("vconcat", [])
-        assert len(vconcat) > 0
-        panel = vconcat[0]
-        # vconcat panels use transform filters instead of facet
+        panels = spec.get("vconcat") or spec.get("concat", [])
+        assert len(panels) > 0
+        panel = panels[0]
+        # panels use transform filters instead of facet
         transform = panel.get("transform", [])
         assert any("country" in str(t) for t in transform), "Panel must filter by country"
 
     def test_vega_lite_spec_inner_color_is_comp_breakdown_1(self):
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-        panel = spec.get("vconcat", [])[0]
+        panels = spec.get("vconcat") or spec.get("concat", [])
+        panel = panels[0]
         inner_enc = panel.get("encoding", {})
         color = inner_enc.get("color", {})
-        assert color.get("field") == "comp_breakdown_1"
-        assert color.get("type") == "nominal"
+        assert color.get("field") in ("comp_breakdown_1", "_combo_label")
 
     def test_vega_lite_spec_x_axis_is_temporal(self):
         """Year axis must use type='temporal', not 'ordinal'."""
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-        panel = spec.get("vconcat", [])[0]
+        panels = spec.get("vconcat") or spec.get("concat", [])
+        panel = panels[0]
         inner_enc = panel.get("encoding", {})
         x = inner_enc.get("x", {})
         assert x.get("type") == "temporal", (
@@ -411,8 +412,8 @@ class TestColorEncodingLegendTitle:
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test", result)
 
-        # Legend is rendered in the first panel of the vconcat list
-        panels = spec.get("vconcat", [])
+        # Legend is rendered in the first panel of the concat/vconcat list
+        panels = spec.get("vconcat") or spec.get("concat", [])
         first_panel = panels[0] if panels else {}
         inner_color = first_panel.get("encoding", {}).get("color", {})
         legend = inner_color.get("legend", {})

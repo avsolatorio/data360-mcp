@@ -238,13 +238,14 @@ class TestLegendMustBeVisible:
             reason="test",
             color_dim="country",
             facet_dim="comp_breakdown_1",
+            scale_incompatible=True,
         )
         spec = build_small_multiples_spec(df, "Test", result)
 
-        panels = spec.get("vconcat", [])
+        panels = spec.get("concat") or spec.get("vconcat", [])
         assert len(panels) >= 2, (
-            f"Expected at least 2 vconcat panels, got {len(panels)}. "
-            "Check that the fixture has enough breakdowns to trigger vconcat path."
+            f"Expected at least 2 panels, got {len(panels)}. "
+            "Check that the fixture has enough breakdowns to trigger multiple panels."
         )
 
         suppressed = []
@@ -331,9 +332,9 @@ class TestLegendSharedColorSuppression:
         )
         spec = build_small_multiples_spec(df, "Test", result)
 
-        panels = spec.get("vconcat", [])
+        panels = spec.get("concat") or spec.get("vconcat", [])
         if not panels:
-            pytest.skip("Spec uses Vega-Lite native facet — vconcat panel check not applicable")
+            pytest.skip("Spec uses Vega-Lite native facet — concat/vconcat panel check not applicable")
 
         suppressed = []
         for i, panel in enumerate(panels):

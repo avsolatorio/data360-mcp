@@ -215,8 +215,29 @@ def wb_altair_config() -> dict:
     }
 
 
+def _suppress_redundant_legends(node):
+    if isinstance(node, dict):
+        if "encoding" in node:
+            enc = node["encoding"]
+            if isinstance(enc, dict):
+                color_enc = enc.get("color")
+                if isinstance(color_enc, dict) and "field" in color_enc:
+                    color_field = color_enc.get("field")
+                    if color_field:
+                        x_field = enc.get("x", {}).get("field") if isinstance(enc.get("x"), dict) else None
+                        y_field = enc.get("y", {}).get("field") if isinstance(enc.get("y"), dict) else None
+                        if color_field in (x_field, y_field):
+                            color_enc["legend"] = None
+        for k, v in node.items():
+            _suppress_redundant_legends(v)
+    elif isinstance(node, list):
+        for item in node:
+            _suppress_redundant_legends(item)
+
+
 def inject_wb_config(vl_spec: dict) -> dict:
     """Merge WB style config into a Vega-Lite spec without overwriting user settings."""
+    _suppress_redundant_legends(vl_spec)
     wb_cfg = wb_altair_config()
     if "config" not in vl_spec:
         vl_spec["config"] = wb_cfg
@@ -375,13 +396,17 @@ def _clean_unit_label(label: str) -> str:
     if not label:
         return "Value"
     l = label.lower()
+    if "(" in label or "per" in l or "/" in label:
+        return label.strip()
     if "percent" in l or "percentage" in l or "%" in l:
         if "gdp" in l:
             return "% of GDP"
-        return "Percentage"
+        return "%" if label == "%" else "Percentage"
     if "index" in l or "score" in l:
         return "Index"
     if "usd" in l or "us$" in l or "dollar" in l:
+        if "constant" in l or "current" in l:
+            return label.strip()
         return "USD"
     if "share" in l or "proportion" in l or "ratio" in l:
         return "Share"
@@ -389,9 +414,7 @@ def _clean_unit_label(label: str) -> str:
         return "Estimate"
     if "co2" in l or "greenhouse" in l:
         return "Tonnes CO2-eq"
-    if len(label) <= 15:
-        return label.strip()
-    return "Value"
+    return label.strip()
 
 
 # Dimension codes that are custom breakdowns (not standard demographic dims).
@@ -913,6 +936,7 @@ class StrategyResult:
     raw_hint: str | None = None
     # Full data profile computed before routing; returned in tool responses
     data_profile: dict | None = None
+    refusal_reason: str | None = None
 
 
 from typing import Protocol
@@ -941,6 +965,12 @@ class RoutingContext:
     # Coverage quality signals from data profile (set when data_profile is passed to select_strategy)
     sparse_country_count: int = 0
     completeness_pct: float = 100.0
+    same_unit: bool = True
+    can_share_axis: bool = True
+    refusal_reason: str | None = None
+
+    def register_refusal(self, hint: str, reason: str):
+        self.refusal_reason = f"Cannot honor requested '{hint}': {reason}"
 
     @classmethod
     def build(
@@ -976,6 +1006,35 @@ class RoutingContext:
         cb3_count = df["comp_breakdown_3"].nunique() if "comp_breakdown_3" in cols else 0
         unit_count = df["unit_measure"].nunique() if "unit_measure" in cols else 0
 
+        # Identify statistical error band breakdowns to exclude them from routing disaggregation counts
+        # BUT only if country_count <= 1. If we have multiple countries, we route to small multiples
+        # to avoid overlapping confidence interval bands in a single plot.
+        err_band_dims = set()
+        if country_count <= 1:
+            for col_name in ("comp_breakdown_1", "comp_breakdown_2", "comp_breakdown_3"):
+                if col_name in cols:
+                    unique_vals = [str(x).lower().strip() for x in df[col_name].dropna().unique()]
+                    if unique_vals:
+                        is_err = True
+                        for val in unique_vals:
+                            is_val_err = False
+                            if "estimate" in val:
+                                is_val_err = True
+                            elif val == "est" or val.startswith("est ") or val.endswith(" est") or " est " in val:
+                                is_val_err = True
+                            elif "standard error" in val or "std error" in val or "std. error" in val:
+                                is_val_err = True
+                            elif val in ("stderr", "std_err", "std.err", "std. err", "s.e."):
+                                is_val_err = True
+                            elif val == "se" or val.startswith("se ") or val.endswith(" se") or " se " in val:
+                                is_val_err = True
+
+                            if not is_val_err:
+                                is_err = False
+                                break
+                        if is_err:
+                            err_band_dims.add(col_name)
+
         breakdown_counts = {
             k: v
             for k, v in [
@@ -983,9 +1042,9 @@ class RoutingContext:
                 ("age", age_count),
                 ("urbanisation", urban_count),
                 ("residence", residence_count),
-                ("comp_breakdown_1", cb1_count),
-                ("comp_breakdown_2", cb2_count),
-                ("comp_breakdown_3", cb3_count),
+                ("comp_breakdown_1", cb1_count if "comp_breakdown_1" not in err_band_dims else 0),
+                ("comp_breakdown_2", cb2_count if "comp_breakdown_2" not in err_band_dims else 0),
+                ("comp_breakdown_3", cb3_count if "comp_breakdown_3" not in err_band_dims else 0),
                 ("unit_measure", unit_count),
             ]
             if v > 1
@@ -1074,19 +1133,27 @@ class ExplicitScatterRule:
 class ExplicitStackedAreaMultiIndicatorRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
         if ctx.hint in ("area", "stacked_area") and ctx.n_indicators >= 2 and len(ctx.ind_cols) >= 2:
-            if ctx.year_count > 1:
-                return StrategyResult(
-                    ChartStrategy.STACKED_AREA,
-                    f"User requested stacked area; {ctx.n_indicators} indicators, {ctx.year_count} years → stacked area chart",
-                    indicator_cols=ctx.ind_cols,
-                    color_dim="indicator",
-                )
+            if not (ctx.same_unit and ctx.can_share_axis):
+                ctx.register_refusal(ctx.hint, "Indicators represent different units or incompatible scales")
+                return None
+            if ctx.year_count <= 1:
+                ctx.register_refusal(ctx.hint, "Area charts require multiple years of data")
+                return None
+            return StrategyResult(
+                ChartStrategy.STACKED_AREA,
+                f"User requested stacked area; {ctx.n_indicators} indicators, {ctx.year_count} years → stacked area chart",
+                indicator_cols=ctx.ind_cols,
+                color_dim="indicator",
+            )
         return None
 
 class ExplicitStackedBarRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
         if ctx.hint in ("stacked_bar", "bar"):
             if ctx.n_indicators >= 2 and len(ctx.ind_cols) >= 2:
+                if not (ctx.same_unit and ctx.can_share_axis):
+                    ctx.register_refusal(ctx.hint, "Indicators represent different units or incompatible scales")
+                    return None
                 return StrategyResult(
                     ChartStrategy.STACKED_BAR,
                     f"User requested stacked bar; {ctx.n_indicators} indicators → stacked bar chart",
@@ -1164,7 +1231,7 @@ class ExplicitSmallMultiplesRule:
         return None
 
 
-def _axes_are_incompatible(df: "pd.DataFrame", ind_cols: list) -> bool:
+def _axes_are_incompatible(df: "pd.DataFrame", ind_cols: list, scale_type: str | None = None) -> bool:
     """Return True when indicators cannot meaningfully share a single Y-axis.
 
     Three complementary tests — all data-driven and domain-agnostic:
@@ -1203,10 +1270,20 @@ def _axes_are_incompatible(df: "pd.DataFrame", ind_cols: list) -> bool:
         if max_abs > 0:
             mags.append(_m.log10(max_abs))
 
-    # Test 1: any pair exceeds a 10× magnitude ratio
+    # Test 1: any pair exceeds magnitude ratio threshold
+    valid_cols = [col for col in ind_cols if col in df.columns and not pd.to_numeric(df[col], errors="coerce").dropna().empty]
     for i in range(len(mags)):
         for j in range(i + 1, len(mags)):
-            if abs(mags[i] - mags[j]) >= 1.0:
+            col_i, col_j = valid_cols[i], valid_cols[j]
+            s_i = pd.to_numeric(df[col_i], errors="coerce").dropna()
+            s_j = pd.to_numeric(df[col_j], errors="coerce").dropna()
+            is_pct_i = any(x in col_i.lower() for x in ["%", "percent", "pct", "proportion", "share", "rate"]) and s_i.max() <= 100.0 and s_i.min() >= 0.0
+            is_pct_j = any(x in col_j.lower() for x in ["%", "percent", "pct", "proportion", "share", "rate"]) and s_j.max() <= 100.0 and s_j.min() >= 0.0
+            same_numeric_scale = not ((s_i.max() <= 1.0) ^ (s_j.max() <= 1.0))
+
+            is_pct = (scale_type == "percentage") or (is_pct_i and is_pct_j and same_numeric_scale)
+            thresh = float("inf") if is_pct else 1.0
+            if abs(mags[i] - mags[j]) >= thresh:
                 return True
 
     # Test 2: sign-domain mismatch — some medians negative, some non-negative
@@ -1216,12 +1293,15 @@ def _axes_are_incompatible(df: "pd.DataFrame", ind_cols: list) -> bool:
 
     # Test 3: range non-overlap — any pair of indicators has disjoint [min, max]
     # Two ranges [a,b] and [c,d] overlap iff b >= c AND d >= a.
-    for i in range(len(ranges)):
-        for j in range(i + 1, len(ranges)):
-            a, b = ranges[i]
-            c, d = ranges[j]
-            if b < c or d < a:  # ranges are disjoint
-                return True
+    # Percentage-based indicators share the same bounded [0, 100] scale, so range non-overlap is bypassed.
+    is_pct_scale = (scale_type == "percentage")
+    if not is_pct_scale:
+        for i in range(len(ranges)):
+            for j in range(i + 1, len(ranges)):
+                a, b = ranges[i]
+                c, d = ranges[j]
+                if b < c or d < a:  # ranges are disjoint
+                    return True
 
     return False
 
@@ -1266,7 +1346,7 @@ class TwoIndicatorRule:
                         color_dim="country",
                     )
                 try:
-                    is_incompatible = _axes_are_incompatible(ctx.df, ctx.ind_cols)
+                    is_incompatible = _axes_are_incompatible(ctx.df, ctx.ind_cols, ctx.scale_type)
                 except Exception:
                     is_incompatible = False
 
@@ -1282,22 +1362,28 @@ class TwoIndicatorRule:
 
                 return StrategyResult(
                     ChartStrategy.SMALL_MULTIPLES,
-                    f"2 indicators, {ctx.country_count} economies, {ctx.year_count} years → small multiples",
+                    (
+                        f"2 indicators (scale-compatible), "
+                        f"{ctx.country_count} economies, {ctx.year_count} years → small multiples (facet=indicator, color=country)"
+                    ),
                     indicator_cols=ctx.ind_cols,
-                    color_dim="indicator",
-                    facet_dim="country",
+                    color_dim="country",
+                    facet_dim="indicator",
                 )
             if ctx.year_count <= 1:
                 return StrategyResult(
-                    ChartStrategy.TEMPORAL_MULTI_IND,
-                    "2 indicators, 1 country, single year → multi-axis bars",
+                    ChartStrategy.SMALL_MULTIPLES,
+                    "2 indicators, 1 country, single year → small multiples (facet=indicator, color=indicator)",
                     indicator_cols=ctx.ind_cols,
-                    mark_hint="bar",
+                    color_dim="indicator",
+                    facet_dim="indicator",
                 )
             return StrategyResult(
-                ChartStrategy.TEMPORAL_MULTI_IND,
-                f"2 indicators, 1 country, {ctx.year_count} years → layered lines",
+                ChartStrategy.SMALL_MULTIPLES,
+                f"2 indicators, 1 country, {ctx.year_count} years → small multiples (facet=indicator, color=indicator)",
                 indicator_cols=ctx.ind_cols,
+                color_dim="indicator",
+                facet_dim="indicator",
             )
         return None
 
@@ -1311,7 +1397,7 @@ class ThreePlusIndicatorRule:
             # independent Y-axes (one panel per indicator, color=country).
             if ctx.year_count > 1 and ctx.country_count >= 1:
                 try:
-                    is_incompatible = _axes_are_incompatible(ctx.df, ctx.ind_cols)
+                    is_incompatible = _axes_are_incompatible(ctx.df, ctx.ind_cols, ctx.scale_type)
                 except Exception:
                     is_incompatible = False
 
@@ -1334,18 +1420,32 @@ class ThreePlusIndicatorRule:
                         (
                             f"{ctx.n_indicators} indicators, "
                             f"{ctx.country_count} economies, {ctx.year_count} years "
-                            f"→ small multiples (facet=country, color=indicator)"
+                            f"→ small multiples (facet=indicator, color=country)"
                         ),
                         indicator_cols=ctx.ind_cols,
-                        color_dim="indicator",
-                        facet_dim="country",
+                        color_dim="country",
+                        facet_dim="indicator",
                     )
 
+            if ctx.country_count > 1:
+                return StrategyResult(
+                    ChartStrategy.SMALL_MULTIPLES,
+                    (
+                        f"{ctx.n_indicators} indicators, "
+                        f"{ctx.country_count} economies → "
+                        f"small multiples (facet=indicator, color=country)"
+                    ),
+                    indicator_cols=ctx.ind_cols,
+                    color_dim="country",
+                    facet_dim="indicator",
+                )
+
             return StrategyResult(
-                ChartStrategy.TEMPORAL_MULTI_IND,
-                f"{ctx.n_indicators} indicators → multi-axis {mark_hint}s",
+                ChartStrategy.SMALL_MULTIPLES,
+                f"{ctx.n_indicators} indicators, 1 country → small multiples (facet=indicator, color=indicator)",
                 indicator_cols=ctx.ind_cols,
-                mark_hint=mark_hint,
+                color_dim="indicator",
+                facet_dim="indicator",
             )
         return None
 
@@ -1353,6 +1453,13 @@ class ThreePlusIndicatorRule:
 class StackedAreaRule:
     def evaluate(self, ctx: RoutingContext) -> StrategyResult | None:
         if ctx.hint in ("area", "stacked_area") and "unit_measure" not in ctx.breakdown_counts:
+            if ctx.n_indicators >= 2:
+                if not (ctx.same_unit and ctx.can_share_axis):
+                    ctx.register_refusal(ctx.hint, "Indicators represent different units or incompatible scales")
+                    return None
+            if ctx.year_count <= 1:
+                ctx.register_refusal(ctx.hint, "Area charts require multiple years of data")
+                return None
             if ctx.year_count > 1:
                 color_dim = None
                 if ctx.breakdown_counts:
@@ -1621,6 +1728,14 @@ def select_strategy(
         ctx.sparse_country_count = len(cq.get("sparse_countries", []))
         ctx.completeness_pct = cq.get("completeness_pct", 100.0)
 
+        scale_comp = data_profile.get("scale_compatibility", {})
+        ctx.same_unit = scale_comp.get("same_unit", True)
+        ctx.can_share_axis = scale_comp.get("can_share_axis", True)
+
+        inds = data_profile.get("indicators", [])
+        if inds and all(ind.get("scale_type") == "percentage" for ind in inds):
+            ctx.scale_type = "percentage"
+
     res: StrategyResult | None = None
 
     # Handle explicit strategy override
@@ -1645,6 +1760,7 @@ def select_strategy(
     res.scale_type = ctx.scale_type
     res.unit_mult = ctx.unit_mult
     res.raw_hint = ctx.raw_hint
+    res.refusal_reason = ctx.refusal_reason
 
     # Attach the full data profile to the result so it travels with the strategy
     if data_profile is not None:
@@ -1907,12 +2023,13 @@ def _resolve_axis_title(
     indicator_name: str | None,
 ) -> str | None:
     """Return the best available axis title for a value axis, using only the short unit of measure."""
-    if not y_label:
-        return None
     _GENERIC = {"value", ""}
-    if y_label.lower() in _GENERIC:
-        return None
-    return _clean_unit_label(y_label)
+    unit_ok = y_label is not None and y_label.lower() not in _GENERIC
+    if unit_ok:
+        return _clean_unit_label(y_label)
+    if indicator_name:
+        return indicator_name
+    return None
 
 
 def _detect_temporal_frequency(series: pd.Series) -> TemporalFreq:
@@ -2085,6 +2202,26 @@ def _x_temporal_encoding(freq: TemporalFreq = "annual") -> dict:
     return copy.deepcopy(_TEMPORAL_X_ENCODING.get(freq, _TEMPORAL_X_ENCODING["annual"]))
 
 
+def _is_proportion_indicator(df, unit_measure=None, scale_type=None):
+    """Check if the indicator unit, scale_type, or name suggests it's a proportion/rate/share."""
+    normalized_unit = (unit_measure or "").upper()
+    if scale_type == "percentage" or "%" in normalized_unit or "PERCENT" in normalized_unit:
+        return True
+
+    keywords = {"PROPORTION", "SHARE", "RATE", "RATIO", "FRACTION"}
+    if any(k in normalized_unit for k in keywords):
+        return True
+
+    if df is not None and "indicator" in df.columns:
+        ind_names = df["indicator"].dropna().unique()
+        for name in ind_names:
+            name_upper = str(name).upper()
+            if any(k in name_upper for k in keywords) or "PERCENT" in name_upper or "%" in name_upper:
+                return True
+
+    return False
+
+
 def _value_label_expr(unit_measure: str | None = None, scale_type: str | None = None) -> str:
     """Vega expression for custom k/m/b/t axis label formatting."""
     normalized = (unit_measure or "").upper().strip()
@@ -2094,7 +2231,7 @@ def _value_label_expr(unit_measure: str | None = None, scale_type: str | None = 
     prefix = "$" if is_currency else ""
     is_percentage = scale_type == "percentage" or "%" in normalized or "PERCENT" in normalized
     if is_percentage:
-        return "format(datum.value, '.1f') + '%'"
+        return "format(datum.value, '.1~f') + '%'"
     if unit_measure == "T":
         tiers = [("1e12", "Gt"), ("1e9", "Mt"), ("1e6", "Kt")]
     elif unit_measure == "W_POP":
@@ -2104,13 +2241,13 @@ def _value_label_expr(unit_measure: str | None = None, scale_type: str | None = 
     else:
         tiers = [("1e12", "t"), ("1e9", "b"), ("1e6", "m"), ("1e3", "k")]
     parts = [
-        f"abs(datum.value)>={t} ? '{prefix}'+format(datum.value/{t},'.1f')+'{s}'"
+        f"abs(datum.value)>={t} ? '{prefix}'+format(datum.value/{t},'.1~f')+'{s}'"
         for t, s in tiers
     ]
     tail = (
-        f" : abs(datum.value)>=10 ? '{prefix}'+format(datum.value,',.1f')"
-        f" : abs(datum.value)>=1 ? '{prefix}'+format(datum.value,'.1f')"
-        f" : '{prefix}'+format(datum.value,'.2f')"
+        f" : abs(datum.value)>=10 ? '{prefix}'+format(datum.value,',.1~f')"
+        f" : abs(datum.value)>=1 ? '{prefix}'+format(datum.value,'.1~f')"
+        f" : '{prefix}'+format(datum.value,'.2~f')"
     )
     return " : ".join(parts) + tail
 
@@ -2826,6 +2963,15 @@ def _truncate_panel_title(title_text: str | list[str], max_len: int = 35) -> str
     return title_text
 
 
+def _determine_small_multiples_columns(n_panels: int, year_count: int) -> int | None:
+    if n_panels <= 1:
+        return None
+    # Maximum of 2 columns. If year count is large (>10), we need wider panels. Keep columns to 1 or 2.
+    if year_count > 10:
+        return 1 if n_panels <= 3 else 2
+    return 2
+
+
 def _build_scale_split_vconcat(
     df: pd.DataFrame,
     title: str | dict,
@@ -2835,6 +2981,7 @@ def _build_scale_split_vconcat(
     unit_measure: str | None = None,
     grouping_threshold: float = 0.75,
     force_separate_panels: bool = False,
+    indicator_name: str | None = None,
 ) -> dict:
     """Vconcat layout for scale-incompatible custom breakdowns.
 
@@ -2906,7 +3053,31 @@ def _build_scale_split_vconcat(
         # One panel per facet value, sorted alphabetically (standard facet behavior)
         groups = [[v] for v in breakdown_vals]
     else:
-        groups = _group_breakdowns_by_scale(df, facet_dim, grouping_threshold)
+        # Check if values are bounded percentages using unit measure / axis label declaration
+        is_pct_unit = False
+        if unit_measure and any(x in str(unit_measure).lower() for x in ["percent", "pct", "%"]):
+            is_pct_unit = True
+        elif y_label and any(x in str(y_label).lower() for x in ["percent", "pct", "%"]):
+            is_pct_unit = True
+
+        val_series = pd.to_numeric(df["value"], errors="coerce").dropna()
+        is_pct = is_pct_unit and not val_series.empty and val_series.max() <= 100.0 and val_series.min() >= 0.0
+
+        # Check if there is a fraction vs percent mismatch in the breakdown values:
+        same_numeric_scale = True
+        if is_pct:
+            maxes = []
+            for v in breakdown_vals:
+                s = pd.to_numeric(df.loc[df[facet_dim] == v, "value"], errors="coerce").dropna()
+                if not s.empty:
+                    maxes.append(s.max())
+            if maxes:
+                any_gt_1 = any(m > 1.0 for m in maxes)
+                all_lte_1 = all(m <= 1.0 for m in maxes)
+                same_numeric_scale = any_gt_1 or all_lte_1
+
+        actual_threshold = float("inf") if (is_pct and same_numeric_scale) else grouping_threshold
+        groups = _group_breakdowns_by_scale(df, facet_dim, actual_threshold)
 
     # GoG: when the color channel encodes a variable DIFFERENT from the facet variable
     # (e.g. IPC phases within unit panels, or countries within WGI breakdown panels),
@@ -2937,9 +3108,371 @@ def _build_scale_split_vconcat(
     # Build the worst-case combo label list (most items any panel will show) so
     # the layout helper can pick orient/direction/columns once for the whole spec.
     _n_panels = len(groups)
-    _legend_target_total_px = 700  # desired total figure height in pixels
-    _base_single_px = 140          # default single-member panel height
-    _base_multi_px  = 180          # default multi-member panel height
+    if _n_panels == 1:
+        group = groups[0]
+        is_bar_chart = (df["year"].nunique() <= 1 if "year" in df.columns else True)
+
+        x_enc = _x_temporal_encoding(result.temporal_frequency)
+        if is_bar_chart:
+            x_enc["type"] = "nominal"
+            if "timeUnit" in x_enc:
+                del x_enc["timeUnit"]
+            if "axis" in x_enc and "format" in x_enc["axis"]:
+                del x_enc["axis"]["format"]
+
+            if len(group) == 1:
+                if result.color_dim and result.color_dim in df.columns:
+                    x_enc["field"] = result.color_dim
+            else:
+                x_enc["field"] = facet_dim
+
+            if "axis" not in x_enc or x_enc["axis"] is None:
+                x_enc["axis"] = {}
+            x_enc["axis"].update({
+                "labelAngle": -45,
+                "labelAlign": "right",
+                "labelBaseline": "middle",
+                "labelLimit": 150,
+                "labelOverlap": False,
+            })
+
+        y_title = _resolve_axis_title(y_label, indicator_name)
+        y_axis = {
+            **_axis_style(),
+            "title": y_title,
+            "labelExpr": label_expr,
+        }
+
+        df_filtered = df[df[facet_dim].isin(group)].copy()
+
+        if len(group) == 1:
+            bd_val = group[0]
+            bd_label = lab.get(bd_val, bd_val)
+            bd_data = df_filtered[df_filtered[facet_dim] == bd_val]
+            max_abs = (
+                float(bd_data["value"].abs().max())
+                if "value" in bd_data.columns and not bd_data.empty
+                else None
+            )
+            tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+
+            if is_bar_chart:
+                mark_spec = {
+                    "type": "bar",
+                    "cornerRadiusTopRight": 2,
+                    "cornerRadiusTopLeft": 2,
+                    "size": 40,
+                }
+            else:
+                mark_spec = {
+                    "type": "line",
+                    "strokeWidth": 3,
+                    "strokeCap": "round",
+                    "point": _LINE_HOVER_POINT,
+                }
+
+            encoding = {
+                "x": x_enc,
+                "y": {
+                    "field": "value",
+                    "type": "quantitative",
+                    "axis": y_axis,
+                    "scale": {"zero": is_bar_chart},
+                },
+                "tooltip": build_structured_tooltips(
+                    list(bd_data.columns),
+                    "bar" if is_bar_chart else "line",
+                    indicator_labels={**lab, "value": bd_label},
+                    value_format=tt_fmt,
+                    viz_data=bd_data,
+                    temporal_freq=result.temporal_frequency,
+                    dim_name_labels=result.dim_name_labels,
+                ),
+            }
+
+            extra_transforms = []
+            if result.color_dim and result.secondary_color_dim:
+                _sec = result.secondary_color_dim
+                _pri = result.color_dim
+                sorted_secondary = sorted(df[_sec].dropna().unique().tolist()) if _sec in df.columns else []
+                sorted_primary = sorted(bd_data[_pri].dropna().unique().tolist()) if _pri in bd_data.columns else []
+                _s_combo_domain = [
+                    f"{s} | {lab.get(p, p)}"
+                    for s in sorted_secondary
+                    for p in sorted_primary
+                ]
+                _s_combo_range = []
+                for si, _country in enumerate(sorted_secondary):
+                    base_color = WB_CAT_COLORS[si % len(WB_CAT_COLORS)]
+                    _s_combo_range.extend(_generate_color_shades(base_color, len(sorted_primary)))
+                _s_combo_field = "_s_combo_label"
+                _s_combo_calc = {
+                    "calculate": f"datum['{_sec}'] + ' | ' + datum['{_pri}']",
+                    "as": _s_combo_field,
+                }
+                extra_transforms.append(_s_combo_calc)
+                _pri_title = result.dim_name_labels.get(_pri) or _pri.replace("_", " ").title()
+                _sec_title = result.dim_name_labels.get(_sec) or _sec.replace("_", " ").title()
+
+                _all_combo_labels = _s_combo_domain
+                _legend_layout = _compute_legend_layout(_all_combo_labels)
+                encoding["color"] = {
+                    "field": _s_combo_field,
+                    "type": "nominal",
+                    "scale": {"domain": _s_combo_domain, "range": _s_combo_range},
+                    "legend": {**_legend_layout, "title": f"{_sec_title} | {_pri_title}"},
+                }
+            elif result.color_dim:
+                n_items = bd_data[result.color_dim].nunique() if result.color_dim in bd_data.columns else 0
+                domain_labels = list(bd_data[result.color_dim].unique()) if result.color_dim in bd_data.columns else None
+                legend_title = result.dim_name_labels.get(result.color_dim)
+                encoding["color"] = _color_encoding(
+                    result.color_dim,
+                    mark_type="bar" if is_bar_chart else "line",
+                    n_items=n_items,
+                    legend_title=legend_title,
+                    domain_labels=domain_labels,
+                    domain=_color_dim_domain,
+                )
+            else:
+                mark_spec["color"] = WB_CAT_COLORS[0]
+
+        else:
+            group_labels = [lab.get(v, v) for v in group]
+            max_abs = (
+                float(df_filtered["value"].abs().max())
+                if "value" in df_filtered.columns and not df_filtered.empty
+                else None
+            )
+            tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
+
+            mark_spec = {
+                "type": "bar" if is_bar_chart else "line",
+                **(
+                    {"cornerRadiusTopRight": 2, "cornerRadiusTopLeft": 2, "size": 40}
+                    if is_bar_chart
+                    else {"strokeWidth": 3, "strokeCap": "round", "point": _LINE_HOVER_POINT}
+                )
+            }
+
+            extra_transforms = []
+            if is_bar_chart and result.color_dim:
+                n_items = df_filtered[result.color_dim].nunique() if result.color_dim in df_filtered.columns else 0
+                domain_labels = list(df_filtered[result.color_dim].unique()) if result.color_dim in df_filtered.columns else None
+                legend_title = result.dim_name_labels.get(result.color_dim)
+                encoding = {
+                    "x": x_enc,
+                    "y": {
+                        "field": "value",
+                        "type": "quantitative",
+                        "axis": y_axis,
+                        "scale": {"zero": is_bar_chart},
+                    },
+                    "color": _color_encoding(
+                        result.color_dim,
+                        mark_type="bar",
+                        n_items=n_items,
+                        legend_title=legend_title,
+                        domain_labels=domain_labels,
+                        domain=_color_dim_domain,
+                    ),
+                    "tooltip": build_structured_tooltips(
+                        list(df_filtered.columns),
+                        "bar",
+                        indicator_labels=lab,
+                        value_format=tt_fmt,
+                        viz_data=df_filtered,
+                        temporal_freq=result.temporal_frequency,
+                        dim_name_labels=result.dim_name_labels,
+                    ),
+                }
+            elif result.color_dim and result.color_dim != facet_dim:
+                sorted_countries = sorted(df[result.color_dim].dropna().unique().tolist())
+                combo_domain = [
+                    f"{c} | {lab.get(bd, bd)}"
+                    for c in sorted_countries
+                    for bd in group
+                ]
+                combo_range = []
+                for ci, country in enumerate(sorted_countries):
+                    base_color = WB_CAT_COLORS[ci % len(WB_CAT_COLORS)]
+                    combo_range.extend(_generate_color_shades(base_color, len(group)))
+
+                _combo_field = "_combo_label"
+                _combo_calc = {
+                    "calculate": f"datum['{result.color_dim}'] + ' | ' + datum['{facet_dim}']",
+                    "as": _combo_field,
+                }
+                extra_transforms.append(_combo_calc)
+
+                _country_title = result.dim_name_labels.get(result.color_dim) or result.color_dim.title()
+                _bd_title = result.dim_name_labels.get(facet_dim) or facet_dim.title()
+
+                _all_combo_labels = combo_domain
+                _legend_layout = _compute_legend_layout(_all_combo_labels)
+                encoding = {
+                    "x": x_enc,
+                    "y": {
+                        "field": "value",
+                        "type": "quantitative",
+                        "axis": y_axis,
+                        "scale": {"zero": is_bar_chart},
+                    },
+                    "color": {
+                        "field": _combo_field,
+                        "type": "nominal",
+                        "scale": {"domain": combo_domain, "range": combo_range},
+                        "legend": {**_legend_layout, "title": f"{_country_title} | {_bd_title}"},
+                    },
+                    "tooltip": build_structured_tooltips(
+                        list(df_filtered.columns),
+                        "bar" if is_bar_chart else "line",
+                        indicator_labels=lab,
+                        value_format=tt_fmt,
+                        viz_data=df_filtered,
+                        temporal_freq=result.temporal_frequency,
+                        dim_name_labels=result.dim_name_labels,
+                    ),
+                }
+            else:
+                group_colors = [
+                    WB_CAT_COLORS[j % len(WB_CAT_COLORS)]
+                    for j in range(len(group))
+                ]
+                encoding = {
+                    "x": x_enc,
+                    "y": {
+                        "field": "value",
+                        "type": "quantitative",
+                        "axis": y_axis,
+                        "scale": {"zero": is_bar_chart},
+                    },
+                    "color": {
+                        "field": facet_dim,
+                        "type": "nominal",
+                        "scale": {
+                            "domain": group,
+                            "range": group_colors,
+                        },
+                        "legend": {
+                            "orient": "bottom" if max((len(lbl) for lbl in group_labels), default=0) > 40 else "right",
+                            "labelFontSize": 11,
+                            "symbolSize": 80,
+                            **(
+                                {"labelLimit": 0, "direction": "vertical"}
+                                if max((len(lbl) for lbl in group_labels), default=0) > 40
+                                else {"labelLimit": 200}
+                            ),
+                        },
+                    },
+                    "tooltip": build_structured_tooltips(
+                        list(df_filtered.columns),
+                        "bar" if is_bar_chart else "line",
+                        indicator_labels=lab,
+                        value_format=tt_fmt,
+                        viz_data=df_filtered,
+                        temporal_freq=result.temporal_frequency,
+                        dim_name_labels=result.dim_name_labels,
+                    ),
+                }
+
+        if is_bar_chart and result.color_dim and result.color_dim in df_filtered.columns:
+            if encoding.get("x", {}).get("field") != result.color_dim:
+                encoding["xOffset"] = {"field": result.color_dim, "type": "nominal"}
+
+        rows = df_filtered.to_dict(orient="records")
+
+        spec = {
+            "$schema": _vl_schema(),
+            "title": annotated_title,
+            "data": {"values": rows},
+            "mark": mark_spec,
+            "encoding": encoding,
+            "width": 600,
+            "height": 350,
+        }
+
+        if extra_transforms:
+            spec["transform"] = extra_transforms
+
+        needs_zero_line = (
+            not is_bar_chart
+            and "value" in df_filtered.columns
+            and df_filtered["value"].min() < 0 < df_filtered["value"].max()
+        )
+
+        effective_color_dim = facet_dim if len(group) > 1 else result.color_dim
+        n_series = df_filtered[effective_color_dim].nunique() if (effective_color_dim and effective_color_dim in df_filtered.columns) else 0
+        needs_end_labels = (
+            not is_bar_chart
+            and effective_color_dim
+            and 2 <= n_series <= MAX_END_LABEL_SERIES
+            and "year" in df_filtered.columns
+        )
+
+        if needs_zero_line or needs_end_labels:
+            main_layer = {"mark": spec.pop("mark"), "encoding": spec.pop("encoding")}
+            if needs_end_labels:
+                if "color" in main_layer["encoding"] and isinstance(main_layer["encoding"]["color"], dict):
+                    main_layer["encoding"]["color"]["legend"] = None
+            layers = [main_layer]
+
+            if needs_zero_line:
+                zero_layer = {
+                    "mark": {
+                        "type": "rule",
+                        "color": "#999999",
+                        "strokeWidth": 1.0,
+                        "strokeDash": [4, 3],
+                        "opacity": 0.8,
+                        "tooltip": False,
+                    },
+                    "encoding": {"y": {"datum": 0}},
+                }
+                layers.append(zero_layer)
+
+            if needs_end_labels:
+                year_type = "temporal" if df_filtered["year"].dtype == "datetime64[ns]" else "ordinal"
+                end_label_layer = {
+                    "transform": [
+                        {
+                            "aggregate": [
+                                {"op": "argmax", "field": "year", "as": "_last"}
+                            ],
+                            "groupby": [effective_color_dim],
+                        },
+                        {
+                            "calculate": "datum._last.value",
+                            "as": "_end_value",
+                        },
+                        {
+                            "calculate": "datum._last.year",
+                            "as": "_end_year",
+                        },
+                    ],
+                    "mark": {
+                        "type": "text",
+                        "align": "left",
+                        "dx": 5,
+                        "fontSize": 10,
+                        "fontWeight": "normal",
+                        "tooltip": False,
+                    },
+                    "encoding": {
+                        "x": {"field": "_end_year", "type": year_type},
+                        "y": {"field": "_end_value", "type": "quantitative"},
+                        "text": {"field": effective_color_dim, "type": "nominal"},
+                        "color": encoding.get("color", {}),
+                    },
+                }
+                layers.append(end_label_layer)
+
+            spec["layer"] = layers
+
+        return inject_wb_config(spec)
+    _legend_target_total_px = 850  # desired total figure height in pixels
+    _base_single_px = 240          # default single-member panel height
+    _base_multi_px  = 300          # default multi-member panel height
 
     if result.color_dim and (result.color_dim != facet_dim or result.secondary_color_dim):
         # Combo path (Case B / secondary_color_dim): compute worst-case labels.
@@ -2975,10 +3508,12 @@ def _build_scale_split_vconcat(
         _panel_h_multi  = _base_multi_px
 
     is_multi_panel = len(groups) > 1
-    panel_width = 220 if is_multi_panel else 680
+    panel_width = 280 if is_multi_panel else 680
     if is_multi_panel:
-        _panel_h_single = 130
-        _panel_h_multi = 150
+        _panel_h_single = 200
+        _panel_h_multi = 220
+
+    is_bar_chart = (df["year"].nunique() <= 1 if "year" in df.columns else True)
 
     charts: list[dict] = []
     color_offset = 0  # global color index so adjacent panels never share a colour
@@ -2987,6 +3522,30 @@ def _build_scale_split_vconcat(
         is_last_panel = g_idx == len(groups) - 1
 
         x_enc = _x_temporal_encoding(result.temporal_frequency)
+        if is_bar_chart:
+            x_enc["type"] = "nominal"
+            if "timeUnit" in x_enc:
+                del x_enc["timeUnit"]
+            if "axis" in x_enc and "format" in x_enc["axis"]:
+                del x_enc["axis"]["format"]
+
+            # Map single-year snapshot charts to use a categorical/varying dimension as the x-axis field
+            if len(group) == 1:
+                if result.color_dim and result.color_dim in df.columns:
+                    x_enc["field"] = result.color_dim
+            else:
+                x_enc["field"] = facet_dim
+
+            if "axis" not in x_enc or x_enc["axis"] is None:
+                x_enc["axis"] = {}
+            x_enc["axis"].update({
+                "labelAngle": -45,
+                "labelAlign": "right",
+                "labelBaseline": "middle",
+                "labelLimit": 150,
+                "labelOverlap": False,
+            })
+
         if not is_last_panel and not is_multi_panel:
             x_enc = {**x_enc, "axis": {**x_enc.get("axis", {}), "labels": False, "title": None}}
 
@@ -3009,12 +3568,20 @@ def _build_scale_split_vconcat(
             )
             tt_fmt = _compute_tooltip_format(max_abs, unit_measure)
 
-            mark_spec = {
-                "type": "line",
-                "strokeWidth": 3,
-                "strokeCap": "round",
-                "point": _LINE_HOVER_POINT,
-            }
+            if is_bar_chart:
+                mark_spec = {
+                    "type": "bar",
+                    "cornerRadiusTopRight": 2,
+                    "cornerRadiusTopLeft": 2,
+                    "size": 40,
+                }
+            else:
+                mark_spec = {
+                    "type": "line",
+                    "strokeWidth": 3,
+                    "strokeCap": "round",
+                    "point": _LINE_HOVER_POINT,
+                }
 
             chart_enc = {
                 "x": x_enc,
@@ -3273,7 +3840,7 @@ def _build_scale_split_vconcat(
                     },
                     "tooltip": build_structured_tooltips(
                         list(group_data.columns),
-                        "line",
+                        "bar" if is_bar_chart else "line",
                         indicator_labels=lab,
                         value_format=tt_fmt,
                         viz_data=group_data,
@@ -3296,25 +3863,50 @@ def _build_scale_split_vconcat(
                 # BEFORE the filter so the calculated field is available.
                 "transform": _panel_extra_transforms + [{"filter": {"field": facet_dim, "oneOf": group}}],
                 "mark": {
-                    "type": "line",
-                    "strokeWidth": 3,
-                    "strokeCap": "round",
-                    "point": _LINE_HOVER_POINT,
+                    "type": "bar" if is_bar_chart else "line",
+                    **(
+                        {"cornerRadiusTopRight": 2, "cornerRadiusTopLeft": 2, "size": 40}
+                        if is_bar_chart
+                        else {"strokeWidth": 3, "strokeCap": "round", "point": _LINE_HOVER_POINT}
+                    )
                 },
                 "encoding": panel_encoding,
             })
 
+    x_resolve = "independent" if is_bar_chart else "shared"
     spec: dict = {
         "$schema": _vl_schema(),
         "title": annotated_title,
         "data": {"values": rows},
-        "resolve": {"scale": {"x": "shared", "color": color_resolve}},
+        "resolve": {"scale": {"x": x_resolve, "color": color_resolve}},
+        "autosize": {"type": "fit", "contains": "padding"},
     }
+    if is_bar_chart:
+        spec["padding"] = {"top": 10, "left": 10, "bottom": 110, "right": 10}
+    # Always use concat to avoid Vega-Lite layout bugs in vertical concatenation (vconcat)
+    # where rotated labels on the bottom-most panel get clipped.
+    spec["concat"] = charts
     if is_multi_panel:
-        spec["concat"] = charts
-        spec["columns"] = 2
+        year_cnt = df["year"].nunique() if "year" in df.columns else 1
+        spec["columns"] = _determine_small_multiples_columns(len(groups), year_cnt)
+
+        # Optimize shared legend positioning and layout for high cardinality
+        color_dim = result.color_dim
+        if color_dim and color_dim in df.columns:
+            n_items = df[color_dim].nunique()
+            if n_items > 4:
+                cols = min(5, (n_items + 1) // 2)
+                spec["config"] = {
+                    "legend": {
+                        "orient": "bottom",
+                        "direction": "horizontal",
+                        "columns": cols,
+                        "title": result.dim_name_labels.get(color_dim, color_dim.replace("_", " ").title()) if result.dim_name_labels else color_dim.replace("_", " ").title(),
+                        "labelLimit": 200,
+                    }
+                }
     else:
-        spec["vconcat"] = charts
+        spec["columns"] = 1
     return inject_wb_config(spec)
 
 
@@ -3340,6 +3932,96 @@ def build_small_multiples_spec(
     prevents scale-dominant series from compressing smaller ones on a shared axis.
     """
     facet_dim = result.facet_dim or "comp_breakdown_1"
+    color_dim = result.color_dim
+
+    # Redirect exactly 2 scale-incompatible indicators for a single country to the dual-axis line chart
+    indicator_cols = result.indicator_cols or []
+    unique_inds = df["indicator"].dropna().unique().tolist() if "indicator" in df.columns else []
+    if not indicator_cols and len(unique_inds) == 2:
+        indicator_cols = unique_inds
+
+    country_cnt = df["country"].nunique() if "country" in df.columns else 0
+    is_bar = (result.mark_hint == "bar") or (df["year"].nunique() <= 1 if "year" in df.columns else True)
+
+    if len(indicator_cols) == 2 and country_cnt <= 1 and not is_bar:
+        try:
+            clean_labels = {}
+            if indicator_labels:
+                clean_labels = {
+                    _clean_label_generic(k): _clean_label_generic(v)
+                    for k, v in indicator_labels.items()
+                }
+
+            maxes = {}
+            for ind in indicator_cols:
+                clean_ind = _clean_label_generic(ind)
+                pretty_val = clean_labels.get(clean_ind, clean_ind)
+
+                if ind in df.columns:
+                    vals = df[ind].dropna().abs()
+                elif pretty_val in df.columns:
+                    vals = df[pretty_val].dropna().abs()
+                elif "indicator" in df.columns:
+                    vals = df[df["indicator"].map(lambda x: _clean_label_generic(x) if isinstance(x, str) else x).isin([clean_ind, pretty_val])]["value"].dropna().abs()
+                else:
+                    vals = pd.Series(dtype=float)
+                maxes[ind] = vals.max() if not vals.empty else 0.0
+
+            nz_maxes = [m for m in maxes.values() if m > 0]
+            is_incompatible = False
+            if len(nz_maxes) == 2:
+                ratio = max(nz_maxes) / min(nz_maxes)
+                if ratio > 10.0:
+                    is_incompatible = True
+        except Exception:
+            is_incompatible = False
+
+        if is_incompatible:
+            if "indicator" in df.columns and "value" in df.columns:
+                index_cols = [c for c in df.columns if c not in ("indicator", "value")]
+                wide_df = df.pivot_table(index=index_cols, columns="indicator", values="value", aggfunc="mean").reset_index()
+                wide_df.columns.name = None
+                temp_indicator_cols = [c for c in wide_df.columns if c not in index_cols]
+            else:
+                wide_df = df
+                temp_indicator_cols = indicator_cols
+
+            from data360.viz_config import build_temporal_multi_indicator_spec, StrategyResult, ChartStrategy
+            temp_result = StrategyResult(
+                strategy=ChartStrategy.TEMPORAL_MULTI_IND,
+                reason=result.reason,
+                indicator_cols=temp_indicator_cols,
+                color_dim=result.color_dim,
+                facet_dim=result.facet_dim,
+                mark_hint=result.mark_hint,
+                scale_incompatible=result.scale_incompatible,
+            )
+            return build_temporal_multi_indicator_spec(
+                wide_df,
+                title,
+                temp_result,
+                indicator_labels=indicator_labels,
+                y_label=y_label,
+                unit_measure=unit_measure,
+                indicator_name=indicator_name,
+            )
+
+    # Auto-melt if called directly with a wide dataframe (e.g. in tests or simple API calls)
+    if (facet_dim == "indicator" or color_dim == "indicator") and "indicator" not in df.columns:
+        if result.indicator_cols:
+            df = df.copy()
+            id_cols = [c for c in df.columns if c not in result.indicator_cols]
+            df = df.melt(
+                id_vars=id_cols,
+                value_vars=result.indicator_cols,
+                var_name="indicator",
+                value_name="value",
+            )
+            # Map column names to pretty labels if indicator_labels is provided
+            if indicator_labels:
+                df["indicator"] = df["indicator"].map(lambda x: indicator_labels.get(x, x))
+            df = df.dropna(subset=["value"])
+
     if facet_dim in df.columns:
         df = df.copy()
         df[facet_dim] = df[facet_dim].map(lambda x: _clean_label_generic(x) if isinstance(x, str) else x)
@@ -3350,11 +4032,17 @@ def build_small_multiples_spec(
             for k, v in indicator_labels.items()
         }
 
-    facet_is_indicator = (result.facet_dim == "indicator")
-    force_sep = result.scale_incompatible and facet_is_indicator or not result.scale_incompatible
+    force_sep = result.scale_incompatible
+    # Force separation if faceting by indicator and coloring by another dimension (e.g. country)
+    if facet_dim == "indicator" and color_dim != "indicator" and not is_bar:
+        force_sep = True
+    # Force separation if faceting by country (never group countries into a single panel in small multiples)
+    elif facet_dim == "country":
+        force_sep = True
     return _build_scale_split_vconcat(
         df, title, result, indicator_labels, y_label, unit_measure,
-        force_separate_panels=force_sep
+        force_separate_panels=force_sep,
+        indicator_name=indicator_name
     )
 
 
@@ -3734,8 +4422,10 @@ def build_stacked_bar_spec(
     # Rule: if color_dim == "country", x = "year" (temporal stacked bar, countries stacked).
     #       if color_dim == "year",    x = "country" (shouldn't happen but guard it).
     #       otherwise, prefer "country" when multiple countries exist, else "year".
-    if color_dim == "country":
-        x_field = "year"
+    if df.get("year", pd.Series()).nunique() <= 1 and df.get("country", pd.Series()).nunique() <= 1:
+        x_field = color_dim
+    elif color_dim == "country":
+        x_field = "year" if df.get("year", pd.Series()).nunique() > 1 else "country"
     elif color_dim == "year":
         x_field = "country"
     else:
@@ -3820,7 +4510,50 @@ def build_correlation_spec(
     x_label = lab.get(x_col, x_col.replace("_", " ").title())
     y_label = lab.get(y_col, y_col.replace("_", " ").title())
 
-    rows = df.dropna(subset=[x_col, y_col]).to_dict(orient="records")
+    df_clean = df.dropna(subset=[x_col, y_col]).copy()
+    if not df_clean.empty:
+        x_min, x_max = df_clean[x_col].min(), df_clean[x_col].max()
+        y_min, y_max = df_clean[y_col].min(), df_clean[y_col].max()
+        x_range = x_max - x_min if x_max != x_min else 1.0
+        y_range = y_max - y_min if y_max != y_min else 1.0
+
+        df_clean["_x_norm"] = (df_clean[x_col] - x_min) / x_range
+        df_clean["_y_norm"] = (df_clean[y_col] - y_min) / y_range
+
+        # Priority metric: distance from center (0.5, 0.5) to prioritize outliers/boundary points
+        df_clean["_dist_from_center"] = (df_clean["_x_norm"] - 0.5) ** 2 + (df_clean["_y_norm"] - 0.5) ** 2
+
+        # Sort descending by distance from center so outliers are labeled first
+        df_sorted = df_clean.sort_values(by="_dist_from_center", ascending=False)
+
+        labeled_points = []
+        show_labels = {}
+
+        # Collision thresholds: 6% horizontal width, 4% vertical height
+        EPSILON_X = 0.06
+        EPSILON_Y = 0.04
+
+        for idx, row in df_sorted.iterrows():
+            x_n = row["_x_norm"]
+            y_n = row["_y_norm"]
+
+            collision = False
+            for lx, ly in labeled_points:
+                if abs(x_n - lx) < EPSILON_X and abs(y_n - ly) < EPSILON_Y:
+                    collision = True
+                    break
+
+            if not collision:
+                show_labels[idx] = True
+                labeled_points.append((x_n, y_n))
+            else:
+                show_labels[idx] = False
+
+        df_clean["_show_label"] = df_clean.index.map(show_labels)
+    else:
+        df_clean["_show_label"] = True
+
+    rows = df_clean.to_dict(orient="records")
 
     color_dim = result.color_dim or "country"
     color_enc = _color_encoding(color_dim)
@@ -3882,7 +4615,11 @@ def build_correlation_spec(
                         "field": color_dim,
                         "type": "nominal"
                     },
-                    "color": color_enc
+                    "color": color_enc,
+                    "opacity": {
+                        "condition": {"test": "datum._show_label", "value": 1},
+                        "value": 0
+                    }
                 }
             }
         ],
@@ -4196,9 +4933,117 @@ def build_temporal_multi_indicator_spec(
     rows = df_copy.to_dict(orient="records")
 
     label_expr = _value_label_expr(unit_measure)
-    charts = []
-
     is_bar_chart = (result.mark_hint == "bar") or (df_copy["year"].nunique() <= 1 if "year" in df_copy.columns else True)
+
+    # If exactly 2 scale-incompatible indicators for a single country, use dual-axis layering
+    country_cnt = df_copy["country"].nunique() if "country" in df_copy.columns else 0
+    if len(ind_cols) == 2 and not should_layer and country_cnt <= 1 and not is_bar_chart:
+        chart0_color = WB_CAT_COLORS[0]
+        chart1_color = WB_CAT_COLORS[1]
+
+        col0 = ind_cols[0]
+        col1 = ind_cols[1]
+
+        col0_label = lab.get(col0, col0.replace("_", " ").title())
+        col1_label = lab.get(col1, col1.replace("_", " ").title())
+
+        max_abs0 = float(df_copy[col0].abs().max()) if col0 in df_copy.columns else None
+        max_abs1 = float(df_copy[col1].abs().max()) if col1 in df_copy.columns else None
+
+        tt_fmt0 = _compute_tooltip_format(max_abs0, unit_measure)
+        tt_fmt1 = _compute_tooltip_format(max_abs1, unit_measure)
+
+        if df_copy["year"].nunique() <= 1 if "year" in df_copy.columns else True:
+            x_enc = {
+                "field": "year" if "year" in df_copy.columns else "TIME_PERIOD",
+                "type": "nominal",
+                "axis": {"title": None}
+            }
+        else:
+            x_enc = _x_temporal_encoding(result.temporal_frequency)
+
+        layer0 = {
+            "mark": {
+                "type": "line",
+                "strokeWidth": 3,
+                "strokeCap": "round",
+                "point": _LINE_HOVER_POINT,
+                "color": chart0_color,
+                "tooltip": True
+            },
+            "encoding": {
+                "x": x_enc,
+                "y": {
+                    "field": col0,
+                    "type": "quantitative",
+                    "axis": {
+                        **_axis_style(),
+                        "title": col0_label,
+                        "titleColor": chart0_color,
+                        "labelColor": chart0_color,
+                        "labelExpr": label_expr,
+                    },
+                    "scale": {"zero": False}
+                },
+                "tooltip": build_structured_tooltips(
+                    _multi_indicator_tooltip_columns(list(df_copy.columns), col0),
+                    "line", lab, value_format=tt_fmt0, viz_data=df_copy,
+                    temporal_freq=result.temporal_frequency,
+                    dim_name_labels=result.dim_name_labels,
+                )
+            }
+        }
+
+        layer1 = {
+            "mark": {
+                "type": "line",
+                "strokeWidth": 3,
+                "strokeCap": "round",
+                "point": _LINE_HOVER_POINT,
+                "color": chart1_color,
+                "tooltip": True
+            },
+            "encoding": {
+                "x": x_enc,
+                "y": {
+                    "field": col1,
+                    "type": "quantitative",
+                    "axis": {
+                        **_axis_style(),
+                        "title": col1_label,
+                        "titleColor": chart1_color,
+                        "labelColor": chart1_color,
+                        "labelExpr": label_expr,
+                    },
+                    "scale": {"zero": False}
+                },
+                "tooltip": build_structured_tooltips(
+                    _multi_indicator_tooltip_columns(list(df_copy.columns), col1),
+                    "line", lab, value_format=tt_fmt1, viz_data=df_copy,
+                    temporal_freq=result.temporal_frequency,
+                    dim_name_labels=result.dim_name_labels,
+                )
+            }
+        }
+
+        data_spec = {"values": rows}
+        if df_copy["year"].nunique() <= 1 if "year" in df_copy.columns else True:
+            data_spec["format"] = {"parse": {"year": "string"}}
+
+        spec = {
+            "$schema": _vl_schema(),
+            "title": title,
+            "data": data_spec,
+            "width": 680,
+            "height": 350,
+            "layer": [layer0, layer1],
+            "resolve": {
+                "scale": {"y": "independent"}
+            }
+        }
+        return inject_wb_config(spec)
+
+    charts = []
 
     for i, col in enumerate(ind_cols):
         color = WB_CAT_COLORS[i % len(WB_CAT_COLORS)]
@@ -5227,16 +6072,13 @@ class ValueAxisLabelFormatRule(PostProcessingRule):
         if not self.should_apply(spec, data_frequency):
             return spec
 
-        # Detect if data represents raw proportions (value max <= 1.0 and unit contains 'proportion' or 'share')
-        # rather than 0-100 percentages. If so, override scale_type to "proportion".
         resolved_scale_type = scale_type
         if df is not None and "value" in df.columns:
             import pandas as pd
             vals = df["value"].dropna()
             if not vals.empty:
                 max_val = float(vals.abs().max())
-                normalized = (unit_measure or "").upper()
-                if ("PROPORTION" in normalized or "SHARE" in normalized) and 0.0 < max_val <= 1.0:
+                if max_val <= 1.0 and _is_proportion_indicator(df, unit_measure, scale_type):
                     resolved_scale_type = "proportion"
 
         y = spec["encoding"]["y"]
@@ -5781,11 +6623,36 @@ class PercentageBoundaryClampingRule(PostProcessingRule):
 
     def should_apply(self, spec, scale_type=None, df=None, unit_measure=None, **kwargs):
         import pandas as pd
-        if scale_type == "percentage":
-            if df is not None and "value" in df.columns:
-                max_val = df["value"].max()
-                if not pd.isna(max_val) and max_val > 100:
+        if df is not None and "value" in df.columns:
+            vals = df["value"].dropna()
+            if not vals.empty:
+                max_val = float(vals.max())
+                min_val = float(vals.min())
+                if min_val < 0:
                     return False
+                if max_val > 100:
+                    return False
+
+                # Exclude unbounded growth, inflation, or interest rates from clamping
+                normalized_unit = (unit_measure or "").upper()
+                unbounded_keywords = {"GROWTH", "INFLATION", "INTEREST", "YIELD", "INDEX"}
+                if any(k in normalized_unit for k in unbounded_keywords):
+                    return False
+                if "indicator" in df.columns:
+                    ind_names = df["indicator"].dropna().unique()
+                    for name in ind_names:
+                        name_upper = str(name).upper()
+                        if any(k in name_upper for k in unbounded_keywords):
+                            return False
+
+                # Exclude indicators concentrated far from zero to allow natural trend zooming
+                is_proportion = max_val <= 1.0 and _is_proportion_indicator(df, unit_measure, scale_type)
+                if is_proportion and min_val > 0.3:
+                    return False
+                if not is_proportion and min_val > 30:
+                    return False
+
+        if scale_type == "percentage":
             return True
 
         # Also apply for proportion indicators even if scale_type is not percentage
@@ -5794,8 +6661,7 @@ class PercentageBoundaryClampingRule(PostProcessingRule):
             vals = df["value"].dropna()
             if not vals.empty:
                 max_val = float(vals.abs().max())
-                normalized = (unit_measure or "").upper()
-                if ("PROPORTION" in normalized or "SHARE" in normalized) and 0.0 < max_val <= 1.0:
+                if max_val <= 1.0 and _is_proportion_indicator(df, unit_measure, scale_type):
                     return True
         return False
 
@@ -5805,16 +6671,41 @@ class PercentageBoundaryClampingRule(PostProcessingRule):
 
         # Check if the data represents raw proportions (value max <= 1) rather than 0-100 percentages.
         is_proportion = False
+        max_val = 100.0
         if df is not None and "value" in df.columns:
             import pandas as pd
             vals = df["value"].dropna()
             if not vals.empty:
-                max_val = float(vals.abs().max())
-                normalized = (unit_measure or "").upper()
-                if ("PROPORTION" in normalized or "SHARE" in normalized) and 0.0 < max_val <= 1.0:
+                max_abs = float(vals.abs().max())
+                max_val = float(vals.max())
+                if max_abs <= 1.0 and _is_proportion_indicator(df, unit_measure, scale_type):
                     is_proportion = True
 
-        domain = [0, 1] if is_proportion else [0, 100]
+        # Determine dynamic upper bound for domain to avoid squishing
+        if is_proportion:
+            if max_val <= 0.05:
+                upper = 0.05
+            elif max_val <= 0.10:
+                upper = 0.10
+            elif max_val <= 0.25:
+                upper = 0.25
+            elif max_val <= 0.50:
+                upper = 0.50
+            else:
+                upper = 1.0
+            domain = [0, upper]
+        else:
+            if max_val <= 5:
+                upper = 5
+            elif max_val <= 10:
+                upper = 10
+            elif max_val <= 25:
+                upper = 25
+            elif max_val <= 50:
+                upper = 50
+            else:
+                upper = 100
+            domain = [0, upper]
 
         enc = spec.get("encoding", {})
         for channel in ("x", "y"):
@@ -5825,8 +6716,20 @@ class PercentageBoundaryClampingRule(PostProcessingRule):
                     continue
                 ch_enc["scale"]["domain"] = domain
 
+                # Format axis label correctly if it's a proportion percentage
+                if is_proportion:
+                    axis_spec = ch_enc.setdefault("axis", {})
+                    if "labelExpr" in axis_spec:
+                        expr = axis_spec["labelExpr"]
+                        if "datum.value" in expr and "* 100" not in expr and "%" in expr:
+                            axis_spec["labelExpr"] = expr.replace("datum.value", "datum.value * 100")
+
         if "spec" in spec:
             self.apply(spec["spec"], data_frequency, unit_measure, scale_type=scale_type, df=df, **kwargs)
+
+        if "layer" in spec:
+            for subspec in spec["layer"]:
+                self.apply(subspec, data_frequency, unit_measure, scale_type=scale_type, df=df, **kwargs)
 
         return spec
 

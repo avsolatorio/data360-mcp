@@ -562,7 +562,20 @@ def _build_data_profile(
 
         if maxes and mins_nonzero:
             ratio = max(maxes) / min(mins_nonzero)
-            can_share = all_same_scale and ratio <= 10.0
+
+            # Bounded percentages relaxation
+            is_percentage = (ind_profiles[0]["scale_type"] == "percentage") if ind_profiles else False
+            maxes_val = [p["value_range"]["max"] for p in ind_profiles if p["value_range"]["max"] is not None]
+            any_gt_1 = any(m > 1.0 for m in maxes_val)
+            all_lte_1 = all(m <= 1.0 for m in maxes_val)
+            same_numeric_scale = any_gt_1 or all_lte_1
+
+            if is_percentage and same_numeric_scale:
+                thresh = 100.0
+            else:
+                thresh = 10.0
+
+            can_share = all_same_scale and ratio <= thresh
             reason_parts = []
             if all_same_scale:
                 reason_parts.append(f"same scale type ({ind_profiles[0]['scale_type']})")
@@ -570,7 +583,7 @@ def _build_data_profile(
                 types = ", ".join(p["scale_type"] for p in ind_profiles)
                 reason_parts.append(f"different scale types ({types})")
             reason_parts.append(f"value ratio {ratio:.1f}x")
-            reason_parts.append(f"{'within' if ratio <= 10 else 'exceeds'} 10x threshold")
+            reason_parts.append(f"{'within' if ratio <= thresh else 'exceeds'} {int(thresh)}x threshold")
             profile["scale_compatibility"] = {
                 "same_unit": all_same_unit,
                 "same_scale_type": all_same_scale,
