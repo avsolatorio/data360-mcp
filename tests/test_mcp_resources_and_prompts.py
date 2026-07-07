@@ -10,7 +10,7 @@ from data360.mcp_server import mcp
 @pytest.mark.asyncio
 async def test_mcp_resources_registered_and_valid() -> None:
     """Verify that all expected MCP resources are registered and contain correct content."""
-    resources = await mcp.get_resources()
+    resources = {str(r.uri): r for r in await mcp.list_resources()}
 
     expected_resources = {
         "data360://system-prompt",
@@ -74,73 +74,73 @@ async def test_mcp_resources_registered_and_valid() -> None:
 @pytest.mark.asyncio
 async def test_mcp_prompts_render_successfully() -> None:
     """Verify that all prompts are registered and render to strings without syntax/format errors."""
-    prompts = await mcp.get_prompts()
+    prompts = {p.name: p for p in await mcp.list_prompts()}
 
     # 1. gate_classifier (no arguments)
     assert "gate_classifier" in prompts
-    res_gate = await prompts["gate_classifier"].render()
+    res_gate = (await prompts["gate_classifier"].render()).messages
     assert len(res_gate) > 0
     assert isinstance(res_gate[0].content.text, str)
 
     # 2. thematic_to_data
     assert "thematic_to_data" in prompts
-    res_thematic = await prompts["thematic_to_data"].render(
+    res_thematic = (await prompts["thematic_to_data"].render(
         arguments={"user_message": "What is the unemployment rate in Kenya?"}
-    )
+    )).messages
     assert "unemployment rate in Kenya" in res_thematic[0].content.text
 
     # 3. indicator_search (the one that previously failed due to unescaped braces)
     assert "indicator_search" in prompts
-    res_search = await prompts["indicator_search"].render(
+    res_search = (await prompts["indicator_search"].render(
         arguments={
             "query": "poverty rate",
             "country": "Kenya",
             "required_dimensions": "SEX,AGE",
         }
-    )
+    )).messages
     assert "poverty rate" in res_search[0].content.text
     assert "verify 'Kenya'" in res_search[0].content.text
     assert "['SEX', 'AGE']" in res_search[0].content.text
     assert 'disaggregation_filters={"REF_AREA": "KEN"}' in res_search[0].content.text
 
     # Test indicator_search with database parameter
-    res_search_db = await prompts["indicator_search"].render(
+    res_search_db = (await prompts["indicator_search"].render(
         arguments={
             "query": "poverty rate",
             "country": "Kenya",
             "required_dimensions": "SEX,AGE",
             "database": "wdi",
         }
-    )
+    )).messages
     assert 'database="wdi"' in res_search_db[0].content.text
 
     # 4. indicator_details
     assert "indicator_details" in prompts
-    res_details = await prompts["indicator_details"].render(
+    res_details = (await prompts["indicator_details"].render(
         arguments={
             "indicator_id": "WB_WDI_NY_GDP_PCAP_KD",
             "database_id": "WB_WDI",
             "question": "how is it calculated",
         }
-    )
+    )).messages
     assert "WB_WDI_NY_GDP_PCAP_KD" in res_details[0].content.text
     assert "how is it calculated" in res_details[0].content.text
 
     # 5. country_data
     assert "country_data" in prompts
-    res_country = await prompts["country_data"].render(
+    res_country = (await prompts["country_data"].render(
         arguments={
             "query": "GDP growth",
             "country": "Kenya, Uganda",
             "start_year": "2018",
             "end_year": "2023",
         }
-    )
+    )).messages
     assert "GDP growth" in res_country[0].content.text
     assert "Kenya, Uganda" in res_country[0].content.text
 
     # Test country_data with database parameter
-    res_country_db = await prompts["country_data"].render(
+    res_country_db = (await prompts["country_data"].render(
         arguments={
             "query": "GDP growth",
             "country": "Kenya, Uganda",
@@ -148,30 +148,30 @@ async def test_mcp_prompts_render_successfully() -> None:
             "end_year": "2023",
             "database": "wdi",
         }
-    )
+    )).messages
     assert 'database="wdi"' in res_country_db[0].content.text
 
     # 6. k360_research_compiler
     assert "k360_research_compiler" in prompts
-    res_compiler = await prompts["k360_research_compiler"].render(
+    res_compiler = (await prompts["k360_research_compiler"].render(
         arguments={
             "user_question": "Compare GDP in East Africa",
             "data_question": "GDP growth Kenya Uganda Tanzania",
             "tool_calls_json": "[]",
         }
-    )
+    )).messages
     assert "Compare GDP in East Africa" in res_compiler[0].content.text
 
     # 7. k360_narrative
     assert "k360_narrative" in prompts
-    res_narrative = await prompts["k360_narrative"].render(
+    res_narrative = (await prompts["k360_narrative"].render(
         arguments={
             "user_question": "Compare GDP in East Africa",
             "content_packet_json": "{}",
             "raw_tool_results_json": "[]",
             "include_claim_tags": "true",
         }
-    )
+    )).messages
     assert "Compare GDP in East Africa" in res_narrative[0].content.text
     assert "include_claim_tags=true" in res_narrative[0].content.text
 
@@ -179,14 +179,14 @@ async def test_mcp_prompts_render_successfully() -> None:
 @pytest.mark.asyncio
 async def test_mcp_tools_registered() -> None:
     """Verify that the search_datasets tool is registered on the MCP server."""
-    tools = await mcp.get_tools()
+    tools = {t.name: t for t in await mcp.list_tools()}
     assert "data360_search_datasets" in tools
 
 
 @pytest.mark.asyncio
 async def test_search_indicators_tool_schema() -> None:
     """Verify that the search_indicators tool has the database parameter in its schema."""
-    tools = await mcp.get_tools()
+    tools = {t.name: t for t in await mcp.list_tools()}
     assert "data360_search_indicators" in tools
     tool = tools["data360_search_indicators"]
     properties = tool.parameters.get("properties", {})

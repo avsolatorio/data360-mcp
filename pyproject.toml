@@ -6,7 +6,7 @@ description = "Model Context Protocol (MCP) server that gives LLM agents and cha
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-  "fastmcp>=2.12.4",
+  "fastmcp==3.0.0",
   "mcp>=1.18.0",
   "fastapi>=0.115.0",
   "uvicorn[standard]>=0.30.0",

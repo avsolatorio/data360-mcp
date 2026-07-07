@@ -206,7 +206,8 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
         return response
 
 
-mcp.settings.stateless_http = True
+from fastmcp import settings
+settings.stateless_http = True
 
 # NOTE: import to be able to run the server with all definitions loaded
 # path="/mcp" means the MCP endpoint lives at /mcp (no trailing slash needed)

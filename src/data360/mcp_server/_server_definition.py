@@ -4,5 +4,4 @@ from fastmcp import FastMCP
 mcp = FastMCP(
     "Data360 MCP Server",
     version="0.1.0",
-    include_fastmcp_meta=False,
 )
