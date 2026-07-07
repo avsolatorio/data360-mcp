@@ -454,3 +454,18 @@ Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
 async def vega_lite_renderer() -> str:
     """HTML renderer template for Vega-Lite v6 charts."""
     return VEGA_LITE_RENDERER_HTML
+
+
+import os
+from fastapi.staticfiles import StaticFiles
+from starlette.routing import Mount
+
+# Resolve the repository root directory
+repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+static_dir = os.path.join(repo_root, "static")
+os.makedirs(static_dir, exist_ok=True)
+
+# Mount the static directory directly on the FastMCP instance
+mcp._additional_http_routes.append(
+    Mount("/static", StaticFiles(directory=static_dir), name="static")
+)
