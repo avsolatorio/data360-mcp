@@ -923,14 +923,43 @@ def _sanitize_dataframe_for_json_records(df: pd.DataFrame) -> pd.DataFrame:
 
 
 async def _fetch_data_internal(url: str) -> pd.DataFrame:
+    from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
     client = get_shared_httpx_client()
-    response = await client.get(url)
-    response.raise_for_status()
-    data = response.json()
-    raw_data = data.get("value", [])
-    if not raw_data:
+
+    parsed = urlparse(url)
+    params = parse_qs(parsed.query)
+
+    all_raw_data = []
+    has_more = True
+    offset = 0
+
+    while has_more:
+        params["offset"] = [str(offset)]
+        new_query = urlencode(params, doseq=True)
+        page_url = urlunparse(parsed._replace(query=new_query))
+
+        response = await client.get(page_url)
+        response.raise_for_status()
+        data = response.json()
+        raw_data = data.get("value", [])
+        if not raw_data:
+            break
+        all_raw_data.extend(raw_data)
+
+        has_more = data.get("has_more", False)
+        next_offset = data.get("next_offset")
+        if next_offset is not None and next_offset > offset:
+            offset = next_offset
+        else:
+            offset += len(raw_data)
+
+        if len(all_raw_data) >= 1000:
+            break
+
+    if not all_raw_data:
         raise ValueError("No data found at the provided URL.")
-    return pd.DataFrame(raw_data)
+    return pd.DataFrame(all_raw_data)
+
 
 
 async def _fetch_single_indicator(
@@ -1517,38 +1546,42 @@ def _apply_post_processing_rules(
     """Recursively applies post-processing rules to all sub-views/panels in a Vega-Lite spec."""
     import inspect
 
-    def _apply_rule_recursively(rule, subspec, data_root=None, **kwargs):
+    def _apply_rule_recursively(rule, subspec, data_root=None, is_composite=False, **kwargs):
         if not isinstance(subspec, dict):
             return subspec
 
         # Structural rules must be run at the top-level
         is_structural = rule.name in ("general_error_band", "population_pyramid", "apply_wb_style")
         if is_structural:
-            return rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **kwargs)
+            sig = inspect.signature(rule.apply)
+            rule_kwargs = dict(kwargs)
+            if "is_composite" in sig.parameters:
+                rule_kwargs["is_composite"] = is_composite
+            return rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **rule_kwargs)
 
         current_data_root = data_root if data_root is not None else subspec
 
         # Recurse into composite views
         if "vconcat" in subspec and isinstance(subspec["vconcat"], list):
             subspec["vconcat"] = [
-                _apply_rule_recursively(rule, child, current_data_root, **kwargs)
+                _apply_rule_recursively(rule, child, current_data_root, is_composite=True, **kwargs)
                 for child in subspec["vconcat"]
             ]
             return subspec
         elif "hconcat" in subspec and isinstance(subspec["hconcat"], list):
             subspec["hconcat"] = [
-                _apply_rule_recursively(rule, child, current_data_root, **kwargs)
+                _apply_rule_recursively(rule, child, current_data_root, is_composite=True, **kwargs)
                 for child in subspec["hconcat"]
             ]
             return subspec
         elif "layer" in subspec and isinstance(subspec["layer"], list):
             subspec["layer"] = [
-                _apply_rule_recursively(rule, child, current_data_root, **kwargs)
+                _apply_rule_recursively(rule, child, current_data_root, is_composite=is_composite, **kwargs)
                 for child in subspec["layer"]
             ]
             return subspec
         elif "spec" in subspec and isinstance(subspec["spec"], dict):
-            subspec["spec"] = _apply_rule_recursively(rule, subspec["spec"], current_data_root, **kwargs)
+            subspec["spec"] = _apply_rule_recursively(rule, subspec["spec"], current_data_root, is_composite=is_composite, **kwargs)
             return subspec
 
         # Leaf view: temporarily inject data/datasets from root if missing
@@ -1559,14 +1592,20 @@ def _apply_post_processing_rules(
             subspec["datasets"] = current_data_root["datasets"]
 
         # Apply the rule
-        subspec = rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **kwargs)
+        sig = inspect.signature(rule.apply)
+        rule_kwargs = dict(kwargs)
+        if "is_composite" in sig.parameters:
+            rule_kwargs["is_composite"] = is_composite
+        subspec = rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **rule_kwargs)
 
         # Cleanup injected data
         if not has_local_data:
             subspec.pop("data", None)
             subspec.pop("datasets", None)
 
+
         return subspec
+
 
     for rule in viz_config.POST_PROCESSING_RULES:
         sig = inspect.signature(rule.apply)
@@ -1995,11 +2034,13 @@ async def get_viz_spec(
         _logger.warning(f"Could not load database mapping for source attribution: {e}")
         db_map = {}
     database_display = db_map.get(database_id, database_id)
+    chart_title_auto = viz_config._clean_label_generic(chart_title_auto)
     indicator_display = (
         chart_title_auto
         if chart_title_auto != "Generated Visualization"
         else indicator_id
     )
+    indicator_display = viz_config._clean_label_generic(indicator_display)
     source_attribution: dict[str, str] = {
         "database_id": database_id,
         "database_name": database_display,
@@ -2279,6 +2320,11 @@ async def get_viz_spec(
             int(viz_data["country"].nunique()) if "country" in viz_data.columns else 0
         )
         _minimum = _MIN_COUNTRIES_BY_STRATEGY[strategy_result.strategy]
+        # If it is a population pyramid request, it will be transformed into a single-panel chart, so 1 country is sufficient.
+        if strategy_result.strategy == viz_config.ChartStrategy.SMALL_MULTIPLES:
+            hint_str = (chart_type or "").lower().strip()
+            if "pyramid" in hint_str or "population_pyramid" in hint_str:
+                _minimum = 1
         if _actual_countries < _minimum:
             return _err(
                 f"Insufficient data for a {strategy_result.strategy.value} chart: "
@@ -2301,7 +2347,10 @@ async def get_viz_spec(
             _avg_pts = float(viz_data.groupby("country")["year"].nunique().mean())
         else:
             _avg_pts = len(viz_data) / _n_series
-        if _avg_pts < 3:
+        # Population pyramid requests are designed to show cross-sectional cohorts in a single year, so they should not fall back.
+        hint_str = (chart_type or "").lower().strip()
+        is_pyramid = "pyramid" in hint_str or "population_pyramid" in hint_str
+        if _avg_pts < 3 and not is_pyramid:
             _logger.info(
                 f"[get_viz_spec] Sparse data ({_avg_pts:.1f} pts/country) — "
                 f"falling back from {strategy_result.strategy.value} to cross_sectional bar."
@@ -2580,6 +2629,10 @@ async def get_multi_indicator_viz_spec(
         if series_labels and ind["indicator_id"] in series_labels:
             ind_name = series_labels[ind["indicator_id"]]
 
+        ind_name = viz_config._clean_label_generic(ind_name)
+
+
+
         col_base = _slugify(ind_name)
         col = _make_unique_col(col_base, used_cols)
         used_cols.add(col)
@@ -2635,6 +2688,14 @@ async def get_multi_indicator_viz_spec(
 
     if merged.empty:
         return _err("No overlapping data found across indicators after merging.")
+
+    # Aggregate any duplicate rows created by mismatching/unmerged breakdown dimensions
+    # (e.g., sex is present in some dataframes but not all, creating Cartesian product rows).
+    # Grouping by join_keys and taking the mean collapses these duplicate values cleanly.
+    agg_dict = {col: "mean" for col in indicator_col_names if col in merged.columns}
+    groupby_keys = [k for k in join_keys if k in merged.columns]
+    merged = merged.groupby(groupby_keys, as_index=False).agg(agg_dict)
+
 
     merged = _sanitize_dataframe_for_json_records(merged)
 
@@ -2699,6 +2760,10 @@ async def get_multi_indicator_viz_spec(
                 "subtitle": [f"Note: Data unavailable for {missing_str}."]
             }
 
+    # 5b. Shorten titles to their differentiators for mapping, legends, and sub-charts
+    diff_map = viz_config._get_label_differentiators(titles)
+    shortened_titles = [diff_map.get(t, t) for t in titles]
+
     # 6. Build indicator_labels for axis/tooltip
     def _format_label(t: str, u: str | None) -> str:
         if not u:
@@ -2710,7 +2775,7 @@ async def get_multi_indicator_viz_spec(
 
     indicator_labels = {
         col: _format_label(title, unit)
-        for col, title, unit in zip(indicator_col_names, titles, units)
+        for col, title, unit in zip(indicator_col_names, shortened_titles, units)
     }
 
     if series_labels:
@@ -2753,7 +2818,7 @@ async def get_multi_indicator_viz_spec(
             value_name="value",
         )
         # Map internal slugified column names back to human-readable indicator titles
-        slug_to_title = dict(zip(indicator_col_names, titles))
+        slug_to_title = dict(zip(indicator_col_names, shortened_titles))
         spec_df["indicator"] = spec_df["indicator"].map(slug_to_title)
         spec_df = spec_df.dropna(subset=["value"])
         # Propagate the color_dim so the builder picks up the indicator column
@@ -2784,7 +2849,7 @@ async def get_multi_indicator_viz_spec(
             var_name="indicator",
             value_name="value",
         )
-        slug_to_title = dict(zip(indicator_col_names, titles))
+        slug_to_title = dict(zip(indicator_col_names, shortened_titles))
         spec_df["indicator"] = spec_df["indicator"].map(slug_to_title)
         spec_df = spec_df.dropna(subset=["value"])
 
@@ -2792,11 +2857,25 @@ async def get_multi_indicator_viz_spec(
     try:
         # If there is a shared unit, it makes sense to use it as the Y-axis label.
         # Otherwise, fall back to the second indicator's name (useful for scatterplots).
-        computed_y_label = (
-            shared_unit_label
-            if shared_unit_label
-            else indicator_labels.get(indicator_col_names[1], "Value")
-        )
+        # If all units are percentage-based, label the axis as "Percentage".
+        is_all_pct = False
+        if unique_label_units:
+            is_all_pct = all(
+                any(x in str(u).lower() for x in ["percent", "pct", "%"])
+                for u in unique_label_units
+            )
+
+        if shared_unit_label:
+            computed_y_label = shared_unit_label
+        elif is_all_pct:
+            computed_y_label = "Percentage"
+        else:
+            # For scatterplots, the second indicator maps to the Y axis.
+            # Otherwise, use "Value" to avoid misleadingly labeling the axis with only one series name.
+            if strategy_result.strategy == viz_config.ChartStrategy.SCATTER:
+                computed_y_label = indicator_labels.get(indicator_col_names[1], "Value")
+            else:
+                computed_y_label = "Value"
 
         spec = viz_config.dispatch_spec(
             strategy_result.strategy,
