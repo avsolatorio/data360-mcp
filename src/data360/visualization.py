@@ -2365,6 +2365,13 @@ async def get_viz_spec(
         f"Chart strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
     )
 
+    if strategy_result.strategy == viz_config.ChartStrategy.FALLBACK_LINE:
+        return _err(
+            "Could not determine a suitable visualization strategy for this data structure. "
+            "A fallback visualization was not generated."
+        )
+
+
     try:
         spec = viz_config.dispatch_spec(
             strategy_result.strategy,
@@ -2805,6 +2812,13 @@ async def get_multi_indicator_viz_spec(
         f"Multi-indicator strategy: {strategy_result.strategy.value} — {strategy_result.reason}"
     )
 
+    if strategy_result.strategy == viz_config.ChartStrategy.FALLBACK_LINE:
+        return _err(
+            "Could not determine a suitable visualization strategy for this data structure. "
+            "A fallback visualization was not generated."
+        )
+
+
     # 7b. Reshape for stacked area / stacked bar: melt wide → long
     # build_stacked_area_spec and build_stacked_bar_spec expect a DataFrame with a single "value" column and a
     # "indicator" color column, not the wide merged layout produced by the join above.
@@ -2872,7 +2886,7 @@ async def get_multi_indicator_viz_spec(
         else:
             # For scatterplots, the second indicator maps to the Y axis.
             # Otherwise, use "Value" to avoid misleadingly labeling the axis with only one series name.
-            if strategy_result.strategy == viz_config.ChartStrategy.SCATTER:
+            if strategy_result.strategy == viz_config.ChartStrategy.CORRELATION:
                 computed_y_label = indicator_labels.get(indicator_col_names[1], "Value")
             else:
                 computed_y_label = "Value"

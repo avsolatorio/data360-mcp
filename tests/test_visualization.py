@@ -103,6 +103,23 @@ class TestGetVizSpecStrategyDispatch:
         assert result["error"] is not None
 
     @pytest.mark.asyncio
+    async def test_fallback_line_returns_error_note(self, patches):
+        """When strategy is FALLBACK_LINE, get_viz_spec should refuse to visualize and return an error note."""
+        from data360.viz_config import StrategyResult, ChartStrategy
+        with patch(
+            "data360.viz_config.select_strategy",
+            return_value=StrategyResult(ChartStrategy.FALLBACK_LINE, "test fallback reason"),
+        ):
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+            )
+
+        assert result["url"] is None
+        assert result["error"] is not None
+        assert "fallback" in result["error"].lower()
+
+    @pytest.mark.asyncio
     async def test_get_viz_spec_applies_post_processing_rules(self, patches):
         """get_viz_spec should automatically apply post-processing rules (e.g. LineYearGapStrokeDashRule)."""
         df_gap = pd.DataFrame(
