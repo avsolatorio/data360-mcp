@@ -391,7 +391,15 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
             document.getElementById('vis').innerHTML = `<p style="color:red;">Failed to render chart spec: ${err.message}</p>`;
           });
         } else {
-          document.getElementById('vis').innerHTML = '<p>No visualization spec available</p>';
+          document.getElementById('vis').innerHTML = `
+            <div>
+              <p>No visualization spec available.</p>
+              <pre style="white-space: pre-wrap; font-size: 11px; background: #fee; padding: 8px; border: 1px solid #fcc; font-family: monospace;">
+Result Keys: ${result ? Object.keys(result).join(', ') : 'null'}
+Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
+              </pre>
+            </div>
+          `;
         }
       };
 
