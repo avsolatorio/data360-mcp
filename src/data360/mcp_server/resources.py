@@ -381,9 +381,32 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
           return;
         }
 
-        const data = result.structuredContent;
-        if (data && data.spec) {
-          vegaEmbed("#vis", data.spec, {
+        // 1. Try to get spec from structuredContent (default)
+        let spec = result.structuredContent?.spec;
+
+        // 2. Fallback: Parse the spec URL from text content and fetch it
+        if (!spec && result.content) {
+          try {
+            const textBlock = result.content.find(
+              (block) => block.type === "text" && block.text && block.text.includes("View spec:")
+            );
+            if (textBlock) {
+              const match = textBlock.text.match(/View spec:\s*(https?:\/\/[^\s\n]+)/);
+              if (match && match[1]) {
+                const specUrl = match[1];
+                const response = await fetch(specUrl);
+                if (response.ok) {
+                  spec = await response.json();
+                }
+              }
+            }
+          } catch (e) {
+            console.error("Failed to fetch spec fallback:", e);
+          }
+        }
+
+        if (spec) {
+          vegaEmbed("#vis", spec, {
             actions: false,
             theme: "default"
           }).catch(err => {
@@ -414,6 +437,10 @@ Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
     "ui://data360/vega-lite-renderer.html",
     app=AppConfig(
         csp=ResourceCSP(
+            connect_domains=[
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+            ],
             resource_domains=[
                 "https://unpkg.com",
                 "https://cdn.jsdelivr.net",
