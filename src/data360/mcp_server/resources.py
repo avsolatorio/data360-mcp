@@ -406,7 +406,11 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
     "ui://data360/vega-lite-renderer.html",
     app=AppConfig(
         csp=ResourceCSP(
-            resource_domains=["https://unpkg.com", "https://cdn.jsdelivr.net"],
+            resource_domains=[
+                "https://unpkg.com",
+                "https://cdn.jsdelivr.net",
+                "'unsafe-eval'",
+            ],
         )
     ),
 )
