@@ -8,7 +8,10 @@ import json
 from typing import Any, Literal
 
 import pydantic_core
+from fastmcp.apps import AppConfig
+from fastmcp.tools import ToolResult
 from fastmcp.tools.tool import Tool
+from mcp.types import TextContent
 
 from data360 import api as data360_api
 from data360 import providers as data360_providers
@@ -272,7 +275,7 @@ async def _get_viz_spec(
     chart_title: str | dict | None = None,
     series_labels: dict[str, str] | None = None,
     strategy_override: str | None = None,
-) -> dict[str, Any]:
+) -> ToolResult:
     """Generate a Vega-Lite chart from a single Data360 indicator.
 
     Use when the user requests a chart or plot for a single indicator.
@@ -294,7 +297,7 @@ async def _get_viz_spec(
         series_labels: Rename dimension codes for legend (e.g. {"WGI_EST": "Estimate"}).
         strategy_override: Explicitly force a chart strategy (e.g. "stacked_bar", "temporal_single").
     """
-    return await data360_viz.get_viz_spec(
+    res = await data360_viz.get_viz_spec(
         database_id=database_id,
         indicator_id=indicator_id,
         country_code=country_code,
@@ -310,6 +313,58 @@ async def _get_viz_spec(
         strategy_override=strategy_override,
     )
 
+    if res.get("error"):
+        return ToolResult(
+            is_error=True,
+            content=[TextContent(type="text", text=res["error"])],
+            structured_content={"error": res["error"]},
+        )
+
+    url = res.get("url")
+    strategy = res.get("strategy")
+    reason = res.get("reason")
+    warning = res.get("warning")
+    source_line = res.get("source_line", "")
+    subtitle_line = res.get("subtitle_line", "")
+
+    lines = []
+    if warning:
+        lines.append(f"Warning: {warning}")
+    lines.append(f"Chart generated using strategy '{strategy}' ({reason}).")
+    if source_line:
+        lines.append(source_line)
+    if subtitle_line:
+        lines.append(subtitle_line)
+    if url:
+        lines.append(f"View spec: {url}")
+
+    text_summary = "\n".join(lines)
+
+    spec = None
+    if url:
+        try:
+            import os
+            spec_id = url.split("/")[-1].replace("_vega.json", "")
+            specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+            vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
+            if os.path.exists(vega_path):
+                with open(vega_path, "r") as f:
+                    spec = json.load(f)
+        except Exception:
+            pass
+
+    return ToolResult(
+        content=[TextContent(type="text", text=text_summary)],
+        structured_content={
+            "spec": spec,
+            "warning": warning,
+            "strategy": strategy,
+            "reason": reason,
+            "dimensions": res.get("dimensions"),
+            "data_profile": res.get("data_profile"),
+        },
+    )
+
 
 async def _get_multi_indicator_viz_spec(
     indicator_ids: list[dict[str, str]] | None = None,
@@ -321,7 +376,7 @@ async def _get_multi_indicator_viz_spec(
     chart_title: str | dict | None = None,
     series_labels: dict[str, str] | None = None,
     strategy_override: str | None = None,
-) -> dict[str, Any]:
+) -> ToolResult:
     """Generate a Vega-Lite chart comparing multiple Data360 indicators.
 
     Use when you need to compare 2–4 indicators (e.g. via scatterplot or dual-axis line chart).
@@ -338,7 +393,7 @@ async def _get_multi_indicator_viz_spec(
         series_labels: Rename dimension codes for legend.
         strategy_override: Explicitly force a chart strategy (e.g. "stacked_bar", "vconcat_panels").
     """
-    return await data360_viz.get_multi_indicator_viz_spec(
+    res = await data360_viz.get_multi_indicator_viz_spec(
         indicator_ids=indicator_ids,
         country_code=country_code,
         start_year=start_year,
@@ -348,6 +403,58 @@ async def _get_multi_indicator_viz_spec(
         chart_title=chart_title,
         series_labels=series_labels,
         strategy_override=strategy_override,
+    )
+
+    if res.get("error"):
+        return ToolResult(
+            is_error=True,
+            content=[TextContent(type="text", text=res["error"])],
+            structured_content={"error": res["error"]},
+        )
+
+    url = res.get("url")
+    strategy = res.get("strategy")
+    reason = res.get("reason")
+    warning = res.get("warning")
+    source_line = res.get("source_line", "")
+    subtitle_line = res.get("subtitle_line", "")
+
+    lines = []
+    if warning:
+        lines.append(f"Warning: {warning}")
+    lines.append(f"Chart generated using strategy '{strategy}' ({reason}).")
+    if source_line:
+        lines.append(source_line)
+    if subtitle_line:
+        lines.append(subtitle_line)
+    if url:
+        lines.append(f"View spec: {url}")
+
+    text_summary = "\n".join(lines)
+
+    spec = None
+    if url:
+        try:
+            import os
+            spec_id = url.split("/")[-1].replace("_vega.json", "")
+            specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+            vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
+            if os.path.exists(vega_path):
+                with open(vega_path, "r") as f:
+                    spec = json.load(f)
+        except Exception:
+            pass
+
+    return ToolResult(
+        content=[TextContent(type="text", text=text_summary)],
+        structured_content={
+            "spec": spec,
+            "warning": warning,
+            "strategy": strategy,
+            "reason": reason,
+            "dimensions": res.get("dimensions"),
+            "data_profile": res.get("data_profile"),
+        },
     )
 
 
@@ -564,6 +671,7 @@ get_data_api_url = mcp.tool(
 get_viz_spec = mcp.tool(
     instrument_mcp_tool(_get_viz_spec, tool_name="data360_get_viz_spec"),
     name="data360_get_viz_spec",
+    app=AppConfig(resource_uri="ui://data360/vega-lite-renderer.html"),
 )
 
 get_multi_indicator_viz_spec = mcp.tool(
@@ -572,6 +680,7 @@ get_multi_indicator_viz_spec = mcp.tool(
         tool_name="data360_get_multi_indicator_viz_spec",
     ),
     name="data360_get_multi_indicator_viz_spec",
+    app=AppConfig(resource_uri="ui://data360/vega-lite-renderer.html"),
 )
 
 get_supported_chart_types = mcp.tool(
