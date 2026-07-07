@@ -383,6 +383,7 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
 
         // 1. Try to get spec from structuredContent (default)
         let spec = result.structuredContent?.spec;
+        let fetchError = null;
 
         // 2. Fallback: Parse the spec URL from text content and fetch it
         if (!spec && result.content) {
@@ -397,10 +398,13 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
                 const response = await fetch(specUrl);
                 if (response.ok) {
                   spec = await response.json();
+                } else {
+                  fetchError = `HTTP ${response.status}: ${response.statusText}`;
                 }
               }
             }
           } catch (e) {
+            fetchError = e.message;
             console.error("Failed to fetch spec fallback:", e);
           }
         }
@@ -419,6 +423,7 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
               <p>No visualization spec available.</p>
               <pre style="white-space: pre-wrap; font-size: 11px; background: #fee; padding: 8px; border: 1px solid #fcc; font-family: monospace;">
 Result Keys: ${result ? Object.keys(result).join(', ') : 'null'}
+Fetch Error: ${fetchError || 'none'}
 Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
               </pre>
             </div>
@@ -437,10 +442,7 @@ Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
     "ui://data360/vega-lite-renderer.html",
     app=AppConfig(
         csp=ResourceCSP(
-            connect_domains=[
-                "http://localhost:*",
-                "http://127.0.0.1:*",
-            ],
+            connect_domains=["*"],
             resource_domains=[
                 "https://unpkg.com",
                 "https://cdn.jsdelivr.net",
