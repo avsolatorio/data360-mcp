@@ -7,6 +7,7 @@ Includes ``data360://agent-recipe`` for host integrators (LangGraph / data360-mc
 import json
 from datetime import datetime
 
+from fastmcp.apps import AppConfig, ResourceCSP
 from data360.providers import get_database_mapping
 
 from ._server_definition import mcp
@@ -342,3 +343,73 @@ async def chart_grammar_resource() -> str:
     the data_profile in tool responses.
     """
     return CHART_GRAMMAR
+
+
+VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data360 Vega-Lite Renderer</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 8px;
+        background: transparent;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      #vis {
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+  </head>
+  <body>
+    <div id="vis"></div>
+    <script type="module">
+      import { App } from "https://unpkg.com/@modelcontextprotocol/ext-apps@0.4.0/app-with-deps";
+
+      const app = new App({ name: "Data360 Vega-Lite Renderer", version: "1.0.0" });
+
+      app.ontoolresult = (result) => {
+        if (result.isError) {
+          document.getElementById('vis').innerHTML = `<p style="color:red;">Error: ${result.content || "Failed to render chart"}</p>`;
+          return;
+        }
+
+        const data = result.structuredContent;
+        if (data && data.spec) {
+          vegaEmbed("#vis", data.spec, {
+            actions: false,
+            theme: "default"
+          }).catch(err => {
+            console.error(err);
+            document.getElementById('vis').innerHTML = `<p style="color:red;">Failed to render chart spec: ${err.message}</p>`;
+          });
+        } else {
+          document.getElementById('vis').innerHTML = '<p>No visualization spec available</p>';
+        }
+      };
+
+      await app.connect();
+    </script>
+  </body>
+</html>
+"""
+
+
+@mcp.resource(
+    "ui://data360/vega-lite-renderer.html",
+    app=AppConfig(
+        csp=ResourceCSP(
+            resource_domains=["https://unpkg.com", "https://cdn.jsdelivr.net"],
+        )
+    ),
+)
+async def vega_lite_renderer() -> str:
+    """HTML renderer template for Vega-Lite v6 charts."""
+    return VEGA_LITE_RENDERER_HTML
