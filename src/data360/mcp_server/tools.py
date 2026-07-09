@@ -1760,7 +1760,7 @@ def data360_explorer_html() -> str:
 
       subtitleDiv.textContent = "Searching indicators...";
       try {
-        const res = await fetch(`/api/indicators/search?query=${encodeURIComponent(query)}&database=${encodeURIComponent(db)}`);
+        const res = await fetch(`http://127.0.0.1:8021/api/indicators/search?query=${encodeURIComponent(query)}&database=${encodeURIComponent(db)}`);
         const payload = await res.json();
         renderIndicators({ query, indicators: payload.indicators });
       } catch (err) {

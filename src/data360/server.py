@@ -260,6 +260,15 @@ app.add_middleware(AuditLogMiddleware)
 # SecurityValidationMiddleware is enabled for incoming request validation.
 app.add_middleware(SecurityValidationMiddleware)
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Instrument FastAPI for incoming request tracking
 if mcp_settings.env != "local" and _connection_string:
     try:
