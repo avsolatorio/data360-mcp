@@ -10,6 +10,9 @@ from typing import Any, Literal, Optional
 
 import pydantic_core
 from fastmcp.apps import AppConfig, PrefabAppConfig
+from prefab_ui.app import PrefabApp
+from prefab_ui.components import Column, Row, Heading, Input, Select, SelectOption, Button, ForEach, Card, CardHeader, CardTitle, CardContent, CardFooter, Text, Form, Rx, RESULT
+from prefab_ui.actions import CallTool, SetState, SendMessage
 from fastmcp.tools import ToolResult
 from fastmcp.tools.tool import Tool
 from mcp.types import TextContent
@@ -1495,283 +1498,14 @@ compare_countries = mcp.add_tool(
 # ---------------------------------------------------------------------------
 
 
-@mcp.resource("ui://data360-explorer/index.html")
-def data360_explorer_html() -> str:
-    """HTML resource for the Data360 indicator explorer Custom HTML app."""
-    return """<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="color-scheme" content="light dark">
-  <style>
-    body {
-      font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-      margin: 0;
-      padding: 12px;
-      background: var(--color-background-primary, #0f172a);
-      color: var(--color-text-primary, #f8fafc);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      background: var(--color-background-secondary, #1e293b);
-      border: 1px solid var(--color-border-primary, #475569);
-      padding: 16px;
-      border-radius: var(--border-radius-lg, 12px);
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
-      width: 440px;
-      box-sizing: border-box;
-      transition: background-color 0.3s, border-color 0.3s;
-    }
-    h3 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-size: var(--font-heading-sm-size, 1.25rem);
-      color: var(--color-text-info, #38bdf8);
-      text-align: center;
-      font-weight: var(--font-weight-bold, 700);
-    }
-    .subtitle {
-      font-size: var(--font-text-xs-size, 0.85rem);
-      color: var(--color-text-secondary, #94a3b8);
-      margin-bottom: 12px;
-      text-align: center;
-    }
-    .indicator-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 280px;
-      overflow-y: auto;
-      margin-bottom: 12px;
-    }
-    .indicator-card {
-      background: var(--color-background-tertiary, #334155);
-      border: 1px solid var(--color-border-secondary, #475569);
-      border-radius: var(--border-radius-md, 8px);
-      padding: 10px;
-      cursor: pointer;
-      transition: background-color 0.2s, border-color 0.2s;
-    }
-    .indicator-card:hover {
-      background: var(--color-background-ghost, #475569);
-      border-color: var(--color-border-info, #38bdf8);
-    }
-    .indicator-name {
-      font-weight: var(--font-weight-semibold, 600);
-      font-size: var(--font-text-sm-size, 0.9rem);
-      color: var(--color-text-primary, #f8fafc);
-      margin-bottom: 4px;
-    }
-    .indicator-meta {
-      font-size: var(--font-text-xs-size, 0.75rem);
-      color: var(--color-text-secondary, #94a3b8);
-      display: flex;
-      justify-content: space-between;
-    }
-    .indicator-desc {
-      font-size: var(--font-text-xs-size, 0.75rem);
-      color: var(--color-text-tertiary, #cbd5e1);
-      margin-top: 4px;
-      line-height: 1.2;
-    }
-    #status {
-      font-size: var(--font-text-xs-size, 0.85rem);
-      color: var(--color-text-success, #10b981);
-      min-height: 20px;
-      text-align: center;
-      font-weight: var(--font-weight-medium, 500);
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h3>Data360 Indicator Explorer</h3>
-    <div id="subtitle" class="subtitle">Searching indicators...</div>
-    <div class="indicator-list" id="list">
-      <!-- Dynamically populated -->
-    </div>
-    <div id="status"></div>
-  </div>
-
-  <script type="module">
-    class McpAppClient {
-      constructor() {
-        this.pendingRequests = new Map();
-        this.requestId = 0;
-        this.initialized = false;
-        this.hostContext = null;
-        window.addEventListener('message', (e) => this.handleMessage(e));
-        this.initialize();
-      }
-
-      async initialize() {
-        try {
-          const result = await this.request('ui/initialize', {
-            appInfo: { name: 'Data360 Explorer', version: '1.0.0' },
-            appCapabilities: {},
-            protocolVersion: '2025-11-21'
-          });
-          this.hostContext = result.hostContext;
-          
-          if (this.hostContext?.styles?.variables) {
-            const root = document.documentElement;
-            const vars = this.hostContext.styles.variables;
-            for (const [key, value] of Object.entries(vars)) {
-              root.style.setProperty(key, value);
-            }
-          }
-          
-          this.initialized = true;
-          this.notify('ui/notifications/initialized', {});
-          this.reportSize();
-        } catch (error) {
-          console.error('Failed to initialize MCP App:', error);
-        }
-      }
-
-      handleMessage(event) {
-        const data = event.data;
-        if (!data || typeof data !== 'object') return;
-        if ('id' in data && this.pendingRequests.has(data.id)) {
-          const { resolve, reject } = this.pendingRequests.get(data.id);
-          this.pendingRequests.delete(data.id);
-          if (data.error) {
-            reject(new Error(data.error.message));
-          } else {
-            resolve(data.result);
-          }
-          return;
-        }
-        if (data.method === 'ui/notifications/tool-result') {
-          try {
-            const result = data.params;
-            const content = result.content;
-            const textBlock = content.find(c => c.type === 'text');
-            if (textBlock) {
-              const payload = JSON.parse(textBlock.text);
-              renderIndicators(payload);
-            }
-          } catch (e) {
-            console.error('Error parsing tool result:', e);
-            document.getElementById('subtitle').textContent = "Error loading indicators.";
-          }
-        }
-      }
-
-      request(method, params) {
-        return new Promise((resolve, reject) => {
-          const id = ++this.requestId;
-          this.pendingRequests.set(id, { resolve, reject });
-          window.parent.postMessage({ jsonrpc: '2.0', id, method, params }, '*');
-          setTimeout(() => {
-            if (this.pendingRequests.has(id)) {
-              this.pendingRequests.delete(id);
-              reject(new Error('Request timed out'));
-            }
-          }, 30000);
-        });
-      }
-
-      notify(method, params) {
-        window.parent.postMessage({ jsonrpc: '2.0', method, params }, '*');
-      }
-
-      reportSize() {
-        this.notify('ui/notifications/size-changed', {
-          height: document.body.scrollHeight
-        });
-      }
-
-      async sendMessageToChat(text) {
-        return this.request('ui/message', {
-          role: 'user',
-          content: [{ type: 'text', text }]
-        });
-      }
-    }
-
-    const mcpApp = new McpAppClient();
-    const listDiv = document.getElementById('list');
-    const subtitleDiv = document.getElementById('subtitle');
-    const statusDiv = document.getElementById('status');
-
-    function renderIndicators(payload) {
-      const indicators = payload.indicators || [];
-      const query = payload.query || "";
-      subtitleDiv.textContent = `Found ${indicators.length} indicators for query: "${query}"`;
-      listDiv.innerHTML = "";
-      
-      if (indicators.length === 0) {
-        listDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">No indicators found.</div>';
-        mcpApp.reportSize();
-        return;
-      }
-
-      indicators.forEach(ind => {
-        const card = document.createElement('div');
-        card.className = 'indicator-card';
-        
-        const nameDiv = document.createElement('div');
-        nameDiv.className = 'indicator-name';
-        nameDiv.textContent = ind.name;
-        
-        const metaDiv = document.createElement('div');
-        metaDiv.className = 'indicator-meta';
-        metaDiv.innerHTML = `<span>Source: ${ind.database_name}</span><span>Years: ${ind.time_period_range || "N/A"}</span>`;
-        
-        card.appendChild(nameDiv);
-        card.appendChild(metaDiv);
-        
-        if (ind.truncated_definition) {
-          const descDiv = document.createElement('div');
-          descDiv.className = 'indicator-desc';
-          descDiv.textContent = ind.truncated_definition;
-          card.appendChild(descDiv);
-        }
-        
-        card.addEventListener('click', async () => {
-          statusDiv.textContent = "Selecting indicator...";
-          try {
-            await mcpApp.sendMessageToChat(`Let's fetch data and generate a chart for the indicator: "${ind.name}" (ID: ${ind.idno}, Database: ${ind.database_id}).`);
-            statusDiv.textContent = "Selection sent to chat!";
-          } catch (err) {
-            statusDiv.textContent = "Error: " + err.message;
-          }
-        });
-        
-        listDiv.appendChild(card);
-      });
-      
-      // Update iframe height after rendering
-      setTimeout(() => {
-        mcpApp.reportSize();
-      }, 50);
-    }
-
-    // Report size on load
-    window.addEventListener('load', () => {
-      mcpApp.reportSize();
-    });
-  </script>
-</body>
-</html>
-"""
-
-
 @mcp.tool(
     name="data360_indicator_explorer",
-    app=AppConfig(resource_uri="ui://data360-explorer/index.html"),
+    app=True,
 )
 async def data360_indicator_explorer(
     query: str,
-    database: str | None = None,
-    limit: int = 10,
-) -> ToolResult:
+    database: Optional[str] = None,
+) -> PrefabApp:
     """Interactively explore and search World Bank Data360 development indicators.
 
     Use when the user wants to browse, search, and select specific development indicators or variables.
@@ -1779,30 +1513,52 @@ async def data360_indicator_explorer(
     Args:
         query: Search term (e.g. 'GDP', 'poverty', 'education').
         database: Optional database ID filter (e.g. 'wdi', 'pip').
-        limit: Maximum number of search results to display (default 10).
     """
-    res = await _search_indicators(query=query, database=database, limit=limit)
-    
-    # Extract indicator records to send to the UI
-    indicators_data = []
-    if hasattr(res, "indicators") and res.indicators:
-        for ind in res.indicators:
-            indicators_data.append({
-                "idno": ind.idno,
-                "database_id": ind.database_id,
-                "database_name": ind.database_name,
-                "name": ind.name,
-                "truncated_definition": ind.truncated_definition,
-                "time_period_range": ind.time_period_range,
-            })
-            
-    payload = {
-        "query": query,
-        "indicators": indicators_data
-    }
-    
-    return ToolResult(
-        content=[TextContent(type="text", text=json.dumps(payload))]
+    initial_results = await data360_search_indicators_internal(query=query, database=database)
+
+    with Column(gap=4) as view:
+        Heading("Data360 Indicator Explorer", level=2)
+        
+        # Search & Filter Form (calls internal search tool via CallTool)
+        with Form(
+            on_submit=CallTool(
+                "data360_search_indicators_internal",
+                arguments={"query": Rx("search_query"), "database": Rx("selected_db")},
+                on_success=SetState("indicators_list", RESULT),
+            )
+        ):
+            with Row(gap=2):
+                Input(name="search_query", placeholder="Search indicators...", value=query)
+                with Select(name="selected_db", value=database or ""):
+                    SelectOption(label="All Databases", value="")
+                    SelectOption(label="World Development Indicators (WDI)", value="wdi")
+                    SelectOption(label="Health Nutrition & Population (HNP)", value="hnp")
+                    SelectOption(label="Poverty & Inequality (PIP)", value="pip")
+                Button("Search")
+
+        # Results Grid
+        with ForEach("indicators_list") as ind:
+            with Card(css_class="mb-2"):
+                with CardHeader():
+                    CardTitle(ind.name)
+                with CardContent():
+                    Text(ind.truncated_definition)
+                    with Row(gap=4, css_class="mt-2 text-xs text-muted"):
+                        Text(f"Source: {ind.database_name}")
+                        Text(f"Years: {ind.time_period_range}")
+                with CardFooter():
+                    Button(
+                        "Plot Chart", 
+                        on_click=SendMessage(
+                            content=Rx("f'Let\'s plot the indicator: \"{ind.name}\" (ID: {ind.idno}, Database: {ind.database_id})'")
+                        )
+                    )
+
+    return PrefabApp(
+        view=view,
+        state={
+            "indicators_list": initial_results
+        }
     )
 @mcp.resource("ui://data360-chart/index.html")
 def data360_chart_html() -> str:
