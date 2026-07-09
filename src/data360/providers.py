@@ -1293,11 +1293,20 @@ class CodelistManager:
         """Get a dictionary mapping codes to names (e.g., {'KEN': 'Kenya'})."""
         codelist_type = codelist_type.upper()
 
-        # Ensure loaded if global
+        # Try extdataportal metadata cache first
+        await self._ensure_extdataportal_loaded()
+        resolved_key = self._resolve_extdataportal_key(codelist_type)
+        if resolved_key in self._extdataportal and self._extdataportal[resolved_key]:
+            return dict(self._extdataportal[resolved_key])
+
+        # Fallback to legacy API fetch if global
         if codelist_type in self.GLOBAL_CODELISTS:
-            await self._ensure_loaded(codelist_type)
-            items = self._cache.get(codelist_type, [])
-            return {item.get("Id", ""): item.get("Name", "") for item in items}
+            try:
+                await self._ensure_loaded(codelist_type)
+                items = self._cache.get(codelist_type, [])
+                return {item.get("Id", ""): item.get("Name", "") for item in items}
+            except Exception:
+                pass
 
         # Static mappings (reverse the value->code mapping to code->name)
         if codelist_type in self.STATIC_MAPPINGS:
