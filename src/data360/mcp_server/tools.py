@@ -6,7 +6,7 @@ concise docstrings to reduce token context bloat, and validation schemas.
 
 import os
 import json
-from typing import Any, Literal
+from typing import Any, Literal, Optional
 
 import pydantic_core
 from fastmcp.apps import AppConfig, PrefabAppConfig
@@ -1965,3 +1965,28 @@ def data360_chart_html() -> str:
 </html>
 """
     return html_template.replace("{vega_js}", vega_js).replace("{vega_lite_js}", vega_lite_js).replace("{vega_embed_js}", vega_embed_js).replace("{vega_interpreter_js}", vega_interpreter_js)
+
+
+@mcp.tool(name="data360_search_indicators_internal")
+async def data360_search_indicators_internal(
+    query: str,
+    database: Optional[str] = None,
+    limit: int = 20,
+) -> list[dict]:
+    """Helper internal tool to return a clean list of indicators for the UI app."""
+    if not query.strip():
+        return []
+    res = await _search_indicators(query=query, database=database, limit=limit)
+    indicators_data = []
+    if hasattr(res, "indicators") and res.indicators:
+        for ind in res.indicators:
+            indicators_data.append({
+                "idno": ind.idno,
+                "database_id": ind.database_id,
+                "database_name": ind.database_name,
+                "name": ind.name,
+                "truncated_definition": ind.truncated_definition,
+                "time_period_range": ind.time_period_range,
+            })
+    return indicators_data
+
