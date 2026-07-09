@@ -125,7 +125,12 @@ def save_specs_to_static(vl_spec: dict) -> str:
     ``data360.config.get_mcp_server_settings()``.
     """
     spec_id = str(uuid.uuid4())
-    specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+    else:
+        server_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+        specs_dir = os.path.join(project_root, "static", "viz_specs")
     os.makedirs(specs_dir, exist_ok=True)
     vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
     with open(vega_path, "w") as f:
@@ -2065,6 +2070,18 @@ async def get_viz_spec(
     if "obs_value" in data.columns:
         data["obs_value"] = pd.to_numeric(data["obs_value"], errors="coerce")
 
+    # Auto-filter unit_measure for population pyramid candidates (containing age and sex dimensions)
+    # when multiple units are present to avoid faceting on unit_measure and collapsing age groups.
+    cols = {c.lower() for c in data.columns}
+    if "sex" in cols and "age" in cols and "unit_measure" in cols:
+        unit_col = [c for c in data.columns if c.lower() == "unit_measure"][0]
+        unique_units = data[unit_col].dropna().unique()
+        if len(unique_units) > 1:
+            count_units = [u for u in unique_units if str(u).upper() in ("COUNT", "VAL", "NUMBER", "VALUE")]
+            selected_unit = count_units[0] if count_units else unique_units[0]
+            data = data[data[unit_col] == selected_unit].copy()
+            _logger.info("Multi-unit population data detected. Auto-filtered unit_measure to '%s' to preserve age/sex breakdown structure.", selected_unit)
+
     try:
         viz_data, relevant_cols, temporal_frequency = _clean_single_df(
             data, relevant_fields, chart_type, data_frequency
@@ -2338,6 +2355,15 @@ async def get_viz_spec(
             hint_str = (chart_type or "").lower().strip()
             if "pyramid" in hint_str or "population_pyramid" in hint_str:
                 _minimum = 1
+        
+        # If we facet or group by breakdown dimensions (not by country), 1 country is sufficient.
+        if strategy_result.strategy in (viz_config.ChartStrategy.SMALL_MULTIPLES, viz_config.ChartStrategy.BREAKDOWN_COMPARISON):
+            facet_dim = getattr(strategy_result, "facet_dim", None)
+            color_dim = getattr(strategy_result, "color_dim", None)
+            secondary_color_dim = getattr(strategy_result, "secondary_color_dim", None)
+            if facet_dim != "country" and color_dim != "country" and secondary_color_dim != "country":
+                _minimum = 1
+
         if _actual_countries < _minimum:
             return _err(
                 f"Insufficient data for a {strategy_result.strategy.value} chart: "
@@ -2363,7 +2389,18 @@ async def get_viz_spec(
         # Population pyramid requests are designed to show cross-sectional cohorts in a single year, so they should not fall back.
         hint_str = (chart_type or "").lower().strip()
         is_pyramid = "pyramid" in hint_str or "population_pyramid" in hint_str
-        if _avg_pts < 3 and not is_pyramid:
+        
+        # Don't fall back to cross-sectional if we are faceting/grouping by breakdown dimensions, 
+        # as doing so would collapse the breakdown details.
+        is_breakdown = False
+        if strategy_result.strategy in (viz_config.ChartStrategy.SMALL_MULTIPLES, viz_config.ChartStrategy.BREAKDOWN_COMPARISON):
+            facet_dim = getattr(strategy_result, "facet_dim", None)
+            color_dim = getattr(strategy_result, "color_dim", None)
+            secondary_color_dim = getattr(strategy_result, "secondary_color_dim", None)
+            if facet_dim != "country" and color_dim != "country" and secondary_color_dim != "country":
+                is_breakdown = True
+
+        if _avg_pts < 3 and not is_pyramid and not is_breakdown:
             _logger.info(
                 f"[get_viz_spec] Sparse data ({_avg_pts:.1f} pts/country) — "
                 f"falling back from {strategy_result.strategy.value} to cross_sectional bar."
@@ -2439,8 +2476,9 @@ async def get_viz_spec(
                 reason_lower.split("→")[-1] if "→" in reason_lower else reason_lower
             )
 
+            is_scatter_match = (core_intent == "point" and ("scatter" in reason_suffix or "scatterplot" in reason_suffix))
             is_point_fallback_to_line = (core_intent == "point" and "line" in reason_suffix)
-            if core_intent and core_intent not in reason_suffix and not is_point_fallback_to_line:
+            if core_intent and core_intent not in reason_suffix and not is_scatter_match and not is_point_fallback_to_line:
                 warning_msg = (
                     f"You requested '{chart_type}', but the visualization engine "
                     f"selected a different strategy based on data cardinality: {out_reason}. "
@@ -2992,7 +3030,8 @@ async def get_multi_indicator_viz_spec(
             reason_lower.split("→")[-1] if "→" in reason_lower else reason_lower
         )
 
-        if core_intent and core_intent not in reason_suffix:
+        is_scatter_match = (core_intent == "point" and ("scatter" in reason_suffix or "scatterplot" in reason_suffix))
+        if core_intent and core_intent not in reason_suffix and not is_scatter_match:
             warning_msg = (
                 f"You requested '{chart_type}', but the visualization engine "
                 f"selected a different strategy based on data cardinality: {strategy_result.reason}. "

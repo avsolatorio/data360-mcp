@@ -17,6 +17,7 @@ if not _os.environ.get("PYTEST_CURRENT_TEST") and not _os.environ.get("PYTEST_RU
     load_dotenv()
 del _os
 
+from typing import Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -66,6 +67,10 @@ class MCPServerSettings(BaseSettings):
     health_check_timeout: float = Field(
         default=5.0,
         description="Per-check timeout in seconds for GET /ready outbound probes.",
+    )
+    chart_render_mode: Literal["prefab", "svg", "embed"] = Field(
+        default="svg",
+        description="Rendering mode for charts: 'prefab' (native Recharts), 'svg' (static SVG), or 'embed' (interactive sandboxed Vega-Lite iframe).",
     )
 
     model_config = SettingsConfigDict(env_prefix="MCP_")

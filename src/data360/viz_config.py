@@ -122,7 +122,8 @@ KNOWN_ORDINAL_SORT_ORDERS: dict[str, list[str]] = {
         "15 to 19 years old", "15-19",
         "10 to 14 years old", "10-14",
         "5 to 9 years old", "5-9",
-        "under 5 years old", "0-4"
+        "under 5 years old", "0-4",
+        "under 15 years old", "15 to 64 years old", "65 years old and over"
     ]
 }
 
@@ -7065,13 +7066,25 @@ class PopulationPyramidRule(PostProcessingRule):
         )
 
     def should_apply(self, spec, df=None, raw_hint=None, **kwargs):
-        hint_str = (raw_hint or "").lower().strip()
-        if not ("pyramid" in hint_str or "population_pyramid" in hint_str):
-            return False
         if df is None:
             return False
         cols = {c.lower() for c in df.columns}
-        return "sex" in cols and "age" in cols
+        has_dims = "sex" in cols and "age" in cols
+        if not has_dims:
+            return False
+
+        hint_str = (raw_hint or "").lower().strip()
+        is_pyramid_hint = "pyramid" in hint_str or "population_pyramid" in hint_str
+        if is_pyramid_hint:
+            return True
+
+        # Auto-trigger if single country, single year, and both age/sex columns are present
+        year_count = df["year"].nunique() if "year" in df.columns else 0
+        country_count = df["country"].nunique() if "country" in df.columns else 0
+        if year_count == 1 and country_count == 1:
+            return True
+
+        return False
 
     def apply(self, spec, data_frequency=None, unit_measure=None, df=None, raw_hint=None, **kwargs):
         if not self.should_apply(spec, df=df, raw_hint=raw_hint):

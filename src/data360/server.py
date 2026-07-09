@@ -3,12 +3,18 @@ import json
 import logging
 import os
 import uuid
+
+# Force Prefab UI to inline all CSS and JS dependencies inside the HTML resource.
+# This prevents sandbox blocks on external CDNs like jsdelivr.
+os.environ["PREFAB_BUNDLED_RENDERER"] = "1"
+
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from data360.mcp_server.resources import CORSStaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request as StarletteRequest
 
@@ -332,7 +338,12 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
     if url_str:
         try:
             spec_id = url_str.split("/")[-1].replace("_vega.json", "")
-            specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+            if os.environ.get("PYTEST_CURRENT_TEST"):
+                specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+            else:
+                server_dir = os.path.dirname(os.path.abspath(__file__))
+                project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+                specs_dir = os.path.join(project_root, "static", "viz_specs")
             vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
             if os.path.exists(vega_path):
                 with open(vega_path, "r") as f:
@@ -411,10 +422,14 @@ async def critique_endpoint(req: CritiqueRequest):
                 os.environ.pop("OPENAI_API_KEY", None)
 
 
-# Mount static files FIRST (more specific path must come before catch-all)
-static_dir = os.path.join(os.getcwd(), "static")
+if os.environ.get("PYTEST_CURRENT_TEST"):
+    static_dir = os.path.join(os.getcwd(), "static")
+else:
+    server_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+    static_dir = os.path.join(project_root, "static")
 os.makedirs(static_dir, exist_ok=True)
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
+app.mount("/static", CORSStaticFiles(directory=static_dir), name="static")
 # Mount MCP app at root — the path="/mcp" in http_app() handles the /mcp route
 app.mount("/", mcp_app)
 

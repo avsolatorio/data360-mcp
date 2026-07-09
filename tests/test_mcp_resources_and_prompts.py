@@ -194,3 +194,18 @@ async def test_search_indicators_tool_schema() -> None:
     db_schema = properties["database"]
     assert "anyOf" in db_schema
     assert any(opt.get("type") == "string" for opt in db_schema["anyOf"])
+
+
+@pytest.mark.asyncio
+async def test_vega_lite_renderer_resource_spec_injection() -> None:
+    """Verify that vega-lite-renderer.html resource correctly injects the spec parameter."""
+    # Read without spec
+    res_no_spec = await mcp.read_resource("ui://data360/vega-lite-renderer.html")
+    html_no_spec = res_no_spec.contents[0].content
+    assert "window.PRE_LOADED_SPEC =" not in html_no_spec
+    
+    # Read with spec parameter in query string
+    spec_json = '{"test_key": "test_val"}'
+    res_with_spec = await mcp.read_resource(f"ui://data360/vega-lite-renderer.html?spec={spec_json}")
+    html_with_spec = res_with_spec.contents[0].content
+    assert "window.PRE_LOADED_SPEC = {\"test_key\": \"test_val\"};" in html_with_spec

@@ -120,6 +120,149 @@ class TestGetVizSpecStrategyDispatch:
         assert "fallback" in result["error"].lower()
 
     @pytest.mark.asyncio
+    async def test_get_viz_spec_single_country_breakdown_sufficiency(self, patches):
+        """Single country with 2 breakdowns (small multiples strategy) should be allowed by the guard."""
+        from data360.viz_config import StrategyResult, ChartStrategy
+        
+        # Mock dataframe representing a single country with sex and age breakdown
+        # Must use raw column names: time_period, obs_value, ref_area
+        df = pd.DataFrame({
+            "time_period": ["2023", "2023"],
+            "obs_value": [1000.0, 1100.0],
+            "ref_area": ["ESP", "ESP"],
+            "sex": ["Male", "Female"],
+            "age": ["under 5", "under 5"]
+        })
+        
+        # Override select_strategy to return SMALL_MULTIPLES faceted by sex, color by age
+        strat_res = StrategyResult(
+            ChartStrategy.SMALL_MULTIPLES,
+            "2 breakdowns, 1 economy -> small multiples (facet=sex, color=age)",
+            facet_dim="sex",
+            color_dim="age",
+        )
+        
+        with (
+            patch("data360.visualization._fetch_data_internal", new_callable=AsyncMock, return_value=df),
+            patch("data360.viz_config.select_strategy", return_value=strat_res),
+            patch("data360.api.get_disaggregation", new_callable=AsyncMock, return_value={"dimensions": []})
+        ):
+            result = await get_viz_spec(
+                database_id="WB_HNP",
+                indicator_id="WB_HNP_SP_POP_5Y",
+                country_code="ESP",
+                start_year=2023,
+                end_year=2023,
+                chart_type="bar"
+            )
+            
+            assert result["error"] is None
+            assert result["url"] is not None
+            assert result["strategy"] == "small_multiples"
+
+    @pytest.mark.asyncio
+    async def test_get_viz_spec_auto_population_pyramid(self, patches):
+        """Single country and single year with sex and age breakdowns should automatically trigger PopulationPyramidRule even if chart_type is None."""
+        from data360.viz_config import StrategyResult, ChartStrategy
+        
+        df = pd.DataFrame({
+            "time_period": ["2023", "2023"],
+            "obs_value": [1000.0, 1100.0],
+            "ref_area": ["ESP", "ESP"],
+            "sex": ["Male", "Female"],
+            "age": ["under 5", "under 5"]
+        })
+        
+        strat_res = StrategyResult(
+            ChartStrategy.SMALL_MULTIPLES,
+            "2 breakdowns, 1 economy -> small multiples (facet=sex, color=age)",
+            facet_dim="sex",
+            color_dim="age",
+        )
+        
+        # Capture the spec passed to save_specs_to_static
+        saved_spec = None
+        def fake_save(spec):
+            nonlocal saved_spec
+            saved_spec = spec
+            return "http://localhost:8021/static/viz_specs/pyramid_test.json"
+            
+        with (
+            patch("data360.visualization._fetch_data_internal", new_callable=AsyncMock, return_value=df),
+            patch("data360.viz_config.select_strategy", return_value=strat_res),
+            patch("data360.api.get_disaggregation", new_callable=AsyncMock, return_value={"dimensions": []}),
+            patch("data360.visualization.save_specs_to_static", side_effect=fake_save)
+        ):
+            result = await get_viz_spec(
+                database_id="WB_HNP",
+                indicator_id="WB_HNP_SP_POP_5Y",
+                country_code="ESP",
+                start_year=2023,
+                end_year=2023,
+                chart_type=None
+            )
+            
+            assert result["error"] is None
+            assert result["strategy"] == "small_multiples"
+            assert saved_spec is not None
+            # The PopulationPyramidRule should have triggered, creating the signed_value transform
+            assert any("signed_value" in str(t) for t in saved_spec.get("transform", []))
+
+    @pytest.mark.asyncio
+    async def test_get_viz_spec_auto_filters_multi_unit_for_population(self, patches):
+        """Verify that get_viz_spec automatically filters unit_measure to Count when multi-unit data is returned for a population pyramid candidate."""
+        from data360.viz_config import StrategyResult, ChartStrategy
+        
+        # Mock data returning both COUNT and PT (Percentage) for age/sex breakdown
+        df = pd.DataFrame({
+            "time_period": ["2023", "2023", "2023", "2023"],
+            "obs_value": [1000.0, 1100.0, 4.5, 4.8],
+            "ref_area": ["ESP", "ESP", "ESP", "ESP"],
+            "sex": ["Male", "Female", "Male", "Female"],
+            "age": ["under 5", "under 5", "under 5", "under 5"],
+            "unit_measure": ["COUNT", "COUNT", "PT", "PT"]
+        })
+        
+        strat_res = StrategyResult(
+            ChartStrategy.SMALL_MULTIPLES,
+            "2 breakdowns, 1 economy -> small multiples (facet=sex, color=age)",
+            facet_dim="sex",
+            color_dim="age",
+        )
+        
+        saved_spec = None
+        def fake_save(spec):
+            nonlocal saved_spec
+            saved_spec = spec
+            return "http://localhost:8021/static/viz_specs/pyramid_multi_unit_test.json"
+            
+        with (
+            patch("data360.visualization._fetch_data_internal", new_callable=AsyncMock, return_value=df),
+            patch("data360.viz_config.select_strategy", return_value=strat_res),
+            patch("data360.api.get_disaggregation", new_callable=AsyncMock, return_value={"dimensions": []}),
+            patch("data360.visualization.save_specs_to_static", side_effect=fake_save)
+        ):
+            result = await get_viz_spec(
+                database_id="WB_HNP",
+                indicator_id="WB_HNP_SP_POP_5Y",
+                country_code="ESP",
+                start_year=2023,
+                end_year=2023,
+                chart_type=None
+            )
+            
+            assert result["error"] is None
+            assert result["strategy"] == "small_multiples"
+            assert saved_spec is not None
+            # The data values should only contain the COUNT values (1000.0 and 1100.0), not the PT values (4.5 and 4.8)
+            # unit_measure is stripped as a trivial dimension since it has been filtered to a single value
+            values = saved_spec["data"]["values"]
+            assert len(values) == 2
+            assert all("unit_measure" not in v for v in values)
+            assert any(v["value"] == 1000.0 for v in values)
+            assert any(v["value"] == 1100.0 for v in values)
+
+    @pytest.mark.asyncio
     async def test_get_viz_spec_applies_post_processing_rules(self, patches):
         """get_viz_spec should automatically apply post-processing rules (e.g. LineYearGapStrokeDashRule)."""
         df_gap = pd.DataFrame(
@@ -950,14 +1093,20 @@ class TestVisualizationUnitQualification:
 async def test_detect_missing_countries():
     """Verify that _detect_missing_countries correctly detects and flags missing country codes/names."""
     from data360.visualization import _detect_missing_countries
+    from unittest.mock import patch, AsyncMock
 
-    # 1. Base check
-    missing = await _detect_missing_countries("USA,IND,PAK", {"USA", "IND"})
-    assert missing == ["Pakistan"]
+    with patch(
+        "data360.providers.get_codelist_mapping",
+        new_callable=AsyncMock,
+        return_value={"USA": "United States", "IND": "India", "PAK": "Pakistan"},
+    ):
+        # 1. Base check
+        missing = await _detect_missing_countries("USA,IND,PAK", {"USA", "IND"})
+        assert missing == ["Pakistan"]
 
-    # 2. Case insensitivity and whitespace check
-    missing = await _detect_missing_countries(" usa;  ind; pak ", {"USA", "IND"})
-    assert missing == ["Pakistan"]
+        # 2. Case insensitivity and whitespace check
+        missing = await _detect_missing_countries(" usa;  ind; pak ", {"USA", "IND"})
+        assert missing == ["Pakistan"]
 
     # 3. None/empty checks
     assert await _detect_missing_countries(None, {"USA"}) == []
@@ -1003,3 +1152,23 @@ def test_log_scale_guard_percentage():
     # 3. Explicit log hint should override the percentage safety guard
     result_explicit = rule.apply(spec_pct, df=df_pct, raw_hint="log scale please")
     assert result_explicit["encoding"]["y"]["scale"]["type"] == "log"
+
+
+def test_normalize_disaggregation_filters():
+    from data360.mcp_server.tools import _normalize_disaggregation_filters
+    
+    # 1. Null/empty cases
+    assert _normalize_disaggregation_filters(None) is None
+    assert _normalize_disaggregation_filters({}) == {}
+    
+    # 2. String and None values
+    filters = {"SEX": "F", "AGE": None}
+    assert _normalize_disaggregation_filters(filters) == {"SEX": "F", "AGE": None}
+    
+    # 3. List values should be converted to comma-separated strings
+    filters_list = {"SEX": ["F", "M"], "AGE": ["Y0T4"]}
+    assert _normalize_disaggregation_filters(filters_list) == {"SEX": "F,M", "AGE": "Y0T4"}
+    
+    # 4. Mix of strings, numbers, and lists
+    filters_mix = {"SEX": "F", "YEARS": [2020, 2021, None], "AGE": 5}
+    assert _normalize_disaggregation_filters(filters_mix) == {"SEX": "F", "YEARS": "2020,2021", "AGE": "5"}

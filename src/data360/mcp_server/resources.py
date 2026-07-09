@@ -13,6 +13,20 @@ from data360.providers import get_database_mapping
 from ._server_definition import mcp
 from .agent_recipe import AGENT_RECIPE_MARKDOWN
 
+import sys
+
+_orig_read_resource = mcp.read_resource
+async def _logged_read_resource(uri: str, *args, **kwargs):
+    print(f"[INTERCEPT] read_resource requested for URI: {uri}", file=sys.stderr, flush=True)
+    try:
+        res = await _orig_read_resource(uri, *args, **kwargs)
+        print(f"[INTERCEPT] read_resource success for URI: {uri}", file=sys.stderr, flush=True)
+        return res
+    except Exception as e:
+        print(f"[INTERCEPT] read_resource FAILED for URI: {uri} error: {e!r}", file=sys.stderr, flush=True)
+        raise
+mcp.read_resource = _logged_read_resource
+
 # System prompt with chain-of-thought guidance for chatbot integration
 from .prompts import SYSTEM_PROMPT
 
@@ -363,75 +377,148 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
         height: 100%;
         min-height: 400px;
       }
+      #error-display {
+        display: none;
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        padding: 15px;
+        margin: 10px;
+        border-radius: 4px;
+      }
+      #error-display h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+      }
+      #error-display pre {
+        white-space: pre-wrap;
+        font-size: 11px;
+        margin-top: 10px;
+        background: #fff;
+        padding: 8px;
+        border: 1px solid #ddd;
+        font-family: monospace;
+      }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <script src="http://localhost:8021/static/libs/vega.js"></script>
+    <script src="http://localhost:8021/static/libs/vega-lite.js"></script>
+    <script src="http://localhost:8021/static/libs/vega-embed.js"></script>
   </head>
   <body>
     <div id="vis"></div>
+    <div id="error-display">
+      <h3>Renderer Error</h3>
+      <p id="error-message"></p>
+      <pre id="error-stack"></pre>
+    </div>
     <script type="module">
-      import { App } from "https://unpkg.com/@modelcontextprotocol/ext-apps@0.4.0/app-with-deps";
+      const serverBaseUrl = "http://localhost:8021";
 
-      const app = new App({ name: "Data360 Vega-Lite Renderer", version: "1.0.0" });
+      function showError(message, stack) {
+        document.getElementById('vis').style.display = 'none';
+        const display = document.getElementById('error-display');
+        display.style.display = 'block';
+        document.getElementById('error-message').textContent = message;
+        document.getElementById('error-stack').textContent = stack || 'No stack trace available';
+      }
 
-      app.ontoolresult = async (result) => {
-        if (result.isError) {
-          document.getElementById('vis').innerHTML = `<p style="color:red;">Error: ${result.content || "Failed to render chart"}</p>`;
-          return;
+      async function logToServer(msg, detail) {
+        try {
+          await fetch(`${serverBaseUrl}/debug-log`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: msg, detail: detail })
+          });
+        } catch (e) {
+          console.error("Failed to log to server:", e);
         }
+      }
 
-        // 1. Try to get spec from structuredContent (default)
-        let spec = result.structuredContent?.spec;
-        let fetchError = null;
+      window.addEventListener('error', (event) => {
+        const msg = event.message || event.error?.message || 'Unknown error';
+        const stack = event.error?.stack || '';
+        showError(msg, stack);
+        logToServer("Unhandled error", { message: msg, stack: stack });
+      });
 
-        // 2. Fallback: Parse the spec URL from text content and fetch it
-        if (!spec && result.content) {
-          try {
-            const textBlock = result.content.find(
-              (block) => block.type === "text" && block.text && block.text.includes("View spec:")
-            );
-            if (textBlock) {
-              const match = textBlock.text.match(/View spec:\s*(https?:\/\/[^\s\n]+)/);
-              if (match && match[1]) {
-                const specUrl = match[1];
-                const response = await fetch(specUrl);
-                if (response.ok) {
-                  spec = await response.json();
-                } else {
-                  fetchError = `HTTP ${response.status}: ${response.statusText}`;
+      window.addEventListener('unhandledrejection', (event) => {
+        const msg = event.reason?.message || String(event.reason);
+        const stack = event.reason?.stack || '';
+        showError("Promise Rejection: " + msg, stack);
+        logToServer("Unhandled promise rejection", { message: msg, stack: stack });
+      });
+
+      import { App } from "http://localhost:8021/static/libs/ext-apps.js";
+
+      if (window.PRE_LOADED_SPEC) {
+        vegaEmbed("#vis", window.PRE_LOADED_SPEC, {
+          actions: false,
+          theme: "default"
+        }).catch(err => {
+          console.error(err);
+          showError(`Failed to render chart spec: ${err.message}`, err.stack);
+        });
+      } else {
+        const app = new App({ name: "Data360 Vega-Lite Renderer", version: "1.0.0" });
+
+        app.ontoolresult = async (result) => {
+          if (result.isError) {
+            document.getElementById('vis').innerHTML = `<p style="color:red;">Error: ${result.content || "Failed to render chart"}</p>`;
+            return;
+          }
+
+          // 1. Try to get spec from structuredContent (default)
+          let spec = result.structuredContent?.spec;
+          let fetchError = null;
+
+          // 2. Fallback: Parse the spec URL from text content and fetch it
+          if (!spec && result.content) {
+            try {
+              const textBlock = result.content.find(
+                (block) => block.type === "text" && block.text && block.text.includes("View spec:")
+              );
+              if (textBlock) {
+                const match = textBlock.text.match(/View spec:\s*(https?:\/\/[^\s\n]+)/);
+                if (match && match[1]) {
+                  const specUrl = match[1];
+                  const response = await fetch(specUrl);
+                  if (response.ok) {
+                    spec = await response.json();
+                  } else {
+                    fetchError = `HTTP ${response.status}: ${response.statusText}`;
+                  }
                 }
               }
+            } catch (e) {
+              fetchError = e.message;
+              console.error("Failed to fetch spec fallback:", e);
             }
-          } catch (e) {
-            fetchError = e.message;
-            console.error("Failed to fetch spec fallback:", e);
           }
-        }
 
-        if (spec) {
-          vegaEmbed("#vis", spec, {
-            actions: false,
-            theme: "default"
-          }).catch(err => {
-            console.error(err);
-            document.getElementById('vis').innerHTML = `<p style="color:red;">Failed to render chart spec: ${err.message}</p>`;
-          });
-        } else {
-          document.getElementById('vis').innerHTML = `
-            <div>
-              <p>No visualization spec available.</p>
-              <pre style="white-space: pre-wrap; font-size: 11px; background: #fee; padding: 8px; border: 1px solid #fcc; font-family: monospace;">
+          if (spec) {
+            vegaEmbed("#vis", spec, {
+              actions: false,
+              theme: "default"
+            }).catch(err => {
+              console.error(err);
+              showError(`Failed to render chart spec: ${err.message}`, err.stack);
+            });
+          } else {
+            document.getElementById('vis').innerHTML = `
+              <div>
+                <p>No visualization spec available.</p>
+                <pre style="white-space: pre-wrap; font-size: 11px; background: #fee; padding: 8px; border: 1px solid #fcc; font-family: monospace;">
 Result Keys: ${result ? Object.keys(result).join(', ') : 'null'}
 Fetch Error: ${fetchError || 'none'}
 Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
-              </pre>
-            </div>
-          `;
-        }
-      };
+                </pre>
+              </div>
+            `;
+          }
+        };
 
-      await app.connect();
+        await app.connect();
+      }
     </script>
   </body>
 </html>
@@ -439,11 +526,13 @@ Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
 
 
 @mcp.resource(
-    "ui://data360/vega-lite-renderer.html",
+    "ui://data360/vega-lite-renderer.html{?spec}",
     app=AppConfig(
         csp=ResourceCSP(
             connect_domains=["*"],
             resource_domains=[
+                "http://localhost:*",
+                "http://127.0.0.1:*",
                 "https://unpkg.com",
                 "https://cdn.jsdelivr.net",
                 "'unsafe-eval'",
@@ -451,14 +540,71 @@ Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
         )
     ),
 )
-async def vega_lite_renderer() -> str:
+async def vega_lite_renderer(spec: str | None = None) -> str:
     """HTML renderer template for Vega-Lite v6 charts."""
-    return VEGA_LITE_RENDERER_HTML
+    from data360.config import get_mcp_server_settings
+    settings = get_mcp_server_settings()
+    port = settings.port or 8021
+    server_base = f"http://localhost:{port}"
+    html = VEGA_LITE_RENDERER_HTML.replace("http://localhost:8021", server_base)
+    if spec:
+        # Clean the spec parameter (if it contains escaped quotes, etc.)
+        injection = f"\n      window.PRE_LOADED_SPEC = {spec};\n"
+        html = html.replace("<body>", f"<body>\n    <script>{injection}</script>")
+    return html
 
 
 import os
 from fastapi.staticfiles import StaticFiles
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
 from starlette.routing import Mount
+
+from starlette.exceptions import HTTPException
+
+class CORSStaticFiles(StaticFiles):
+    async def __call__(self, scope, receive, send) -> None:
+        if scope["type"] != "http":
+            await super().__call__(scope, receive, send)
+            return
+
+        if scope["method"] == "OPTIONS":
+            response = Response(
+                "OK",
+                status_code=200,
+                headers={
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+                    "Access-Control-Allow-Headers": "*",
+                }
+            )
+            await response(scope, receive, send)
+            return
+
+        async def cors_send(message) -> None:
+            if message["type"] == "http.response.start":
+                headers = list(message.get("headers", []))
+                has_origin = any(h[0].lower() == b"access-control-allow-origin" for h in headers)
+                if not has_origin:
+                    headers.append((b"access-control-allow-origin", b"*"))
+                    headers.append((b"access-control-allow-methods", b"GET, HEAD, OPTIONS"))
+                    headers.append((b"access-control-allow-headers", b"*"))
+                message["headers"] = headers
+            await send(message)
+
+        await super().__call__(scope, receive, cors_send)
+
+    async def get_response(self, path: str, scope) -> Response:
+        try:
+            return await super().get_response(path, scope)
+        except HTTPException as exc:
+            return JSONResponse(
+                {"detail": exc.detail},
+                status_code=exc.status_code,
+                headers=exc.headers
+            )
+
+
 
 # Resolve the repository root directory
 repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -467,5 +613,34 @@ os.makedirs(static_dir, exist_ok=True)
 
 # Mount the static directory directly on the FastMCP instance
 mcp._additional_http_routes.append(
-    Mount("/static", StaticFiles(directory=static_dir), name="static")
+    Mount("/static", CORSStaticFiles(directory=static_dir), name="static")
 )
+
+@mcp.custom_route("/debug-log", methods=["POST", "OPTIONS"])
+async def debug_log(request: Request) -> Response:
+    if request.method == "OPTIONS":
+        return Response(
+            "OK",
+            status_code=200,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type",
+            }
+        )
+
+    try:
+        body = await request.json()
+        print(f"\n[IFRAME DEBUG LOG] {body}\n", flush=True)
+        return JSONResponse(
+            {"status": "ok"},
+            headers={"Access-Control-Allow-Origin": "*"}
+        )
+    except Exception as e:
+        print(f"Error reading debug log: {e}", flush=True)
+        return JSONResponse(
+            {"error": str(e)},
+            status_code=400,
+            headers={"Access-Control-Allow-Origin": "*"}
+        )
+
