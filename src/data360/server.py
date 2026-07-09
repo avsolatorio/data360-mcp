@@ -10,6 +10,7 @@ os.environ["PREFAB_BUNDLED_RENDERER"] = "1"
 
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
+from typing import Optional
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -279,6 +280,36 @@ async def root():
         "ready": "/mcp/ready",
         "mcp": "/mcp",
     }
+
+
+@app.get("/api/indicators/search")
+async def api_search_indicators(
+    query: str,
+    database: Optional[str] = None,
+    limit: int = 20,
+):
+    from data360.mcp_server.tools import _search_indicators
+    
+    if not query.strip():
+        return {"indicators": []}
+        
+    try:
+        res = await _search_indicators(query=query, database=database, limit=limit)
+        indicators_data = []
+        if hasattr(res, "indicators") and res.indicators:
+            for ind in res.indicators:
+                indicators_data.append({
+                    "idno": ind.idno,
+                    "database_id": ind.database_id,
+                    "database_name": ind.database_name,
+                    "name": ind.name,
+                    "truncated_definition": ind.truncated_definition,
+                    "time_period_range": ind.time_period_range,
+                })
+        return {"indicators": indicators_data}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
 
 
 from pydantic import BaseModel
