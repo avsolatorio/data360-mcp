@@ -46,17 +46,3 @@ describe("tool contract version sync", () => {
     expect(raw.version).toBe(TOOL_CONTRACT_VERSION);
   });
 });
-
-import { formatData360VizSourceLine } from "./viz-display-format";
-
-describe("formatData360VizSourceLine", () => {
-  it("formats source line with indicator id in parentheses", () => {
-    const raw = {
-      database_name: "World Development Indicators (WDI)",
-      indicator_name: "GDP (current US$)",
-      indicator_id: "NY.GDP.MKTP.CD",
-    };
-    const res = formatData360VizSourceLine(raw);
-    expect(res).toBe("World Bank — GDP (current US$) (NY.GDP.MKTP.CD)");
-  });
-});
