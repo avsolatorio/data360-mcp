@@ -49,9 +49,10 @@ async def test_search_indicators_internal():
 
 
 @pytest.mark.asyncio
-async def test_indicator_explorer_prefab_app():
+async def test_indicator_explorer_tool_result():
     from data360.mcp_server.tools import data360_indicator_explorer
-    from prefab_ui.app import PrefabApp
+    from fastmcp.tools import ToolResult
+    import json
     
     mock_indicator = AsyncMock()
     mock_indicator.idno = "WB_WDI_NY_GDP"
@@ -66,8 +67,14 @@ async def test_indicator_explorer_prefab_app():
 
     with patch("data360.mcp_server.tools._search_indicators", return_value=mock_res):
         app_res = await data360_indicator_explorer(query="GDP", database="wdi")
-        assert isinstance(app_res, PrefabApp)
-        assert "indicators_list" in app_res.state
-        assert len(app_res.state["indicators_list"]) == 1
+        assert isinstance(app_res, ToolResult)
+        
+        # Verify JSON content
+        text_block = app_res.content[0]
+        payload = json.loads(text_block.text)
+        assert payload["query"] == "GDP"
+        assert len(payload["indicators"]) == 1
+        assert payload["indicators"][0]["idno"] == "WB_WDI_NY_GDP"
+
 
 
