@@ -24,10 +24,8 @@ def main(
         azure_connection_string=mcp_settings.azure_connection_string,
     )
 
-    if transport == "stdio":
-        mcp.run(transport=transport)
-    else:
-        mcp.run(transport=transport, port=port)
+    kwargs = {"port": port} if transport != "stdio" else {}
+    mcp.run(transport=transport, **kwargs)
 
 
 if __name__ == "__main__":
