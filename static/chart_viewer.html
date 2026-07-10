@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unemployment Chart Viewer</title>
+    <!-- Import Outfit Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Load Vega-Lite dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: #f8fafc;
+        }
+        .container {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+        h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        #vis {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        #vis:hover {
+            transform: scale(1.01);
+        }
+        .footer {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Japan Unemployment Analysis</h1>
+        <div id="vis"></div>
+        <div class="footer">Data source: World Bank - World Development Indicators (WDI)</div>
+    </div>
+
+    <script>
+        const spec = {
+          "data": {
+            "values": [
+              {"year": "2009", "value": 3.882, "country": "Japan", "_d360_lseg": "Japan_0", "_d360_ygap": 0},
+              {"year": "2010", "value": 3.985, "country": "Japan", "_d360_lseg": "Japan_0", "_d360_ygap": 0},
+              {"year": "2010", "value": 3.985, "country": "Japan", "_d360_lseg": "Japan_1", "_d360_ygap": 1},
+              {"year": "2012", "value": 3.492, "country": "Japan", "_d360_lseg": "Japan_1", "_d360_ygap": 1},
+              {"year": "2012", "value": 3.492, "country": "Japan", "_d360_lseg": "Japan_2", "_d360_ygap": 0},
+              {"year": "2013", "value": 3.397, "country": "Japan", "_d360_lseg": "Japan_2", "_d360_ygap": 0},
+              {"year": "2013", "value": 3.397, "country": "Japan", "_d360_lseg": "Japan_3", "_d360_ygap": 1},
+              {"year": "2015", "value": 2.715, "country": "Japan", "_d360_lseg": "Japan_3", "_d360_ygap": 1},
+              {"year": "2015", "value": 2.715, "country": "Japan", "_d360_lseg": "Japan_4", "_d360_ygap": 0},
+              {"year": "2016", "value": 2.594, "country": "Japan", "_d360_lseg": "Japan_4", "_d360_ygap": 0},
+              {"year": "2016", "value": 2.594, "country": "Japan", "_d360_lseg": "Japan_5", "_d360_ygap": 0},
+              {"year": "2017", "value": 2.315, "country": "Japan", "_d360_lseg": "Japan_5", "_d360_ygap": 0},
+              {"year": "2017", "value": 2.315, "country": "Japan", "_d360_lseg": "Japan_6", "_d360_ygap": 0},
+              {"year": "2018", "value": 2.296, "country": "Japan", "_d360_lseg": "Japan_6", "_d360_ygap": 0},
+              {"year": "2018", "value": 2.296, "country": "Japan", "_d360_lseg": "Japan_7", "_d360_ygap": 0},
+              {"year": "2019", "value": 2.033, "country": "Japan", "_d360_lseg": "Japan_7", "_d360_ygap": 0},
+              {"year": "2019", "value": 2.033, "country": "Japan", "_d360_lseg": "Japan_8", "_d360_ygap": 0},
+              {"year": "2020", "value": 2.468, "country": "Japan", "_d360_lseg": "Japan_8", "_d360_ygap": 0}
+            ]
+          },
+          "mark": {
+            "type": "line",
+            "point": {"size": 56, "filled": true},
+            "strokeCap": "round",
+            "strokeWidth": 3
+          },
+          "title": {
+            "text": [
+              "Unemployment with advanced education",
+              "(% of total labor force with advanced education)"
+            ],
+            "subtitle": [
+              "Japan, 2009-2020",
+              "Dashed lines indicate missing intervals (e.g., 2011, 2014)"
+            ],
+            "subtitleColor": "#e2e8f0"
+          },
+          "width": 600,
+          "height": 350,
+          "config": {
+            "bar": {"cornerRadiusTopLeft": 2, "cornerRadiusTopRight": 2},
+            "axis": {
+              "gridDash": [4, 2],
+              "gridColor": "#e2e8f0",
+              "gridWidth": 1,
+              "labelFont": "Outfit, sans-serif",
+              "tickColor": "#cbd5e1",
+              "tickCount": 5,
+              "titleFont": "Outfit, sans-serif",
+              "labelColor": "#64748b",
+              "titleColor": "#0f172a",
+              "domainColor": "#cbd5e1",
+              "labelOverlap": "greedy",
+              "labelFontSize": 12,
+              "titleFontSize": 12,
+              "titleFontWeight": "bold"
+            },
+            "font": "Outfit, sans-serif",
+            "line": {"strokeCap": "round", "strokeWidth": 3},
+            "view": {"stroke": "transparent"},
+            "point": {"size": 60, "stroke": "#FFFFFF", "strokeWidth": 1},
+            "range": {
+              "category": [
+                "#38bdf8", "#fb923c", "#a78bfa", "#4ade80", "#f472b6"
+              ]
+            },
+            "title": {
+              "color": "#0f172a",
+              "anchor": "start",
+              "offset": 8,
+              "fontSize": 16,
+              "fontWeight": "bold",
+              "lineHeight": 22,
+              "subtitleColor": "#64748b",
+              "subtitlePadding": 4,
+              "subtitleFontSize": 12,
+              "subtitleFontWeight": "normal",
+              "subtitleLineHeight": 18
+            },
+            "legend": {
+              "orient": "top",
+              "direction": "horizontal",
+              "labelFont": "Outfit, sans-serif",
+              "titleFont": "Outfit, sans-serif",
+              "labelColor": "#0f172a",
+              "labelLimit": 300,
+              "titleColor": "#0f172a",
+              "labelFontSize": 12,
+              "titleFontSize": 12,
+              "labelFontWeight": "bold"
+            },
+            "background": "#FFFFFF"
+          },
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "encoding": {
+            "x": {
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "gridDash": [4, 2],
+                "gridColor": "#cbd5e1",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "labelColor": "#64748b",
+                "titleColor": "#0f172a",
+                "titleFontWeight": "bold"
+              },
+              "type": "temporal",
+              "field": "year",
+              "timeUnit": "year"
+            },
+            "y": {
+              "axis": {
+                "title": "Percentage of labor force with advanced education",
+                "gridDash": [4, 2],
+                "gridColor": "#cbd5e1",
+                "tickCount": 5,
+                "labelColor": "#64748b",
+                "titleColor": "#0f172a",
+                "titleFontWeight": "bold"
+              },
+              "type": "quantitative",
+              "field": "value",
+              "scale": {"zero": false}
+            },
+            "color": {
+              "type": "nominal",
+              "field": "country",
+              "legend": {
+                "title": "Country",
+                "orient": "top",
+                "columns": 3,
+                "direction": "horizontal",
+                "labelLimit": 250,
+                "symbolType": "stroke"
+              }
+            },
+            "detail": {"type": "nominal", "field": "_d360_lseg"},
+            "tooltip": [
+              {"type": "temporal", "field": "year", "title": "Year", "format": "%Y", "timeUnit": "year"},
+              {"type": "quantitative", "field": "value", "title": "Value", "format": ".2f"},
+              {"type": "nominal", "field": "country", "title": "Country"}
+            ],
+            "strokeDash": {
+              "value": [],
+              "condition": {
+                "test": "datum._d360_ygap == 1",
+                "value": [6, 4]
+              }
+            }
+          }
+        };
+
+        vegaEmbed('#vis', spec, {actions: false}).catch(console.error);
+    </script>
+</body>
+</html>

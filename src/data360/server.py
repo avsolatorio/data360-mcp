@@ -4,6 +4,10 @@ import logging
 import os
 import uuid
 
+# Force Prefab UI to inline all CSS and JS dependencies inside the HTML resource.
+# This prevents sandbox blocks on external CDNs like jsdelivr.
+os.environ["PREFAB_BUNDLED_RENDERER"] = "1"
+
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from typing import Optional
@@ -11,6 +15,7 @@ from typing import Optional
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from data360.mcp_server.resources import CORSStaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request as StarletteRequest
 
@@ -255,6 +260,15 @@ app.add_middleware(AuditLogMiddleware)
 # SecurityValidationMiddleware is enabled for incoming request validation.
 app.add_middleware(SecurityValidationMiddleware)
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Instrument FastAPI for incoming request tracking
 if mcp_settings.env != "local" and _connection_string:
     try:
@@ -277,6 +291,33 @@ async def root():
     }
 
 
+@app.get("/api/indicators/search")
+async def api_search_indicators(
+    query: str,
+    database: Optional[str] = None,
+    limit: int = 20,
+):
+    from data360.mcp_server.tools import _search_indicators
+    
+    if not query.strip():
+        return {"indicators": []}
+        
+    try:
+        res = await _search_indicators(query=query, database=database, limit=limit)
+        indicators_data = []
+        if hasattr(res, "indicators") and res.indicators:
+            for ind in res.indicators:
+                indicators_data.append({
+                    "idno": ind.idno,
+                    "database_id": ind.database_id,
+                    "database_name": ind.database_name,
+                    "name": ind.name,
+                    "truncated_definition": ind.truncated_definition,
+                    "time_period_range": ind.time_period_range,
+                })
+        return {"indicators": indicators_data}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 from pydantic import BaseModel
 from typing import Any, Optional, Dict, List
@@ -354,6 +395,7 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
 
 
 
+
 if os.environ.get("PYTEST_CURRENT_TEST"):
     static_dir = os.path.join(os.getcwd(), "static")
 else:
@@ -361,7 +403,7 @@ else:
     project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
     static_dir = os.path.join(project_root, "static")
 os.makedirs(static_dir, exist_ok=True)
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
+app.mount("/static", CORSStaticFiles(directory=static_dir), name="static")
 # Mount MCP app at root — the path="/mcp" in http_app() handles the /mcp route
 app.mount("/", mcp_app)
 
