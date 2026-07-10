@@ -6,11 +6,12 @@ import uuid
 
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
-from typing import Optional
+from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request as StarletteRequest
 
@@ -277,21 +278,17 @@ async def root():
     }
 
 
-
-from pydantic import BaseModel
-from typing import Any, Optional, Dict, List
-
 class VizSpecRequest(BaseModel):
     database_id: str
     indicator_id: str
-    country_code: Optional[str] = None
-    start_year: Optional[int] = None
-    end_year: Optional[int] = None
-    disaggregation_filters: Optional[Dict[str, Optional[str]]] = None
-    chart_type: Optional[str] = None
-    relevant_fields: Optional[List[str]] = None
-    chart_title: Optional[str] = None
-    series_labels: Optional[Dict[str, str]] = None
+    country_code: str | None = None
+    start_year: int | None = None
+    end_year: int | None = None
+    disaggregation_filters: dict[str, str | None] | None = None
+    chart_type: str | None = None
+    relevant_fields: list[str] | None = None
+    chart_title: str | None = None
+    series_labels: dict[str, str] | None = None
 
 
 @app.post("/api/viz-spec")
@@ -318,20 +315,17 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
     if not spec:
         return JSONResponse(status_code=500, content={"error": "Vega-Lite spec was not generated."})
 
-    return {
+    return {k: v for k, v in {
         "spec": spec,
         "reason": res.get("reason"),
-        "strategy": res.get("strategy")
-    }
+        "strategy": res.get("strategy"),
+    }.items() if v is not None}
 
 
 
-if os.environ.get("PYTEST_CURRENT_TEST"):
-    static_dir = os.path.join(os.getcwd(), "static")
-else:
-    server_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
-    static_dir = os.path.join(project_root, "static")
+server_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+static_dir = os.path.join(project_root, "static")
 os.makedirs(static_dir, exist_ok=True)
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 # Mount MCP app at root — the path="/mcp" in http_app() handles the /mcp route
