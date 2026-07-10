@@ -3,8 +3,10 @@ import json
 import logging
 import os
 import uuid
+
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
+from typing import Optional
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -276,8 +278,88 @@ async def root():
 
 
 
-# Mount static files FIRST (more specific path must come before catch-all)
-static_dir = os.path.join(os.getcwd(), "static")
+from pydantic import BaseModel
+from typing import Any, Optional, Dict, List
+
+class VizSpecRequest(BaseModel):
+    database_id: str
+    indicator_id: str
+    country_code: Optional[str] = None
+    start_year: Optional[int] = None
+    end_year: Optional[int] = None
+    disaggregation_filters: Optional[Dict[str, Optional[str]]] = None
+    chart_type: Optional[str] = None
+    relevant_fields: Optional[List[str]] = None
+    chart_title: Optional[str] = None
+    series_labels: Optional[Dict[str, str]] = None
+
+
+@app.post("/api/viz-spec")
+async def get_viz_spec_endpoint(req: VizSpecRequest):
+    from data360 import visualization as data360_viz
+    from data360.config import get_mcp_server_settings
+
+    # Temporarily disable Charts API URL to force local static file storage
+    settings = get_mcp_server_settings()
+    old_charts_url = settings.charts_api_url
+    settings.charts_api_url = None
+
+    try:
+        res = await data360_viz.get_viz_spec(
+            database_id=req.database_id,
+            indicator_id=req.indicator_id,
+            country_code=req.country_code,
+            start_year=req.start_year,
+            end_year=req.end_year,
+            disaggregation_filters=req.disaggregation_filters,
+            chart_type=req.chart_type,
+            relevant_fields=req.relevant_fields,
+            chart_title=req.chart_title,
+            series_labels=req.series_labels,
+        )
+    finally:
+        # Restore Charts API URL setting
+        settings.charts_api_url = old_charts_url
+
+    if res.get("error"):
+        return JSONResponse(status_code=400, content={"error": res.get("error")})
+
+    url_str = res.get("url")
+    spec = None
+    if url_str:
+        try:
+            spec_id = url_str.split("/")[-1].replace("_vega.json", "")
+            if os.environ.get("PYTEST_CURRENT_TEST"):
+                specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+            else:
+                server_dir = os.path.dirname(os.path.abspath(__file__))
+                project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+                specs_dir = os.path.join(project_root, "static", "viz_specs")
+            vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
+            if os.path.exists(vega_path):
+                with open(vega_path, "r") as f:
+                    spec = json.load(f)
+        except Exception as e:
+            _audit_logger.exception("Failed to read generated spec")
+            return JSONResponse(status_code=500, content={"error": "Failed to read generated spec"})
+
+    if not spec:
+        return JSONResponse(status_code=500, content={"error": "Spec was generated but could not be retrieved from disk."})
+
+    return {
+        "spec": spec,
+        "reason": res.get("reason"),
+        "strategy": res.get("strategy")
+    }
+
+
+
+if os.environ.get("PYTEST_CURRENT_TEST"):
+    static_dir = os.path.join(os.getcwd(), "static")
+else:
+    server_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+    static_dir = os.path.join(project_root, "static")
 os.makedirs(static_dir, exist_ok=True)
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 # Mount MCP app at root — the path="/mcp" in http_app() handles the /mcp route

@@ -576,3 +576,21 @@ compare_countries = mcp.add_tool(
         serializer=_compact_aggregation_serializer,
     )
 )
+
+
+def _normalize_disaggregation_filters(filters: dict[str, Any] | None) -> dict[str, str | None] | None:
+    """Normalize user-provided disaggregation filters.
+    Converts list values (e.g., ["F", "M"]) to comma-separated strings (e.g., "F,M")
+    to conform to the underlying API support while remaining type-flexible for LLM callers.
+    """
+    if filters is None:
+        return None
+    normalized = {}
+    for k, v in filters.items():
+        if v is None:
+            normalized[k] = None
+        elif isinstance(v, list):
+            normalized[k] = ",".join(str(item).strip() for item in v if item is not None)
+        else:
+            normalized[k] = str(v)
+    return normalized

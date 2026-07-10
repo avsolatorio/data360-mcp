@@ -55,7 +55,6 @@ class TestB1SourceFallback:
         assert isinstance(result, str)
         assert "World Bank" in result
 
-
 # ============================================================================
 # B3: dispatch_spec must pass y_label/unit_measure to HEATMAP
 # ============================================================================
@@ -349,3 +348,72 @@ class TestPhase1ResilienceAndSpecStorage:
         assert url == "http://remote-charts-api/spec/123"
         mock_post.assert_called_once()
         mock_save.assert_called_once()
+
+
+# ============================================================================
+# Task 5: Scatter Plot Annotation Overlap Prevention
+# ============================================================================
+
+
+class TestScatterPlotOverlapPrevention:
+    """Test density-based label collision detection in build_correlation_spec."""
+
+    def test_low_cardinality_retains_all_labels(self):
+        """If there are few points (e.g. 5), all labels must be visible."""
+        from data360.viz_config import build_correlation_spec
+        df = pd.DataFrame([
+            {"country": f"C{i}", "gdp": float(i), "life_exp": float(i * 10)}
+            for i in range(5)
+        ])
+        result = StrategyResult(
+            ChartStrategy.CORRELATION,
+            "test",
+            indicator_cols=["gdp", "life_exp"],
+            color_dim="country"
+        )
+        spec = build_correlation_spec(df, "Test Title", result)
+
+        # Verify data values have _show_label = True for all points
+        values = spec["data"]["values"]
+        assert len(values) == 5
+        for v in values:
+            assert v["_show_label"] is True
+
+    def test_high_cardinality_filters_overlapping_labels(self):
+        """If there are many overlapping points, some labels must be hidden, but outliers must be shown."""
+        from data360.viz_config import build_correlation_spec
+
+        # Generate 30 points in a very tight cluster, plus 2 outliers far away
+        rows = []
+        for i in range(30):
+            rows.append({"country": f"Cluster{i}", "gdp": 10.0 + (i * 0.001), "life_exp": 50.0 + (i * 0.001)})
+        # Add 2 outliers (extremely far from the cluster)
+        rows.append({"country": "OutlierMin", "gdp": 0.0, "life_exp": 0.0})
+        rows.append({"country": "OutlierMax", "gdp": 100.0, "life_exp": 100.0})
+
+        df = pd.DataFrame(rows)
+        result = StrategyResult(
+            ChartStrategy.CORRELATION,
+            "test",
+            indicator_cols=["gdp", "life_exp"],
+            color_dim="country"
+        )
+        spec = build_correlation_spec(df, "Test Title", result)
+        values = spec["data"]["values"]
+
+        # At least some of the clustered points must have _show_label = False
+        hidden_count = sum(1 for v in values if not v["_show_label"])
+        assert hidden_count > 0, "Some overlapping labels must be hidden."
+
+        # Outliers (min/max points) are prioritized and should be shown
+        outlier_min = next(v for v in values if v["country"] == "OutlierMin")
+        outlier_max = next(v for v in values if v["country"] == "OutlierMax")
+        assert outlier_min["_show_label"] is True, "OutlierMin label must be shown."
+        assert outlier_max["_show_label"] is True, "OutlierMax label must be shown."
+
+        # Verify that the text mark has opacity encoding configured correctly
+        text_layer = next(layer for layer in spec["layer"] if layer["mark"]["type"] == "text")
+        opacity_encoding = text_layer["encoding"]["opacity"]
+        assert opacity_encoding["condition"]["test"] == "datum._show_label"
+        assert opacity_encoding["condition"]["value"] == 1
+        assert opacity_encoding["value"] == 0

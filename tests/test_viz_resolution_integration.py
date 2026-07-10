@@ -163,6 +163,22 @@ def _viz_patches(api_rows: list[dict], meta: MagicMock | None = None, country_ma
                 new_callable=AsyncMock,
                 return_value=country_map,
             ),
+            patch(
+                "data360.api.get_disaggregation",
+                new_callable=AsyncMock,
+                return_value={
+                    "dimensions": [
+                        {
+                            "field_name": "COMP_BREAKDOWN_1",
+                            "field_value": ["WGI_EST", "WGI_SC", "WGI_SE", "WGI_SR", "WGI_SC_LB", "WGI_SC_UB"]
+                        },
+                        {
+                            "field_name": "SEX",
+                            "field_value": ["F", "M", "_T"]
+                        }
+                    ]
+                }
+            ),
         ):
             yield
 
@@ -178,7 +194,7 @@ async def test_get_viz_spec_comp_breakdown_uses_resolved_labels():
     """comp_breakdown_1 values in the spec must be human labels, not raw codes."""
     from data360.visualization import get_viz_spec
 
-    async with _viz_patches(_make_wgi_rows("GEO")):
+    async with _viz_patches(_make_wgi_rows("GEO", codes=["WGI_SC", "WGI_SR"])):
         result = await get_viz_spec(
             database_id="WB_WGI",
             indicator_id="GOV_WGI_GE",
