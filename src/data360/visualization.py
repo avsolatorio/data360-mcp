@@ -402,18 +402,21 @@ def _infer_scale_type(unit_code: str | None, unit_label: str | None = None) -> s
     Returns one of: ``"percentage"``, ``"currency"``, ``"persons"``, ``"index"``.
     """
     tokens: set[str] = set()
+    import re
     for raw in (unit_code, unit_label):
         if raw:
             normalised = raw.upper().strip()
             tokens.add(normalised)
-            tokens.update(normalised.replace("_", " ").split())
+            # Remove all punctuation before splitting
+            clean_str = re.sub(r'[^\w\s]', ' ', normalised)
+            tokens.update(clean_str.split())
 
+    if tokens & _PERSONS_TOKENS:
+        return "persons"
     if tokens & _PERCENTAGE_TOKENS:
         return "percentage"
     if tokens & _CURRENCY_TOKENS:
         return "currency"
-    if tokens & _PERSONS_TOKENS:
-        return "persons"
     return "index"
 
 

@@ -1055,10 +1055,10 @@ class RoutingContext:
         normalized = (raw_unit or "").upper().strip()
         if "$" in normalized or "USD" in normalized or "CURRENCY" in normalized or "DOLLARS" in normalized:
             scale_type = "currency"
+        elif normalized == "PS" or "PEOPLE" in normalized or "PERSONS" in normalized or "COUNT" in normalized or "HEADCOUNT" in normalized or "PERSON" in normalized:
+            scale_type = "persons"
         elif "%" in normalized or "PERCENT" in normalized or "RATE" in normalized or "SHARE" in normalized or "PROPORTION" in normalized:
             scale_type = "percentage"
-        elif normalized == "PS" or "PEOPLE" in normalized or "PERSONS" in normalized or "COUNT" in normalized or "HEADCOUNT" in normalized:
-            scale_type = "persons"
         else:
             scale_type = "index"
 
@@ -2206,7 +2206,7 @@ def _x_temporal_encoding(freq: TemporalFreq = "annual") -> dict:
 def _is_proportion_indicator(df, unit_measure=None, scale_type=None):
     """Check if the indicator unit, scale_type, or name suggests it's a proportion/rate/share."""
     normalized_unit = (unit_measure or "").upper()
-    if scale_type == "percentage" or "%" in normalized_unit or "PERCENT" in normalized_unit:
+    if scale_type == "percentage" or (("%" in normalized_unit or "PERCENT" in normalized_unit) and "PERSON" not in normalized_unit):
         return True
 
     keywords = {"PROPORTION", "SHARE", "RATE", "RATIO", "FRACTION"}
@@ -2230,7 +2230,7 @@ def _value_label_expr(unit_measure: str | None = None, scale_type: str | None = 
         return "format(datum.value, '.0%')"
     is_currency = scale_type == "currency" or "$" in normalized or "USD" in normalized
     prefix = "$" if is_currency else ""
-    is_percentage = scale_type == "percentage" or "%" in normalized or "PERCENT" in normalized
+    is_percentage = scale_type == "percentage" or (("%" in normalized or "PERCENT" in normalized) and "PERSON" not in normalized)
     if is_percentage:
         return "format(datum.value, '.1~f') + '%'"
     if unit_measure == "T":
