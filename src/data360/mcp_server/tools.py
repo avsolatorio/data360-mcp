@@ -4,19 +4,17 @@ Thin wrapper layer that registers API functions as MCP tools with optimized sign
 concise docstrings to reduce token context bloat, and validation schemas.
 """
 
-import os
 import json
+import os
+import threading
 from typing import Any, Literal, Optional
 
 import pydantic_core
-from fastmcp.apps import AppConfig, PrefabAppConfig
-from prefab_ui.app import PrefabApp
-from prefab_ui.components import Column, Row, Heading, Input, Select, SelectOption, Button, ForEach, Card, CardHeader, CardTitle, CardContent, CardFooter, Text, Form, Rx, RESULT
-from prefab_ui.actions import CallTool, SetState, SendMessage
+from fastmcp.apps import AppConfig
+from fastmcp.exceptions import ToolError
 from fastmcp.tools import ToolResult
 from fastmcp.tools.tool import Tool
 from mcp.types import TextContent
-from fastmcp.exceptions import ToolError
 
 from data360 import api as data360_api
 from data360 import providers as data360_providers
@@ -307,686 +305,105 @@ async def _get_data_api_url(
 
 
 
-# Cache for local Vega library contents to prevent disk read overhead on every tool call
-_vega_js_cache = None
-_vega_lite_js_cache = None
-_vega_embed_js_cache = None
-_vega_interpreter_js_cache = None
+
+
+# ---------------------------------------------------------------------------
+# Bundled Vega library cache (thread-safe, loaded once on first use)
+# ---------------------------------------------------------------------------
+
+_vega_libs_lock = threading.Lock()
+_vega_libs_cache: tuple[str, str, str, str] | None = None
+
 
 def get_cached_vega_libs() -> tuple[str, str, str, str]:
-    """Load and cache local Vega library scripts from static/libs."""
-    global _vega_js_cache, _vega_lite_js_cache, _vega_embed_js_cache, _vega_interpreter_js_cache
-    if _vega_js_cache is None:
+    """Load and cache local Vega library scripts from static/libs (thread-safe)."""
+    global _vega_libs_cache
+    if _vega_libs_cache is not None:
+        return _vega_libs_cache
+    with _vega_libs_lock:
+        if _vega_libs_cache is not None:  # double-check after acquiring lock
+            return _vega_libs_cache
         from pathlib import Path
-        libs_dir = Path(__file__).resolve().parent.parent.parent.parent / "static" / "libs"
+        import logging
+
+        libs_dir = (
+            Path(__file__).resolve().parent.parent.parent.parent / "static" / "libs"
+        )
         try:
-            _vega_js_cache = (libs_dir / "vega.js").read_text(encoding="utf-8")
-            _vega_lite_js_cache = (libs_dir / "vega-lite.js").read_text(encoding="utf-8")
-            _vega_embed_js_cache = (libs_dir / "vega-embed.js").read_text(encoding="utf-8")
-            _vega_interpreter_js_cache = (libs_dir / "vega-interpreter.js").read_text(encoding="utf-8")
+            vega_js = (libs_dir / "vega.js").read_text(encoding="utf-8")
+            vega_lite_js = (libs_dir / "vega-lite.js").read_text(encoding="utf-8")
+            vega_embed_js = (libs_dir / "vega-embed.js").read_text(encoding="utf-8")
+            vega_interp_js = (libs_dir / "vega-interpreter.js").read_text(
+                encoding="utf-8"
+            )
         except Exception as e:
-            import logging
-            logger = logging.getLogger("data360")
-            logger.warning(f"Failed to load local Vega library scripts: {e}")
-            _vega_js_cache = ""
-            _vega_lite_js_cache = ""
-            _vega_embed_js_cache = ""
-            _vega_interpreter_js_cache = ""
-    return _vega_js_cache, _vega_lite_js_cache, _vega_embed_js_cache, _vega_interpreter_js_cache
+            logging.getLogger("data360").warning(
+                "Failed to load local Vega library scripts: %s", e
+            )
+            vega_js = vega_lite_js = vega_embed_js = vega_interp_js = ""
+        _vega_libs_cache = (vega_js, vega_lite_js, vega_embed_js, vega_interp_js)
+        return _vega_libs_cache
 
 
-def spec_to_prefab(
-    spec: dict[str, Any] | None,
+# ---------------------------------------------------------------------------
+# Markdown summary helper (text content block for viz ToolResults)
+# ---------------------------------------------------------------------------
+
+
+def _make_text_summary(
+    spec: "dict[str, Any] | None",
     strategy: str,
     reason: str,
     warning: str | None = None,
-    source_line: str | None = None,
     subtitle_line: str | None = None,
-) -> Any:
-    """Map a Vega-Lite spec to prefab_ui components."""
-    from prefab_ui.components import (
-        Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Alert, AlertTitle, AlertDescription, Markdown, Container, DataTable, DataTableColumn, Grid
-    )
-    from prefab_ui.components.charts import LineChart, BarChart, ScatterChart, ChartSeries, AreaChart
+    source_line: str | None = None,
+    url: str | None = None,
+) -> str:
+    """Build a markdown summary table from a Vega-Lite spec for the text content block."""
     import pandas as pd
 
-    children = []
+    lines: list[str] = []
 
-    # 1. Add warning Alert if present
     if warning:
-        children.append(
-            Alert(
-                variant="warning",
-                children=[
-                    AlertTitle(content="Warning"),
-                    AlertDescription(content=warning),
-                ]
-            )
-        )
+        lines.append(f"### Warning\n{warning}\n")
 
-    # 2. Extract embedded data
-    data_rows = []
-    if isinstance(spec, dict) and "data" in spec and "values" in spec["data"]:
-        data_rows = spec["data"]["values"]
-
-    chart_component = None
-
-    if data_rows:
-        from data360.config import get_mcp_server_settings
-        import logging
-        
-        logger = logging.getLogger("data360")
-        mcp_settings = get_mcp_server_settings()
-        
-        chart_render_mode = mcp_settings.chart_render_mode
-        
-        # 1. If in 'embed' mode, render Vega-Lite directly inside an iframe using Embed
-        if chart_render_mode == "embed" and spec:
-            try:
-                from prefab_ui.components import Embed
-                import copy
-                # Copy the spec and strip title from the embedded canvas (Card renders the title cleanly)
-                spec_for_embed = copy.deepcopy(spec)
-                if "title" in spec_for_embed:
-                    del spec_for_embed["title"]
-                import urllib.parse
-                
-                port = mcp_settings.port or 8021
-                server_base = f"http://localhost:{port}"
-                spec_json = json.dumps(spec_for_embed)
-                quoted_spec = urllib.parse.quote(spec_json)
-                url = f"{server_base}/static/embed.html?spec={quoted_spec}"
-                
-                chart_component = Embed(
-                    url=url,
-                    sandbox="allow-scripts allow-same-origin",
-                    width="100%",
-                    height="480px"
-                )
-            except Exception as e:
-                logger.warning(f"Embed rendering failed: {e}; falling back to interactive charts.")
-
-        # 2. If in 'svg' mode (or if embed failed), render static SVG using vl_convert
-        elif chart_render_mode == "svg" and spec:
-            try:
-                import vl_convert as vlc
-                from prefab_ui.components import Svg
-                import copy
-                
-                spec_for_svg = copy.deepcopy(spec)
-                if "title" in spec_for_svg:
-                    del spec_for_svg["title"]
-                
-                svg_str = vlc.vegalite_to_svg(json.dumps(spec_for_svg))
-                chart_component = Svg(content=svg_str, width="100%", height="auto")
-            except Exception as e:
-                logger.warning(f"SVG rendering failed: {e}; falling back to interactive charts.")
-
-        # If we successfully generated the SVG or Embed component, wrap in Card and return immediately
-        if chart_component is not None:
-            title = "Data360 Visualization"
-            real_subtitle = ""
-            if isinstance(spec, dict) and isinstance(spec.get("title"), dict):
-                title_val = spec["title"].get("text", "Data360 Visualization")
-                if isinstance(title_val, list):
-                    title = " ".join(str(t) for t in title_val if t)
-                else:
-                    title = str(title_val)
-                sub_val = spec["title"].get("subtitle")
-                if isinstance(sub_val, list):
-                    real_subtitle = " · ".join(str(s) for s in sub_val if s)
-                elif sub_val:
-                    real_subtitle = str(sub_val)
-            elif isinstance(spec, dict) and isinstance(spec.get("title"), str):
-                title = spec["title"]
-            
-            card_header_children = [CardTitle(content=title)]
-            if real_subtitle:
-                card_header_children.append(CardDescription(content=real_subtitle))
-            elif subtitle_line:
-                card_header_children.append(CardDescription(content=subtitle_line))
-                
-            card_children = [
-                CardHeader(children=card_header_children)
-            ]
-            card_children.append(CardContent(children=[chart_component]))
-                
-            footer_text = []
-            if source_line:
-                footer_text.append(source_line)
-                
-            if footer_text:
-                card_children.append(CardFooter(children=[Markdown(content="\n\n".join(footer_text))]))
-        
-            children.append(Card(children=card_children))
-            return Container(children=children)
-
-        try:
-            df = pd.DataFrame(data_rows)
-            # Normalize columns to lowercase to prevent casing mismatches in Recharts
-            df.columns = [col.lower() for col in df.columns]
-
-            # 1. Determine value column (quantitative axis)
-            val_col = ""
-            for possible_val in ["obs_value", "value", "val", "obs"]:
-                if possible_val in df.columns:
-                    val_col = possible_val
-                    break
-            if not val_col:
-                # Fallback to the first numeric or non-time/non-country column
-                for col in df.columns:
-                    if col not in ["time_period", "year", "date", "ref_area", "country", "country_code", "indicator", "indicator_id"]:
-                        val_col = col
-                        break
-
-            # 2. Determine x/categorical column
-            x_col = ""
-            strategy_lower = strategy.lower() if strategy else ""
-            if "temporal" in strategy_lower or "small_multiples" in strategy_lower:
-                for possible_time in ["time_period", "year", "date", "time"]:
-                    if possible_time in df.columns:
-                        x_col = possible_time
-                        break
-                if not x_col and len(df.columns) > 0:
-                    x_col = df.columns[0]
-            else:
-                for possible_cat in ["ref_area", "country", "country_code", "economy"]:
-                    if possible_cat in df.columns:
-                        x_col = possible_cat
-                        break
-                if not x_col:
-                    for col in df.columns:
-                        if col != val_col:
-                            x_col = col
-                            break
-            
-            # 1. Determine if the Vega-Lite spec uses a concatenated layout (vconcat/hconcat)
-            is_concatenated = isinstance(spec, dict) and ("vconcat" in spec or "hconcat" in spec or "concat" in spec)
-            
-            # Determine chart type based on structure and strategy
-            if is_concatenated:
-                import re
-                concat_key = "vconcat" if "vconcat" in spec else ("hconcat" in spec and "hconcat" or "concat")
-                children_specs = spec[concat_key]
-                facet_cards = []
-                
-                # The data values are shared at the top level or child level
-                top_data = spec.get("data", {}).get("values", [])
-                if not top_data:
-                    top_data = data_rows
-                
-                for i, child_spec in enumerate(children_specs):
-                    if not isinstance(child_spec, dict):
-                        continue
-                    child_title_val = child_spec.get("title", {}).get("text", f"Panel {i+1}") if isinstance(child_spec.get("title"), dict) else f"Panel {i+1}"
-                    if isinstance(child_title_val, list):
-                        child_title = " ".join(str(t) for t in child_title_val if t)
-                    else:
-                        child_title = str(child_title_val)
-                    
-                    # Handle transform filtering (e.g. filter by country or indicator)
-                    child_data = top_data
-                    transforms = child_spec.get("transform", [])
-                    for transform in transforms:
-                        if isinstance(transform, dict) and "filter" in transform and isinstance(transform["filter"], str):
-                            filter_expr = transform["filter"]
-                            match = re.search(r"datum\.(\w+)\s*==\s*['\"]([^'\"]+)['\"]", filter_expr)
-                            if match:
-                                col, val = match.groups()
-                                child_data = [row for row in child_data if str(row.get(col, row.get(col.lower(), row.get(col.upper(), "")))) == val]
-                    
-                    # Detect encoding fields for this child spec
-                    y_encoding = child_spec.get("encoding", {}).get("y", {})
-                    child_val_col = y_encoding.get("field", "").lower() if isinstance(y_encoding, dict) else ""
-                    
-                    x_encoding = child_spec.get("encoding", {}).get("x", {})
-                    child_x_col = x_encoding.get("field", "").lower() if isinstance(x_encoding, dict) else ""
-                    
-                    if not child_val_col:
-                        child_val_col = val_col
-                    if not child_x_col:
-                        child_x_col = x_col
-                        
-                    if child_data and child_x_col and child_val_col:
-                        child_df = pd.DataFrame(child_data)
-                        child_df.columns = [c.lower() for c in child_df.columns]
-                        
-                        if child_x_col in child_df.columns:
-                            child_df = child_df.sort_values(by=child_x_col)
-                            
-                        child_df_clean = child_df.where(pd.notnull(child_df), None)
-                        sub_chart_data = child_df_clean.to_dict(orient="records")
-                        
-                        # Detect mark type
-                        mark_spec = child_spec.get("mark", "line")
-                        mark_type = mark_spec.get("type", "line") if isinstance(mark_spec, dict) else str(mark_spec)
-                        is_bar = mark_type == "bar" or "bar" in strategy_lower
-                        
-                        color_encoding = child_spec.get("encoding", {}).get("color", {})
-                        if isinstance(color_encoding, dict) and "field" in color_encoding:
-                            # If we color by another column (e.g. country inside this panel), it's a multi-series line chart
-                            group_field = color_encoding.get("field", "").lower()
-                            if group_field in child_df.columns and child_df[group_field].nunique() > 1:
-                                pivot_df = child_df.pivot(index=child_x_col, columns=group_field, values=child_val_col)
-                                pivot_df = pivot_df.reset_index()
-                                pivot_df = pivot_df.where(pd.notnull(pivot_df), None)
-                                sub_chart_data = pivot_df.to_dict(orient="records")
-                                
-                                series_list = [ChartSeries(data_key=col, label=col) for col in pivot_df.columns if col != child_x_col]
-                                sub_chart = LineChart(
-                                    data=sub_chart_data,
-                                    series=series_list,
-                                    x_axis=child_x_col,
-                                    height=200,
-                                )
-                            else:
-                                sub_chart = LineChart(
-                                    data=sub_chart_data,
-                                    series=[ChartSeries(data_key=child_val_col, label=child_title)],
-                                    x_axis=child_x_col,
-                                    height=200,
-                                )
-                        else:
-                            if is_bar:
-                                sub_chart = BarChart(
-                                    data=sub_chart_data,
-                                    series=[ChartSeries(data_key=child_val_col, label=child_title)],
-                                    x_axis=child_x_col,
-                                    horizontal=True,
-                                    height=200,
-                                )
-                            else:
-                                sub_chart = LineChart(
-                                    data=sub_chart_data,
-                                    series=[ChartSeries(data_key=child_val_col, label=child_title)],
-                                    x_axis=child_x_col,
-                                    height=200,
-                                )
-                                
-                        facet_cards.append(
-                            Card(
-                                children=[
-                                    CardHeader(children=[CardTitle(content=child_title)]),
-                                    CardContent(children=[sub_chart])
-                                ]
-                            )
-                        )
-                
-                if facet_cards:
-                    chart_component = Grid(
-                        columns={"default": 1, "md": 2},
-                        gap=4,
-                        children=facet_cards
-                    )
-            elif "small_multiples" in strategy_lower or "concat" in strategy_lower:
-                # Group data by the grouping column (country or indicator)
-                group_col = ""
-                for possible_group in ["ref_area", "country", "country_code"]:
-                    if possible_group in df.columns:
-                        group_col = possible_group
-                        break
-                
-                if group_col and x_col and val_col:
-                    # Get unique values of the group column
-                    groups = df[group_col].unique()
-                    facet_cards = []
-                    
-                    for group_val in groups:
-                        group_df = df[df[group_col] == group_val]
-                        group_df_sorted = group_df.sort_values(by=x_col)
-                        group_df_clean = group_df_sorted.where(pd.notnull(group_df_sorted), None)
-                        group_chart_data = group_df_clean.to_dict(orient="records")
-                        
-                        # Determine sub-chart type (LineChart if temporal, else BarChart)
-                        is_temporal = "year" in x_col or "time_period" in x_col
-                        if is_temporal:
-                            sub_chart = LineChart(
-                                data=group_chart_data,
-                                series=[ChartSeries(data_key=val_col, label=str(group_val))],
-                                x_axis=x_col,
-                                height=200,
-                            )
-                        else:
-                            sub_chart = BarChart(
-                                data=group_chart_data,
-                                series=[ChartSeries(data_key=val_col, label=str(group_val))],
-                                x_axis=x_col,
-                                horizontal=True,
-                                height=200,
-                            )
-                            
-                        # Wrap each facet in its own Card
-                        facet_cards.append(
-                            Card(
-                                children=[
-                                    CardHeader(children=[CardTitle(content=str(group_val))]),
-                                    CardContent(children=[sub_chart])
-                                ]
-                            )
-                        )
-                    
-                    if facet_cards:
-                        chart_component = Grid(
-                            columns={"default": 1, "md": 2},
-                            gap=4,
-                            children=facet_cards
-                        )
-            elif "correlation" in strategy_lower:
-                # Scatterplot of two indicators
-                # Usually the dataset contains x and y columns mapped in the encoding
-                encoding = spec.get("encoding", {})
-                if not encoding and "layer" in spec:
-                    for layer in spec["layer"]:
-                        if isinstance(layer, dict) and "encoding" in layer:
-                            encoding = layer["encoding"]
-                            break
-                            
-                x_col_corr = encoding.get("x", {}).get("field", "").lower() if isinstance(encoding.get("x"), dict) else ""
-                y_col_corr = encoding.get("y", {}).get("field", "").lower() if isinstance(encoding.get("y"), dict) else ""
-                
-                if x_col_corr and y_col_corr:
-                    # Determine data key for grouping points
-                    pt_key = "point"
-                    for possible_pt in ["ref_area", "country", "country_code"]:
-                        if possible_pt in df.columns:
-                            pt_key = possible_pt
-                            break
-                            
-                    # Generate a unique series for each country so the tooltip name mapping works correctly in Prefab
-                    unique_pts = sorted([pt for pt in df[pt_key].dropna().unique() if str(pt).strip() != ""])
-                    series_list = []
-                    for pt in unique_pts:
-                        pt_str = str(pt)
-                        series_key = pt_str.replace(" ", "_").replace("'", "").replace("&", "")
-                        
-                        # Find matching metadata for this point to build a rich label
-                        pt_df = df[df[pt_key] == pt]
-                        
-                        # Resolve year
-                        yr_val = ""
-                        if "year" in pt_df.columns and not pt_df["year"].dropna().empty:
-                            yr_val = str(int(pt_df["year"].dropna().iloc[0]))
-                        elif "time_period" in pt_df.columns and not pt_df["time_period"].dropna().empty:
-                            yr_val = str(pt_df["time_period"].dropna().iloc[0])
-                            
-                        # Resolve country code / ref_area
-                        code_val = ""
-                        for possible_code in ["ref_area", "country_code"]:
-                            if possible_code in pt_df.columns and possible_code != pt_key and not pt_df[possible_code].dropna().empty:
-                                code_val = str(pt_df[possible_code].dropna().iloc[0])
-                                break
-                                
-                        # Build rich label containing all available metadata
-                        label_parts = [pt_str]
-                        if code_val:
-                            label_parts.append(f"({code_val})")
-                        if yr_val:
-                            label_parts.append(f"- {yr_val}")
-                        pt_label = " ".join(label_parts)
-                        
-                        series_list.append(ChartSeries(data_key=series_key, label=pt_label))
-                        
-                    # Map the rows to have the corresponding _series property
-                    df_clean = df.where(pd.notnull(df), None)
-                    chart_data = []
-                    for _, row in df_clean.iterrows():
-                        row_dict = row.to_dict()
-                        pt_val = row_dict.get(pt_key)
-                        if pt_val is not None:
-                            row_dict["_series"] = str(pt_val).replace(" ", "_").replace("'", "").replace("&", "")
-                        else:
-                            row_dict["_series"] = "unknown"
-                        chart_data.append(row_dict)
-
-                    chart_component = ScatterChart(
-                        data=chart_data,
-                        series=series_list,
-                        x_axis=x_col_corr,
-                        y_axis=y_col_corr,
-                        z_axis=pt_key,
-                        show_legend=True,
-                    )
-            elif "stacked_area" in strategy_lower or "stacked" in strategy_lower:
-                # Multi-series stacked area chart
-                group_col = ""
-                for possible_group in ["ref_area", "country", "country_code"]:
-                    if possible_group in df.columns:
-                        group_col = possible_group
-                        break
-                        
-                if group_col and df[group_col].nunique() > 1 and x_col and val_col:
-                    # Pivot index=x_col, columns=group_col, values=val_col
-                    pivot_df = df.pivot(index=x_col, columns=group_col, values=val_col)
-                    pivot_df = pivot_df.reset_index()
-                    pivot_df = pivot_df.where(pd.notnull(pivot_df), None)
-                    chart_data = pivot_df.to_dict(orient="records")
-                    
-                    series_list = []
-                    for col in pivot_df.columns:
-                        if col != x_col:
-                            series_list.append(ChartSeries(data_key=col, label=col))
-                            
-                    chart_component = AreaChart(
-                        data=chart_data,
-                        series=series_list,
-                        x_axis=x_col,
-                        stacked=True,
-                    )
-            elif isinstance(spec, dict) and "layer" in spec:
-                # Layered specs: plot multiple indicators on the same cartesian axes
-                layers = spec["layer"]
-                series_list = []
-                for i, layer in enumerate(layers):
-                    if not isinstance(layer, dict):
-                        continue
-                    layer_y = layer.get("encoding", {}).get("y", {})
-                    layer_val_col = layer_y.get("field", "").lower() if isinstance(layer_y, dict) else ""
-                    if layer_val_col and layer_val_col in df.columns:
-                        title_text = layer_y.get("axis", {}).get("title") if isinstance(layer_y.get("axis"), dict) else ""
-                        if not title_text:
-                            title_text = layer_val_col.replace("_", " ").title()
-                        series_list.append(ChartSeries(data_key=layer_val_col, label=title_text))
-                        
-                if series_list and x_col:
-                    df_clean = df.where(pd.notnull(df), None)
-                    chart_data = df_clean.to_dict(orient="records")
-                    
-                    # Check if it uses bar marks
-                    is_bar = any("bar" in str(l.get("mark", "")) for l in layers) or "bar" in strategy_lower
-                    if is_bar:
-                        chart_component = BarChart(
-                            data=chart_data,
-                            series=series_list,
-                            x_axis=x_col,
-                        )
-                    else:
-                        chart_component = LineChart(
-                            data=chart_data,
-                            series=series_list,
-                            x_axis=x_col,
-                        )
-            elif "temporal" in strategy_lower:
-                # Time-series data
-                # Determine group column (e.g., country/region) for pivoting
-                group_col = ""
-                for possible_group in ["ref_area", "country", "country_code"]:
-                    if possible_group in df.columns:
-                        group_col = possible_group
-                        break
-
-                # If there are multiple series
-                if group_col and df[group_col].nunique() > 1 and x_col and val_col:
-                    # Pivot: index=x_col, columns=group_col, values=val_col
-                    pivot_df = df.pivot(index=x_col, columns=group_col, values=val_col)
-                    pivot_df = pivot_df.reset_index()
-                    pivot_df = pivot_df.where(pd.notnull(pivot_df), None)
-                    chart_data = pivot_df.to_dict(orient="records")
-                    
-                    # Each column other than x_col is a series line
-                    series_list = []
-                    for col in pivot_df.columns:
-                        if col != x_col:
-                            series_list.append(ChartSeries(data_key=col, label=col))
-                    
-                    chart_component = LineChart(
-                        data=chart_data,
-                        series=series_list,
-                        x_axis=x_col,
-                    )
-                else:
-                    # Single series time-series
-                    df_clean = df.where(pd.notnull(df), None)
-                    chart_data = df_clean.to_dict(orient="records")
-                    
-                    label = spec.get("title", {}).get("text", "Value") if isinstance(spec.get("title"), dict) else "Value"
-                    chart_component = LineChart(
-                        data=chart_data,
-                        series=[ChartSeries(data_key=val_col, label=label)],
-                        x_axis=x_col,
-                    )
-            elif "cross_sectional" in strategy_lower:
-                # Country comparison for a single year
-                if x_col and val_col:
-                    df_sorted = df.sort_values(by=val_col, ascending=False)
-                    df_clean = df_sorted.where(pd.notnull(df_sorted), None)
-                    chart_data = df_clean.to_dict(orient="records")
-                    
-                    label = spec.get("title", {}).get("text", "Value") if isinstance(spec.get("title"), dict) else "Value"
-                    chart_component = BarChart(
-                        data=chart_data,
-                        series=[ChartSeries(data_key=val_col, label=label)],
-                        x_axis=x_col,
-                        horizontal=True,
-                    )
-        except Exception:
-            pass
-
-    # 3. Fallback: If no chart component generated (or for choropleth maps/unsupported strategies), show a clean DataTable
-    if chart_component is None:
-        if data_rows:
-            df = pd.DataFrame(data_rows)
-            df_clean = df.where(pd.notnull(df), None)
-            table_data = df_clean.to_dict(orient="records")
-            
-            # Generate DataTableColumn for each column
-            columns = []
-            for col in df.columns:
-                columns.append(DataTableColumn(key=col, header=col.replace("_", " ").title()))
-                
-            chart_component = DataTable(
-                rows=table_data,
-                columns=columns,
-                search=True,
-            )
-        else:
-            chart_component = Markdown(content="No data or visualization available.")
-
-    # 4. Build Card Structure
-    title = "Data360 Visualization"
-    real_subtitle = ""
-    if isinstance(spec, dict) and isinstance(spec.get("title"), dict):
-        title_val = spec["title"].get("text", "Data360 Visualization")
-        if isinstance(title_val, list):
-            title = " ".join(str(t) for t in title_val if t)
-        else:
-            title = str(title_val)
-        sub_val = spec["title"].get("subtitle")
-        if isinstance(sub_val, list):
-            real_subtitle = " · ".join(str(s) for s in sub_val if s)
-        elif sub_val:
-            real_subtitle = str(sub_val)
-    elif isinstance(spec, dict) and isinstance(spec.get("title"), str):
-        title = spec["title"]
-    
-    card_header_children = [CardTitle(content=title)]
-    if real_subtitle:
-        card_header_children.append(CardDescription(content=real_subtitle))
-    elif subtitle_line:
-        card_header_children.append(CardDescription(content=subtitle_line))
-        
-    card_children = [
-        CardHeader(children=card_header_children)
-    ]
-    
-    card_children.append(CardContent(children=[chart_component]))
-        
-    footer_text = []
-    if source_line:
-        footer_text.append(source_line)
-        
-    if footer_text:
-        card_children.append(CardFooter(children=[Markdown(content="\n\n".join(footer_text))]))
-
-    children.append(Card(children=card_children))
-    return Container(children=children)
-
-
-def spec_to_prefab_and_summary(
-    spec: dict[str, Any] | None,
-    strategy: str,
-    reason: str,
-    warning: str | None = None,
-    source_line: str | None = None,
-    subtitle_line: str | None = None,
-    url: str | None = None,
-) -> tuple[dict[str, Any], str]:
-    """Map a Vega-Lite spec to prefab_ui app json and a text summary/table."""
-    from prefab_ui.app import PrefabApp
-    
-    prefab_comp = spec_to_prefab(
-        spec=spec,
-        strategy=strategy,
-        reason=reason,
-        warning=warning,
-        source_line=source_line,
-        subtitle_line=subtitle_line,
-    )
-    app_json = PrefabApp(view=prefab_comp).to_json()
-
-    # Generate Markdown summary table
-    data_rows = []
-    if isinstance(spec, dict) and "data" in spec and "values" in spec["data"]:
-        data_rows = spec["data"]["values"]
-
-    lines = []
-    if warning:
-        lines.append(f"### ⚠️ Warning\n{warning}\n")
-
-    lines.append(f"### 📊 Data Summary ({strategy})")
+    lines.append(f"### Data Summary ({strategy})")
     lines.append(reason)
     if subtitle_line:
         lines.append(f"*{subtitle_line}*")
     lines.append("")
 
+    data_rows: list[dict] = []
+    if isinstance(spec, dict):
+        data_rows = spec.get("data", {}).get("values", [])
+
     if data_rows:
         try:
-            import pandas as pd
             df = pd.DataFrame(data_rows)
-            # Reorder columns to place time_period and ref_area first if present
+            # Reorder: put time/area columns first
             cols = list(df.columns)
-            preferred = ["TIME_PERIOD", "time_period", "REF_AREA", "ref_area"]
-            for p in reversed(preferred):
+            for p in reversed(
+                ["TIME_PERIOD", "time_period", "REF_AREA", "ref_area"]
+            ):
                 if p in cols:
                     cols.remove(p)
                     cols.insert(0, p)
             df = df[cols]
-            
-            headers = [col.replace("_", " ").title() for col in df.columns]
-            header_line = "| " + " | ".join(headers) + " |"
-            separator_line = "| " + " | ".join(["---"] * len(df.columns)) + " |"
-            row_lines = []
+
+            headers = [c.replace("_", " ").title() for c in df.columns]
+            lines.append("| " + " | ".join(headers) + " |")
+            lines.append("| " + " | ".join(["---"] * len(df.columns)) + " |")
             for _, row in df.iterrows():
                 vals = []
                 for col in df.columns:
-                    val = row[col]
-                    if val is None:
+                    v = row[col]
+                    if v is None or (isinstance(v, float) and pd.isna(v)):
                         vals.append("")
-                    elif isinstance(val, float):
-                        vals.append(f"{val:,.2f}")
+                    elif isinstance(v, float):
+                        vals.append(f"{v:,.2f}")
                     else:
-                        vals.append(str(val))
-                row_lines.append("| " + " | ".join(vals) + " |")
-            lines.append("\n".join([header_line, separator_line] + row_lines))
+                        vals.append(str(v))
+                lines.append("| " + " | ".join(vals) + " |")
         except Exception:
             lines.append("No tabular data available.")
     else:
@@ -997,8 +414,7 @@ def spec_to_prefab_and_summary(
     if url:
         lines.append(f"\n*Vega-Lite Spec URL:* {url}")
 
-    return app_json, "\n".join(lines)
-
+    return "\n".join(lines)
 
 async def _get_viz_spec(
     database_id: str,
@@ -1089,7 +505,7 @@ async def _get_viz_spec(
         except Exception:
             pass
 
-    app_json, text_summary = spec_to_prefab_and_summary(
+    text_summary = _make_text_summary(
         spec=spec,
         strategy=strategy,
         reason=reason,
@@ -1099,16 +515,13 @@ async def _get_viz_spec(
         url=url,
     )
 
-    payload = {
-        "spec": spec,
-        "strategy": strategy,
-    }
+    structured = {"spec": spec, "strategy": strategy}
     return ToolResult(
         content=[
-            TextContent(type="text", text=json.dumps(payload)),
+            TextContent(type="text", text=json.dumps(structured)),
             TextContent(type="text", text=text_summary),
         ],
-        structured_content=app_json,
+        structured_content=structured,
     )
 
 
@@ -1188,7 +601,7 @@ async def _get_multi_indicator_viz_spec(
         except Exception:
             pass
 
-    app_json, text_summary = spec_to_prefab_and_summary(
+    text_summary = _make_text_summary(
         spec=spec,
         strategy=strategy,
         reason=reason,
@@ -1198,16 +611,13 @@ async def _get_multi_indicator_viz_spec(
         url=url,
     )
 
-    payload = {
-        "spec": spec,
-        "strategy": strategy,
-    }
+    structured = {"spec": spec, "strategy": strategy}
     return ToolResult(
         content=[
-            TextContent(type="text", text=json.dumps(payload)),
+            TextContent(type="text", text=json.dumps(structured)),
             TextContent(type="text", text=text_summary),
         ],
-        structured_content=app_json,
+        structured_content=structured,
     )
 
 
@@ -1706,7 +1116,7 @@ def data360_explorer_html() -> str:
       const query = payload.query || "";
       subtitleDiv.textContent = `Found ${indicators.length} indicators for query: "${query}"`;
       listDiv.innerHTML = "";
-      
+
       if (indicators.length === 0) {
         listDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">No indicators found.</div>';
         mcpApp.reportSize();
@@ -1716,25 +1126,25 @@ def data360_explorer_html() -> str:
       indicators.forEach(ind => {
         const card = document.createElement('div');
         card.className = 'indicator-card';
-        
+
         const nameDiv = document.createElement('div');
         nameDiv.className = 'indicator-name';
         nameDiv.textContent = ind.name;
-        
+
         const metaDiv = document.createElement('div');
         metaDiv.className = 'indicator-meta';
         metaDiv.innerHTML = `<span>Source: ${ind.database_name}</span><span>Years: ${ind.time_period_range || "N/A"}</span>`;
-        
+
         card.appendChild(nameDiv);
         card.appendChild(metaDiv);
-        
+
         if (ind.truncated_definition) {
           const descDiv = document.createElement('div');
           descDiv.className = 'indicator-desc';
           descDiv.textContent = ind.truncated_definition;
           card.appendChild(descDiv);
         }
-        
+
         card.addEventListener('click', async () => {
           try {
             await mcpApp.sendMessageToChat(`Let's plot the indicator: "${ind.name}" (ID: ${ind.idno}, Database: ${ind.database_id})`);
@@ -1742,10 +1152,10 @@ def data360_explorer_html() -> str:
             console.error(err);
           }
         });
-        
+
         listDiv.appendChild(card);
       });
-      
+
       setTimeout(() => {
         mcpApp.reportSize();
       }, 50);
@@ -1800,13 +1210,13 @@ async def data360_indicator_explorer(
         query: Search term (e.g. 'GDP', 'poverty', 'education').
         database: Optional database ID filter (e.g. 'wdi', 'pip').
     """
-    res = await data360_search_indicators_internal(query=query, database=database)
-    
+    res = await _search_indicators_for_ui(query=query, database=database)
+
     payload = {
         "query": query,
         "indicators": res
     }
-    
+
     return ToolResult(
         content=[TextContent(type="text", text=json.dumps(payload))]
     )
@@ -1943,7 +1353,7 @@ def data360_chart_html() -> str:
         mcpApp.reportSize();
         return;
       }
-      
+
       try {
         vegaEmbed("#vis", spec, {
           actions: false,
@@ -1973,13 +1383,16 @@ def data360_chart_html() -> str:
     return html_template.replace("{vega_js}", vega_js).replace("{vega_lite_js}", vega_lite_js).replace("{vega_embed_js}", vega_embed_js).replace("{vega_interpreter_js}", vega_interpreter_js)
 
 
-@mcp.tool(name="data360_search_indicators_internal")
-async def data360_search_indicators_internal(
+async def _search_indicators_for_ui(
     query: str,
     database: Optional[str] = None,
     limit: int = 20,
 ) -> list[dict]:
-    """Helper internal tool to return a clean list of indicators for the UI app."""
+    """Private helper: returns a flat indicator list for the UI HTML app.
+
+    Not registered as an MCP tool — called internally by data360_indicator_explorer
+    and by the /api/indicators/search FastAPI endpoint.
+    """
     if not query.strip():
         return []
     res = await _search_indicators(query=query, database=database, limit=limit)
@@ -1995,4 +1408,3 @@ async def data360_search_indicators_internal(
                 "time_period_range": ind.time_period_range,
             })
     return indicators_data
-
