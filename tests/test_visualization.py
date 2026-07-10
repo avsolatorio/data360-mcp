@@ -88,6 +88,20 @@ class TestGetVizSpecStrategyDispatch:
         assert result["strategy"] == "temporal_single"
 
     @pytest.mark.asyncio
+    async def test_returns_spec_directly_in_viz_result(self, patches):
+        """Verify that the generated Vega-Lite specification dict is returned directly in VizResult."""
+        result = await get_viz_spec(
+            database_id="WB_WDI",
+            indicator_id="FAKE_IND",
+        )
+
+        assert result["url"] is not None
+        assert result["error"] is None
+        assert "spec" in result
+        assert isinstance(result["spec"], dict)
+        assert result["spec"]["$schema"] == "https://vega.github.io/schema/vega-lite/v5.json"
+
+    @pytest.mark.asyncio
     async def test_strategy_dispatch_failure_returns_error(self, patches):
         """When dispatch_spec raises, an error is returned."""
         with patch(

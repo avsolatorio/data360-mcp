@@ -264,6 +264,7 @@ def _ok(
     dimensions: dict[str, list] | None = None,
     data_summary: dict | None = None,
     data_profile: dict | None = None,
+    spec: dict | None = None,
 ) -> VizResult:
     r: VizResult = {"url": url, "error": None}
     if warning:
@@ -282,6 +283,8 @@ def _ok(
         r["data_summary"] = data_summary  # type: ignore[assignment]
     if data_profile:
         r["data_profile"] = data_profile  # type: ignore[assignment]
+    if spec is not None:
+        r["spec"] = spec
     attrib_for_line = {
         k: str(v)
         for k, v in r.items()
@@ -2497,6 +2500,7 @@ async def get_viz_spec(
             dimensions=dim_summary or None,
             data_summary=data_summary or None,
             data_profile=data_profile or None,
+            spec=spec,
         )
     except Exception as e:
         _logger.exception("Strategy builder failed")
@@ -3048,4 +3052,5 @@ async def get_multi_indicator_viz_spec(
         strategy=strategy_result.strategy.value,
         reason=out_reason,
         data_profile=data_profile or None,
+        spec=spec,
     )
