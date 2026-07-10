@@ -125,12 +125,9 @@ def save_specs_to_static(vl_spec: dict) -> str:
     ``data360.config.get_mcp_server_settings()``.
     """
     spec_id = str(uuid.uuid4())
-    if os.environ.get("PYTEST_CURRENT_TEST"):
-        specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
-    else:
-        server_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
-        specs_dir = os.path.join(project_root, "static", "viz_specs")
+    server_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+    specs_dir = os.path.join(project_root, "static", "viz_specs")
     os.makedirs(specs_dir, exist_ok=True)
     vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
     with open(vega_path, "w") as f:
@@ -978,6 +975,10 @@ async def _fetch_data_internal(url: str) -> pd.DataFrame:
             offset += len(raw_data)
 
         if len(all_raw_data) >= 1000:
+            _logger.warning(
+                "_fetch_data_internal: capped at 1000 rows for %s — some data may be truncated.",
+                url,
+            )
             break
 
     if not all_raw_data:
