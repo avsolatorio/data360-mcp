@@ -352,6 +352,8 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
             series_labels=req.series_labels,
             charts_api_url_override=None,
         )
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
     if res.get("error"):
         return JSONResponse(status_code=400, content={"error": res.get("error")})

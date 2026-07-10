@@ -30,7 +30,7 @@ async def test_api_search_indicators_endpoint():
 
 @pytest.mark.asyncio
 async def test_search_indicators_internal():
-    from data360.mcp_server.tools import data360_search_indicators_internal
+    from data360.mcp_server.tools import _search_indicators_for_ui
     mock_indicator = AsyncMock()
     mock_indicator.idno = "WB_WDI_NY_GDP"
     mock_indicator.database_id = "WB_WDI"
@@ -43,7 +43,7 @@ async def test_search_indicators_internal():
     mock_res.indicators = [mock_indicator]
 
     with patch("data360.mcp_server.tools._search_indicators", return_value=mock_res):
-        res = await data360_search_indicators_internal(query="GDP", database="wdi")
+        res = await _search_indicators_for_ui(query="GDP", database="wdi")
         assert len(res) == 1
         assert res[0]["idno"] == "WB_WDI_NY_GDP"
 
@@ -53,7 +53,7 @@ async def test_indicator_explorer_tool_result():
     from data360.mcp_server.tools import data360_indicator_explorer
     from fastmcp.tools import ToolResult
     import json
-    
+
     mock_indicator = AsyncMock()
     mock_indicator.idno = "WB_WDI_NY_GDP"
     mock_indicator.database_id = "WB_WDI"
@@ -68,13 +68,10 @@ async def test_indicator_explorer_tool_result():
     with patch("data360.mcp_server.tools._search_indicators", return_value=mock_res):
         app_res = await data360_indicator_explorer(query="GDP", database="wdi")
         assert isinstance(app_res, ToolResult)
-        
+
         # Verify JSON content
         text_block = app_res.content[0]
         payload = json.loads(text_block.text)
         assert payload["query"] == "GDP"
         assert len(payload["indicators"]) == 1
         assert payload["indicators"][0]["idno"] == "WB_WDI_NY_GDP"
-
-
-
