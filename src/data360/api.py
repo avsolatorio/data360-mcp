@@ -3014,17 +3014,22 @@ async def summarize_data(
     raw_field_names = [_GROUPBY_FIELD_MAP[c.lower()] for c in group_by]
     groups_dict: dict[tuple[str, ...], list[dict[str, Any]]] = {}
 
-    # Region and Income mapping helpers
+    # Region and Income mapping helpers — build an inverted lookup dict once
+    # so that each per-row call is O(1) rather than O(n_groups).
     from .providers import get_group_hierarchy_manager  # noqa: PLC0415
     ghm = get_group_hierarchy_manager()
+    # _country_to_group: (country_code_upper, group_type) -> group_id
+    _country_to_group: dict[tuple[str, str], str] = {}
+    for _gid, _ginfo in ghm._groups.items():
+        _gtype = _ginfo.get("type", "")
+        # Member countries → their containing group
+        for _c in _ginfo.get("countries", []):
+            _country_to_group[(_c.upper(), _gtype)] = _gid
+        # The group code itself maps to itself (e.g. SSF → SSF for REGION)
+        _country_to_group[(_gid.upper(), _gtype)] = _gid
+
     def get_country_group(country: str, group_type: str) -> str:
-        country_upper = country.upper()
-        if ghm.is_group(country_upper) and ghm.get_group_type(country_upper) == group_type:
-            return country_upper
-        for gid, info in ghm._groups.items():
-            if info.get("type") == group_type and country_upper in info.get("countries", []):
-                return gid
-        return "_MISSING"
+        return _country_to_group.get((country.upper(), group_type), "_MISSING")
 
     for row in data_response.data:
         key_parts = []
