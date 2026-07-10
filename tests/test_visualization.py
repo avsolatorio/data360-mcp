@@ -103,13 +103,173 @@ class TestGetVizSpecStrategyDispatch:
         assert result["error"] is not None
 
     @pytest.mark.asyncio
+    async def test_fallback_line_returns_error_note(self, patches):
+        """When strategy is FALLBACK_LINE, get_viz_spec should refuse to visualize and return an error note."""
+        from data360.viz_config import StrategyResult, ChartStrategy
+        with patch(
+            "data360.viz_config.select_strategy",
+            return_value=StrategyResult(ChartStrategy.FALLBACK_LINE, "test fallback reason"),
+        ):
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+            )
+
+        assert result["url"] is None
+        assert result["error"] is not None
+        assert "fallback" in result["error"].lower()
+
+    @pytest.mark.asyncio
+    async def test_get_viz_spec_single_country_breakdown_sufficiency(self, patches):
+        """Single country with 2 breakdowns (small multiples strategy) should be allowed by the guard."""
+        from data360.viz_config import StrategyResult, ChartStrategy
+
+        # Mock dataframe representing a single country with sex and age breakdown
+        # Must use raw column names: time_period, obs_value, ref_area
+        df = pd.DataFrame({
+            "time_period": ["2023", "2023"],
+            "obs_value": [1000.0, 1100.0],
+            "ref_area": ["ESP", "ESP"],
+            "sex": ["Male", "Female"],
+            "age": ["under 5", "under 5"]
+        })
+
+        # Override select_strategy to return SMALL_MULTIPLES faceted by sex, color by age
+        strat_res = StrategyResult(
+            ChartStrategy.SMALL_MULTIPLES,
+            "2 breakdowns, 1 economy -> small multiples (facet=sex, color=age)",
+            facet_dim="sex",
+            color_dim="age",
+        )
+
+        with (
+            patch("data360.visualization._fetch_data_internal", new_callable=AsyncMock, return_value=df),
+            patch("data360.viz_config.select_strategy", return_value=strat_res),
+            patch("data360.api.get_disaggregation", new_callable=AsyncMock, return_value={"dimensions": []})
+        ):
+            result = await get_viz_spec(
+                database_id="WB_HNP",
+                indicator_id="WB_HNP_SP_POP_5Y",
+                country_code="ESP",
+                start_year=2023,
+                end_year=2023,
+                chart_type="bar"
+            )
+
+            assert result["error"] is None
+            assert result["url"] is not None
+            assert result["strategy"] == "small_multiples"
+
+    @pytest.mark.asyncio
+    async def test_get_viz_spec_auto_population_pyramid(self, patches):
+        """Single country and single year with sex and age breakdowns should automatically trigger PopulationPyramidRule even if chart_type is None."""
+        from data360.viz_config import StrategyResult, ChartStrategy
+
+        df = pd.DataFrame({
+            "time_period": ["2023", "2023"],
+            "obs_value": [1000.0, 1100.0],
+            "ref_area": ["ESP", "ESP"],
+            "sex": ["Male", "Female"],
+            "age": ["under 5", "under 5"]
+        })
+
+        strat_res = StrategyResult(
+            ChartStrategy.SMALL_MULTIPLES,
+            "2 breakdowns, 1 economy -> small multiples (facet=sex, color=age)",
+            facet_dim="sex",
+            color_dim="age",
+        )
+
+        # Capture the spec passed to save_specs_to_static
+        saved_spec = None
+        def fake_save(spec):
+            nonlocal saved_spec
+            saved_spec = spec
+            return "http://localhost:8021/static/viz_specs/pyramid_test.json"
+
+        with (
+            patch("data360.visualization._fetch_data_internal", new_callable=AsyncMock, return_value=df),
+            patch("data360.viz_config.select_strategy", return_value=strat_res),
+            patch("data360.api.get_disaggregation", new_callable=AsyncMock, return_value={"dimensions": []}),
+            patch("data360.visualization.save_specs_to_static", side_effect=fake_save)
+        ):
+            result = await get_viz_spec(
+                database_id="WB_HNP",
+                indicator_id="WB_HNP_SP_POP_5Y",
+                country_code="ESP",
+                start_year=2023,
+                end_year=2023,
+                chart_type=None
+            )
+
+            assert result["error"] is None
+            assert result["strategy"] == "small_multiples"
+            assert saved_spec is not None
+            # The PopulationPyramidRule should have triggered, creating the signed_value transform
+            assert any("signed_value" in str(t) for t in saved_spec.get("transform", []))
+
+    @pytest.mark.asyncio
+    async def test_get_viz_spec_auto_filters_multi_unit_for_population(self, patches):
+        """Verify that get_viz_spec automatically filters unit_measure to Count when multi-unit data is returned for a population pyramid candidate."""
+        from data360.viz_config import StrategyResult, ChartStrategy
+
+        # Mock data returning both COUNT and PT (Percentage) for age/sex breakdown
+        df = pd.DataFrame({
+            "time_period": ["2023", "2023", "2023", "2023"],
+            "obs_value": [1000.0, 1100.0, 4.5, 4.8],
+            "ref_area": ["ESP", "ESP", "ESP", "ESP"],
+            "sex": ["Male", "Female", "Male", "Female"],
+            "age": ["under 5", "under 5", "under 5", "under 5"],
+            "unit_measure": ["COUNT", "COUNT", "PT", "PT"]
+        })
+
+        strat_res = StrategyResult(
+            ChartStrategy.SMALL_MULTIPLES,
+            "2 breakdowns, 1 economy -> small multiples (facet=sex, color=age)",
+            facet_dim="sex",
+            color_dim="age",
+        )
+
+        saved_spec = None
+        def fake_save(spec):
+            nonlocal saved_spec
+            saved_spec = spec
+            return "http://localhost:8021/static/viz_specs/pyramid_multi_unit_test.json"
+
+        with (
+            patch("data360.visualization._fetch_data_internal", new_callable=AsyncMock, return_value=df),
+            patch("data360.viz_config.select_strategy", return_value=strat_res),
+            patch("data360.api.get_disaggregation", new_callable=AsyncMock, return_value={"dimensions": []}),
+            patch("data360.visualization.save_specs_to_static", side_effect=fake_save)
+        ):
+            result = await get_viz_spec(
+                database_id="WB_HNP",
+                indicator_id="WB_HNP_SP_POP_5Y",
+                country_code="ESP",
+                start_year=2023,
+                end_year=2023,
+                chart_type=None
+            )
+
+            assert result["error"] is None
+            assert result["strategy"] == "small_multiples"
+            assert saved_spec is not None
+            # The data values should only contain the COUNT values (1000.0 and 1100.0), not the PT values (4.5 and 4.8)
+            # unit_measure is stripped as a trivial dimension since it has been filtered to a single value
+            values = saved_spec["data"]["values"]
+            assert len(values) == 2
+            assert all("unit_measure" not in v for v in values)
+            assert any(v["value"] == 1000.0 for v in values)
+            assert any(v["value"] == 1100.0 for v in values)
+
+    @pytest.mark.asyncio
     async def test_get_viz_spec_applies_post_processing_rules(self, patches):
         """get_viz_spec should automatically apply post-processing rules (e.g. LineYearGapStrokeDashRule)."""
         df_gap = pd.DataFrame(
             {
-                "TIME_PERIOD": ["2020-01-01", "2023-01-01"],
-                "OBS_VALUE": [100.0, 300.0],
-                "REF_AREA": ["KEN", "KEN"],
+                "TIME_PERIOD": ["2020-01-01", "2021-01-01", "2023-01-01"],
+                "OBS_VALUE": [100.0, 200.0, 300.0],
+                "REF_AREA": ["KEN", "KEN", "KEN"],
             }
         )
 
@@ -139,6 +299,107 @@ class TestGetVizSpecStrategyDispatch:
         assert spec is not None
         assert "strokeDash" in spec["encoding"]
         assert spec["encoding"]["detail"]["field"] == "_d360_lseg"
+
+    @pytest.mark.asyncio
+    async def test_bar_chart_without_years_defaults_to_latest_year(self, patches):
+        """Cross-sectional chart requested without years must filter to latest year."""
+        df_bar = pd.DataFrame(
+            {
+                "TIME_PERIOD": ["2020-01-01", "2021-01-01", "2022-01-01", "2020-01-01", "2021-01-01", "2022-01-01", "2020-01-01", "2021-01-01", "2022-01-01"],
+                "OBS_VALUE": [100, 200, 300, 150, 250, 350, 120, 220, 320],
+                "REF_AREA": ["KEN", "KEN", "KEN", "UGA", "UGA", "UGA", "TZA", "TZA", "TZA"],
+            }
+        )
+        with patch(
+            "data360.visualization._fetch_data_internal",
+            new_callable=AsyncMock,
+            return_value=df_bar,
+        ):
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+                chart_type="bar",
+            )
+
+        assert result["error"] is None
+        assert result["strategy"] == "cross_sectional"  # routed to bar chart instead of temporal line
+        assert result["data_summary"]["year_range"] == ["2022", "2022"]
+
+    @pytest.mark.asyncio
+    async def test_bar_chart_with_explicit_year_range_routes_to_stacked_bar(self, patches):
+        """bar hint + explicit start_year/end_year + multi-year + multi-country → stacked_bar.
+        The pre-filter must NOT strip years when the caller set both bounds explicitly.
+        """
+        df_multi = pd.DataFrame(
+            {
+                "TIME_PERIOD": [
+                    "2020-01-01", "2021-01-01", "2022-01-01",
+                    "2020-01-01", "2021-01-01", "2022-01-01",
+                    "2020-01-01", "2021-01-01", "2022-01-01"
+                ],
+                "OBS_VALUE": [100, 200, 300, 150, 250, 350, 120, 220, 320],
+                "REF_AREA": ["KEN", "KEN", "KEN", "UGA", "UGA", "UGA", "TZA", "TZA", "TZA"],
+            }
+        )
+
+        with patch(
+            "data360.visualization._fetch_data_internal",
+            new_callable=AsyncMock,
+            return_value=df_multi,
+        ):
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+                chart_type="bar",
+                start_year=2020,
+                end_year=2022,
+            )
+
+        assert result["error"] is None
+        # bar + multi-year + multi-country + explicit year range → stacked bar
+        assert result["strategy"] == "stacked_bar"
+
+    async def test_bar_chart_without_year_range_filters_to_latest_year(self, patches):
+        """bar hint WITHOUT explicit start_year/end_year + multi-year + multi-country
+        still filters to the latest year to prevent cluttered cross-sectional bars.
+        """
+        df_multi = pd.DataFrame(
+            {
+                "TIME_PERIOD": [
+                    "2020-01-01", "2021-01-01", "2022-01-01",
+                    "2020-01-01", "2021-01-01", "2022-01-01",
+                    "2020-01-01", "2021-01-01", "2022-01-01"
+                ],
+                "OBS_VALUE": [100, 200, 300, 150, 250, 350, 120, 220, 320],
+                "REF_AREA": ["KEN", "KEN", "KEN", "UGA", "UGA", "UGA", "TZA", "TZA", "TZA"],
+            }
+        )
+
+        with patch(
+            "data360.visualization._fetch_data_internal",
+            new_callable=AsyncMock,
+            return_value=df_multi,
+        ):
+            result = await get_viz_spec(
+                database_id="WB_WDI",
+                indicator_id="FAKE_IND",
+                chart_type="bar",
+                # no start_year / end_year → pre-filter kicks in
+            )
+
+        assert result["error"] is None
+        assert result["strategy"] == "cross_sectional"
+        assert result["data_summary"]["year_range"] == ["2022", "2022"]
+
+    def test_format_source_line_includes_indicator_id(self):
+        from data360.visualization import _format_source_line_from_attribution
+        attrib = {
+            "database_name": "World Development Indicators (WDI)",
+            "indicator_name": "GDP (current US$)",
+            "indicator_id": "NY.GDP.MKTP.CD",
+        }
+        res = _format_source_line_from_attribution(attrib)
+        assert res == "World Bank — GDP (current US$) (NY.GDP.MKTP.CD)"
 
 
 
@@ -190,7 +451,7 @@ class TestStructuredTooltips:
 
     def test_year_tooltip_temporal_for_annual_string_years(self):
         """String years (e.g. '2018', '2019') should now produce temporal tooltips
-        with type=temporal and timeUnit=year so VL formats them as dates correctly
+        with type=temporal and timeUnit=utcyear so VL formats them as dates correctly
         instead of falling through to the raw epoch timestamp display."""
         df = pd.DataFrame({"year": ["2018", "2019"], "value": [1.0, 2.0]})
         tips = viz_config.build_structured_tooltips(
@@ -198,7 +459,7 @@ class TestStructuredTooltips:
         )
         year_tip = next(t for t in tips if t["field"] == "year")
         assert year_tip["type"] == "temporal"
-        assert year_tip["timeUnit"] == "year"
+        assert year_tip["timeUnit"] == "utcyear"
         assert year_tip["format"] == "%Y"
 
     def test_year_tooltip_temporal_when_column_is_datetime(self):
@@ -213,7 +474,7 @@ class TestStructuredTooltips:
         )
         year_tip = next(t for t in tips if t["field"] == "year")
         assert year_tip["type"] == "temporal"
-        assert year_tip["timeUnit"] == "year"
+        assert year_tip["timeUnit"] == "utcyear"
         assert year_tip["format"] == "%Y"
 
     def test_country_tooltip_is_nominal(self):
@@ -255,7 +516,7 @@ class TestHighCardinalityChartSelection:
         return _make_df(n_countries=n_countries, single_year=single_year)
 
     def test_above_threshold_single_year_triggers_beeswarm(self):
-        df = self._df(n_countries=12, single_year=True)
+        df = self._df(n_countries=25, single_year=True)
         assert viz_config.should_use_beeswarm(df, chart_type=None, color_dim="country")
 
     def test_below_threshold_does_not_trigger_beeswarm(self):
@@ -265,26 +526,26 @@ class TestHighCardinalityChartSelection:
         )
 
     def test_above_threshold_multi_year_does_not_trigger(self):
-        df = self._df(n_countries=15, single_year=False)
+        df = self._df(n_countries=25, single_year=False)
         assert not viz_config.should_use_beeswarm(
             df, chart_type=None, color_dim="country"
         )
 
     def test_explicit_bar_chart_type_does_not_trigger_beeswarm(self):
-        df = self._df(n_countries=20, single_year=True)
+        df = self._df(n_countries=25, single_year=True)
         assert not viz_config.should_use_beeswarm(
             df, chart_type="bar", color_dim="country"
         )
 
-    def test_beeswarm_spec_uses_tick_mark(self):
-        df = self._df(n_countries=15, single_year=True)
+    def test_beeswarm_spec_uses_bar_mark(self):
+        df = self._df(n_countries=25, single_year=True)
         spec = viz_config.build_beeswarm_spec(df, title="Test Chart")
         mark = spec["mark"]
         mark_type = mark["type"] if isinstance(mark, dict) else mark
-        assert mark_type == "tick", f"Expected tick mark for beeswarm, got {mark_type}"
+        assert mark_type == "bar", f"Expected bar mark for beeswarm, got {mark_type}"
 
     def test_beeswarm_spec_sorts_y_by_value(self):
-        df = self._df(n_countries=15, single_year=True)
+        df = self._df(n_countries=25, single_year=True)
         spec = viz_config.build_beeswarm_spec(df, title="Test")
         assert spec["encoding"]["y"]["sort"] == "-x"
 
@@ -303,11 +564,10 @@ class TestHighCardinalityChartSelection:
             "Tooltips must be dicts, not strings"
         )
 
-    def test_beeswarm_spec_uses_wb_color_palette(self):
+    def test_beeswarm_spec_does_not_encode_color(self):
         df = self._df(n_countries=15, single_year=True)
         spec = viz_config.build_beeswarm_spec(df, title="Test")
-        color_range = spec["encoding"]["color"]["scale"]["range"]
-        assert color_range == viz_config.WB_CAT_COLORS
+        assert "color" not in spec["encoding"], "Beeswarm must bypass color legend to avoid clutter"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -317,6 +577,12 @@ class TestHighCardinalityChartSelection:
 
 class TestWBStyleInjection:
     """Every spec must receive WB color palette, typography, and grid settings."""
+
+    def test_temporal_encoding_has_no_grid(self):
+        """Temporal X-axis encodings must explicitly set grid=False to avoid vertical gridline clutter."""
+        for freq in ["annual", "monthly", "quarterly", "daily"]:
+            enc = viz_config._x_temporal_encoding(freq)
+            assert enc["axis"]["grid"] is False, f"Temporal freq {freq} must disable grid"
 
     def test_inject_adds_config_when_absent(self):
         spec = {"mark": "line"}
@@ -736,7 +1002,7 @@ class TestChartTypeOverrideWarning:
             yield
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("requested_chart", ["strip", "small_multiples"])
+    @pytest.mark.parametrize("requested_chart", ["strip"])
     async def test_warning_injected_when_hint_overridden(self, patches, requested_chart):
         """If LLM requests an incompatible chart type, a warning should be present."""
         result = await get_viz_spec(
@@ -752,7 +1018,7 @@ class TestChartTypeOverrideWarning:
         )
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("requested_chart", ["line", "bar", "scatter", "area", "stacked_area", "heatmap", "map", "choropleth"])
+    @pytest.mark.parametrize("requested_chart", ["line", "bar", "scatter", "area", "stacked_area", "heatmap", "map", "choropleth", "small_multiples"])
     async def test_no_warning_when_hint_matches(self, patches, requested_chart):
         """If LLM requests a chart type that the pipeline can honor, no warning is emitted."""
         result = await get_viz_spec(
@@ -821,3 +1087,88 @@ class TestVisualizationUnitQualification:
                 disaggregation_filters=None,
             )
             assert unit == "million people"
+
+
+@pytest.mark.asyncio
+async def test_detect_missing_countries():
+    """Verify that _detect_missing_countries correctly detects and flags missing country codes/names."""
+    from data360.visualization import _detect_missing_countries
+    from unittest.mock import patch, AsyncMock
+
+    with patch(
+        "data360.providers.get_codelist_mapping",
+        new_callable=AsyncMock,
+        return_value={"USA": "United States", "IND": "India", "PAK": "Pakistan"},
+    ):
+        # 1. Base check
+        missing = await _detect_missing_countries("USA,IND,PAK", {"USA", "IND"})
+        assert missing == ["Pakistan"]
+
+        # 2. Case insensitivity and whitespace check
+        missing = await _detect_missing_countries(" usa;  ind; pak ", {"USA", "IND"})
+        assert missing == ["Pakistan"]
+
+    # 3. None/empty checks
+    assert await _detect_missing_countries(None, {"USA"}) == []
+    assert await _detect_missing_countries("", {"USA"}) == []
+
+
+def test_log_scale_guard_percentage():
+    """Verify that auto-log-scaling is bypassed for percentage/proportion indicators unless explicitly requested."""
+    from data360.viz_config import SkewnessLogScaleRule
+
+    rule = SkewnessLogScaleRule()
+
+    # 1. Non-percentage highly skewed/wide-range data should get log scale
+    df = pd.DataFrame({
+        "value": [1.0, 10.0, 100.0, 1000.0],
+        "unit_measure": ["USD", "USD", "USD", "USD"]
+    })
+    spec = {
+        "mark": "line",
+        "encoding": {
+            "x": {"field": "year", "type": "temporal"},
+            "y": {"field": "value", "type": "quantitative"}
+        }
+    }
+    result = rule.apply(spec, df=df, raw_hint=None)
+    assert result["encoding"]["y"]["scale"]["type"] == "log"
+
+    # 2. Percentage unit highly skewed/wide-range data should NOT get log scale automatically
+    df_pct = pd.DataFrame({
+        "value": [0.01, 0.05, 0.2, 0.8],
+        "unit_measure": ["%", "%", "%", "%"]
+    })
+    spec_pct = {
+        "mark": "line",
+        "encoding": {
+            "x": {"field": "year", "type": "temporal"},
+            "y": {"field": "value", "type": "quantitative"}
+        }
+    }
+    result_pct = rule.apply(spec_pct, df=df_pct, raw_hint=None)
+    assert "scale" not in result_pct["encoding"]["y"]
+
+    # 3. Explicit log hint should override the percentage safety guard
+    result_explicit = rule.apply(spec_pct, df=df_pct, raw_hint="log scale please")
+    assert result_explicit["encoding"]["y"]["scale"]["type"] == "log"
+
+
+def test_normalize_disaggregation_filters():
+    from data360.mcp_server.tools import _normalize_disaggregation_filters
+
+    # 1. Null/empty cases
+    assert _normalize_disaggregation_filters(None) is None
+    assert _normalize_disaggregation_filters({}) == {}
+
+    # 2. String and None values
+    filters = {"SEX": "F", "AGE": None}
+    assert _normalize_disaggregation_filters(filters) == {"SEX": "F", "AGE": None}
+
+    # 3. List values should be converted to comma-separated strings
+    filters_list = {"SEX": ["F", "M"], "AGE": ["Y0T4"]}
+    assert _normalize_disaggregation_filters(filters_list) == {"SEX": "F,M", "AGE": "Y0T4"}
+
+    # 4. Mix of strings, numbers, and lists
+    filters_mix = {"SEX": "F", "YEARS": [2020, 2021, None], "AGE": 5}
+    assert _normalize_disaggregation_filters(filters_mix) == {"SEX": "F", "YEARS": "2020,2021", "AGE": "5"}
