@@ -13,22 +13,9 @@ from data360.providers import get_database_mapping
 from ._server_definition import mcp
 from .agent_recipe import AGENT_RECIPE_MARKDOWN
 
-import sys
-
-_orig_read_resource = mcp.read_resource
-async def _logged_read_resource(uri: str, *args, **kwargs):
-    print(f"[INTERCEPT] read_resource requested for URI: {uri}", file=sys.stderr, flush=True)
-    try:
-        res = await _orig_read_resource(uri, *args, **kwargs)
-        print(f"[INTERCEPT] read_resource success for URI: {uri}", file=sys.stderr, flush=True)
-        return res
-    except Exception as e:
-        print(f"[INTERCEPT] read_resource FAILED for URI: {uri} error: {e!r}", file=sys.stderr, flush=True)
-        raise
-mcp.read_resource = _logged_read_resource
-
 # System prompt with chain-of-thought guidance for chatbot integration
 from .prompts import SYSTEM_PROMPT
+
 
 CODELISTS = {
     "auto_resolved": {
@@ -400,9 +387,9 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
         font-family: monospace;
       }
     </style>
-    <script src="http://localhost:8021/static/libs/vega.js"></script>
-    <script src="http://localhost:8021/static/libs/vega-lite.js"></script>
-    <script src="http://localhost:8021/static/libs/vega-embed.js"></script>
+    <script src="<<<SERVER_BASE>>>/static/libs/vega.js"></script>
+    <script src="<<<SERVER_BASE>>>/static/libs/vega-lite.js"></script>
+    <script src="<<<SERVER_BASE>>>/static/libs/vega-embed.js"></script>
   </head>
   <body>
     <div id="vis"></div>
@@ -412,7 +399,7 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
       <pre id="error-stack"></pre>
     </div>
     <script type="module">
-      const serverBaseUrl = "http://localhost:8021";
+      const serverBaseUrl = "<<<SERVER_BASE>>>";
 
       function showError(message, stack) {
         document.getElementById('vis').style.display = 'none';
@@ -448,7 +435,7 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
         logToServer("Unhandled promise rejection", { message: msg, stack: stack });
       });
 
-      import { App } from "http://localhost:8021/static/libs/ext-apps.js";
+      import { App } from "<<<SERVER_BASE>>>/static/libs/ext-apps.js";
 
       if (window.PRE_LOADED_SPEC) {
         vegaEmbed("#vis", window.PRE_LOADED_SPEC, {
@@ -543,12 +530,14 @@ Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
 async def vega_lite_renderer(spec: str | None = None) -> str:
     """HTML renderer template for Vega-Lite v6 charts."""
     from data360.config import get_mcp_server_settings
+
     settings = get_mcp_server_settings()
     port = settings.port or 8021
     server_base = f"http://localhost:{port}"
-    html = VEGA_LITE_RENDERER_HTML.replace("http://localhost:8021", server_base)
+    # Use an explicit sentinel that cannot appear in real HTML/JS content.
+    # All occurrences in VEGA_LITE_RENDERER_HTML are replaced in one pass.
+    html = VEGA_LITE_RENDERER_HTML.replace("<<<SERVER_BASE>>>", server_base)
     if spec:
-        # Clean the spec parameter (if it contains escaped quotes, etc.)
         injection = f"\n      window.PRE_LOADED_SPEC = {spec};\n"
         html = html.replace("<body>", f"<body>\n    <script>{injection}</script>")
     return html
@@ -558,7 +547,6 @@ import os
 from fastapi.staticfiles import StaticFiles
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
-from starlette.routing import Mount
 
 from starlette.exceptions import HTTPException
 
@@ -606,15 +594,6 @@ class CORSStaticFiles(StaticFiles):
 
 
 
-# Resolve the repository root directory
-repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-static_dir = os.path.join(repo_root, "static")
-os.makedirs(static_dir, exist_ok=True)
-
-# Mount the static directory directly on the FastMCP instance
-mcp._additional_http_routes.append(
-    Mount("/static", CORSStaticFiles(directory=static_dir), name="static")
-)
 
 @mcp.custom_route("/debug-log", methods=["POST", "OPTIONS"])
 async def debug_log(request: Request) -> Response:
@@ -643,4 +622,3 @@ async def debug_log(request: Request) -> Response:
             status_code=400,
             headers={"Access-Control-Allow-Origin": "*"}
         )
-
