@@ -4,17 +4,14 @@ import logging
 import os
 import uuid
 
-# Force Prefab UI to inline all CSS and JS dependencies inside the HTML resource.
-# This prevents sandbox blocks on external CDNs like jsdelivr.
-os.environ["PREFAB_BUNDLED_RENDERER"] = "1"
-
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 from data360.mcp_server.resources import CORSStaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request as StarletteRequest
@@ -298,10 +295,10 @@ async def api_search_indicators(
     limit: int = 20,
 ):
     from data360.mcp_server.tools import _search_indicators
-    
+
     if not query.strip():
         return {"indicators": []}
-        
+
     try:
         res = await _search_indicators(query=query, database=database, limit=limit)
         indicators_data = []
@@ -319,8 +316,6 @@ async def api_search_indicators(
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
-from pydantic import BaseModel
-from typing import Any, Optional, Dict, List
 
 class VizSpecRequest(BaseModel):
     database_id: str
@@ -338,14 +333,12 @@ class VizSpecRequest(BaseModel):
 @app.post("/api/viz-spec")
 async def get_viz_spec_endpoint(req: VizSpecRequest):
     from data360 import visualization as data360_viz
-    from data360.config import get_mcp_server_settings
-
-    # Temporarily disable Charts API URL to force local static file storage
-    settings = get_mcp_server_settings()
-    old_charts_url = settings.charts_api_url
-    settings.charts_api_url = None
 
     try:
+        # Pass charts_api_url_override=None to force local static file storage,
+        # avoiding mutation of the shared @ft.cache singleton (which is a race condition
+        # under concurrent requests). The HTML app always wants local specs for direct
+        # file access; blob storage routing happens via the MCP tool path, not this endpoint.
         res = await data360_viz.get_viz_spec(
             database_id=req.database_id,
             indicator_id=req.indicator_id,
@@ -357,10 +350,8 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
             relevant_fields=req.relevant_fields,
             chart_title=req.chart_title,
             series_labels=req.series_labels,
+            charts_api_url_override=None,
         )
-    finally:
-        # Restore Charts API URL setting
-        settings.charts_api_url = old_charts_url
 
     if res.get("error"):
         return JSONResponse(status_code=400, content={"error": res.get("error")})

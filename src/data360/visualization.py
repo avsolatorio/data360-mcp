@@ -223,18 +223,34 @@ def _vega_spec_to_json_safe(obj: object) -> object:
     )
 
 
-async def _store_spec(vl_spec: dict) -> str:
+_UNSET = object()  # sentinel for "not provided" (distinct from None which means "disable")
+
+
+async def _store_spec(
+    vl_spec: dict,
+    charts_api_url_override: object = _UNSET,
+) -> str:
     """Persist a Vega-Lite dict: Charts API when configured, else static file.
 
     Always runs ``_vega_spec_to_json_safe`` first so httpx ``json=`` and
     ``json.dump`` cannot fail on non-JSON-native types in embedded data.
+
+    Args:
+        vl_spec: The Vega-Lite spec dict to persist.
+        charts_api_url_override: When provided, overrides the ``charts_api_url``
+            from settings *for this call only*, without mutating the shared singleton.
+            Pass ``None`` to force local-only storage even when a Charts API URL is
+            configured. Use the sentinel ``_UNSET`` (default) to read from settings.
     """
     safe = _vega_spec_to_json_safe(vl_spec)
     if not isinstance(safe, dict):
         raise TypeError("Vega spec must serialize to a JSON object")
 
     settings = get_mcp_server_settings()
-    charts_url = settings.charts_api_url
+    if charts_api_url_override is _UNSET:
+        charts_url = settings.charts_api_url
+    else:
+        charts_url = charts_api_url_override  # type: ignore[assignment]
     env = settings.env or "local"
     is_prod = env.lower() in ("prod", "production")
 
@@ -1656,6 +1672,7 @@ async def get_viz_spec(
     chart_title: str | None = None,
     series_labels: dict[str, str] | None = None,
     strategy_override: str | None = None,
+    charts_api_url_override: object = None,
 ) -> VizResult:
     """Generate a Vega-Lite chart from a single Data360 indicator.
 
@@ -2486,7 +2503,7 @@ async def get_viz_spec(
                 )
 
         return _ok(
-            await _store_spec(spec),
+            await _store_spec(spec, charts_api_url_override=charts_api_url_override),
             warning=warning_msg,
             source_attribution=source_attribution,
             strategy=strategy_result.strategy.value,
