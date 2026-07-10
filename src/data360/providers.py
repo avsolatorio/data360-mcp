@@ -1056,35 +1056,19 @@ class CodelistManager:
         return dict(self._extdataportal.get(key, {}))
 
     async def _ensure_loaded(self, codelist_type: str) -> None:
-        """Ensure a global codelist is loaded."""
+        """Ensure a global codelist is loaded from extdataportal."""
         if codelist_type in self._loaded:
             return
         if codelist_type in self.GLOBAL_CODELISTS:
-            await self._load_from_api(codelist_type)
-
-    async def _load_from_api(self, codelist_type: str) -> None:
-        """Fetch a global codelist from the API."""
-        url = f"{data360_config.api_url}/codelist"
-        params = {"type": codelist_type}
-
-        try:
-            client = get_shared_httpx_client()
-            response = await client.get(url, params=params)
-            response.raise_for_status()
-            data = response.json()
-            self._cache[codelist_type] = data.get("value", [])
-            self._loaded.add(codelist_type)
-            _logger.info(
-                f"Loaded {len(self._cache[codelist_type])} items for {codelist_type}"
-            )
-        except httpx.HTTPStatusError as e:
-            error_msg = f"HTTP error fetching {codelist_type} codelist: {e.response.status_code}"
-            _logger.error(error_msg)
-            raise
-        except httpx.RequestError as e:
-            error_msg = f"Request error fetching {codelist_type} codelist: {str(e)}"
-            _logger.error(error_msg)
-            raise
+            await self._ensure_extdataportal_loaded()
+            ext_key = self._resolve_extdataportal_key(codelist_type)
+            if ext_key in self._extdataportal and self._extdataportal[ext_key]:
+                items = [
+                    {"Id": code, "Name": name}
+                    for code, name in self._extdataportal[ext_key].items()
+                ]
+                self._cache[codelist_type] = items
+                self._loaded.add(codelist_type)
 
     def _normalize_query(self, query: str) -> str:
         """Normalize query for case-insensitive and whitespace-invariant search."""
@@ -1293,11 +1277,23 @@ class CodelistManager:
         """Get a dictionary mapping codes to names (e.g., {'KEN': 'Kenya'})."""
         codelist_type = codelist_type.upper()
 
-        # Ensure loaded if global
+        # Try from extdataportal first
+        try:
+            await self._ensure_extdataportal_loaded()
+            ext_key = self._resolve_extdataportal_key(codelist_type)
+            if ext_key in self._extdataportal and self._extdataportal[ext_key]:
+                return dict(self._extdataportal[ext_key])
+        except Exception as e:
+            _logger.debug(f"Failed to load from extdataportal: {e}")
+
+        # Ensure loaded if global (legacy fallback)
         if codelist_type in self.GLOBAL_CODELISTS:
-            await self._ensure_loaded(codelist_type)
-            items = self._cache.get(codelist_type, [])
-            return {item.get("Id", ""): item.get("Name", "") for item in items}
+            try:
+                await self._ensure_loaded(codelist_type)
+                items = self._cache.get(codelist_type, [])
+                return {item.get("Id", ""): item.get("Name", "") for item in items}
+            except Exception as e:
+                _logger.warning(f"Legacy global load failed for {codelist_type}: {e}")
 
         # Static mappings (reverse the value->code mapping to code->name)
         if codelist_type in self.STATIC_MAPPINGS:

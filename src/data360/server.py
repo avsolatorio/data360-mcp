@@ -24,7 +24,15 @@ _audit_logger = logging.getLogger("audit")
 _telemetry_client = None
 
 # Setup logging from configuration
+import sys
 mcp_settings = get_mcp_server_settings()
+if "--port" in sys.argv:
+    try:
+        _port_idx = sys.argv.index("--port")
+        mcp_settings.port = int(sys.argv[_port_idx + 1])
+    except (ValueError, IndexError):
+        pass
+
 setup_logging(
     log_file=mcp_settings.log_file,
     log_level=mcp_settings.log_level,
@@ -198,7 +206,8 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
         return response
 
 
-mcp.settings.stateless_http = True
+from fastmcp import settings
+settings.stateless_http = True
 
 # NOTE: import to be able to run the server with all definitions loaded
 # path="/mcp" means the MCP endpoint lives at /mcp (no trailing slash needed)
@@ -264,6 +273,7 @@ async def root():
         "ready": "/mcp/ready",
         "mcp": "/mcp",
     }
+
 
 
 # Mount static files FIRST (more specific path must come before catch-all)

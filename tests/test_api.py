@@ -2133,3 +2133,39 @@ class TestDimensionsResilienceAndParsing:
                 pass
 
         assert len(conc_reqs) == 1
+
+
+class TestEmptyOrWhitespaceIdsValidation:
+    """Tests that MetadataRequest and IndicatorDataRequest validate empty or whitespace-only IDs."""
+
+    def test_metadata_request_rejects_empty_ids(self):
+        from pydantic import ValidationError
+        from data360.models import MetadataRequest
+
+        with pytest.raises(ValidationError, match="database_id cannot be empty"):
+            MetadataRequest(database_id="", indicator_id="WB_WDI_FP_CPI_TOTL_ZG")
+
+        with pytest.raises(ValidationError, match="database_id cannot be empty"):
+            MetadataRequest(database_id="   ", indicator_id="WB_WDI_FP_CPI_TOTL_ZG")
+
+        with pytest.raises(ValidationError, match="indicator_id cannot be empty"):
+            MetadataRequest(database_id="WB_WDI", indicator_id="")
+
+        with pytest.raises(ValidationError, match="indicator_id cannot be empty"):
+            MetadataRequest(database_id="WB_WDI", indicator_id="   ")
+
+    def test_indicator_data_request_rejects_empty_ids(self):
+        from pydantic import ValidationError
+        from data360.models import IndicatorDataRequest
+
+        with pytest.raises(ValidationError, match="database_id cannot be empty"):
+            IndicatorDataRequest(database_id="", indicator_id="WB_WDI_FP_CPI_TOTL_ZG")
+
+        with pytest.raises(ValidationError, match="database_id cannot be empty"):
+            IndicatorDataRequest(database_id="   ", indicator_id="WB_WDI_FP_CPI_TOTL_ZG")
+
+        with pytest.raises(ValidationError, match="indicator_id cannot be empty"):
+            IndicatorDataRequest(database_id="WB_WDI", indicator_id="")
+
+        with pytest.raises(ValidationError, match="indicator_id cannot be empty"):
+            IndicatorDataRequest(database_id="WB_WDI", indicator_id="   ")
