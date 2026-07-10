@@ -462,3 +462,26 @@ class TestEndToEndWgiResolution:
         raw_wgi = {"WGI_EST", "WGI_SC", "WGI_SC_LB", "WGI_SC_UB", "WGI_SE", "WGI_SR"}
         remaining = raw_wgi & set(result["comp_breakdown_1"].unique())
         assert not remaining, f"Unresolved WGI codes: {remaining}"
+
+
+class TestCodelistExtdataportal:
+    @pytest.mark.asyncio
+    async def test_find_value_uses_extdataportal(self):
+        from data360.providers import CodelistManager
+
+        mgr = CodelistManager()
+        # Seed mock extdataportal data
+        mock_data = {
+            "REF_AREA": {
+                "JPN": "Japan",
+                "KEN": "Kenya"
+            }
+        }
+        mgr._apply_extdataportal(mock_data)
+
+        # Calling find_value should use extdataportal and return Japan
+        results = await mgr.find_value("REF_AREA", "japan")
+        assert len(results) == 1
+        assert results[0]["id"] == "JPN"
+        assert results[0]["name"] == "Japan"
+        assert results[0]["score"] == 100

@@ -338,6 +338,10 @@ class MetadataRequest(BaseModel):
     @model_validator(mode="after")
     def validate_ids(self) -> "MetadataRequest":
         """Validate database_id and indicator_id logic."""
+        if not self.database_id or not self.database_id.strip():
+            raise ValueError("database_id cannot be empty or whitespace-only.")
+        if not self.indicator_id or not self.indicator_id.strip():
+            raise ValueError("indicator_id cannot be empty or whitespace-only.")
         if self.database_id == self.indicator_id:
             raise ValueError(
                 f"Invalid database_id: '{self.database_id}'. It matches indicator_id."
@@ -384,6 +388,10 @@ class IndicatorDataRequest(BaseModel):
     @model_validator(mode="after")
     def validate_ids(self) -> "IndicatorDataRequest":
         """Validate database_id and indicator_id logic."""
+        if not self.database_id or not self.database_id.strip():
+            raise ValueError("database_id cannot be empty or whitespace-only.")
+        if not self.indicator_id or not self.indicator_id.strip():
+            raise ValueError("indicator_id cannot be empty or whitespace-only.")
         # 1. Check if database_id is suspicious (same as indicator_id)
         if self.database_id == self.indicator_id:
             raise ValueError(
