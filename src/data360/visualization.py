@@ -90,7 +90,7 @@ def _unit_measure_for_formatting(
     raw_norm = raw.upper()
     label_norm = label.upper()
 
-    if raw_norm == "PT" or "PERCENT" in label_norm:
+    if raw_norm == "PT" or ("PERCENT" in label_norm and "PERSON" not in label_norm):
         return "%"
     if (
         "$" in raw_norm
@@ -125,12 +125,9 @@ def save_specs_to_static(vl_spec: dict) -> str:
     ``data360.config.get_mcp_server_settings()``.
     """
     spec_id = str(uuid.uuid4())
-    if os.environ.get("PYTEST_CURRENT_TEST"):
-        specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
-    else:
-        server_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
-        specs_dir = os.path.join(project_root, "static", "viz_specs")
+    server_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+    specs_dir = os.path.join(project_root, "static", "viz_specs")
     os.makedirs(specs_dir, exist_ok=True)
     vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
     with open(vega_path, "w") as f:
@@ -280,6 +277,7 @@ def _ok(
     dimensions: dict[str, list] | None = None,
     data_summary: dict | None = None,
     data_profile: dict | None = None,
+    spec: dict | None = None,
 ) -> VizResult:
     r: VizResult = {"url": url, "error": None}
     if warning:
@@ -298,6 +296,8 @@ def _ok(
         r["data_summary"] = data_summary  # type: ignore[assignment]
     if data_profile:
         r["data_profile"] = data_profile  # type: ignore[assignment]
+    if spec is not None:
+        r["spec"] = spec
     attrib_for_line = {
         k: str(v)
         for k, v in r.items()
@@ -418,18 +418,21 @@ def _infer_scale_type(unit_code: str | None, unit_label: str | None = None) -> s
     Returns one of: ``"percentage"``, ``"currency"``, ``"persons"``, ``"index"``.
     """
     tokens: set[str] = set()
+    import re
     for raw in (unit_code, unit_label):
         if raw:
             normalised = raw.upper().strip()
             tokens.add(normalised)
-            tokens.update(normalised.replace("_", " ").split())
+            # Remove all punctuation before splitting
+            clean_str = re.sub(r'[^\w\s]', ' ', normalised)
+            tokens.update(clean_str.split())
 
+    if tokens & _PERSONS_TOKENS:
+        return "persons"
     if tokens & _PERCENTAGE_TOKENS:
         return "percentage"
     if tokens & _CURRENCY_TOKENS:
         return "currency"
-    if tokens & _PERSONS_TOKENS:
-        return "persons"
     return "index"
 
 
@@ -988,6 +991,10 @@ async def _fetch_data_internal(url: str) -> pd.DataFrame:
             offset += len(raw_data)
 
         if len(all_raw_data) >= 1000:
+            _logger.warning(
+                "_fetch_data_internal: capped at 1000 rows for %s — some data may be truncated.",
+                url,
+            )
             break
 
     if not all_raw_data:
@@ -2511,6 +2518,7 @@ async def get_viz_spec(
             dimensions=dim_summary or None,
             data_summary=data_summary or None,
             data_profile=data_profile or None,
+            spec=spec,
         )
     except Exception as e:
         _logger.exception("Strategy builder failed")
@@ -3062,4 +3070,5 @@ async def get_multi_indicator_viz_spec(
         strategy=strategy_result.strategy.value,
         reason=out_reason,
         data_profile=data_profile or None,
+        spec=spec,
     )

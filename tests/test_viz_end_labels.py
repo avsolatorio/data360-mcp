@@ -183,3 +183,27 @@ class TestEndLabelsOnMultiSeriesLines:
         assert has_top_mark or line_layers, (
             "The original line layer must still exist after end labels are added."
         )
+
+    def test_end_labels_adjusted_to_avoid_overlap(self):
+        """When two lines end at very close values, their label Y positions must be spaced out."""
+        # Create 2 countries ending at 10.0 and 10.1 in the last year
+        df = pd.DataFrame([
+            {"country": "C1", "year": 2018, "value": 5.0},
+            {"country": "C1", "year": 2019, "value": 10.0},
+            {"country": "C2", "year": 2018, "value": 5.0},
+            {"country": "C2", "year": 2019, "value": 10.1},
+        ])
+        result = _default_result()
+        spec = build_temporal_single_spec(df, "Overlap test", result)
+
+        # Verify that the data values in the generated spec have distinct _label_y values
+        # for C1 and C2 in the last year
+        data_values = spec.get("data", {}).get("values", [])
+        c1_last = next(v for v in data_values if v["country"] == "C1" and v["year"] == 2019)
+        c2_last = next(v for v in data_values if v["country"] == "C2" and v["year"] == 2019)
+
+        # Original values were 10.0 and 10.1 (difference of 0.1)
+        # Total range is 10.1 - 5.0 = 5.1.
+        # Threshold is 4% of 5.1 = 0.204.
+        # Spaced out values should have a difference of at least 0.2
+        assert abs(c2_last["_label_y"] - c1_last["_label_y"]) >= 0.2

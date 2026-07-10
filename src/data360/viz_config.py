@@ -1055,10 +1055,10 @@ class RoutingContext:
         normalized = (raw_unit or "").upper().strip()
         if "$" in normalized or "USD" in normalized or "CURRENCY" in normalized or "DOLLARS" in normalized:
             scale_type = "currency"
+        elif normalized == "PS" or "PEOPLE" in normalized or "PERSONS" in normalized or "COUNT" in normalized or "HEADCOUNT" in normalized or "PERSON" in normalized:
+            scale_type = "persons"
         elif "%" in normalized or "PERCENT" in normalized or "RATE" in normalized or "SHARE" in normalized or "PROPORTION" in normalized:
             scale_type = "percentage"
-        elif normalized == "PS" or "PEOPLE" in normalized or "PERSONS" in normalized or "COUNT" in normalized or "HEADCOUNT" in normalized:
-            scale_type = "persons"
         else:
             scale_type = "index"
 
@@ -2206,7 +2206,7 @@ def _x_temporal_encoding(freq: TemporalFreq = "annual") -> dict:
 def _is_proportion_indicator(df, unit_measure=None, scale_type=None):
     """Check if the indicator unit, scale_type, or name suggests it's a proportion/rate/share."""
     normalized_unit = (unit_measure or "").upper()
-    if scale_type == "percentage" or "%" in normalized_unit or "PERCENT" in normalized_unit:
+    if scale_type == "percentage" or (("%" in normalized_unit or "PERCENT" in normalized_unit) and "PERSON" not in normalized_unit):
         return True
 
     keywords = {"PROPORTION", "SHARE", "RATE", "RATIO", "FRACTION"}
@@ -2230,7 +2230,7 @@ def _value_label_expr(unit_measure: str | None = None, scale_type: str | None = 
         return "format(datum.value, '.0%')"
     is_currency = scale_type == "currency" or "$" in normalized or "USD" in normalized
     prefix = "$" if is_currency else ""
-    is_percentage = scale_type == "percentage" or "%" in normalized or "PERCENT" in normalized
+    is_percentage = scale_type == "percentage" or (("%" in normalized or "PERCENT" in normalized) and "PERSON" not in normalized)
     if is_percentage:
         return "format(datum.value, '.1~f') + '%'"
     if unit_measure == "T":
@@ -2346,6 +2346,66 @@ def _color_encoding(
     }
 
 
+def _adjust_end_label_y(df: pd.DataFrame, color_dim: str) -> pd.DataFrame:
+    """Compute a '_label_y' column in df to prevent direct end labels from overlapping.
+
+    Uses a 1D relaxation (spring/force) algorithm on the final year's data values.
+    """
+    if df.empty or "value" not in df.columns or "year" not in df.columns or not color_dim or color_dim not in df.columns:
+        return df
+
+    # Create copy and initialize _label_y to value
+    df = df.copy()
+    df["_label_y"] = df["value"]
+
+    try:
+        # Reset index to guarantee row matching is safe and non-duplicate
+        df = df.reset_index(drop=True)
+        # Get the rows representing the last point for each series
+        last_indices = df.groupby(color_dim)["year"].idxmax()
+        last_rows = df.loc[last_indices]
+
+        if len(last_rows) < 2:
+            return df
+
+        y_min = df["value"].min()
+        y_max = df["value"].max()
+        y_range = y_max - y_min if y_max != y_min else 1.0
+        if y_range <= 0:
+            return df
+
+        threshold = 0.04 * y_range
+
+        last_points = []
+        for idx, row in last_rows.iterrows():
+            last_points.append({
+                "idx": idx,
+                "val": float(row["value"])
+            })
+
+        last_points.sort(key=lambda x: x["val"])
+
+        # Spring relaxation pass
+        for _ in range(10):
+            for i in range(len(last_points) - 1):
+                p1 = last_points[i]
+                p2 = last_points[i+1]
+                diff = p2["val"] - p1["val"]
+                if diff < threshold:
+                    overlap = threshold - diff
+                    p1["val"] -= overlap / 2.0
+                    p2["val"] += overlap / 2.0
+
+        for p in last_points:
+            df.at[p["idx"], "_label_y"] = p["val"]
+
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).warning(f"Failed to adjust end labels: {e}")
+
+    return df
+
+
 def build_temporal_single_spec(
     df: pd.DataFrame,
     title: str | dict,
@@ -2366,6 +2426,18 @@ def build_temporal_single_spec(
     original_n = None
     if color_dim and color_dim in df.columns:
         df, original_n = _cap_cardinality(df, color_dim, HIGH_CARDINALITY_THRESHOLDS["line_max_series"])
+
+    # Determine if we need direct end labels and adjust y-positions to avoid overlaps
+    is_bar = result.mark_hint == "bar"
+    n_series = df[color_dim].nunique() if (color_dim and color_dim in df.columns) else 0
+    needs_end_labels = (
+        not is_bar
+        and color_dim
+        and 2 <= n_series <= MAX_END_LABEL_SERIES
+        and "year" in df.columns
+    )
+    if needs_end_labels:
+        df = _adjust_end_label_y(df, color_dim)
 
     rows = df.to_dict(orient="records")
     max_abs = float(df["value"].abs().max()) if "value" in df.columns else None
@@ -2513,7 +2585,7 @@ def build_temporal_single_spec(
                         "groupby": [color_dim],
                     },
                     {
-                        "calculate": f"datum._last.value",
+                        "calculate": "datum._last._label_y",
                         "as": "_end_value",
                     },
                     {
@@ -3377,9 +3449,16 @@ def _build_scale_split_vconcat(
                     ),
                 }
 
-        if is_bar_chart and result.color_dim and result.color_dim in df_filtered.columns:
-            if encoding.get("x", {}).get("field") != result.color_dim:
-                encoding["xOffset"] = {"field": result.color_dim, "type": "nominal"}
+        effective_color_dim = facet_dim if len(group) > 1 else result.color_dim
+        n_series = df_filtered[effective_color_dim].nunique() if (effective_color_dim and effective_color_dim in df_filtered.columns) else 0
+        needs_end_labels = (
+            not is_bar_chart
+            and effective_color_dim
+            and 2 <= n_series <= MAX_END_LABEL_SERIES
+            and "year" in df_filtered.columns
+        )
+        if needs_end_labels:
+            df_filtered = _adjust_end_label_y(df_filtered, effective_color_dim)
 
         rows = df_filtered.to_dict(orient="records")
 
@@ -3402,14 +3481,10 @@ def _build_scale_split_vconcat(
             and df_filtered["value"].min() < 0 < df_filtered["value"].max()
         )
 
-        effective_color_dim = facet_dim if len(group) > 1 else result.color_dim
-        n_series = df_filtered[effective_color_dim].nunique() if (effective_color_dim and effective_color_dim in df_filtered.columns) else 0
-        needs_end_labels = (
-            not is_bar_chart
-            and effective_color_dim
-            and 2 <= n_series <= MAX_END_LABEL_SERIES
-            and "year" in df_filtered.columns
-        )
+        # If bar offset is needed
+        if is_bar_chart and result.color_dim and result.color_dim in df_filtered.columns:
+            if encoding.get("x", {}).get("field") != result.color_dim:
+                encoding["xOffset"] = {"field": result.color_dim, "type": "nominal"}
 
         if needs_zero_line or needs_end_labels:
             main_layer = {"mark": spec.pop("mark"), "encoding": spec.pop("encoding")}
@@ -3443,7 +3518,7 @@ def _build_scale_split_vconcat(
                             "groupby": [effective_color_dim],
                         },
                         {
-                            "calculate": "datum._last.value",
+                            "calculate": "datum._last._label_y",
                             "as": "_end_value",
                         },
                         {

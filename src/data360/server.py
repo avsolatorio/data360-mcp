@@ -288,6 +288,7 @@ async def root():
     }
 
 
+
 @app.get("/api/indicators/search")
 async def api_search_indicators(
     query: str,
@@ -320,14 +321,14 @@ async def api_search_indicators(
 class VizSpecRequest(BaseModel):
     database_id: str
     indicator_id: str
-    country_code: Optional[str] = None
-    start_year: Optional[int] = None
-    end_year: Optional[int] = None
-    disaggregation_filters: Optional[Dict[str, Optional[str]]] = None
-    chart_type: Optional[str] = None
-    relevant_fields: Optional[List[str]] = None
-    chart_title: Optional[str] = None
-    series_labels: Optional[Dict[str, str]] = None
+    country_code: str | None = None
+    start_year: int | None = None
+    end_year: int | None = None
+    disaggregation_filters: dict[str, str | None] | None = None
+    chart_type: str | None = None
+    relevant_fields: list[str] | None = None
+    chart_title: str | None = None
+    series_labels: dict[str, str] | None = None
 
 
 @app.post("/api/viz-spec")
@@ -358,33 +359,15 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
     if res.get("error"):
         return JSONResponse(status_code=400, content={"error": res.get("error")})
 
-    url_str = res.get("url")
-    spec = None
-    if url_str:
-        try:
-            spec_id = url_str.split("/")[-1].replace("_vega.json", "")
-            if os.environ.get("PYTEST_CURRENT_TEST"):
-                specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
-            else:
-                server_dir = os.path.dirname(os.path.abspath(__file__))
-                project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
-                specs_dir = os.path.join(project_root, "static", "viz_specs")
-            vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
-            if os.path.exists(vega_path):
-                with open(vega_path, "r") as f:
-                    spec = json.load(f)
-        except Exception as e:
-            _audit_logger.exception("Failed to read generated spec")
-            return JSONResponse(status_code=500, content={"error": "Failed to read generated spec"})
-
+    spec = res.get("spec")
     if not spec:
-        return JSONResponse(status_code=500, content={"error": "Spec was generated but could not be retrieved from disk."})
+        return JSONResponse(status_code=500, content={"error": "Vega-Lite spec was not generated."})
 
-    return {
+    return {k: v for k, v in {
         "spec": spec,
         "reason": res.get("reason"),
-        "strategy": res.get("strategy")
-    }
+        "strategy": res.get("strategy"),
+    }.items() if v is not None}
 
 
 
