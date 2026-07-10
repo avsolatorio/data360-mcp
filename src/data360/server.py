@@ -318,7 +318,6 @@ async def api_search_indicators(
         return {"indicators": indicators_data}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
-
 from pydantic import BaseModel
 from typing import Any, Optional, Dict, List
 

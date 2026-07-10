@@ -9,10 +9,7 @@ import json
 from typing import Any, Literal, Optional
 
 import pydantic_core
-from fastmcp.apps import AppConfig, PrefabAppConfig
-from prefab_ui.app import PrefabApp
-from prefab_ui.components import Column, Row, Heading, Input, Select, SelectOption, Button, ForEach, Card, CardHeader, CardTitle, CardContent, CardFooter, Text, Form, Rx, RESULT
-from prefab_ui.actions import CallTool, SetState, SendMessage
+from fastmcp.apps import AppConfig
 from fastmcp.tools import ToolResult
 from fastmcp.tools.tool import Tool
 from mcp.types import TextContent
@@ -374,12 +371,12 @@ def spec_to_prefab(
     if data_rows:
         from data360.config import get_mcp_server_settings
         import logging
-        
+
         logger = logging.getLogger("data360")
         mcp_settings = get_mcp_server_settings()
-        
+
         chart_render_mode = mcp_settings.chart_render_mode
-        
+
         # 1. If in 'embed' mode, render Vega-Lite directly inside an iframe using Embed
         if chart_render_mode == "embed" and spec:
             try:
@@ -390,13 +387,13 @@ def spec_to_prefab(
                 if "title" in spec_for_embed:
                     del spec_for_embed["title"]
                 import urllib.parse
-                
+
                 port = mcp_settings.port or 8021
                 server_base = f"http://localhost:{port}"
                 spec_json = json.dumps(spec_for_embed)
                 quoted_spec = urllib.parse.quote(spec_json)
                 url = f"{server_base}/static/embed.html?spec={quoted_spec}"
-                
+
                 chart_component = Embed(
                     url=url,
                     sandbox="allow-scripts allow-same-origin",
@@ -412,11 +409,11 @@ def spec_to_prefab(
                 import vl_convert as vlc
                 from prefab_ui.components import Svg
                 import copy
-                
+
                 spec_for_svg = copy.deepcopy(spec)
                 if "title" in spec_for_svg:
                     del spec_for_svg["title"]
-                
+
                 svg_str = vlc.vegalite_to_svg(json.dumps(spec_for_svg))
                 chart_component = Svg(content=svg_str, width="100%", height="auto")
             except Exception as e:
@@ -439,25 +436,25 @@ def spec_to_prefab(
                     real_subtitle = str(sub_val)
             elif isinstance(spec, dict) and isinstance(spec.get("title"), str):
                 title = spec["title"]
-            
+
             card_header_children = [CardTitle(content=title)]
             if real_subtitle:
                 card_header_children.append(CardDescription(content=real_subtitle))
             elif subtitle_line:
                 card_header_children.append(CardDescription(content=subtitle_line))
-                
+
             card_children = [
                 CardHeader(children=card_header_children)
             ]
             card_children.append(CardContent(children=[chart_component]))
-                
+
             footer_text = []
             if source_line:
                 footer_text.append(source_line)
-                
+
             if footer_text:
                 card_children.append(CardFooter(children=[Markdown(content="\n\n".join(footer_text))]))
-        
+
             children.append(Card(children=card_children))
             return Container(children=children)
 
@@ -499,22 +496,22 @@ def spec_to_prefab(
                         if col != val_col:
                             x_col = col
                             break
-            
+
             # 1. Determine if the Vega-Lite spec uses a concatenated layout (vconcat/hconcat)
             is_concatenated = isinstance(spec, dict) and ("vconcat" in spec or "hconcat" in spec or "concat" in spec)
-            
+
             # Determine chart type based on structure and strategy
             if is_concatenated:
                 import re
                 concat_key = "vconcat" if "vconcat" in spec else ("hconcat" in spec and "hconcat" or "concat")
                 children_specs = spec[concat_key]
                 facet_cards = []
-                
+
                 # The data values are shared at the top level or child level
                 top_data = spec.get("data", {}).get("values", [])
                 if not top_data:
                     top_data = data_rows
-                
+
                 for i, child_spec in enumerate(children_specs):
                     if not isinstance(child_spec, dict):
                         continue
@@ -523,7 +520,7 @@ def spec_to_prefab(
                         child_title = " ".join(str(t) for t in child_title_val if t)
                     else:
                         child_title = str(child_title_val)
-                    
+
                     # Handle transform filtering (e.g. filter by country or indicator)
                     child_data = top_data
                     transforms = child_spec.get("transform", [])
@@ -534,34 +531,34 @@ def spec_to_prefab(
                             if match:
                                 col, val = match.groups()
                                 child_data = [row for row in child_data if str(row.get(col, row.get(col.lower(), row.get(col.upper(), "")))) == val]
-                    
+
                     # Detect encoding fields for this child spec
                     y_encoding = child_spec.get("encoding", {}).get("y", {})
                     child_val_col = y_encoding.get("field", "").lower() if isinstance(y_encoding, dict) else ""
-                    
+
                     x_encoding = child_spec.get("encoding", {}).get("x", {})
                     child_x_col = x_encoding.get("field", "").lower() if isinstance(x_encoding, dict) else ""
-                    
+
                     if not child_val_col:
                         child_val_col = val_col
                     if not child_x_col:
                         child_x_col = x_col
-                        
+
                     if child_data and child_x_col and child_val_col:
                         child_df = pd.DataFrame(child_data)
                         child_df.columns = [c.lower() for c in child_df.columns]
-                        
+
                         if child_x_col in child_df.columns:
                             child_df = child_df.sort_values(by=child_x_col)
-                            
+
                         child_df_clean = child_df.where(pd.notnull(child_df), None)
                         sub_chart_data = child_df_clean.to_dict(orient="records")
-                        
+
                         # Detect mark type
                         mark_spec = child_spec.get("mark", "line")
                         mark_type = mark_spec.get("type", "line") if isinstance(mark_spec, dict) else str(mark_spec)
                         is_bar = mark_type == "bar" or "bar" in strategy_lower
-                        
+
                         color_encoding = child_spec.get("encoding", {}).get("color", {})
                         if isinstance(color_encoding, dict) and "field" in color_encoding:
                             # If we color by another column (e.g. country inside this panel), it's a multi-series line chart
@@ -571,7 +568,7 @@ def spec_to_prefab(
                                 pivot_df = pivot_df.reset_index()
                                 pivot_df = pivot_df.where(pd.notnull(pivot_df), None)
                                 sub_chart_data = pivot_df.to_dict(orient="records")
-                                
+
                                 series_list = [ChartSeries(data_key=col, label=col) for col in pivot_df.columns if col != child_x_col]
                                 sub_chart = LineChart(
                                     data=sub_chart_data,
@@ -602,7 +599,7 @@ def spec_to_prefab(
                                     x_axis=child_x_col,
                                     height=200,
                                 )
-                                
+
                         facet_cards.append(
                             Card(
                                 children=[
@@ -611,7 +608,7 @@ def spec_to_prefab(
                                 ]
                             )
                         )
-                
+
                 if facet_cards:
                     chart_component = Grid(
                         columns={"default": 1, "md": 2},
@@ -625,18 +622,18 @@ def spec_to_prefab(
                     if possible_group in df.columns:
                         group_col = possible_group
                         break
-                
+
                 if group_col and x_col and val_col:
                     # Get unique values of the group column
                     groups = df[group_col].unique()
                     facet_cards = []
-                    
+
                     for group_val in groups:
                         group_df = df[df[group_col] == group_val]
                         group_df_sorted = group_df.sort_values(by=x_col)
                         group_df_clean = group_df_sorted.where(pd.notnull(group_df_sorted), None)
                         group_chart_data = group_df_clean.to_dict(orient="records")
-                        
+
                         # Determine sub-chart type (LineChart if temporal, else BarChart)
                         is_temporal = "year" in x_col or "time_period" in x_col
                         if is_temporal:
@@ -654,7 +651,7 @@ def spec_to_prefab(
                                 horizontal=True,
                                 height=200,
                             )
-                            
+
                         # Wrap each facet in its own Card
                         facet_cards.append(
                             Card(
@@ -664,7 +661,7 @@ def spec_to_prefab(
                                 ]
                             )
                         )
-                    
+
                     if facet_cards:
                         chart_component = Grid(
                             columns={"default": 1, "md": 2},
@@ -680,10 +677,10 @@ def spec_to_prefab(
                         if isinstance(layer, dict) and "encoding" in layer:
                             encoding = layer["encoding"]
                             break
-                            
+
                 x_col_corr = encoding.get("x", {}).get("field", "").lower() if isinstance(encoding.get("x"), dict) else ""
                 y_col_corr = encoding.get("y", {}).get("field", "").lower() if isinstance(encoding.get("y"), dict) else ""
-                
+
                 if x_col_corr and y_col_corr:
                     # Determine data key for grouping points
                     pt_key = "point"
@@ -691,31 +688,31 @@ def spec_to_prefab(
                         if possible_pt in df.columns:
                             pt_key = possible_pt
                             break
-                            
+
                     # Generate a unique series for each country so the tooltip name mapping works correctly in Prefab
                     unique_pts = sorted([pt for pt in df[pt_key].dropna().unique() if str(pt).strip() != ""])
                     series_list = []
                     for pt in unique_pts:
                         pt_str = str(pt)
                         series_key = pt_str.replace(" ", "_").replace("'", "").replace("&", "")
-                        
+
                         # Find matching metadata for this point to build a rich label
                         pt_df = df[df[pt_key] == pt]
-                        
+
                         # Resolve year
                         yr_val = ""
                         if "year" in pt_df.columns and not pt_df["year"].dropna().empty:
                             yr_val = str(int(pt_df["year"].dropna().iloc[0]))
                         elif "time_period" in pt_df.columns and not pt_df["time_period"].dropna().empty:
                             yr_val = str(pt_df["time_period"].dropna().iloc[0])
-                            
+
                         # Resolve country code / ref_area
                         code_val = ""
                         for possible_code in ["ref_area", "country_code"]:
                             if possible_code in pt_df.columns and possible_code != pt_key and not pt_df[possible_code].dropna().empty:
                                 code_val = str(pt_df[possible_code].dropna().iloc[0])
                                 break
-                                
+
                         # Build rich label containing all available metadata
                         label_parts = [pt_str]
                         if code_val:
@@ -723,9 +720,9 @@ def spec_to_prefab(
                         if yr_val:
                             label_parts.append(f"- {yr_val}")
                         pt_label = " ".join(label_parts)
-                        
+
                         series_list.append(ChartSeries(data_key=series_key, label=pt_label))
-                        
+
                     # Map the rows to have the corresponding _series property
                     df_clean = df.where(pd.notnull(df), None)
                     chart_data = []
@@ -753,19 +750,19 @@ def spec_to_prefab(
                     if possible_group in df.columns:
                         group_col = possible_group
                         break
-                        
+
                 if group_col and df[group_col].nunique() > 1 and x_col and val_col:
                     # Pivot index=x_col, columns=group_col, values=val_col
                     pivot_df = df.pivot(index=x_col, columns=group_col, values=val_col)
                     pivot_df = pivot_df.reset_index()
                     pivot_df = pivot_df.where(pd.notnull(pivot_df), None)
                     chart_data = pivot_df.to_dict(orient="records")
-                    
+
                     series_list = []
                     for col in pivot_df.columns:
                         if col != x_col:
                             series_list.append(ChartSeries(data_key=col, label=col))
-                            
+
                     chart_component = AreaChart(
                         data=chart_data,
                         series=series_list,
@@ -786,11 +783,11 @@ def spec_to_prefab(
                         if not title_text:
                             title_text = layer_val_col.replace("_", " ").title()
                         series_list.append(ChartSeries(data_key=layer_val_col, label=title_text))
-                        
+
                 if series_list and x_col:
                     df_clean = df.where(pd.notnull(df), None)
                     chart_data = df_clean.to_dict(orient="records")
-                    
+
                     # Check if it uses bar marks
                     is_bar = any("bar" in str(l.get("mark", "")) for l in layers) or "bar" in strategy_lower
                     if is_bar:
@@ -821,13 +818,13 @@ def spec_to_prefab(
                     pivot_df = pivot_df.reset_index()
                     pivot_df = pivot_df.where(pd.notnull(pivot_df), None)
                     chart_data = pivot_df.to_dict(orient="records")
-                    
+
                     # Each column other than x_col is a series line
                     series_list = []
                     for col in pivot_df.columns:
                         if col != x_col:
                             series_list.append(ChartSeries(data_key=col, label=col))
-                    
+
                     chart_component = LineChart(
                         data=chart_data,
                         series=series_list,
@@ -837,7 +834,7 @@ def spec_to_prefab(
                     # Single series time-series
                     df_clean = df.where(pd.notnull(df), None)
                     chart_data = df_clean.to_dict(orient="records")
-                    
+
                     label = spec.get("title", {}).get("text", "Value") if isinstance(spec.get("title"), dict) else "Value"
                     chart_component = LineChart(
                         data=chart_data,
@@ -850,7 +847,7 @@ def spec_to_prefab(
                     df_sorted = df.sort_values(by=val_col, ascending=False)
                     df_clean = df_sorted.where(pd.notnull(df_sorted), None)
                     chart_data = df_clean.to_dict(orient="records")
-                    
+
                     label = spec.get("title", {}).get("text", "Value") if isinstance(spec.get("title"), dict) else "Value"
                     chart_component = BarChart(
                         data=chart_data,
@@ -867,12 +864,12 @@ def spec_to_prefab(
             df = pd.DataFrame(data_rows)
             df_clean = df.where(pd.notnull(df), None)
             table_data = df_clean.to_dict(orient="records")
-            
+
             # Generate DataTableColumn for each column
             columns = []
             for col in df.columns:
                 columns.append(DataTableColumn(key=col, header=col.replace("_", " ").title()))
-                
+
             chart_component = DataTable(
                 rows=table_data,
                 columns=columns,
@@ -897,23 +894,23 @@ def spec_to_prefab(
             real_subtitle = str(sub_val)
     elif isinstance(spec, dict) and isinstance(spec.get("title"), str):
         title = spec["title"]
-    
+
     card_header_children = [CardTitle(content=title)]
     if real_subtitle:
         card_header_children.append(CardDescription(content=real_subtitle))
     elif subtitle_line:
         card_header_children.append(CardDescription(content=subtitle_line))
-        
+
     card_children = [
         CardHeader(children=card_header_children)
     ]
-    
+
     card_children.append(CardContent(children=[chart_component]))
-        
+
     footer_text = []
     if source_line:
         footer_text.append(source_line)
-        
+
     if footer_text:
         card_children.append(CardFooter(children=[Markdown(content="\n\n".join(footer_text))]))
 
@@ -932,7 +929,7 @@ def spec_to_prefab_and_summary(
 ) -> tuple[dict[str, Any], str]:
     """Map a Vega-Lite spec to prefab_ui app json and a text summary/table."""
     from prefab_ui.app import PrefabApp
-    
+
     prefab_comp = spec_to_prefab(
         spec=spec,
         strategy=strategy,
@@ -970,7 +967,7 @@ def spec_to_prefab_and_summary(
                     cols.remove(p)
                     cols.insert(0, p)
             df = df[cols]
-            
+
             headers = [col.replace("_", " ").title() for col in df.columns]
             header_line = "| " + " | ".join(headers) + " |"
             separator_line = "| " + " | ".join(["---"] * len(df.columns)) + " |"
@@ -1430,7 +1427,7 @@ get_data_api_url = mcp.tool(
 get_viz_spec = mcp.tool(
     instrument_mcp_tool(_get_viz_spec, tool_name="data360_get_viz_spec"),
     name="data360_get_viz_spec",
-    app=AppConfig(resource_uri="ui://data360-chart/index.html"),
+    app=AppConfig(resource_uri="ui://data360-chart/index.html", prefers_border=False),
 )
 
 get_multi_indicator_viz_spec = mcp.tool(
@@ -1439,7 +1436,7 @@ get_multi_indicator_viz_spec = mcp.tool(
         tool_name="data360_get_multi_indicator_viz_spec",
     ),
     name="data360_get_multi_indicator_viz_spec",
-    app=AppConfig(resource_uri="ui://data360-chart/index.html"),
+    app=AppConfig(resource_uri="ui://data360-chart/index.html", prefers_border=False),
 )
 
 get_supported_chart_types = mcp.tool(
@@ -1507,13 +1504,16 @@ def data360_explorer_html() -> str:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data360 Indicator Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 12px;
       background: transparent;
       color: #cbd5e1;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
     .search-bar {
       display: flex;
@@ -1528,6 +1528,7 @@ def data360_explorer_html() -> str:
       background: #1e293b;
       color: #f8fafc;
       font-size: 14px;
+      font-family: inherit;
       box-sizing: border-box;
     }
     input {
@@ -1706,7 +1707,7 @@ def data360_explorer_html() -> str:
       const query = payload.query || "";
       subtitleDiv.textContent = `Found ${indicators.length} indicators for query: "${query}"`;
       listDiv.innerHTML = "";
-      
+
       if (indicators.length === 0) {
         listDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">No indicators found.</div>';
         mcpApp.reportSize();
@@ -1716,25 +1717,25 @@ def data360_explorer_html() -> str:
       indicators.forEach(ind => {
         const card = document.createElement('div');
         card.className = 'indicator-card';
-        
+
         const nameDiv = document.createElement('div');
         nameDiv.className = 'indicator-name';
         nameDiv.textContent = ind.name;
-        
+
         const metaDiv = document.createElement('div');
         metaDiv.className = 'indicator-meta';
         metaDiv.innerHTML = `<span>Source: ${ind.database_name}</span><span>Years: ${ind.time_period_range || "N/A"}</span>`;
-        
+
         card.appendChild(nameDiv);
         card.appendChild(metaDiv);
-        
+
         if (ind.truncated_definition) {
           const descDiv = document.createElement('div');
           descDiv.className = 'indicator-desc';
           descDiv.textContent = ind.truncated_definition;
           card.appendChild(descDiv);
         }
-        
+
         card.addEventListener('click', async () => {
           try {
             await mcpApp.sendMessageToChat(`Let's plot the indicator: "${ind.name}" (ID: ${ind.idno}, Database: ${ind.database_id})`);
@@ -1742,10 +1743,10 @@ def data360_explorer_html() -> str:
             console.error(err);
           }
         });
-        
+
         listDiv.appendChild(card);
       });
-      
+
       setTimeout(() => {
         mcpApp.reportSize();
       }, 50);
@@ -1786,7 +1787,7 @@ def data360_explorer_html() -> str:
 
 @mcp.tool(
     name="data360_indicator_explorer",
-    app=AppConfig(resource_uri="ui://data360-explorer/index.html"),
+    app=AppConfig(resource_uri="ui://data360-explorer/index.html", prefers_border=False),
 )
 async def data360_indicator_explorer(
     query: str,
@@ -1801,12 +1802,12 @@ async def data360_indicator_explorer(
         database: Optional database ID filter (e.g. 'wdi', 'pip').
     """
     res = await data360_search_indicators_internal(query=query, database=database)
-    
+
     payload = {
         "query": query,
         "indicators": res
     }
-    
+
     return ToolResult(
         content=[TextContent(type="text", text=json.dumps(payload))]
     )
@@ -1820,12 +1821,15 @@ def data360_chart_html() -> str:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data360 Vega-Lite Renderer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 8px;
       background: transparent;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
     #vis {
       width: 100%;
@@ -1943,7 +1947,7 @@ def data360_chart_html() -> str:
         mcpApp.reportSize();
         return;
       }
-      
+
       try {
         vegaEmbed("#vis", spec, {
           actions: false,
@@ -1996,3 +2000,506 @@ async def data360_search_indicators_internal(
             })
     return indicators_data
 
+def _normalize_disaggregation_filters(filters: dict[str, Any] | None) -> dict[str, str | None] | None:
+    """Normalize user-provided disaggregation filters.
+    Converts list values (e.g., ["F", "M"]) to comma-separated strings (e.g., "F,M")
+    to conform to the underlying API support while remaining type-flexible for LLM callers.
+    """
+    if filters is None:
+        return None
+    normalized = {}
+    for k, v in filters.items():
+        if v is None:
+            normalized[k] = None
+        elif isinstance(v, list):
+            normalized[k] = ",".join(str(item).strip() for item in v if item is not None)
+        else:
+            normalized[k] = str(v)
+    return normalized
+
+
+
+
+
+
+@mcp.resource("ui://data360-choice/index.html")
+def data360_choice_html() -> str:
+    """HTML resource for the Data360 self-contained choice Custom HTML app."""
+    return """<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data360 Option Selector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    :root, .light {
+      --bg-color: transparent;
+      --text-color: #0f172a;
+      --card-bg: #f1f5f9;
+      --card-border: transparent;
+      --btn-hover: #e2e8f0;
+      --btn-border: #cbd5e1;
+      --muted-color: #64748b;
+    }
+
+    .dark {
+      --bg-color: transparent;
+      --text-color: #cbd5e1;
+      --card-bg: #1e293b;
+      --card-border: transparent;
+      --btn-hover: #334155;
+      --btn-border: #475569;
+      --muted-color: #94a3b8;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not(.light) {
+        --bg-color: transparent;
+        --text-color: #cbd5e1;
+        --card-bg: #1e293b;
+        --card-border: transparent;
+        --btn-hover: #334155;
+        --btn-border: #475569;
+        --muted-color: #94a3b8;
+      }
+    }
+
+    body {
+      margin: 0;
+      padding: 8px 12px;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      box-sizing: border-box;
+    }
+    .prompt-title {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text-color);
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    }
+    .choices-container {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .choice-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex: 1 1 calc(33.333% - 8px);
+      min-width: 180px;
+      padding: 16px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.25rem;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      outline: none;
+      box-sizing: border-box;
+      transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .choice-card:hover:not(:disabled) {
+      background: var(--btn-hover);
+      border-color: var(--btn-border);
+      transform: translateY(-1px);
+    }
+    .choice-card:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    .choice-card:disabled {
+      cursor: not-allowed;
+    }
+    .choice-card:disabled:not(.selected) {
+      opacity: 0.4;
+    }
+    .choice-card.selected {
+      background: var(--btn-hover) !important;
+      border-color: var(--btn-border) !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .choice-text {
+      flex-grow: 1;
+      margin-bottom: 16px;
+      line-height: 1.35;
+    }
+    .routing-icon {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+    .response-sent {
+      font-size: 0.9rem;
+      color: var(--muted-color);
+      margin-top: 12px;
+      display: none;
+    }
+    .choice-card.specify-mode {
+      cursor: default;
+      transform: none !important;
+      background: var(--btn-hover);
+      border-color: var(--btn-border);
+      width: 100%;
+      flex: 1 1 100%;
+      align-items: stretch;
+    }
+    .specify-input {
+      flex-grow: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      font-family: inherit;
+      font-weight: 500;
+      padding: 4px 0;
+      width: 100%;
+    }
+    .specify-input::placeholder {
+      color: var(--muted-color);
+      opacity: 0.6;
+    }
+    .specify-submit-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--text-color);
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      outline: none;
+      transition: transform 0.1s;
+    }
+    .specify-submit-btn:hover {
+      transform: scale(1.1);
+    }
+    .specify-submit-btn:active {
+      transform: scale(1.0);
+    }
+  </style>
+</head>
+<body>
+  <p class="prompt-title" id="card-prompt">Loading...</p>
+  <div class="choices-container" id="choices-container"></div>
+  <div class="response-sent" id="sent-msg">Response sent.</div>
+
+  <script type="module">
+    class McpAppClient {
+      constructor() {
+        this.pendingRequests = new Map();
+        this.requestId = 0;
+        this.initialized = false;
+        this.hostContext = null;
+        window.addEventListener('message', (e) => this.handleMessage(e));
+        this.initialize();
+      }
+
+      async initialize() {
+        try {
+          const result = await this.request('ui/initialize', {
+            appInfo: { name: 'Data360 Choice', version: '1.0.0' },
+            appCapabilities: {},
+            protocolVersion: '2025-11-21'
+          });
+          this.hostContext = result.hostContext;
+          this.initialized = true;
+          this.notify('ui/notifications/initialized', {});
+          this.applyTheme();
+          this.reportSize();
+        } catch (error) {
+          console.error('Failed to initialize MCP App:', error);
+        }
+      }
+
+      applyTheme() {
+        const theme = this.hostContext?.theme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('light');
+        } else {
+          document.documentElement.classList.add('light');
+          document.documentElement.classList.remove('dark');
+        }
+      }
+
+      handleMessage(event) {
+        const data = event.data;
+        if (!data || typeof data !== 'object') return;
+        if ('id' in data && this.pendingRequests.has(data.id)) {
+          const { resolve, reject } = this.pendingRequests.get(data.id);
+          this.pendingRequests.delete(data.id);
+          if (data.error) {
+            reject(new Error(data.error.message));
+          } else {
+            resolve(data.result);
+          }
+          return;
+        }
+        if (data.method === 'ui/notifications/host-context-changed') {
+          this.hostContext = { ...this.hostContext, ...data.params };
+          this.applyTheme();
+          return;
+        }
+        if (data.method === 'ui/notifications/tool-result') {
+          try {
+            const result = data.params;
+            let payload = null;
+            if (result.content) {
+              const textBlock = result.content.find(c => c.type === 'text');
+              if (textBlock) {
+                payload = JSON.parse(textBlock.text);
+              }
+            }
+            if (payload) {
+              renderChoiceCard(payload);
+            }
+          } catch (e) {
+            console.error('Error parsing tool result:', e);
+          }
+        }
+      }
+
+      request(method, params) {
+        return new Promise((resolve, reject) => {
+          const id = ++this.requestId;
+          this.pendingRequests.set(id, { resolve, reject });
+          window.parent.postMessage({ jsonrpc: '2.0', id, method, params }, '*');
+          setTimeout(() => {
+            if (this.pendingRequests.has(id)) {
+              this.pendingRequests.delete(id);
+              reject(new Error('Request timed out'));
+            }
+          }, 30000);
+        });
+      }
+
+      notify(method, params) {
+        window.parent.postMessage({ jsonrpc: '2.0', method, params }, '*');
+      }
+
+      reportSize() {
+        this.notify('ui/notifications/size-changed', {
+          height: document.body.scrollHeight
+        });
+      }
+
+      async sendMessageToChat(text) {
+        return this.request('ui/message', {
+          role: 'user',
+          content: [{ type: 'text', text }]
+        });
+      }
+    }
+
+    const mcpApp = new McpAppClient();
+    const promptEl = document.getElementById('card-prompt');
+    const containerEl = document.getElementById('choices-container');
+    const sentMsgEl = document.getElementById('sent-msg');
+
+    function renderChoiceCard(payload) {
+      const prompt = payload.prompt || "";
+      const options = payload.options || [];
+
+      promptEl.textContent = prompt;
+      containerEl.innerHTML = "";
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-card';
+
+        const txtDiv = document.createElement('div');
+        txtDiv.className = 'choice-text';
+        txtDiv.textContent = opt;
+
+        const iconDiv = document.createElement('div');
+        iconDiv.className = 'routing-icon';
+        iconDiv.textContent = '↪';
+
+        btn.appendChild(txtDiv);
+        btn.appendChild(iconDiv);
+
+        btn.addEventListener('click', async (e) => {
+          if (opt.toLowerCase().includes('specify') || opt.toLowerCase().includes('other')) {
+            if (btn.classList.contains('specify-mode')) {
+              return;
+            }
+
+            // Enter specify mode
+            btn.classList.add('specify-mode');
+            btn.innerHTML = '';
+
+            // Disable other buttons
+            const cards = containerEl.querySelectorAll('.choice-card');
+            cards.forEach(c => {
+              if (c !== btn) {
+                c.style.opacity = '0.3';
+                c.disabled = true;
+              }
+            });
+
+            const form = document.createElement('form');
+            form.style.display = 'flex';
+            form.style.width = '100%';
+            form.style.gap = '8px';
+            form.style.alignItems = 'center';
+            form.style.boxSizing = 'border-box';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'specify-input';
+            let placeholder = 'Type here...';
+            if (opt.toLowerCase().includes('country')) {
+              placeholder = 'Enter country name...';
+            } else if (opt.toLowerCase().includes('year') || opt.toLowerCase().includes('range') || opt.toLowerCase().includes('timeframe')) {
+              placeholder = 'e.g. 2015-2020';
+            }
+            input.placeholder = placeholder;
+            input.required = true;
+
+            // Focus input
+            setTimeout(() => input.focus(), 10);
+
+            const submitBtn = document.createElement('button');
+            submitBtn.type = 'submit';
+            submitBtn.className = 'specify-submit-btn';
+            submitBtn.textContent = '↪';
+
+            form.appendChild(input);
+            form.appendChild(submitBtn);
+            btn.appendChild(form);
+
+            mcpApp.reportSize();
+
+            form.addEventListener('click', (ev) => ev.stopPropagation());
+            form.addEventListener('submit', async (ev) => {
+              ev.preventDefault();
+              const val = input.value.trim();
+              if (!val) return;
+
+              btn.classList.remove('specify-mode');
+              btn.classList.add('selected');
+              btn.innerHTML = '';
+
+              const finalTxt = document.createElement('div');
+              finalTxt.className = 'choice-text';
+              finalTxt.textContent = val;
+
+              const finalIcon = document.createElement('div');
+              finalIcon.className = 'routing-icon';
+              finalIcon.textContent = '↪';
+
+              btn.appendChild(finalTxt);
+              btn.appendChild(finalIcon);
+
+              try {
+                await mcpApp.sendMessageToChat(`\u21AA\uFE0E *${val}*`);
+              } catch (err) {
+                console.error(err);
+                btn.classList.remove('selected');
+                // Restore original list on error
+                renderChoiceCard(payload);
+              }
+            });
+            return;
+          }
+
+          const cards = containerEl.querySelectorAll('.choice-card');
+          cards.forEach(c => c.disabled = true);
+          btn.classList.add('selected');
+
+          mcpApp.reportSize();
+
+          try {
+            await mcpApp.sendMessageToChat(`\u21AA\uFE0E *${opt}*`);
+          } catch (err) {
+            console.error(err);
+            btn.classList.remove('selected');
+            cards.forEach(c => c.disabled = false);
+            mcpApp.reportSize();
+          }
+        });
+        containerEl.appendChild(btn);
+      });
+
+      mcpApp.reportSize();
+      setTimeout(() => mcpApp.reportSize(), 50);
+    }
+
+    window.addEventListener('load', () => {
+      mcpApp.reportSize();
+    });
+  </script>
+</body>
+</html>
+"""
+
+
+@mcp.tool(
+    name="data360_interactive_choices",
+    app=AppConfig(resource_uri="ui://data360-choice/index.html", prefers_border=False),
+)
+async def data360_interactive_choices(
+    prompt: str,
+    options: list[str],
+    title: Optional[str] = None,
+) -> ToolResult:
+    """Present the user with a set of options to choose from using a custom HTML renderer.
+
+    Always call this tool to provide follow-ups and elicitations based on the natural flow of the
+    conversation and the type of information being discussed. Your goal is to anticipate the
+    user's next question or provide an easy way to steer a broad topic.
+
+    Call this tool in the following scenarios:
+
+    1. Single Follow-up (1 choice):
+       - The "Obvious Next Step": When there is one highly logical action to take after your response.
+         For example, if you explain a mathematical concept, offer a follow-up to walk through a practical example.
+       - Deep Dives into Jargon: If your response introduces a complex technical term or a new concept,
+         offer a single follow-up to explain that specific term so the main response does not get too cluttered.
+       - Launching Interactive Tools: If you mention that you can build a widget or run a simulation,
+         provide a single button to let the user trigger that specific interactive element directly.
+
+    2. Multiple Choices (2+ choices):
+       - Broad Overviews & Branching Paths: When you give a high-level summary of a massive topic,
+         use this to let the user choose exactly which sub-category or "branch" you want to zoom in on next.
+       - Disambiguation (Clarifying Intent): If the user's request is open-ended or could be interpreted in
+         a few different ways, present options so the user can clarify exactly which direction they meant to take.
+         Examples:
+         * GDP/Metric variant: "Real GDP per capita (constant 2015 US$)" vs "Nominal GDP per capita (current US$)"
+         * Timeframe/Year range: "Latest available year" vs "Historical trend (last 10 years)" vs "Specify a custom range"
+         * Breakdown/Disaggregation: "Total economy average" vs "Break down by gender (Male vs Female)" vs "Break down by geographic area (Urban vs Rural)"
+       - Menus and Brainstorming: When generating lists of ideas (like different programming frameworks,
+         design patterns, or troubleshooting steps), use this to act like a clickable menu, letting the user
+         instantly select the one you want to explore.
+
+    Essentially, surface these components whenever you can save the user the effort of typing out the
+    logical next prompt, or when the conversation has reached a crossroads and you need the user to choose
+    the direction.
+
+    Args:
+        prompt: The question or decision to present to the user.
+        options: List of options the user can choose from.
+        title: Optional heading for the card.
+    """
+    payload = {
+        "prompt": prompt,
+        "options": options,
+        "title": title or "Choose an Option"
+    }
+    return ToolResult(
+        content=[TextContent(type="text", text=json.dumps(payload))]
+    )
