@@ -211,3 +211,9 @@ node_modules/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# DeepEval
+.deepeval/
+evals/reports/
+evals/scratch/
+.env.evals

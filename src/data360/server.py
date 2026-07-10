@@ -332,6 +332,11 @@ class VizSpecRequest(BaseModel):
     relevant_fields: Optional[List[str]] = None
     chart_title: Optional[str] = None
     series_labels: Optional[Dict[str, str]] = None
+class CritiqueRequest(BaseModel):
+    spec: Dict[str, Any]
+    query: str
+    expected_description: str
+    openai_api_key: Optional[str] = None
 
 
 @app.post("/api/viz-spec")
@@ -392,6 +397,65 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
         "strategy": res.get("strategy")
     }
 
+
+@app.post("/api/critique")
+async def critique_endpoint(req: CritiqueRequest):
+    old_api_key = os.environ.get("OPENAI_API_KEY")
+    if req.openai_api_key:
+        os.environ["OPENAI_API_KEY"] = req.openai_api_key
+
+    if not os.environ.get("OPENAI_API_KEY"):
+        return JSONResponse(
+            status_code=400,
+            content={"error": "OpenAI API key not configured. Please supply an openai_api_key in the request."}
+        )
+
+    try:
+        from deepeval.test_case import LLMTestCase, SingleTurnParams
+        from deepeval.metrics import GEval
+
+        grammar_of_graphics_metric = GEval(
+            name="Grammar of Graphics & FT Visual Vocabulary Correctness",
+            criteria="""
+            Determine if the Vega-Lite JSON specification maps optimally to the retrieved data shape based on the Financial Times Visual Vocabulary:
+            1. Single-indicator multi-year trends MUST map to a continuous line chart.
+            2. Multi-indicator datasets with incompatible units MUST map to separate vertical subplot panels sharing a synchronized timeline.
+            3. Single-year multi-country datasets MUST map to horizontal bars to allow label space, or route X-axis to country to avoid summing values.
+            4. Gaps in reporting years MUST use dashed lines.
+            5. Single-year nominal charts MUST have their 'year' field parsed as a string to prevent JS Date auto-parsing errors.
+            """,
+            evaluation_params=[SingleTurnParams.ACTUAL_OUTPUT, SingleTurnParams.INPUT],
+            evaluation_steps=[
+                "Inspect the input query and simulated dataframe shape (number of indicators, countries, years, and breakdowns).",
+                "Inspect the actual output Vega-Lite JSON specification.",
+                "Check if the X/Y encoding channels, mark types, facets, and resolving settings are optimal.",
+                "Deduct points if values are overlaid in a single bar on a nominal X-axis without proper country separation.",
+                "Verify that scale formatting, title styling, and tooltips match standard specifications."
+            ],
+            threshold=0.8
+        )
+
+        test_case = LLMTestCase(
+            input=f"Query: '{req.query}' | Expected layout: {req.expected_description}",
+            actual_output=json.dumps(req.spec, indent=2)
+        )
+
+        grammar_of_graphics_metric.measure(test_case)
+
+        return {
+            "score": grammar_of_graphics_metric.score,
+            "reason": grammar_of_graphics_metric.reason,
+            "success": grammar_of_graphics_metric.is_successful()
+        }
+    except Exception as e:
+        _audit_logger.exception("Evaluation failed")
+        return JSONResponse(status_code=500, content={"error": "Evaluation failed"})
+    finally:
+        if req.openai_api_key:
+            if old_api_key:
+                os.environ["OPENAI_API_KEY"] = old_api_key
+            else:
+                os.environ.pop("OPENAI_API_KEY", None)
 
 
 
