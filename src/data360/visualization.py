@@ -90,7 +90,7 @@ def _unit_measure_for_formatting(
     raw_norm = raw.upper()
     label_norm = label.upper()
 
-    if raw_norm == "PT" or "PERCENT" in label_norm:
+    if raw_norm == "PT" or ("PERCENT" in label_norm and "PERSON" not in label_norm):
         return "%"
     if (
         "$" in raw_norm
