@@ -355,6 +355,22 @@ class TestDataSufficiencyGuards:
         clamped = rule.apply(spec, unit_measure="Proportion of total employment", scale_type="percentage", df=df)
         assert clamped["encoding"]["y"]["scale"]["domain"] == [0, 0.25]
 
+    def test_person_percentage_exclusion(self):
+        """Verify that units containing 'PERSON' are not treated as proportions even if they have percentage keywords."""
+        from data360.viz_config import _is_proportion_indicator, RoutingContext
+
+        # Test _is_proportion_indicator directly
+        df = pd.DataFrame({"indicator": ["People in food insecurity"]})
+        assert not _is_proportion_indicator(df, unit_measure="Percent of persons")
+        assert not _is_proportion_indicator(df, unit_measure="Persons (%)")
+
+        # Test RoutingContext scale type resolution
+        ctx1 = RoutingContext.build(df, 1, None, None, raw_unit="Percent of persons")
+        assert ctx1.scale_type == "persons"
+
+        ctx2 = RoutingContext.build(df, 1, None, None, raw_unit="Persons (%)")
+        assert ctx2.scale_type == "persons"
+
     def test_sparse_country_filtering_in_get_viz_spec(self):
         """get_viz_spec should filter out countries with < 2 time-series data points."""
         from data360.visualization import get_viz_spec
