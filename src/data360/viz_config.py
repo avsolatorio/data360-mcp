@@ -6993,6 +6993,13 @@ class GeneralErrorBandRule(PostProcessingRule):
                     new_panels.append(panel)
                     continue
 
+                color_enc = panel_enc.get("color")
+                keep_color = False
+                if isinstance(color_enc, dict):
+                    color_field = color_enc.get("field")
+                    if color_field and color_field != "comp_breakdown_1":
+                        keep_color = True
+
                 # Extract the per-country filter transform (e.g. filter country==Argentina).
                 # Also capture per-indicator filters: in multi-indicator WGI small-multiples
                 # each panel is scoped to one indicator value, not a country.
@@ -7017,24 +7024,35 @@ class GeneralErrorBandRule(PostProcessingRule):
                 scoping_filters = country_filter_transforms + indicator_filter_transforms
                 full_transforms = scoping_filters + transforms
 
-                errorband = {
-                    "transform": full_transforms,
-                    "mark": {"type": "area", "opacity": 0.2, "color": "#34A7F2"},
-                    "encoding": {
-                        "x": panel_x_enc,
-                        "y": {
-                            "field": lb_field,
-                            "type": "quantitative",
-                            "scale": {"zero": False}
-                        },
-                        "y2": {
-                            "field": ub_field
-                        }
+                errorband_mark = {"type": "area", "opacity": 0.2}
+                if not keep_color:
+                    errorband_mark["color"] = "#34A7F2"
+
+                errorband_encoding = {
+                    "x": panel_x_enc,
+                    "y": {
+                        "field": lb_field,
+                        "type": "quantitative",
+                        "scale": {"zero": False}
+                    },
+                    "y2": {
+                        "field": ub_field
                     }
                 }
+                if keep_color:
+                    errorband_encoding["color"] = color_enc
 
-                # Build line encoding — remove the comp_breakdown_1 color channel
-                line_enc = {k: v for k, v in panel_enc.items() if k != "color"}
+                errorband = {
+                    "transform": full_transforms,
+                    "mark": errorband_mark,
+                    "encoding": errorband_encoding
+                }
+
+                # Build line encoding
+                if keep_color:
+                    line_enc = panel_enc
+                else:
+                    line_enc = {k: v for k, v in panel_enc.items() if k != "color"}
 
                 line = {
                     "transform": scoping_filters + [
@@ -7078,25 +7096,39 @@ class GeneralErrorBandRule(PostProcessingRule):
         x_enc = enc.get("x", {})
         color_enc = enc.get("color", {})
 
+        keep_color = False
+        if isinstance(color_enc, dict):
+            color_field = color_enc.get("field")
+            if color_field and color_field != "comp_breakdown_1":
+                keep_color = True
+
+        errorband_mark = {"type": "area", "opacity": 0.2}
+        if not keep_color:
+            errorband_mark["color"] = "#34A7F2"
+
+        errorband_encoding = {
+            "x": x_enc,
+            "y": {
+                "field": lb_field,
+                "type": "quantitative",
+                "scale": {"zero": False}
+            },
+            "y2": {
+                "field": ub_field
+            }
+        }
+        if keep_color:
+            errorband_encoding["color"] = color_enc
+
         errorband_layer = {
             "transform": transforms,
-            "mark": {"type": "area", "opacity": 0.2, "color": "#34A7F2"},
-            "encoding": {
-                "x": x_enc,
-                "y": {
-                    "field": lb_field,
-                    "type": "quantitative",
-                    "scale": {"zero": False}
-                },
-                "y2": {
-                    "field": ub_field
-                }
-            }
+            "mark": errorband_mark,
+            "encoding": errorband_encoding
         }
 
         # Clean up line encoding to only filter and draw the 'est' line
         line_enc = enc.copy()
-        if isinstance(color_enc, dict) and color_enc.get("field") == "comp_breakdown_1":
+        if not keep_color:
             if "color" in line_enc:
                 del line_enc["color"]
 
