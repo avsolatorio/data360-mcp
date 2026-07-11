@@ -45,6 +45,7 @@ Do not answer with guesses. Do not stop after describing a plan.
    If you need high-level dataset catalogs or source databases (e.g. Findex) → call data360_search_datasets.
    - **CRITICAL**: The search API is sensitive to special characters. Strip parentheses `(`, `)` and currency signs like `$` from your query (e.g. search for "GDP per capita current US", NOT "GDP per capita (current US$)").
    - **CRITICAL** when search returns multiple results: STOP — do not loop every row.
+   - **CRITICAL: Resolving Ambiguity**: If there are multiple matching indicators representing different metrics (e.g. constant prices vs current prices, real vs nominal GDP, or purchasing power parity vs market exchange rate), or if you are unsure which one the user wanted, do NOT guess. Instead, immediately call `data360_interactive_choices` with a clarifying prompt and the options (e.g. `data360_interactive_choices(prompt="Which GDP per capita series would you like to view?", options=["Real GDP per capita (constant 2015 US$)", "Nominal GDP per capita (current US$)", "PPP GDP per capita (constant 2017 int'l $)"], title="Select Indicator Variant")`). Then, STOP and wait for the user to make a selection.
    - Pick the **single best** indicator (relevance + coverage), then state:
      "Selected Indicator: [ID] — [Name]" and "Why: [reason]".
 
@@ -84,7 +85,13 @@ Do not answer with guesses. Do not stop after describing a plan.
 
 
 3) Confirm availability → call data360_get_disaggregation.
-   - **CRITICAL**: if UNIT_MEASURE has multiple values (e.g. KD vs CD), pick **one** and filter.
+   - **CRITICAL**: If UNIT_MEASURE has multiple values (e.g. KD vs CD), there are multiple options for a critical dimension (such as breakdowns like Sex, Age, or Education), or the timeframe/year range and disaggregation filters are ambiguous:
+     1. Call `data360_interactive_choices` to let the user select:
+        * Between unit measures (e.g. "Constant 2015 US$ (Real)" vs "Current US$ (Nominal)")
+        * Between breakdowns/disaggregations (e.g. "National Average (Total)" vs "Disaggregate by Gender (Male vs Female)")
+        * Between timeframes/year ranges (e.g. "Latest available year" vs "Historical trend (last 10 years)")
+     2. STOP and wait for the user to make a selection. Do not proceed until you receive the selection.
+   - Otherwise, pick **one** and filter.
 
 4) If you need raw data values for a **specific point lookup or small dataset** → call data360_get_data.
    - **CRITICAL**: pass disaggregation_filters={"REF_AREA": "..."} when the user asked for a geography.
@@ -211,6 +218,23 @@ Then provide the final answer to the user (after tools complete).
 - After tools return, continue with the next needed tool call.
 - Only produce a normal user-facing response when no further tool calls are required.
 - When presenting a chart, always describe what the visualization shows in 1-2 sentences.
+
+### Rules for Follow-ups and Elicitations (data360_interactive_choices)
+You typically provide follow-ups and elicitations using the `data360_interactive_choices` tool based on the natural flow of our conversation and the type of information we are discussing. Your goal is to anticipate the user's next question or provide an easy way to steer a broad topic.
+
+Here are the specific scenarios when you should call `data360_interactive_choices`:
+
+#### 1. Single Follow-up (1 choice)
+* **The "Obvious Next Step"**: When there is one highly logical action to take after your response. For example, if you explain a mathematical concept, the follow-up might offer to walk through a practical example.
+* **Deep Dives into Jargon**: If your response introduces a complex technical term or a new concept, you might offer a single follow-up to explain that specific term so the main response does not get too cluttered.
+* **Launching Interactive Tools**: If you mention that you can build a widget or run a simulation, provide a single button to let the user trigger that specific interactive element directly.
+
+#### 2. Multiple Choices (2+ choices)
+* **Broad Overviews & Branching Paths**: When you give a high-level summary of a massive topic, use multiple choices to let the user choose exactly which sub-category or "branch" you want to zoom in on next.
+* **Disambiguation (Clarifying Intent)**: If the user's request is open-ended or could be interpreted in a few different ways (such as selecting between real or nominal series, different indicator options, timeframe/year ranges, or disaggregations/breakdowns), present options so the user can clarify exactly which direction they meant to take.
+* **Menus and Brainstorming**: When generating lists of ideas—like different programming frameworks, design patterns, or troubleshooting steps—use multiple choices to act like a clickable menu, letting the user instantly select the one you want to explore.
+
+Essentially, surface these components using `data360_interactive_choices` whenever you can save the user the effort of typing out the logical next prompt, or when the conversation has reached a crossroads and you need the user to choose the direction.
 """
 
 # Mirrors ``data360_mcp_agent.gate.GATE_SYSTEM_PROMPT`` — update both when changing rules.
@@ -355,15 +379,15 @@ def indicator_search(
    - Check TIME_PERIOD for actual years (may have gaps)
    - Check REF_AREA for country coverage{f" - verify '{country}' is available" if country else ""}
    - Check available dimensions{f" - need: {dims_list}" if dims_list else ""}
-   - **Check UNIT_MEASURE**: If multiple units exist (e.g. constant/current/LCU), you MUST pick ONE and filter for it.
 
-3. **Dimension Analysis (CRITICAL)**:
-   - Look at the `dimensions` list from step 2 (or call available_dimensions).
-   - **Identify Ambiguity**: Are there dimensions with multiple values (besides TIME_PERIOD and REF_AREA)?
+ 3. **Dimension Analysis (CRITICAL)**:
+   - Look at the `dimensions` list from step 2 (or call available_dimensions) or multiple candidate indicators.
+   - **Identify Ambiguity**: Are there dimensions with multiple values (besides TIME_PERIOD and REF_AREA) or multiple matching indicator series (e.g., constant vs current)?
      - Example: `UNIT_MEASURE: ["KD", "CD"]` (Constant vs Current).
      - Example: `VALUATION: ["MER", "PPP"]`.
-   - **Make a Choice**: You MUST pick ONE specific value that best fits the user's intent to avoid duplicate data.
-   - **Report**: Note your choice and alternatives (e.g. "Selecting Constant US$ (KD) for trend analysis. Current US$ (CD) also available.").
+   - **Clarify via Choice Card**: If you cannot resolve this ambiguity based on user context, immediately call `data360_interactive_choices` to let the user select via interactive buttons.
+     Example: `data360_interactive_choices(prompt="Which series would you like to view?", options=["Real GDP per capita", "Nominal GDP per capita"])`
+     After calling it, STOP and wait for the user to make a selection. Do not proceed until you receive the selection.
 
 4. **Validation Check**:
    - If the user asked for a specific country (e.g. Kenya), do NOT call `get_data` without `disaggregation_filters={{"REF_AREA": "KEN"}}` (plus your selected dimension filters). Values must be strings or null per dimension — not JSON arrays.

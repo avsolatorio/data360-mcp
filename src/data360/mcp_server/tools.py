@@ -1062,3 +1062,516 @@ def data360_chart_html() -> str:
 </html>
 """
     return html_template.replace("{vega_js}", vega_js).replace("{vega_lite_js}", vega_lite_js).replace("{vega_embed_js}", vega_embed_js).replace("{vega_interpreter_js}", vega_interpreter_js)
+
+
+
+async def _search_indicators_for_ui(
+    query: str,
+    database: Optional[str] = None,
+    limit: int = 20,
+) -> list[dict]:
+    """Private helper: returns a flat indicator list for the UI HTML app.
+
+    Not registered as an MCP tool — called internally by data360_indicator_explorer
+    and by the /api/indicators/search FastAPI endpoint.
+    """
+    if not query.strip():
+        return []
+    res = await _search_indicators(query=query, database=database, limit=limit)
+    indicators_data = []
+    if hasattr(res, "indicators") and res.indicators:
+        for ind in res.indicators:
+            indicators_data.append({
+                "idno": ind.idno,
+                "database_id": ind.database_id,
+                "database_name": ind.database_name,
+                "name": ind.name,
+                "truncated_definition": ind.truncated_definition,
+                "time_period_range": ind.time_period_range,
+            })
+    return indicators_data
+
+
+
+@mcp.resource("ui://data360-choice/index.html")
+def data360_choice_html() -> str:
+    """HTML resource for the Data360 self-contained choice Custom HTML app."""
+    return """<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data360 Option Selector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    :root, .light {
+      --bg-color: transparent;
+      --text-color: #0f172a;
+      --card-bg: #f1f5f9;
+      --card-border: transparent;
+      --btn-hover: #e2e8f0;
+      --btn-border: #cbd5e1;
+      --muted-color: #64748b;
+    }
+
+    .dark {
+      --bg-color: transparent;
+      --text-color: #cbd5e1;
+      --card-bg: #1e293b;
+      --card-border: transparent;
+      --btn-hover: #334155;
+      --btn-border: #475569;
+      --muted-color: #94a3b8;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not(.light) {
+        --bg-color: transparent;
+        --text-color: #cbd5e1;
+        --card-bg: #1e293b;
+        --card-border: transparent;
+        --btn-hover: #334155;
+        --btn-border: #475569;
+        --muted-color: #94a3b8;
+      }
+    }
+
+    body {
+      margin: 0;
+      padding: 8px 12px;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      box-sizing: border-box;
+    }
+    .prompt-title {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text-color);
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    }
+    .choices-container {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .choice-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex: 1 1 calc(33.333% - 8px);
+      min-width: 180px;
+      padding: 16px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.25rem;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      outline: none;
+      box-sizing: border-box;
+      transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .choice-card:hover:not(:disabled) {
+      background: var(--btn-hover);
+      border-color: var(--btn-border);
+      transform: translateY(-1px);
+    }
+    .choice-card:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    .choice-card:disabled {
+      cursor: not-allowed;
+    }
+    .choice-card:disabled:not(.selected) {
+      opacity: 0.4;
+    }
+    .choice-card.selected {
+      background: var(--btn-hover) !important;
+      border-color: var(--btn-border) !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .choice-text {
+      flex-grow: 1;
+      margin-bottom: 16px;
+      line-height: 1.35;
+    }
+    .routing-icon {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+    .response-sent {
+      font-size: 0.9rem;
+      color: var(--muted-color);
+      margin-top: 12px;
+      display: none;
+    }
+    .choice-card.specify-mode {
+      cursor: default;
+      transform: none !important;
+      background: var(--btn-hover);
+      border-color: var(--btn-border);
+      width: 100%;
+      flex: 1 1 100%;
+      align-items: stretch;
+    }
+    .specify-input {
+      flex-grow: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      font-family: inherit;
+      font-weight: 500;
+      padding: 4px 0;
+      width: 100%;
+    }
+    .specify-input::placeholder {
+      color: var(--muted-color);
+      opacity: 0.6;
+    }
+    .specify-submit-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--text-color);
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      outline: none;
+      transition: transform 0.1s;
+    }
+    .specify-submit-btn:hover {
+      transform: scale(1.1);
+    }
+    .specify-submit-btn:active {
+      transform: scale(1.0);
+    }
+  </style>
+</head>
+<body>
+  <p class="prompt-title" id="card-prompt">Loading...</p>
+  <div class="choices-container" id="choices-container"></div>
+  <div class="response-sent" id="sent-msg">Response sent.</div>
+
+  <script type="module">
+    class McpAppClient {
+      constructor() {
+        this.pendingRequests = new Map();
+        this.requestId = 0;
+        this.initialized = false;
+        this.hostContext = null;
+        window.addEventListener('message', (e) => this.handleMessage(e));
+        this.initialize();
+      }
+
+      async initialize() {
+        try {
+          const result = await this.request('ui/initialize', {
+            appInfo: { name: 'Data360 Choice', version: '1.0.0' },
+            appCapabilities: {},
+            protocolVersion: '2025-11-21'
+          });
+          this.hostContext = result.hostContext;
+          this.initialized = true;
+          this.notify('ui/notifications/initialized', {});
+          this.applyTheme();
+          this.reportSize();
+        } catch (error) {
+          console.error('Failed to initialize MCP App:', error);
+        }
+      }
+
+      applyTheme() {
+        const theme = this.hostContext?.theme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('light');
+        } else {
+          document.documentElement.classList.add('light');
+          document.documentElement.classList.remove('dark');
+        }
+      }
+
+      handleMessage(event) {
+        const data = event.data;
+        if (!data || typeof data !== 'object') return;
+        if ('id' in data && this.pendingRequests.has(data.id)) {
+          const { resolve, reject } = this.pendingRequests.get(data.id);
+          this.pendingRequests.delete(data.id);
+          if (data.error) {
+            reject(new Error(data.error.message));
+          } else {
+            resolve(data.result);
+          }
+          return;
+        }
+        if (data.method === 'ui/notifications/host-context-changed') {
+          this.hostContext = { ...this.hostContext, ...data.params };
+          this.applyTheme();
+          return;
+        }
+        if (data.method === 'ui/notifications/tool-result') {
+          try {
+            const result = data.params;
+            let payload = null;
+            if (result.content) {
+              const textBlock = result.content.find(c => c.type === 'text');
+              if (textBlock) {
+                payload = JSON.parse(textBlock.text);
+              }
+            }
+            if (payload) {
+              renderChoiceCard(payload);
+            }
+          } catch (e) {
+            console.error('Error parsing tool result:', e);
+          }
+        }
+      }
+
+      request(method, params) {
+        return new Promise((resolve, reject) => {
+          const id = ++this.requestId;
+          this.pendingRequests.set(id, { resolve, reject });
+          window.parent.postMessage({ jsonrpc: '2.0', id, method, params }, '*');
+          setTimeout(() => {
+            if (this.pendingRequests.has(id)) {
+              this.pendingRequests.delete(id);
+              reject(new Error('Request timed out'));
+            }
+          }, 30000);
+        });
+      }
+
+      notify(method, params) {
+        window.parent.postMessage({ jsonrpc: '2.0', method, params }, '*');
+      }
+
+      reportSize() {
+        this.notify('ui/notifications/size-changed', {
+          height: document.body.scrollHeight
+        });
+      }
+
+      async sendMessageToChat(text) {
+        return this.request('ui/message', {
+          role: 'user',
+          content: [{ type: 'text', text }]
+        });
+      }
+    }
+
+    const mcpApp = new McpAppClient();
+    const promptEl = document.getElementById('card-prompt');
+    const containerEl = document.getElementById('choices-container');
+    const sentMsgEl = document.getElementById('sent-msg');
+
+    function renderChoiceCard(payload) {
+      const prompt = payload.prompt || "";
+      const options = payload.options || [];
+
+      promptEl.textContent = prompt;
+      containerEl.innerHTML = "";
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-card';
+
+        const txtDiv = document.createElement('div');
+        txtDiv.className = 'choice-text';
+        txtDiv.textContent = opt;
+
+        const iconDiv = document.createElement('div');
+        iconDiv.className = 'routing-icon';
+        iconDiv.textContent = '↪';
+
+        btn.appendChild(txtDiv);
+        btn.appendChild(iconDiv);
+
+        btn.addEventListener('click', async (e) => {
+          if (opt.toLowerCase().includes('specify') || opt.toLowerCase().includes('other')) {
+            if (btn.classList.contains('specify-mode')) {
+              return;
+            }
+
+            // Enter specify mode
+            btn.classList.add('specify-mode');
+            btn.innerHTML = '';
+
+            // Disable other buttons
+            const cards = containerEl.querySelectorAll('.choice-card');
+            cards.forEach(c => {
+              if (c !== btn) {
+                c.style.opacity = '0.3';
+                c.disabled = true;
+              }
+            });
+
+            const form = document.createElement('form');
+            form.style.display = 'flex';
+            form.style.width = '100%';
+            form.style.gap = '8px';
+            form.style.alignItems = 'center';
+            form.style.boxSizing = 'border-box';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'specify-input';
+            let placeholder = 'Type here...';
+            if (opt.toLowerCase().includes('country')) {
+              placeholder = 'Enter country name...';
+            } else if (opt.toLowerCase().includes('year') || opt.toLowerCase().includes('range') || opt.toLowerCase().includes('timeframe')) {
+              placeholder = 'e.g. 2015-2020';
+            }
+            input.placeholder = placeholder;
+            input.required = true;
+
+            // Focus input
+            setTimeout(() => input.focus(), 10);
+
+            const submitBtn = document.createElement('button');
+            submitBtn.type = 'submit';
+            submitBtn.className = 'specify-submit-btn';
+            submitBtn.textContent = '↪';
+
+            form.appendChild(input);
+            form.appendChild(submitBtn);
+            btn.appendChild(form);
+
+            mcpApp.reportSize();
+
+            form.addEventListener('click', (ev) => ev.stopPropagation());
+            form.addEventListener('submit', async (ev) => {
+              ev.preventDefault();
+              const val = input.value.trim();
+              if (!val) return;
+
+              btn.classList.remove('specify-mode');
+              btn.classList.add('selected');
+              btn.innerHTML = '';
+
+              const finalTxt = document.createElement('div');
+              finalTxt.className = 'choice-text';
+              finalTxt.textContent = val;
+
+              const finalIcon = document.createElement('div');
+              finalIcon.className = 'routing-icon';
+              finalIcon.textContent = '↪';
+
+              btn.appendChild(finalTxt);
+              btn.appendChild(finalIcon);
+
+              try {
+                await mcpApp.sendMessageToChat(`\u21AA\uFE0E *${val}*`);
+              } catch (err) {
+                console.error(err);
+                btn.classList.remove('selected');
+                // Restore original list on error
+                renderChoiceCard(payload);
+              }
+            });
+            return;
+          }
+
+          const cards = containerEl.querySelectorAll('.choice-card');
+          cards.forEach(c => c.disabled = true);
+          btn.classList.add('selected');
+
+          mcpApp.reportSize();
+
+          try {
+            await mcpApp.sendMessageToChat(`\u21AA\uFE0E *${opt}*`);
+          } catch (err) {
+            console.error(err);
+            btn.classList.remove('selected');
+            cards.forEach(c => c.disabled = false);
+            mcpApp.reportSize();
+          }
+        });
+        containerEl.appendChild(btn);
+      });
+
+      mcpApp.reportSize();
+      setTimeout(() => mcpApp.reportSize(), 50);
+    }
+
+    window.addEventListener('load', () => {
+      mcpApp.reportSize();
+    });
+  </script>
+</body>
+</html>
+"""
+
+
+@mcp.tool(
+    name="data360_interactive_choices",
+    app=AppConfig(resource_uri="ui://data360-choice/index.html", prefers_border=False),
+)
+async def data360_interactive_choices(
+    prompt: str,
+    options: list[str],
+    title: Optional[str] = None,
+) -> ToolResult:
+    """Present the user with a set of options to choose from using a custom HTML renderer.
+
+    Always call this tool to provide follow-ups and elicitations based on the natural flow of the
+    conversation and the type of information being discussed. Your goal is to anticipate the
+    user's next question or provide an easy way to steer a broad topic.
+
+    Call this tool in the following scenarios:
+
+    1. Single Follow-up (1 choice):
+       - The "Obvious Next Step": When there is one highly logical action to take after your response.
+         For example, if you explain a mathematical concept, offer a follow-up to walk through a practical example.
+       - Deep Dives into Jargon: If your response introduces a complex technical term or a new concept,
+         offer a single follow-up to explain that specific term so the main response does not get too cluttered.
+       - Launching Interactive Tools: If you mention that you can build a widget or run a simulation,
+         provide a single button to let the user trigger that specific interactive element directly.
+
+    2. Multiple Choices (2+ choices):
+       - Broad Overviews & Branching Paths: When you give a high-level summary of a massive topic,
+         use this to let the user choose exactly which sub-category or "branch" you want to zoom in on next.
+       - Disambiguation (Clarifying Intent): If the user's request is open-ended or could be interpreted in
+         a few different ways, present options so the user can clarify exactly which direction they meant to take.
+         Examples:
+         * GDP/Metric variant: "Real GDP per capita (constant 2015 US$)" vs "Nominal GDP per capita (current US$)"
+         * Timeframe/Year range: "Latest available year" vs "Historical trend (last 10 years)" vs "Specify a custom range"
+         * Breakdown/Disaggregation: "Total economy average" vs "Break down by gender (Male vs Female)" vs "Break down by geographic area (Urban vs Rural)"
+       - Menus and Brainstorming: When generating lists of ideas (like different programming frameworks,
+         design patterns, or troubleshooting steps), use this to act like a clickable menu, letting the user
+         instantly select the one you want to explore.
+
+    Essentially, surface these components whenever you can save the user the effort of typing out the
+    logical next prompt, or when the conversation has reached a crossroads and you need the user to choose
+    the direction.
+
+    Args:
+        prompt: The question or decision to present to the user.
+        options: List of options the user can choose from.
+        title: Optional heading for the card.
+    """
+    payload = {
+        "prompt": prompt,
+        "options": options,
+        "title": title or "Choose an Option"
+    }
+    return ToolResult(
+        content=[TextContent(type="text", text=json.dumps(payload))]
+    )
+
