@@ -1558,6 +1558,15 @@ async def data360_interactive_choices(
          design patterns, or troubleshooting steps), use this to act like a clickable menu, letting the user
          instantly select the one you want to explore.
 
+    3. Non-exhaustive Lists (CRITICAL):
+       - If you present a list of choices that is not exhaustive (such as listing a few popular countries,
+         specific years, indicator variants, or breakdowns), you MUST always dynamically include a customizable
+         option as the last item in the options list.
+         Examples:
+         * Country list: options=["Kenya", "Nigeria", "South Africa", "United States", "India", "Specify another country..."]
+         * Year list: options=["2024 (latest)", "Last 5 years", "Last 10 years", "Specify a custom range"]
+         * Breakdowns: options=["Total Average", "Breakdown by Gender", "Other (specify)"]
+
     Essentially, surface these components whenever you can save the user the effort of typing out the
     logical next prompt, or when the conversation has reached a crossroads and you need the user to choose
     the direction.
