@@ -488,8 +488,12 @@ async def _get_viz_spec(
     source_line = res.get("source_line")
     subtitle_line = res.get("subtitle_line")
 
-    spec = None
-    if url:
+    # Prefer the spec already carried in the result dict (populated by _ok() in
+    # visualization.py). The disk-reload below is a fallback for callers that
+    # do not propagate the spec (e.g. when the chart URL points to an external
+    # charts API rather than the local static file server).
+    spec: dict | None = res.get("spec") or None
+    if spec is None and url:
         try:
             spec_id = url.split("/")[-1].replace("_vega.json", "")
             if os.environ.get("PYTEST_CURRENT_TEST"):
@@ -515,7 +519,16 @@ async def _get_viz_spec(
         url=url,
     )
 
-    structured = {"spec": spec, "strategy": strategy}
+    structured = {
+        "spec": spec,
+        "strategy": strategy,
+        "url": url,
+        "error": None,
+        "warning": warning,
+        "reason": reason,
+        "source_line": source_line,
+        "subtitle_line": subtitle_line,
+    }
     return ToolResult(
         content=[
             TextContent(type="text", text=json.dumps(structured)),
@@ -584,8 +597,12 @@ async def _get_multi_indicator_viz_spec(
     source_line = res.get("source_line")
     subtitle_line = res.get("subtitle_line")
 
-    spec = None
-    if url:
+    # Prefer the spec already carried in the result dict (populated by _ok() in
+    # visualization.py). The disk-reload below is a fallback for callers that
+    # do not propagate the spec (e.g. when the chart URL points to an external
+    # charts API rather than the local static file server).
+    spec: dict | None = res.get("spec") or None
+    if spec is None and url:
         try:
             spec_id = url.split("/")[-1].replace("_vega.json", "")
             if os.environ.get("PYTEST_CURRENT_TEST"):
@@ -611,7 +628,16 @@ async def _get_multi_indicator_viz_spec(
         url=url,
     )
 
-    structured = {"spec": spec, "strategy": strategy}
+    structured = {
+        "spec": spec,
+        "strategy": strategy,
+        "url": url,
+        "error": None,
+        "warning": warning,
+        "reason": reason,
+        "source_line": source_line,
+        "subtitle_line": subtitle_line,
+    }
     return ToolResult(
         content=[
             TextContent(type="text", text=json.dumps(structured)),
