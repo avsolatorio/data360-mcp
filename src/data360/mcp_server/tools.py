@@ -1383,17 +1383,7 @@ def data360_choice_html() -> str:
 
     function renderChoiceCard(payload) {
       const prompt = payload.prompt || "";
-      let options = payload.options || [];
-
-      // Check if any option is already customizable
-      const hasCustom = options.some(opt => {
-        const o = opt.toLowerCase();
-        return o.includes('specify') || o.includes('other') || o.includes('custom');
-      });
-
-      if (!hasCustom) {
-        options = [...options, "Specify custom..."];
-      }
+      const options = payload.options || [];
 
       promptEl.textContent = prompt;
       containerEl.innerHTML = "";

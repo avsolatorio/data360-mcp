@@ -45,7 +45,8 @@ Do not answer with guesses. Do not stop after describing a plan.
    If you need high-level dataset catalogs or source databases (e.g. Findex) → call data360_search_datasets.
    - **CRITICAL**: The search API is sensitive to special characters. Strip parentheses `(`, `)` and currency signs like `$` from your query (e.g. search for "GDP per capita current US", NOT "GDP per capita (current US$)").
    - **CRITICAL** when search returns multiple results: STOP — do not loop every row.
-   - **CRITICAL: Resolving Ambiguity**: If there are multiple matching indicators representing different metrics (e.g. constant prices vs current prices, real vs nominal GDP, or purchasing power parity vs market exchange rate), or if you are unsure which one the user wanted, do NOT guess. Instead, immediately call `data360_interactive_choices` with a clarifying prompt and the options (e.g. `data360_interactive_choices(prompt="Which GDP per capita series would you like to view?", options=["Real GDP per capita (constant 2015 US$)", "Nominal GDP per capita (current US$)", "PPP GDP per capita (constant 2017 int'l $)"], title="Select Indicator Variant")`). Then, STOP and wait for the user to make a selection.
+   - **CRITICAL: Resolving Ambiguity**: If there are multiple matching indicators representing different metrics (e.g. constant prices vs current prices, real vs nominal GDP, or purchasing power parity vs market exchange rate), or if you are unsure which one the user wanted, do NOT guess. Instead, immediately call `data360_interactive_choices` with a clarifying prompt and the options (e.g. `data360_interactive_choices(prompt="Which GDP per capita series would you like to view?", options=["Real GDP per capita (constant 2015 US$)", "Nominal GDP per capita (current US$)", "PPP GDP per capita (constant 2017 int'l $)", "Specify custom..."], title="Select Indicator Variant")`). Then, STOP and wait for the user to make a selection.
+   - **Dynamic Custom Option**: When calling `data360_interactive_choices`, if the user might need an option outside of the static ones presented, you MUST dynamically append a customizable option at the end of the `options` list (e.g., `"Specify a custom range"`, `"Other (specify)"`, `"Choose a country..."`, or `"Specify custom..."`).
    - Pick the **single best** indicator (relevance + coverage), then state:
      "Selected Indicator: [ID] — [Name]" and "Why: [reason]".
 
@@ -87,10 +88,11 @@ Do not answer with guesses. Do not stop after describing a plan.
 3) Confirm availability → call data360_get_disaggregation.
    - **CRITICAL**: If UNIT_MEASURE has multiple values (e.g. KD vs CD), there are multiple options for a critical dimension (such as breakdowns like Sex, Age, or Education), or the timeframe/year range and disaggregation filters are ambiguous:
      1. Call `data360_interactive_choices` to let the user select:
-        * Between unit measures (e.g. "Constant 2015 US$ (Real)" vs "Current US$ (Nominal)")
-        * Between breakdowns/disaggregations (e.g. "National Average (Total)" vs "Disaggregate by Gender (Male vs Female)")
-        * Between timeframes/year ranges (e.g. "Latest available year" vs "Historical trend (last 10 years)")
-     2. STOP and wait for the user to make a selection. Do not proceed until you receive the selection.
+        * Between unit measures (e.g. "Constant 2015 US$ (Real)" vs "Current US$ (Nominal)" vs "Other (specify)")
+        * Between breakdowns/disaggregations (e.g. "National Average (Total)" vs "Disaggregate by Gender (Male vs Female)" vs "Other (specify)")
+        * Between timeframes/year ranges (e.g. "Latest available year" vs "Historical trend (last 10 years)" vs "Specify a custom range")
+     2. **Dynamic Custom Option**: Always include a customizable option at the end of the `options` list (e.g., `"Specify custom..."` or `"Specify a custom range"`) so the user can enter their own input if none of the options are suitable.
+     3. STOP and wait for the user to make a selection. Do not proceed until you receive the selection.
    - Otherwise, pick **one** and filter.
 
 4) If you need raw data values for a **specific point lookup or small dataset** → call data360_get_data.
@@ -231,10 +233,10 @@ Here are the specific scenarios when you should call `data360_interactive_choice
 
 #### 2. Multiple Choices (2+ choices)
 * **Broad Overviews & Branching Paths**: When you give a high-level summary of a massive topic, use multiple choices to let the user choose exactly which sub-category or "branch" you want to zoom in on next.
-* **Disambiguation (Clarifying Intent)**: If the user's request is open-ended or could be interpreted in a few different ways (such as selecting between real or nominal series, different indicator options, timeframe/year ranges, or disaggregations/breakdowns), present options so the user can clarify exactly which direction they meant to take.
+* **Disambiguation (Clarifying Intent)**: If the user's request is open-ended or could be interpreted in a few different ways (such as selecting between real or nominal series, different indicator options, timeframe/year ranges, or disaggregations/breakdowns), present options so the user can clarify exactly which direction they meant to take. **Always dynamically include a customizable option (e.g. "Specify custom...", "Other (specify)", or "Specify a custom range") at the end of the options list to allow custom typing if none of the predefined options suffice.**
 * **Menus and Brainstorming**: When generating lists of ideas—like different programming frameworks, design patterns, or troubleshooting steps—use multiple choices to act like a clickable menu, letting the user instantly select the one you want to explore.
 
-Essentially, surface these components using `data360_interactive_choices` whenever you can save the user the effort of typing out the logical next prompt, or when the conversation has reached a crossroads and you need the user to choose the direction.
+Essentially, surface these components using `data360_interactive_choices` whenever you can save the user the effort of typing out the logical next prompt, or when the conversation has reached a crossroads and you need the user to choose the direction. Always make sure to include a dynamic customizable option if the static list might not fully satisfy the user's possible need.
 """
 
 # Mirrors ``data360_mcp_agent.gate.GATE_SYSTEM_PROMPT`` — update both when changing rules.
@@ -386,7 +388,7 @@ def indicator_search(
      - Example: `UNIT_MEASURE: ["KD", "CD"]` (Constant vs Current).
      - Example: `VALUATION: ["MER", "PPP"]`.
    - **Clarify via Choice Card**: If you cannot resolve this ambiguity based on user context, immediately call `data360_interactive_choices` to let the user select via interactive buttons.
-     Example: `data360_interactive_choices(prompt="Which series would you like to view?", options=["Real GDP per capita", "Nominal GDP per capita"])`
+     Example: `data360_interactive_choices(prompt="Which series would you like to view?", options=["Real GDP per capita", "Nominal GDP per capita", "Specify custom..."])`
      After calling it, STOP and wait for the user to make a selection. Do not proceed until you receive the selection.
 
 4. **Validation Check**:
