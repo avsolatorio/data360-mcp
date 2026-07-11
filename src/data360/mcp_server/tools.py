@@ -639,28 +639,6 @@ def _get_supported_chart_types() -> str:
     return json.dumps(parsed, indent=2)
 
 
-async def _explain_chart_routing(
-    n_indicators: int,
-    country_count: int,
-    year_count: int,
-    avg_years_per_country: float,
-    breakdown_dims: list[str] | None = None,
-    chart_type_hint: str | None = None,
-    scale_type: str | None = None,
-    indicator_scales: list[dict] | None = None,
-) -> Any:
-    """Explain which chart strategy the routing engine would select for the given data shape."""
-    return data360_viz_config.explain_chart_routing(
-        n_indicators=n_indicators,
-        country_count=country_count,
-        year_count=year_count,
-        avg_years_per_country=avg_years_per_country,
-        breakdown_dims=breakdown_dims,
-        chart_type_hint=chart_type_hint,
-        scale_type=scale_type,
-        indicator_scales=indicator_scales,
-    )
-
 
 async def _expand_country_group(
     group_code: str,
@@ -865,13 +843,6 @@ expand_country_group = mcp.tool(
         _expand_country_group, tool_name="data360_expand_country_group"
     ),
     name="data360_expand_country_group",
-)
-
-explain_chart_routing = mcp.tool(
-    instrument_mcp_tool(
-        _explain_chart_routing, tool_name="data360_explain_chart_routing"
-    ),
-    name="data360_explain_chart_routing",
 )
 
 # ---------------------------------------------------------------------------
