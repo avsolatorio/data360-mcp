@@ -97,6 +97,15 @@ async def _search_indicators(
         dedupe: De-duplicate indicators across query results.
         database: Optional database name or ID to filter search results (e.g. "wdi", "wgi", "World Development Indicators"). Multiple databases can be queried at once by separating them with a semicolon (e.g. "pip; lpgd; sgi").
     """
+    # Robustness fallback: if queries is passed as a list of exactly 1 item,
+    # normalize it to a single query parameter to prevent validation failure.
+    if queries is not None:
+        clean_queries = [q.strip() for q in queries if q and q.strip()]
+        if len(clean_queries) == 1:
+            if not query:
+                query = clean_queries[0]
+            queries = None
+
     return await data360_api.search(
         query=query,
         required_country=required_country,
