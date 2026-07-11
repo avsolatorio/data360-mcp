@@ -268,6 +268,59 @@ class TestVisualizationRoutingRules:
                 f"Panel {i} line layer must filter to 'est' rows only"
             )
 
+    def test_wgi_error_band_color_preservation(self):
+        """GeneralErrorBandRule should preserve color encoding when mapped to a field other than comp_breakdown_1."""
+        from data360.viz_config import GeneralErrorBandRule
+        rule = GeneralErrorBandRule()
+
+        # Scenario A: vconcat case (concat) where color is mapped to 'country'
+        spec_concat = {
+            "concat": [
+                {
+                    "mark": "line",
+                    "encoding": {
+                        "x": {"field": "year", "type": "temporal"},
+                        "y": {"field": "value", "type": "quantitative"},
+                        "color": {"field": "country", "type": "nominal"}
+                    }
+                }
+            ]
+        }
+        df_wgi = pd.DataFrame({
+            "year": [2020, 2020, 2020],
+            "value": [55.0, 45.0, 65.0],
+            "comp_breakdown_1": ["WGI_EST", "WGI_SC_LB", "WGI_SC_UB"],
+            "country": ["Germany", "Germany", "Germany"]
+        })
+
+        res_concat = rule.apply(spec_concat, df=df_wgi)
+        panel = res_concat["concat"][0]
+        assert "layer" in panel
+        assert len(panel["layer"]) == 2
+        # Error band layer should have color encoding mapped to 'country'
+        assert panel["layer"][0]["encoding"]["color"]["field"] == "country"
+        # Area mark should not have a hardcoded color
+        assert "color" not in panel["layer"][0]["mark"]
+        # Line layer should also have color encoding mapped to 'country'
+        assert panel["layer"][1]["encoding"]["color"]["field"] == "country"
+
+        # Scenario B: layered / single panel case where color is mapped to 'country'
+        spec_layered = {
+            "mark": "line",
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "quantitative"},
+                "color": {"field": "country", "type": "nominal"}
+            }
+        }
+        res_layered = rule.apply(spec_layered, df=df_wgi)
+        assert "layer" in res_layered
+        assert len(res_layered["layer"]) == 2
+        # Error band layer should have color encoding mapped to 'country'
+        assert res_layered["layer"][0]["encoding"]["color"]["field"] == "country"
+        assert "color" not in res_layered["layer"][0]["mark"]
+        # Line layer should have color encoding mapped to 'country'
+        assert res_layered["layer"][1]["encoding"]["color"]["field"] == "country"
 
     def test_population_pyramid_rule(self):
         """PopulationPyramidRule should construct a diverging horizontal bar chart."""
