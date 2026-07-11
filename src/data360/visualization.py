@@ -1679,7 +1679,7 @@ async def get_viz_spec(
     chart_title: str | None = None,
     series_labels: dict[str, str] | None = None,
     strategy_override: str | None = None,
-    charts_api_url_override: object = None,
+    charts_api_url_override: object = _UNSET,
 ) -> VizResult:
     """Generate a Vega-Lite chart from a single Data360 indicator.
 

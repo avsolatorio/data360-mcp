@@ -167,6 +167,161 @@ class TestVisualizationRoutingRules:
         assert len(layered_gen["layer"]) == 2
         assert layered_gen["layer"][0]["mark"]["type"] == "area"
 
+    def test_wgi_error_band_multi_indicator_vconcat(self):
+        """GeneralErrorBandRule vconcat branch must scope each panel's pivot to
+        its own indicator when facet_dim='indicator'.
+
+        Regression for: multi-indicator WGI small-multiples charts where all
+        indicators' comp_breakdown_1 rows (est/lower/upper/se/Number of sources)
+        were being merged into a single pivot, causing the confidence band to
+        span from ~-1 to ~60+ (blending WGI point-estimates with source counts).
+        """
+        from data360.viz_config import GeneralErrorBandRule
+        rule = GeneralErrorBandRule()
+
+        # Two WGI indicators, single country, 2 years.
+        # Each indicator has 3 comp_breakdown_1 rows: est, lower, upper.
+        # "Number of sources" (~60) must NOT contaminate the band.
+        rows = []
+        for ind in ["Government Effectiveness", "Voice and Accountability"]:
+            for yr in [2022, 2023]:
+                rows += [
+                    {"year": str(yr), "country": "India", "indicator": ind,
+                     "comp_breakdown_1": "est",   "value": 0.40 if ind == "Government Effectiveness" else 0.05},
+                    {"year": str(yr), "country": "India", "indicator": ind,
+                     "comp_breakdown_1": "lower", "value": 0.20 if ind == "Government Effectiveness" else -0.15},
+                    {"year": str(yr), "country": "India", "indicator": ind,
+                     "comp_breakdown_1": "upper", "value": 0.60 if ind == "Government Effectiveness" else 0.25},
+                    {"year": str(yr), "country": "India", "indicator": ind,
+                     "comp_breakdown_1": "Number of sources", "value": 60.0},
+                ]
+        df = pd.DataFrame(rows)
+
+        x_enc = {"field": "year", "type": "temporal"}
+        y_enc = {"field": "value", "type": "quantitative"}
+
+        # Simulate the vconcat spec _build_scale_split_vconcat emits:
+        # outer data = full df, each panel has an indicator-scoped filter transform.
+        vconcat_spec = {
+            "data": {"values": df.to_dict(orient="records")},
+            "concat": [
+                {
+                    "title": {"text": "Government Effectiveness"},
+                    "width": 680, "height": 200,
+                    "transform": [{"filter": {"field": "indicator", "equal": "Government Effectiveness"}}],
+                    "mark": {"type": "line", "strokeWidth": 3},
+                    "encoding": {"x": x_enc, "y": y_enc},
+                },
+                {
+                    "title": {"text": "Voice and Accountability"},
+                    "width": 680, "height": 200,
+                    "transform": [{"filter": {"field": "indicator", "equal": "Voice and Accountability"}}],
+                    "mark": {"type": "line", "strokeWidth": 3},
+                    "encoding": {"x": x_enc, "y": y_enc},
+                },
+            ]
+        }
+
+        assert rule.should_apply(vconcat_spec, df=df)
+        result = rule.apply(vconcat_spec, df=df)
+
+        panels = result.get("concat", [])
+        assert len(panels) == 2, "Both indicator panels should be preserved"
+
+        for i, panel in enumerate(panels):
+            assert "layer" in panel, f"Panel {i} should be converted to a layered errorband spec"
+            layers = panel["layer"]
+            assert len(layers) == 2, f"Panel {i} should have area + line layers"
+            area_layer, line_layer = layers[0], layers[1]
+
+            assert area_layer["mark"]["type"] == "area"
+            assert line_layer["mark"]["type"] == "line"
+
+            # The area layer transform must include both the indicator filter AND the pivot.
+            area_transforms = area_layer["transform"]
+            indicator_filters = [
+                t for t in area_transforms
+                if "filter" in t and isinstance(t["filter"], dict)
+                and t["filter"].get("field") == "indicator"
+            ]
+            assert len(indicator_filters) == 1, (
+                f"Panel {i} area layer must have exactly one indicator filter; "
+                f"got {indicator_filters}"
+            )
+
+            # The line layer must filter to 'est' only AND scope to its indicator.
+            line_transforms = line_layer["transform"]
+            ind_filters_in_line = [
+                t for t in line_transforms
+                if "filter" in t and isinstance(t["filter"], dict)
+                and t["filter"].get("field") == "indicator"
+            ]
+            est_filters = [
+                t for t in line_transforms
+                if "filter" in t and isinstance(t.get("filter"), str)
+                and "comp_breakdown_1" in t["filter"] and "est" in t["filter"]
+            ]
+            assert len(ind_filters_in_line) == 1, (
+                f"Panel {i} line layer must have one indicator filter"
+            )
+            assert len(est_filters) == 1, (
+                f"Panel {i} line layer must filter to 'est' rows only"
+            )
+
+    def test_wgi_error_band_color_preservation(self):
+        """GeneralErrorBandRule should preserve color encoding when mapped to a field other than comp_breakdown_1."""
+        from data360.viz_config import GeneralErrorBandRule
+        rule = GeneralErrorBandRule()
+
+        # Scenario A: vconcat case (concat) where color is mapped to 'country'
+        spec_concat = {
+            "concat": [
+                {
+                    "mark": "line",
+                    "encoding": {
+                        "x": {"field": "year", "type": "temporal"},
+                        "y": {"field": "value", "type": "quantitative"},
+                        "color": {"field": "country", "type": "nominal"}
+                    }
+                }
+            ]
+        }
+        df_wgi = pd.DataFrame({
+            "year": [2020, 2020, 2020],
+            "value": [55.0, 45.0, 65.0],
+            "comp_breakdown_1": ["WGI_EST", "WGI_SC_LB", "WGI_SC_UB"],
+            "country": ["Germany", "Germany", "Germany"]
+        })
+
+        res_concat = rule.apply(spec_concat, df=df_wgi)
+        panel = res_concat["concat"][0]
+        assert "layer" in panel
+        assert len(panel["layer"]) == 2
+        # Error band layer should have color encoding mapped to 'country'
+        assert panel["layer"][0]["encoding"]["color"]["field"] == "country"
+        # Area mark should not have a hardcoded color
+        assert "color" not in panel["layer"][0]["mark"]
+        # Line layer should also have color encoding mapped to 'country'
+        assert panel["layer"][1]["encoding"]["color"]["field"] == "country"
+
+        # Scenario B: layered / single panel case where color is mapped to 'country'
+        spec_layered = {
+            "mark": "line",
+            "encoding": {
+                "x": {"field": "year", "type": "temporal"},
+                "y": {"field": "value", "type": "quantitative"},
+                "color": {"field": "country", "type": "nominal"}
+            }
+        }
+        res_layered = rule.apply(spec_layered, df=df_wgi)
+        assert "layer" in res_layered
+        assert len(res_layered["layer"]) == 2
+        # Error band layer should have color encoding mapped to 'country'
+        assert res_layered["layer"][0]["encoding"]["color"]["field"] == "country"
+        assert "color" not in res_layered["layer"][0]["mark"]
+        # Line layer should have color encoding mapped to 'country'
+        assert res_layered["layer"][1]["encoding"]["color"]["field"] == "country"
+
     def test_population_pyramid_rule(self):
         """PopulationPyramidRule should construct a diverging horizontal bar chart."""
         from data360.viz_config import PopulationPyramidRule
