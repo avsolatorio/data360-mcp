@@ -1445,6 +1445,15 @@ def data360_choice_html() -> str:
             // Focus input
             setTimeout(() => input.focus(), 10);
 
+            // Handle Escape key to cancel/revert specify mode
+            input.addEventListener('keydown', (ev) => {
+              if (ev.key === 'Escape') {
+                ev.preventDefault();
+                ev.stopPropagation();
+                renderChoiceCard(payload);
+              }
+            });
+
             const submitBtn = document.createElement('button');
             submitBtn.type = 'submit';
             submitBtn.className = 'specify-submit-btn';
