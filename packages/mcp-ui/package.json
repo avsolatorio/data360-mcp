@@ -1,6 +1,6 @@
 {
   "name": "@data360/mcp-ui",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "React UI for presenting Data360 MCP tool output (chart card, search results card, and future surfaces).",
   "type": "module",
   "files": [
@@ -16,6 +16,11 @@
       "types": "./dist/search-card.d.ts",
       "import": "./dist/search-card.js",
       "require": "./dist/search-card.cjs"
+    },
+    "./choice-card": {
+      "types": "./dist/choice-card.d.ts",
+      "import": "./dist/choice-card.js",
+      "require": "./dist/choice-card.cjs"
     }
   },
   "scripts": {
