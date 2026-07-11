@@ -6981,10 +6981,10 @@ class GeneralErrorBandRule(PostProcessingRule):
         is_vconcat = ("vconcat" in spec or "concat" in spec) and not is_layered
         concat_key = "concat" if "concat" in spec else "vconcat"
 
-        # ── vconcat/concat case: each panel is a per-country flat spec ──────────────
-        # We need to transform each panel individually, preserving its country
-        # filter transform while replacing the color-by-breakdown encoding with
-        # a layered errorband + estimate line approach.
+        # ── vconcat/concat case: each panel is a per-country or per-indicator flat spec ─
+        # We need to transform each panel individually, preserving its scoping
+        # filter transform (country OR indicator) while replacing the
+        # color-by-breakdown encoding with a layered errorband + estimate line approach.
         if is_vconcat:
             new_panels = []
             for panel in spec[concat_key]:
@@ -6993,10 +6993,16 @@ class GeneralErrorBandRule(PostProcessingRule):
                     new_panels.append(panel)
                     continue
 
-                # Extract the per-country filter transform (e.g. filter country==Argentina)
+                # Extract the per-country filter transform (e.g. filter country==Argentina).
+                # Also capture per-indicator filters: in multi-indicator WGI small-multiples
+                # each panel is scoped to one indicator value, not a country.
                 country_filter_transforms = [
                     t for t in panel.get("transform", [])
                     if "filter" in t and isinstance(t["filter"], dict) and t["filter"].get("field") == "country"
+                ]
+                indicator_filter_transforms = [
+                    t for t in panel.get("transform", [])
+                    if "filter" in t and isinstance(t["filter"], dict) and t["filter"].get("field") == "indicator"
                 ]
                 panel_x_enc = panel_enc.get("x", {})
                 panel_mark = panel.get("mark", {"type": "line", "strokeWidth": 3})
@@ -7004,8 +7010,12 @@ class GeneralErrorBandRule(PostProcessingRule):
                 panel_width = panel.get("width", spec.get("width", 600))
                 panel_height = panel.get("height", spec.get("height", 200))
 
-                # Build the full transform chain: country filter → pivot → calculate bounds
-                full_transforms = country_filter_transforms + transforms
+                # Build the full transform chain: scoping filters → pivot → calculate bounds.
+                # Scoping filters = country filter (single-indicator multi-country) OR indicator
+                # filter (multi-indicator WGI). Both are prepended so the pivot only sees the
+                # rows belonging to this panel's dimension value.
+                scoping_filters = country_filter_transforms + indicator_filter_transforms
+                full_transforms = scoping_filters + transforms
 
                 errorband = {
                     "transform": full_transforms,
@@ -7027,7 +7037,7 @@ class GeneralErrorBandRule(PostProcessingRule):
                 line_enc = {k: v for k, v in panel_enc.items() if k != "color"}
 
                 line = {
-                    "transform": country_filter_transforms + [
+                    "transform": scoping_filters + [
                         {"filter": "datum.comp_breakdown_1 == 'est'"}
                     ],
                     "mark": panel_mark,
