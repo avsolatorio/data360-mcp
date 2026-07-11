@@ -6845,9 +6845,22 @@ def _filter_df_for_error_band(df: pd.DataFrame) -> pd.DataFrame:
 
     best_triplet = None
     for est in est_vals:
-        est_base = str(est).lower().replace("_sc", "").replace("_est", "").strip()
-        matching_lower = [l for l in lower_vals if est_base in str(l).lower() or est_base == str(l).lower().replace("_lb", "").replace("_lower", "").strip()]
-        matching_upper = [u for u in upper_vals if est_base in str(u).lower() or est_base == str(u).lower().replace("_ub", "").replace("_upper", "").strip()]
+        # Strip parentheses and their contents to handle mapped labels like "Governance score (0-100)"
+        est_clean = re.sub(r'\(.*?\)', '', str(est))
+        est_base = est_clean.lower().replace("_sc", "").replace("_est", "").strip()
+
+        matching_lower = []
+        for l in lower_vals:
+            l_clean = re.sub(r'\(.*?\)', '', str(l)).lower()
+            if est_base in l_clean or est_base == l_clean.replace("_lb", "").replace("_lower", "").strip():
+                matching_lower.append(l)
+
+        matching_upper = []
+        for u in upper_vals:
+            u_clean = re.sub(r'\(.*?\)', '', str(u)).lower()
+            if est_base in u_clean or est_base == u_clean.replace("_ub", "").replace("_upper", "").strip():
+                matching_upper.append(u)
+
         if matching_lower and matching_upper:
             best_triplet = (est, matching_lower[0], matching_upper[0])
             break
@@ -6858,8 +6871,17 @@ def _filter_df_for_error_band(df: pd.DataFrame) -> pd.DataFrame:
     # Try to find a matching estimate + se pair
     best_pair = None
     for est in est_vals:
-        est_base = str(est).lower().replace("_est", "").strip()
-        matching_se = [s for s in se_vals if est_base in str(s).lower() or "se" in str(s).lower() or "standard error" in str(s).lower()]
+        est_clean = re.sub(r'\(.*?\)', '', str(est))
+        est_base = est_clean.lower().replace("_est", "").strip()
+
+        matching_se = []
+        for s in se_vals:
+            s_clean = re.sub(r'\(.*?\)', '', str(s)).lower()
+            # Strict matching: est_base must be in the se label, or the se label must be generic (e.g. "se", "standard error")
+            is_generic = s_clean.strip() in ("se", "standard error", "std_err", "stderr", "std error", "error")
+            if est_base in s_clean or is_generic:
+                matching_se.append(s)
+
         if matching_se:
             best_pair = (est, matching_se[0])
             break
