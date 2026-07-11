@@ -1383,7 +1383,17 @@ def data360_choice_html() -> str:
 
     function renderChoiceCard(payload) {
       const prompt = payload.prompt || "";
-      const options = payload.options || [];
+      let options = payload.options || [];
+
+      // Check if any option is already customizable
+      const hasCustom = options.some(opt => {
+        const o = opt.toLowerCase();
+        return o.includes('specify') || o.includes('other') || o.includes('custom');
+      });
+
+      if (!hasCustom) {
+        options = [...options, "Specify custom..."];
+      }
 
       promptEl.textContent = prompt;
       containerEl.innerHTML = "";
@@ -1404,7 +1414,8 @@ def data360_choice_html() -> str:
         btn.appendChild(iconDiv);
 
         btn.addEventListener('click', async (e) => {
-          if (opt.toLowerCase().includes('specify') || opt.toLowerCase().includes('other')) {
+          const lowerOpt = opt.toLowerCase();
+          if (lowerOpt.includes('specify') || lowerOpt.includes('other') || lowerOpt.includes('custom') || lowerOpt.includes('enter') || opt.endsWith('...')) {
             if (btn.classList.contains('specify-mode')) {
               return;
             }
