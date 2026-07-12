@@ -25,13 +25,28 @@ _telemetry_client = None
 
 # Setup logging from configuration
 import sys
+
+_logger = logging.getLogger(__name__)
 mcp_settings = get_mcp_server_settings()
-if "--port" in sys.argv:
-    try:
-        _port_idx = sys.argv.index("--port")
-        mcp_settings.port = int(sys.argv[_port_idx + 1])
-    except (ValueError, IndexError):
-        pass
+
+# Parse port from argv, supporting both '--port 8021' and '--port=8021' forms.
+_parsed_port: int | None = None
+for _arg in sys.argv:
+    if _arg.startswith("--port="):
+        try:
+            _parsed_port = int(_arg.split("=", 1)[1])
+        except ValueError:
+            logging.warning("Could not parse port from argv argument '%s'; using default.", _arg)
+        break
+    if _arg == "--port":
+        _idx = sys.argv.index(_arg)
+        try:
+            _parsed_port = int(sys.argv[_idx + 1])
+        except (ValueError, IndexError):
+            logging.warning("Could not parse port after '--port' in argv; using default.")
+        break
+if _parsed_port is not None:
+    mcp_settings.port = _parsed_port
 
 setup_logging(
     log_file=mcp_settings.log_file,
@@ -143,8 +158,8 @@ class SecurityValidationMiddleware(BaseHTTPMiddleware):
 
         except json.JSONDecodeError:
             pass  # Let MCP handle invalid JSON
-        except Exception as e:
-            logging.error(f"Security validation error: {e}")
+        except Exception:
+            logging.error("Security validation error", exc_info=True)
             # Continue on validation errors to avoid blocking legitimate requests
 
         return await call_next(request)
