@@ -83,7 +83,7 @@ class TestGrammarOfGraphicsContractPresence:
             )
 
     def test_get_viz_spec_docstring_has_encoding_type_rules(self):
-        """Vega-Lite v6 encoding type rules must be documented."""
+        """Vega-Lite v5 encoding type rules must be documented."""
         doc = get_viz_spec.__doc__ or ""
         assert "ordinal" in doc, (
             "Docstring must warn against using 'ordinal' for year fields."
