@@ -1609,6 +1609,12 @@ def _apply_post_processing_rules(
                 for child in subspec["vconcat"]
             ]
             return subspec
+        elif "concat" in subspec and isinstance(subspec["concat"], list):
+            subspec["concat"] = [
+                _apply_rule_recursively(rule, child, current_data_root, is_composite=True, **kwargs)
+                for child in subspec["concat"]
+            ]
+            return subspec
         elif "hconcat" in subspec and isinstance(subspec["hconcat"], list):
             subspec["hconcat"] = [
                 _apply_rule_recursively(rule, child, current_data_root, is_composite=True, **kwargs)
@@ -2772,12 +2778,31 @@ async def get_multi_indicator_viz_spec(
     if merged.empty:
         return _err("No overlapping data found across indicators after merging.")
 
-    # Aggregate any duplicate rows created by mismatching/unmerged breakdown dimensions
-    # (e.g., sex is present in some dataframes but not all, creating Cartesian product rows).
-    # Grouping by join_keys and taking the mean collapses these duplicate values cleanly.
-    agg_dict = {col: "mean" for col in indicator_col_names if col in merged.columns}
+    # Collapse duplicate rows introduced by the outer-merge fanout.
+    # Strategy:
+    # 1. Drop rows that are identical across every column — safe, no data loss.
+    # 2. If true ambiguous duplicates remain (same join keys, different indicator
+    #    values), emit a warning and take the mean as a fallback.  This should
+    #    not happen for well-aligned indicators but is guarded explicitly so that
+    #    any averaging is visible in the server log rather than silent.
     groupby_keys = [k for k in join_keys if k in merged.columns]
-    merged = merged.groupby(groupby_keys, as_index=False).agg(agg_dict)
+    agg_cols = [col for col in indicator_col_names if col in merged.columns]
+
+    merged = merged.drop_duplicates()
+
+    if groupby_keys and agg_cols:
+        dup_mask = merged.duplicated(subset=groupby_keys, keep=False)
+        if dup_mask.any():
+            _logger.warning(
+                "Multi-indicator merge produced %d ambiguous duplicate rows "
+                "(same %s keys, differing indicator values). Taking mean as "
+                "fallback — verify that the indicators share compatible "
+                "disaggregation dimensions.",
+                dup_mask.sum(),
+                groupby_keys,
+            )
+            agg_dict = {col: "mean" for col in agg_cols}
+            merged = merged.groupby(groupby_keys, as_index=False).agg(agg_dict)
 
 
     merged = _sanitize_dataframe_for_json_records(merged)
