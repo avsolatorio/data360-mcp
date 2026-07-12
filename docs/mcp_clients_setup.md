@@ -34,10 +34,10 @@ Add the following entry under `"mcpServers"`:
       "args": [
         "run",
         "--project",
-        "/Users/rafaelmacalaba/WBG/data360-mcp",
+        "/path/to/data360-mcp",
         "fastmcp",
         "run",
-        "/Users/rafaelmacalaba/WBG/data360-mcp/src/data360/server.py"
+        "/path/to/data360-mcp/src/data360/server.py"
       ],
       "env": {
         "PREFAB_BUNDLED_RENDERER": "1"
@@ -46,7 +46,7 @@ Add the following entry under `"mcpServers"`:
   }
 }
 ```
-*Replace `/Users/rafaelmacalaba/WBG/data360-mcp` with your actual local repository path.*
+*Replace `/path/to/data360-mcp` with your actual local repository path.*
 
 Restart **Claude Desktop** to apply the configuration. Charts will render directly inside the Claude chat window using local cached JavaScript libraries.
 
@@ -68,10 +68,10 @@ mcpServers:
     args:
       - "run"
       - "--project"
-      - "/Users/rafaelmacalaba/WBG/data360-mcp"
+      - "/path/to/data360-mcp"
       - "fastmcp"
       - "run"
-      - "/Users/rafaelmacalaba/WBG/data360-mcp/src/data360/server.py"
+      - "/path/to/data360-mcp/src/data360/server.py"
     env:
       PREFAB_BUNDLED_RENDERER: "1"
 ```
@@ -94,10 +94,10 @@ In your Cline or Roo Code extension settings (`cline_mcp_settings.json` located 
       "args": [
         "run",
         "--project",
-        "/Users/rafaelmacalaba/WBG/data360-mcp",
+        "/path/to/data360-mcp",
         "fastmcp",
         "run",
-        "/Users/rafaelmacalaba/WBG/data360-mcp/src/data360/server.py"
+        "/path/to/data360-mcp/src/data360/server.py"
       ],
       "env": {
         "PREFAB_BUNDLED_RENDERER": "1"
@@ -115,4 +115,7 @@ If you see the error:
 `OSError: [Errno 30] Read-only file system: '/static'`
 or `No visualization spec available` in the iframe cards:
 * **Cause:** The client spawned the server in a sandbox with the working directory set to `/`, causing it to try to write to `/static` or `/static/viz_specs`.
-* **Solution:** Ensure you are using the latest version of the repository where path resolution has been updated to use script-relative resolution (`__file__`) instead of `os.getcwd()`.
+* **Solution:** Set the `DATA360_STATIC_DIR` environment variable (or ensure `static/` exists in your working directory). The server resolves the static directory from `os.getcwd()` at startup, so run the server from your repository root. For example:
+  ```bash
+  cd /path/to/data360-mcp && PREFAB_BUNDLED_RENDERER=1 uv run uvicorn data360.server:app --port 8021
+  ```

@@ -1283,17 +1283,19 @@ class CodelistManager:
             ext_key = self._resolve_extdataportal_key(codelist_type)
             if ext_key in self._extdataportal and self._extdataportal[ext_key]:
                 return dict(self._extdataportal[ext_key])
-        except Exception as e:
-            _logger.debug(f"Failed to load from extdataportal: {e}")
+        except Exception:
+            _logger.debug("Failed to load from extdataportal.", exc_info=True)
 
-        # Ensure loaded if global (legacy fallback)
+        # Fallback: derive global codelist from extdataportal via _ensure_loaded cache path
         if codelist_type in self.GLOBAL_CODELISTS:
             try:
                 await self._ensure_loaded(codelist_type)
                 items = self._cache.get(codelist_type, [])
                 return {item.get("Id", ""): item.get("Name", "") for item in items}
-            except Exception as e:
-                _logger.warning(f"Legacy global load failed for {codelist_type}: {e}")
+            except Exception:
+                _logger.warning(
+                    "Global codelist load failed for %s.", codelist_type, exc_info=True
+                )
 
         # Static mappings (reverse the value->code mapping to code->name)
         if codelist_type in self.STATIC_MAPPINGS:
