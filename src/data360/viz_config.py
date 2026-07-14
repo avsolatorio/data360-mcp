@@ -7034,6 +7034,7 @@ class GeneralErrorBandRule(PostProcessingRule):
                     if "filter" in t and isinstance(t["filter"], dict) and t["filter"].get("field") == "indicator"
                 ]
                 panel_x_enc = panel_enc.get("x", {})
+                panel_y_enc = panel_enc.get("y", {})
                 panel_mark = panel.get("mark", {"type": "line", "strokeWidth": 3})
                 panel_title = panel.get("title")
                 panel_width = panel.get("width", spec.get("width", 600))
@@ -7046,21 +7047,45 @@ class GeneralErrorBandRule(PostProcessingRule):
                 scoping_filters = country_filter_transforms + indicator_filter_transforms
                 full_transforms = scoping_filters + transforms
 
-                errorband_mark = {"type": "area", "opacity": 0.2}
-                if not keep_color:
-                    errorband_mark["color"] = "#34A7F2"
+                is_nominal_x = panel_x_enc.get("type") == "nominal"
+                is_nominal_y = panel_y_enc.get("type") == "nominal"
 
-                errorband_encoding = {
-                    "x": panel_x_enc,
-                    "y": {
-                        "field": lb_field,
-                        "type": "quantitative",
-                        "scale": {"zero": False}
-                    },
-                    "y2": {
-                        "field": ub_field
+                if is_nominal_x or is_nominal_y:
+                    errorband_mark = {"type": "rule", "color": "#666666", "strokeWidth": 1.5}
+                else:
+                    errorband_mark = {"type": "area", "opacity": 0.2}
+                    if not keep_color:
+                        errorband_mark["color"] = "#34A7F2"
+
+                if is_nominal_y:
+                    errorband_encoding = {
+                        "y": panel_y_enc,
+                        "x": {
+                            "field": lb_field,
+                            "type": "quantitative",
+                            "scale": {"zero": False}
+                        },
+                        "x2": {
+                            "field": ub_field
+                        }
                     }
-                }
+                    if "yOffset" in panel_enc:
+                        errorband_encoding["yOffset"] = panel_enc["yOffset"]
+                else:
+                    errorband_encoding = {
+                        "x": panel_x_enc,
+                        "y": {
+                            "field": lb_field,
+                            "type": "quantitative",
+                            "scale": {"zero": False}
+                        },
+                        "y2": {
+                            "field": ub_field
+                        }
+                    }
+                    if "xOffset" in panel_enc:
+                        errorband_encoding["xOffset"] = panel_enc["xOffset"]
+
                 if keep_color:
                     errorband_encoding["color"] = color_enc
 
@@ -7116,6 +7141,7 @@ class GeneralErrorBandRule(PostProcessingRule):
             return spec
 
         x_enc = enc.get("x", {})
+        y_enc = enc.get("y", {})
         color_enc = enc.get("color", {})
 
         keep_color = False
@@ -7124,21 +7150,45 @@ class GeneralErrorBandRule(PostProcessingRule):
             if color_field and color_field != "comp_breakdown_1":
                 keep_color = True
 
-        errorband_mark = {"type": "area", "opacity": 0.2}
-        if not keep_color:
-            errorband_mark["color"] = "#34A7F2"
+        is_nominal_x = x_enc.get("type") == "nominal"
+        is_nominal_y = y_enc.get("type") == "nominal"
 
-        errorband_encoding = {
-            "x": x_enc,
-            "y": {
-                "field": lb_field,
-                "type": "quantitative",
-                "scale": {"zero": False}
-            },
-            "y2": {
-                "field": ub_field
+        if is_nominal_x or is_nominal_y:
+            errorband_mark = {"type": "rule", "color": "#666666", "strokeWidth": 1.5}
+        else:
+            errorband_mark = {"type": "area", "opacity": 0.2}
+            if not keep_color:
+                errorband_mark["color"] = "#34A7F2"
+
+        if is_nominal_y:
+            errorband_encoding = {
+                "y": y_enc,
+                "x": {
+                    "field": lb_field,
+                    "type": "quantitative",
+                    "scale": {"zero": False}
+                },
+                "x2": {
+                    "field": ub_field
+                }
             }
-        }
+            if "yOffset" in enc:
+                errorband_encoding["yOffset"] = enc["yOffset"]
+        else:
+            errorband_encoding = {
+                "x": x_enc,
+                "y": {
+                    "field": lb_field,
+                    "type": "quantitative",
+                    "scale": {"zero": False}
+                },
+                "y2": {
+                    "field": ub_field
+                }
+            }
+            if "xOffset" in enc:
+                errorband_encoding["xOffset"] = enc["xOffset"]
+
         if keep_color:
             errorband_encoding["color"] = color_enc
 

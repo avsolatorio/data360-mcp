@@ -322,6 +322,83 @@ class TestVisualizationRoutingRules:
         # Line layer should have color encoding mapped to 'country'
         assert res_layered["layer"][1]["encoding"]["color"]["field"] == "country"
 
+    def test_wgi_error_band_nominal_x_and_y(self):
+        """GeneralErrorBandRule should use rule mark instead of area when either x or y is nominal."""
+        from data360.viz_config import GeneralErrorBandRule
+        rule = GeneralErrorBandRule()
+
+        # 1. Vertical Case: Nominal X-axis
+        spec_x = {
+            "mark": "bar",
+            "encoding": {
+                "x": {"field": "country", "type": "nominal"},
+                "y": {"field": "value", "type": "quantitative"},
+                "xOffset": {"field": "country", "type": "nominal"}
+            }
+        }
+        df_wgi = pd.DataFrame({
+            "country": ["Brazil", "Brazil", "Brazil"],
+            "value": [55.0, 45.0, 65.0],
+            "comp_breakdown_1": ["WGI_EST", "WGI_SC_LB", "WGI_SC_UB"]
+        })
+
+        assert rule.should_apply(spec_x, df=df_wgi)
+        layered_x = rule.apply(spec_x, df=df_wgi)
+        assert "layer" in layered_x
+        assert len(layered_x["layer"]) == 2
+        # Error band layer should use rule mark
+        assert layered_x["layer"][0]["mark"]["type"] == "rule"
+        # It should map x, y, y2, and preserve xOffset
+        assert layered_x["layer"][0]["encoding"]["x"]["field"] == "country"
+        assert layered_x["layer"][0]["encoding"]["y"]["field"] == "lower"
+        assert layered_x["layer"][0]["encoding"]["y2"]["field"] == "upper"
+        assert layered_x["layer"][0]["encoding"]["xOffset"]["field"] == "country"
+
+        # 2. Horizontal Case: Nominal Y-axis
+        spec_y = {
+            "mark": "bar",
+            "encoding": {
+                "y": {"field": "country", "type": "nominal"},
+                "x": {"field": "value", "type": "quantitative"},
+                "yOffset": {"field": "country", "type": "nominal"}
+            }
+        }
+
+        assert rule.should_apply(spec_y, df=df_wgi)
+        layered_y = rule.apply(spec_y, df=df_wgi)
+        assert "layer" in layered_y
+        assert len(layered_y["layer"]) == 2
+        # Error band layer should use rule mark
+        assert layered_y["layer"][0]["mark"]["type"] == "rule"
+        # It should map y, x, x2, and preserve yOffset
+        assert layered_y["layer"][0]["encoding"]["y"]["field"] == "country"
+        assert layered_y["layer"][0]["encoding"]["x"]["field"] == "lower"
+        assert layered_y["layer"][0]["encoding"]["x2"]["field"] == "upper"
+        assert layered_y["layer"][0]["encoding"]["yOffset"]["field"] == "country"
+
+        # 3. Concat Panels Case (Horizontal Nominal)
+        spec_concat = {
+            "concat": [
+                {
+                    "mark": "bar",
+                    "encoding": {
+                        "y": {"field": "country", "type": "nominal"},
+                        "x": {"field": "value", "type": "quantitative"},
+                        "yOffset": {"field": "country", "type": "nominal"}
+                    }
+                }
+            ]
+        }
+        res_concat = rule.apply(spec_concat, df=df_wgi)
+        panel = res_concat["concat"][0]
+        assert "layer" in panel
+        assert len(panel["layer"]) == 2
+        assert panel["layer"][0]["mark"]["type"] == "rule"
+        assert panel["layer"][0]["encoding"]["y"]["field"] == "country"
+        assert panel["layer"][0]["encoding"]["x"]["field"] == "lower"
+        assert panel["layer"][0]["encoding"]["x2"]["field"] == "upper"
+        assert panel["layer"][0]["encoding"]["yOffset"]["field"] == "country"
+
     def test_population_pyramid_rule(self):
         """PopulationPyramidRule should construct a diverging horizontal bar chart."""
         from data360.viz_config import PopulationPyramidRule
