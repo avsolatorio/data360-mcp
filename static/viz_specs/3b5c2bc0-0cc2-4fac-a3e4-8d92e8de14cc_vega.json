@@ -1,0 +1,741 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Mean consumption or income per capita of bottom 40 percent population vs. GDP",
+      "per capita"
+    ],
+    "subtitle": [
+      "Colombia, Ecuador, Peru, 2012-2022"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2012",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 3.98415
+      },
+      {
+        "year": "2012",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.91241
+      },
+      {
+        "year": "2012",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.41293
+      },
+      {
+        "year": "2013",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.19694
+      },
+      {
+        "year": "2013",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.07462
+      },
+      {
+        "year": "2013",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.53571
+      },
+      {
+        "year": "2014",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.42317
+      },
+      {
+        "year": "2014",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.47264
+      },
+      {
+        "year": "2014",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.67427
+      },
+      {
+        "year": "2015",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.56864
+      },
+      {
+        "year": "2015",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.31903
+      },
+      {
+        "year": "2015",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.75892
+      },
+      {
+        "year": "2016",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.59685
+      },
+      {
+        "year": "2016",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.36598
+      },
+      {
+        "year": "2016",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.8298
+      },
+      {
+        "year": "2017",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.70189
+      },
+      {
+        "year": "2017",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.5333
+      },
+      {
+        "year": "2017",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.80272
+      },
+      {
+        "year": "2018",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.67647
+      },
+      {
+        "year": "2018",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.40127
+      },
+      {
+        "year": "2018",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.09368
+      },
+      {
+        "year": "2019",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.50504
+      },
+      {
+        "year": "2019",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.22999
+      },
+      {
+        "year": "2019",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.30642
+      },
+      {
+        "year": "2020",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 3.60107
+      },
+      {
+        "year": "2020",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.45306
+      },
+      {
+        "year": "2020",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 3.90915
+      },
+      {
+        "year": "2021",
+        "country": "Colombia",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.0733
+      },
+      {
+        "year": "2021",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.01011
+      },
+      {
+        "year": "2021",
+        "country": "Peru",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 4.92352
+      },
+      {
+        "year": "2022",
+        "country": "Ecuador",
+        "indicator": "Mean consumption or income per capita of bottom 40 percent population",
+        "value": 5.22626
+      },
+      {
+        "year": "2012",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 5675.75618
+      },
+      {
+        "year": "2012",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 5579.856243
+      },
+      {
+        "year": "2012",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 5740.043463
+      },
+      {
+        "year": "2013",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 5910.805923
+      },
+      {
+        "year": "2013",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 5893.321727
+      },
+      {
+        "year": "2013",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 6021.461428
+      },
+      {
+        "year": "2014",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 6121.83982
+      },
+      {
+        "year": "2014",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 6055.041728
+      },
+      {
+        "year": "2014",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 6103.918647
+      },
+      {
+        "year": "2015",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 6248.514905
+      },
+      {
+        "year": "2015",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 5976.159681
+      },
+      {
+        "year": "2015",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 6231.711503
+      },
+      {
+        "year": "2016",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 6316.070678
+      },
+      {
+        "year": "2016",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 5849.135879
+      },
+      {
+        "year": "2016",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 6392.254749
+      },
+      {
+        "year": "2017",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 6309.677453
+      },
+      {
+        "year": "2017",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 6104.272535
+      },
+      {
+        "year": "2017",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 6457.419403
+      },
+      {
+        "year": "2018",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 6353.546429
+      },
+      {
+        "year": "2018",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 6063.095618
+      },
+      {
+        "year": "2018",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 6593.144375
+      },
+      {
+        "year": "2019",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 6439.963598
+      },
+      {
+        "year": "2019",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 5971.389384
+      },
+      {
+        "year": "2019",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 6626.260835
+      },
+      {
+        "year": "2020",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 5891.955232
+      },
+      {
+        "year": "2020",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 5355.689342
+      },
+      {
+        "year": "2020",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 5831.830248
+      },
+      {
+        "year": "2021",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 6457.169218
+      },
+      {
+        "year": "2021",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 5815.094774
+      },
+      {
+        "year": "2021",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 6550.967475
+      },
+      {
+        "year": "2022",
+        "country": "Colombia",
+        "indicator": "GDP per capita",
+        "value": 6856.725905
+      },
+      {
+        "year": "2022",
+        "country": "Ecuador",
+        "indicator": "GDP per capita",
+        "value": 6107.49495
+      },
+      {
+        "year": "2022",
+        "country": "Peru",
+        "indicator": "GDP per capita",
+        "value": 6671.28902
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "GDP per capita",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 300,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "GDP per capita"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "GDP per capita",
+            "format": ",.0f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Colombia",
+              "Ecuador",
+              "Peru"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "Mean consumption or income per cap\u2026",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 300,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Mean consumption or income per capita of bottom 40 percent population"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Mean consumption or income per capita of bottom 40 percent population",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Colombia",
+              "Ecuador",
+              "Peru"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "columns": 1,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

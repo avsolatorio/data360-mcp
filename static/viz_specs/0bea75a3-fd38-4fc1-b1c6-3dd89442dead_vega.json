@@ -1,0 +1,1285 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Latest available total population by country",
+    "subtitle": [
+      "Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola, Antigua and Barbuda, ARB, Argentina, Armenia, \u2026 (+226 more), 1993-2023",
+      "Persons",
+      "Showing 50 of 236 countries by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2009",
+        "value": 4529047,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2009",
+        "value": 11893754,
+        "country": "Chad"
+      },
+      {
+        "year": "2009",
+        "value": 157511,
+        "country": "Channel Islands"
+      },
+      {
+        "year": "2009",
+        "value": 17009731,
+        "country": "Chile"
+      },
+      {
+        "year": "2009",
+        "value": 1331260000,
+        "country": "China"
+      },
+      {
+        "year": "2009",
+        "value": 44271541,
+        "country": "Colombia"
+      },
+      {
+        "year": "2012",
+        "value": 10071028,
+        "country": "Burundi"
+      },
+      {
+        "year": "2012",
+        "value": 511955,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2012",
+        "value": 14945085,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2012",
+        "value": 20809529,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2009",
+        "value": 48660459,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2009",
+        "value": 2077394,
+        "country": "Namibia"
+      },
+      {
+        "year": "2009",
+        "value": 10016,
+        "country": "Nauru"
+      },
+      {
+        "year": "2009",
+        "value": 27173035,
+        "country": "Nepal"
+      },
+      {
+        "year": "2006",
+        "value": 146405973,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2006",
+        "value": 270002,
+        "country": "Barbados"
+      },
+      {
+        "year": "2006",
+        "value": 9604924,
+        "country": "Belarus"
+      },
+      {
+        "year": "2006",
+        "value": 10547958,
+        "country": "Belgium"
+      },
+      {
+        "year": "2019",
+        "value": 4944703,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2019",
+        "value": 16685223,
+        "country": "Chad"
+      },
+      {
+        "year": "2019",
+        "value": 165639,
+        "country": "Channel Islands"
+      },
+      {
+        "year": "2019",
+        "value": 19197744,
+        "country": "Chile"
+      },
+      {
+        "year": "2019",
+        "value": 1407745000,
+        "country": "China"
+      },
+      {
+        "year": "2019",
+        "value": 49907985,
+        "country": "Colombia"
+      },
+      {
+        "year": "1999",
+        "value": 111680,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "1999",
+        "value": 2930622,
+        "country": "Moldova"
+      },
+      {
+        "year": "1999",
+        "value": 32410,
+        "country": "Monaco"
+      },
+      {
+        "year": "1999",
+        "value": 2356813,
+        "country": "Mongolia"
+      },
+      {
+        "year": "1999",
+        "value": 606001,
+        "country": "Montenegro"
+      },
+      {
+        "year": "1999",
+        "value": 17734506,
+        "country": "Mozambique"
+      },
+      {
+        "year": "1999",
+        "value": 44787724,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1999",
+        "value": 1776368,
+        "country": "Namibia"
+      },
+      {
+        "year": "1999",
+        "value": 10187,
+        "country": "Nauru"
+      },
+      {
+        "year": "1999",
+        "value": 24125199,
+        "country": "Nepal"
+      },
+      {
+        "year": "2020",
+        "value": 12617036,
+        "country": "Burundi"
+      },
+      {
+        "year": "2020",
+        "value": 514679,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2020",
+        "value": 16725474,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2020",
+        "value": 26210558,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2020",
+        "value": 38028638,
+        "country": "Canada"
+      },
+      {
+        "year": "2020",
+        "value": 68684,
+        "country": "Cayman Islands"
+      },
+      {
+        "year": "2020",
+        "value": 5026628,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2020",
+        "value": 17224679,
+        "country": "Chad"
+      },
+      {
+        "year": "2020",
+        "value": 166235,
+        "country": "Channel Islands"
+      },
+      {
+        "year": "2020",
+        "value": 19370624,
+        "country": "Chile"
+      },
+      {
+        "year": "2020",
+        "value": 1411100000,
+        "country": "China"
+      },
+      {
+        "year": "2020",
+        "value": 50629997,
+        "country": "Colombia"
+      },
+      {
+        "year": "2010",
+        "value": 9376444,
+        "country": "Burundi"
+      },
+      {
+        "year": "2018",
+        "value": 11859446,
+        "country": "Burundi"
+      },
+      {
+        "year": "2018",
+        "value": 513415,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2018",
+        "value": 16274522,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2018",
+        "value": 24806383,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2011",
+        "value": 107698,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2011",
+        "value": 2860699,
+        "country": "Moldova"
+      },
+      {
+        "year": "2011",
+        "value": 33946,
+        "country": "Monaco"
+      },
+      {
+        "year": "2011",
+        "value": 2786317,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2011",
+        "value": 620345,
+        "country": "Montenegro"
+      },
+      {
+        "year": "2011",
+        "value": 23649039,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2011",
+        "value": 49419820,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2011",
+        "value": 2146325,
+        "country": "Namibia"
+      },
+      {
+        "year": "2011",
+        "value": 10098,
+        "country": "Nauru"
+      },
+      {
+        "year": "2011",
+        "value": 27464494,
+        "country": "Nepal"
+      },
+      {
+        "year": "2009",
+        "value": 3066000,
+        "country": "Armenia"
+      },
+      {
+        "year": "2009",
+        "value": 101604,
+        "country": "Aruba"
+      },
+      {
+        "year": "2009",
+        "value": 21691653,
+        "country": "Australia"
+      },
+      {
+        "year": "2009",
+        "value": 8343323,
+        "country": "Austria"
+      },
+      {
+        "year": "2009",
+        "value": 8947243,
+        "country": "Azerbaijan"
+      },
+      {
+        "year": "2018",
+        "value": 112664152,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2018",
+        "value": 50996,
+        "country": "Faroe Islands"
+      },
+      {
+        "year": "2018",
+        "value": 917180,
+        "country": "Fiji"
+      },
+      {
+        "year": "2018",
+        "value": 5515525,
+        "country": "Finland"
+      },
+      {
+        "year": "2018",
+        "value": 67158348,
+        "country": "France"
+      },
+      {
+        "year": "2018",
+        "value": 279815,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2018",
+        "value": 2212318,
+        "country": "Gabon"
+      },
+      {
+        "year": "2020",
+        "value": 110916,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2020",
+        "value": 2635130,
+        "country": "Moldova"
+      },
+      {
+        "year": "2020",
+        "value": 38050,
+        "country": "Monaco"
+      },
+      {
+        "year": "2020",
+        "value": 3327204,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2020",
+        "value": 626590,
+        "country": "Montenegro"
+      },
+      {
+        "year": "2020",
+        "value": 30783688,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2020",
+        "value": 53016522,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2020",
+        "value": 2728762,
+        "country": "Namibia"
+      },
+      {
+        "year": "2020",
+        "value": 11643,
+        "country": "Nauru"
+      },
+      {
+        "year": "2020",
+        "value": 28966574,
+        "country": "Nepal"
+      },
+      {
+        "year": "2006",
+        "value": 3127100,
+        "country": "Armenia"
+      },
+      {
+        "year": "2006",
+        "value": 99405,
+        "country": "Aruba"
+      },
+      {
+        "year": "2006",
+        "value": 20450966,
+        "country": "Australia"
+      },
+      {
+        "year": "2006",
+        "value": 8268641,
+        "country": "Austria"
+      },
+      {
+        "year": "2006",
+        "value": 8484550,
+        "country": "Azerbaijan"
+      },
+      {
+        "year": "2006",
+        "value": 348375,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2006",
+        "value": 960424,
+        "country": "Bahrain"
+      },
+      {
+        "year": "2009",
+        "value": 8947646,
+        "country": "Burundi"
+      },
+      {
+        "year": "2009",
+        "value": 506141,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2009",
+        "value": 14276810,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2009",
+        "value": 19113974,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2009",
+        "value": 33630069,
+        "country": "Canada"
+      },
+      {
+        "year": "2009",
+        "value": 52618,
+        "country": "Cayman Islands"
+      },
+      {
+        "year": "2017",
+        "value": 82657002,
+        "country": "Germany"
+      },
+      {
+        "year": "2017",
+        "value": 30008354,
+        "country": "Ghana"
+      },
+      {
+        "year": "2017",
+        "value": 34245,
+        "country": "Gibraltar"
+      },
+      {
+        "year": "2017",
+        "value": 10754679,
+        "country": "Greece"
+      },
+      {
+        "year": "2017",
+        "value": 56172,
+        "country": "Greenland"
+      },
+      {
+        "year": "2017",
+        "value": 115438,
+        "country": "Grenada"
+      },
+      {
+        "year": "2017",
+        "value": 163490,
+        "country": "Guam"
+      },
+      {
+        "year": "2017",
+        "value": 16567357,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2020",
+        "value": 2961500,
+        "country": "Armenia"
+      },
+      {
+        "year": "2020",
+        "value": 108587,
+        "country": "Aruba"
+      },
+      {
+        "year": "2020",
+        "value": 25649248,
+        "country": "Australia"
+      },
+      {
+        "year": "2020",
+        "value": 8916864,
+        "country": "Austria"
+      },
+      {
+        "year": "2020",
+        "value": 10093121,
+        "country": "Azerbaijan"
+      },
+      {
+        "year": "2020",
+        "value": 395863,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2020",
+        "value": 1472204,
+        "country": "Bahrain"
+      },
+      {
+        "year": "2020",
+        "value": 166298024,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2020",
+        "value": 281698,
+        "country": "Barbados"
+      },
+      {
+        "year": "2020",
+        "value": 9379952,
+        "country": "Belarus"
+      },
+      {
+        "year": "2020",
+        "value": 11538604,
+        "country": "Belgium"
+      },
+      {
+        "year": "2004",
+        "value": 19840313,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2004",
+        "value": 47068772,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2004",
+        "value": 1942082,
+        "country": "Namibia"
+      },
+      {
+        "year": "2004",
+        "value": 10060,
+        "country": "Nauru"
+      },
+      {
+        "year": "2004",
+        "value": 26016656,
+        "country": "Nepal"
+      },
+      {
+        "year": "2003",
+        "value": 7043154,
+        "country": "Burundi"
+      },
+      {
+        "year": "2003",
+        "value": 473383,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2003",
+        "value": 13050968,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2003",
+        "value": 16160340,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2003",
+        "value": 31642461,
+        "country": "Canada"
+      },
+      {
+        "year": "2003",
+        "value": 43934,
+        "country": "Cayman Islands"
+      },
+      {
+        "year": "2003",
+        "value": 4103086,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2003",
+        "value": 9487833,
+        "country": "Chad"
+      },
+      {
+        "year": "2003",
+        "value": 150960,
+        "country": "Channel Islands"
+      },
+      {
+        "year": "2003",
+        "value": 16024752,
+        "country": "Chile"
+      },
+      {
+        "year": "2003",
+        "value": 1288400000,
+        "country": "China"
+      },
+      {
+        "year": "2003",
+        "value": 40937429,
+        "country": "Colombia"
+      },
+      {
+        "year": "2008",
+        "value": 18574056,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2008",
+        "value": 33247298,
+        "country": "Canada"
+      },
+      {
+        "year": "2008",
+        "value": 51151,
+        "country": "Cayman Islands"
+      },
+      {
+        "year": "2008",
+        "value": 4558984,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2008",
+        "value": 11476296,
+        "country": "Chad"
+      },
+      {
+        "year": "2008",
+        "value": 156408,
+        "country": "Channel Islands"
+      },
+      {
+        "year": "2008",
+        "value": 16838988,
+        "country": "Chile"
+      },
+      {
+        "year": "2008",
+        "value": 1324655000,
+        "country": "China"
+      },
+      {
+        "year": "2008",
+        "value": 43758808,
+        "country": "Colombia"
+      },
+      {
+        "year": "2009",
+        "value": 81902307,
+        "country": "Germany"
+      },
+      {
+        "year": "2009",
+        "value": 24862664,
+        "country": "Ghana"
+      },
+      {
+        "year": "2009",
+        "value": 30823,
+        "country": "Gibraltar"
+      },
+      {
+        "year": "2009",
+        "value": 11107017,
+        "country": "Greece"
+      },
+      {
+        "year": "2009",
+        "value": 56323,
+        "country": "Greenland"
+      },
+      {
+        "year": "2009",
+        "value": 111254,
+        "country": "Grenada"
+      },
+      {
+        "year": "2009",
+        "value": 166173,
+        "country": "Guam"
+      },
+      {
+        "year": "2009",
+        "value": 14215611,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2007",
+        "value": 496190,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2007",
+        "value": 13841770,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2007",
+        "value": 18049896,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2007",
+        "value": 32888886,
+        "country": "Canada"
+      },
+      {
+        "year": "2007",
+        "value": 49687,
+        "country": "Cayman Islands"
+      },
+      {
+        "year": "2007",
+        "value": 4462770,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2007",
+        "value": 11081660,
+        "country": "Chad"
+      },
+      {
+        "year": "2007",
+        "value": 155309,
+        "country": "Channel Islands"
+      },
+      {
+        "year": "2007",
+        "value": 16671581,
+        "country": "Chile"
+      },
+      {
+        "year": "2007",
+        "value": 1317885000,
+        "country": "China"
+      },
+      {
+        "year": "2007",
+        "value": 43235374,
+        "country": "Colombia"
+      },
+      {
+        "year": "2007",
+        "value": 615875,
+        "country": "Montenegro"
+      },
+      {
+        "year": "2007",
+        "value": 21287635,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2007",
+        "value": 48125043,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2007",
+        "value": 2018600,
+        "country": "Namibia"
+      },
+      {
+        "year": "2007",
+        "value": 10020,
+        "country": "Nauru"
+      },
+      {
+        "year": "2007",
+        "value": 26788492,
+        "country": "Nepal"
+      },
+      {
+        "year": "2001",
+        "value": 136805810,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2001",
+        "value": 262425,
+        "country": "Barbados"
+      },
+      {
+        "year": "2001",
+        "value": 9928549,
+        "country": "Belarus"
+      },
+      {
+        "year": "2001",
+        "value": 10286570,
+        "country": "Belgium"
+      },
+      {
+        "year": "2014",
+        "value": 108396,
+        "country": "Micronesia, Fed. Sts."
+      },
+      {
+        "year": "2014",
+        "value": 2857815,
+        "country": "Moldova"
+      },
+      {
+        "year": "2014",
+        "value": 36128,
+        "country": "Monaco"
+      },
+      {
+        "year": "2014",
+        "value": 2963113,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2003",
+        "value": 3182500,
+        "country": "Armenia"
+      },
+      {
+        "year": "2003",
+        "value": 93128,
+        "country": "Aruba"
+      },
+      {
+        "year": "2003",
+        "value": 19720737,
+        "country": "Australia"
+      },
+      {
+        "year": "2003",
+        "value": 8121423,
+        "country": "Austria"
+      },
+      {
+        "year": "2003",
+        "value": 8234100,
+        "country": "Azerbaijan"
+      },
+      {
+        "year": "2003",
+        "value": 335618,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2003",
+        "value": 764517,
+        "country": "Bahrain"
+      },
+      {
+        "year": "2003",
+        "value": 140970351,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2003",
+        "value": 265776,
+        "country": "Barbados"
+      },
+      {
+        "year": "2010",
+        "value": 5363352,
+        "country": "Finland"
+      },
+      {
+        "year": "2010",
+        "value": 65026211,
+        "country": "France"
+      },
+      {
+        "year": "2010",
+        "value": 270580,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2010",
+        "value": 1719879,
+        "country": "Gabon"
+      },
+      {
+        "year": "2010",
+        "value": 1926630,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2010",
+        "value": 3786695,
+        "country": "Georgia"
+      },
+      {
+        "year": "2010",
+        "value": 81776930,
+        "country": "Germany"
+      },
+      {
+        "year": "2010",
+        "value": 25474995,
+        "country": "Ghana"
+      },
+      {
+        "year": "2010",
+        "value": 31248,
+        "country": "Gibraltar"
+      },
+      {
+        "year": "2010",
+        "value": 11121341,
+        "country": "Greece"
+      },
+      {
+        "year": "2010",
+        "value": 56534,
+        "country": "Greenland"
+      },
+      {
+        "year": "2010",
+        "value": 111586,
+        "country": "Grenada"
+      },
+      {
+        "year": "2010",
+        "value": 166522,
+        "country": "Guam"
+      },
+      {
+        "year": "2015",
+        "value": 27823629,
+        "country": "Nepal"
+      },
+      {
+        "year": "2011",
+        "value": 22340024,
+        "country": "Australia"
+      },
+      {
+        "year": "2011",
+        "value": 8391643,
+        "country": "Austria"
+      },
+      {
+        "year": "2011",
+        "value": 9173082,
+        "country": "Azerbaijan"
+      },
+      {
+        "year": "2011",
+        "value": 371729,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2011",
+        "value": 1195020,
+        "country": "Bahrain"
+      },
+      {
+        "year": "2011",
+        "value": 153591076,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2011",
+        "value": 276139,
+        "country": "Barbados"
+      },
+      {
+        "year": "2011",
+        "value": 9461643,
+        "country": "Belarus"
+      },
+      {
+        "year": "2011",
+        "value": 11038264,
+        "country": "Belgium"
+      },
+      {
+        "year": "2023",
+        "value": 128691692,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2023",
+        "value": 54414,
+        "country": "Faroe Islands"
+      },
+      {
+        "year": "2023",
+        "value": 924145,
+        "country": "Fiji"
+      },
+      {
+        "year": "2023",
+        "value": 5583911,
+        "country": "Finland"
+      },
+      {
+        "year": "2023",
+        "value": 68372286,
+        "country": "France"
+      },
+      {
+        "year": "2023",
+        "value": 281118,
+        "country": "French Polynesia"
+      },
+      {
+        "year": "2023",
+        "value": 2484789,
+        "country": "Gabon"
+      },
+      {
+        "year": "2023",
+        "value": 2697845,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2023",
+        "value": 3715483,
+        "country": "Georgia"
+      },
+      {
+        "year": "2023",
+        "value": 83287273,
+        "country": "Germany"
+      },
+      {
+        "year": "2023",
+        "value": 33787914,
+        "country": "Ghana"
+      },
+      {
+        "year": "2023",
+        "value": 38471,
+        "country": "Gibraltar"
+      },
+      {
+        "year": "2023",
+        "value": 10407351,
+        "country": "Greece"
+      },
+      {
+        "year": "2023",
+        "value": 56865,
+        "country": "Greenland"
+      },
+      {
+        "year": "2023",
+        "value": 117081,
+        "country": "Grenada"
+      },
+      {
+        "year": "2023",
+        "value": 166506,
+        "country": "Guam"
+      },
+      {
+        "year": "2023",
+        "value": 18124838,
+        "country": "Guatemala"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          10016.0,
+          1411100000.0
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Persons",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.0f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

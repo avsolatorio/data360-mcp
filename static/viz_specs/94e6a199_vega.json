@@ -1,0 +1,763 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "WB_WDI_SE_PRM_ENRR | WB_WDI_SE_SEC_ENRR | WB_WDI_SE_TER_ENRR"
+    ],
+    "subtitle": [
+      "Mexico, 2005-2020"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2005",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 108.534042
+      },
+      {
+        "year": "2006",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 108.129272
+      },
+      {
+        "year": "2007",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 108.72686
+      },
+      {
+        "year": "2008",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 109.446381
+      },
+      {
+        "year": "2009",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 110.722198
+      },
+      {
+        "year": "2010",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 110.995216
+      },
+      {
+        "year": "2011",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 111.058861
+      },
+      {
+        "year": "2012",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 111.073517
+      },
+      {
+        "year": "2013",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 110.109268
+      },
+      {
+        "year": "2014",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 108.573143
+      },
+      {
+        "year": "2015",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 106.963432
+      },
+      {
+        "year": "2016",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 106.39122
+      },
+      {
+        "year": "2017",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 105.797607
+      },
+      {
+        "year": "2018",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 105.188164
+      },
+      {
+        "year": "2019",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 105.095039
+      },
+      {
+        "year": "2020",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_PRM_ENRR",
+        "value": 104.517731
+      },
+      {
+        "year": "2005",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 80.630539
+      },
+      {
+        "year": "2006",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 82.701393
+      },
+      {
+        "year": "2007",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 84.088707
+      },
+      {
+        "year": "2008",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 86.076309
+      },
+      {
+        "year": "2009",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 85.942322
+      },
+      {
+        "year": "2010",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 87.272926
+      },
+      {
+        "year": "2011",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 88.380089
+      },
+      {
+        "year": "2012",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 90.693619
+      },
+      {
+        "year": "2013",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 93.262306
+      },
+      {
+        "year": "2014",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 97.319687
+      },
+      {
+        "year": "2015",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 100.982269
+      },
+      {
+        "year": "2016",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 102.871368
+      },
+      {
+        "year": "2017",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 105.110184
+      },
+      {
+        "year": "2018",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 105.964653
+      },
+      {
+        "year": "2019",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 105.51561
+      },
+      {
+        "year": "2020",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_SEC_ENRR",
+        "value": 102.581543
+      },
+      {
+        "year": "2005",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 24.130989
+      },
+      {
+        "year": "2006",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 24.56897
+      },
+      {
+        "year": "2007",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 25.14743
+      },
+      {
+        "year": "2008",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 25.77894
+      },
+      {
+        "year": "2009",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 26.21059
+      },
+      {
+        "year": "2010",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 27.167021
+      },
+      {
+        "year": "2011",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 28.03616
+      },
+      {
+        "year": "2012",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 29.349649
+      },
+      {
+        "year": "2013",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 30.33016
+      },
+      {
+        "year": "2014",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 31.20529
+      },
+      {
+        "year": "2015",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 31.971861
+      },
+      {
+        "year": "2016",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 38.589771
+      },
+      {
+        "year": "2017",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 40.339069
+      },
+      {
+        "year": "2018",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 41.638279
+      },
+      {
+        "year": "2019",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 43.04414
+      },
+      {
+        "year": "2020",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SE_TER_ENRR",
+        "value": 45.165451
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "WB_WDI_SE_PRM_ENRR",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "WB_WDI_SE_PRM_ENRR"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "WB_WDI_SE_PRM_ENRR",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Mexico"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "WB_WDI_SE_SEC_ENRR",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "WB_WDI_SE_SEC_ENRR"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "WB_WDI_SE_SEC_ENRR",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Mexico"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "WB_WDI_SE_TER_ENRR",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "WB_WDI_SE_TER_ENRR"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "WB_WDI_SE_TER_ENRR",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Mexico"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "columns": 1,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

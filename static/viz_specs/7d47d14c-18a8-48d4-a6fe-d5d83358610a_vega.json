@@ -1,0 +1,273 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Individuals using the Internet (% of population)"
+    ],
+    "subtitle": [
+      "2018",
+      "Percentage of population"
+    ]
+  },
+  "width": 800,
+  "height": 450,
+  "data": {
+    "url": "https://unpkg.com/world-atlas@2.0.2/countries-110m.json",
+    "format": {
+      "type": "topojson",
+      "feature": "countries"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "year": "2018",
+              "value": 71.042761,
+              "country": "Turkiye"
+            },
+            {
+              "year": "2018",
+              "value": 62.553155,
+              "country": "Ukraine"
+            },
+            {
+              "year": "2018",
+              "value": 90.692009,
+              "country": "United Kingdom"
+            },
+            {
+              "year": "2018",
+              "value": 55.200001,
+              "country": "Uzbekistan"
+            },
+            {
+              "year": "2018",
+              "value": 72.542397,
+              "country": "Moldova"
+            },
+            {
+              "year": "2018",
+              "value": 82.043187,
+              "country": "France"
+            },
+            {
+              "year": "2018",
+              "value": 68.245052,
+              "country": "Armenia"
+            },
+            {
+              "year": "2018",
+              "value": 79.799995,
+              "country": "Azerbaijan"
+            },
+            {
+              "year": "2018",
+              "value": 86.107236,
+              "country": "Spain"
+            },
+            {
+              "year": "2018",
+              "value": 89.246963,
+              "country": "Sweden"
+            },
+            {
+              "year": "2018",
+              "value": 62.717908,
+              "country": "Georgia"
+            },
+            {
+              "year": "2018",
+              "value": 87.037112,
+              "country": "Germany"
+            },
+            {
+              "year": "2018",
+              "value": 77.541735,
+              "country": "Poland"
+            },
+            {
+              "year": "2018",
+              "value": 70.681278,
+              "country": "Romania"
+            },
+            {
+              "year": "2018",
+              "value": 80.864722,
+              "country": "Russian Federation"
+            },
+            {
+              "year": "2018",
+              "value": 74.387183,
+              "country": "Italy"
+            },
+            {
+              "year": "2018",
+              "value": 78.903919,
+              "country": "Kazakhstan"
+            },
+            {
+              "year": "2018",
+              "value": 91.891892,
+              "country": "Netherlands"
+            },
+            {
+              "year": "2018",
+              "value": 79.129887,
+              "country": "Belarus"
+            },
+            {
+              "year": "2018",
+              "value": 88.647343,
+              "country": "Belgium"
+            }
+          ]
+        },
+        "key": "country",
+        "fields": [
+          "year",
+          "value",
+          "country"
+        ]
+      }
+    }
+  ],
+  "projection": {
+    "type": "equalEarth"
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "fill": "#eee",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      },
+      "transform": [
+        {
+          "filter": "isValid(datum.value)"
+        }
+      ],
+      "encoding": {
+        "color": {
+          "field": "value",
+          "type": "quantitative",
+          "scale": {
+            "scheme": "blues"
+          },
+          "legend": {
+            "title": "Percentage of population",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -40,7 +40,11 @@ def get_liveness_body() -> dict[str, Any]:
 
 
 def _static_viz_specs_dir() -> Path:
-    return Path(os.getcwd()) / "static" / "viz_specs"
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return Path(os.getcwd()) / "static" / "viz_specs"
+    server_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+    return Path(project_root) / "static" / "viz_specs"
 
 
 async def _check_data360_api(timeout: float) -> dict[str, Any]:

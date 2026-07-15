@@ -1,0 +1,1826 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Government Effectiveness in South Asia",
+    "subtitle": [
+      "2015-2024"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "value": -0.654701,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": 0.364918,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": 0.396848,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": 0.089837,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": -0.232125,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": -1.163374,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": -0.533769,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": 0.440651,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": 0.376122,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": -0.037053,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": -0.06644,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": -0.981872,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": -0.573203,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": 0.483263,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": 0.352782,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": -0.069895,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": -0.309564,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": -0.927737,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": -0.619394,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": 0.538477,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": 0.50153,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": -0.097567,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": -0.308319,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": -0.914399,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": -0.597058,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": 0.484639,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": 0.505486,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": -0.071331,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": 0.007041,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": -1.111676,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": -0.72137,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": 0.483744,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": 0.349289,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": -0.113436,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": -0.098305,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": -1.026386,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": -0.563899,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": 0.596382,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": 0.240014,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": -0.23534,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": 0.147102,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": -0.946078,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": -0.62345,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": 0.534799,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": 0.339253,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": -0.503783,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": -0.221235,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": -0.954516,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2023",
+        "value": -0.557453,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2023",
+        "value": 0.535303,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2023",
+        "value": 0.422603,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2023",
+        "value": -0.284555,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2023",
+        "value": -0.220345,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2023",
+        "value": -0.844048,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": -0.618975,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": 0.580836,
+        "country": "Bhutan",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": 0.404605,
+        "country": "India",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": -0.274522,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": -0.221287,
+        "country": "Maldives",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": -0.88453,
+        "country": "Nepal",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": 0.226733,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2015",
+        "value": 0.244285,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2015",
+        "value": 0.21611,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2015",
+        "value": 0.226733,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2015",
+        "value": 0.339539,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2015",
+        "value": 0.244285,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2016",
+        "value": 0.226733,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2016",
+        "value": 0.244285,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2016",
+        "value": 0.21611,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2016",
+        "value": 0.226733,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2016",
+        "value": 0.373302,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2016",
+        "value": 0.244285,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2017",
+        "value": 0.226733,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2017",
+        "value": 0.244285,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2017",
+        "value": 0.21611,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2017",
+        "value": 0.226733,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2017",
+        "value": 0.373302,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2017",
+        "value": 0.244285,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2018",
+        "value": 0.226733,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2018",
+        "value": 0.244285,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2018",
+        "value": 0.226068,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2018",
+        "value": 0.226733,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2018",
+        "value": 0.373302,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2018",
+        "value": 0.244285,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2019",
+        "value": 0.226733,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2019",
+        "value": 0.255996,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2019",
+        "value": 0.226,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2019",
+        "value": 0.226733,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2019",
+        "value": 0.373302,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2019",
+        "value": 0.244285,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2020",
+        "value": 0.226733,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2020",
+        "value": 0.259728,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2020",
+        "value": 0.226,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2020",
+        "value": 0.241317,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2020",
+        "value": 0.373302,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2020",
+        "value": 0.244285,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2021",
+        "value": 0.226733,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2021",
+        "value": 0.247522,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2021",
+        "value": 0.226,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2021",
+        "value": 0.24008,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2021",
+        "value": 0.373302,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2021",
+        "value": 0.244285,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2022",
+        "value": 0.217912,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2022",
+        "value": 0.253899,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2022",
+        "value": 0.217261,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2022",
+        "value": 0.219259,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2022",
+        "value": 0.337432,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2022",
+        "value": 0.233354,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2023",
+        "value": 0.216856,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2023",
+        "value": 0.253899,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2023",
+        "value": 0.216214,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2023",
+        "value": 0.227608,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2023",
+        "value": 0.337432,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2023",
+        "value": 0.232058,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2024",
+        "value": 0.216856,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2024",
+        "value": 0.252232,
+        "country": "Bhutan",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2024",
+        "value": 0.216273,
+        "country": "India",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2024",
+        "value": 0.217912,
+        "country": "Sri Lanka",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2024",
+        "value": 0.337432,
+        "country": "Maldives",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2024",
+        "value": 0.232058,
+        "country": "Nepal",
+        "comp_breakdown_1": "se"
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "Bangladesh",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Bangladesh"
+              }
+            },
+            {
+              "pivot": "comp_breakdown_1",
+              "value": "value",
+              "groupby": [
+                "year",
+                "country"
+              ]
+            },
+            {
+              "calculate": "datum.est - 1.645 * datum.se",
+              "as": "lower"
+            },
+            {
+              "calculate": "datum.est + 1.645 * datum.se",
+              "as": "upper"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "opacity": 0.2,
+            "color": "#34A7F2"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "lower",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "y2": {
+              "field": "upper"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Bangladesh"
+              }
+            },
+            {
+              "filter": "datum.comp_breakdown_1 == 'est'"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": {
+              "filled": true,
+              "size": 56
+            }
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "value",
+              "type": "quantitative",
+              "axis": {
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold",
+                "tickCount": 5,
+                "title": null,
+                "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+              },
+              "scale": {
+                "zero": false
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "title": "Year",
+                "type": "temporal",
+                "timeUnit": "utcyear",
+                "format": "%Y"
+              },
+              {
+                "field": "value",
+                "title": "Bangladesh",
+                "format": ".2f",
+                "type": "quantitative"
+              },
+              {
+                "field": "country",
+                "title": "Economy",
+                "type": "nominal"
+              },
+              {
+                "field": "comp_breakdown_1",
+                "title": "Dimension 1",
+                "type": "nominal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "Bhutan",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Bhutan"
+              }
+            },
+            {
+              "pivot": "comp_breakdown_1",
+              "value": "value",
+              "groupby": [
+                "year",
+                "country"
+              ]
+            },
+            {
+              "calculate": "datum.est - 1.645 * datum.se",
+              "as": "lower"
+            },
+            {
+              "calculate": "datum.est + 1.645 * datum.se",
+              "as": "upper"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "opacity": 0.2,
+            "color": "#34A7F2"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "lower",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "y2": {
+              "field": "upper"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Bhutan"
+              }
+            },
+            {
+              "filter": "datum.comp_breakdown_1 == 'est'"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": {
+              "filled": true,
+              "size": 56
+            }
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "value",
+              "type": "quantitative",
+              "axis": {
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold",
+                "tickCount": 5,
+                "title": null,
+                "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+              },
+              "scale": {
+                "zero": false
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "title": "Year",
+                "type": "temporal",
+                "timeUnit": "utcyear",
+                "format": "%Y"
+              },
+              {
+                "field": "value",
+                "title": "Bhutan",
+                "format": ".2f",
+                "type": "quantitative"
+              },
+              {
+                "field": "country",
+                "title": "Economy",
+                "type": "nominal"
+              },
+              {
+                "field": "comp_breakdown_1",
+                "title": "Dimension 1",
+                "type": "nominal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "India",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "India"
+              }
+            },
+            {
+              "pivot": "comp_breakdown_1",
+              "value": "value",
+              "groupby": [
+                "year",
+                "country"
+              ]
+            },
+            {
+              "calculate": "datum.est - 1.645 * datum.se",
+              "as": "lower"
+            },
+            {
+              "calculate": "datum.est + 1.645 * datum.se",
+              "as": "upper"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "opacity": 0.2,
+            "color": "#34A7F2"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "lower",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "y2": {
+              "field": "upper"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "India"
+              }
+            },
+            {
+              "filter": "datum.comp_breakdown_1 == 'est'"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": {
+              "filled": true,
+              "size": 56
+            }
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "value",
+              "type": "quantitative",
+              "axis": {
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold",
+                "tickCount": 5,
+                "title": null,
+                "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+              },
+              "scale": {
+                "zero": false
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "title": "Year",
+                "type": "temporal",
+                "timeUnit": "utcyear",
+                "format": "%Y"
+              },
+              {
+                "field": "value",
+                "title": "India",
+                "format": ".2f",
+                "type": "quantitative"
+              },
+              {
+                "field": "country",
+                "title": "Economy",
+                "type": "nominal"
+              },
+              {
+                "field": "comp_breakdown_1",
+                "title": "Dimension 1",
+                "type": "nominal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "Maldives",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Maldives"
+              }
+            },
+            {
+              "pivot": "comp_breakdown_1",
+              "value": "value",
+              "groupby": [
+                "year",
+                "country"
+              ]
+            },
+            {
+              "calculate": "datum.est - 1.645 * datum.se",
+              "as": "lower"
+            },
+            {
+              "calculate": "datum.est + 1.645 * datum.se",
+              "as": "upper"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "opacity": 0.2,
+            "color": "#34A7F2"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "lower",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "y2": {
+              "field": "upper"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Maldives"
+              }
+            },
+            {
+              "filter": "datum.comp_breakdown_1 == 'est'"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": {
+              "filled": true,
+              "size": 56
+            }
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "value",
+              "type": "quantitative",
+              "axis": {
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold",
+                "tickCount": 5,
+                "title": null,
+                "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+              },
+              "scale": {
+                "zero": false
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "title": "Year",
+                "type": "temporal",
+                "timeUnit": "utcyear",
+                "format": "%Y"
+              },
+              {
+                "field": "value",
+                "title": "Maldives",
+                "format": ".2f",
+                "type": "quantitative"
+              },
+              {
+                "field": "country",
+                "title": "Economy",
+                "type": "nominal"
+              },
+              {
+                "field": "comp_breakdown_1",
+                "title": "Dimension 1",
+                "type": "nominal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "Nepal",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Nepal"
+              }
+            },
+            {
+              "pivot": "comp_breakdown_1",
+              "value": "value",
+              "groupby": [
+                "year",
+                "country"
+              ]
+            },
+            {
+              "calculate": "datum.est - 1.645 * datum.se",
+              "as": "lower"
+            },
+            {
+              "calculate": "datum.est + 1.645 * datum.se",
+              "as": "upper"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "opacity": 0.2,
+            "color": "#34A7F2"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "lower",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "y2": {
+              "field": "upper"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Nepal"
+              }
+            },
+            {
+              "filter": "datum.comp_breakdown_1 == 'est'"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": {
+              "filled": true,
+              "size": 56
+            }
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "value",
+              "type": "quantitative",
+              "axis": {
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold",
+                "tickCount": 5,
+                "title": null,
+                "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+              },
+              "scale": {
+                "zero": false
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "title": "Year",
+                "type": "temporal",
+                "timeUnit": "utcyear",
+                "format": "%Y"
+              },
+              {
+                "field": "value",
+                "title": "Nepal",
+                "format": ".1f",
+                "type": "quantitative"
+              },
+              {
+                "field": "country",
+                "title": "Economy",
+                "type": "nominal"
+              },
+              {
+                "field": "comp_breakdown_1",
+                "title": "Dimension 1",
+                "type": "nominal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "Sri Lanka",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Sri Lanka"
+              }
+            },
+            {
+              "pivot": "comp_breakdown_1",
+              "value": "value",
+              "groupby": [
+                "year",
+                "country"
+              ]
+            },
+            {
+              "calculate": "datum.est - 1.645 * datum.se",
+              "as": "lower"
+            },
+            {
+              "calculate": "datum.est + 1.645 * datum.se",
+              "as": "upper"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "opacity": 0.2,
+            "color": "#34A7F2"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "lower",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "y2": {
+              "field": "upper"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Sri Lanka"
+              }
+            },
+            {
+              "filter": "datum.comp_breakdown_1 == 'est'"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": {
+              "filled": true,
+              "size": 56
+            }
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "value",
+              "type": "quantitative",
+              "axis": {
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold",
+                "tickCount": 5,
+                "title": null,
+                "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+              },
+              "scale": {
+                "zero": false
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "title": "Year",
+                "type": "temporal",
+                "timeUnit": "utcyear",
+                "format": "%Y"
+              },
+              {
+                "field": "value",
+                "title": "Sri Lanka",
+                "format": ".2f",
+                "type": "quantitative"
+              },
+              {
+                "field": "country",
+                "title": "Economy",
+                "type": "nominal"
+              },
+              {
+                "field": "comp_breakdown_1",
+                "title": "Dimension 1",
+                "type": "nominal"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "columns": 2,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

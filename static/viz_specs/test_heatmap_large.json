@@ -1,0 +1,1663 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Performance Matrix over time",
+  "data": {
+    "values": [
+      {
+        "country": "Economy 00",
+        "year": "2018",
+        "value": 3.0
+      },
+      {
+        "country": "Economy 00",
+        "year": "2019",
+        "value": 4.0
+      },
+      {
+        "country": "Economy 00",
+        "year": "2020",
+        "value": 0.0
+      },
+      {
+        "country": "Economy 00",
+        "year": "2021",
+        "value": 1.0
+      },
+      {
+        "country": "Economy 00",
+        "year": "2022",
+        "value": 2.0
+      },
+      {
+        "country": "Economy 01",
+        "year": "2018",
+        "value": 4.0
+      },
+      {
+        "country": "Economy 01",
+        "year": "2019",
+        "value": 5.0
+      },
+      {
+        "country": "Economy 01",
+        "year": "2020",
+        "value": 1.0
+      },
+      {
+        "country": "Economy 01",
+        "year": "2021",
+        "value": 2.0
+      },
+      {
+        "country": "Economy 01",
+        "year": "2022",
+        "value": 3.0
+      },
+      {
+        "country": "Economy 02",
+        "year": "2018",
+        "value": 5.0
+      },
+      {
+        "country": "Economy 02",
+        "year": "2019",
+        "value": 6.0
+      },
+      {
+        "country": "Economy 02",
+        "year": "2020",
+        "value": 2.0
+      },
+      {
+        "country": "Economy 02",
+        "year": "2021",
+        "value": 3.0
+      },
+      {
+        "country": "Economy 02",
+        "year": "2022",
+        "value": 4.0
+      },
+      {
+        "country": "Economy 03",
+        "year": "2018",
+        "value": 6.0
+      },
+      {
+        "country": "Economy 03",
+        "year": "2019",
+        "value": 7.0
+      },
+      {
+        "country": "Economy 03",
+        "year": "2020",
+        "value": 3.0
+      },
+      {
+        "country": "Economy 03",
+        "year": "2021",
+        "value": 4.0
+      },
+      {
+        "country": "Economy 03",
+        "year": "2022",
+        "value": 5.0
+      },
+      {
+        "country": "Economy 04",
+        "year": "2018",
+        "value": 7.0
+      },
+      {
+        "country": "Economy 04",
+        "year": "2019",
+        "value": 8.0
+      },
+      {
+        "country": "Economy 04",
+        "year": "2020",
+        "value": 4.0
+      },
+      {
+        "country": "Economy 04",
+        "year": "2021",
+        "value": 5.0
+      },
+      {
+        "country": "Economy 04",
+        "year": "2022",
+        "value": 6.0
+      },
+      {
+        "country": "Economy 05",
+        "year": "2018",
+        "value": 8.0
+      },
+      {
+        "country": "Economy 05",
+        "year": "2019",
+        "value": 9.0
+      },
+      {
+        "country": "Economy 05",
+        "year": "2020",
+        "value": 5.0
+      },
+      {
+        "country": "Economy 05",
+        "year": "2021",
+        "value": 6.0
+      },
+      {
+        "country": "Economy 05",
+        "year": "2022",
+        "value": 7.0
+      },
+      {
+        "country": "Economy 06",
+        "year": "2018",
+        "value": 9.0
+      },
+      {
+        "country": "Economy 06",
+        "year": "2019",
+        "value": 10.0
+      },
+      {
+        "country": "Economy 06",
+        "year": "2020",
+        "value": 6.0
+      },
+      {
+        "country": "Economy 06",
+        "year": "2021",
+        "value": 7.0
+      },
+      {
+        "country": "Economy 06",
+        "year": "2022",
+        "value": 8.0
+      },
+      {
+        "country": "Economy 07",
+        "year": "2018",
+        "value": 10.0
+      },
+      {
+        "country": "Economy 07",
+        "year": "2019",
+        "value": 11.0
+      },
+      {
+        "country": "Economy 07",
+        "year": "2020",
+        "value": 7.0
+      },
+      {
+        "country": "Economy 07",
+        "year": "2021",
+        "value": 8.0
+      },
+      {
+        "country": "Economy 07",
+        "year": "2022",
+        "value": 9.0
+      },
+      {
+        "country": "Economy 08",
+        "year": "2018",
+        "value": 11.0
+      },
+      {
+        "country": "Economy 08",
+        "year": "2019",
+        "value": 12.0
+      },
+      {
+        "country": "Economy 08",
+        "year": "2020",
+        "value": 8.0
+      },
+      {
+        "country": "Economy 08",
+        "year": "2021",
+        "value": 9.0
+      },
+      {
+        "country": "Economy 08",
+        "year": "2022",
+        "value": 10.0
+      },
+      {
+        "country": "Economy 09",
+        "year": "2018",
+        "value": 12.0
+      },
+      {
+        "country": "Economy 09",
+        "year": "2019",
+        "value": 13.0
+      },
+      {
+        "country": "Economy 09",
+        "year": "2020",
+        "value": 9.0
+      },
+      {
+        "country": "Economy 09",
+        "year": "2021",
+        "value": 10.0
+      },
+      {
+        "country": "Economy 09",
+        "year": "2022",
+        "value": 11.0
+      },
+      {
+        "country": "Economy 10",
+        "year": "2018",
+        "value": 13.0
+      },
+      {
+        "country": "Economy 10",
+        "year": "2019",
+        "value": 14.0
+      },
+      {
+        "country": "Economy 10",
+        "year": "2020",
+        "value": 10.0
+      },
+      {
+        "country": "Economy 10",
+        "year": "2021",
+        "value": 11.0
+      },
+      {
+        "country": "Economy 10",
+        "year": "2022",
+        "value": 12.0
+      },
+      {
+        "country": "Economy 11",
+        "year": "2018",
+        "value": 14.0
+      },
+      {
+        "country": "Economy 11",
+        "year": "2019",
+        "value": 15.0
+      },
+      {
+        "country": "Economy 11",
+        "year": "2020",
+        "value": 11.0
+      },
+      {
+        "country": "Economy 11",
+        "year": "2021",
+        "value": 12.0
+      },
+      {
+        "country": "Economy 11",
+        "year": "2022",
+        "value": 13.0
+      },
+      {
+        "country": "Economy 12",
+        "year": "2018",
+        "value": 15.0
+      },
+      {
+        "country": "Economy 12",
+        "year": "2019",
+        "value": 16.0
+      },
+      {
+        "country": "Economy 12",
+        "year": "2020",
+        "value": 12.0
+      },
+      {
+        "country": "Economy 12",
+        "year": "2021",
+        "value": 13.0
+      },
+      {
+        "country": "Economy 12",
+        "year": "2022",
+        "value": 14.0
+      },
+      {
+        "country": "Economy 13",
+        "year": "2018",
+        "value": 16.0
+      },
+      {
+        "country": "Economy 13",
+        "year": "2019",
+        "value": 17.0
+      },
+      {
+        "country": "Economy 13",
+        "year": "2020",
+        "value": 13.0
+      },
+      {
+        "country": "Economy 13",
+        "year": "2021",
+        "value": 14.0
+      },
+      {
+        "country": "Economy 13",
+        "year": "2022",
+        "value": 15.0
+      },
+      {
+        "country": "Economy 14",
+        "year": "2018",
+        "value": 17.0
+      },
+      {
+        "country": "Economy 14",
+        "year": "2019",
+        "value": 18.0
+      },
+      {
+        "country": "Economy 14",
+        "year": "2020",
+        "value": 14.0
+      },
+      {
+        "country": "Economy 14",
+        "year": "2021",
+        "value": 15.0
+      },
+      {
+        "country": "Economy 14",
+        "year": "2022",
+        "value": 16.0
+      },
+      {
+        "country": "Economy 15",
+        "year": "2018",
+        "value": 18.0
+      },
+      {
+        "country": "Economy 15",
+        "year": "2019",
+        "value": 19.0
+      },
+      {
+        "country": "Economy 15",
+        "year": "2020",
+        "value": 15.0
+      },
+      {
+        "country": "Economy 15",
+        "year": "2021",
+        "value": 16.0
+      },
+      {
+        "country": "Economy 15",
+        "year": "2022",
+        "value": 17.0
+      },
+      {
+        "country": "Economy 16",
+        "year": "2018",
+        "value": 19.0
+      },
+      {
+        "country": "Economy 16",
+        "year": "2019",
+        "value": 20.0
+      },
+      {
+        "country": "Economy 16",
+        "year": "2020",
+        "value": 16.0
+      },
+      {
+        "country": "Economy 16",
+        "year": "2021",
+        "value": 17.0
+      },
+      {
+        "country": "Economy 16",
+        "year": "2022",
+        "value": 18.0
+      },
+      {
+        "country": "Economy 17",
+        "year": "2018",
+        "value": 20.0
+      },
+      {
+        "country": "Economy 17",
+        "year": "2019",
+        "value": 21.0
+      },
+      {
+        "country": "Economy 17",
+        "year": "2020",
+        "value": 17.0
+      },
+      {
+        "country": "Economy 17",
+        "year": "2021",
+        "value": 18.0
+      },
+      {
+        "country": "Economy 17",
+        "year": "2022",
+        "value": 19.0
+      },
+      {
+        "country": "Economy 18",
+        "year": "2018",
+        "value": 21.0
+      },
+      {
+        "country": "Economy 18",
+        "year": "2019",
+        "value": 22.0
+      },
+      {
+        "country": "Economy 18",
+        "year": "2020",
+        "value": 18.0
+      },
+      {
+        "country": "Economy 18",
+        "year": "2021",
+        "value": 19.0
+      },
+      {
+        "country": "Economy 18",
+        "year": "2022",
+        "value": 20.0
+      },
+      {
+        "country": "Economy 19",
+        "year": "2018",
+        "value": 22.0
+      },
+      {
+        "country": "Economy 19",
+        "year": "2019",
+        "value": 23.0
+      },
+      {
+        "country": "Economy 19",
+        "year": "2020",
+        "value": 19.0
+      },
+      {
+        "country": "Economy 19",
+        "year": "2021",
+        "value": 20.0
+      },
+      {
+        "country": "Economy 19",
+        "year": "2022",
+        "value": 21.0
+      },
+      {
+        "country": "Economy 20",
+        "year": "2018",
+        "value": 23.0
+      },
+      {
+        "country": "Economy 20",
+        "year": "2019",
+        "value": 24.0
+      },
+      {
+        "country": "Economy 20",
+        "year": "2020",
+        "value": 20.0
+      },
+      {
+        "country": "Economy 20",
+        "year": "2021",
+        "value": 21.0
+      },
+      {
+        "country": "Economy 20",
+        "year": "2022",
+        "value": 22.0
+      },
+      {
+        "country": "Economy 21",
+        "year": "2018",
+        "value": 24.0
+      },
+      {
+        "country": "Economy 21",
+        "year": "2019",
+        "value": 25.0
+      },
+      {
+        "country": "Economy 21",
+        "year": "2020",
+        "value": 21.0
+      },
+      {
+        "country": "Economy 21",
+        "year": "2021",
+        "value": 22.0
+      },
+      {
+        "country": "Economy 21",
+        "year": "2022",
+        "value": 23.0
+      },
+      {
+        "country": "Economy 22",
+        "year": "2018",
+        "value": 25.0
+      },
+      {
+        "country": "Economy 22",
+        "year": "2019",
+        "value": 26.0
+      },
+      {
+        "country": "Economy 22",
+        "year": "2020",
+        "value": 22.0
+      },
+      {
+        "country": "Economy 22",
+        "year": "2021",
+        "value": 23.0
+      },
+      {
+        "country": "Economy 22",
+        "year": "2022",
+        "value": 24.0
+      },
+      {
+        "country": "Economy 23",
+        "year": "2018",
+        "value": 26.0
+      },
+      {
+        "country": "Economy 23",
+        "year": "2019",
+        "value": 27.0
+      },
+      {
+        "country": "Economy 23",
+        "year": "2020",
+        "value": 23.0
+      },
+      {
+        "country": "Economy 23",
+        "year": "2021",
+        "value": 24.0
+      },
+      {
+        "country": "Economy 23",
+        "year": "2022",
+        "value": 25.0
+      },
+      {
+        "country": "Economy 24",
+        "year": "2018",
+        "value": 27.0
+      },
+      {
+        "country": "Economy 24",
+        "year": "2019",
+        "value": 28.0
+      },
+      {
+        "country": "Economy 24",
+        "year": "2020",
+        "value": 24.0
+      },
+      {
+        "country": "Economy 24",
+        "year": "2021",
+        "value": 25.0
+      },
+      {
+        "country": "Economy 24",
+        "year": "2022",
+        "value": 26.0
+      },
+      {
+        "country": "Economy 25",
+        "year": "2018",
+        "value": 28.0
+      },
+      {
+        "country": "Economy 25",
+        "year": "2019",
+        "value": 29.0
+      },
+      {
+        "country": "Economy 25",
+        "year": "2020",
+        "value": 25.0
+      },
+      {
+        "country": "Economy 25",
+        "year": "2021",
+        "value": 26.0
+      },
+      {
+        "country": "Economy 25",
+        "year": "2022",
+        "value": 27.0
+      },
+      {
+        "country": "Economy 26",
+        "year": "2018",
+        "value": 29.0
+      },
+      {
+        "country": "Economy 26",
+        "year": "2019",
+        "value": 30.0
+      },
+      {
+        "country": "Economy 26",
+        "year": "2020",
+        "value": 26.0
+      },
+      {
+        "country": "Economy 26",
+        "year": "2021",
+        "value": 27.0
+      },
+      {
+        "country": "Economy 26",
+        "year": "2022",
+        "value": 28.0
+      },
+      {
+        "country": "Economy 27",
+        "year": "2018",
+        "value": 30.0
+      },
+      {
+        "country": "Economy 27",
+        "year": "2019",
+        "value": 31.0
+      },
+      {
+        "country": "Economy 27",
+        "year": "2020",
+        "value": 27.0
+      },
+      {
+        "country": "Economy 27",
+        "year": "2021",
+        "value": 28.0
+      },
+      {
+        "country": "Economy 27",
+        "year": "2022",
+        "value": 29.0
+      },
+      {
+        "country": "Economy 28",
+        "year": "2018",
+        "value": 31.0
+      },
+      {
+        "country": "Economy 28",
+        "year": "2019",
+        "value": 32.0
+      },
+      {
+        "country": "Economy 28",
+        "year": "2020",
+        "value": 28.0
+      },
+      {
+        "country": "Economy 28",
+        "year": "2021",
+        "value": 29.0
+      },
+      {
+        "country": "Economy 28",
+        "year": "2022",
+        "value": 30.0
+      },
+      {
+        "country": "Economy 29",
+        "year": "2018",
+        "value": 32.0
+      },
+      {
+        "country": "Economy 29",
+        "year": "2019",
+        "value": 33.0
+      },
+      {
+        "country": "Economy 29",
+        "year": "2020",
+        "value": 29.0
+      },
+      {
+        "country": "Economy 29",
+        "year": "2021",
+        "value": 30.0
+      },
+      {
+        "country": "Economy 29",
+        "year": "2022",
+        "value": 31.0
+      },
+      {
+        "country": "Economy 30",
+        "year": "2018",
+        "value": 33.0
+      },
+      {
+        "country": "Economy 30",
+        "year": "2019",
+        "value": 34.0
+      },
+      {
+        "country": "Economy 30",
+        "year": "2020",
+        "value": 30.0
+      },
+      {
+        "country": "Economy 30",
+        "year": "2021",
+        "value": 31.0
+      },
+      {
+        "country": "Economy 30",
+        "year": "2022",
+        "value": 32.0
+      },
+      {
+        "country": "Economy 31",
+        "year": "2018",
+        "value": 34.0
+      },
+      {
+        "country": "Economy 31",
+        "year": "2019",
+        "value": 35.0
+      },
+      {
+        "country": "Economy 31",
+        "year": "2020",
+        "value": 31.0
+      },
+      {
+        "country": "Economy 31",
+        "year": "2021",
+        "value": 32.0
+      },
+      {
+        "country": "Economy 31",
+        "year": "2022",
+        "value": 33.0
+      },
+      {
+        "country": "Economy 32",
+        "year": "2018",
+        "value": 35.0
+      },
+      {
+        "country": "Economy 32",
+        "year": "2019",
+        "value": 36.0
+      },
+      {
+        "country": "Economy 32",
+        "year": "2020",
+        "value": 32.0
+      },
+      {
+        "country": "Economy 32",
+        "year": "2021",
+        "value": 33.0
+      },
+      {
+        "country": "Economy 32",
+        "year": "2022",
+        "value": 34.0
+      },
+      {
+        "country": "Economy 33",
+        "year": "2018",
+        "value": 36.0
+      },
+      {
+        "country": "Economy 33",
+        "year": "2019",
+        "value": 37.0
+      },
+      {
+        "country": "Economy 33",
+        "year": "2020",
+        "value": 33.0
+      },
+      {
+        "country": "Economy 33",
+        "year": "2021",
+        "value": 34.0
+      },
+      {
+        "country": "Economy 33",
+        "year": "2022",
+        "value": 35.0
+      },
+      {
+        "country": "Economy 34",
+        "year": "2018",
+        "value": 37.0
+      },
+      {
+        "country": "Economy 34",
+        "year": "2019",
+        "value": 38.0
+      },
+      {
+        "country": "Economy 34",
+        "year": "2020",
+        "value": 34.0
+      },
+      {
+        "country": "Economy 34",
+        "year": "2021",
+        "value": 35.0
+      },
+      {
+        "country": "Economy 34",
+        "year": "2022",
+        "value": 36.0
+      },
+      {
+        "country": "Economy 35",
+        "year": "2018",
+        "value": 38.0
+      },
+      {
+        "country": "Economy 35",
+        "year": "2019",
+        "value": 39.0
+      },
+      {
+        "country": "Economy 35",
+        "year": "2020",
+        "value": 35.0
+      },
+      {
+        "country": "Economy 35",
+        "year": "2021",
+        "value": 36.0
+      },
+      {
+        "country": "Economy 35",
+        "year": "2022",
+        "value": 37.0
+      },
+      {
+        "country": "Economy 36",
+        "year": "2018",
+        "value": 39.0
+      },
+      {
+        "country": "Economy 36",
+        "year": "2019",
+        "value": 40.0
+      },
+      {
+        "country": "Economy 36",
+        "year": "2020",
+        "value": 36.0
+      },
+      {
+        "country": "Economy 36",
+        "year": "2021",
+        "value": 37.0
+      },
+      {
+        "country": "Economy 36",
+        "year": "2022",
+        "value": 38.0
+      },
+      {
+        "country": "Economy 37",
+        "year": "2018",
+        "value": 40.0
+      },
+      {
+        "country": "Economy 37",
+        "year": "2019",
+        "value": 41.0
+      },
+      {
+        "country": "Economy 37",
+        "year": "2020",
+        "value": 37.0
+      },
+      {
+        "country": "Economy 37",
+        "year": "2021",
+        "value": 38.0
+      },
+      {
+        "country": "Economy 37",
+        "year": "2022",
+        "value": 39.0
+      },
+      {
+        "country": "Economy 38",
+        "year": "2018",
+        "value": 41.0
+      },
+      {
+        "country": "Economy 38",
+        "year": "2019",
+        "value": 42.0
+      },
+      {
+        "country": "Economy 38",
+        "year": "2020",
+        "value": 38.0
+      },
+      {
+        "country": "Economy 38",
+        "year": "2021",
+        "value": 39.0
+      },
+      {
+        "country": "Economy 38",
+        "year": "2022",
+        "value": 40.0
+      },
+      {
+        "country": "Economy 39",
+        "year": "2018",
+        "value": 42.0
+      },
+      {
+        "country": "Economy 39",
+        "year": "2019",
+        "value": 43.0
+      },
+      {
+        "country": "Economy 39",
+        "year": "2020",
+        "value": 39.0
+      },
+      {
+        "country": "Economy 39",
+        "year": "2021",
+        "value": 40.0
+      },
+      {
+        "country": "Economy 39",
+        "year": "2022",
+        "value": 41.0
+      },
+      {
+        "country": "Economy 40",
+        "year": "2018",
+        "value": 43.0
+      },
+      {
+        "country": "Economy 40",
+        "year": "2019",
+        "value": 44.0
+      },
+      {
+        "country": "Economy 40",
+        "year": "2020",
+        "value": 40.0
+      },
+      {
+        "country": "Economy 40",
+        "year": "2021",
+        "value": 41.0
+      },
+      {
+        "country": "Economy 40",
+        "year": "2022",
+        "value": 42.0
+      },
+      {
+        "country": "Economy 41",
+        "year": "2018",
+        "value": 44.0
+      },
+      {
+        "country": "Economy 41",
+        "year": "2019",
+        "value": 45.0
+      },
+      {
+        "country": "Economy 41",
+        "year": "2020",
+        "value": 41.0
+      },
+      {
+        "country": "Economy 41",
+        "year": "2021",
+        "value": 42.0
+      },
+      {
+        "country": "Economy 41",
+        "year": "2022",
+        "value": 43.0
+      },
+      {
+        "country": "Economy 42",
+        "year": "2018",
+        "value": 45.0
+      },
+      {
+        "country": "Economy 42",
+        "year": "2019",
+        "value": 46.0
+      },
+      {
+        "country": "Economy 42",
+        "year": "2020",
+        "value": 42.0
+      },
+      {
+        "country": "Economy 42",
+        "year": "2021",
+        "value": 43.0
+      },
+      {
+        "country": "Economy 42",
+        "year": "2022",
+        "value": 44.0
+      },
+      {
+        "country": "Economy 43",
+        "year": "2018",
+        "value": 46.0
+      },
+      {
+        "country": "Economy 43",
+        "year": "2019",
+        "value": 47.0
+      },
+      {
+        "country": "Economy 43",
+        "year": "2020",
+        "value": 43.0
+      },
+      {
+        "country": "Economy 43",
+        "year": "2021",
+        "value": 44.0
+      },
+      {
+        "country": "Economy 43",
+        "year": "2022",
+        "value": 45.0
+      },
+      {
+        "country": "Economy 44",
+        "year": "2018",
+        "value": 47.0
+      },
+      {
+        "country": "Economy 44",
+        "year": "2019",
+        "value": 48.0
+      },
+      {
+        "country": "Economy 44",
+        "year": "2020",
+        "value": 44.0
+      },
+      {
+        "country": "Economy 44",
+        "year": "2021",
+        "value": 45.0
+      },
+      {
+        "country": "Economy 44",
+        "year": "2022",
+        "value": 46.0
+      },
+      {
+        "country": "Economy 45",
+        "year": "2018",
+        "value": 48.0
+      },
+      {
+        "country": "Economy 45",
+        "year": "2019",
+        "value": 49.0
+      },
+      {
+        "country": "Economy 45",
+        "year": "2020",
+        "value": 45.0
+      },
+      {
+        "country": "Economy 45",
+        "year": "2021",
+        "value": 46.0
+      },
+      {
+        "country": "Economy 45",
+        "year": "2022",
+        "value": 47.0
+      },
+      {
+        "country": "Economy 46",
+        "year": "2018",
+        "value": 49.0
+      },
+      {
+        "country": "Economy 46",
+        "year": "2019",
+        "value": 50.0
+      },
+      {
+        "country": "Economy 46",
+        "year": "2020",
+        "value": 46.0
+      },
+      {
+        "country": "Economy 46",
+        "year": "2021",
+        "value": 47.0
+      },
+      {
+        "country": "Economy 46",
+        "year": "2022",
+        "value": 48.0
+      },
+      {
+        "country": "Economy 47",
+        "year": "2018",
+        "value": 50.0
+      },
+      {
+        "country": "Economy 47",
+        "year": "2019",
+        "value": 51.0
+      },
+      {
+        "country": "Economy 47",
+        "year": "2020",
+        "value": 47.0
+      },
+      {
+        "country": "Economy 47",
+        "year": "2021",
+        "value": 48.0
+      },
+      {
+        "country": "Economy 47",
+        "year": "2022",
+        "value": 49.0
+      },
+      {
+        "country": "Economy 48",
+        "year": "2018",
+        "value": 51.0
+      },
+      {
+        "country": "Economy 48",
+        "year": "2019",
+        "value": 52.0
+      },
+      {
+        "country": "Economy 48",
+        "year": "2020",
+        "value": 48.0
+      },
+      {
+        "country": "Economy 48",
+        "year": "2021",
+        "value": 49.0
+      },
+      {
+        "country": "Economy 48",
+        "year": "2022",
+        "value": 50.0
+      },
+      {
+        "country": "Economy 49",
+        "year": "2018",
+        "value": 52.0
+      },
+      {
+        "country": "Economy 49",
+        "year": "2019",
+        "value": 53.0
+      },
+      {
+        "country": "Economy 49",
+        "year": "2020",
+        "value": 49.0
+      },
+      {
+        "country": "Economy 49",
+        "year": "2021",
+        "value": 50.0
+      },
+      {
+        "country": "Economy 49",
+        "year": "2022",
+        "value": 51.0
+      },
+      {
+        "country": "Economy 50",
+        "year": "2018",
+        "value": 53.0
+      },
+      {
+        "country": "Economy 50",
+        "year": "2019",
+        "value": 54.0
+      },
+      {
+        "country": "Economy 50",
+        "year": "2020",
+        "value": 50.0
+      },
+      {
+        "country": "Economy 50",
+        "year": "2021",
+        "value": 51.0
+      },
+      {
+        "country": "Economy 50",
+        "year": "2022",
+        "value": 52.0
+      },
+      {
+        "country": "Economy 51",
+        "year": "2018",
+        "value": 54.0
+      },
+      {
+        "country": "Economy 51",
+        "year": "2019",
+        "value": 55.0
+      },
+      {
+        "country": "Economy 51",
+        "year": "2020",
+        "value": 51.0
+      },
+      {
+        "country": "Economy 51",
+        "year": "2021",
+        "value": 52.0
+      },
+      {
+        "country": "Economy 51",
+        "year": "2022",
+        "value": 53.0
+      },
+      {
+        "country": "Economy 52",
+        "year": "2018",
+        "value": 55.0
+      },
+      {
+        "country": "Economy 52",
+        "year": "2019",
+        "value": 56.0
+      },
+      {
+        "country": "Economy 52",
+        "year": "2020",
+        "value": 52.0
+      },
+      {
+        "country": "Economy 52",
+        "year": "2021",
+        "value": 53.0
+      },
+      {
+        "country": "Economy 52",
+        "year": "2022",
+        "value": 54.0
+      },
+      {
+        "country": "Economy 53",
+        "year": "2018",
+        "value": 56.0
+      },
+      {
+        "country": "Economy 53",
+        "year": "2019",
+        "value": 57.0
+      },
+      {
+        "country": "Economy 53",
+        "year": "2020",
+        "value": 53.0
+      },
+      {
+        "country": "Economy 53",
+        "year": "2021",
+        "value": 54.0
+      },
+      {
+        "country": "Economy 53",
+        "year": "2022",
+        "value": 55.0
+      },
+      {
+        "country": "Economy 54",
+        "year": "2018",
+        "value": 57.0
+      },
+      {
+        "country": "Economy 54",
+        "year": "2019",
+        "value": 58.0
+      },
+      {
+        "country": "Economy 54",
+        "year": "2020",
+        "value": 54.0
+      },
+      {
+        "country": "Economy 54",
+        "year": "2021",
+        "value": 55.0
+      },
+      {
+        "country": "Economy 54",
+        "year": "2022",
+        "value": 56.0
+      },
+      {
+        "country": "Economy 55",
+        "year": "2018",
+        "value": 58.0
+      },
+      {
+        "country": "Economy 55",
+        "year": "2019",
+        "value": 59.0
+      },
+      {
+        "country": "Economy 55",
+        "year": "2020",
+        "value": 55.0
+      },
+      {
+        "country": "Economy 55",
+        "year": "2021",
+        "value": 56.0
+      },
+      {
+        "country": "Economy 55",
+        "year": "2022",
+        "value": 57.0
+      },
+      {
+        "country": "Economy 56",
+        "year": "2018",
+        "value": 59.0
+      },
+      {
+        "country": "Economy 56",
+        "year": "2019",
+        "value": 60.0
+      },
+      {
+        "country": "Economy 56",
+        "year": "2020",
+        "value": 56.0
+      },
+      {
+        "country": "Economy 56",
+        "year": "2021",
+        "value": 57.0
+      },
+      {
+        "country": "Economy 56",
+        "year": "2022",
+        "value": 58.0
+      },
+      {
+        "country": "Economy 57",
+        "year": "2018",
+        "value": 60.0
+      },
+      {
+        "country": "Economy 57",
+        "year": "2019",
+        "value": 61.0
+      },
+      {
+        "country": "Economy 57",
+        "year": "2020",
+        "value": 57.0
+      },
+      {
+        "country": "Economy 57",
+        "year": "2021",
+        "value": 58.0
+      },
+      {
+        "country": "Economy 57",
+        "year": "2022",
+        "value": 59.0
+      },
+      {
+        "country": "Economy 58",
+        "year": "2018",
+        "value": 61.0
+      },
+      {
+        "country": "Economy 58",
+        "year": "2019",
+        "value": 62.0
+      },
+      {
+        "country": "Economy 58",
+        "year": "2020",
+        "value": 58.0
+      },
+      {
+        "country": "Economy 58",
+        "year": "2021",
+        "value": 59.0
+      },
+      {
+        "country": "Economy 58",
+        "year": "2022",
+        "value": 60.0
+      },
+      {
+        "country": "Economy 59",
+        "year": "2018",
+        "value": 62.0
+      },
+      {
+        "country": "Economy 59",
+        "year": "2019",
+        "value": 63.0
+      },
+      {
+        "country": "Economy 59",
+        "year": "2020",
+        "value": 59.0
+      },
+      {
+        "country": "Economy 59",
+        "year": "2021",
+        "value": 60.0
+      },
+      {
+        "country": "Economy 59",
+        "year": "2022",
+        "value": 61.0
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          0.0,
+          63.0
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Value",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 20
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

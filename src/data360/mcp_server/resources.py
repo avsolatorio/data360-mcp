@@ -7,6 +7,7 @@ Includes ``data360://agent-recipe`` for host integrators (LangGraph / data360-mc
 import json
 from datetime import datetime
 
+from fastmcp.apps import AppConfig, ResourceCSP
 from data360.providers import get_database_mapping
 
 from ._server_definition import mcp
@@ -14,6 +15,7 @@ from .agent_recipe import AGENT_RECIPE_MARKDOWN
 
 # System prompt with chain-of-thought guidance for chatbot integration
 from .prompts import SYSTEM_PROMPT
+
 
 CODELISTS = {
     "auto_resolved": {
@@ -237,3 +239,386 @@ async def search_usage_resource() -> str:
 async def k360_narrative_style_resource() -> str:
     """Narrative formatting contract for K360 staged agent hosts."""
     return json.dumps(K360_NARRATIVE_STYLE, indent=2)
+
+
+# ---------------------------------------------------------------------------
+# Chart Grammar Resource — grammar-of-graphics decision rules
+# ---------------------------------------------------------------------------
+
+CHART_GRAMMAR = """# Data360 Chart Grammar — Decision Rules for Visualization
+
+This resource teaches you how to reason about data shapes and select the correct
+chart strategy. The visualization engine applies these rules automatically, but
+understanding them lets you make better upstream decisions (which tool to call,
+what chart_type to pass, and how to narrate the result).
+
+## 1. Strategy Selection Rules
+
+The engine selects a strategy based on the **data shape** after fetching:
+
+| Condition | Strategy | Chart type |
+|-----------|----------|-----------|
+| 1 indicator, temporal, 1–8 countries | `temporal_single` | Line chart (color=country) |
+| 1 indicator, temporal, >8 countries, no breakdowns | `heatmap` | Heatmap matrix (country × year) |
+| 1 indicator, single year, ≤8 countries | `cross_sectional` | Horizontal bar chart |
+| 1 indicator, single year, >8 countries | `distribution` | Strip/beeswarm chart |
+| 1 indicator, breakdown dimensions present | `breakdown_comparison` or `small_multiples` | Grouped bar or faceted panels |
+| 2+ indicators, temporal, 1 country | `temporal_multi_indicator` | Layered lines or stacked panels |
+| 2+ indicators, single year, multiple countries | `scatter` or `cross_sectional` | Scatter or grouped bar |
+| Composition data (parts sum to ~100%) | `stacked_area` or `stacked_bar` | Stacked marks |
+
+## 2. Layout Composition Rules (Multi-Indicator)
+
+When comparing 2+ indicators, the engine decides whether to use a **single shared
+panel** or **vertically stacked panels with independent Y-axes**.
+
+The decision is based on the `data_profile.scale_compatibility` in the tool response:
+
+| Condition | Layout | Reason |
+|-----------|--------|--------|
+| Same scale type AND value ratio ≤ 10× | Single panel, shared Y-axis | Values are comparable |
+| Same scale type BUT value ratio > 10× | vconcat panels, independent Y-axes | Large magnitude difference distorts one series |
+| Different scale types (e.g. % vs USD) | vconcat panels, independent Y-axes | Incomparable units |
+| All values are percentages in [0, 100] | Single panel | Natural shared range |
+
+**How to use**: After calling `data360_get_multi_indicator_viz_spec`, read
+`data_profile.scale_compatibility.can_share_axis` and `data_profile.indicators`
+to understand the layout decision and narrate it to the user.
+
+## 3. Encoding Grammar
+
+The engine maps data dimensions to visual channels:
+
+| Data dimension | Vega-Lite encoding | When used |
+|---|---|---|
+| year / time_period | `x` (temporal) | Time-series charts |
+| country | `color` (nominal) | Multi-country lines; `y` for cross-sectional bars |
+| value / obs_value | `y` (quantitative) | Always the measurement axis |
+| indicator | `color` (nominal) | Multi-indicator overlays |
+| breakdown dim (sex, age, etc.) | `color` or `facet` | Disaggregation present |
+
+## 4. Data Profile Fields
+
+Every viz tool response now includes a `data_profile` with these sections:
+
+- **indicators**: Per-indicator value ranges (min/max/median), unit codes, scale
+  types (percentage/currency/persons/index), and whether values are proportions.
+- **scale_compatibility** (multi-indicator): Whether indicators can share a Y-axis.
+- **structure**: Country list, year range, temporal density (dense/moderate/sparse).
+- **breakdowns**: Available disaggregation dimensions with actual values and meanings.
+- **composition_hint**: Whether data looks like parts-of-a-whole (suitable for stacked).
+
+Use these fields to:
+1. **Narrate accurately**: "GDP ranges from $1,200 to $63,000" instead of guessing.
+2. **Assess chart quality**: If `temporal_density` is "sparse", note potential gaps.
+3. **Suggest alternatives**: If `composition_hint.suitable_for_stacked` is true,
+   suggest a stacked area view.
+
+## 5. When NOT to Pass chart_type
+
+Let the engine auto-select when:
+- The data shape is unambiguous (single indicator, clear temporal or cross-sectional)
+- You are unsure which chart fits the data
+
+Only override chart_type when:
+- The user explicitly asked for a style ("show me a bar chart")
+- You need a specific multi-indicator layout ("scatter", "connected_scatter")
+
+## 6. Tool Selection
+
+| Scenario | Tool |
+|----------|------|
+| 1 indicator | `data360_get_viz_spec` |
+| 2–4 indicators to compare | `data360_get_multi_indicator_viz_spec` |
+| Need to summarize without a chart | `data360_summarize_data` |
+"""
+
+
+@mcp.resource("data360://viz/chart-grammar")
+async def chart_grammar_resource() -> str:
+    """Grammar-of-graphics decision rules for Data360 visualization.
+
+    Teaches the LLM how to reason about data shapes, scale compatibility,
+    encoding rules, and layout decisions. Read this resource to understand
+    how the visualization engine selects strategies and how to interpret
+    the data_profile in tool responses.
+    """
+    return CHART_GRAMMAR
+
+
+VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data360 Vega-Lite Renderer</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 8px;
+        background: transparent;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      #vis {
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+      }
+      #error-display {
+        display: none;
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        padding: 15px;
+        margin: 10px;
+        border-radius: 4px;
+      }
+      #error-display h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+      }
+      #error-display pre {
+        white-space: pre-wrap;
+        font-size: 11px;
+        margin-top: 10px;
+        background: #fff;
+        padding: 8px;
+        border: 1px solid #ddd;
+        font-family: monospace;
+      }
+    </style>
+    <script src="<<<SERVER_BASE>>>/static/libs/vega.js"></script>
+    <script src="<<<SERVER_BASE>>>/static/libs/vega-lite.js"></script>
+    <script src="<<<SERVER_BASE>>>/static/libs/vega-embed.js"></script>
+  </head>
+  <body>
+    <div id="vis"></div>
+    <div id="error-display">
+      <h3>Renderer Error</h3>
+      <p id="error-message"></p>
+      <pre id="error-stack"></pre>
+    </div>
+    <script type="module">
+      const serverBaseUrl = "<<<SERVER_BASE>>>";
+
+      function showError(message, stack) {
+        document.getElementById('vis').style.display = 'none';
+        const display = document.getElementById('error-display');
+        display.style.display = 'block';
+        document.getElementById('error-message').textContent = message;
+        document.getElementById('error-stack').textContent = stack || 'No stack trace available';
+      }
+
+      async function logToServer(msg, detail) {
+        try {
+          await fetch(`${serverBaseUrl}/debug-log`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: msg, detail: detail })
+          });
+        } catch (e) {
+          console.error("Failed to log to server:", e);
+        }
+      }
+
+      window.addEventListener('error', (event) => {
+        const msg = event.message || event.error?.message || 'Unknown error';
+        const stack = event.error?.stack || '';
+        showError(msg, stack);
+        logToServer("Unhandled error", { message: msg, stack: stack });
+      });
+
+      window.addEventListener('unhandledrejection', (event) => {
+        const msg = event.reason?.message || String(event.reason);
+        const stack = event.reason?.stack || '';
+        showError("Promise Rejection: " + msg, stack);
+        logToServer("Unhandled promise rejection", { message: msg, stack: stack });
+      });
+
+      import { App } from "<<<SERVER_BASE>>>/static/libs/ext-apps.js";
+
+      if (window.PRE_LOADED_SPEC) {
+        vegaEmbed("#vis", window.PRE_LOADED_SPEC, {
+          actions: false,
+          theme: "default"
+        }).catch(err => {
+          console.error(err);
+          showError(`Failed to render chart spec: ${err.message}`, err.stack);
+        });
+      } else {
+        const app = new App({ name: "Data360 Vega-Lite Renderer", version: "1.0.0" });
+
+        app.ontoolresult = async (result) => {
+          if (result.isError) {
+            document.getElementById('vis').innerHTML = `<p style="color:red;">Error: ${result.content || "Failed to render chart"}</p>`;
+            return;
+          }
+
+          // 1. Try to get spec from structuredContent (default)
+          let spec = result.structuredContent?.spec;
+          let fetchError = null;
+
+          // 2. Fallback: Parse the spec URL from text content and fetch it
+          if (!spec && result.content) {
+            try {
+              const textBlock = result.content.find(
+                (block) => block.type === "text" && block.text && block.text.includes("View spec:")
+              );
+              if (textBlock) {
+                const match = textBlock.text.match(/View spec:\s*(https?:\/\/[^\s\n]+)/);
+                if (match && match[1]) {
+                  const specUrl = match[1];
+                  const response = await fetch(specUrl);
+                  if (response.ok) {
+                    spec = await response.json();
+                  } else {
+                    fetchError = `HTTP ${response.status}: ${response.statusText}`;
+                  }
+                }
+              }
+            } catch (e) {
+              fetchError = e.message;
+              console.error("Failed to fetch spec fallback:", e);
+            }
+          }
+
+          if (spec) {
+            vegaEmbed("#vis", spec, {
+              actions: false,
+              theme: "default"
+            }).catch(err => {
+              console.error(err);
+              showError(`Failed to render chart spec: ${err.message}`, err.stack);
+            });
+          } else {
+            document.getElementById('vis').innerHTML = `
+              <div>
+                <p>No visualization spec available.</p>
+                <pre style="white-space: pre-wrap; font-size: 11px; background: #fee; padding: 8px; border: 1px solid #fcc; font-family: monospace;">
+Result Keys: ${result ? Object.keys(result).join(', ') : 'null'}
+Fetch Error: ${fetchError || 'none'}
+Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
+                </pre>
+              </div>
+            `;
+          }
+        };
+
+        await app.connect();
+      }
+    </script>
+  </body>
+</html>
+"""
+
+
+@mcp.resource(
+    "ui://data360/vega-lite-renderer.html{?spec}",
+    app=AppConfig(
+        csp=ResourceCSP(
+            connect_domains=["*"],
+            resource_domains=[
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "https://unpkg.com",
+                "https://cdn.jsdelivr.net",
+                "'unsafe-eval'",
+            ],
+        )
+    ),
+)
+async def vega_lite_renderer(spec: str | None = None) -> str:
+    """HTML renderer template for Vega-Lite v6 charts."""
+    from data360.config import get_mcp_server_settings
+
+    settings = get_mcp_server_settings()
+    port = settings.port or 8021
+    server_base = f"http://localhost:{port}"
+    # Use an explicit sentinel that cannot appear in real HTML/JS content.
+    # All occurrences in VEGA_LITE_RENDERER_HTML are replaced in one pass.
+    html = VEGA_LITE_RENDERER_HTML.replace("<<<SERVER_BASE>>>", server_base)
+    if spec:
+        injection = f"\n      window.PRE_LOADED_SPEC = {spec};\n"
+        html = html.replace("<body>", f"<body>\n    <script>{injection}</script>")
+    return html
+
+
+import os
+from fastapi.staticfiles import StaticFiles
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+from starlette.exceptions import HTTPException
+
+class CORSStaticFiles(StaticFiles):
+    async def __call__(self, scope, receive, send) -> None:
+        if scope["type"] != "http":
+            await super().__call__(scope, receive, send)
+            return
+
+        if scope["method"] == "OPTIONS":
+            response = Response(
+                "OK",
+                status_code=200,
+                headers={
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+                    "Access-Control-Allow-Headers": "*",
+                }
+            )
+            await response(scope, receive, send)
+            return
+
+        async def cors_send(message) -> None:
+            if message["type"] == "http.response.start":
+                headers = list(message.get("headers", []))
+                has_origin = any(h[0].lower() == b"access-control-allow-origin" for h in headers)
+                if not has_origin:
+                    headers.append((b"access-control-allow-origin", b"*"))
+                    headers.append((b"access-control-allow-methods", b"GET, HEAD, OPTIONS"))
+                    headers.append((b"access-control-allow-headers", b"*"))
+                message["headers"] = headers
+            await send(message)
+
+        await super().__call__(scope, receive, cors_send)
+
+    async def get_response(self, path: str, scope) -> Response:
+        try:
+            return await super().get_response(path, scope)
+        except HTTPException as exc:
+            return JSONResponse(
+                {"detail": exc.detail},
+                status_code=exc.status_code,
+                headers=exc.headers
+            )
+
+
+
+
+@mcp.custom_route("/debug-log", methods=["POST", "OPTIONS"])
+async def debug_log(request: Request) -> Response:
+    if request.method == "OPTIONS":
+        return Response(
+            "OK",
+            status_code=200,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type",
+            }
+        )
+
+    try:
+        body = await request.json()
+        print(f"\n[IFRAME DEBUG LOG] {body}\n", flush=True)
+        return JSONResponse(
+            {"status": "ok"},
+            headers={"Access-Control-Allow-Origin": "*"}
+        )
+    except Exception as e:
+        print(f"Error reading debug log: {e}", flush=True)
+        return JSONResponse(
+            {"error": str(e)},
+            status_code=400,
+            headers={"Access-Control-Allow-Origin": "*"}
+        )

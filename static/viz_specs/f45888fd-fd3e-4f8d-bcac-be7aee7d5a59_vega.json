@@ -1,0 +1,531 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Employment in agriculture, female (% of female employment) (modeled ILO",
+      "estimate) | Employment in agriculture, male (% of male employment) (modeled ILO",
+      "estimate) | Employment in services, female (% of female employment) (modeled ILO",
+      "estimate) | Employment in services, male (% of male employment) (modeled ILO",
+      "estimate)"
+    ],
+    "subtitle": [
+      "United Kingdom, 2015-2022",
+      "Percentage"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "employment_in_agriculture_female_of_fema": 0.648202,
+        "employment_in_agriculture_male_of_male_e": 1.583905,
+        "employment_in_services_female_of_female": 91.651744,
+        "employment_in_services_male_of_male_empl": 70.088808
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "employment_in_agriculture_female_of_fema": 0.632074,
+        "employment_in_agriculture_male_of_male_e": 1.587567,
+        "employment_in_services_female_of_female": 91.723714,
+        "employment_in_services_male_of_male_empl": 70.332793
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "employment_in_agriculture_female_of_fema": 0.650729,
+        "employment_in_agriculture_male_of_male_e": 1.612313,
+        "employment_in_services_female_of_female": 91.659946,
+        "employment_in_services_male_of_male_empl": 70.778664
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "employment_in_agriculture_female_of_fema": 0.624797,
+        "employment_in_agriculture_male_of_male_e": 1.463183,
+        "employment_in_services_female_of_female": 91.900602,
+        "employment_in_services_male_of_male_empl": 70.971756
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "employment_in_agriculture_female_of_fema": 0.61584,
+        "employment_in_agriculture_male_of_male_e": 1.512716,
+        "employment_in_services_female_of_female": 91.599873,
+        "employment_in_services_male_of_male_empl": 70.764145
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "employment_in_agriculture_female_of_fema": 0.57721,
+        "employment_in_agriculture_male_of_male_e": 1.352961,
+        "employment_in_services_female_of_female": 91.986115,
+        "employment_in_services_male_of_male_empl": 72.491476
+      },
+      {
+        "year": "2021",
+        "country": "United Kingdom",
+        "employment_in_agriculture_female_of_fema": 0.495405,
+        "employment_in_agriculture_male_of_male_e": 1.267865,
+        "employment_in_services_female_of_female": 91.736056,
+        "employment_in_services_male_of_male_empl": 73.327544
+      },
+      {
+        "year": "2022",
+        "country": "United Kingdom",
+        "employment_in_agriculture_female_of_fema": 0.441328,
+        "employment_in_agriculture_male_of_male_e": 1.044003,
+        "employment_in_services_female_of_female": 91.872747,
+        "employment_in_services_male_of_male_empl": 73.997015
+      }
+    ]
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Employment in agriculture, female (% of female employment) (modeled ILO estimate) (Percentage)",
+        "color": "#34A7F2",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#34A7F2",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "employment_in_agriculture_female_of_fema",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "employment_in_agriculture_female_of_fema",
+            "title": "Employment in agriculture, female (% of female employment) (modeled ILO estimate) (Percentage)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "Employment in agriculture, male (% of male employment) (modeled ILO estimate) (Percentage)",
+        "color": "#FF9800",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#FF9800",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "employment_in_agriculture_male_of_male_e",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "employment_in_agriculture_male_of_male_e",
+            "title": "Employment in agriculture, male (% of male employment) (modeled ILO estimate) (Percentage)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "Employment in services, female (% of female employment) (modeled ILO estimate) (Percentage)",
+        "color": "#664AB6",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#664AB6",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "employment_in_services_female_of_female",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#664AB6"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "employment_in_services_female_of_female",
+            "title": "Employment in services, female (% of female employment) (modeled ILO estimate) (Percentage)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "Employment in services, male (% of male employment) (modeled ILO estimate) (Percentage)",
+        "color": "#4EC2C0",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#4EC2C0",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "employment_in_services_male_of_male_empl",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#4EC2C0"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "employment_in_services_male_of_male_empl",
+            "title": "Employment in services, male (% of male employment) (modeled ILO estimate) (Percentage)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared"
+    },
+    "axis": {
+      "x": "independent"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

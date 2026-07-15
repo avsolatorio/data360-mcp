@@ -1,0 +1,298 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Carbon dioxide (CO2) emissions excluding LULUCF per capita vs. Labor force",
+      "participation rate, male"
+    ],
+    "subtitle": [
+      "2018"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "carbon_dioxide_co2_emissions_excluding_l": 2.285624,
+        "labor_force_participation_rate_male": 74.881,
+        "_x_norm": 0.0,
+        "_y_norm": 0.8279637487558277,
+        "_dist_from_center": 0.35756022049797564,
+        "_show_label": true
+      },
+      {
+        "year": "2018",
+        "country": "Canada",
+        "carbon_dioxide_co2_emissions_excluding_l": 16.523882,
+        "labor_force_participation_rate_male": 70.246,
+        "_x_norm": 1.0,
+        "_y_norm": 0.5851537534705847,
+        "_dist_from_center": 0.25725116173012913,
+        "_show_label": true
+      },
+      {
+        "year": "2018",
+        "country": "France",
+        "carbon_dioxide_co2_emissions_excluding_l": 4.892171,
+        "labor_force_participation_rate_male": 60.205,
+        "_x_norm": 0.18306642568213052,
+        "_y_norm": 0.05914400963905901,
+        "_dist_from_center": 0.2948008947670266,
+        "_show_label": true
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "carbon_dioxide_co2_emissions_excluding_l": 5.684522,
+        "labor_force_participation_rate_male": 59.076,
+        "_x_norm": 0.23871585976318174,
+        "_y_norm": 0.0,
+        "_dist_from_center": 0.3182694019392933,
+        "_show_label": true
+      },
+      {
+        "year": "2018",
+        "country": "Mexico",
+        "carbon_dioxide_co2_emissions_excluding_l": 3.838317,
+        "labor_force_participation_rate_male": 78.165,
+        "_x_norm": 0.10905077011527675,
+        "_y_norm": 1.0,
+        "_dist_from_center": 0.4028413003474582,
+        "_show_label": true
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "carbon_dioxide_co2_emissions_excluding_l": 8.077017,
+        "labor_force_participation_rate_male": 62.468,
+        "_x_norm": 0.406748704792398,
+        "_y_norm": 0.1776939598721778,
+        "_dist_from_center": 0.11257698756077267,
+        "_show_label": true
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "carbon_dioxide_co2_emissions_excluding_l",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Carbon dioxide (CO2) emissions excluding LULUCF per capita (Tonnes)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "labor_force_participation_rate_male",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Labor force participation rate, male (Percentage of men)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "carbon_dioxide_co2_emissions_excluding_l",
+            "title": "Carbon dioxide (CO2) emissions excluding LULUCF per capita (Tonnes)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "labor_force_participation_rate_male",
+            "title": "Labor force participation rate, male (Percentage of men)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "carbon_dioxide_co2_emissions_excluding_l",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "labor_force_participation_rate_male",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum._show_label",
+            "value": 1
+          },
+          "value": 0
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

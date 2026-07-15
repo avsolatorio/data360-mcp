@@ -1,0 +1,1085 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP growth over time",
+    "subtitle": [
+      "2015-2024",
+      "Percentage change per annum",
+      "Showing 12 of 169 economies by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "value": 2.955901,
+        "country": "COL",
+        "_d360_lseg": "COL_0",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2017",
+        "value": 1.359361,
+        "country": "COL",
+        "_d360_lseg": "COL_0",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2017",
+        "value": 1.359361,
+        "country": "COL",
+        "_d360_lseg": "COL_1",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 2.564324,
+        "country": "COL",
+        "_d360_lseg": "COL_1",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 3.186855,
+        "country": "COL",
+        "_d360_lseg": "COL_1",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -7.185914,
+        "country": "COL",
+        "_d360_lseg": "COL_1",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -7.185914,
+        "country": "COL",
+        "_d360_lseg": "COL_2",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 7.328277,
+        "country": "COL",
+        "_d360_lseg": "COL_2",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 7.328277,
+        "country": "COL",
+        "_d360_lseg": "COL_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 0.84182,
+        "country": "COL",
+        "_d360_lseg": "COL_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 1.493307,
+        "country": "COL",
+        "_d360_lseg": "COL_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 1.147356,
+        "country": "COM",
+        "_d360_lseg": "COM_4",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2017",
+        "value": 3.815763,
+        "country": "COM",
+        "_d360_lseg": "COM_4",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2017",
+        "value": 3.815763,
+        "country": "COM",
+        "_d360_lseg": "COM_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 3.642451,
+        "country": "COM",
+        "_d360_lseg": "COM_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 1.76078,
+        "country": "COM",
+        "_d360_lseg": "COM_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -0.195557,
+        "country": "COM",
+        "_d360_lseg": "COM_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -0.195557,
+        "country": "COM",
+        "_d360_lseg": "COM_6",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 2.453812,
+        "country": "COM",
+        "_d360_lseg": "COM_6",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 2.453812,
+        "country": "COM",
+        "_d360_lseg": "COM_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 3.186613,
+        "country": "COM",
+        "_d360_lseg": "COM_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 3.300715,
+        "country": "COM",
+        "_d360_lseg": "COM_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 2.20652,
+        "country": "GBR",
+        "_d360_lseg": "GBR_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 3.023222,
+        "country": "GBR",
+        "_d360_lseg": "GBR_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 1.551331,
+        "country": "GBR",
+        "_d360_lseg": "GBR_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 1.256299,
+        "country": "GBR",
+        "_d360_lseg": "GBR_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -10.047897,
+        "country": "GBR",
+        "_d360_lseg": "GBR_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -10.047897,
+        "country": "GBR",
+        "_d360_lseg": "GBR_9",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 5.149704,
+        "country": "GBR",
+        "_d360_lseg": "GBR_9",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 5.149704,
+        "country": "GBR",
+        "_d360_lseg": "GBR_10",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 0.27165,
+        "country": "GBR",
+        "_d360_lseg": "GBR_10",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 1.080277,
+        "country": "GBR",
+        "_d360_lseg": "GBR_10",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 1.819451,
+        "country": "USA",
+        "_d360_lseg": "USA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 2.457622,
+        "country": "USA",
+        "_d360_lseg": "USA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 2.966505,
+        "country": "USA",
+        "_d360_lseg": "USA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 2.583825,
+        "country": "USA",
+        "_d360_lseg": "USA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -2.081376,
+        "country": "USA",
+        "_d360_lseg": "USA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -2.081376,
+        "country": "USA",
+        "_d360_lseg": "USA_12",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 2.524214,
+        "country": "USA",
+        "_d360_lseg": "USA_12",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 2.524214,
+        "country": "USA",
+        "_d360_lseg": "USA_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 2.934363,
+        "country": "USA",
+        "_d360_lseg": "USA_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 2.793187,
+        "country": "USA",
+        "_d360_lseg": "USA_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 1.689798,
+        "country": "URY",
+        "_d360_lseg": "URY_14",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 1.740376,
+        "country": "URY",
+        "_d360_lseg": "URY_14",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 0.164778,
+        "country": "URY",
+        "_d360_lseg": "URY_14",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.928351,
+        "country": "URY",
+        "_d360_lseg": "URY_14",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -7.357327,
+        "country": "URY",
+        "_d360_lseg": "URY_14",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": -7.357327,
+        "country": "URY",
+        "_d360_lseg": "URY_15",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 4.60623,
+        "country": "URY",
+        "_d360_lseg": "URY_15",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 4.60623,
+        "country": "URY",
+        "_d360_lseg": "URY_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 0.761749,
+        "country": "URY",
+        "_d360_lseg": "URY_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 3.325759,
+        "country": "URY",
+        "_d360_lseg": "URY_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 6.71108,
+        "country": "UZB",
+        "_d360_lseg": "UZB_17",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 4.700274,
+        "country": "UZB",
+        "_d360_lseg": "UZB_17",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 5.723684,
+        "country": "UZB",
+        "_d360_lseg": "UZB_17",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 6.793311,
+        "country": "UZB",
+        "_d360_lseg": "UZB_17",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 1.621623,
+        "country": "UZB",
+        "_d360_lseg": "UZB_17",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 1.621623,
+        "country": "UZB",
+        "_d360_lseg": "UZB_18",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 6.085923,
+        "country": "UZB",
+        "_d360_lseg": "UZB_18",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 6.085923,
+        "country": "UZB",
+        "_d360_lseg": "UZB_19",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 6.31603,
+        "country": "UZB",
+        "_d360_lseg": "UZB_19",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 6.676188,
+        "country": "UZB",
+        "_d360_lseg": "UZB_19",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.967834,
+        "country": "TUN",
+        "_d360_lseg": "TUN_20",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 1.117232,
+        "country": "TUN",
+        "_d360_lseg": "TUN_20",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 2.252614,
+        "country": "TUN",
+        "_d360_lseg": "TUN_20",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 2.60697,
+        "country": "TUN",
+        "_d360_lseg": "TUN_20",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 1.550093,
+        "country": "TUN",
+        "_d360_lseg": "TUN_20",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 1.550093,
+        "country": "TUN",
+        "_d360_lseg": "TUN_21",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 2.752288,
+        "country": "TUN",
+        "_d360_lseg": "TUN_21",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 2.752288,
+        "country": "TUN",
+        "_d360_lseg": "TUN_22",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 0.184016,
+        "country": "TUN",
+        "_d360_lseg": "TUN_22",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 1.614446,
+        "country": "TUN",
+        "_d360_lseg": "TUN_22",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 5.805574,
+        "country": "TUR",
+        "_d360_lseg": "TUR_23",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 3.323665,
+        "country": "TUR",
+        "_d360_lseg": "TUR_23",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 7.825857,
+        "country": "TUR",
+        "_d360_lseg": "TUR_23",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 3.468153,
+        "country": "TUR",
+        "_d360_lseg": "TUR_23",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 1.301624,
+        "country": "TUR",
+        "_d360_lseg": "TUR_23",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 1.301624,
+        "country": "TUR",
+        "_d360_lseg": "TUR_24",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 5.441225,
+        "country": "TUR",
+        "_d360_lseg": "TUR_24",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 5.441225,
+        "country": "TUR",
+        "_d360_lseg": "TUR_25",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 5.045124,
+        "country": "TUR",
+        "_d360_lseg": "TUR_25",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 3.327623,
+        "country": "TUR",
+        "_d360_lseg": "TUR_25",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 6.452549,
+        "country": "TKM",
+        "_d360_lseg": "TKM_26",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 6.2291,
+        "country": "TKM",
+        "_d360_lseg": "TKM_26",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 6.451384,
+        "country": "TKM",
+        "_d360_lseg": "TKM_26",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 6.206024,
+        "country": "TKM",
+        "_d360_lseg": "TKM_26",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 6.331696,
+        "country": "TKM",
+        "_d360_lseg": "TKM_26",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 6.331696,
+        "country": "TKM",
+        "_d360_lseg": "TKM_27",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 6.234914,
+        "country": "TKM",
+        "_d360_lseg": "TKM_27",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 6.234914,
+        "country": "TKM",
+        "_d360_lseg": "TKM_28",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 6.318799,
+        "country": "TKM",
+        "_d360_lseg": "TKM_28",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 6.282356,
+        "country": "TKM",
+        "_d360_lseg": "TKM_28",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 11.314829,
+        "country": "TCA",
+        "_d360_lseg": "TCA_29",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 7.251186,
+        "country": "TCA",
+        "_d360_lseg": "TCA_29",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 74.587988,
+        "country": "TCA",
+        "_d360_lseg": "TCA_29",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 6.752648,
+        "country": "TCA",
+        "_d360_lseg": "TCA_29",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 4.981705,
+        "country": "TCA",
+        "_d360_lseg": "TCA_29",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 4.981705,
+        "country": "TCA",
+        "_d360_lseg": "TCA_30",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 14.087123,
+        "country": "TCA",
+        "_d360_lseg": "TCA_30",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 14.087123,
+        "country": "TCA",
+        "_d360_lseg": "TCA_31",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 13.731148,
+        "country": "TCA",
+        "_d360_lseg": "TCA_31",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 5.636825,
+        "country": "TCA",
+        "_d360_lseg": "TCA_31",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 5.18786,
+        "country": "UGA",
+        "_d360_lseg": "UGA_32",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 4.781,
+        "country": "UGA",
+        "_d360_lseg": "UGA_32",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 3.131406,
+        "country": "UGA",
+        "_d360_lseg": "UGA_32",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 6.303924,
+        "country": "UGA",
+        "_d360_lseg": "UGA_32",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 6.438745,
+        "country": "UGA",
+        "_d360_lseg": "UGA_32",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 6.438745,
+        "country": "UGA",
+        "_d360_lseg": "UGA_33",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 4.588022,
+        "country": "UGA",
+        "_d360_lseg": "UGA_33",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 4.588022,
+        "country": "UGA",
+        "_d360_lseg": "UGA_34",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 5.336973,
+        "country": "UGA",
+        "_d360_lseg": "UGA_34",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 6.055581,
+        "country": "UGA",
+        "_d360_lseg": "UGA_34",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": -9.772987,
+        "country": "UKR",
+        "_d360_lseg": "UKR_35",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 2.440982,
+        "country": "UKR",
+        "_d360_lseg": "UKR_35",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 2.359972,
+        "country": "UKR",
+        "_d360_lseg": "UKR_35",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 3.488362,
+        "country": "UKR",
+        "_d360_lseg": "UKR_35",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 3.199504,
+        "country": "UKR",
+        "_d360_lseg": "UKR_35",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 3.199504,
+        "country": "UKR",
+        "_d360_lseg": "UKR_36",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": -28.758584,
+        "country": "UKR",
+        "_d360_lseg": "UKR_36",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": -28.758584,
+        "country": "UKR",
+        "_d360_lseg": "UKR_37",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 5.534734,
+        "country": "UKR",
+        "_d360_lseg": "UKR_37",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 3.248118,
+        "country": "UKR",
+        "_d360_lseg": "UKR_37",
+        "_d360_ygap": 0
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Percentage change per annum",
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "GDP",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        },
+        "detail": {
+          "field": "_d360_lseg",
+          "type": "nominal"
+        },
+        "strokeDash": {
+          "condition": {
+            "test": "datum._d360_ygap == 1",
+            "value": [
+              6,
+              4
+            ]
+          },
+          "value": []
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "rule",
+        "color": "#999999",
+        "strokeWidth": 1.0,
+        "strokeDash": [
+          4,
+          3
+        ],
+        "opacity": 0.8,
+        "tooltip": false
+      },
+      "encoding": {
+        "y": {
+          "datum": 0
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

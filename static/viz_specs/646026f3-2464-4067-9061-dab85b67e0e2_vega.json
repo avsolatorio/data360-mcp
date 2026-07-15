@@ -1,0 +1,513 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Morocco \u2014 GDP (current US$), 1960\u20132024",
+    "subtitle": [
+      "Morocco, 1960-2024",
+      "US Dollars"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2019",
+        "value": 128920266409.4575,
+        "country": "Morocco"
+      },
+      {
+        "year": "2016",
+        "value": 111572947004.91748,
+        "country": "Morocco"
+      },
+      {
+        "year": "1998",
+        "value": 46497608724.9865,
+        "country": "Morocco"
+      },
+      {
+        "year": "2004",
+        "value": 66114145451.00669,
+        "country": "Morocco"
+      },
+      {
+        "year": "2002",
+        "value": 47077192187.64177,
+        "country": "Morocco"
+      },
+      {
+        "year": "2022",
+        "value": 131245312804.48315,
+        "country": "Morocco"
+      },
+      {
+        "year": "1996",
+        "value": 43161571527.635315,
+        "country": "Morocco"
+      },
+      {
+        "year": "1991",
+        "value": 32285573573.918488,
+        "country": "Morocco"
+      },
+      {
+        "year": "1987",
+        "value": 21765195948.188976,
+        "country": "Morocco"
+      },
+      {
+        "year": "1977",
+        "value": 11049783871.814425,
+        "country": "Morocco"
+      },
+      {
+        "year": "1974",
+        "value": 7675466449.355309,
+        "country": "Morocco"
+      },
+      {
+        "year": "1962",
+        "value": 2379611124.614415,
+        "country": "Morocco"
+      },
+      {
+        "year": "1963",
+        "value": 2657252578.307634,
+        "country": "Morocco"
+      },
+      {
+        "year": "2014",
+        "value": 119130841411.6636,
+        "country": "Morocco"
+      },
+      {
+        "year": "2013",
+        "value": 115739287305.0801,
+        "country": "Morocco"
+      },
+      {
+        "year": "2011",
+        "value": 110080631332.37537,
+        "country": "Morocco"
+      },
+      {
+        "year": "2020",
+        "value": 121353645057.14368,
+        "country": "Morocco"
+      },
+      {
+        "year": "2017",
+        "value": 118540573367.84428,
+        "country": "Morocco"
+      },
+      {
+        "year": "2015",
+        "value": 110413823841.59187,
+        "country": "Morocco"
+      },
+      {
+        "year": "1982",
+        "value": 17692276734.170986,
+        "country": "Morocco"
+      },
+      {
+        "year": "1983",
+        "value": 16251408127.57345,
+        "country": "Morocco"
+      },
+      {
+        "year": "1985",
+        "value": 14991283215.740831,
+        "country": "Morocco"
+      },
+      {
+        "year": "1980",
+        "value": 21728516153.09073,
+        "country": "Morocco"
+      },
+      {
+        "year": "1970",
+        "value": 3956336244.118653,
+        "country": "Morocco"
+      },
+      {
+        "year": "1960",
+        "value": 2037154741.932106,
+        "country": "Morocco"
+      },
+      {
+        "year": "2012",
+        "value": 106937392311.12907,
+        "country": "Morocco"
+      },
+      {
+        "year": "2007",
+        "value": 86947913286.72797,
+        "country": "Morocco"
+      },
+      {
+        "year": "2008",
+        "value": 101822906949.06345,
+        "country": "Morocco"
+      },
+      {
+        "year": "2006",
+        "value": 75883823300.85452,
+        "country": "Morocco"
+      },
+      {
+        "year": "2009",
+        "value": 101154952240.8807,
+        "country": "Morocco"
+      },
+      {
+        "year": "1999",
+        "value": 46266428648.14326,
+        "country": "Morocco"
+      },
+      {
+        "year": "2021",
+        "value": 142022058447.23093,
+        "country": "Morocco"
+      },
+      {
+        "year": "2010",
+        "value": 100865329473.43983,
+        "country": "Morocco"
+      },
+      {
+        "year": "2005",
+        "value": 68852658068.66728,
+        "country": "Morocco"
+      },
+      {
+        "year": "2000",
+        "value": 43017455401.844536,
+        "country": "Morocco"
+      },
+      {
+        "year": "2001",
+        "value": 43831480207.64445,
+        "country": "Morocco"
+      },
+      {
+        "year": "1995",
+        "value": 39030285468.38408,
+        "country": "Morocco"
+      },
+      {
+        "year": "1997",
+        "value": 39147844526.08376,
+        "country": "Morocco"
+      },
+      {
+        "year": "1990",
+        "value": 30179954774.98992,
+        "country": "Morocco"
+      },
+      {
+        "year": "1981",
+        "value": 17788185478.943974,
+        "country": "Morocco"
+      },
+      {
+        "year": "1976",
+        "value": 9584297284.283163,
+        "country": "Morocco"
+      },
+      {
+        "year": "1984",
+        "value": 14824667954.36736,
+        "country": "Morocco"
+      },
+      {
+        "year": "1978",
+        "value": 13236946233.575916,
+        "country": "Morocco"
+      },
+      {
+        "year": "1975",
+        "value": 8984853005.080584,
+        "country": "Morocco"
+      },
+      {
+        "year": "1972",
+        "value": 5074117544.774822,
+        "country": "Morocco"
+      },
+      {
+        "year": "1968",
+        "value": 3271422332.619964,
+        "country": "Morocco"
+      },
+      {
+        "year": "1965",
+        "value": 2948331090.467524,
+        "country": "Morocco"
+      },
+      {
+        "year": "2018",
+        "value": 127341147581.81831,
+        "country": "Morocco"
+      },
+      {
+        "year": "2023",
+        "value": 146036093666.76212,
+        "country": "Morocco"
+      },
+      {
+        "year": "2003",
+        "value": 58029363354.27568,
+        "country": "Morocco"
+      },
+      {
+        "year": "1994",
+        "value": 35604137422.5796,
+        "country": "Morocco"
+      },
+      {
+        "year": "2024",
+        "value": 160610994054.7341,
+        "country": "Morocco"
+      },
+      {
+        "year": "1993",
+        "value": 31655473663.834824,
+        "country": "Morocco"
+      },
+      {
+        "year": "1992",
+        "value": 33711069430.78004,
+        "country": "Morocco"
+      },
+      {
+        "year": "1986",
+        "value": 19462085540.22311,
+        "country": "Morocco"
+      },
+      {
+        "year": "1989",
+        "value": 26314313191.182552,
+        "country": "Morocco"
+      },
+      {
+        "year": "1988",
+        "value": 25705296183.503674,
+        "country": "Morocco"
+      },
+      {
+        "year": "1979",
+        "value": 15911994817.310717,
+        "country": "Morocco"
+      },
+      {
+        "year": "1973",
+        "value": 6242145880.088758,
+        "country": "Morocco"
+      },
+      {
+        "year": "1969",
+        "value": 3651622668.951031,
+        "country": "Morocco"
+      },
+      {
+        "year": "1967",
+        "value": 3046345314.386552,
+        "country": "Morocco"
+      },
+      {
+        "year": "1971",
+        "value": 4356669034.342655,
+        "country": "Morocco"
+      },
+      {
+        "year": "1966",
+        "value": 2876401297.107593,
+        "country": "Morocco"
+      },
+      {
+        "year": "1964",
+        "value": 2798345298.577806,
+        "country": "Morocco"
+      },
+      {
+        "year": "1961",
+        "value": 2025693539.558422,
+        "country": "Morocco"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "US Dollars",
+        "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1f') : '$'+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": "$,.2f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      }
+    ],
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Economy",
+        "labelLimit": 250,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

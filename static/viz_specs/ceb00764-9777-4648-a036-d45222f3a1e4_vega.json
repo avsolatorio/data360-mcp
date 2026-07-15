@@ -1,0 +1,568 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP per capita vs. Literacy rate, adult total"
+    ],
+    "subtitle": [
+      "Ghana, Nigeria, 2010-2020"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1381.22795
+      },
+      {
+        "year": "2010",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2315.466765
+      },
+      {
+        "year": "2011",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1537.81834
+      },
+      {
+        "year": "2011",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2370.976571
+      },
+      {
+        "year": "2012",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1640.540721
+      },
+      {
+        "year": "2012",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2403.653879
+      },
+      {
+        "year": "2013",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1718.597048
+      },
+      {
+        "year": "2013",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2495.341066
+      },
+      {
+        "year": "2014",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1726.369301
+      },
+      {
+        "year": "2014",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2583.61557
+      },
+      {
+        "year": "2015",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1722.772828
+      },
+      {
+        "year": "2015",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2585.733607
+      },
+      {
+        "year": "2016",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1740.811019
+      },
+      {
+        "year": "2016",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2481.814904
+      },
+      {
+        "year": "2017",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1841.446362
+      },
+      {
+        "year": "2017",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2441.712364
+      },
+      {
+        "year": "2018",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1915.453232
+      },
+      {
+        "year": "2018",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2431.778578
+      },
+      {
+        "year": "2019",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1999.553722
+      },
+      {
+        "year": "2019",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2431.535285
+      },
+      {
+        "year": "2020",
+        "country": "Ghana",
+        "indicator": "GDP per capita",
+        "value": 1970.194115
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "indicator": "GDP per capita",
+        "value": 2228.686314
+      },
+      {
+        "year": "2010",
+        "country": "Ghana",
+        "indicator": "Literacy rate, adult total",
+        "value": 71.5
+      },
+      {
+        "year": "2015",
+        "country": "Ghana",
+        "indicator": "Literacy rate, adult total",
+        "value": 60.198104
+      },
+      {
+        "year": "2016",
+        "country": "Nigeria",
+        "indicator": "Literacy rate, adult total",
+        "value": 58.220001
+      },
+      {
+        "year": "2017",
+        "country": "Ghana",
+        "indicator": "Literacy rate, adult total",
+        "value": 64.489998
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "GDP per capita",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "GDP per capita"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "GDP per capita",
+            "format": ",.0f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Ghana",
+              "Nigeria"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "Literacy rate, adult total",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Literacy rate, adult total"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Literacy rate, adult total",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Ghana",
+              "Nigeria"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        },
+        "detail": {
+          "field": "_d360_lseg",
+          "type": "nominal"
+        },
+        "strokeDash": {
+          "condition": {
+            "test": "datum._d360_ygap == 1",
+            "value": [
+              6,
+              4
+            ]
+          },
+          "value": []
+        }
+      },
+      "data": {
+        "values": [
+          {
+            "year": "2010",
+            "country": "Ghana",
+            "indicator": "Literacy rate, adult total",
+            "value": 71.5,
+            "_d360_lseg": "Ghana_0",
+            "_d360_ygap": 1
+          },
+          {
+            "year": "2015",
+            "country": "Ghana",
+            "indicator": "Literacy rate, adult total",
+            "value": 60.198104,
+            "_d360_lseg": "Ghana_0",
+            "_d360_ygap": 1
+          },
+          {
+            "year": "2015",
+            "country": "Ghana",
+            "indicator": "Literacy rate, adult total",
+            "value": 60.198104,
+            "_d360_lseg": "Ghana_1",
+            "_d360_ygap": 1
+          },
+          {
+            "year": "2017",
+            "country": "Ghana",
+            "indicator": "Literacy rate, adult total",
+            "value": 64.489998,
+            "_d360_lseg": "Ghana_1",
+            "_d360_ygap": 1
+          },
+          {
+            "year": "2016",
+            "country": "Nigeria",
+            "indicator": "Literacy rate, adult total",
+            "value": 58.220001,
+            "_d360_lseg": "Nigeria_2",
+            "_d360_ygap": 0
+          }
+        ]
+      }
+    }
+  ],
+  "columns": 1,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

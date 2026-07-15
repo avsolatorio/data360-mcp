@@ -1,0 +1,540 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years) vs. GDP per capita (constant 2015 US$)"
+    ],
+    "subtitle": [
+      "2017-2021"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2017",
+        "country": "Ethiopia",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 64.766
+      },
+      {
+        "year": "2017",
+        "country": "Kenya",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 62.725
+      },
+      {
+        "year": "2017",
+        "country": "Mozambique",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 60.148
+      },
+      {
+        "year": "2017",
+        "country": "Rwanda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.14
+      },
+      {
+        "year": "2017",
+        "country": "Tanzania",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 64.963
+      },
+      {
+        "year": "2017",
+        "country": "Uganda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 65.174
+      },
+      {
+        "year": "2018",
+        "country": "Ethiopia",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 65.257
+      },
+      {
+        "year": "2018",
+        "country": "Kenya",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 62.825
+      },
+      {
+        "year": "2018",
+        "country": "Mozambique",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 60.79
+      },
+      {
+        "year": "2018",
+        "country": "Rwanda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.354
+      },
+      {
+        "year": "2018",
+        "country": "Tanzania",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 65.488
+      },
+      {
+        "year": "2018",
+        "country": "Uganda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 65.775
+      },
+      {
+        "year": "2019",
+        "country": "Ethiopia",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 65.741
+      },
+      {
+        "year": "2019",
+        "country": "Kenya",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 62.939
+      },
+      {
+        "year": "2019",
+        "country": "Mozambique",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 61.306
+      },
+      {
+        "year": "2019",
+        "country": "Rwanda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.691
+      },
+      {
+        "year": "2019",
+        "country": "Tanzania",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.007
+      },
+      {
+        "year": "2019",
+        "country": "Uganda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.354
+      },
+      {
+        "year": "2020",
+        "country": "Ethiopia",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 65.969
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 61.596
+      },
+      {
+        "year": "2020",
+        "country": "Mozambique",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 61.39
+      },
+      {
+        "year": "2020",
+        "country": "Rwanda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.953
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.771
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.41
+      },
+      {
+        "year": "2021",
+        "country": "Ethiopia",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 65.33
+      },
+      {
+        "year": "2021",
+        "country": "Kenya",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 61.225
+      },
+      {
+        "year": "2021",
+        "country": "Mozambique",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 60.268
+      },
+      {
+        "year": "2021",
+        "country": "Rwanda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.85
+      },
+      {
+        "year": "2021",
+        "country": "Tanzania",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.131
+      },
+      {
+        "year": "2021",
+        "country": "Uganda",
+        "indicator": "Life expectancy at birth, total (years)",
+        "value": 66.45
+      },
+      {
+        "year": "2017",
+        "country": "Ethiopia",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 678.985419
+      },
+      {
+        "year": "2017",
+        "country": "Kenya",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1542.33774
+      },
+      {
+        "year": "2017",
+        "country": "Mozambique",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 618.397694
+      },
+      {
+        "year": "2017",
+        "country": "Rwanda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 765.845359
+      },
+      {
+        "year": "2017",
+        "country": "Tanzania",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1001.55896
+      },
+      {
+        "year": "2017",
+        "country": "Uganda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 871.09388
+      },
+      {
+        "year": "2018",
+        "country": "Ethiopia",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 705.968812
+      },
+      {
+        "year": "2018",
+        "country": "Kenya",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1596.690459
+      },
+      {
+        "year": "2018",
+        "country": "Mozambique",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 621.153734
+      },
+      {
+        "year": "2018",
+        "country": "Rwanda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 808.704813
+      },
+      {
+        "year": "2018",
+        "country": "Tanzania",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1024.015259
+      },
+      {
+        "year": "2018",
+        "country": "Uganda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 895.075128
+      },
+      {
+        "year": "2019",
+        "country": "Ethiopia",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 744.70279
+      },
+      {
+        "year": "2019",
+        "country": "Kenya",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1645.709618
+      },
+      {
+        "year": "2019",
+        "country": "Mozambique",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 617.13932
+      },
+      {
+        "year": "2019",
+        "country": "Rwanda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 863.872078
+      },
+      {
+        "year": "2019",
+        "country": "Tanzania",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1051.766602
+      },
+      {
+        "year": "2019",
+        "country": "Uganda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 920.939102
+      },
+      {
+        "year": "2020",
+        "country": "Ethiopia",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 768.705424
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1609.334141
+      },
+      {
+        "year": "2020",
+        "country": "Mozambique",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 591.80406
+      },
+      {
+        "year": "2020",
+        "country": "Rwanda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 821.257133
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1041.259644
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 917.035032
+      },
+      {
+        "year": "2021",
+        "country": "Ethiopia",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 790.65702
+      },
+      {
+        "year": "2021",
+        "country": "Kenya",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1698.895783
+      },
+      {
+        "year": "2021",
+        "country": "Mozambique",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 588.215855
+      },
+      {
+        "year": "2021",
+        "country": "Rwanda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 871.041835
+      },
+      {
+        "year": "2021",
+        "country": "Tanzania",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1054.317261
+      },
+      {
+        "year": "2021",
+        "country": "Uganda",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 919.401675
+      }
+    ]
+  },
+  "facet": {
+    "field": "country",
+    "type": "nominal",
+    "columns": 2,
+    "header": {
+      "title": null,
+      "labelFontWeight": "bold"
+    }
+  },
+  "spec": {
+    "mark": {
+      "type": "line",
+      "tooltip": true,
+      "interpolate": "monotone"
+    },
+    "encoding": {
+      "x": {
+        "field": "year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "axis": {
+          "title": null,
+          "format": "%Y",
+          "tickCount": 5,
+          "labelAngle": 0,
+          "gridColor": "#CED4DE",
+          "gridDash": [
+            4,
+            2
+          ],
+          "labelColor": "#666666",
+          "titleColor": "#111111",
+          "titleFontWeight": "bold"
+        }
+      },
+      "y": {
+        "field": "value",
+        "type": "quantitative",
+        "axis": {
+          "gridColor": "#CED4DE",
+          "gridDash": [
+            4,
+            2
+          ],
+          "labelColor": "#666666",
+          "titleColor": "#111111",
+          "titleFontWeight": "bold",
+          "tickCount": 5,
+          "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)"
+        },
+        "scale": {
+          "type": "log",
+          "zero": false
+        }
+      },
+      "color": {
+        "field": "country",
+        "type": "nominal",
+        "legend": null
+      },
+      "tooltip": [
+        {
+          "field": "year",
+          "title": "Year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "format": "%Y"
+        },
+        {
+          "field": "value",
+          "title": "Value",
+          "type": "quantitative",
+          "format": ",.0f"
+        },
+        {
+          "field": "country",
+          "title": "Economy",
+          "type": "nominal"
+        },
+        {
+          "field": "indicator",
+          "title": "Indicator"
+        }
+      ]
+    },
+    "width": 300,
+    "height": 180
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

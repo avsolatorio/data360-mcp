@@ -1,0 +1,1654 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP per capita (constant 2015 US$) | GDP (annual % growth) | Inflation, consumer",
+      "prices (annual % growth)"
+    ],
+    "subtitle": [
+      "2010-2022"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8792.634361
+      },
+      {
+        "year": "2010",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 5764.650124
+      },
+      {
+        "year": "2010",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1235.159391
+      },
+      {
+        "year": "2010",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8755.120117
+      },
+      {
+        "year": "2010",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 5953.945065
+      },
+      {
+        "year": "2011",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9067.993163
+      },
+      {
+        "year": "2011",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6275.716343
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1281.610544
+      },
+      {
+        "year": "2011",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9120.820313
+      },
+      {
+        "year": "2011",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6067.124827
+      },
+      {
+        "year": "2012",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9167.499239
+      },
+      {
+        "year": "2012",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6723.090037
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1333.096266
+      },
+      {
+        "year": "2012",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9464.010742
+      },
+      {
+        "year": "2012",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6121.557839
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9366.739324
+      },
+      {
+        "year": "2013",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 7197.937319
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1399.453798
+      },
+      {
+        "year": "2013",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9601.537109
+      },
+      {
+        "year": "2013",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6170.876709
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9338.342783
+      },
+      {
+        "year": "2014",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 7686.373695
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1484.316407
+      },
+      {
+        "year": "2014",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9493.8125
+      },
+      {
+        "year": "2014",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6155.005895
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8936.196617
+      },
+      {
+        "year": "2015",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8175.332851
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1583.998159
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9277.713867
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6112.273825
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8577.843767
+      },
+      {
+        "year": "2016",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8679.225288
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1694.46535
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9269.317383
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6095.29506
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8628.253089
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9221.350456
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1788.697703
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9418.996094
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6125.692051
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8722.336303
+      },
+      {
+        "year": "2018",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9798.578906
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1883.357727
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9674.787109
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6117.270141
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8771.440513
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 10356.292489
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1936.030677
+      },
+      {
+        "year": "2019",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9882.024414
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 6032.829726
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8435.011433
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 10573.379406
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1806.501106
+      },
+      {
+        "year": "2020",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9632.325195
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 5569.584833
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8799.229458
+      },
+      {
+        "year": "2021",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 11469.317451
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 1965.309434
+      },
+      {
+        "year": "2021",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 10231.318359
+      },
+      {
+        "year": "2021",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 5750.909375
+      },
+      {
+        "year": "2022",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9032.084816
+      },
+      {
+        "year": "2022",
+        "country": "China",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 11830.298768
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 2098.211245
+      },
+      {
+        "year": "2022",
+        "country": "Russian Federation",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 10119.115234
+      },
+      {
+        "year": "2022",
+        "country": "South Africa",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 5786.865053
+      },
+      {
+        "year": "2010",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 7.528226
+      },
+      {
+        "year": "2010",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 10.59169
+      },
+      {
+        "year": "2010",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 8.497585
+      },
+      {
+        "year": "2010",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 4.5
+      },
+      {
+        "year": "2010",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 3.039733
+      },
+      {
+        "year": "2011",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 3.974423
+      },
+      {
+        "year": "2011",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 9.462052
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 5.241316
+      },
+      {
+        "year": "2011",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 4.300029
+      },
+      {
+        "year": "2011",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 3.168556
+      },
+      {
+        "year": "2012",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.921176
+      },
+      {
+        "year": "2012",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 7.85782
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 5.456388
+      },
+      {
+        "year": "2012",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 4.024086
+      },
+      {
+        "year": "2012",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 2.396232
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 3.004823
+      },
+      {
+        "year": "2013",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 7.77843
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 6.386106
+      },
+      {
+        "year": "2013",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.755422
+      },
+      {
+        "year": "2013",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 2.485468
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 0.503956
+      },
+      {
+        "year": "2014",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 7.461007
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 7.410228
+      },
+      {
+        "year": "2014",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 0.736267
+      },
+      {
+        "year": "2014",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.413826
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": -3.545763
+      },
+      {
+        "year": "2015",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 6.981623
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 7.996254
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": -1.972719
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.321862
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": -3.275917
+      },
+      {
+        "year": "2016",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 6.773689
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 8.256306
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 0.193671
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 0.664552
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.322869
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 6.891239
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 6.795383
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.826705
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.157947
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.783667
+      },
+      {
+        "year": "2018",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 6.757806
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 6.453851
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 2.806341
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.556784
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 1.220778
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 6.067378
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 3.871437
+      },
+      {
+        "year": "2019",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 2.198076
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 0.259936
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": -3.276759
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 2.339504
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": -5.777725
+      },
+      {
+        "year": "2020",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": -2.653654
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": -6.168918
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 4.762604
+      },
+      {
+        "year": "2021",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 8.570384
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 9.689592
+      },
+      {
+        "year": "2021",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": 5.866492
+      },
+      {
+        "year": "2021",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 4.858649
+      },
+      {
+        "year": "2022",
+        "country": "Brazil",
+        "indicator": "GDP (annual % growth)",
+        "value": 3.016694
+      },
+      {
+        "year": "2022",
+        "country": "China",
+        "indicator": "GDP (annual % growth)",
+        "value": 3.133854
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "indicator": "GDP (annual % growth)",
+        "value": 7.609365
+      },
+      {
+        "year": "2022",
+        "country": "Russian Federation",
+        "indicator": "GDP (annual % growth)",
+        "value": -1.435371
+      },
+      {
+        "year": "2022",
+        "country": "South Africa",
+        "indicator": "GDP (annual % growth)",
+        "value": 2.058137
+      },
+      {
+        "year": "2010",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 5.038727
+      },
+      {
+        "year": "2010",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.175325
+      },
+      {
+        "year": "2010",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 11.98939
+      },
+      {
+        "year": "2010",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.849392
+      },
+      {
+        "year": "2010",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 4.067496
+      },
+      {
+        "year": "2011",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.63645
+      },
+      {
+        "year": "2011",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 5.553899
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 8.911793
+      },
+      {
+        "year": "2011",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 8.440465
+      },
+      {
+        "year": "2011",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 5.000853
+      },
+      {
+        "year": "2012",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 5.403499
+      },
+      {
+        "year": "2012",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 2.619524
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 9.478997
+      },
+      {
+        "year": "2012",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 5.074743
+      },
+      {
+        "year": "2012",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 5.737971
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.204311
+      },
+      {
+        "year": "2013",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 2.62105
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 10.017878
+      },
+      {
+        "year": "2013",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.754668
+      },
+      {
+        "year": "2013",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 5.780169
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.32904
+      },
+      {
+        "year": "2014",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 1.921642
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.665657
+      },
+      {
+        "year": "2014",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 7.82017
+      },
+      {
+        "year": "2014",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.13283
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 9.029901
+      },
+      {
+        "year": "2015",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 1.437024
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 4.906973
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 15.534396
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 4.518691
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 8.739144
+      },
+      {
+        "year": "2016",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 2.000002
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 4.948216
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 7.042437
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.602908
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.446373
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 1.593136
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.328173
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.683331
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 5.186187
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.66485
+      },
+      {
+        "year": "2018",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 2.07479
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.938826
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 2.878314
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 4.509873
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.732976
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 2.899234
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.729506
+      },
+      {
+        "year": "2019",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 4.472026
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 4.102851
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.211768
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 2.419422
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.623437
+      },
+      {
+        "year": "2020",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.382198
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 3.232388
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 8.30166
+      },
+      {
+        "year": "2021",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 0.981015
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 5.131407
+      },
+      {
+        "year": "2021",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.694459
+      },
+      {
+        "year": "2021",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 4.618745
+      },
+      {
+        "year": "2022",
+        "country": "Brazil",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 9.280106
+      },
+      {
+        "year": "2022",
+        "country": "China",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 1.973576
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 6.699034
+      },
+      {
+        "year": "2022",
+        "country": "Russian Federation",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 13.74368
+      },
+      {
+        "year": "2022",
+        "country": "South Africa",
+        "indicator": "Inflation, consumer prices (annual % growth)",
+        "value": 7.039873
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "GDP (annual % growth)",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 330,
+      "height": 180,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "GDP (annual % growth)"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "GDP (annual % growth)",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Brazil",
+              "China",
+              "India",
+              "Russian Federation",
+              "South Africa"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "GDP per capita (constant 2015 US$)",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 330,
+      "height": 180,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "GDP per capita (constant 2015 US$)"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "GDP per capita (constant 2015 US$)",
+            "format": ",.0f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Brazil",
+              "China",
+              "India",
+              "Russian Federation",
+              "South Africa"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "Inflation, consumer prices (annual % growth)",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 330,
+      "height": 180,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Inflation, consumer prices (annual % growth)"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Inflation, consumer prices (annual % growth)",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Brazil",
+              "China",
+              "India",
+              "Russian Federation",
+              "South Africa"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "columns": 2,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

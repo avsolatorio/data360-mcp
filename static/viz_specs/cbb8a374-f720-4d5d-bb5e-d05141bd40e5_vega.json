@@ -1,0 +1,1759 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Inflation (CPI, annual %) in Latin America & Caribbean countries (2015\u20132024)",
+    "subtitle": [
+      "Antigua and Barbuda, Argentina, Aruba, Bahamas, The, Barbados, Belize, Bolivia, Brazil, Cayman Islands, Chile, \u2026 (+26 more), 2015-2024",
+      "Percentage change per annum"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2018",
+        "value": 4.347349,
+        "country": "Honduras"
+      },
+      {
+        "year": "2019",
+        "value": 2.557545,
+        "country": "Chile"
+      },
+      {
+        "year": "2019",
+        "value": 3.523019,
+        "country": "Colombia"
+      },
+      {
+        "year": "2019",
+        "value": 2.096046,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2020",
+        "value": 3.045491,
+        "country": "Chile"
+      },
+      {
+        "year": "2020",
+        "value": 2.526635,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 3.070667,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2018",
+        "value": 3.66485,
+        "country": "Brazil"
+      },
+      {
+        "year": "2018",
+        "value": 1.09033,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2017",
+        "value": 0.908458,
+        "country": "Grenada"
+      },
+      {
+        "year": "2017",
+        "value": 4.424537,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2017",
+        "value": 1.904656,
+        "country": "Guyana"
+      },
+      {
+        "year": "2017",
+        "value": 10.680089,
+        "country": "Haiti"
+      },
+      {
+        "year": "2017",
+        "value": 3.934361,
+        "country": "Honduras"
+      },
+      {
+        "year": "2020",
+        "value": 0.038521,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2017",
+        "value": 6.218094,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2019",
+        "value": 1.000543,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2019",
+        "value": 3.9051,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2016",
+        "value": -0.687037,
+        "country": "St. Kitts and Nevis"
+      },
+      {
+        "year": "2016",
+        "value": -3.078218,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2016",
+        "value": -0.149642,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2016",
+        "value": 55.412388,
+        "country": "Suriname"
+      },
+      {
+        "year": "2018",
+        "value": 7.606534,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2015",
+        "value": 3.99738,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2023",
+        "value": 2.696123,
+        "country": "Grenada"
+      },
+      {
+        "year": "2023",
+        "value": 6.206576,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2018",
+        "value": 0.761578,
+        "country": "Panama"
+      },
+      {
+        "year": "2018",
+        "value": 3.97561,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2018",
+        "value": 1.509154,
+        "country": "Peru"
+      },
+      {
+        "year": "2019",
+        "value": -0.355084,
+        "country": "Panama"
+      },
+      {
+        "year": "2019",
+        "value": 2.757097,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2019",
+        "value": 2.252122,
+        "country": "Peru"
+      },
+      {
+        "year": "2018",
+        "value": -1.037122,
+        "country": "St. Kitts and Nevis"
+      },
+      {
+        "year": "2018",
+        "value": 1.935619,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2018",
+        "value": 2.324145,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2016",
+        "value": 2.821708,
+        "country": "Mexico"
+      },
+      {
+        "year": "2021",
+        "value": 4.928414,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2021",
+        "value": 1.630703,
+        "country": "Panama"
+      },
+      {
+        "year": "2015",
+        "value": -1.733612,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2015",
+        "value": 6.893904,
+        "country": "Suriname"
+      },
+      {
+        "year": "2021",
+        "value": 2.059227,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2023",
+        "value": 3.052916,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2023",
+        "value": 3.187189,
+        "country": "Barbados"
+      },
+      {
+        "year": "2023",
+        "value": 4.38984,
+        "country": "Belize"
+      },
+      {
+        "year": "2021",
+        "value": 2.228913,
+        "country": "Dominica"
+      },
+      {
+        "year": "2021",
+        "value": 8.243003,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2021",
+        "value": 0.133251,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2021",
+        "value": 3.466926,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2022",
+        "value": 2.884902,
+        "country": "Dominica"
+      },
+      {
+        "year": "2022",
+        "value": 8.811092,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2022",
+        "value": 3.46617,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2022",
+        "value": 7.198616,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2024",
+        "value": 2.903952,
+        "country": "Guyana"
+      },
+      {
+        "year": "2024",
+        "value": 26.949056,
+        "country": "Haiti"
+      },
+      {
+        "year": "2024",
+        "value": 4.606211,
+        "country": "Honduras"
+      },
+      {
+        "year": "2024",
+        "value": 5.411944,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2024",
+        "value": 4.367464,
+        "country": "Brazil"
+      },
+      {
+        "year": "2024",
+        "value": 4.297639,
+        "country": "Chile"
+      },
+      {
+        "year": "2024",
+        "value": 6.609086,
+        "country": "Colombia"
+      },
+      {
+        "year": "2024",
+        "value": 1.086154,
+        "country": "Grenada"
+      },
+      {
+        "year": "2024",
+        "value": 2.869928,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2024",
+        "value": 0.526885,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2024",
+        "value": 4.849144,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2016",
+        "value": 3.523173,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2019",
+        "value": 7.881989,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2017",
+        "value": 3.446373,
+        "country": "Brazil"
+      },
+      {
+        "year": "2016",
+        "value": 1.65039,
+        "country": "Grenada"
+      },
+      {
+        "year": "2016",
+        "value": 4.448442,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2016",
+        "value": 0.836008,
+        "country": "Guyana"
+      },
+      {
+        "year": "2016",
+        "value": 11.502907,
+        "country": "Haiti"
+      },
+      {
+        "year": "2016",
+        "value": 2.724612,
+        "country": "Honduras"
+      },
+      {
+        "year": "2017",
+        "value": 2.432488,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2017",
+        "value": -1.028282,
+        "country": "Aruba"
+      },
+      {
+        "year": "2017",
+        "value": 1.518207,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2016",
+        "value": -0.489438,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2016",
+        "value": -0.931196,
+        "country": "Aruba"
+      },
+      {
+        "year": "2016",
+        "value": -0.346377,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2016",
+        "value": 1.281928,
+        "country": "Barbados"
+      },
+      {
+        "year": "2018",
+        "value": 3.736639,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2019",
+        "value": 5.37629,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2023",
+        "value": 7.581683,
+        "country": "Chile"
+      },
+      {
+        "year": "2023",
+        "value": 11.735904,
+        "country": "Colombia"
+      },
+      {
+        "year": "2023",
+        "value": 0.525194,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2021",
+        "value": 4.524568,
+        "country": "Chile"
+      },
+      {
+        "year": "2019",
+        "value": 1.431356,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2019",
+        "value": 53.548304,
+        "country": "Argentina"
+      },
+      {
+        "year": "2019",
+        "value": 4.257462,
+        "country": "Aruba"
+      },
+      {
+        "year": "2019",
+        "value": 2.491235,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2016",
+        "value": 9.639413,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2016",
+        "value": 254.948535,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2020",
+        "value": 9.756406,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2021",
+        "value": 3.495058,
+        "country": "Colombia"
+      },
+      {
+        "year": "2021",
+        "value": 1.726478,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2021",
+        "value": 2.062996,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2021",
+        "value": 48.409379,
+        "country": "Argentina"
+      },
+      {
+        "year": "2021",
+        "value": 2.904913,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2017",
+        "value": 0.694917,
+        "country": "St. Kitts and Nevis"
+      },
+      {
+        "year": "2017",
+        "value": 0.104262,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2017",
+        "value": 2.153336,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2017",
+        "value": 21.996943,
+        "country": "Suriname"
+      },
+      {
+        "year": "2018",
+        "value": 2.265863,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2018",
+        "value": 3.106006,
+        "country": "Barbados"
+      },
+      {
+        "year": "2018",
+        "value": 0.269983,
+        "country": "Belize"
+      },
+      {
+        "year": "2018",
+        "value": 2.27206,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2016",
+        "value": 0.141816,
+        "country": "Dominica"
+      },
+      {
+        "year": "2016",
+        "value": 1.614166,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2016",
+        "value": 1.728265,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2016",
+        "value": 0.604049,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2023",
+        "value": 6.474137,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2018",
+        "value": 0.804102,
+        "country": "Grenada"
+      },
+      {
+        "year": "2018",
+        "value": 3.751862,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2018",
+        "value": 1.282843,
+        "country": "Guyana"
+      },
+      {
+        "year": "2018",
+        "value": 12.481411,
+        "country": "Haiti"
+      },
+      {
+        "year": "2021",
+        "value": 7.747914,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2020",
+        "value": 1.767516,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2020",
+        "value": 2.002412,
+        "country": "Peru"
+      },
+      {
+        "year": "2019",
+        "value": 2.622208,
+        "country": "Curacao"
+      },
+      {
+        "year": "2019",
+        "value": 1.504624,
+        "country": "Dominica"
+      },
+      {
+        "year": "2019",
+        "value": 1.810604,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2019",
+        "value": 0.266013,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2019",
+        "value": 0.075324,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2021",
+        "value": 5.862782,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2022",
+        "value": 11.643867,
+        "country": "Chile"
+      },
+      {
+        "year": "2022",
+        "value": 10.177231,
+        "country": "Colombia"
+      },
+      {
+        "year": "2022",
+        "value": 8.274775,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2017",
+        "value": 6.041457,
+        "country": "Mexico"
+      },
+      {
+        "year": "2020",
+        "value": 3.681813,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2020",
+        "value": -1.550275,
+        "country": "Panama"
+      },
+      {
+        "year": "2022",
+        "value": 2.668175,
+        "country": "St. Kitts and Nevis"
+      },
+      {
+        "year": "2022",
+        "value": 6.378147,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2022",
+        "value": 5.660098,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2022",
+        "value": 52.446027,
+        "country": "Suriname"
+      },
+      {
+        "year": "2023",
+        "value": 3.557112,
+        "country": "St. Kitts and Nevis"
+      },
+      {
+        "year": "2023",
+        "value": 4.070608,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2023",
+        "value": 4.564577,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2023",
+        "value": 51.587316,
+        "country": "Suriname"
+      },
+      {
+        "year": "2018",
+        "value": 2.583688,
+        "country": "Curacao"
+      },
+      {
+        "year": "2018",
+        "value": 0.989191,
+        "country": "Dominica"
+      },
+      {
+        "year": "2018",
+        "value": 3.564434,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2018",
+        "value": -0.224103,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2021",
+        "value": 3.235637,
+        "country": "Belize"
+      },
+      {
+        "year": "2021",
+        "value": 0.737384,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2021",
+        "value": 8.30166,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 2.580539,
+        "country": "Grenada"
+      },
+      {
+        "year": "2022",
+        "value": 6.885128,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2022",
+        "value": 6.115056,
+        "country": "Guyana"
+      },
+      {
+        "year": "2022",
+        "value": 33.983932,
+        "country": "Haiti"
+      },
+      {
+        "year": "2022",
+        "value": 9.089639,
+        "country": "Honduras"
+      },
+      {
+        "year": "2015",
+        "value": 0.801982,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2015",
+        "value": -0.476542,
+        "country": "Curacao"
+      },
+      {
+        "year": "2015",
+        "value": -0.843827,
+        "country": "Dominica"
+      },
+      {
+        "year": "2015",
+        "value": 0.836746,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2024",
+        "value": -0.110284,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2024",
+        "value": 3.627707,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2024",
+        "value": 16.229616,
+        "country": "Suriname"
+      },
+      {
+        "year": "2024",
+        "value": 6.198867,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2024",
+        "value": 219.883929,
+        "country": "Argentina"
+      },
+      {
+        "year": "2015",
+        "value": 8.66627,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2015",
+        "value": 121.738085,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2018",
+        "value": 2.43489,
+        "country": "Chile"
+      },
+      {
+        "year": "2018",
+        "value": 3.240569,
+        "country": "Colombia"
+      },
+      {
+        "year": "2018",
+        "value": 2.221115,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2016",
+        "value": 2.351022,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2017",
+        "value": 0.875586,
+        "country": "Panama"
+      },
+      {
+        "year": "2017",
+        "value": 3.602477,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2017",
+        "value": 2.9949,
+        "country": "Peru"
+      },
+      {
+        "year": "2017",
+        "value": 3.850672,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2020",
+        "value": 0.993337,
+        "country": "Guyana"
+      },
+      {
+        "year": "2020",
+        "value": 22.796311,
+        "country": "Haiti"
+      },
+      {
+        "year": "2020",
+        "value": 3.468412,
+        "country": "Honduras"
+      },
+      {
+        "year": "2015",
+        "value": -0.515448,
+        "country": "Grenada"
+      },
+      {
+        "year": "2015",
+        "value": 2.38872,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2020",
+        "value": 0.598986,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2018",
+        "value": 1.018569,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2018",
+        "value": 1.207158,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2018",
+        "value": 34.277224,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": 3.626041,
+        "country": "Aruba"
+      },
+      {
+        "year": "2020",
+        "value": 1.220264,
+        "country": "Dominica"
+      },
+      {
+        "year": "2020",
+        "value": 3.781032,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2020",
+        "value": -0.338872,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2020",
+        "value": -0.37159,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2017",
+        "value": 1.880384,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2020",
+        "value": 3.396834,
+        "country": "Mexico"
+      },
+      {
+        "year": "2015",
+        "value": 3.691542,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2020",
+        "value": 5.226778,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2019",
+        "value": 0.59815,
+        "country": "Grenada"
+      },
+      {
+        "year": "2019",
+        "value": 3.699984,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2019",
+        "value": 2.087231,
+        "country": "Guyana"
+      },
+      {
+        "year": "2019",
+        "value": 18.703783,
+        "country": "Haiti"
+      },
+      {
+        "year": "2019",
+        "value": 4.365872,
+        "country": "Honduras"
+      },
+      {
+        "year": "2019",
+        "value": 1.676625,
+        "country": "Barbados"
+      },
+      {
+        "year": "2019",
+        "value": 0.187069,
+        "country": "Belize"
+      },
+      {
+        "year": "2019",
+        "value": 1.839545,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2022",
+        "value": 10.349569,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2015",
+        "value": 9.029901,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 0.137492,
+        "country": "Panama"
+      },
+      {
+        "year": "2015",
+        "value": 3.129003,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2015",
+        "value": 3.398092,
+        "country": "Peru"
+      },
+      {
+        "year": "2017",
+        "value": 1.585588,
+        "country": "Curacao"
+      },
+      {
+        "year": "2017",
+        "value": 0.296253,
+        "country": "Dominica"
+      },
+      {
+        "year": "2017",
+        "value": 3.279557,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2017",
+        "value": 0.417336,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2017",
+        "value": 1.012354,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2015",
+        "value": 1.861483,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2015",
+        "value": -1.11279,
+        "country": "Barbados"
+      },
+      {
+        "year": "2015",
+        "value": -0.861584,
+        "country": "Belize"
+      },
+      {
+        "year": "2015",
+        "value": 4.05961,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2023",
+        "value": 4.629302,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2023",
+        "value": 5.869104,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2018",
+        "value": 4.89935,
+        "country": "Mexico"
+      },
+      {
+        "year": "2023",
+        "value": 2.821103,
+        "country": "Guyana"
+      },
+      {
+        "year": "2023",
+        "value": 36.813516,
+        "country": "Haiti"
+      },
+      {
+        "year": "2023",
+        "value": 6.663252,
+        "country": "Honduras"
+      },
+      {
+        "year": "2019",
+        "value": 3.635961,
+        "country": "Mexico"
+      },
+      {
+        "year": "2022",
+        "value": 5.828386,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2022",
+        "value": 9.10438,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2022",
+        "value": 5.605406,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2022",
+        "value": 6.276893,
+        "country": "Belize"
+      },
+      {
+        "year": "2022",
+        "value": 7.896276,
+        "country": "Mexico"
+      },
+      {
+        "year": "2021",
+        "value": 1.195689,
+        "country": "St. Kitts and Nevis"
+      },
+      {
+        "year": "2021",
+        "value": 2.410703,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2021",
+        "value": 1.572729,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2021",
+        "value": 59.119663,
+        "country": "Suriname"
+      },
+      {
+        "year": "2015",
+        "value": 0.330027,
+        "country": "Sint Maarten (Dutch part)"
+      },
+      {
+        "year": "2015",
+        "value": -2.301876,
+        "country": "St. Kitts and Nevis"
+      },
+      {
+        "year": "2015",
+        "value": -0.983601,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2024",
+        "value": 4.624738,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2024",
+        "value": 0.693226,
+        "country": "Panama"
+      },
+      {
+        "year": "2024",
+        "value": 3.835403,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2024",
+        "value": 2.007707,
+        "country": "Peru"
+      },
+      {
+        "year": "2023",
+        "value": 5.067139,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2023",
+        "value": 133.488936,
+        "country": "Argentina"
+      },
+      {
+        "year": "2024",
+        "value": 4.722256,
+        "country": "Mexico"
+      },
+      {
+        "year": "2017",
+        "value": 2.182718,
+        "country": "Chile"
+      },
+      {
+        "year": "2017",
+        "value": 4.314313,
+        "country": "Colombia"
+      },
+      {
+        "year": "2017",
+        "value": 1.625907,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2016",
+        "value": 0.663427,
+        "country": "Belize"
+      },
+      {
+        "year": "2016",
+        "value": 3.623214,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2016",
+        "value": 8.739144,
+        "country": "Brazil"
+      },
+      {
+        "year": "2016",
+        "value": 7.51346,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": -0.017479,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2016",
+        "value": -0.047208,
+        "country": "Curacao"
+      },
+      {
+        "year": "2017",
+        "value": 4.378399,
+        "country": "Jamaica"
+      },
+      {
+        "year": "2017",
+        "value": 2.19201,
+        "country": "Sint Maarten (Dutch part)"
+      },
+      {
+        "year": "2016",
+        "value": -0.625258,
+        "country": "Cayman Islands"
+      },
+      {
+        "year": "2016",
+        "value": 3.786194,
+        "country": "Chile"
+      },
+      {
+        "year": "2015",
+        "value": -2.347528,
+        "country": "Cayman Islands"
+      },
+      {
+        "year": "2015",
+        "value": 4.348774,
+        "country": "Chile"
+      },
+      {
+        "year": "2015",
+        "value": 4.989831,
+        "country": "Colombia"
+      },
+      {
+        "year": "2017",
+        "value": 4.660185,
+        "country": "Barbados"
+      },
+      {
+        "year": "2017",
+        "value": 1.147653,
+        "country": "Belize"
+      },
+      {
+        "year": "2017",
+        "value": 2.822758,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2016",
+        "value": 0.111683,
+        "country": "Sint Maarten (Dutch part)"
+      },
+      {
+        "year": "2016",
+        "value": 0.739734,
+        "country": "Panama"
+      },
+      {
+        "year": "2016",
+        "value": 4.086823,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2016",
+        "value": 3.557177,
+        "country": "Peru"
+      },
+      {
+        "year": "2018",
+        "value": 4.947237,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2015",
+        "value": -1.001734,
+        "country": "Guyana"
+      },
+      {
+        "year": "2015",
+        "value": 6.731841,
+        "country": "Haiti"
+      },
+      {
+        "year": "2015",
+        "value": 3.157831,
+        "country": "Honduras"
+      },
+      {
+        "year": "2019",
+        "value": 3.732976,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 7.531078,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2022",
+        "value": 72.430758,
+        "country": "Argentina"
+      },
+      {
+        "year": "2023",
+        "value": 2.576888,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2023",
+        "value": 4.593563,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 0.62599,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2020",
+        "value": 42.015095,
+        "country": "Argentina"
+      },
+      {
+        "year": "2020",
+        "value": 0.724911,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2021",
+        "value": 1.219512,
+        "country": "Grenada"
+      },
+      {
+        "year": "2021",
+        "value": 4.261051,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2021",
+        "value": 5.032856,
+        "country": "Guyana"
+      },
+      {
+        "year": "2021",
+        "value": 16.841524,
+        "country": "Haiti"
+      },
+      {
+        "year": "2021",
+        "value": 4.48088,
+        "country": "Honduras"
+      },
+      {
+        "year": "2023",
+        "value": 4.632023,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2023",
+        "value": 6.455613,
+        "country": "Peru"
+      },
+      {
+        "year": "2022",
+        "value": 10.467424,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2022",
+        "value": 2.859651,
+        "country": "Panama"
+      },
+      {
+        "year": "2022",
+        "value": 9.765567,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2022",
+        "value": 8.333706,
+        "country": "Peru"
+      },
+      {
+        "year": "2015",
+        "value": 0.968993,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2015",
+        "value": 0.474764,
+        "country": "Aruba"
+      },
+      {
+        "year": "2020",
+        "value": -0.740733,
+        "country": "Grenada"
+      },
+      {
+        "year": "2020",
+        "value": 3.214441,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2020",
+        "value": -1.167245,
+        "country": "St. Kitts and Nevis"
+      },
+      {
+        "year": "2020",
+        "value": -1.755808,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2020",
+        "value": -0.628131,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2020",
+        "value": 34.889784,
+        "country": "Suriname"
+      },
+      {
+        "year": "2021",
+        "value": 4.787983,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2021",
+        "value": 4.271664,
+        "country": "Peru"
+      },
+      {
+        "year": "2015",
+        "value": 4.661216,
+        "country": "Trinidad and Tobago"
+      },
+      {
+        "year": "2023",
+        "value": 5.527961,
+        "country": "Mexico"
+      },
+      {
+        "year": "2020",
+        "value": 0.121435,
+        "country": "Belize"
+      },
+      {
+        "year": "2020",
+        "value": 0.940742,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2020",
+        "value": 3.211768,
+        "country": "Brazil"
+      },
+      {
+        "year": "2023",
+        "value": 8.387659,
+        "country": "Nicaragua"
+      },
+      {
+        "year": "2023",
+        "value": 1.486414,
+        "country": "Panama"
+      },
+      {
+        "year": "2019",
+        "value": -0.329562,
+        "country": "St. Kitts and Nevis"
+      },
+      {
+        "year": "2019",
+        "value": 0.539088,
+        "country": "St. Lucia"
+      },
+      {
+        "year": "2019",
+        "value": 0.91307,
+        "country": "St. Vincent and the Grenadines"
+      },
+      {
+        "year": "2015",
+        "value": 3.966646,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2015",
+        "value": -0.731384,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2022",
+        "value": 1.746329,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2022",
+        "value": 9.280106,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 2.720641,
+        "country": "Mexico"
+      },
+      {
+        "year": "2021",
+        "value": 5.689208,
+        "country": "Mexico"
+      },
+      {
+        "year": "2023",
+        "value": 5.086775,
+        "country": "Dominica"
+      },
+      {
+        "year": "2023",
+        "value": 4.785613,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2023",
+        "value": 2.215688,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2023",
+        "value": 4.045547,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2024",
+        "value": -0.412853,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2024",
+        "value": 2.569219,
+        "country": "Dominica"
+      },
+      {
+        "year": "2024",
+        "value": 3.302233,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2024",
+        "value": 1.547325,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2024",
+        "value": 0.853782,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2024",
+        "value": 0.409162,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2024",
+        "value": 1.446437,
+        "country": "Barbados"
+      },
+      {
+        "year": "2024",
+        "value": 3.28956,
+        "country": "Belize"
+      },
+      {
+        "year": "2024",
+        "value": 5.099766,
+        "country": "Bolivia"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "redblue",
+        "domain": [
+          -254.948535,
+          254.948535
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Percentage change per annum",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

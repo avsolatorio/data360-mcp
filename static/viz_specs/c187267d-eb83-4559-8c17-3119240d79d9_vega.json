@@ -1,0 +1,719 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Control of Corruption in the Philippines (1996\u20132024)",
+    "subtitle": [
+      "Philippines, 1996-2024",
+      "Series: Governance score (0-100), Lower bound of the 90% confidence interval for the governance score, Upper bound of the 90% confidence interval for the governance score"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1996",
+        "value": 40.672661,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "1998",
+        "value": 42.507065,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2000",
+        "value": 35.295854,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2002",
+        "value": 33.662291,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2003",
+        "value": 34.791747,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2004",
+        "value": 34.533042,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2005",
+        "value": 32.883557,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2006",
+        "value": 34.474469,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2007",
+        "value": 33.957326,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2008",
+        "value": 33.939809,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2009",
+        "value": 31.10579,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2010",
+        "value": 32.024239,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2011",
+        "value": 36.407554,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2012",
+        "value": 35.030135,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2013",
+        "value": 37.771084,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2014",
+        "value": 36.060261,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": 35.903713,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": 35.44452,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": 34.963703,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": 34.923837,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": 35.484098,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": 36.939341,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": 36.228363,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": 36.165971,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2023",
+        "value": 36.336761,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": 36.183225,
+        "country": "Philippines",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "1996",
+        "value": 34.044648,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "1998",
+        "value": 35.879051,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2000",
+        "value": 28.66784,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2002",
+        "value": 27.100555,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2003",
+        "value": 28.23001,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2004",
+        "value": 28.739927,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2005",
+        "value": 27.090442,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2006",
+        "value": 28.760656,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2007",
+        "value": 28.243513,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2008",
+        "value": 28.225996,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2009",
+        "value": 25.391977,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2010",
+        "value": 26.310426,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2011",
+        "value": 31.233576,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2012",
+        "value": 29.792778,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2013",
+        "value": 32.500294,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2014",
+        "value": 30.789471,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2015",
+        "value": 30.632923,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2016",
+        "value": 30.17373,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2017",
+        "value": 29.681043,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2018",
+        "value": 29.641177,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2019",
+        "value": 30.201438,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2020",
+        "value": 31.668551,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2021",
+        "value": 30.957573,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2022",
+        "value": 30.89518,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2023",
+        "value": 31.106198,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2024",
+        "value": 30.952662,
+        "country": "Philippines",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "1996",
+        "value": 47.300675,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "1998",
+        "value": 49.135078,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2000",
+        "value": 41.923868,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2002",
+        "value": 40.224028,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2003",
+        "value": 41.353483,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2004",
+        "value": 40.326157,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2005",
+        "value": 38.676672,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2006",
+        "value": 40.188281,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2007",
+        "value": 39.671139,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2008",
+        "value": 39.653622,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2009",
+        "value": 36.819602,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2010",
+        "value": 37.738052,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2011",
+        "value": 41.581531,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2012",
+        "value": 40.267493,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2013",
+        "value": 43.041874,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2014",
+        "value": 41.331052,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2015",
+        "value": 41.174504,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2016",
+        "value": 40.71531,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2017",
+        "value": 40.246363,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2018",
+        "value": 40.206497,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2019",
+        "value": 40.766758,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2020",
+        "value": 42.210131,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2021",
+        "value": 41.499154,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2022",
+        "value": 41.436761,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2023",
+        "value": 41.567323,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2024",
+        "value": 41.413787,
+        "country": "Philippines",
+        "comp_breakdown_1": "upper"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "transform": [
+        {
+          "pivot": "comp_breakdown_1",
+          "value": "value",
+          "groupby": [
+            "year",
+            "country"
+          ]
+        }
+      ],
+      "mark": {
+        "type": "area",
+        "opacity": 0.2,
+        "color": "#34A7F2"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "lower",
+          "type": "quantitative",
+          "scale": {
+            "zero": false
+          }
+        },
+        "y2": {
+          "field": "upper"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.comp_breakdown_1 == 'est'"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Worldwide Governance Indicators: Control of Corruption",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          },
+          {
+            "field": "_label_y",
+            "title": " Label Y"
+          },
+          {
+            "value": "Worldwide Governance Indicators: Control of Corruption",
+            "title": "Indicator"
+          }
+        ],
+        "detail": {
+          "field": "_d360_lseg",
+          "type": "nominal"
+        },
+        "strokeDash": {
+          "condition": {
+            "test": "datum._d360_ygap == 1",
+            "value": [
+              6,
+              4
+            ]
+          },
+          "value": []
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

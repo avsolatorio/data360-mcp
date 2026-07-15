@@ -1,0 +1,1651 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Index for Risk Management (INFORM Risk) Across Regions 2016-2025",
+    "subtitle": [
+      "2016-2022",
+      "0-10 scale",
+      "Showing 50 of 191 economies by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2019",
+        "value": 8.1,
+        "country": "AFG"
+      },
+      {
+        "year": "2019",
+        "value": 5.8,
+        "country": "AGO"
+      },
+      {
+        "year": "2019",
+        "value": 3.2,
+        "country": "ALB"
+      },
+      {
+        "year": "2019",
+        "value": 2.2,
+        "country": "ARE"
+      },
+      {
+        "year": "2019",
+        "value": 3.1,
+        "country": "ARG"
+      },
+      {
+        "year": "2019",
+        "value": 5.9,
+        "country": "PSE"
+      },
+      {
+        "year": "2019",
+        "value": 1.5,
+        "country": "QAT"
+      },
+      {
+        "year": "2019",
+        "value": 3.6,
+        "country": "RUS"
+      },
+      {
+        "year": "2019",
+        "value": 3.1,
+        "country": "SAU"
+      },
+      {
+        "year": "2019",
+        "value": 7.3,
+        "country": "SDN"
+      },
+      {
+        "year": "2019",
+        "value": 4.1,
+        "country": "SLB"
+      },
+      {
+        "year": "2019",
+        "value": 4.0,
+        "country": "SLV"
+      },
+      {
+        "year": "2019",
+        "value": 7.7,
+        "country": "SOM"
+      },
+      {
+        "year": "2019",
+        "value": 3.1,
+        "country": "SRB"
+      },
+      {
+        "year": "2019",
+        "value": 2.0,
+        "country": "SVK"
+      },
+      {
+        "year": "2019",
+        "value": 1.5,
+        "country": "SVN"
+      },
+      {
+        "year": "2019",
+        "value": 4.0,
+        "country": "SWZ"
+      },
+      {
+        "year": "2019",
+        "value": 4.9,
+        "country": "TGO"
+      },
+      {
+        "year": "2019",
+        "value": 4.6,
+        "country": "THA"
+      },
+      {
+        "year": "2019",
+        "value": 4.7,
+        "country": "TJK"
+      },
+      {
+        "year": "2019",
+        "value": 3.1,
+        "country": "TKM"
+      },
+      {
+        "year": "2019",
+        "value": 3.3,
+        "country": "TON"
+      },
+      {
+        "year": "2019",
+        "value": 3.0,
+        "country": "TTO"
+      },
+      {
+        "year": "2019",
+        "value": 2.5,
+        "country": "TUV"
+      },
+      {
+        "year": "2019",
+        "value": 5.6,
+        "country": "TZA"
+      },
+      {
+        "year": "2019",
+        "value": 6.3,
+        "country": "UGA"
+      },
+      {
+        "year": "2019",
+        "value": 4.9,
+        "country": "UKR"
+      },
+      {
+        "year": "2019",
+        "value": 2.4,
+        "country": "URY"
+      },
+      {
+        "year": "2019",
+        "value": 3.1,
+        "country": "USA"
+      },
+      {
+        "year": "2019",
+        "value": 3.8,
+        "country": "UZB"
+      },
+      {
+        "year": "2019",
+        "value": 2.6,
+        "country": "VCT"
+      },
+      {
+        "year": "2019",
+        "value": 4.1,
+        "country": "VUT"
+      },
+      {
+        "year": "2019",
+        "value": 2.9,
+        "country": "WSM"
+      },
+      {
+        "year": "2019",
+        "value": 4.8,
+        "country": "ZAF"
+      },
+      {
+        "year": "2019",
+        "value": 4.7,
+        "country": "ZMB"
+      },
+      {
+        "year": "2019",
+        "value": 5.5,
+        "country": "ZWE"
+      },
+      {
+        "year": "2019",
+        "value": 5.2,
+        "country": "AZE"
+      },
+      {
+        "year": "2019",
+        "value": 2.5,
+        "country": "BHS"
+      },
+      {
+        "year": "2019",
+        "value": 3.6,
+        "country": "BIH"
+      },
+      {
+        "year": "2019",
+        "value": 5.0,
+        "country": "BRA"
+      },
+      {
+        "year": "2019",
+        "value": 2.3,
+        "country": "BRN"
+      },
+      {
+        "year": "2019",
+        "value": 7.9,
+        "country": "CAF"
+      },
+      {
+        "year": "2019",
+        "value": 6.9,
+        "country": "CMR"
+      },
+      {
+        "year": "2019",
+        "value": 7.7,
+        "country": "COD"
+      },
+      {
+        "year": "2019",
+        "value": 5.9,
+        "country": "COG"
+      },
+      {
+        "year": "2019",
+        "value": 3.3,
+        "country": "CUB"
+      },
+      {
+        "year": "2019",
+        "value": 2.8,
+        "country": "CYP"
+      },
+      {
+        "year": "2019",
+        "value": 5.5,
+        "country": "DJI"
+      },
+      {
+        "year": "2019",
+        "value": 3.1,
+        "country": "DMA"
+      },
+      {
+        "year": "2019",
+        "value": 1.3,
+        "country": "DNK"
+      },
+      {
+        "year": "2016",
+        "value": 5.4,
+        "country": "PSE"
+      },
+      {
+        "year": "2016",
+        "value": 1.7,
+        "country": "QAT"
+      },
+      {
+        "year": "2016",
+        "value": 4.0,
+        "country": "RUS"
+      },
+      {
+        "year": "2016",
+        "value": 3.2,
+        "country": "SAU"
+      },
+      {
+        "year": "2016",
+        "value": 7.5,
+        "country": "SDN"
+      },
+      {
+        "year": "2016",
+        "value": 4.5,
+        "country": "SLB"
+      },
+      {
+        "year": "2016",
+        "value": 4.0,
+        "country": "SLV"
+      },
+      {
+        "year": "2016",
+        "value": 7.6,
+        "country": "SOM"
+      },
+      {
+        "year": "2016",
+        "value": 3.1,
+        "country": "SRB"
+      },
+      {
+        "year": "2016",
+        "value": 2.0,
+        "country": "SVK"
+      },
+      {
+        "year": "2016",
+        "value": 1.5,
+        "country": "SVN"
+      },
+      {
+        "year": "2016",
+        "value": 3.5,
+        "country": "SWZ"
+      },
+      {
+        "year": "2016",
+        "value": 4.5,
+        "country": "TGO"
+      },
+      {
+        "year": "2016",
+        "value": 4.6,
+        "country": "THA"
+      },
+      {
+        "year": "2016",
+        "value": 4.8,
+        "country": "TJK"
+      },
+      {
+        "year": "2016",
+        "value": 3.3,
+        "country": "TKM"
+      },
+      {
+        "year": "2016",
+        "value": 3.2,
+        "country": "TON"
+      },
+      {
+        "year": "2018",
+        "value": 8.2,
+        "country": "AFG"
+      },
+      {
+        "year": "2018",
+        "value": 5.9,
+        "country": "AGO"
+      },
+      {
+        "year": "2018",
+        "value": 3.0,
+        "country": "ALB"
+      },
+      {
+        "year": "2018",
+        "value": 2.2,
+        "country": "ARE"
+      },
+      {
+        "year": "2018",
+        "value": 3.0,
+        "country": "ARG"
+      },
+      {
+        "year": "2018",
+        "value": 5.7,
+        "country": "PSE"
+      },
+      {
+        "year": "2018",
+        "value": 1.5,
+        "country": "QAT"
+      },
+      {
+        "year": "2018",
+        "value": 3.7,
+        "country": "RUS"
+      },
+      {
+        "year": "2018",
+        "value": 3.2,
+        "country": "SAU"
+      },
+      {
+        "year": "2018",
+        "value": 7.4,
+        "country": "SDN"
+      },
+      {
+        "year": "2018",
+        "value": 4.2,
+        "country": "SLB"
+      },
+      {
+        "year": "2018",
+        "value": 4.1,
+        "country": "SLV"
+      },
+      {
+        "year": "2018",
+        "value": 7.7,
+        "country": "SOM"
+      },
+      {
+        "year": "2018",
+        "value": 3.2,
+        "country": "SRB"
+      },
+      {
+        "year": "2018",
+        "value": 2.0,
+        "country": "SVK"
+      },
+      {
+        "year": "2018",
+        "value": 1.5,
+        "country": "SVN"
+      },
+      {
+        "year": "2018",
+        "value": 3.5,
+        "country": "SWZ"
+      },
+      {
+        "year": "2018",
+        "value": 4.7,
+        "country": "TGO"
+      },
+      {
+        "year": "2018",
+        "value": 4.7,
+        "country": "THA"
+      },
+      {
+        "year": "2018",
+        "value": 4.7,
+        "country": "TJK"
+      },
+      {
+        "year": "2018",
+        "value": 3.2,
+        "country": "TKM"
+      },
+      {
+        "year": "2018",
+        "value": 3.3,
+        "country": "TON"
+      },
+      {
+        "year": "2018",
+        "value": 3.2,
+        "country": "TTO"
+      },
+      {
+        "year": "2018",
+        "value": 2.5,
+        "country": "TUV"
+      },
+      {
+        "year": "2018",
+        "value": 5.3,
+        "country": "TZA"
+      },
+      {
+        "year": "2018",
+        "value": 6.4,
+        "country": "UGA"
+      },
+      {
+        "year": "2018",
+        "value": 4.8,
+        "country": "UKR"
+      },
+      {
+        "year": "2018",
+        "value": 2.3,
+        "country": "URY"
+      },
+      {
+        "year": "2018",
+        "value": 3.3,
+        "country": "USA"
+      },
+      {
+        "year": "2018",
+        "value": 3.8,
+        "country": "UZB"
+      },
+      {
+        "year": "2018",
+        "value": 2.6,
+        "country": "VCT"
+      },
+      {
+        "year": "2018",
+        "value": 4.3,
+        "country": "VUT"
+      },
+      {
+        "year": "2018",
+        "value": 2.7,
+        "country": "WSM"
+      },
+      {
+        "year": "2018",
+        "value": 4.6,
+        "country": "ZAF"
+      },
+      {
+        "year": "2018",
+        "value": 4.6,
+        "country": "ZMB"
+      },
+      {
+        "year": "2018",
+        "value": 5.3,
+        "country": "ZWE"
+      },
+      {
+        "year": "2018",
+        "value": 5.3,
+        "country": "AZE"
+      },
+      {
+        "year": "2018",
+        "value": 2.3,
+        "country": "BHS"
+      },
+      {
+        "year": "2018",
+        "value": 3.7,
+        "country": "BIH"
+      },
+      {
+        "year": "2018",
+        "value": 4.8,
+        "country": "BRA"
+      },
+      {
+        "year": "2018",
+        "value": 2.3,
+        "country": "BRN"
+      },
+      {
+        "year": "2018",
+        "value": 8.0,
+        "country": "CAF"
+      },
+      {
+        "year": "2018",
+        "value": 6.8,
+        "country": "CMR"
+      },
+      {
+        "year": "2018",
+        "value": 7.8,
+        "country": "COD"
+      },
+      {
+        "year": "2018",
+        "value": 5.7,
+        "country": "COG"
+      },
+      {
+        "year": "2018",
+        "value": 3.3,
+        "country": "CUB"
+      },
+      {
+        "year": "2018",
+        "value": 2.8,
+        "country": "CYP"
+      },
+      {
+        "year": "2018",
+        "value": 5.4,
+        "country": "DJI"
+      },
+      {
+        "year": "2018",
+        "value": 3.2,
+        "country": "DMA"
+      },
+      {
+        "year": "2018",
+        "value": 1.4,
+        "country": "DNK"
+      },
+      {
+        "year": "2016",
+        "value": 8.0,
+        "country": "AFG"
+      },
+      {
+        "year": "2016",
+        "value": 5.9,
+        "country": "AGO"
+      },
+      {
+        "year": "2016",
+        "value": 3.2,
+        "country": "ALB"
+      },
+      {
+        "year": "2016",
+        "value": 2.1,
+        "country": "ARE"
+      },
+      {
+        "year": "2016",
+        "value": 2.6,
+        "country": "ARG"
+      },
+      {
+        "year": "2016",
+        "value": 2.4,
+        "country": "TTO"
+      },
+      {
+        "year": "2016",
+        "value": 2.9,
+        "country": "TUV"
+      },
+      {
+        "year": "2016",
+        "value": 5.4,
+        "country": "TZA"
+      },
+      {
+        "year": "2016",
+        "value": 6.2,
+        "country": "UGA"
+      },
+      {
+        "year": "2016",
+        "value": 5.0,
+        "country": "UKR"
+      },
+      {
+        "year": "2016",
+        "value": 1.9,
+        "country": "URY"
+      },
+      {
+        "year": "2016",
+        "value": 3.4,
+        "country": "USA"
+      },
+      {
+        "year": "2016",
+        "value": 3.9,
+        "country": "UZB"
+      },
+      {
+        "year": "2016",
+        "value": 2.8,
+        "country": "VCT"
+      },
+      {
+        "year": "2016",
+        "value": 4.6,
+        "country": "VUT"
+      },
+      {
+        "year": "2016",
+        "value": 2.6,
+        "country": "WSM"
+      },
+      {
+        "year": "2016",
+        "value": 4.6,
+        "country": "ZAF"
+      },
+      {
+        "year": "2016",
+        "value": 4.6,
+        "country": "ZMB"
+      },
+      {
+        "year": "2016",
+        "value": 5.1,
+        "country": "ZWE"
+      },
+      {
+        "year": "2016",
+        "value": 5.3,
+        "country": "AZE"
+      },
+      {
+        "year": "2016",
+        "value": 2.2,
+        "country": "BHS"
+      },
+      {
+        "year": "2016",
+        "value": 3.5,
+        "country": "BIH"
+      },
+      {
+        "year": "2016",
+        "value": 4.6,
+        "country": "BRA"
+      },
+      {
+        "year": "2016",
+        "value": 2.4,
+        "country": "BRN"
+      },
+      {
+        "year": "2016",
+        "value": 7.9,
+        "country": "CAF"
+      },
+      {
+        "year": "2016",
+        "value": 6.4,
+        "country": "CMR"
+      },
+      {
+        "year": "2016",
+        "value": 7.5,
+        "country": "COD"
+      },
+      {
+        "year": "2016",
+        "value": 5.5,
+        "country": "COG"
+      },
+      {
+        "year": "2016",
+        "value": 2.8,
+        "country": "CUB"
+      },
+      {
+        "year": "2016",
+        "value": 2.9,
+        "country": "CYP"
+      },
+      {
+        "year": "2016",
+        "value": 5.3,
+        "country": "DJI"
+      },
+      {
+        "year": "2016",
+        "value": 2.9,
+        "country": "DMA"
+      },
+      {
+        "year": "2016",
+        "value": 1.3,
+        "country": "DNK"
+      },
+      {
+        "year": "2022",
+        "value": 8.1,
+        "country": "AFG"
+      },
+      {
+        "year": "2022",
+        "value": 5.8,
+        "country": "AGO"
+      },
+      {
+        "year": "2022",
+        "value": 3.0,
+        "country": "ALB"
+      },
+      {
+        "year": "2022",
+        "value": 2.2,
+        "country": "ARE"
+      },
+      {
+        "year": "2022",
+        "value": 3.1,
+        "country": "ARG"
+      },
+      {
+        "year": "2022",
+        "value": 5.9,
+        "country": "PSE"
+      },
+      {
+        "year": "2022",
+        "value": 1.4,
+        "country": "QAT"
+      },
+      {
+        "year": "2022",
+        "value": 4.2,
+        "country": "RUS"
+      },
+      {
+        "year": "2022",
+        "value": 2.9,
+        "country": "SAU"
+      },
+      {
+        "year": "2022",
+        "value": 7.7,
+        "country": "SDN"
+      },
+      {
+        "year": "2022",
+        "value": 4.4,
+        "country": "SLB"
+      },
+      {
+        "year": "2022",
+        "value": 4.2,
+        "country": "SLV"
+      },
+      {
+        "year": "2022",
+        "value": 8.4,
+        "country": "SOM"
+      },
+      {
+        "year": "2022",
+        "value": 3.4,
+        "country": "SRB"
+      },
+      {
+        "year": "2022",
+        "value": 2.7,
+        "country": "SVK"
+      },
+      {
+        "year": "2022",
+        "value": 1.9,
+        "country": "SVN"
+      },
+      {
+        "year": "2022",
+        "value": 3.9,
+        "country": "SWZ"
+      },
+      {
+        "year": "2022",
+        "value": 5.1,
+        "country": "TGO"
+      },
+      {
+        "year": "2022",
+        "value": 4.6,
+        "country": "THA"
+      },
+      {
+        "year": "2022",
+        "value": 4.7,
+        "country": "TJK"
+      },
+      {
+        "year": "2022",
+        "value": 3.0,
+        "country": "TKM"
+      },
+      {
+        "year": "2022",
+        "value": 3.3,
+        "country": "TON"
+      },
+      {
+        "year": "2022",
+        "value": 3.1,
+        "country": "TTO"
+      },
+      {
+        "year": "2022",
+        "value": 3.0,
+        "country": "TUV"
+      },
+      {
+        "year": "2022",
+        "value": 5.5,
+        "country": "TZA"
+      },
+      {
+        "year": "2022",
+        "value": 6.5,
+        "country": "UGA"
+      },
+      {
+        "year": "2022",
+        "value": 5.3,
+        "country": "UKR"
+      },
+      {
+        "year": "2022",
+        "value": 2.6,
+        "country": "URY"
+      },
+      {
+        "year": "2022",
+        "value": 3.1,
+        "country": "USA"
+      },
+      {
+        "year": "2022",
+        "value": 3.6,
+        "country": "UZB"
+      },
+      {
+        "year": "2022",
+        "value": 2.8,
+        "country": "VCT"
+      },
+      {
+        "year": "2022",
+        "value": 4.4,
+        "country": "VUT"
+      },
+      {
+        "year": "2022",
+        "value": 2.9,
+        "country": "WSM"
+      },
+      {
+        "year": "2022",
+        "value": 5.2,
+        "country": "ZAF"
+      },
+      {
+        "year": "2022",
+        "value": 4.7,
+        "country": "ZMB"
+      },
+      {
+        "year": "2022",
+        "value": 5.3,
+        "country": "ZWE"
+      },
+      {
+        "year": "2022",
+        "value": 5.2,
+        "country": "AZE"
+      },
+      {
+        "year": "2022",
+        "value": 2.4,
+        "country": "BHS"
+      },
+      {
+        "year": "2022",
+        "value": 3.7,
+        "country": "BIH"
+      },
+      {
+        "year": "2022",
+        "value": 5.0,
+        "country": "BRA"
+      },
+      {
+        "year": "2022",
+        "value": 2.3,
+        "country": "BRN"
+      },
+      {
+        "year": "2022",
+        "value": 7.8,
+        "country": "CAF"
+      },
+      {
+        "year": "2022",
+        "value": 7.1,
+        "country": "CMR"
+      },
+      {
+        "year": "2022",
+        "value": 7.9,
+        "country": "COD"
+      },
+      {
+        "year": "2022",
+        "value": 5.7,
+        "country": "COG"
+      },
+      {
+        "year": "2022",
+        "value": 3.3,
+        "country": "CUB"
+      },
+      {
+        "year": "2022",
+        "value": 2.9,
+        "country": "CYP"
+      },
+      {
+        "year": "2022",
+        "value": 5.7,
+        "country": "DJI"
+      },
+      {
+        "year": "2022",
+        "value": 2.7,
+        "country": "DMA"
+      },
+      {
+        "year": "2022",
+        "value": 1.4,
+        "country": "DNK"
+      },
+      {
+        "year": "2021",
+        "value": 8.2,
+        "country": "AFG"
+      },
+      {
+        "year": "2021",
+        "value": 5.9,
+        "country": "AGO"
+      },
+      {
+        "year": "2021",
+        "value": 3.0,
+        "country": "ALB"
+      },
+      {
+        "year": "2021",
+        "value": 2.2,
+        "country": "ARE"
+      },
+      {
+        "year": "2021",
+        "value": 3.1,
+        "country": "ARG"
+      },
+      {
+        "year": "2021",
+        "value": 5.9,
+        "country": "PSE"
+      },
+      {
+        "year": "2021",
+        "value": 1.4,
+        "country": "QAT"
+      },
+      {
+        "year": "2021",
+        "value": 3.5,
+        "country": "RUS"
+      },
+      {
+        "year": "2021",
+        "value": 3.1,
+        "country": "SAU"
+      },
+      {
+        "year": "2021",
+        "value": 7.5,
+        "country": "SDN"
+      },
+      {
+        "year": "2021",
+        "value": 4.6,
+        "country": "SLB"
+      },
+      {
+        "year": "2021",
+        "value": 3.9,
+        "country": "SLV"
+      },
+      {
+        "year": "2021",
+        "value": 7.7,
+        "country": "SOM"
+      },
+      {
+        "year": "2021",
+        "value": 3.4,
+        "country": "SRB"
+      },
+      {
+        "year": "2021",
+        "value": 2.0,
+        "country": "SVK"
+      },
+      {
+        "year": "2021",
+        "value": 1.6,
+        "country": "SVN"
+      },
+      {
+        "year": "2021",
+        "value": 4.1,
+        "country": "SWZ"
+      },
+      {
+        "year": "2021",
+        "value": 4.8,
+        "country": "TGO"
+      },
+      {
+        "year": "2021",
+        "value": 4.6,
+        "country": "THA"
+      },
+      {
+        "year": "2021",
+        "value": 4.5,
+        "country": "TJK"
+      },
+      {
+        "year": "2021",
+        "value": 3.1,
+        "country": "TKM"
+      },
+      {
+        "year": "2021",
+        "value": 3.4,
+        "country": "TON"
+      },
+      {
+        "year": "2021",
+        "value": 3.0,
+        "country": "TTO"
+      },
+      {
+        "year": "2021",
+        "value": 3.0,
+        "country": "TUV"
+      },
+      {
+        "year": "2021",
+        "value": 5.6,
+        "country": "TZA"
+      },
+      {
+        "year": "2021",
+        "value": 6.4,
+        "country": "UGA"
+      },
+      {
+        "year": "2021",
+        "value": 4.9,
+        "country": "UKR"
+      },
+      {
+        "year": "2021",
+        "value": 2.3,
+        "country": "URY"
+      },
+      {
+        "year": "2021",
+        "value": 3.1,
+        "country": "USA"
+      },
+      {
+        "year": "2021",
+        "value": 3.6,
+        "country": "UZB"
+      },
+      {
+        "year": "2021",
+        "value": 3.0,
+        "country": "VCT"
+      },
+      {
+        "year": "2021",
+        "value": 4.5,
+        "country": "VUT"
+      },
+      {
+        "year": "2021",
+        "value": 3.0,
+        "country": "WSM"
+      },
+      {
+        "year": "2021",
+        "value": 5.3,
+        "country": "ZAF"
+      },
+      {
+        "year": "2021",
+        "value": 5.0,
+        "country": "ZMB"
+      },
+      {
+        "year": "2021",
+        "value": 5.3,
+        "country": "ZWE"
+      },
+      {
+        "year": "2021",
+        "value": 5.2,
+        "country": "AZE"
+      },
+      {
+        "year": "2021",
+        "value": 2.4,
+        "country": "BHS"
+      },
+      {
+        "year": "2021",
+        "value": 3.7,
+        "country": "BIH"
+      },
+      {
+        "year": "2021",
+        "value": 5.0,
+        "country": "BRA"
+      },
+      {
+        "year": "2021",
+        "value": 2.3,
+        "country": "BRN"
+      },
+      {
+        "year": "2021",
+        "value": 7.7,
+        "country": "CAF"
+      },
+      {
+        "year": "2021",
+        "value": 6.9,
+        "country": "CMR"
+      },
+      {
+        "year": "2021",
+        "value": 7.8,
+        "country": "COD"
+      },
+      {
+        "year": "2021",
+        "value": 5.7,
+        "country": "COG"
+      },
+      {
+        "year": "2021",
+        "value": 2.8,
+        "country": "CUB"
+      },
+      {
+        "year": "2021",
+        "value": 2.9,
+        "country": "CYP"
+      },
+      {
+        "year": "2021",
+        "value": 5.7,
+        "country": "DJI"
+      },
+      {
+        "year": "2021",
+        "value": 2.8,
+        "country": "DMA"
+      },
+      {
+        "year": "2021",
+        "value": 1.3,
+        "country": "DNK"
+      },
+      {
+        "year": "2020",
+        "value": 5.5,
+        "country": "PSE"
+      },
+      {
+        "year": "2020",
+        "value": 1.5,
+        "country": "QAT"
+      },
+      {
+        "year": "2020",
+        "value": 3.5,
+        "country": "RUS"
+      },
+      {
+        "year": "2020",
+        "value": 3.1,
+        "country": "SAU"
+      },
+      {
+        "year": "2020",
+        "value": 7.3,
+        "country": "SDN"
+      },
+      {
+        "year": "2020",
+        "value": 4.5,
+        "country": "SLB"
+      },
+      {
+        "year": "2020",
+        "value": 3.9,
+        "country": "SLV"
+      },
+      {
+        "year": "2020",
+        "value": 7.7,
+        "country": "SOM"
+      },
+      {
+        "year": "2020",
+        "value": 3.5,
+        "country": "SRB"
+      },
+      {
+        "year": "2020",
+        "value": 2.0,
+        "country": "SVK"
+      },
+      {
+        "year": "2020",
+        "value": 1.5,
+        "country": "SVN"
+      },
+      {
+        "year": "2020",
+        "value": 4.0,
+        "country": "SWZ"
+      },
+      {
+        "year": "2020",
+        "value": 4.8,
+        "country": "TGO"
+      },
+      {
+        "year": "2020",
+        "value": 4.5,
+        "country": "THA"
+      },
+      {
+        "year": "2020",
+        "value": 4.4,
+        "country": "TJK"
+      },
+      {
+        "year": "2020",
+        "value": 3.1,
+        "country": "TKM"
+      },
+      {
+        "year": "2020",
+        "value": 3.3,
+        "country": "TON"
+      },
+      {
+        "year": "2020",
+        "value": 3.0,
+        "country": "TTO"
+      },
+      {
+        "year": "2020",
+        "value": 2.8,
+        "country": "TUV"
+      },
+      {
+        "year": "2020",
+        "value": 5.4,
+        "country": "TZA"
+      },
+      {
+        "year": "2020",
+        "value": 6.2,
+        "country": "UGA"
+      },
+      {
+        "year": "2020",
+        "value": 4.9,
+        "country": "UKR"
+      },
+      {
+        "year": "2020",
+        "value": 2.3,
+        "country": "URY"
+      },
+      {
+        "year": "2020",
+        "value": 3.1,
+        "country": "USA"
+      },
+      {
+        "year": "2020",
+        "value": 3.8,
+        "country": "UZB"
+      },
+      {
+        "year": "2020",
+        "value": 2.7,
+        "country": "VCT"
+      },
+      {
+        "year": "2020",
+        "value": 4.4,
+        "country": "VUT"
+      },
+      {
+        "year": "2020",
+        "value": 2.9,
+        "country": "WSM"
+      },
+      {
+        "year": "2020",
+        "value": 4.9,
+        "country": "ZAF"
+      },
+      {
+        "year": "2020",
+        "value": 4.7,
+        "country": "ZMB"
+      },
+      {
+        "year": "2020",
+        "value": 5.3,
+        "country": "ZWE"
+      },
+      {
+        "year": "2020",
+        "value": 5.4,
+        "country": "AZE"
+      },
+      {
+        "year": "2020",
+        "value": 2.4,
+        "country": "BHS"
+      },
+      {
+        "year": "2020",
+        "value": 3.6,
+        "country": "BIH"
+      },
+      {
+        "year": "2020",
+        "value": 4.9,
+        "country": "BRA"
+      },
+      {
+        "year": "2020",
+        "value": 2.3,
+        "country": "BRN"
+      },
+      {
+        "year": "2020",
+        "value": 7.8,
+        "country": "CAF"
+      },
+      {
+        "year": "2020",
+        "value": 6.9,
+        "country": "CMR"
+      },
+      {
+        "year": "2020",
+        "value": 7.8,
+        "country": "COD"
+      },
+      {
+        "year": "2020",
+        "value": 5.7,
+        "country": "COG"
+      },
+      {
+        "year": "2020",
+        "value": 2.7,
+        "country": "CUB"
+      },
+      {
+        "year": "2020",
+        "value": 2.8,
+        "country": "CYP"
+      },
+      {
+        "year": "2020",
+        "value": 5.5,
+        "country": "DJI"
+      },
+      {
+        "year": "2020",
+        "value": 2.7,
+        "country": "DMA"
+      },
+      {
+        "year": "2020",
+        "value": 1.3,
+        "country": "DNK"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          1.3,
+          8.4
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "0-10 scale",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Index for Risk Management",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

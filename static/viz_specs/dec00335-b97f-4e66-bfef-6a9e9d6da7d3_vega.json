@@ -1,0 +1,1430 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Life Expectancy vs. GDP per Capita \u2014 World (2020)",
+    "subtitle": [
+      "2020"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020",
+        "country": "Afghanistan",
+        "gdp_per_capita_ppp_constant_2021_interna": 2769.685745,
+        "life_expectancy_at_birth_total_years": 61.454
+      },
+      {
+        "year": "2020",
+        "country": "Albania",
+        "gdp_per_capita_ppp_constant_2021_interna": 16457.787225,
+        "life_expectancy_at_birth_total_years": 77.824
+      },
+      {
+        "year": "2020",
+        "country": "Algeria",
+        "gdp_per_capita_ppp_constant_2021_interna": 14194.155748,
+        "life_expectancy_at_birth_total_years": 73.257
+      },
+      {
+        "year": "2020",
+        "country": "Andorra",
+        "gdp_per_capita_ppp_constant_2021_interna": 55488.490299,
+        "life_expectancy_at_birth_total_years": 79.418
+      },
+      {
+        "year": "2020",
+        "country": "Angola",
+        "gdp_per_capita_ppp_constant_2021_interna": 8960.337972,
+        "life_expectancy_at_birth_total_years": 63.116
+      },
+      {
+        "year": "2020",
+        "country": "Antigua and Barbuda",
+        "gdp_per_capita_ppp_constant_2021_interna": 23930.6715,
+        "life_expectancy_at_birth_total_years": 77.161
+      },
+      {
+        "year": "2020",
+        "country": "Argentina",
+        "gdp_per_capita_ppp_constant_2021_interna": 23877.09314,
+        "life_expectancy_at_birth_total_years": 75.878
+      },
+      {
+        "year": "2020",
+        "country": "Armenia",
+        "gdp_per_capita_ppp_constant_2021_interna": 15052.935979,
+        "life_expectancy_at_birth_total_years": 73.37561
+      },
+      {
+        "year": "2020",
+        "country": "Aruba",
+        "gdp_per_capita_ppp_constant_2021_interna": 30347.637185,
+        "life_expectancy_at_birth_total_years": 75.406
+      },
+      {
+        "year": "2020",
+        "country": "Australia",
+        "gdp_per_capita_ppp_constant_2021_interna": 57260.465053,
+        "life_expectancy_at_birth_total_years": 83.2
+      },
+      {
+        "year": "2020",
+        "country": "Austria",
+        "gdp_per_capita_ppp_constant_2021_interna": 60276.415346,
+        "life_expectancy_at_birth_total_years": 81.192683
+      },
+      {
+        "year": "2020",
+        "country": "Azerbaijan",
+        "gdp_per_capita_ppp_constant_2021_interna": 19126.096851,
+        "life_expectancy_at_birth_total_years": 70.312
+      },
+      {
+        "year": "2020",
+        "country": "Bahamas, The",
+        "gdp_per_capita_ppp_constant_2021_interna": 26452.695761,
+        "life_expectancy_at_birth_total_years": 72.994
+      },
+      {
+        "year": "2020",
+        "country": "Bahrain",
+        "gdp_per_capita_ppp_constant_2021_interna": 53814.245259,
+        "life_expectancy_at_birth_total_years": 78.683
+      },
+      {
+        "year": "2020",
+        "country": "Bangladesh",
+        "gdp_per_capita_ppp_constant_2021_interna": 7015.197928,
+        "life_expectancy_at_birth_total_years": 71.421
+      },
+      {
+        "year": "2020",
+        "country": "Barbados",
+        "gdp_per_capita_ppp_constant_2021_interna": 17728.072925,
+        "life_expectancy_at_birth_total_years": 76.647
+      },
+      {
+        "year": "2020",
+        "country": "Belarus",
+        "gdp_per_capita_ppp_constant_2021_interna": 26731.495387,
+        "life_expectancy_at_birth_total_years": 72.138561
+      },
+      {
+        "year": "2020",
+        "country": "Belgium",
+        "gdp_per_capita_ppp_constant_2021_interna": 57333.542414,
+        "life_expectancy_at_birth_total_years": 80.695122
+      },
+      {
+        "year": "2020",
+        "country": "Belize",
+        "gdp_per_capita_ppp_constant_2021_interna": 10045.140416,
+        "life_expectancy_at_birth_total_years": 71.58
+      },
+      {
+        "year": "2020",
+        "country": "Benin",
+        "gdp_per_capita_ppp_constant_2021_interna": 3317.859722,
+        "life_expectancy_at_birth_total_years": 60.154
+      },
+      {
+        "year": "2020",
+        "country": "Bermuda",
+        "gdp_per_capita_ppp_constant_2021_interna": 88618.083068,
+        "life_expectancy_at_birth_total_years": 81.456
+      },
+      {
+        "year": "2020",
+        "country": "Bhutan",
+        "gdp_per_capita_ppp_constant_2021_interna": 12979.936949,
+        "life_expectancy_at_birth_total_years": 72.253
+      },
+      {
+        "year": "2020",
+        "country": "Bolivia",
+        "gdp_per_capita_ppp_constant_2021_interna": 10285.659075,
+        "life_expectancy_at_birth_total_years": 62.906
+      },
+      {
+        "year": "2020",
+        "country": "Bosnia and Herzegovina",
+        "gdp_per_capita_ppp_constant_2021_interna": 16747.104842,
+        "life_expectancy_at_birth_total_years": 76.04
+      },
+      {
+        "year": "2020",
+        "country": "Botswana",
+        "gdp_per_capita_ppp_constant_2021_interna": 16289.391358,
+        "life_expectancy_at_birth_total_years": 67.643
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "gdp_per_capita_ppp_constant_2021_interna": 17327.515725,
+        "life_expectancy_at_birth_total_years": 74.506
+      },
+      {
+        "year": "2020",
+        "country": "Brunei Darussalam",
+        "gdp_per_capita_ppp_constant_2021_interna": 80280.898064,
+        "life_expectancy_at_birth_total_years": 75.114
+      },
+      {
+        "year": "2020",
+        "country": "Bulgaria",
+        "gdp_per_capita_ppp_constant_2021_interna": 28521.325133,
+        "life_expectancy_at_birth_total_years": 73.356098
+      },
+      {
+        "year": "2020",
+        "country": "Burkina Faso",
+        "gdp_per_capita_ppp_constant_2021_interna": 2380.931718,
+        "life_expectancy_at_birth_total_years": 60.454
+      },
+      {
+        "year": "2020",
+        "country": "Burundi",
+        "gdp_per_capita_ppp_constant_2021_interna": 1030.770264,
+        "life_expectancy_at_birth_total_years": 62.569
+      },
+      {
+        "year": "2020",
+        "country": "Cabo Verde",
+        "gdp_per_capita_ppp_constant_2021_interna": 7207.86854,
+        "life_expectancy_at_birth_total_years": 73.818
+      },
+      {
+        "year": "2020",
+        "country": "Cambodia",
+        "gdp_per_capita_ppp_constant_2021_interna": 6128.782438,
+        "life_expectancy_at_birth_total_years": 70.059
+      },
+      {
+        "year": "2020",
+        "country": "Cameroon",
+        "gdp_per_capita_ppp_constant_2021_interna": 4763.481944,
+        "life_expectancy_at_birth_total_years": 61.674
+      },
+      {
+        "year": "2020",
+        "country": "Canada",
+        "gdp_per_capita_ppp_constant_2021_interna": 54092.879032,
+        "life_expectancy_at_birth_total_years": 81.53
+      },
+      {
+        "year": "2020",
+        "country": "Cayman Islands",
+        "gdp_per_capita_ppp_constant_2021_interna": 72183.135905,
+        "life_expectancy_at_birth_total_years": 79.23
+      },
+      {
+        "year": "2020",
+        "country": "Central African Republic",
+        "gdp_per_capita_ppp_constant_2021_interna": 1136.57053,
+        "life_expectancy_at_birth_total_years": 50.596
+      },
+      {
+        "year": "2020",
+        "country": "Chad",
+        "gdp_per_capita_ppp_constant_2021_interna": 2513.029227,
+        "life_expectancy_at_birth_total_years": 53.082
+      },
+      {
+        "year": "2020",
+        "country": "Chile",
+        "gdp_per_capita_ppp_constant_2021_interna": 26248.561643,
+        "life_expectancy_at_birth_total_years": 79.349
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "gdp_per_capita_ppp_constant_2021_interna": 19215.15417,
+        "life_expectancy_at_birth_total_years": 78.019
+      },
+      {
+        "year": "2020",
+        "country": "Colombia",
+        "gdp_per_capita_ppp_constant_2021_interna": 15861.499929,
+        "life_expectancy_at_birth_total_years": 74.757
+      },
+      {
+        "year": "2020",
+        "country": "Comoros",
+        "gdp_per_capita_ppp_constant_2021_interna": 3377.745641,
+        "life_expectancy_at_birth_total_years": 65.756
+      },
+      {
+        "year": "2020",
+        "country": "Congo, Dem. Rep.",
+        "gdp_per_capita_ppp_constant_2021_interna": 1361.027911,
+        "life_expectancy_at_birth_total_years": 60.428
+      },
+      {
+        "year": "2020",
+        "country": "Congo, Rep.",
+        "gdp_per_capita_ppp_constant_2021_interna": 6350.509134,
+        "life_expectancy_at_birth_total_years": 64.391
+      },
+      {
+        "year": "2020",
+        "country": "Costa Rica",
+        "gdp_per_capita_ppp_constant_2021_interna": 22211.861392,
+        "life_expectancy_at_birth_total_years": 79.725
+      },
+      {
+        "year": "2020",
+        "country": "Cote d'Ivoire",
+        "gdp_per_capita_ppp_constant_2021_interna": 5787.815333,
+        "life_expectancy_at_birth_total_years": 60.14
+      },
+      {
+        "year": "2020",
+        "country": "Croatia",
+        "gdp_per_capita_ppp_constant_2021_interna": 32493.312195,
+        "life_expectancy_at_birth_total_years": 77.52439
+      },
+      {
+        "year": "2020",
+        "country": "Curacao",
+        "gdp_per_capita_ppp_constant_2021_interna": 23669.770773,
+        "life_expectancy_at_birth_total_years": 76.501
+      },
+      {
+        "year": "2020",
+        "country": "Cyprus",
+        "gdp_per_capita_ppp_constant_2021_interna": 43402.539063,
+        "life_expectancy_at_birth_total_years": 81.23
+      },
+      {
+        "year": "2020",
+        "country": "Czechia",
+        "gdp_per_capita_ppp_constant_2021_interna": 45119.938731,
+        "life_expectancy_at_birth_total_years": 78.226829
+      },
+      {
+        "year": "2020",
+        "country": "Denmark",
+        "gdp_per_capita_ppp_constant_2021_interna": 65744.436725,
+        "life_expectancy_at_birth_total_years": 81.602439
+      },
+      {
+        "year": "2020",
+        "country": "Djibouti",
+        "gdp_per_capita_ppp_constant_2021_interna": 5791.477677,
+        "life_expectancy_at_birth_total_years": 64.2
+      },
+      {
+        "year": "2020",
+        "country": "Dominica",
+        "gdp_per_capita_ppp_constant_2021_interna": 14919.530769,
+        "life_expectancy_at_birth_total_years": 71.269
+      },
+      {
+        "year": "2020",
+        "country": "Dominican Republic",
+        "gdp_per_capita_ppp_constant_2021_interna": 19545.409955,
+        "life_expectancy_at_birth_total_years": 72.636
+      },
+      {
+        "year": "2020",
+        "country": "Ecuador",
+        "gdp_per_capita_ppp_constant_2021_interna": 12440.326375,
+        "life_expectancy_at_birth_total_years": 72.004
+      },
+      {
+        "year": "2020",
+        "country": "Egypt, Arab Rep.",
+        "gdp_per_capita_ppp_constant_2021_interna": 15309.235988,
+        "life_expectancy_at_birth_total_years": 69.79
+      },
+      {
+        "year": "2020",
+        "country": "El Salvador",
+        "gdp_per_capita_ppp_constant_2021_interna": 9692.449316,
+        "life_expectancy_at_birth_total_years": 70.244
+      },
+      {
+        "year": "2020",
+        "country": "Equatorial Guinea",
+        "gdp_per_capita_ppp_constant_2021_interna": 17089.153726,
+        "life_expectancy_at_birth_total_years": 62.141
+      },
+      {
+        "year": "2020",
+        "country": "Estonia",
+        "gdp_per_capita_ppp_constant_2021_interna": 40920.527062,
+        "life_expectancy_at_birth_total_years": 78.595122
+      },
+      {
+        "year": "2020",
+        "country": "Eswatini",
+        "gdp_per_capita_ppp_constant_2021_interna": 9695.824981,
+        "life_expectancy_at_birth_total_years": 59.862
+      },
+      {
+        "year": "2020",
+        "country": "Ethiopia",
+        "gdp_per_capita_ppp_constant_2021_interna": 2516.549076,
+        "life_expectancy_at_birth_total_years": 65.969
+      },
+      {
+        "year": "2020",
+        "country": "Faroe Islands",
+        "gdp_per_capita_ppp_constant_2021_interna": 66032.910911,
+        "life_expectancy_at_birth_total_years": 82.534193
+      },
+      {
+        "year": "2020",
+        "country": "Fiji",
+        "gdp_per_capita_ppp_constant_2021_interna": 10812.035501,
+        "life_expectancy_at_birth_total_years": 66.924
+      },
+      {
+        "year": "2020",
+        "country": "Finland",
+        "gdp_per_capita_ppp_constant_2021_interna": 55424.857499,
+        "life_expectancy_at_birth_total_years": 81.931707
+      },
+      {
+        "year": "2020",
+        "country": "France",
+        "gdp_per_capita_ppp_constant_2021_interna": 49311.33341,
+        "life_expectancy_at_birth_total_years": 82.17561
+      },
+      {
+        "year": "2020",
+        "country": "Gabon",
+        "gdp_per_capita_ppp_constant_2021_interna": 18681.484074,
+        "life_expectancy_at_birth_total_years": 67.073
+      },
+      {
+        "year": "2020",
+        "country": "Gambia, The",
+        "gdp_per_capita_ppp_constant_2021_interna": 2702.319195,
+        "life_expectancy_at_birth_total_years": 64.418
+      },
+      {
+        "year": "2020",
+        "country": "Georgia",
+        "gdp_per_capita_ppp_constant_2021_interna": 17031.144028,
+        "life_expectancy_at_birth_total_years": 73.509
+      },
+      {
+        "year": "2020",
+        "country": "Germany",
+        "gdp_per_capita_ppp_constant_2021_interna": 60203.28976,
+        "life_expectancy_at_birth_total_years": 81.041463
+      },
+      {
+        "year": "2020",
+        "country": "Ghana",
+        "gdp_per_capita_ppp_constant_2021_interna": 6412.685418,
+        "life_expectancy_at_birth_total_years": 64.309
+      },
+      {
+        "year": "2020",
+        "country": "Greece",
+        "gdp_per_capita_ppp_constant_2021_interna": 30487.112933,
+        "life_expectancy_at_birth_total_years": 81.287805
+      },
+      {
+        "year": "2020",
+        "country": "Greenland",
+        "gdp_per_capita_ppp_constant_2021_interna": 68533.73399,
+        "life_expectancy_at_birth_total_years": 71.285854
+      },
+      {
+        "year": "2020",
+        "country": "Grenada",
+        "gdp_per_capita_ppp_constant_2021_interna": 14647.745138,
+        "life_expectancy_at_birth_total_years": 75.019
+      },
+      {
+        "year": "2020",
+        "country": "Guatemala",
+        "gdp_per_capita_ppp_constant_2021_interna": 11097.150412,
+        "life_expectancy_at_birth_total_years": 69.971
+      },
+      {
+        "year": "2020",
+        "country": "Guinea",
+        "gdp_per_capita_ppp_constant_2021_interna": 3630.993306,
+        "life_expectancy_at_birth_total_years": 59.35
+      },
+      {
+        "year": "2020",
+        "country": "Guinea-Bissau",
+        "gdp_per_capita_ppp_constant_2021_interna": 2455.856062,
+        "life_expectancy_at_birth_total_years": 61.343
+      },
+      {
+        "year": "2020",
+        "country": "Guyana",
+        "gdp_per_capita_ppp_constant_2021_interna": 19234.130198,
+        "life_expectancy_at_birth_total_years": 67.751
+      },
+      {
+        "year": "2020",
+        "country": "Haiti",
+        "gdp_per_capita_ppp_constant_2021_interna": 3239.835434,
+        "life_expectancy_at_birth_total_years": 63.773
+      },
+      {
+        "year": "2020",
+        "country": "Honduras",
+        "gdp_per_capita_ppp_constant_2021_interna": 5603.263984,
+        "life_expectancy_at_birth_total_years": 70.864
+      },
+      {
+        "year": "2020",
+        "country": "Hong Kong SAR, China",
+        "gdp_per_capita_ppp_constant_2021_interna": 61328.528804,
+        "life_expectancy_at_birth_total_years": 85.496341
+      },
+      {
+        "year": "2020",
+        "country": "Hungary",
+        "gdp_per_capita_ppp_constant_2021_interna": 36119.521174,
+        "life_expectancy_at_birth_total_years": 75.419512
+      },
+      {
+        "year": "2020",
+        "country": "Iceland",
+        "gdp_per_capita_ppp_constant_2021_interna": 59543.813499,
+        "life_expectancy_at_birth_total_years": 83.063415
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "gdp_per_capita_ppp_constant_2021_interna": 7399.530681,
+        "life_expectancy_at_birth_total_years": 70.156
+      },
+      {
+        "year": "2020",
+        "country": "Indonesia",
+        "gdp_per_capita_ppp_constant_2021_interna": 12388.544927,
+        "life_expectancy_at_birth_total_years": 68.817
+      },
+      {
+        "year": "2020",
+        "country": "Iran, Islamic Rep.",
+        "gdp_per_capita_ppp_constant_2021_interna": 15381.584544,
+        "life_expectancy_at_birth_total_years": 74.141
+      },
+      {
+        "year": "2020",
+        "country": "Iraq",
+        "gdp_per_capita_ppp_constant_2021_interna": 12827.634539,
+        "life_expectancy_at_birth_total_years": 69.651
+      },
+      {
+        "year": "2020",
+        "country": "Ireland",
+        "gdp_per_capita_ppp_constant_2021_interna": 101968.554362,
+        "life_expectancy_at_birth_total_years": 82.456098
+      },
+      {
+        "year": "2020",
+        "country": "Israel",
+        "gdp_per_capita_ppp_constant_2021_interna": 42915.941694,
+        "life_expectancy_at_birth_total_years": 82.64878
+      },
+      {
+        "year": "2020",
+        "country": "Italy",
+        "gdp_per_capita_ppp_constant_2021_interna": 45505.068871,
+        "life_expectancy_at_birth_total_years": 82.195122
+      },
+      {
+        "year": "2020",
+        "country": "Jamaica",
+        "gdp_per_capita_ppp_constant_2021_interna": 9891.96933,
+        "life_expectancy_at_birth_total_years": 71.452
+      },
+      {
+        "year": "2020",
+        "country": "Japan",
+        "gdp_per_capita_ppp_constant_2021_interna": 42992.479637,
+        "life_expectancy_at_birth_total_years": 84.56
+      },
+      {
+        "year": "2020",
+        "country": "Jordan",
+        "gdp_per_capita_ppp_constant_2021_interna": 9022.639304,
+        "life_expectancy_at_birth_total_years": 75.583
+      },
+      {
+        "year": "2020",
+        "country": "Kazakhstan",
+        "gdp_per_capita_ppp_constant_2021_interna": 32011.54915,
+        "life_expectancy_at_birth_total_years": 71.195
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "gdp_per_capita_ppp_constant_2021_interna": 5057.401155,
+        "life_expectancy_at_birth_total_years": 61.596
+      },
+      {
+        "year": "2020",
+        "country": "Kiribati",
+        "gdp_per_capita_ppp_constant_2021_interna": 2834.685814,
+        "life_expectancy_at_birth_total_years": 65.205
+      },
+      {
+        "year": "2020",
+        "country": "Korea, Rep.",
+        "gdp_per_capita_ppp_constant_2021_interna": 49374.092615,
+        "life_expectancy_at_birth_total_years": 83.426829
+      },
+      {
+        "year": "2020",
+        "country": "Kosovo",
+        "gdp_per_capita_ppp_constant_2021_interna": 11137.502856,
+        "life_expectancy_at_birth_total_years": 74.212
+      },
+      {
+        "year": "2020",
+        "country": "Kuwait",
+        "gdp_per_capita_ppp_constant_2021_interna": 49372.818794,
+        "life_expectancy_at_birth_total_years": 78.760976
+      },
+      {
+        "year": "2020",
+        "country": "Kyrgyz Republic",
+        "gdp_per_capita_ppp_constant_2021_interna": 5537.795473,
+        "life_expectancy_at_birth_total_years": 71.8
+      },
+      {
+        "year": "2020",
+        "country": "Lao PDR",
+        "gdp_per_capita_ppp_constant_2021_interna": 7995.595025,
+        "life_expectancy_at_birth_total_years": 68.339
+      },
+      {
+        "year": "2020",
+        "country": "Latvia",
+        "gdp_per_capita_ppp_constant_2021_interna": 34225.897604,
+        "life_expectancy_at_birth_total_years": 75.185366
+      },
+      {
+        "year": "2020",
+        "country": "Lebanon",
+        "gdp_per_capita_ppp_constant_2021_interna": 12507.436637,
+        "life_expectancy_at_birth_total_years": 76.299
+      },
+      {
+        "year": "2020",
+        "country": "Lesotho",
+        "gdp_per_capita_ppp_constant_2021_interna": 2517.110445,
+        "life_expectancy_at_birth_total_years": 55.133
+      },
+      {
+        "year": "2020",
+        "country": "Liberia",
+        "gdp_per_capita_ppp_constant_2021_interna": 1497.376924,
+        "life_expectancy_at_birth_total_years": 61.267
+      },
+      {
+        "year": "2020",
+        "country": "Libya",
+        "gdp_per_capita_ppp_constant_2021_interna": 9978.664001,
+        "life_expectancy_at_birth_total_years": 72.388
+      },
+      {
+        "year": "2020",
+        "country": "Lithuania",
+        "gdp_per_capita_ppp_constant_2021_interna": 43091.797372,
+        "life_expectancy_at_birth_total_years": 75.029268
+      },
+      {
+        "year": "2020",
+        "country": "Luxembourg",
+        "gdp_per_capita_ppp_constant_2021_interna": 129865.629988,
+        "life_expectancy_at_birth_total_years": 82.143902
+      },
+      {
+        "year": "2020",
+        "country": "Macao SAR, China",
+        "gdp_per_capita_ppp_constant_2021_interna": 59662.485586,
+        "life_expectancy_at_birth_total_years": 84.129268
+      },
+      {
+        "year": "2020",
+        "country": "Madagascar",
+        "gdp_per_capita_ppp_constant_2021_interna": 1545.727144,
+        "life_expectancy_at_birth_total_years": 62.706
+      },
+      {
+        "year": "2020",
+        "country": "Malawi",
+        "gdp_per_capita_ppp_constant_2021_interna": 1656.439852,
+        "life_expectancy_at_birth_total_years": 65.216
+      },
+      {
+        "year": "2020",
+        "country": "Malaysia",
+        "gdp_per_capita_ppp_constant_2021_interna": 29200.452632,
+        "life_expectancy_at_birth_total_years": 76.057
+      },
+      {
+        "year": "2020",
+        "country": "Maldives",
+        "gdp_per_capita_ppp_constant_2021_interna": 14242.97507,
+        "life_expectancy_at_birth_total_years": 78.713
+      },
+      {
+        "year": "2020",
+        "country": "Mali",
+        "gdp_per_capita_ppp_constant_2021_interna": 2796.410384,
+        "life_expectancy_at_birth_total_years": 58.858
+      },
+      {
+        "year": "2020",
+        "country": "Malta",
+        "gdp_per_capita_ppp_constant_2021_interna": 50387.822037,
+        "life_expectancy_at_birth_total_years": 82.097561
+      },
+      {
+        "year": "2020",
+        "country": "Marshall Islands",
+        "gdp_per_capita_ppp_constant_2021_interna": 6417.184412,
+        "life_expectancy_at_birth_total_years": 65.387
+      },
+      {
+        "year": "2020",
+        "country": "Mauritania",
+        "gdp_per_capita_ppp_constant_2021_interna": 5963.235498,
+        "life_expectancy_at_birth_total_years": 66.794
+      },
+      {
+        "year": "2020",
+        "country": "Mauritius",
+        "gdp_per_capita_ppp_constant_2021_interna": 22258.386811,
+        "life_expectancy_at_birth_total_years": 74.177073
+      },
+      {
+        "year": "2020",
+        "country": "Mexico",
+        "gdp_per_capita_ppp_constant_2021_interna": 19728.481782,
+        "life_expectancy_at_birth_total_years": 70.449
+      },
+      {
+        "year": "2020",
+        "country": "Micronesia, Fed. Sts.",
+        "gdp_per_capita_ppp_constant_2021_interna": 3852.200256,
+        "life_expectancy_at_birth_total_years": 65.878
+      },
+      {
+        "year": "2020",
+        "country": "Moldova",
+        "gdp_per_capita_ppp_constant_2021_interna": 13559.260022,
+        "life_expectancy_at_birth_total_years": 69.914
+      },
+      {
+        "year": "2020",
+        "country": "Mongolia",
+        "gdp_per_capita_ppp_constant_2021_interna": 14801.342083,
+        "life_expectancy_at_birth_total_years": 71.349024
+      },
+      {
+        "year": "2020",
+        "country": "Montenegro",
+        "gdp_per_capita_ppp_constant_2021_interna": 20904.686623,
+        "life_expectancy_at_birth_total_years": 75.931707
+      },
+      {
+        "year": "2020",
+        "country": "Morocco",
+        "gdp_per_capita_ppp_constant_2021_interna": 8054.562988,
+        "life_expectancy_at_birth_total_years": 73.133
+      },
+      {
+        "year": "2020",
+        "country": "Mozambique",
+        "gdp_per_capita_ppp_constant_2021_interna": 1466.124765,
+        "life_expectancy_at_birth_total_years": 61.39
+      },
+      {
+        "year": "2020",
+        "country": "Myanmar",
+        "gdp_per_capita_ppp_constant_2021_interna": 5926.834502,
+        "life_expectancy_at_birth_total_years": 66.612
+      },
+      {
+        "year": "2020",
+        "country": "Namibia",
+        "gdp_per_capita_ppp_constant_2021_interna": 9652.248272,
+        "life_expectancy_at_birth_total_years": 64.071
+      },
+      {
+        "year": "2020",
+        "country": "Nauru",
+        "gdp_per_capita_ppp_constant_2021_interna": 11304.572332,
+        "life_expectancy_at_birth_total_years": 61.527
+      },
+      {
+        "year": "2020",
+        "country": "Nepal",
+        "gdp_per_capita_ppp_constant_2021_interna": 4412.542044,
+        "life_expectancy_at_birth_total_years": 69.106
+      },
+      {
+        "year": "2020",
+        "country": "Netherlands",
+        "gdp_per_capita_ppp_constant_2021_interna": 64862.19225,
+        "life_expectancy_at_birth_total_years": 81.358537
+      },
+      {
+        "year": "2020",
+        "country": "New Zealand",
+        "gdp_per_capita_ppp_constant_2021_interna": 46266.395473,
+        "life_expectancy_at_birth_total_years": 82.256098
+      },
+      {
+        "year": "2020",
+        "country": "Nicaragua",
+        "gdp_per_capita_ppp_constant_2021_interna": 6523.36985,
+        "life_expectancy_at_birth_total_years": 70.766
+      },
+      {
+        "year": "2020",
+        "country": "Niger",
+        "gdp_per_capita_ppp_constant_2021_interna": 1615.692724,
+        "life_expectancy_at_birth_total_years": 59.89
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "gdp_per_capita_ppp_constant_2021_interna": 7664.210996,
+        "life_expectancy_at_birth_total_years": 53.072
+      },
+      {
+        "year": "2020",
+        "country": "North Macedonia",
+        "gdp_per_capita_ppp_constant_2021_interna": 20971.529072,
+        "life_expectancy_at_birth_total_years": 74.395122
+      },
+      {
+        "year": "2020",
+        "country": "Norway",
+        "gdp_per_capita_ppp_constant_2021_interna": 86096.050895,
+        "life_expectancy_at_birth_total_years": 83.209756
+      },
+      {
+        "year": "2020",
+        "country": "Oman",
+        "gdp_per_capita_ppp_constant_2021_interna": 37560.599871,
+        "life_expectancy_at_birth_total_years": 77.763
+      },
+      {
+        "year": "2020",
+        "country": "Pakistan",
+        "gdp_per_capita_ppp_constant_2021_interna": 5135.014593,
+        "life_expectancy_at_birth_total_years": 65.701
+      },
+      {
+        "year": "2020",
+        "country": "Palau",
+        "gdp_per_capita_ppp_constant_2021_interna": 18183.73692,
+        "life_expectancy_at_birth_total_years": 68.689
+      },
+      {
+        "year": "2020",
+        "country": "Panama",
+        "gdp_per_capita_ppp_constant_2021_interna": 26881.798721,
+        "life_expectancy_at_birth_total_years": 76.33
+      },
+      {
+        "year": "2020",
+        "country": "Papua New Guinea",
+        "gdp_per_capita_ppp_constant_2021_interna": 4077.631322,
+        "life_expectancy_at_birth_total_years": 65.075
+      },
+      {
+        "year": "2020",
+        "country": "Paraguay",
+        "gdp_per_capita_ppp_constant_2021_interna": 14991.66062,
+        "life_expectancy_at_birth_total_years": 72.72
+      },
+      {
+        "year": "2020",
+        "country": "Peru",
+        "gdp_per_capita_ppp_constant_2021_interna": 13609.599961,
+        "life_expectancy_at_birth_total_years": 73.832
+      },
+      {
+        "year": "2020",
+        "country": "Philippines",
+        "gdp_per_capita_ppp_constant_2021_interna": 8455.184571,
+        "life_expectancy_at_birth_total_years": 70.097
+      },
+      {
+        "year": "2020",
+        "country": "Poland",
+        "gdp_per_capita_ppp_constant_2021_interna": 37852.802131,
+        "life_expectancy_at_birth_total_years": 76.4
+      },
+      {
+        "year": "2020",
+        "country": "Portugal",
+        "gdp_per_capita_ppp_constant_2021_interna": 36852.228734,
+        "life_expectancy_at_birth_total_years": 81.329268
+      },
+      {
+        "year": "2020",
+        "country": "Puerto Rico",
+        "gdp_per_capita_ppp_constant_2021_interna": 40171.386688,
+        "life_expectancy_at_birth_total_years": 80.009
+      },
+      {
+        "year": "2020",
+        "country": "Qatar",
+        "gdp_per_capita_ppp_constant_2021_interna": 103061.899445,
+        "life_expectancy_at_birth_total_years": 80.409
+      },
+      {
+        "year": "2020",
+        "country": "Romania",
+        "gdp_per_capita_ppp_constant_2021_interna": 35283.752357,
+        "life_expectancy_at_birth_total_years": 74.253659
+      },
+      {
+        "year": "2020",
+        "country": "Russian Federation",
+        "gdp_per_capita_ppp_constant_2021_interna": 36376.335938,
+        "life_expectancy_at_birth_total_years": 71.33878
+      },
+      {
+        "year": "2020",
+        "country": "Rwanda",
+        "gdp_per_capita_ppp_constant_2021_interna": 2520.317394,
+        "life_expectancy_at_birth_total_years": 66.953
+      },
+      {
+        "year": "2020",
+        "country": "Samoa",
+        "gdp_per_capita_ppp_constant_2021_interna": 6745.292414,
+        "life_expectancy_at_birth_total_years": 70.727
+      },
+      {
+        "year": "2020",
+        "country": "San Marino",
+        "gdp_per_capita_ppp_constant_2021_interna": 55998.071099,
+        "life_expectancy_at_birth_total_years": 82.65
+      },
+      {
+        "year": "2020",
+        "country": "Sao Tome and Principe",
+        "gdp_per_capita_ppp_constant_2021_interna": 5742.947249,
+        "life_expectancy_at_birth_total_years": 67.979
+      },
+      {
+        "year": "2020",
+        "country": "Saudi Arabia",
+        "gdp_per_capita_ppp_constant_2021_interna": 57420.733574,
+        "life_expectancy_at_birth_total_years": 77.596
+      },
+      {
+        "year": "2020",
+        "country": "Senegal",
+        "gdp_per_capita_ppp_constant_2021_interna": 4018.041293,
+        "life_expectancy_at_birth_total_years": 67.496
+      },
+      {
+        "year": "2020",
+        "country": "Serbia",
+        "gdp_per_capita_ppp_constant_2021_interna": 21479.167929,
+        "life_expectancy_at_birth_total_years": 74.478049
+      },
+      {
+        "year": "2020",
+        "country": "Seychelles",
+        "gdp_per_capita_ppp_constant_2021_interna": 30056.19943,
+        "life_expectancy_at_birth_total_years": 77.236585
+      },
+      {
+        "year": "2020",
+        "country": "Sierra Leone",
+        "gdp_per_capita_ppp_constant_2021_interna": 2752.626154,
+        "life_expectancy_at_birth_total_years": 59.694
+      },
+      {
+        "year": "2020",
+        "country": "Singapore",
+        "gdp_per_capita_ppp_constant_2021_interna": 115893.042396,
+        "life_expectancy_at_birth_total_years": 83.543902
+      },
+      {
+        "year": "2020",
+        "country": "Sint Maarten (Dutch part)",
+        "gdp_per_capita_ppp_constant_2021_interna": 39265.761679,
+        "life_expectancy_at_birth_total_years": 75.002
+      },
+      {
+        "year": "2020",
+        "country": "Slovak Republic",
+        "gdp_per_capita_ppp_constant_2021_interna": 36216.400211,
+        "life_expectancy_at_birth_total_years": 76.865854
+      },
+      {
+        "year": "2020",
+        "country": "Slovenia",
+        "gdp_per_capita_ppp_constant_2021_interna": 42463.563535,
+        "life_expectancy_at_birth_total_years": 80.531707
+      },
+      {
+        "year": "2020",
+        "country": "Solomon Islands",
+        "gdp_per_capita_ppp_constant_2021_interna": 2515.141432,
+        "life_expectancy_at_birth_total_years": 69.258
+      },
+      {
+        "year": "2020",
+        "country": "Somalia",
+        "gdp_per_capita_ppp_constant_2021_interna": 1396.055447,
+        "life_expectancy_at_birth_total_years": 57.095
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "gdp_per_capita_ppp_constant_2021_interna": 13250.566659,
+        "life_expectancy_at_birth_total_years": 65.15
+      },
+      {
+        "year": "2020",
+        "country": "Spain",
+        "gdp_per_capita_ppp_constant_2021_interna": 41553.447795,
+        "life_expectancy_at_birth_total_years": 82.231707
+      },
+      {
+        "year": "2020",
+        "country": "Sri Lanka",
+        "gdp_per_capita_ppp_constant_2021_interna": 13886.651373,
+        "life_expectancy_at_birth_total_years": 76.928
+      },
+      {
+        "year": "2020",
+        "country": "St. Kitts and Nevis",
+        "gdp_per_capita_ppp_constant_2021_interna": 26736.928356,
+        "life_expectancy_at_birth_total_years": 71.181
+      },
+      {
+        "year": "2020",
+        "country": "St. Lucia",
+        "gdp_per_capita_ppp_constant_2021_interna": 17142.044063,
+        "life_expectancy_at_birth_total_years": 72.308
+      },
+      {
+        "year": "2020",
+        "country": "St. Vincent and the Grenadines",
+        "gdp_per_capita_ppp_constant_2021_interna": 15763.705438,
+        "life_expectancy_at_birth_total_years": 69.605
+      },
+      {
+        "year": "2020",
+        "country": "Sudan",
+        "gdp_per_capita_ppp_constant_2021_interna": 3401.249756,
+        "life_expectancy_at_birth_total_years": 65.124
+      },
+      {
+        "year": "2020",
+        "country": "Suriname",
+        "gdp_per_capita_ppp_constant_2021_interna": 19091.361718,
+        "life_expectancy_at_birth_total_years": 72.321
+      },
+      {
+        "year": "2020",
+        "country": "Sweden",
+        "gdp_per_capita_ppp_constant_2021_interna": 59975.364406,
+        "life_expectancy_at_birth_total_years": 82.356098
+      },
+      {
+        "year": "2020",
+        "country": "Switzerland",
+        "gdp_per_capita_ppp_constant_2021_interna": 77324.887093,
+        "life_expectancy_at_birth_total_years": 83.0
+      },
+      {
+        "year": "2020",
+        "country": "Syrian Arab Republic",
+        "gdp_per_capita_ppp_constant_2021_interna": 4633.349518,
+        "life_expectancy_at_birth_total_years": 71.944
+      },
+      {
+        "year": "2020",
+        "country": "Tajikistan",
+        "gdp_per_capita_ppp_constant_2021_interna": 3724.748959,
+        "life_expectancy_at_birth_total_years": 68.605
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "gdp_per_capita_ppp_constant_2021_interna": 3449.821533,
+        "life_expectancy_at_birth_total_years": 66.771
+      },
+      {
+        "year": "2020",
+        "country": "Thailand",
+        "gdp_per_capita_ppp_constant_2021_interna": 19957.257141,
+        "life_expectancy_at_birth_total_years": 77.331
+      },
+      {
+        "year": "2020",
+        "country": "Timor-Leste",
+        "gdp_per_capita_ppp_constant_2021_interna": 6594.881755,
+        "life_expectancy_at_birth_total_years": 66.919
+      },
+      {
+        "year": "2020",
+        "country": "Togo",
+        "gdp_per_capita_ppp_constant_2021_interna": 2570.483152,
+        "life_expectancy_at_birth_total_years": 61.14
+      },
+      {
+        "year": "2020",
+        "country": "Tonga",
+        "gdp_per_capita_ppp_constant_2021_interna": 6980.410117,
+        "life_expectancy_at_birth_total_years": 72.379
+      },
+      {
+        "year": "2020",
+        "country": "Trinidad and Tobago",
+        "gdp_per_capita_ppp_constant_2021_interna": 30720.887694,
+        "life_expectancy_at_birth_total_years": 72.645
+      },
+      {
+        "year": "2020",
+        "country": "Tunisia",
+        "gdp_per_capita_ppp_constant_2021_interna": 11955.59837,
+        "life_expectancy_at_birth_total_years": 75.004
+      },
+      {
+        "year": "2020",
+        "country": "Turkiye",
+        "gdp_per_capita_ppp_constant_2021_interna": 28976.717916,
+        "life_expectancy_at_birth_total_years": 76.525
+      },
+      {
+        "year": "2020",
+        "country": "Turkmenistan",
+        "gdp_per_capita_ppp_constant_2021_interna": 15791.177586,
+        "life_expectancy_at_birth_total_years": 68.846
+      },
+      {
+        "year": "2020",
+        "country": "Turks and Caicos Islands",
+        "gdp_per_capita_ppp_constant_2021_interna": 19702.53682,
+        "life_expectancy_at_birth_total_years": 77.499
+      },
+      {
+        "year": "2020",
+        "country": "Tuvalu",
+        "gdp_per_capita_ppp_constant_2021_interna": 5154.459578,
+        "life_expectancy_at_birth_total_years": 66.357
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "gdp_per_capita_ppp_constant_2021_interna": 2678.009072,
+        "life_expectancy_at_birth_total_years": 66.41
+      },
+      {
+        "year": "2020",
+        "country": "Ukraine",
+        "gdp_per_capita_ppp_constant_2021_interna": 17092.539063,
+        "life_expectancy_at_birth_total_years": 73.283
+      },
+      {
+        "year": "2020",
+        "country": "United Arab Emirates",
+        "gdp_per_capita_ppp_constant_2021_interna": 66808.647756,
+        "life_expectancy_at_birth_total_years": 81.936
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "gdp_per_capita_ppp_constant_2021_interna": 47158.985486,
+        "life_expectancy_at_birth_total_years": 80.331756
+      },
+      {
+        "year": "2020",
+        "country": "United States",
+        "gdp_per_capita_ppp_constant_2021_interna": 67342.070929,
+        "life_expectancy_at_birth_total_years": 76.980488
+      },
+      {
+        "year": "2020",
+        "country": "Uruguay",
+        "gdp_per_capita_ppp_constant_2021_interna": 27788.185497,
+        "life_expectancy_at_birth_total_years": 78.381
+      },
+      {
+        "year": "2020",
+        "country": "Uzbekistan",
+        "gdp_per_capita_ppp_constant_2021_interna": 8727.411049,
+        "life_expectancy_at_birth_total_years": 71.461
+      },
+      {
+        "year": "2020",
+        "country": "Vanuatu",
+        "gdp_per_capita_ppp_constant_2021_interna": 3259.995438,
+        "life_expectancy_at_birth_total_years": 70.385
+      },
+      {
+        "year": "2020",
+        "country": "Viet Nam",
+        "gdp_per_capita_ppp_constant_2021_interna": 11851.396569,
+        "life_expectancy_at_birth_total_years": 75.383
+      },
+      {
+        "year": "2020",
+        "country": "Virgin Islands (U.S.)",
+        "gdp_per_capita_ppp_constant_2021_interna": 45055.78293,
+        "life_expectancy_at_birth_total_years": 79.819512
+      },
+      {
+        "year": "2020",
+        "country": "West Bank and Gaza",
+        "gdp_per_capita_ppp_constant_2021_interna": 5423.682547,
+        "life_expectancy_at_birth_total_years": 74.998
+      },
+      {
+        "year": "2020",
+        "country": "World",
+        "gdp_per_capita_ppp_constant_2021_interna": 18811.493553,
+        "life_expectancy_at_birth_total_years": 72.183204
+      },
+      {
+        "year": "2020",
+        "country": "Zambia",
+        "gdp_per_capita_ppp_constant_2021_interna": 3391.595412,
+        "life_expectancy_at_birth_total_years": 63.361
+      },
+      {
+        "year": "2020",
+        "country": "Zimbabwe",
+        "gdp_per_capita_ppp_constant_2021_interna": 4527.719881,
+        "life_expectancy_at_birth_total_years": 61.53
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita_ppp_constant_2021_interna",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP per capita, PPP (constant 2021 international $) (PPP dollars, 2021 constant prices)"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log"
+          }
+        },
+        "y": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Life expectancy at birth, total (years)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_per_capita_ppp_constant_2021_interna",
+            "title": "GDP per capita, PPP (constant 2021 international $) (PPP dollars, 2021 constant prices)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "life_expectancy_at_birth_total_years",
+            "title": "Life expectancy at birth, total (years)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita_ppp_constant_2021_interna",
+          "type": "quantitative",
+          "scale": {
+            "type": "log",
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

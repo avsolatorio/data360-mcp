@@ -1,0 +1,466 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Unemployment Rate \u2014 G7 Countries (IMF WEO)",
+    "subtitle": [
+      "2018-2023",
+      "Percentage of labor force"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2018",
+        "value": 5.85,
+        "country": "Canada"
+      },
+      {
+        "year": "2018",
+        "value": 9.025,
+        "country": "France"
+      },
+      {
+        "year": "2018",
+        "value": 3.208,
+        "country": "Germany"
+      },
+      {
+        "year": "2018",
+        "value": 10.617,
+        "country": "Italy"
+      },
+      {
+        "year": "2018",
+        "value": 2.442,
+        "country": "Japan"
+      },
+      {
+        "year": "2018",
+        "value": 4.175,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2018",
+        "value": 3.892,
+        "country": "United States"
+      },
+      {
+        "year": "2019",
+        "value": 5.7,
+        "country": "Canada"
+      },
+      {
+        "year": "2019",
+        "value": 8.425,
+        "country": "France"
+      },
+      {
+        "year": "2019",
+        "value": 2.975,
+        "country": "Germany"
+      },
+      {
+        "year": "2019",
+        "value": 9.9,
+        "country": "Italy"
+      },
+      {
+        "year": "2019",
+        "value": 2.358,
+        "country": "Japan"
+      },
+      {
+        "year": "2019",
+        "value": 3.925,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2019",
+        "value": 3.675,
+        "country": "United States"
+      },
+      {
+        "year": "2020",
+        "value": 9.725,
+        "country": "Canada"
+      },
+      {
+        "year": "2020",
+        "value": 8.033,
+        "country": "France"
+      },
+      {
+        "year": "2020",
+        "value": 3.625,
+        "country": "Germany"
+      },
+      {
+        "year": "2020",
+        "value": 9.358,
+        "country": "Italy"
+      },
+      {
+        "year": "2020",
+        "value": 2.783,
+        "country": "Japan"
+      },
+      {
+        "year": "2020",
+        "value": 4.65,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2020",
+        "value": 8.092,
+        "country": "United States"
+      },
+      {
+        "year": "2021",
+        "value": 7.483,
+        "country": "Canada"
+      },
+      {
+        "year": "2021",
+        "value": 7.875,
+        "country": "France"
+      },
+      {
+        "year": "2021",
+        "value": 3.575,
+        "country": "Germany"
+      },
+      {
+        "year": "2021",
+        "value": 9.525,
+        "country": "Italy"
+      },
+      {
+        "year": "2021",
+        "value": 2.808,
+        "country": "Japan"
+      },
+      {
+        "year": "2021",
+        "value": 4.625,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2021",
+        "value": 5.35,
+        "country": "United States"
+      },
+      {
+        "year": "2022",
+        "value": 5.267,
+        "country": "Canada"
+      },
+      {
+        "year": "2022",
+        "value": 7.308,
+        "country": "France"
+      },
+      {
+        "year": "2022",
+        "value": 3.067,
+        "country": "Germany"
+      },
+      {
+        "year": "2022",
+        "value": 8.117,
+        "country": "Italy"
+      },
+      {
+        "year": "2022",
+        "value": 2.592,
+        "country": "Japan"
+      },
+      {
+        "year": "2022",
+        "value": 3.875,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2022",
+        "value": 3.633,
+        "country": "United States"
+      },
+      {
+        "year": "2023",
+        "value": 5.408,
+        "country": "Canada"
+      },
+      {
+        "year": "2023",
+        "value": 7.413,
+        "country": "France"
+      },
+      {
+        "year": "2023",
+        "value": 3.008,
+        "country": "Germany"
+      },
+      {
+        "year": "2023",
+        "value": 7.658,
+        "country": "Italy"
+      },
+      {
+        "year": "2023",
+        "value": 2.567,
+        "country": "Japan"
+      },
+      {
+        "year": "2023",
+        "value": 4.025,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2023",
+        "value": 3.625,
+        "country": "United States"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Percentage of labor force",
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "Unemployment rate, Percent of total labor force",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

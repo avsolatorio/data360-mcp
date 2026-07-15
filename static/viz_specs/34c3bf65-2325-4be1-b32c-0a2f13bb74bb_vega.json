@@ -1,0 +1,1567 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Public sector employment, as a share of total employment"
+    ],
+    "subtitle": [
+      "2010-2020",
+      "Proportion of total employment"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "value": 0.52572,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.530818,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.530818,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_1",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.494065,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_1",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.494065,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_2",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.508777,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_2",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.508777,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.52452,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.52452,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_4",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.521059,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_4",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.521059,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.517708,
+        "country": "Russian Federation",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Russian Federation_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 0.19886,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_6",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 0.221422,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_6",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 0.221422,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.224818,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.224818,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.217138,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.217138,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_9",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.233898,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_9",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.233898,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_10",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.237073,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_10",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.237073,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 0.20985,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 0.20985,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 0.24023,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 0.24023,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.24147,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.24147,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_14",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 0.248759,
+        "country": "South Africa",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_South Africa_14",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.165767,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_15",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.166059,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_15",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.166059,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_16",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2014",
+        "value": 0.166167,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_16",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2014",
+        "value": 0.166167,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_17",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.168188,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_17",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.168188,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_18",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.164407,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_18",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.164407,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_19",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 0.165458,
+        "country": "Brazil",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_Brazil_19",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.114528,
+        "country": "India",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_India_20",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 0.124752,
+        "country": "India",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_India_20",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 0.124752,
+        "country": "India",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_India_21",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.101606,
+        "country": "India",
+        "sex": "Female",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Female_India_21",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 0.395634,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_22",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.384677,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_22",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.384677,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_23",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.387567,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_23",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.387567,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_24",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.378799,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_24",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.378799,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_25",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.385104,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_25",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.385104,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_26",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.376085,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_26",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.376085,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_27",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.366666,
+        "country": "Russian Federation",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Russian Federation_27",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 0.140793,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_28",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 0.15282,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_28",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 0.15282,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_29",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.153275,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_29",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.153275,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_30",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.128037,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_30",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.128037,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_31",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.150989,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_31",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.150989,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_32",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.143898,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_32",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.143898,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_33",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 0.117004,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_33",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 0.117004,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_34",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 0.14562,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_34",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 0.14562,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_35",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.140632,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_35",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.140632,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_36",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 0.152291,
+        "country": "South Africa",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_South Africa_36",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.0902839,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_37",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.089739,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_37",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.089739,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_38",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2014",
+        "value": 0.086974,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_38",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2014",
+        "value": 0.086974,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_39",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.0900861,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_39",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.0900861,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_40",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.0917028,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_40",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.0917028,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_41",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 0.0933409,
+        "country": "Brazil",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_Brazil_41",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.0836156,
+        "country": "India",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_India_42",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 0.0749215,
+        "country": "India",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_India_42",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 0.0749215,
+        "country": "India",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_India_43",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.0702055,
+        "country": "India",
+        "sex": "Male",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Male_India_43",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 0.466788,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_44",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.465388,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_44",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.465388,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_45",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.446799,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_45",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.446799,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_46",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.45043,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_46",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.45043,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_47",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.462036,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_47",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.462036,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_48",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.455672,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_48",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.455672,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_49",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.449334,
+        "country": "Russian Federation",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Russian Federation_49",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 0.165842,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_50",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 0.182573,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_50",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 0.182573,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_51",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.184715,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_51",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 0.184715,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_52",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.167055,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_52",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 0.167055,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_53",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.187257,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_53",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.187257,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_54",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.184446,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_54",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.184446,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_55",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 0.158079,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_55",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 0.158079,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_56",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 0.18722,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_56",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 0.18722,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_57",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.184985,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_57",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.184985,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_58",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 0.194586,
+        "country": "South Africa",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_South Africa_58",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.122208,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_59",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.122135,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_59",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 0.122135,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_60",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2014",
+        "value": 0.121165,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_60",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2014",
+        "value": 0.121165,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_61",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.123456,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_61",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 0.123456,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_62",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.123015,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_62",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 0.123015,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_63",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 0.124655,
+        "country": "Brazil",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_Brazil_63",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 0.0898267,
+        "country": "India",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_India_64",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2017",
+        "value": 0.183669,
+        "country": "India",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_India_64",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2017",
+        "value": 0.183669,
+        "country": "India",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_India_65",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 0.0851988,
+        "country": "India",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_India_65",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 0.0851988,
+        "country": "India",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_India_66",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 0.077738,
+        "country": "India",
+        "sex": "Total",
+        "urbanisation": "Total",
+        "comp_breakdown_1": "Not Applicable",
+        "_d360_lseg": "Total_India_66",
+        "_d360_ygap": 0
+      }
+    ]
+  },
+  "facet": {
+    "field": "country",
+    "type": "nominal",
+    "columns": 2,
+    "header": {
+      "title": null,
+      "labelFontWeight": "bold"
+    }
+  },
+  "spec": {
+    "mark": {
+      "type": "line",
+      "tooltip": true,
+      "interpolate": "monotone"
+    },
+    "encoding": {
+      "x": {
+        "field": "year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "axis": {
+          "title": null,
+          "format": "%Y",
+          "tickCount": 5,
+          "labelAngle": 0,
+          "grid": false,
+          "gridColor": "#CED4DE",
+          "gridDash": [
+            4,
+            2
+          ],
+          "labelColor": "#666666",
+          "titleColor": "#111111",
+          "titleFontWeight": "bold"
+        }
+      },
+      "y": {
+        "field": "value",
+        "type": "quantitative",
+        "axis": {
+          "gridColor": "#CED4DE",
+          "gridDash": [
+            4,
+            2
+          ],
+          "labelColor": "#666666",
+          "titleColor": "#111111",
+          "titleFontWeight": "bold",
+          "tickCount": 5,
+          "title": "Proportion of total employment"
+        },
+        "scale": {
+          "type": "log",
+          "zero": false
+        }
+      },
+      "color": {
+        "field": "sex",
+        "type": "nominal",
+        "scale": {
+          "range": [
+            "#34A7F2",
+            "#FF9800",
+            "#664AB6",
+            "#4EC2C0",
+            "#F3578E",
+            "#081079",
+            "#0C7C68",
+            "#AA0000",
+            "#DDDA21"
+          ]
+        },
+        "legend": {
+          "orient": "top",
+          "direction": "horizontal",
+          "title": "Sex",
+          "labelLimit": 250,
+          "columns": 3,
+          "symbolType": "stroke"
+        }
+      },
+      "tooltip": [
+        {
+          "field": "year",
+          "title": "Year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "format": "%Y"
+        },
+        {
+          "field": "value",
+          "title": "Value",
+          "type": "quantitative",
+          "format": ".2f"
+        },
+        {
+          "field": "country",
+          "title": "Economy",
+          "type": "nominal"
+        },
+        {
+          "field": "sex",
+          "title": "Sex",
+          "type": "nominal"
+        },
+        {
+          "field": "urbanisation",
+          "title": "Urbanisation",
+          "type": "nominal"
+        },
+        {
+          "field": "comp_breakdown_1",
+          "title": "Dimension 1",
+          "type": "nominal"
+        }
+      ],
+      "detail": {
+        "field": "_d360_lseg",
+        "type": "nominal"
+      },
+      "strokeDash": {
+        "condition": {
+          "test": "datum._d360_ygap == 1",
+          "value": [
+            6,
+            4
+          ]
+        },
+        "value": []
+      }
+    },
+    "width": 300,
+    "height": 180
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

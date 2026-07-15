@@ -1,0 +1,279 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Individuals using the Internet (% of population)"
+    ],
+    "subtitle": [
+      "2021",
+      "Percentage of population",
+      "Gray: countries not in selected set or no data for this year."
+    ]
+  },
+  "width": 800,
+  "height": 450,
+  "data": {
+    "url": "https://unpkg.com/world-atlas@2.0.2/countries-110m.json",
+    "format": {
+      "type": "topojson",
+      "feature": "countries"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "year": "2021",
+              "value": 51.951599,
+              "country": "Honduras"
+            },
+            {
+              "year": "2021",
+              "value": 71.107826,
+              "country": "Peru"
+            },
+            {
+              "year": "2021",
+              "value": 65.977379,
+              "country": "Bolivia"
+            },
+            {
+              "year": "2021",
+              "value": 80.689893,
+              "country": "Brazil"
+            },
+            {
+              "year": "2021",
+              "value": 75.626505,
+              "country": "Mexico"
+            },
+            {
+              "year": "2021",
+              "value": 85.242986,
+              "country": "Dominican Republic"
+            },
+            {
+              "year": "2021",
+              "value": 69.1148,
+              "country": "Ecuador"
+            },
+            {
+              "year": "2021",
+              "value": 57.263802,
+              "country": "El Salvador"
+            },
+            {
+              "year": "2021",
+              "value": 82.749016,
+              "country": "Costa Rica"
+            },
+            {
+              "year": "2021",
+              "value": 67.643549,
+              "country": "Cuba"
+            },
+            {
+              "year": "2021",
+              "value": 50.841649,
+              "country": "Guatemala"
+            },
+            {
+              "year": "2021",
+              "value": 87.150707,
+              "country": "Argentina"
+            },
+            {
+              "year": "2021",
+              "value": 93.937103,
+              "country": "Canada"
+            },
+            {
+              "year": "2021",
+              "value": 90.232803,
+              "country": "Chile"
+            },
+            {
+              "year": "2021",
+              "value": 73.028374,
+              "country": "Colombia"
+            },
+            {
+              "year": "2021",
+              "value": 91.268402,
+              "country": "United States of America"
+            },
+            {
+              "year": "2021",
+              "value": 87.644402,
+              "country": "Uruguay"
+            },
+            {
+              "year": "2021",
+              "value": 74.112198,
+              "country": "Venezuela"
+            },
+            {
+              "year": "2021",
+              "value": 51.620399,
+              "country": "Nicaragua"
+            },
+            {
+              "year": "2021",
+              "value": 77.018386,
+              "country": "Paraguay"
+            }
+          ]
+        },
+        "key": "country",
+        "fields": [
+          "year",
+          "value",
+          "country"
+        ]
+      }
+    }
+  ],
+  "projection": {
+    "type": "equalEarth"
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "fill": "#eee",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      },
+      "transform": [
+        {
+          "filter": "isValid(datum.value)"
+        }
+      ],
+      "encoding": {
+        "color": {
+          "field": "value",
+          "type": "quantitative",
+          "scale": {
+            "scheme": "blues"
+          },
+          "legend": {
+            "title": "Percentage of population",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "Individuals using the Internet (% of population)",
+            "title": "Indicator"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

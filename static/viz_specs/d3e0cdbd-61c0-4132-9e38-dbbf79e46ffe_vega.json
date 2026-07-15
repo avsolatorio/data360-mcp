@@ -1,0 +1,669 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "ASEAN Population Heatmap (2014-2023)",
+    "subtitle": [
+      "Brunei Darussalam, Cambodia, Indonesia, Lao PDR, Malaysia, Myanmar, Philippines, Singapore, Thailand, Viet Nam, 2014-2023",
+      "Count"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "value": 421437.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2021",
+        "value": 445373.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2014",
+        "value": 416656.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2016",
+        "value": 425994.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2018",
+        "value": 434274.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2023",
+        "value": 452524.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2019",
+        "value": 438048.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2022",
+        "value": 449002.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2020",
+        "value": 441725.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2017",
+        "value": 430276.0,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2014",
+        "value": 256230000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2018",
+        "value": 267067000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2015",
+        "value": 259092000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2021",
+        "value": 273753000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2020",
+        "value": 271858000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016",
+        "value": 261850000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2019",
+        "value": 269583000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2022",
+        "value": 275501000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2023",
+        "value": 277534000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2017",
+        "value": 15830700.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2023",
+        "value": 16944800.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2021",
+        "value": 16589000.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2020",
+        "value": 16396900.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2014",
+        "value": 15210800.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2018",
+        "value": 16025200.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2016",
+        "value": 15624600.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2022",
+        "value": 16767800.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2015",
+        "value": 6787420.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2019",
+        "value": 7212050.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2016",
+        "value": 6891360.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2020",
+        "value": 7319400.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2017",
+        "value": 6997920.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2023",
+        "value": 7633780.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2018",
+        "value": 7105010.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2022",
+        "value": 7529480.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2021",
+        "value": 7425060.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2014",
+        "value": 6691450.0,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2019",
+        "value": 53040200.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2021",
+        "value": 53798100.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2014",
+        "value": 51072400.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2018",
+        "value": 52666000.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2015",
+        "value": 51483900.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2016",
+        "value": 51892300.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2023",
+        "value": 54578000.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2014",
+        "value": 30606500.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2022",
+        "value": 33938200.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2016",
+        "value": 31526400.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2017",
+        "value": 31975800.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2018",
+        "value": 32399300.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021",
+        "value": 33573900.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2017",
+        "value": 52288300.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2017",
+        "value": 264499000.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2015",
+        "value": 103031000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2021",
+        "value": 113880000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2022",
+        "value": 115559000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2023",
+        "value": 34308500.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2014",
+        "value": 101325000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2023",
+        "value": 117337000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2016",
+        "value": 104875000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2018",
+        "value": 108569000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2014",
+        "value": 5469720.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2015",
+        "value": 5535000.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2019",
+        "value": 110381000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2020",
+        "value": 5685810.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2016",
+        "value": 5607280.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2015",
+        "value": 15417500.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2019",
+        "value": 16207700.0,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2019",
+        "value": 5703570.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2017",
+        "value": 5612250.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2018",
+        "value": 5638680.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2014",
+        "value": 69960900.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2017",
+        "value": 70898200.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2022",
+        "value": 71697000.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2015",
+        "value": 70294400.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2020",
+        "value": 71475700.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 71601100.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2016",
+        "value": 70607000.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2023",
+        "value": 71801300.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2016",
+        "value": 93126500.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2015",
+        "value": 92191400.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2017",
+        "value": 94033000.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018",
+        "value": 94914300.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2019",
+        "value": 95776700.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2020",
+        "value": 96648700.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2022",
+        "value": 98186900.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2021",
+        "value": 97468000.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2023",
+        "value": 98859000.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2014",
+        "value": 91235500.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2020",
+        "value": 53423200.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2022",
+        "value": 54179300.0,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2015",
+        "value": 31068800.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2019",
+        "value": 32804000.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2020",
+        "value": 33200000.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2017",
+        "value": 106739000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2020",
+        "value": 112191000.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2021",
+        "value": 5453570.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2022",
+        "value": 5637020.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2023",
+        "value": 5917650.0,
+        "country": "Singapore"
+      },
+      {
+        "year": "2018",
+        "value": 71127800.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2019",
+        "value": 71307800.0,
+        "country": "Thailand"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          416656.0,
+          277534000.0
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Count",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.0f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

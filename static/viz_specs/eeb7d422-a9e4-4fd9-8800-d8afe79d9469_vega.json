@@ -1,0 +1,460 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Public sector employment, as a share of total employment"
+    ],
+    "subtitle": [
+      "Mexico, 2010-2020",
+      "Proportion of total employment"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "value": 0.1385,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2011",
+        "value": 0.206869,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2012",
+        "value": 0.114356,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2013",
+        "value": 0.200038,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2014",
+        "value": 0.199287,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2015",
+        "value": 0.197808,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2016",
+        "value": 0.192743,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2017",
+        "value": 0.129177,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2018",
+        "value": 0.185801,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2019",
+        "value": 0.180769,
+        "country": "Mexico",
+        "sex": "Female"
+      },
+      {
+        "year": "2010",
+        "value": 0.0978343,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2011",
+        "value": 0.12138,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2012",
+        "value": 0.0890311,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2013",
+        "value": 0.11937,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2014",
+        "value": 0.114224,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2015",
+        "value": 0.111537,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2016",
+        "value": 0.10611,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2017",
+        "value": 0.0848396,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2018",
+        "value": 0.103541,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2019",
+        "value": 0.100358,
+        "country": "Mexico",
+        "sex": "Male"
+      },
+      {
+        "year": "2010",
+        "value": 0.113227,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2011",
+        "value": 0.152106,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2012",
+        "value": 0.0992479,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2013",
+        "value": 0.14899,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2014",
+        "value": 0.145721,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2015",
+        "value": 0.142988,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2016",
+        "value": 0.138047,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2017",
+        "value": 0.101868,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2018",
+        "value": 0.133987,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2019",
+        "value": 0.130615,
+        "country": "Mexico",
+        "sex": "Total"
+      },
+      {
+        "year": "2020",
+        "value": 0.136659,
+        "country": "Mexico",
+        "sex": "Total"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Share",
+            "labelExpr": "format(datum.value, '.0%')"
+          },
+          "scale": {
+            "zero": false,
+            "domain": [
+              0,
+              0.25
+            ]
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1%"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "sex",
+            "title": "Sex",
+            "type": "nominal"
+          },
+          {
+            "value": "Public sector employment, as a share of total employment",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "sex",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "sex"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              0.25
+            ]
+          },
+          "axis": {}
+        },
+        "text": {
+          "field": "sex",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "sex",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

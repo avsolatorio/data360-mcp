@@ -1,0 +1,2974 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Poverty gap based on disposable income (until 2011 definition)",
+    "subtitle": [
+      "1975-2018",
+      "Percentage points"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2008",
+        "value": 30.7,
+        "country": "RUS",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 28.7,
+        "country": "RUS",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 25.0,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 25.7,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 23.7,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 23.1,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 24.7,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 25.7,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 29.6,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 29.6,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 25.8,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 22.7,
+        "country": "ISL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 34.1,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 34.6,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 32.6,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 34.0,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 34.0,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 34.0,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 35.4,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 32.5,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 31.5,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 31.7,
+        "country": "LVA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1976",
+        "value": 32.1,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1977",
+        "value": 34.5,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1978",
+        "value": 32.5,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1979",
+        "value": 32.0,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1980",
+        "value": 32.5,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1981",
+        "value": 30.7,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1982",
+        "value": 30.8,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1983",
+        "value": 30.2,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1984",
+        "value": 31.8,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1985",
+        "value": 30.3,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1986",
+        "value": 29.8,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1987",
+        "value": 29.5,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1988",
+        "value": 28.6,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1989",
+        "value": 27.9,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1990",
+        "value": 29.2,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1991",
+        "value": 29.5,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1992",
+        "value": 29.4,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1993",
+        "value": 28.0,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1994",
+        "value": 28.7,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 28.4,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1996",
+        "value": 29.2,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1997",
+        "value": 29.8,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1998",
+        "value": 29.2,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1999",
+        "value": 29.6,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 29.1,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2001",
+        "value": 28.9,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2002",
+        "value": 28.9,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2003",
+        "value": 28.4,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 29.5,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 29.2,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 28.3,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 28.5,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 28.7,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 29.3,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 28.2,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 28.8,
+        "country": "CAN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1994",
+        "value": 31.9,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1999",
+        "value": 32.5,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 30.1,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 29.8,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 31.2,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 30.7,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 29.6,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 32.8,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 36.4,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 38.0,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 35.6,
+        "country": "GRC",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1999",
+        "value": 26.5,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 26.0,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2001",
+        "value": 26.4,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2002",
+        "value": 27.1,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2003",
+        "value": 27.4,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 27.4,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 27.5,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 29.1,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 28.9,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 29.8,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 29.6,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 29.7,
+        "country": "GBR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 35.5,
+        "country": "CHL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 35.6,
+        "country": "CHL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 33.8,
+        "country": "CHL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1996",
+        "value": 22.3,
+        "country": "FRA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 20.9,
+        "country": "FRA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 23.6,
+        "country": "FRA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 23.1,
+        "country": "FRA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 23.8,
+        "country": "FRA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 23.6,
+        "country": "FRA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 23.7,
+        "country": "FRA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1994",
+        "value": 30.3,
+        "country": "TUR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 34.1,
+        "country": "TUR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 31.1,
+        "country": "TUR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 33.1,
+        "country": "TUR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 33.7,
+        "country": "TUR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 32.8,
+        "country": "TUR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 34.0,
+        "country": "USA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 35.2,
+        "country": "USA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 36.7,
+        "country": "USA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 36.1,
+        "country": "USA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 36.3,
+        "country": "USA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 37.2,
+        "country": "USA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 36.5,
+        "country": "USA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 36.7,
+        "country": "USA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1975",
+        "value": 18.4,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1983",
+        "value": 21.0,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1991",
+        "value": 19.6,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 23.6,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 22.5,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 21.4,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 23.6,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 24.9,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 24.0,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 24.7,
+        "country": "SWE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 34.3,
+        "country": "JPN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 35.8,
+        "country": "JPN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2003",
+        "value": 35.0,
+        "country": "JPN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 34.4,
+        "country": "JPN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 34.5,
+        "country": "JPN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 35.2,
+        "country": "JPN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2015",
+        "value": 34.5,
+        "country": "JPN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2018",
+        "value": 36.1,
+        "country": "JPN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1986",
+        "value": 19.4,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1996",
+        "value": 18.8,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2001",
+        "value": 17.5,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 24.9,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 25.5,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 21.5,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 22.2,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 21.4,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 21.3,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 21.9,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 21.2,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 23.1,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 23.8,
+        "country": "LUX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 35.3,
+        "country": "KOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 35.9,
+        "country": "KOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 36.8,
+        "country": "KOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 37.0,
+        "country": "KOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 37.7,
+        "country": "KOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 37.9,
+        "country": "KOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 38.2,
+        "country": "KOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1992",
+        "value": 16.6,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1996",
+        "value": 17.3,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2002",
+        "value": 19.0,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 22.6,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 21.0,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 21.6,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 22.1,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 22.8,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 24.2,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 24.3,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 23.0,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 23.6,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 22.4,
+        "country": "CZE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 31.7,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 29.3,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 28.8,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 28.6,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 26.3,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 27.1,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 30.1,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 28.9,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 28.6,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 30.6,
+        "country": "EST",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 33.7,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 31.5,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 31.1,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 30.6,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 31.5,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 37.6,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 33.6,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 30.4,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 30.8,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 29.8,
+        "country": "LTU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1986",
+        "value": 22.0,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1987",
+        "value": 21.7,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1988",
+        "value": 21.1,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1989",
+        "value": 19.9,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1990",
+        "value": 20.5,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1991",
+        "value": 21.8,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1992",
+        "value": 21.6,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1993",
+        "value": 21.3,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1994",
+        "value": 19.4,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 19.5,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1996",
+        "value": 19.2,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1997",
+        "value": 20.8,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1998",
+        "value": 19.7,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1999",
+        "value": 19.4,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 19.5,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2001",
+        "value": 20.7,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2002",
+        "value": 20.9,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2003",
+        "value": 20.2,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 20.5,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 20.5,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 20.2,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 20.6,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 21.3,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 21.1,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 20.8,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 21.4,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 20.9,
+        "country": "FIN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 26.4,
+        "country": "AUS",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 27.4,
+        "country": "AUS",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 25.9,
+        "country": "AUS",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 28.6,
+        "country": "AUS",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 27.6,
+        "country": "AUS",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 28.2,
+        "country": "AUS",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 24.1,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 22.4,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 23.2,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 22.2,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 23.1,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 27.2,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 29.2,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 27.5,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 26.6,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 27.2,
+        "country": "IRL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1985",
+        "value": 27.4,
+        "country": "ISR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1990",
+        "value": 30.3,
+        "country": "ISR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 27.8,
+        "country": "ISR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 27.7,
+        "country": "ISR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 34.2,
+        "country": "ISR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 34.8,
+        "country": "ISR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 35.7,
+        "country": "ISR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 36.0,
+        "country": "ISR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 34.6,
+        "country": "ISR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1994",
+        "value": 39.2,
+        "country": "MEX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 38.5,
+        "country": "MEX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 37.4,
+        "country": "MEX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 39.3,
+        "country": "MEX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 40.8,
+        "country": "MEX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 40.6,
+        "country": "MEX",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 30.0,
+        "country": "POL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 28.4,
+        "country": "POL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 26.7,
+        "country": "POL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 26.9,
+        "country": "POL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 27.4,
+        "country": "POL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 28.0,
+        "country": "POL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 27.4,
+        "country": "POL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 26.8,
+        "country": "POL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 27.3,
+        "country": "POL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1991",
+        "value": 21.9,
+        "country": "HUN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 22.1,
+        "country": "HUN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 24.5,
+        "country": "HUN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 24.0,
+        "country": "HUN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 24.0,
+        "country": "HUN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 22.4,
+        "country": "HUN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 28.8,
+        "country": "HUN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 21.9,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 24.1,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 24.3,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 24.0,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 23.6,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 24.1,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 23.4,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 24.2,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 23.2,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 23.2,
+        "country": "BEL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 26.5,
+        "country": "CHE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 26.2,
+        "country": "CHE",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 29.2,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 28.4,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 28.2,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 27.7,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 28.8,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 27.4,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 26.8,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 30.0,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 31.9,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 32.9,
+        "country": "PRT",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1985",
+        "value": 19.3,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1990",
+        "value": 20.1,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 18.4,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 18.6,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 20.2,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 20.5,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 21.2,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 22.2,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 22.4,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 22.4,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 22.5,
+        "country": "DNK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 25.7,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 24.6,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 24.3,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 24.9,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 28.2,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 29.1,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 28.3,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 26.5,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 28.7,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 31.1,
+        "country": "SVK",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1985",
+        "value": 19.8,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1990",
+        "value": 16.3,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 19.0,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 23.0,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 24.6,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 25.6,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 26.1,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 26.4,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 26.9,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 26.6,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 27.5,
+        "country": "NLD",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1985",
+        "value": 26.8,
+        "country": "NZL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1990",
+        "value": 24.2,
+        "country": "NZL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 27.7,
+        "country": "NZL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 23.6,
+        "country": "NZL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2003",
+        "value": 25.7,
+        "country": "NZL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 24.3,
+        "country": "NZL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 25.8,
+        "country": "NZL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 24.1,
+        "country": "NZL",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 26.7,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2005",
+        "value": 25.0,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2006",
+        "value": 24.6,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2007",
+        "value": 25.7,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 25.1,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 24.7,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 25.1,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 25.1,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 25.4,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 25.9,
+        "country": "SVN",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1985",
+        "value": 21.9,
+        "country": "DEU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1990",
+        "value": 22.4,
+        "country": "DEU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 25.5,
+        "country": "DEU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 26.0,
+        "country": "DEU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 24.3,
+        "country": "DEU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 25.2,
+        "country": "DEU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 24.5,
+        "country": "DEU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 24.4,
+        "country": "DEU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 24.5,
+        "country": "DEU",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 36.6,
+        "country": "ITA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 35.7,
+        "country": "ITA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 32.2,
+        "country": "ITA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 31.1,
+        "country": "ITA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 31.6,
+        "country": "ITA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 34.1,
+        "country": "ITA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 33.4,
+        "country": "ITA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2012",
+        "value": 36.5,
+        "country": "ITA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2013",
+        "value": 36.5,
+        "country": "ITA",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1986",
+        "value": 22.0,
+        "country": "NOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "1995",
+        "value": 25.0,
+        "country": "NOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2000",
+        "value": 24.8,
+        "country": "NOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2004",
+        "value": 26.0,
+        "country": "NOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2008",
+        "value": 29.4,
+        "country": "NOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2009",
+        "value": 30.4,
+        "country": "NOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2010",
+        "value": 30.8,
+        "country": "NOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      },
+      {
+        "year": "2011",
+        "value": 30.8,
+        "country": "NOR",
+        "comp_breakdown_1": "Poverty line: 60% of the nationalmedian disposable income (OECD_IDD)",
+        "comp_breakdown_2": "Definition: Current definition (OECD_IDD)",
+        "comp_breakdown_3": "Statistical operation: Arithmetic mean (OECD_IDD)"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          16.3,
+          40.8
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Percentage points",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "field": "comp_breakdown_1",
+        "title": "Dimension 1",
+        "type": "nominal"
+      },
+      {
+        "field": "comp_breakdown_2",
+        "title": "Dimension 2",
+        "type": "nominal"
+      },
+      {
+        "field": "comp_breakdown_3",
+        "title": "Dimension 3",
+        "type": "nominal"
+      },
+      {
+        "value": "Poverty gap based on disposable income",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

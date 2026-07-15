@@ -1,0 +1,495 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Employment in agriculture, female | Employment in agriculture, male | Employment",
+      "in services, female | Employment in services, male"
+    ],
+    "subtitle": [
+      "United Kingdom, 2015-2022",
+      "Percentage"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, female",
+        "value": 0.648202,
+        "_label_y": 0.648202
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, female",
+        "value": 0.632074,
+        "_label_y": 0.632074
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, female",
+        "value": 0.650729,
+        "_label_y": 0.650729
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, female",
+        "value": 0.624797,
+        "_label_y": 0.624797
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, female",
+        "value": 0.61584,
+        "_label_y": 0.61584
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, female",
+        "value": 0.57721,
+        "_label_y": 0.57721
+      },
+      {
+        "year": "2021",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, female",
+        "value": 0.495405,
+        "_label_y": 0.495405
+      },
+      {
+        "year": "2022",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, female",
+        "value": 0.441328,
+        "_label_y": -1.0882302400000001
+      },
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, male",
+        "value": 1.583905,
+        "_label_y": 1.583905
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, male",
+        "value": 1.587567,
+        "_label_y": 1.587567
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, male",
+        "value": 1.612313,
+        "_label_y": 1.612313
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, male",
+        "value": 1.463183,
+        "_label_y": 1.463183
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, male",
+        "value": 1.512716,
+        "_label_y": 1.512716
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, male",
+        "value": 1.352961,
+        "_label_y": 1.352961
+      },
+      {
+        "year": "2021",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, male",
+        "value": 1.267865,
+        "_label_y": 1.267865
+      },
+      {
+        "year": "2022",
+        "country": "United Kingdom",
+        "indicator": "Agriculture, male",
+        "value": 1.044003,
+        "_label_y": 2.57356124
+      },
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "indicator": "Services, female",
+        "value": 91.651744,
+        "_label_y": 91.651744
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "indicator": "Services, female",
+        "value": 91.723714,
+        "_label_y": 91.723714
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "indicator": "Services, female",
+        "value": 91.659946,
+        "_label_y": 91.659946
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "Services, female",
+        "value": 91.900602,
+        "_label_y": 91.900602
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "indicator": "Services, female",
+        "value": 91.599873,
+        "_label_y": 91.599873
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "indicator": "Services, female",
+        "value": 91.986115,
+        "_label_y": 91.986115
+      },
+      {
+        "year": "2021",
+        "country": "United Kingdom",
+        "indicator": "Services, female",
+        "value": 91.736056,
+        "_label_y": 91.736056
+      },
+      {
+        "year": "2022",
+        "country": "United Kingdom",
+        "indicator": "Services, female",
+        "value": 91.872747,
+        "_label_y": 91.872747
+      },
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "indicator": "Services, male",
+        "value": 70.088808,
+        "_label_y": 70.088808
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "indicator": "Services, male",
+        "value": 70.332793,
+        "_label_y": 70.332793
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "indicator": "Services, male",
+        "value": 70.778664,
+        "_label_y": 70.778664
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "Services, male",
+        "value": 70.971756,
+        "_label_y": 70.971756
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "indicator": "Services, male",
+        "value": 70.764145,
+        "_label_y": 70.764145
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "indicator": "Services, male",
+        "value": 72.491476,
+        "_label_y": 72.491476
+      },
+      {
+        "year": "2021",
+        "country": "United Kingdom",
+        "indicator": "Services, male",
+        "value": 73.327544,
+        "_label_y": 73.327544
+      },
+      {
+        "year": "2022",
+        "country": "United Kingdom",
+        "indicator": "Services, male",
+        "value": 73.997015,
+        "_label_y": 73.997015
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Percentage",
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false,
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "color": {
+          "field": "indicator",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Agriculture, female",
+              "Agriculture, male",
+              "Services, male",
+              "Services, female"
+            ],
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "indicator"
+          ]
+        },
+        {
+          "calculate": "datum._last._label_y",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "text": {
+          "field": "indicator",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "indicator",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Agriculture, female",
+              "Agriculture, male",
+              "Services, male",
+              "Services, female"
+            ],
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

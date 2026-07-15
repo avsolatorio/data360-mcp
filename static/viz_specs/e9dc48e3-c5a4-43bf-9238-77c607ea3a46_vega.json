@@ -1,0 +1,411 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Poverty Headcount Ratio at International Poverty Line (India, Nigeria, Brazil), 2010-2022",
+    "subtitle": [
+      "Brazil, India, Nigeria, 2010-2022",
+      "Percentage of population"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2011",
+        "value": 7.1,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 6.4,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 5.4,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 4.8,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 5.4,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 6.5,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 7.0,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 6.9,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 7.0,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 2.8,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 7.5,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 4.9,
+        "country": "Brazil",
+        "_d360_lseg": "Brazil_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 38.5,
+        "country": "Nigeria",
+        "_d360_lseg": "Nigeria_1",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 37.4,
+        "country": "Nigeria",
+        "_d360_lseg": "Nigeria_1",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 37.4,
+        "country": "Nigeria",
+        "_d360_lseg": "Nigeria_2",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2015",
+        "value": 35.8,
+        "country": "Nigeria",
+        "_d360_lseg": "Nigeria_2",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2015",
+        "value": 35.8,
+        "country": "Nigeria",
+        "_d360_lseg": "Nigeria_3",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 34.2,
+        "country": "Nigeria",
+        "_d360_lseg": "Nigeria_3",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 34.2,
+        "country": "Nigeria",
+        "_d360_lseg": "Nigeria_4",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 41.8,
+        "country": "Nigeria",
+        "_d360_lseg": "Nigeria_4",
+        "_d360_ygap": 1
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Percentage of population",
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "Poverty headcount ratio at $3.00 a day (2021 PPP) (% of population)",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "detail": {
+          "field": "_d360_lseg",
+          "type": "nominal"
+        },
+        "strokeDash": {
+          "condition": {
+            "test": "datum._d360_ygap == 1",
+            "value": [
+              6,
+              4
+            ]
+          },
+          "value": []
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

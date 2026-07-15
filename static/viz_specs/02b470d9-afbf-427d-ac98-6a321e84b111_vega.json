@@ -1,0 +1,257 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Government Effectiveness in Brazil, Poland, and the United Kingdom (2024)",
+    "subtitle": [
+      "Brazil, Poland, United Kingdom, 2024"
+    ]
+  },
+  "width": 500,
+  "height": 180,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2024",
+        "value": 46.98496,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": 74.37989,
+        "country": "United Kingdom",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": 64.434134,
+        "country": "Poland",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2024",
+        "value": 39.814584,
+        "country": "Brazil",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2024",
+        "value": 66.969459,
+        "country": "United Kingdom",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2024",
+        "value": 57.659402,
+        "country": "Poland",
+        "comp_breakdown_1": "lower"
+      },
+      {
+        "year": "2024",
+        "value": 54.155335,
+        "country": "Brazil",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2024",
+        "value": 81.790321,
+        "country": "United Kingdom",
+        "comp_breakdown_1": "upper"
+      },
+      {
+        "year": "2024",
+        "value": 71.208866,
+        "country": "Poland",
+        "comp_breakdown_1": "upper"
+      }
+    ]
+  },
+  "layer": [
+    {
+      "transform": [
+        {
+          "pivot": "comp_breakdown_1",
+          "value": "value",
+          "groupby": [
+            "year",
+            "country"
+          ]
+        }
+      ],
+      "mark": {
+        "type": "rule",
+        "color": "#666666",
+        "strokeWidth": 1.5
+      },
+      "encoding": {
+        "y": {
+          "field": "country",
+          "type": "nominal",
+          "sort": "-x",
+          "axis": {
+            "title": null,
+            "labelColor": "#111111",
+            "labelFontWeight": "bold",
+            "labelLimit": 150
+          }
+        },
+        "x": {
+          "field": "lower",
+          "type": "quantitative",
+          "scale": {
+            "zero": false
+          }
+        },
+        "x2": {
+          "field": "upper"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.comp_breakdown_1 == 'est'"
+        }
+      ],
+      "mark": {
+        "type": "bar",
+        "cornerRadiusTopRight": 3,
+        "cornerRadiusBottomRight": 3
+      },
+      "encoding": {
+        "y": {
+          "field": "country",
+          "type": "nominal",
+          "sort": "-x",
+          "axis": {
+            "title": null,
+            "labelColor": "#111111",
+            "labelFontWeight": "bold",
+            "labelLimit": 150
+          }
+        },
+        "x": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Worldwide Governance Indicators: Government Effectiveness",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": true
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "Worldwide Governance Indicators: Government Effectiveness",
+            "title": "Indicator"
+          }
+        ]
+      }
+    }
+  ]
+}

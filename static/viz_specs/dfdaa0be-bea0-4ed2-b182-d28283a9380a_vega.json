@@ -1,0 +1,377 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP per Capita and Population in South Asia and Peers (Latest Available)",
+    "subtitle": [
+      "2024-2025"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2024",
+        "country": "Afghanistan",
+        "gdp_per_capita": 416.871146,
+        "population_total": 42647492.0
+      },
+      {
+        "year": "2024",
+        "country": "Bangladesh",
+        "gdp_per_capita": 2593.416117,
+        "population_total": 173562364.0
+      },
+      {
+        "year": "2024",
+        "country": "Bhutan",
+        "gdp_per_capita": 4228.051024,
+        "population_total": 791524.0
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "gdp_per_capita": 2591.991661,
+        "population_total": 1450935791.0
+      },
+      {
+        "year": "2024",
+        "country": "Maldives",
+        "gdp_per_capita": 13379.351358,
+        "population_total": 527799.0
+      },
+      {
+        "year": "2024",
+        "country": "Nepal",
+        "gdp_per_capita": 1460.28238,
+        "population_total": 29651054.0
+      },
+      {
+        "year": "2024",
+        "country": "Pakistan",
+        "gdp_per_capita": 1479.477552,
+        "population_total": 251269164.0
+      },
+      {
+        "year": "2024",
+        "country": "Sri Lanka",
+        "gdp_per_capita": 4545.360069,
+        "population_total": 21916000.0
+      },
+      {
+        "year": "2025",
+        "country": "Bangladesh",
+        "gdp_per_capita": 2597.343523,
+        "population_total": 175686899.0
+      },
+      {
+        "year": "2025",
+        "country": "Bhutan",
+        "gdp_per_capita": 4492.784003,
+        "population_total": 796682.0
+      },
+      {
+        "year": "2025",
+        "country": "India",
+        "gdp_per_capita": 2702.479871,
+        "population_total": 1463865525.0
+      },
+      {
+        "year": "2025",
+        "country": "Maldives",
+        "gdp_per_capita": 14614.720812,
+        "population_total": 529676.0
+      },
+      {
+        "year": "2025",
+        "country": "Nepal",
+        "gdp_per_capita": 1535.877812,
+        "population_total": 29618118.0
+      },
+      {
+        "year": "2025",
+        "country": "Pakistan",
+        "gdp_per_capita": 1595.909123,
+        "population_total": 255219554.0
+      },
+      {
+        "year": "2025",
+        "country": "Sri Lanka",
+        "gdp_per_capita": 5002.079044,
+        "population_total": 21756000.0
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2,
+        "opacity": 0.6,
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP per capita (US Dollars)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "population_total",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Population, total (Persons)"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log",
+            "domain": [
+              1.0,
+              1610252077.5000002
+            ]
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 40,
+        "opacity": 0.9
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP per capita (US Dollars)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "population_total",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Population, total (Persons)"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log",
+            "domain": [
+              1.0,
+              1610252077.5000002
+            ]
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_per_capita",
+            "title": "GDP per capita (US Dollars)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "population_total",
+            "title": "Population, total (Persons)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "width": 550,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

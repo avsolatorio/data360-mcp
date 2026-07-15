@@ -1,0 +1,458 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP (annual % growth) vs. Inflation, consumer prices (annual % growth)"
+    ],
+    "subtitle": [
+      "2017-2021",
+      "Percentage change per annum"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "gdp_annual_growth": 1.322869,
+        "inflation_consumer_prices_annual_growth": 3.446373
+      },
+      {
+        "year": "2017",
+        "country": "Chile",
+        "gdp_annual_growth": 1.357695,
+        "inflation_consumer_prices_annual_growth": 2.182718
+      },
+      {
+        "year": "2017",
+        "country": "Colombia",
+        "gdp_annual_growth": 1.359361,
+        "inflation_consumer_prices_annual_growth": 4.314313
+      },
+      {
+        "year": "2017",
+        "country": "Mexico",
+        "gdp_annual_growth": 1.871729,
+        "inflation_consumer_prices_annual_growth": 6.041457
+      },
+      {
+        "year": "2017",
+        "country": "Peru",
+        "gdp_annual_growth": 2.518835,
+        "inflation_consumer_prices_annual_growth": 2.9949
+      },
+      {
+        "year": "2018",
+        "country": "Argentina",
+        "gdp_annual_growth": -2.617396,
+        "inflation_consumer_prices_annual_growth": 34.277224
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "gdp_annual_growth": 1.783667,
+        "inflation_consumer_prices_annual_growth": 3.66485
+      },
+      {
+        "year": "2018",
+        "country": "Chile",
+        "gdp_annual_growth": 3.990029,
+        "inflation_consumer_prices_annual_growth": 2.43489
+      },
+      {
+        "year": "2018",
+        "country": "Colombia",
+        "gdp_annual_growth": 2.564324,
+        "inflation_consumer_prices_annual_growth": 3.240569
+      },
+      {
+        "year": "2018",
+        "country": "Mexico",
+        "gdp_annual_growth": 1.972082,
+        "inflation_consumer_prices_annual_growth": 4.89935
+      },
+      {
+        "year": "2018",
+        "country": "Peru",
+        "gdp_annual_growth": 3.969351,
+        "inflation_consumer_prices_annual_growth": 1.509154
+      },
+      {
+        "year": "2019",
+        "country": "Argentina",
+        "gdp_annual_growth": -2.000861,
+        "inflation_consumer_prices_annual_growth": 53.548304
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "gdp_annual_growth": 1.220778,
+        "inflation_consumer_prices_annual_growth": 3.732976
+      },
+      {
+        "year": "2019",
+        "country": "Chile",
+        "gdp_annual_growth": 0.644223,
+        "inflation_consumer_prices_annual_growth": 2.557545
+      },
+      {
+        "year": "2019",
+        "country": "Colombia",
+        "gdp_annual_growth": 3.186855,
+        "inflation_consumer_prices_annual_growth": 3.523019
+      },
+      {
+        "year": "2019",
+        "country": "Mexico",
+        "gdp_annual_growth": -0.392691,
+        "inflation_consumer_prices_annual_growth": 3.635961
+      },
+      {
+        "year": "2019",
+        "country": "Peru",
+        "gdp_annual_growth": 2.240632,
+        "inflation_consumer_prices_annual_growth": 2.252122
+      },
+      {
+        "year": "2020",
+        "country": "Argentina",
+        "gdp_annual_growth": -9.900485,
+        "inflation_consumer_prices_annual_growth": 42.015095
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "gdp_annual_growth": -3.276759,
+        "inflation_consumer_prices_annual_growth": 3.211768
+      },
+      {
+        "year": "2020",
+        "country": "Chile",
+        "gdp_annual_growth": -6.139697,
+        "inflation_consumer_prices_annual_growth": 3.045491
+      },
+      {
+        "year": "2020",
+        "country": "Colombia",
+        "gdp_annual_growth": -7.185914,
+        "inflation_consumer_prices_annual_growth": 2.526635
+      },
+      {
+        "year": "2020",
+        "country": "Mexico",
+        "gdp_annual_growth": -8.354035,
+        "inflation_consumer_prices_annual_growth": 3.396834
+      },
+      {
+        "year": "2020",
+        "country": "Peru",
+        "gdp_annual_growth": -10.933307,
+        "inflation_consumer_prices_annual_growth": 2.002412
+      },
+      {
+        "year": "2021",
+        "country": "Argentina",
+        "gdp_annual_growth": 10.441812,
+        "inflation_consumer_prices_annual_growth": 48.409379
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "gdp_annual_growth": 4.762604,
+        "inflation_consumer_prices_annual_growth": 8.30166
+      },
+      {
+        "year": "2021",
+        "country": "Chile",
+        "gdp_annual_growth": 11.337403,
+        "inflation_consumer_prices_annual_growth": 4.524568
+      },
+      {
+        "year": "2021",
+        "country": "Colombia",
+        "gdp_annual_growth": 10.801198,
+        "inflation_consumer_prices_annual_growth": 3.495058
+      },
+      {
+        "year": "2021",
+        "country": "Mexico",
+        "gdp_annual_growth": 6.048483,
+        "inflation_consumer_prices_annual_growth": 5.689208
+      },
+      {
+        "year": "2021",
+        "country": "Peru",
+        "gdp_annual_growth": 13.416646,
+        "inflation_consumer_prices_annual_growth": 4.271664
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2,
+        "opacity": 0.6,
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP (annual % growth) (Percentage change per annum)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "inflation_consumer_prices_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Inflation, consumer prices (annual % growth) (Percentage change per annum)"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log"
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 40,
+        "opacity": 0.9
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP (annual % growth) (Percentage change per annum)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "inflation_consumer_prices_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Inflation, consumer prices (annual % growth) (Percentage change per annum)"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log"
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_annual_growth",
+            "title": "GDP (annual % growth) (Percentage change per annum)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "inflation_consumer_prices_annual_growth",
+            "title": "Inflation, consumer prices (annual % growth) (Percentage change per annum)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "width": 550,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

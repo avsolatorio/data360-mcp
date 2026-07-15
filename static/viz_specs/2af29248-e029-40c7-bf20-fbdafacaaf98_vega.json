@@ -1,0 +1,774 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Individuals using the Internet (% of population)"
+    ],
+    "subtitle": [
+      "2000-2022",
+      "Percentage of population"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2012",
+        "value": 36.799999,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2004",
+        "value": 7.642409,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2016",
+        "value": 25.447354,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2017",
+        "value": 32.335806,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2018",
+        "value": 39.904639,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016",
+        "value": 78.78831,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2013",
+        "value": 32.700001,
+        "country": "Philippines"
+      },
+      {
+        "year": "2013",
+        "value": 28.94,
+        "country": "Thailand"
+      },
+      {
+        "year": "2016",
+        "value": 47.504966,
+        "country": "Thailand"
+      },
+      {
+        "year": "2017",
+        "value": 58.14,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018",
+        "value": 56.817481,
+        "country": "Thailand"
+      },
+      {
+        "year": "2008",
+        "value": 18.2,
+        "country": "Thailand"
+      },
+      {
+        "year": "2010",
+        "value": 56.3,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2019",
+        "value": 68.66158,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2006",
+        "value": 17.160715,
+        "country": "Thailand"
+      },
+      {
+        "year": "2019",
+        "value": 66.652419,
+        "country": "Thailand"
+      },
+      {
+        "year": "2005",
+        "value": 3.602025,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2020",
+        "value": 70.3,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018",
+        "value": 69.847929,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2017",
+        "value": 52.891929,
+        "country": "Thailand"
+      },
+      {
+        "year": "2006",
+        "value": 51.637989,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021",
+        "value": 62.104478,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2020",
+        "value": 89.555012,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2010",
+        "value": 22.4,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 66.907799,
+        "country": "Philippines"
+      },
+      {
+        "year": "2003",
+        "value": 9.299027,
+        "country": "Thailand"
+      },
+      {
+        "year": "2018",
+        "value": 81.201049,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2007",
+        "value": 20.03,
+        "country": "Thailand"
+      },
+      {
+        "year": "2022",
+        "value": 78.589999,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2008",
+        "value": 55.8,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2002",
+        "value": 4.332276,
+        "country": "Philippines"
+      },
+      {
+        "year": "2000",
+        "value": 21.384731,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2022",
+        "value": 66.484613,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2015",
+        "value": 39.316127,
+        "country": "Thailand"
+      },
+      {
+        "year": "2022",
+        "value": 87.977245,
+        "country": "Thailand"
+      },
+      {
+        "year": "2010",
+        "value": 30.65,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2016",
+        "value": 53.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2014",
+        "value": 17.14316,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2013",
+        "value": 14.94,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2014",
+        "value": 34.886054,
+        "country": "Thailand"
+      },
+      {
+        "year": "2002",
+        "value": 2.134136,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2014",
+        "value": 34.700001,
+        "country": "Philippines"
+      },
+      {
+        "year": "2012",
+        "value": 14.52,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2002",
+        "value": 1.854999,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2001",
+        "value": 2.018614,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2000",
+        "value": 0.925564,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2008",
+        "value": 23.92,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2010",
+        "value": 25.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2021",
+        "value": 96.751428,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2015",
+        "value": 71.064068,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2001",
+        "value": 5.556326,
+        "country": "Thailand"
+      },
+      {
+        "year": "2000",
+        "value": 3.689041,
+        "country": "Thailand"
+      },
+      {
+        "year": "2022",
+        "value": 75.211144,
+        "country": "Philippines"
+      },
+      {
+        "year": "2000",
+        "value": 1.982253,
+        "country": "Philippines"
+      },
+      {
+        "year": "2007",
+        "value": 55.7,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2018",
+        "value": 44.099998,
+        "country": "Philippines"
+      },
+      {
+        "year": "2001",
+        "value": 2.524006,
+        "country": "Philippines"
+      },
+      {
+        "year": "2011",
+        "value": 35.07,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2001",
+        "value": 1.265651,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2017",
+        "value": 41.599998,
+        "country": "Philippines"
+      },
+      {
+        "year": "2017",
+        "value": 80.140479,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2014",
+        "value": 63.665426,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2010",
+        "value": 10.92,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2004",
+        "value": 2.600286,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011",
+        "value": 12.28,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2019",
+        "value": 47.690649,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2014",
+        "value": 41.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2008",
+        "value": 7.9175,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2003",
+        "value": 2.38702,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2006",
+        "value": 5.740586,
+        "country": "Philippines"
+      },
+      {
+        "year": "2013",
+        "value": 57.057512,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2004",
+        "value": 10.677303,
+        "country": "Thailand"
+      },
+      {
+        "year": "2007",
+        "value": 5.786275,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011",
+        "value": 23.669926,
+        "country": "Thailand"
+      },
+      {
+        "year": "2011",
+        "value": 29.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2015",
+        "value": 45.0,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2011",
+        "value": 61.0,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2015",
+        "value": 36.900002,
+        "country": "Philippines"
+      },
+      {
+        "year": "2009",
+        "value": 55.9,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021",
+        "value": 85.269567,
+        "country": "Thailand"
+      },
+      {
+        "year": "2012",
+        "value": 65.8,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2008",
+        "value": 6.22,
+        "country": "Philippines"
+      },
+      {
+        "year": "2004",
+        "value": 5.243628,
+        "country": "Philippines"
+      },
+      {
+        "year": "2007",
+        "value": 20.755445,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2006",
+        "value": 17.254562,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2004",
+        "value": 42.252266,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2003",
+        "value": 4.857672,
+        "country": "Philippines"
+      },
+      {
+        "year": "2001",
+        "value": 26.695973,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2005",
+        "value": 48.62917,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2013",
+        "value": 38.5,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2009",
+        "value": 6.92,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016",
+        "value": 39.200001,
+        "country": "Philippines"
+      },
+      {
+        "year": "2015",
+        "value": 22.062743,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2012",
+        "value": 30.799999,
+        "country": "Philippines"
+      },
+      {
+        "year": "2009",
+        "value": 9.0,
+        "country": "Philippines"
+      },
+      {
+        "year": "2012",
+        "value": 26.46,
+        "country": "Thailand"
+      },
+      {
+        "year": "2006",
+        "value": 4.764813,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2009",
+        "value": 26.55,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2019",
+        "value": 43.026612,
+        "country": "Philippines"
+      },
+      {
+        "year": "2003",
+        "value": 3.780281,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2009",
+        "value": 20.1,
+        "country": "Thailand"
+      },
+      {
+        "year": "2020",
+        "value": 53.7649,
+        "country": "Philippines"
+      },
+      {
+        "year": "2005",
+        "value": 15.026004,
+        "country": "Thailand"
+      },
+      {
+        "year": "2020",
+        "value": 53.726494,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2005",
+        "value": 12.739929,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2002",
+        "value": 7.53125,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 74.21,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2002",
+        "value": 32.338204,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2020",
+        "value": 77.843741,
+        "country": "Thailand"
+      },
+      {
+        "year": "2000",
+        "value": 0.254248,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2022",
+        "value": 97.39864,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2007",
+        "value": 5.97,
+        "country": "Philippines"
+      },
+      {
+        "year": "2005",
+        "value": 5.3976,
+        "country": "Philippines"
+      },
+      {
+        "year": "2019",
+        "value": 84.187145,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2003",
+        "value": 34.971152,
+        "country": "Malaysia"
+      }
+    ]
+  },
+  "mark": {
+    "type": "area",
+    "tooltip": true,
+    "line": true,
+    "opacity": 0.8
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "stack": "zero",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Percentage of population",
+        "labelExpr": "format(datum.value, '.1f') + '%'"
+      },
+      "scale": {}
+    },
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ],
+        "domain": [
+          "Indonesia",
+          "Malaysia",
+          "Philippines",
+          "Thailand",
+          "Viet Nam"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Economy",
+        "labelLimit": 250,
+        "columns": 3
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Individuals using the Internet (% of population)",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}
