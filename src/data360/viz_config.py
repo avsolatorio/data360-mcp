@@ -1328,11 +1328,13 @@ class TwoIndicatorRule:
                     y_dim=ctx.ind_cols[1],
                 )
             if ctx.year_count > 1 and ctx.country_count > 1:
-                # Phase 8: for small datasets, connected scatter reveals relationship
-                # evolution far better than N small-multiples panels.
-                # Beyond thresholds the dot paths overlap and panels stay readable.
+                # Phase 8: connected scatter reveals relationship evolution.
+                # Only use connected scatter if explicitly requested (hint is "point" i.e. scatter/dot/correlation).
+                # Otherwise, small multiples is much more standard and readable for trend comparison.
+                is_scatter_hint = ctx.hint == "point"
                 if (
-                    ctx.country_count <= CORRELATION_TEMPORAL_AUTO_MAX_COUNTRIES
+                    is_scatter_hint
+                    and ctx.country_count <= CORRELATION_TEMPORAL_AUTO_MAX_COUNTRIES
                     and ctx.year_count <= CORRELATION_TEMPORAL_AUTO_MAX_YEARS
                 ):
                     return StrategyResult(
