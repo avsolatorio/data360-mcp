@@ -298,3 +298,114 @@ def test_percentage_clamping_dynamic_bounds():
     ])
     res_prop = rule.apply(spec, scale_type="percentage", df=df_prop)
     assert res_prop["encoding"]["y"]["scale"]["domain"] == [0, 0.25]
+
+
+def test_small_multiples_broken_line_gap():
+    """Verify that LineYearGapStrokeDashRule is applied correctly to concat/composite small multiples specs."""
+    from data360.visualization import _apply_post_processing_rules
+    import pandas as pd
+
+    # Data for 2 countries (triggers small multiples with multi panels -> concat),
+    # with a multi-year gap (2015 to 2018) to trigger the LineYearGapStrokeDashRule.
+    rows = [
+        {"country": "Argentina", "year": "2015", "value": 10.0, "indicator": "Ind"},
+        {"country": "Argentina", "year": "2018", "value": 12.0, "indicator": "Ind"},
+        {"country": "Chile", "year": "2015", "value": 20.0, "indicator": "Ind"},
+        {"country": "Chile", "year": "2018", "value": 22.0, "indicator": "Ind"},
+    ]
+    df = pd.DataFrame(rows)
+
+    # Let's mock a StrategyResult that routes to SMALL_MULTIPLES
+    from data360.viz_config import StrategyResult, ChartStrategy
+    result = StrategyResult(
+        strategy=ChartStrategy.SMALL_MULTIPLES,
+        reason="test",
+        facet_dim="country"
+    )
+
+    # Call the visualization spec builder
+    spec = build_small_multiples_spec(df, "Test Title", result)
+
+    # Let's verify that the raw build_small_multiples_spec has concat and no local data/strokeDash yet
+    assert "concat" in spec
+    panel = spec["concat"][0]
+    assert "data" not in panel or "values" not in panel["data"]
+
+    # Now let's apply the post-processing rules (as visualization.py does)
+    spec_processed = _apply_post_processing_rules(spec, "A", "Value", result, df)
+
+    # Let's inspect the processed spec
+    assert "concat" in spec_processed
+    for panel in spec_processed["concat"]:
+        # The panel could be layered or a direct leaf view depending on zero-line/end-labels requirements
+        line_view = None
+        if "layer" in panel:
+            for layer in panel["layer"]:
+                m = layer.get("mark")
+                m_type = m.get("type") if isinstance(m, dict) else m
+                if m_type == "line":
+                    line_view = layer
+                    break
+        else:
+            m = panel.get("mark")
+            m_type = m.get("type") if isinstance(m, dict) else m
+            if m_type == "line":
+                line_view = panel
+
+        assert line_view is not None
+        assert "data" in line_view
+        assert "values" in line_view["data"]
+        assert len(line_view["data"]["values"]) == 2  # exactly 2 gap rows since entire series is a gap
+        assert all(r["_d360_ygap"] == 1 for r in line_view["data"]["values"])
+        assert "strokeDash" in line_view["encoding"]
+        assert "detail" in line_view["encoding"]
+        assert line_view["encoding"]["detail"]["field"] == "_d360_lseg"
+
+
+def test_multi_indicator_broken_line_gap():
+    """Verify that LineYearGapStrokeDashRule is applied correctly to vconcat multi-indicator line charts."""
+    from data360.visualization import _apply_post_processing_rules
+    from data360.viz_config import build_temporal_multi_indicator_spec, StrategyResult, ChartStrategy
+    import pandas as pd
+
+    # Data for 2 indicators with a multi-year gap (2015 to 2018)
+    rows = [
+        {"country": "Argentina", "year": "2015", "Ind1": 10.0, "Ind2": 1000.0},
+        {"country": "Argentina", "year": "2018", "Ind1": 12.0, "Ind2": 1100.0},
+    ]
+    df = pd.DataFrame(rows)
+
+    result = StrategyResult(
+        strategy=ChartStrategy.TEMPORAL_MULTI_IND,
+        reason="test",
+        indicator_cols=["Ind1", "Ind2"]
+    )
+
+    # Call the multi-indicator spec builder (generates vconcat spec)
+    spec = build_temporal_multi_indicator_spec(df, "Test Title", result)
+
+    assert "vconcat" in spec
+
+    # Apply the post-processing rules (as visualization.py does)
+    spec_processed = _apply_post_processing_rules(spec, "A", "Value", result, df)
+
+    assert "vconcat" in spec_processed
+    for panel in spec_processed["vconcat"]:
+        # Each panel should have layers (since it layered line + point)
+        assert "layer" in panel
+        line_layer = None
+        for layer in panel["layer"]:
+            m = layer.get("mark")
+            m_type = m.get("type") if isinstance(m, dict) else m
+            if m_type == "line":
+                line_layer = layer
+                break
+
+        assert line_layer is not None
+        assert "data" in line_layer
+        assert "values" in line_layer["data"]
+        assert len(line_layer["data"]["values"]) == 2
+        assert all(r["_d360_ygap"] == 1 for r in line_layer["data"]["values"])
+        assert "strokeDash" in line_layer["encoding"]
+        assert "detail" in line_layer["encoding"]
+        assert line_layer["encoding"]["detail"]["field"] == "_d360_lseg"

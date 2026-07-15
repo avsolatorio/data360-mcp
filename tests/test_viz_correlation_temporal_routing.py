@@ -54,7 +54,7 @@ def _two_ind_df(n_countries: int, n_years: int) -> pd.DataFrame:
 
 
 class TestCorrelationTemporalAutoRouting:
-    """2 indicators + small multi-country multi-year data should route to CORRELATION_TEMPORAL."""
+    """2 indicators + small multi-country multi-year data should route to CORRELATION_TEMPORAL when scatter hint is provided."""
 
     @pytest.mark.parametrize("n_countries,n_years", [
         (2, 5),
@@ -64,12 +64,13 @@ class TestCorrelationTemporalAutoRouting:
         (4, 4),
     ])
     def test_small_dataset_routes_to_correlation_temporal(self, n_countries, n_years):
-        """≤8 countries × ≤8 years with 2 indicators → CORRELATION_TEMPORAL."""
+        """≤8 countries × ≤8 years with 2 indicators + scatter hint → CORRELATION_TEMPORAL."""
         df = _two_ind_df(n_countries, n_years)
         result = select_strategy(
             df,
             n_indicators=2,
             indicator_cols=["indicator_a", "indicator_b"],
+            chart_type_hint="scatter",
         )
         assert result.strategy == ChartStrategy.CORRELATION_TEMPORAL, (
             f"Expected CORRELATION_TEMPORAL for {n_countries} countries × {n_years} years, "
@@ -117,6 +118,7 @@ class TestCorrelationTemporalAutoRouting:
             df,
             n_indicators=2,
             indicator_cols=["indicator_a", "indicator_b"],
+            chart_type_hint="scatter",
         )
         assert result.strategy == ChartStrategy.CORRELATION_TEMPORAL
         assert result.indicator_cols == ["indicator_a", "indicator_b"], (

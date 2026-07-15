@@ -811,7 +811,7 @@ def build_structured_tooltips(
         so hovering always shows which indicator is displayed.
     """
     ordered = [c for c in _TOOLTIP_PRIORITY if c in columns]
-    ordered += [c for c in columns if c not in _TOOLTIP_PRIORITY]
+    ordered += [c for c in columns if c not in _TOOLTIP_PRIORITY and not c.startswith("_")]
 
     tooltips = []
     for col in ordered:
@@ -6418,10 +6418,76 @@ class LineYearGapStrokeDashRule(PostProcessingRule):
         ]
 
     def _maybe_transform_line_spec(self, line_spec: dict, data_root: dict, is_composite: bool = False) -> None:
-        # CRITICAL: If the chart is a composite/multi-panel view (indicated by is_composite=True),
+        # If the chart is a composite/multi-panel view (indicated by is_composite=True),
         # modifying the shared top-level data values array will corrupt/delete data
-        # for other panels. Skip to preserve data integrity across all panels.
-        if is_composite or "vconcat" in data_root or "hconcat" in data_root:
+        # for other panels. Localize the data values to this panel to preserve data integrity.
+        if is_composite or "vconcat" in data_root or "hconcat" in data_root or "concat" in data_root:
+            holder = self._find_inline_values_holder(line_spec, data_root)
+            rows: list[dict] | None = None
+            if holder is not None:
+                v = holder["data"]["values"]
+                rows = v if isinstance(v, list) else None
+            else:
+                named = self._named_dataset_rows(line_spec, data_root)
+                if named is not None:
+                    _, rows_list = named
+                    rows = rows_list if isinstance(rows_list, list) else None
+            if not rows or len(rows) < 2:
+                return
+
+            # Apply any filters from data_root or line_spec to obtain only this panel's subset
+            # (e.g. filter by country/breakdown)
+            filters = []
+            for candidate in (data_root, line_spec):
+                if "transform" in candidate and isinstance(candidate["transform"], list):
+                    for t in candidate["transform"]:
+                        if isinstance(t, dict) and "filter" in t:
+                            filters.append(t["filter"])
+
+            panel_rows = list(rows)
+            for filt in filters:
+                if isinstance(filt, dict):
+                    field = filt.get("field")
+                    equal_val = filt.get("equal")
+                    one_of_val = filt.get("oneOf")
+                    if field:
+                        if equal_val is not None:
+                            panel_rows = [r for r in panel_rows if r.get(field) == equal_val]
+                        elif isinstance(one_of_val, list):
+                            panel_rows = [r for r in panel_rows if r.get(field) in one_of_val]
+
+            enc = line_spec.get("encoding")
+            if not isinstance(enc, dict):
+                return
+            x = enc.get("x", {})
+            x_field = x.get("field") if isinstance(x, dict) else None
+            if x_field not in ("year", "time_period"):
+                return
+
+            facet_keys = self._facet_field_keys(data_root)
+            series_keys = list(
+                dict.fromkeys([*self._series_keys(enc), *facet_keys]),
+            )
+            groups = self._group_rows_by_series(panel_rows, series_keys)
+            if not self._any_calendar_year_gap(groups, x_field):
+                return
+
+            new_rows = self._build_segment_rows(groups, x_field, series_keys)
+            if len(new_rows) < 2:
+                return
+
+            # Localize dataset to line_spec so we don't modify shared parent data
+            line_spec["data"] = {"values": new_rows}
+
+            enc["detail"] = {"field": _LINE_GAP_SEG_DETAIL, "type": "nominal"}
+            enc["strokeDash"] = {
+                "condition": {
+                    "test": f"datum.{_LINE_GAP_STROKE_FLAG} == 1",
+                    "value": [6, 4],
+                },
+                "value": [],
+            }
+            self._strip_internal_tooltip_channels(enc)
             return
 
         enc = line_spec.get("encoding")

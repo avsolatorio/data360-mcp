@@ -510,6 +510,17 @@ class TestStructuredTooltips:
         tips = viz_config.build_structured_tooltips(["some_custom_col"], "bar")
         assert tips[0]["title"] == "Some Custom Col"
 
+    def test_internal_columns_excluded_from_tooltips(self):
+        tips = viz_config.build_structured_tooltips(
+            ["year", "value", "_label_y", "country", "_some_internal_col"], "line"
+        )
+        fields = [t.get("field") for t in tips if "field" in t]
+        assert "_label_y" not in fields
+        assert "_some_internal_col" not in fields
+        assert "year" in fields
+        assert "value" in fields
+        assert "country" in fields
+
     def test_apply_structured_tooltips_injects_into_spec(self):
         spec = {"mark": "line", "encoding": {"x": {"field": "year"}}}
         result = viz_config.apply_structured_tooltips(spec, ["year", "value"], "line")

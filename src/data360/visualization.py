@@ -1600,10 +1600,25 @@ def _apply_post_processing_rules(
                 rule_kwargs["is_composite"] = is_composite
             return rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **rule_kwargs)
 
+        # For rules like line_year_gap_stroke_dash, if we are at a panel root (has layer or spec),
+        # apply the rule directly here so it can handle the layer/spec structure and data localization.
+        if rule.name == "line_year_gap_stroke_dash" and ("layer" in subspec or "spec" in subspec):
+            sig = inspect.signature(rule.apply)
+            rule_kwargs = dict(kwargs)
+            if "is_composite" in sig.parameters:
+                rule_kwargs["is_composite"] = is_composite
+            return rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **rule_kwargs)
+
         current_data_root = data_root if data_root is not None else subspec
 
         # Recurse into composite views
-        if "vconcat" in subspec and isinstance(subspec["vconcat"], list):
+        if "concat" in subspec and isinstance(subspec["concat"], list):
+            subspec["concat"] = [
+                _apply_rule_recursively(rule, child, current_data_root, is_composite=True, **kwargs)
+                for child in subspec["concat"]
+            ]
+            return subspec
+        elif "vconcat" in subspec and isinstance(subspec["vconcat"], list):
             subspec["vconcat"] = [
                 _apply_rule_recursively(rule, child, current_data_root, is_composite=True, **kwargs)
                 for child in subspec["vconcat"]
@@ -1645,10 +1660,12 @@ def _apply_post_processing_rules(
             rule_kwargs["is_composite"] = is_composite
         subspec = rule.apply(subspec, data_frequency=data_frequency, unit_measure=unit_measure, **rule_kwargs)
 
-        # Cleanup injected data
+        # Cleanup injected data if it wasn't modified (still references parent data/datasets)
         if not has_local_data:
-            subspec.pop("data", None)
-            subspec.pop("datasets", None)
+            if current_data_root and subspec.get("data") is current_data_root.get("data"):
+                subspec.pop("data", None)
+            if current_data_root and subspec.get("datasets") is current_data_root.get("datasets"):
+                subspec.pop("datasets", None)
 
 
         return subspec
