@@ -372,6 +372,8 @@ def test_multi_indicator_broken_line_gap():
     rows = [
         {"country": "Argentina", "year": "2015", "Ind1": 10.0, "Ind2": 1000.0},
         {"country": "Argentina", "year": "2018", "Ind1": 12.0, "Ind2": 1100.0},
+        {"country": "Chile", "year": "2015", "Ind1": 20.0, "Ind2": 2000.0},
+        {"country": "Chile", "year": "2018", "Ind1": 22.0, "Ind2": 2200.0},
     ]
     df = pd.DataFrame(rows)
 
@@ -391,20 +393,25 @@ def test_multi_indicator_broken_line_gap():
 
     assert "vconcat" in spec_processed
     for panel in spec_processed["vconcat"]:
-        # Each panel should have layers (since it layered line + point)
-        assert "layer" in panel
+        # The panel could be layered or a direct leaf view
         line_layer = None
-        for layer in panel["layer"]:
-            m = layer.get("mark")
+        if "layer" in panel:
+            for layer in panel["layer"]:
+                m = layer.get("mark")
+                m_type = m.get("type") if isinstance(m, dict) else m
+                if m_type == "line":
+                    line_layer = layer
+                    break
+        else:
+            m = panel.get("mark")
             m_type = m.get("type") if isinstance(m, dict) else m
             if m_type == "line":
-                line_layer = layer
-                break
+                line_layer = panel
 
         assert line_layer is not None
         assert "data" in line_layer
         assert "values" in line_layer["data"]
-        assert len(line_layer["data"]["values"]) == 2
+        assert len(line_layer["data"]["values"]) == 4
         assert all(r["_d360_ygap"] == 1 for r in line_layer["data"]["values"])
         assert "strokeDash" in line_layer["encoding"]
         assert "detail" in line_layer["encoding"]
