@@ -1,0 +1,279 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Foreign direct investment, net inflows (% of GDP)"
+    ],
+    "subtitle": [
+      "2019",
+      "Percentage of GDP",
+      "Gray: countries not in selected set or no data for this year."
+    ]
+  },
+  "width": 800,
+  "height": 450,
+  "data": {
+    "url": "https://unpkg.com/world-atlas@2.0.2/countries-110m.json",
+    "format": {
+      "type": "topojson",
+      "feature": "countries"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "year": "2019",
+              "value": 1.40583,
+              "country": "C\u00f4te d'Ivoire"
+            },
+            {
+              "year": "2019",
+              "value": 21.784191,
+              "country": "Mozambique"
+            },
+            {
+              "year": "2019",
+              "value": 3.685692,
+              "country": "Uganda"
+            },
+            {
+              "year": "2019",
+              "value": 1.016479,
+              "country": "Burkina Faso"
+            },
+            {
+              "year": "2019",
+              "value": 2.583406,
+              "country": "Cameroon"
+            },
+            {
+              "year": "2019",
+              "value": 1.994594,
+              "country": "United Republic of Tanzania"
+            },
+            {
+              "year": "2019",
+              "value": 5.676199,
+              "country": "Ghana"
+            },
+            {
+              "year": "2019",
+              "value": 2.775365,
+              "country": "Ethiopia"
+            },
+            {
+              "year": "2019",
+              "value": 5.773747,
+              "country": "Niger"
+            },
+            {
+              "year": "2019",
+              "value": 0.344961,
+              "country": "Nigeria"
+            },
+            {
+              "year": "2019",
+              "value": 4.552476,
+              "country": "Senegal"
+            },
+            {
+              "year": "2019",
+              "value": 3.362798,
+              "country": "Madagascar"
+            },
+            {
+              "year": "2019",
+              "value": 2.350919,
+              "country": "Zambia"
+            },
+            {
+              "year": "2019",
+              "value": 0.748407,
+              "country": "Zimbabwe"
+            },
+            {
+              "year": "2019",
+              "value": 0.468169,
+              "country": "Kenya"
+            },
+            {
+              "year": "2019",
+              "value": 0.713947,
+              "country": "Algeria"
+            },
+            {
+              "year": "2019",
+              "value": -5.047772,
+              "country": "Angola"
+            },
+            {
+              "year": "2019",
+              "value": 2.501811,
+              "country": "Rwanda"
+            },
+            {
+              "year": "2019",
+              "value": 4.195311,
+              "country": "Mali"
+            },
+            {
+              "year": "2019",
+              "value": 1.314078,
+              "country": "South Africa"
+            }
+          ]
+        },
+        "key": "country",
+        "fields": [
+          "year",
+          "value",
+          "country"
+        ]
+      }
+    }
+  ],
+  "projection": {
+    "type": "equalEarth"
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "fill": "#eee",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      },
+      "transform": [
+        {
+          "filter": "isValid(datum.value)"
+        }
+      ],
+      "encoding": {
+        "color": {
+          "field": "value",
+          "type": "quantitative",
+          "scale": {
+            "scheme": "redblue"
+          },
+          "legend": {
+            "title": "Percentage of GDP",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "Foreign direct investment, net inflows (% of GDP)",
+            "title": "Indicator"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

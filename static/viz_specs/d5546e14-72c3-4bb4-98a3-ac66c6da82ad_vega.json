@@ -1,0 +1,360 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Inflation, consumer prices vs. Labor force participation rate, female"
+    ],
+    "subtitle": [
+      "2021"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2021",
+        "country": "Argentina",
+        "inflation_consumer_prices": 48.409379,
+        "labor_force_participation_rate_female": 50.26,
+        "_x_norm": 1.0,
+        "_y_norm": 0.666903409090909,
+        "_dist_from_center": 0.27785674796616733,
+        "_show_label": true
+      },
+      {
+        "year": "2021",
+        "country": "Australia",
+        "inflation_consumer_prices": 2.863913,
+        "labor_force_participation_rate_female": 61.516,
+        "_x_norm": 0.02783038380509421,
+        "_y_norm": 1.0,
+        "_dist_from_center": 0.4729441464576446,
+        "_show_label": true
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "inflation_consumer_prices": 8.30166,
+        "labor_force_participation_rate_female": 52.482,
+        "_x_norm": 0.1438992898506488,
+        "_y_norm": 0.7326586174242423,
+        "_dist_from_center": 0.18093774803063217,
+        "_show_label": true
+      },
+      {
+        "year": "2021",
+        "country": "Germany",
+        "inflation_consumer_prices": 3.066667,
+        "labor_force_participation_rate_female": 55.018,
+        "_x_norm": 0.032158175255553444,
+        "_y_norm": 0.8077059659090909,
+        "_dist_from_center": 0.3135589344362601,
+        "_show_label": true
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "inflation_consumer_prices": 5.131407,
+        "labor_force_participation_rate_female": 27.724,
+        "_x_norm": 0.07623012510325662,
+        "_y_norm": 0.0,
+        "_dist_from_center": 0.42958090687000156,
+        "_show_label": true
+      },
+      {
+        "year": "2021",
+        "country": "Indonesia",
+        "inflation_consumer_prices": 1.560079,
+        "labor_force_participation_rate_female": 52.069,
+        "_x_norm": 0.0,
+        "_y_norm": 0.7204367897727273,
+        "_dist_from_center": 0.29859237828530555,
+        "_show_label": true
+      },
+      {
+        "year": "2021",
+        "country": "Italy",
+        "inflation_consumer_prices": 1.873783,
+        "labor_force_participation_rate_female": 39.884,
+        "_x_norm": 0.006696023206323253,
+        "_y_norm": 0.35984848484848486,
+        "_dist_from_center": 0.2629912607197218,
+        "_show_label": true
+      },
+      {
+        "year": "2021",
+        "country": "Mexico",
+        "inflation_consumer_prices": 5.689208,
+        "labor_force_participation_rate_female": 44.615,
+        "_x_norm": 0.08813640758773343,
+        "_y_norm": 0.4998520359848485,
+        "_dist_from_center": 0.16963164064808742,
+        "_show_label": true
+      },
+      {
+        "year": "2021",
+        "country": "Russian Federation",
+        "inflation_consumer_prices": 6.694459,
+        "labor_force_participation_rate_female": 55.132,
+        "_x_norm": 0.10959352647745003,
+        "_y_norm": 0.8110795454545453,
+        "_dist_from_center": 0.24918769816852004,
+        "_show_label": true
+      },
+      {
+        "year": "2021",
+        "country": "United Kingdom",
+        "inflation_consumer_prices": 2.518371,
+        "labor_force_participation_rate_female": 58.02,
+        "_x_norm": 0.020454777339255874,
+        "_y_norm": 0.8965435606060607,
+        "_dist_from_center": 0.38721041603487516,
+        "_show_label": true
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "inflation_consumer_prices",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Inflation, consumer prices (Percentage change per annum)"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log",
+            "domain": [
+              1.0,
+              53.25031690000001
+            ]
+          }
+        },
+        "y": {
+          "field": "labor_force_participation_rate_female",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Labor force participation rate, female (Percentage of women)"
+          },
+          "scale": {
+            "zero": false,
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "inflation_consumer_prices",
+            "title": "Inflation, consumer prices (Percentage change per annum)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "labor_force_participation_rate_female",
+            "title": "Labor force participation rate, female (Percentage of women)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "inflation_consumer_prices",
+          "type": "quantitative",
+          "scale": {
+            "type": "log",
+            "zero": false,
+            "domain": [
+              1.0,
+              53.25031690000001
+            ]
+          }
+        },
+        "y": {
+          "field": "labor_force_participation_rate_female",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum._show_label",
+            "value": 1
+          },
+          "value": 0
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

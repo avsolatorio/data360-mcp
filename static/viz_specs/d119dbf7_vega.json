@@ -1,0 +1,297 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "WB_WDI_SP_DYN_LE00_IN vs. WB_WDI_FP_CPI_TOTL_ZG"
+    ],
+    "subtitle": [
+      "2017"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2017",
+        "country": "Australia",
+        "wb_wdi_sp_dyn_le00_in": 82.5,
+        "wb_wdi_fp_cpi_totl_zg": 1.948643,
+        "_x_norm": 1.0,
+        "_y_norm": 0.11944106278143501,
+        "_dist_from_center": 0.39482510469692367,
+        "_show_label": true
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "wb_wdi_sp_dyn_le00_in": 77.235,
+        "wb_wdi_fp_cpi_totl_zg": 1.593136,
+        "_x_norm": 0.691708630987235,
+        "_y_norm": 0.022748981965310142,
+        "_dist_from_center": 0.2645207334101477,
+        "_show_label": true
+      },
+      {
+        "year": "2017",
+        "country": "Germany",
+        "wb_wdi_sp_dyn_le00_in": 80.992683,
+        "wb_wdi_fp_cpi_totl_zg": 1.509495,
+        "_x_norm": 0.9117392551821056,
+        "_y_norm": 0.0,
+        "_dist_from_center": 0.4195292142579151,
+        "_show_label": true
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "wb_wdi_sp_dyn_le00_in": 70.068,
+        "wb_wdi_fp_cpi_totl_zg": 3.328173,
+        "_x_norm": 0.2720459070148729,
+        "_y_norm": 0.4946506261606901,
+        "_dist_from_center": 0.05199168430914466,
+        "_show_label": true
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "wb_wdi_sp_dyn_le00_in": 65.422,
+        "wb_wdi_fp_cpi_totl_zg": 5.186187,
+        "_x_norm": 0.0,
+        "_y_norm": 1.0,
+        "_dist_from_center": 0.5,
+        "_show_label": true
+      },
+      {
+        "year": "2017",
+        "country": "United States",
+        "wb_wdi_sp_dyn_le00_in": 78.539024,
+        "wb_wdi_fp_cpi_totl_zg": 2.13011,
+        "_x_norm": 0.7680655814498184,
+        "_y_norm": 0.16879711436258465,
+        "_dist_from_center": 0.18155450741258006,
+        "_show_label": true
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "wb_wdi_sp_dyn_le00_in",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "WB_WDI_SP_DYN_LE00_IN"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "wb_wdi_fp_cpi_totl_zg",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "WB_WDI_FP_CPI_TOTL_ZG"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "wb_wdi_sp_dyn_le00_in",
+            "title": "WB_WDI_SP_DYN_LE00_IN",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "wb_wdi_fp_cpi_totl_zg",
+            "title": "WB_WDI_FP_CPI_TOTL_ZG",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "wb_wdi_sp_dyn_le00_in",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "wb_wdi_fp_cpi_totl_zg",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum._show_label",
+            "value": 1
+          },
+          "value": 0
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

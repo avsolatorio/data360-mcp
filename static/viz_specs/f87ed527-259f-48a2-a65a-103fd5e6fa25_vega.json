@@ -1,0 +1,343 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "CO2 emissions (metric tons per capita) vs. Renewable energy consumption (% of",
+      "total final energy consumption)"
+    ],
+    "subtitle": [
+      "Nigeria, 2012-2021"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2012",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": 0.541061,
+        "renewable_energy_consumption_of_total_fi": 83.9
+      },
+      {
+        "year": "2013",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": 0.597167,
+        "renewable_energy_consumption_of_total_fi": 81.4
+      },
+      {
+        "year": "2014",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": 0.61763,
+        "renewable_energy_consumption_of_total_fi": 79.9
+      },
+      {
+        "year": "2015",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": 0.565088,
+        "renewable_energy_consumption_of_total_fi": 81.3
+      },
+      {
+        "year": "2016",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": 0.567005,
+        "renewable_energy_consumption_of_total_fi": 81.1
+      },
+      {
+        "year": "2017",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": 0.541716,
+        "renewable_energy_consumption_of_total_fi": 81.6
+      },
+      {
+        "year": "2018",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": 0.554473,
+        "renewable_energy_consumption_of_total_fi": 80.8
+      },
+      {
+        "year": "2019",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": 0.570655,
+        "renewable_energy_consumption_of_total_fi": 80.1
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": 0.523271,
+        "renewable_energy_consumption_of_total_fi": 81.8
+      },
+      {
+        "year": "2021",
+        "country": "Nigeria",
+        "co2_emissions_metric_tons_per_capita": null,
+        "renewable_energy_consumption_of_total_fi": 80.3
+      }
+    ]
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "CO2 emissions (metric tons per capita)",
+        "color": "#34A7F2",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#34A7F2",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "co2_emissions_metric_tons_per_capita",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "co2_emissions_metric_tons_per_capita",
+            "title": "CO2 emissions (metric tons per capita)",
+            "format": ".2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "Renewable energy consumption (% of total final energy consumption) (Percentage of total final energy consumption)",
+        "color": "#FF9800",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#FF9800",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "renewable_energy_consumption_of_total_fi",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "renewable_energy_consumption_of_total_fi",
+            "title": "Renewable energy consumption (% of total final energy consumption) (Percentage of total final energy consumption)",
+            "format": ",.1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared"
+    },
+    "axis": {
+      "x": "independent"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

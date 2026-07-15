@@ -1,0 +1,354 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Tax Revenue in Percent of GDP vs. Wage bill as a percentage of GDP"
+    ],
+    "subtitle": [
+      "Kenya, Uganda, 2015-2020",
+      "Percentage of GDP"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "country": "Kenya",
+        "tax_revenue_in_percent_of_gdp": 14.7591,
+        "wage_bill_as_a_percentage_of_gdp": 4.39695
+      },
+      {
+        "year": "2015",
+        "country": "Uganda",
+        "tax_revenue_in_percent_of_gdp": 10.9394,
+        "wage_bill_as_a_percentage_of_gdp": 3.01034
+      },
+      {
+        "year": "2016",
+        "country": "Kenya",
+        "tax_revenue_in_percent_of_gdp": 15.1002,
+        "wage_bill_as_a_percentage_of_gdp": 4.24053
+      },
+      {
+        "year": "2016",
+        "country": "Uganda",
+        "tax_revenue_in_percent_of_gdp": 10.8462,
+        "wage_bill_as_a_percentage_of_gdp": 3.04434
+      },
+      {
+        "year": "2017",
+        "country": "Kenya",
+        "tax_revenue_in_percent_of_gdp": 14.6088,
+        "wage_bill_as_a_percentage_of_gdp": 4.27644
+      },
+      {
+        "year": "2017",
+        "country": "Uganda",
+        "tax_revenue_in_percent_of_gdp": 11.4212,
+        "wage_bill_as_a_percentage_of_gdp": 3.0331
+      },
+      {
+        "year": "2018",
+        "country": "Kenya",
+        "tax_revenue_in_percent_of_gdp": 14.2378,
+        "wage_bill_as_a_percentage_of_gdp": 4.31712
+      },
+      {
+        "year": "2018",
+        "country": "Uganda",
+        "tax_revenue_in_percent_of_gdp": 11.8181,
+        "wage_bill_as_a_percentage_of_gdp": 2.9834
+      },
+      {
+        "year": "2019",
+        "country": "Kenya",
+        "tax_revenue_in_percent_of_gdp": 13.5754,
+        "wage_bill_as_a_percentage_of_gdp": 4.23655
+      },
+      {
+        "year": "2019",
+        "country": "Uganda",
+        "tax_revenue_in_percent_of_gdp": 11.8519,
+        "wage_bill_as_a_percentage_of_gdp": 3.22629
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "tax_revenue_in_percent_of_gdp": 13.0821,
+        "wage_bill_as_a_percentage_of_gdp": 4.39975
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "tax_revenue_in_percent_of_gdp": 11.4781,
+        "wage_bill_as_a_percentage_of_gdp": 3.56828
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2,
+        "opacity": 0.6,
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "tax_revenue_in_percent_of_gdp",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Tax Revenue in Percent of GDP (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "wage_bill_as_a_percentage_of_gdp",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Wage bill as a percentage of GDP"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 40,
+        "opacity": 0.9
+      },
+      "encoding": {
+        "x": {
+          "field": "tax_revenue_in_percent_of_gdp",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Tax Revenue in Percent of GDP (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "wage_bill_as_a_percentage_of_gdp",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Wage bill as a percentage of GDP"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "tax_revenue_in_percent_of_gdp",
+            "title": "Tax Revenue in Percent of GDP (Percentage of GDP)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "wage_bill_as_a_percentage_of_gdp",
+            "title": "Wage bill as a percentage of GDP",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "width": 550,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

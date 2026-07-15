@@ -1,0 +1,1211 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "CO2 Emissions per Capita \u2014 World (2019)",
+    "subtitle": [
+      "2019",
+      "Ratio"
+    ]
+  },
+  "width": 800,
+  "height": 450,
+  "data": {
+    "url": "https://unpkg.com/world-atlas@2.0.2/countries-110m.json",
+    "format": {
+      "type": "topojson",
+      "feature": "countries"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "year": "2019",
+              "value": 0.286,
+              "country": "Afghanistan"
+            },
+            {
+              "year": "2019",
+              "value": 1.673,
+              "country": "Albania"
+            },
+            {
+              "year": "2019",
+              "value": 4.155,
+              "country": "Algeria"
+            },
+            {
+              "year": "2019",
+              "value": 6.419,
+              "country": "Andorra"
+            },
+            {
+              "year": "2019",
+              "value": 0.681,
+              "country": "Angola"
+            },
+            {
+              "year": "2019",
+              "value": 7.017,
+              "country": "Antigua and Barbuda"
+            },
+            {
+              "year": "2019",
+              "value": 3.969,
+              "country": "Argentina"
+            },
+            {
+              "year": "2019",
+              "value": 2.164,
+              "country": "Armenia"
+            },
+            {
+              "year": "2019",
+              "value": 7.732,
+              "country": "Aruba"
+            },
+            {
+              "year": "2019",
+              "value": 16.316,
+              "country": "Australia"
+            },
+            {
+              "year": "2019",
+              "value": 7.651,
+              "country": "Austria"
+            },
+            {
+              "year": "2019",
+              "value": 3.733,
+              "country": "Azerbaijan"
+            },
+            {
+              "year": "2019",
+              "value": 6.35,
+              "country": "Bahamas, The"
+            },
+            {
+              "year": "2019",
+              "value": 25.295,
+              "country": "Bahrain"
+            },
+            {
+              "year": "2019",
+              "value": 0.575,
+              "country": "Bangladesh"
+            },
+            {
+              "year": "2019",
+              "value": 5.08,
+              "country": "Barbados"
+            },
+            {
+              "year": "2019",
+              "value": 6.581,
+              "country": "Belarus"
+            },
+            {
+              "year": "2019",
+              "value": 8.675,
+              "country": "Belgium"
+            },
+            {
+              "year": "2019",
+              "value": 1.833,
+              "country": "Belize"
+            },
+            {
+              "year": "2019",
+              "value": 0.413,
+              "country": "Benin"
+            },
+            {
+              "year": "2019",
+              "value": 9.256,
+              "country": "Bermuda"
+            },
+            {
+              "year": "2019",
+              "value": 2.117,
+              "country": "Bhutan"
+            },
+            {
+              "year": "2019",
+              "value": 1.937,
+              "country": "Bolivia"
+            },
+            {
+              "year": "2019",
+              "value": 6.22,
+              "country": "Bosnia and Herzegovina"
+            },
+            {
+              "year": "2019",
+              "value": 2.885,
+              "country": "Botswana"
+            },
+            {
+              "year": "2019",
+              "value": 2.282,
+              "country": "Brazil"
+            },
+            {
+              "year": "2019",
+              "value": 5.03,
+              "country": "British Virgin Islands"
+            },
+            {
+              "year": "2019",
+              "value": 24.245,
+              "country": "Brunei Darussalam"
+            },
+            {
+              "year": "2019",
+              "value": 6.059,
+              "country": "Bulgaria"
+            },
+            {
+              "year": "2019",
+              "value": 0.268,
+              "country": "Burkina Faso"
+            },
+            {
+              "year": "2019",
+              "value": 0.056,
+              "country": "Burundi"
+            },
+            {
+              "year": "2019",
+              "value": 1.13,
+              "country": "Cambodia"
+            },
+            {
+              "year": "2019",
+              "value": 0.377,
+              "country": "Cameroon"
+            },
+            {
+              "year": "2019",
+              "value": 15.404,
+              "country": "Canada"
+            },
+            {
+              "year": "2019",
+              "value": 1.226,
+              "country": "Cabo Verde"
+            },
+            {
+              "year": "2019",
+              "value": 0.046,
+              "country": "Central African Republic"
+            },
+            {
+              "year": "2019",
+              "value": 0.138,
+              "country": "Chad"
+            },
+            {
+              "year": "2019",
+              "value": 4.791,
+              "country": "Chile"
+            },
+            {
+              "year": "2019",
+              "value": 7.526,
+              "country": "China"
+            },
+            {
+              "year": "2019",
+              "value": 1.893,
+              "country": "Colombia"
+            },
+            {
+              "year": "2019",
+              "value": 0.396,
+              "country": "Comoros"
+            },
+            {
+              "year": "2019",
+              "value": 1.299,
+              "country": "Congo, Rep."
+            },
+            {
+              "year": "2019",
+              "value": 1.54,
+              "country": "Costa Rica"
+            },
+            {
+              "year": "2019",
+              "value": 0.374,
+              "country": "Cote d'Ivoire"
+            },
+            {
+              "year": "2019",
+              "value": 4.473,
+              "country": "Croatia"
+            },
+            {
+              "year": "2019",
+              "value": 2.008,
+              "country": "Cuba"
+            },
+            {
+              "year": "2019",
+              "value": 11.888,
+              "country": "Curacao"
+            },
+            {
+              "year": "2019",
+              "value": 5.708,
+              "country": "Cyprus"
+            },
+            {
+              "year": "2019",
+              "value": 9.57,
+              "country": "Czechia"
+            },
+            {
+              "year": "2019",
+              "value": 0.044,
+              "country": "Congo, Dem. Rep."
+            },
+            {
+              "year": "2019",
+              "value": 5.321,
+              "country": "Denmark"
+            },
+            {
+              "year": "2019",
+              "value": 0.499,
+              "country": "Djibouti"
+            },
+            {
+              "year": "2019",
+              "value": 2.536,
+              "country": "Dominica"
+            },
+            {
+              "year": "2019",
+              "value": 2.605,
+              "country": "Dominican Republic"
+            },
+            {
+              "year": "2019",
+              "value": 0.519,
+              "country": "Timor-Leste"
+            },
+            {
+              "year": "2019",
+              "value": 2.31,
+              "country": "Ecuador"
+            },
+            {
+              "year": "2019",
+              "value": 2.406,
+              "country": "Egypt, Arab Rep."
+            },
+            {
+              "year": "2019",
+              "value": 1.214,
+              "country": "El Salvador"
+            },
+            {
+              "year": "2019",
+              "value": 3.314,
+              "country": "Equatorial Guinea"
+            },
+            {
+              "year": "2019",
+              "value": 0.199,
+              "country": "Eritrea"
+            },
+            {
+              "year": "2019",
+              "value": 9.261,
+              "country": "Estonia"
+            },
+            {
+              "year": "2019",
+              "value": 0.95,
+              "country": "Eswatini"
+            },
+            {
+              "year": "2019",
+              "value": 0.149,
+              "country": "Ethiopia"
+            },
+            {
+              "year": "2019",
+              "value": 14.269,
+              "country": "Faroe Islands"
+            },
+            {
+              "year": "2019",
+              "value": 1.482,
+              "country": "Fiji"
+            },
+            {
+              "year": "2019",
+              "value": 7.686,
+              "country": "Finland"
+            },
+            {
+              "year": "2019",
+              "value": 4.793,
+              "country": "France"
+            },
+            {
+              "year": "2019",
+              "value": 3.191,
+              "country": "French Polynesia"
+            },
+            {
+              "year": "2019",
+              "value": 2.351,
+              "country": "Gabon"
+            },
+            {
+              "year": "2019",
+              "value": 0.289,
+              "country": "Gambia, The"
+            },
+            {
+              "year": "2019",
+              "value": 2.867,
+              "country": "Georgia"
+            },
+            {
+              "year": "2019",
+              "value": 8.495,
+              "country": "Germany"
+            },
+            {
+              "year": "2019",
+              "value": 0.525,
+              "country": "Ghana"
+            },
+            {
+              "year": "2019",
+              "value": 6.133,
+              "country": "Greece"
+            },
+            {
+              "year": "2019",
+              "value": 9.899,
+              "country": "Greenland"
+            },
+            {
+              "year": "2019",
+              "value": 2.843,
+              "country": "Grenada"
+            },
+            {
+              "year": "2019",
+              "value": 1.129,
+              "country": "Guatemala"
+            },
+            {
+              "year": "2019",
+              "value": 0.301,
+              "country": "Guinea"
+            },
+            {
+              "year": "2019",
+              "value": 0.164,
+              "country": "Guinea-Bissau"
+            },
+            {
+              "year": "2019",
+              "value": 3.412,
+              "country": "Guyana"
+            },
+            {
+              "year": "2019",
+              "value": 0.282,
+              "country": "Haiti"
+            },
+            {
+              "year": "2019",
+              "value": 1.128,
+              "country": "Honduras"
+            },
+            {
+              "year": "2019",
+              "value": 5.597,
+              "country": "Hong Kong SAR, China"
+            },
+            {
+              "year": "2019",
+              "value": 5.032,
+              "country": "Hungary"
+            },
+            {
+              "year": "2019",
+              "value": 9.859,
+              "country": "Iceland"
+            },
+            {
+              "year": "2019",
+              "value": 1.881,
+              "country": "India"
+            },
+            {
+              "year": "2019",
+              "value": 2.399,
+              "country": "Indonesia"
+            },
+            {
+              "year": "2019",
+              "value": 8.447,
+              "country": "Iran, Islamic Rep."
+            },
+            {
+              "year": "2019",
+              "value": 4.618,
+              "country": "Iraq"
+            },
+            {
+              "year": "2019",
+              "value": 7.565,
+              "country": "Ireland"
+            },
+            {
+              "year": "2019",
+              "value": 6.775,
+              "country": "Israel"
+            },
+            {
+              "year": "2019",
+              "value": 5.648,
+              "country": "Italy"
+            },
+            {
+              "year": "2019",
+              "value": 3.356,
+              "country": "Jamaica"
+            },
+            {
+              "year": "2019",
+              "value": 8.725,
+              "country": "Japan"
+            },
+            {
+              "year": "2019",
+              "value": 2.319,
+              "country": "Jordan"
+            },
+            {
+              "year": "2019",
+              "value": 14.331,
+              "country": "Kazakhstan"
+            },
+            {
+              "year": "2019",
+              "value": 0.387,
+              "country": "Kenya"
+            },
+            {
+              "year": "2019",
+              "value": 0.532,
+              "country": "Kiribati"
+            },
+            {
+              "year": "2019",
+              "value": 4.78,
+              "country": "Kosovo"
+            },
+            {
+              "year": "2019",
+              "value": 24.436,
+              "country": "Kuwait"
+            },
+            {
+              "year": "2019",
+              "value": 1.393,
+              "country": "Kyrgyz Republic"
+            },
+            {
+              "year": "2019",
+              "value": 2.636,
+              "country": "Lao PDR"
+            },
+            {
+              "year": "2019",
+              "value": 3.996,
+              "country": "Latvia"
+            },
+            {
+              "year": "2019",
+              "value": 4.428,
+              "country": "Lebanon"
+            },
+            {
+              "year": "2019",
+              "value": 1.081,
+              "country": "Lesotho"
+            },
+            {
+              "year": "2019",
+              "value": 0.185,
+              "country": "Liberia"
+            },
+            {
+              "year": "2019",
+              "value": 10.969,
+              "country": "Libya"
+            },
+            {
+              "year": "2019",
+              "value": 3.875,
+              "country": "Liechtenstein"
+            },
+            {
+              "year": "2019",
+              "value": 4.904,
+              "country": "Lithuania"
+            },
+            {
+              "year": "2019",
+              "value": 15.741,
+              "country": "Luxembourg"
+            },
+            {
+              "year": "2019",
+              "value": 1.807,
+              "country": "Macao SAR, China"
+            },
+            {
+              "year": "2019",
+              "value": 0.152,
+              "country": "Madagascar"
+            },
+            {
+              "year": "2019",
+              "value": 0.09,
+              "country": "Malawi"
+            },
+            {
+              "year": "2019",
+              "value": 8.368,
+              "country": "Malaysia"
+            },
+            {
+              "year": "2019",
+              "value": 4.087,
+              "country": "Maldives"
+            },
+            {
+              "year": "2019",
+              "value": 0.277,
+              "country": "Mali"
+            },
+            {
+              "year": "2019",
+              "value": 3.271,
+              "country": "Malta"
+            },
+            {
+              "year": "2019",
+              "value": 3.329,
+              "country": "Marshall Islands"
+            },
+            {
+              "year": "2019",
+              "value": 1.034,
+              "country": "Mauritania"
+            },
+            {
+              "year": "2019",
+              "value": 3.515,
+              "country": "Mauritius"
+            },
+            {
+              "year": "2019",
+              "value": 3.723,
+              "country": "Mexico"
+            },
+            {
+              "year": "2019",
+              "value": 1.765,
+              "country": "Moldova"
+            },
+            {
+              "year": "2019",
+              "value": null,
+              "country": "Monaco"
+            },
+            {
+              "year": "2019",
+              "value": 14.617,
+              "country": "Mongolia"
+            },
+            {
+              "year": "2019",
+              "value": 4.049,
+              "country": "Montenegro"
+            },
+            {
+              "year": "2019",
+              "value": 1.898,
+              "country": "Morocco"
+            },
+            {
+              "year": "2019",
+              "value": 0.238,
+              "country": "Mozambique"
+            },
+            {
+              "year": "2019",
+              "value": 0.639,
+              "country": "Myanmar"
+            },
+            {
+              "year": "2019",
+              "value": 1.599,
+              "country": "Namibia"
+            },
+            {
+              "year": "2019",
+              "value": 4.734,
+              "country": "Nauru"
+            },
+            {
+              "year": "2019",
+              "value": 0.449,
+              "country": "Nepal"
+            },
+            {
+              "year": "2019",
+              "value": 8.691,
+              "country": "Netherlands"
+            },
+            {
+              "year": "2019",
+              "value": 20.002,
+              "country": "New Caledonia"
+            },
+            {
+              "year": "2019",
+              "value": 7.362,
+              "country": "New Zealand"
+            },
+            {
+              "year": "2019",
+              "value": 0.805,
+              "country": "Nicaragua"
+            },
+            {
+              "year": "2019",
+              "value": 0.11,
+              "country": "Niger"
+            },
+            {
+              "year": "2019",
+              "value": 0.639,
+              "country": "Nigeria"
+            },
+            {
+              "year": "2019",
+              "value": 2.669,
+              "country": "Korea, Dem. People's Rep."
+            },
+            {
+              "year": "2019",
+              "value": 4.03,
+              "country": "North Macedonia"
+            },
+            {
+              "year": "2019",
+              "value": 8.002,
+              "country": "Norway"
+            },
+            {
+              "year": "2019",
+              "value": 15.622,
+              "country": "Oman"
+            },
+            {
+              "year": "2019",
+              "value": 0.9,
+              "country": "Pakistan"
+            },
+            {
+              "year": "2019",
+              "value": 12.337,
+              "country": "Palau"
+            },
+            {
+              "year": "2019",
+              "value": 0.658,
+              "country": "West Bank and Gaza"
+            },
+            {
+              "year": "2019",
+              "value": 3.1,
+              "country": "Panama"
+            },
+            {
+              "year": "2019",
+              "value": 0.831,
+              "country": "Papua New Guinea"
+            },
+            {
+              "year": "2019",
+              "value": 1.248,
+              "country": "Paraguay"
+            },
+            {
+              "year": "2019",
+              "value": 1.799,
+              "country": "Peru"
+            },
+            {
+              "year": "2019",
+              "value": 1.295,
+              "country": "Philippines"
+            },
+            {
+              "year": "2019",
+              "value": 8.312,
+              "country": "Poland"
+            },
+            {
+              "year": "2019",
+              "value": 4.6,
+              "country": "Portugal"
+            },
+            {
+              "year": "2019",
+              "value": 36.105,
+              "country": "Qatar"
+            },
+            {
+              "year": "2019",
+              "value": 3.921,
+              "country": "Romania"
+            },
+            {
+              "year": "2019",
+              "value": 11.636,
+              "country": "Russian Federation"
+            },
+            {
+              "year": "2019",
+              "value": 0.107,
+              "country": "Rwanda"
+            },
+            {
+              "year": "2019",
+              "value": 5.382,
+              "country": "St. Kitts and Nevis"
+            },
+            {
+              "year": "2019",
+              "value": 2.825,
+              "country": "St. Lucia"
+            },
+            {
+              "year": "2019",
+              "value": 2.145,
+              "country": "St. Vincent and the Grenadines"
+            },
+            {
+              "year": "2019",
+              "value": 1.292,
+              "country": "Samoa"
+            },
+            {
+              "year": "2019",
+              "value": null,
+              "country": "San Marino"
+            },
+            {
+              "year": "2019",
+              "value": 0.67,
+              "country": "Sao Tome and Principe"
+            },
+            {
+              "year": "2019",
+              "value": 21.579,
+              "country": "Saudi Arabia"
+            },
+            {
+              "year": "2019",
+              "value": 0.777,
+              "country": "Senegal"
+            },
+            {
+              "year": "2019",
+              "value": 6.356,
+              "country": "Serbia"
+            },
+            {
+              "year": "2019",
+              "value": 5.045,
+              "country": "Seychelles"
+            },
+            {
+              "year": "2019",
+              "value": 0.13,
+              "country": "Sierra Leone"
+            },
+            {
+              "year": "2019",
+              "value": 8.643,
+              "country": "Singapore"
+            },
+            {
+              "year": "2019",
+              "value": 17.046,
+              "country": "Sint Maarten (Dutch part)"
+            },
+            {
+              "year": "2019",
+              "value": 6.207,
+              "country": "Slovak Republic"
+            },
+            {
+              "year": "2019",
+              "value": 6.739,
+              "country": "Slovenia"
+            },
+            {
+              "year": "2019",
+              "value": 0.403,
+              "country": "Solomon Islands"
+            },
+            {
+              "year": "2019",
+              "value": 0.04,
+              "country": "Somalia"
+            },
+            {
+              "year": "2019",
+              "value": 7.789,
+              "country": "South Africa"
+            },
+            {
+              "year": "2019",
+              "value": 12.481,
+              "country": "Korea, Rep."
+            },
+            {
+              "year": "2019",
+              "value": 0.171,
+              "country": "South Sudan"
+            },
+            {
+              "year": "2019",
+              "value": 5.283,
+              "country": "Spain"
+            },
+            {
+              "year": "2019",
+              "value": 0.948,
+              "country": "Sri Lanka"
+            },
+            {
+              "year": "2019",
+              "value": 0.475,
+              "country": "Sudan"
+            },
+            {
+              "year": "2019",
+              "value": 4.351,
+              "country": "Suriname"
+            },
+            {
+              "year": "2019",
+              "value": 3.972,
+              "country": "Sweden"
+            },
+            {
+              "year": "2019",
+              "value": 4.281,
+              "country": "Switzerland"
+            },
+            {
+              "year": "2019",
+              "value": 1.346,
+              "country": "Syrian Arab Republic"
+            },
+            {
+              "year": "2019",
+              "value": 11.593,
+              "country": "Taiwan, China"
+            },
+            {
+              "year": "2019",
+              "value": 0.912,
+              "country": "Tajikistan"
+            },
+            {
+              "year": "2019",
+              "value": 0.277,
+              "country": "Tanzania"
+            },
+            {
+              "year": "2019",
+              "value": 3.941,
+              "country": "Thailand"
+            },
+            {
+              "year": "2019",
+              "value": 0.274,
+              "country": "Togo"
+            },
+            {
+              "year": "2019",
+              "value": 1.525,
+              "country": "Tonga"
+            },
+            {
+              "year": "2019",
+              "value": 27.465,
+              "country": "Trinidad and Tobago"
+            },
+            {
+              "year": "2019",
+              "value": 2.556,
+              "country": "Tunisia"
+            },
+            {
+              "year": "2019",
+              "value": 4.718,
+              "country": "Turkiye"
+            },
+            {
+              "year": "2019",
+              "value": 9.285,
+              "country": "Turkmenistan"
+            },
+            {
+              "year": "2019",
+              "value": 8.399,
+              "country": "Turks and Caicos Islands"
+            },
+            {
+              "year": "2019",
+              "value": 1.037,
+              "country": "Tuvalu"
+            },
+            {
+              "year": "2019",
+              "value": 0.134,
+              "country": "Uganda"
+            },
+            {
+              "year": "2019",
+              "value": 4.937,
+              "country": "Ukraine"
+            },
+            {
+              "year": "2019",
+              "value": 23.436,
+              "country": "United Arab Emirates"
+            },
+            {
+              "year": "2019",
+              "value": 5.435,
+              "country": "United Kingdom"
+            },
+            {
+              "year": "2019",
+              "value": 15.578,
+              "country": "United States"
+            },
+            {
+              "year": "2019",
+              "value": 1.887,
+              "country": "Uruguay"
+            },
+            {
+              "year": "2019",
+              "value": 3.289,
+              "country": "Uzbekistan"
+            },
+            {
+              "year": "2019",
+              "value": 0.565,
+              "country": "Vanuatu"
+            },
+            {
+              "year": "2019",
+              "value": 3.638,
+              "country": "Venezuela, RB"
+            },
+            {
+              "year": "2019",
+              "value": 3.49,
+              "country": "Viet Nam"
+            },
+            {
+              "year": "2019",
+              "value": 4.75,
+              "country": "World"
+            },
+            {
+              "year": "2019",
+              "value": 0.337,
+              "country": "Yemen, Rep."
+            },
+            {
+              "year": "2019",
+              "value": 0.419,
+              "country": "Zambia"
+            },
+            {
+              "year": "2019",
+              "value": 0.672,
+              "country": "Zimbabwe"
+            }
+          ]
+        },
+        "key": "country",
+        "fields": [
+          "year",
+          "value",
+          "country"
+        ]
+      }
+    }
+  ],
+  "projection": {
+    "type": "equalEarth"
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "fill": "#eee",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      },
+      "transform": [
+        {
+          "filter": "isValid(datum.value)"
+        }
+      ],
+      "encoding": {
+        "color": {
+          "field": "value",
+          "type": "quantitative",
+          "scale": {
+            "scheme": "blues"
+          },
+          "legend": {
+            "title": "Ratio",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

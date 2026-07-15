@@ -1,0 +1,351 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Individuals using the Internet (% of population) vs. GDP per capita (constant",
+      "2015 US$)"
+    ],
+    "subtitle": [
+      "2020"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020",
+        "country": "Bangladesh",
+        "individuals_using_the_internet_of_popula": 36.1091,
+        "gdp_per_capita_constant_2015_us": 1604.665923
+      },
+      {
+        "year": "2020",
+        "country": "Burkina Faso",
+        "individuals_using_the_internet_of_popula": 12.9732,
+        "gdp_per_capita_constant_2015_us": 713.842178
+      },
+      {
+        "year": "2020",
+        "country": "Cameroon",
+        "individuals_using_the_internet_of_popula": 37.697498,
+        "gdp_per_capita_constant_2015_us": 1434.519137
+      },
+      {
+        "year": "2020",
+        "country": "Cote d'Ivoire",
+        "individuals_using_the_internet_of_popula": 36.016602,
+        "gdp_per_capita_constant_2015_us": 2055.08484
+      },
+      {
+        "year": "2020",
+        "country": "Ethiopia",
+        "individuals_using_the_internet_of_popula": 16.069599,
+        "gdp_per_capita_constant_2015_us": 768.705424
+      },
+      {
+        "year": "2020",
+        "country": "Ghana",
+        "individuals_using_the_internet_of_popula": 62.517601,
+        "gdp_per_capita_constant_2015_us": 1970.194115
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "individuals_using_the_internet_of_popula": 43.405443,
+        "gdp_per_capita_constant_2015_us": 1806.501106
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "individuals_using_the_internet_of_popula": 24.722799,
+        "gdp_per_capita_constant_2015_us": 1609.334141
+      },
+      {
+        "year": "2020",
+        "country": "Madagascar",
+        "individuals_using_the_internet_of_popula": 11.3547,
+        "gdp_per_capita_constant_2015_us": 422.924255
+      },
+      {
+        "year": "2020",
+        "country": "Mali",
+        "individuals_using_the_internet_of_popula": 29.113001,
+        "gdp_per_capita_constant_2015_us": 872.389427
+      },
+      {
+        "year": "2020",
+        "country": "Mozambique",
+        "individuals_using_the_internet_of_popula": 14.2874,
+        "gdp_per_capita_constant_2015_us": 591.80406
+      },
+      {
+        "year": "2020",
+        "country": "Niger",
+        "individuals_using_the_internet_of_popula": 11.8568,
+        "gdp_per_capita_constant_2015_us": 532.208221
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "individuals_using_the_internet_of_popula": 31.8888,
+        "gdp_per_capita_constant_2015_us": 2228.686314
+      },
+      {
+        "year": "2020",
+        "country": "Pakistan",
+        "individuals_using_the_internet_of_popula": 18.935,
+        "gdp_per_capita_constant_2015_us": 1526.005975
+      },
+      {
+        "year": "2020",
+        "country": "Rwanda",
+        "individuals_using_the_internet_of_popula": 23.8,
+        "gdp_per_capita_constant_2015_us": 821.257133
+      },
+      {
+        "year": "2020",
+        "country": "Senegal",
+        "individuals_using_the_internet_of_popula": 53.3088,
+        "gdp_per_capita_constant_2015_us": 1361.791437
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "individuals_using_the_internet_of_popula": 19.4814,
+        "gdp_per_capita_constant_2015_us": 1041.259644
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "individuals_using_the_internet_of_popula": 7.4,
+        "gdp_per_capita_constant_2015_us": 917.035032
+      },
+      {
+        "year": "2020",
+        "country": "Zambia",
+        "individuals_using_the_internet_of_popula": 14.6458,
+        "gdp_per_capita_constant_2015_us": 1228.735001
+      },
+      {
+        "year": "2020",
+        "country": "Zimbabwe",
+        "individuals_using_the_internet_of_popula": 29.298565,
+        "gdp_per_capita_constant_2015_us": 1230.819334
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "individuals_using_the_internet_of_popula",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Individuals using the Internet (% of population) (Percentage of population)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "gdp_per_capita_constant_2015_us",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "individuals_using_the_internet_of_popula",
+            "title": "Individuals using the Internet (% of population) (Percentage of population)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "gdp_per_capita_constant_2015_us",
+            "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "individuals_using_the_internet_of_popula",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "gdp_per_capita_constant_2015_us",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

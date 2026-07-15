@@ -1,0 +1,321 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP (annual % growth) vs. Inflation, consumer prices (annual % growth)"
+    ],
+    "subtitle": [
+      "2020",
+      "Percentage change per annum"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020",
+        "country": "Australia",
+        "gdp_annual_growth": -0.133532,
+        "inflation_consumer_prices_annual_growth": 0.846901
+      },
+      {
+        "year": "2020",
+        "country": "Bangladesh",
+        "gdp_annual_growth": 3.448018,
+        "inflation_consumer_prices_annual_growth": 5.691075
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "gdp_annual_growth": 2.339504,
+        "inflation_consumer_prices_annual_growth": 2.419422
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "gdp_annual_growth": -5.777725,
+        "inflation_consumer_prices_annual_growth": 6.623437
+      },
+      {
+        "year": "2020",
+        "country": "Indonesia",
+        "gdp_annual_growth": -2.065512,
+        "inflation_consumer_prices_annual_growth": 1.919835
+      },
+      {
+        "year": "2020",
+        "country": "Japan",
+        "gdp_annual_growth": -4.283279,
+        "inflation_consumer_prices_annual_growth": -0.024996
+      },
+      {
+        "year": "2020",
+        "country": "Korea, Rep.",
+        "gdp_annual_growth": -0.700242,
+        "inflation_consumer_prices_annual_growth": 0.537288
+      },
+      {
+        "year": "2020",
+        "country": "Malaysia",
+        "gdp_annual_growth": -5.456847,
+        "inflation_consumer_prices_annual_growth": -1.138702
+      },
+      {
+        "year": "2020",
+        "country": "Mongolia",
+        "gdp_annual_growth": -4.557752,
+        "inflation_consumer_prices_annual_growth": 3.723723
+      },
+      {
+        "year": "2020",
+        "country": "New Zealand",
+        "gdp_annual_growth": -0.240916,
+        "inflation_consumer_prices_annual_growth": 1.714562
+      },
+      {
+        "year": "2020",
+        "country": "Pakistan",
+        "gdp_annual_growth": -1.274087,
+        "inflation_consumer_prices_annual_growth": 9.740116
+      },
+      {
+        "year": "2020",
+        "country": "Philippines",
+        "gdp_annual_growth": -9.518295,
+        "inflation_consumer_prices_annual_growth": 2.393162
+      },
+      {
+        "year": "2020",
+        "country": "Singapore",
+        "gdp_annual_growth": -3.610843,
+        "inflation_consumer_prices_annual_growth": -0.172112
+      },
+      {
+        "year": "2020",
+        "country": "Thailand",
+        "gdp_annual_growth": -6.093063,
+        "inflation_consumer_prices_annual_growth": -0.846088
+      },
+      {
+        "year": "2020",
+        "country": "Viet Nam",
+        "gdp_annual_growth": 2.865413,
+        "inflation_consumer_prices_annual_growth": 3.220934
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP (annual % growth) (Percentage change per annum)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "inflation_consumer_prices_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Inflation, consumer prices (annual % growth) (Percentage change per annum)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_annual_growth",
+            "title": "GDP (annual % growth) (Percentage change per annum)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "inflation_consumer_prices_annual_growth",
+            "title": "Inflation, consumer prices (annual % growth) (Percentage change per annum)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_annual_growth",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "inflation_consumer_prices_annual_growth",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

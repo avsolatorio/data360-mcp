@@ -1,0 +1,421 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Access to electricity, rural vs. Access to electricity, urban"
+    ],
+    "subtitle": [
+      "Kenya, Tanzania, Uganda, 2015-2021"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "country": "Kenya",
+        "access_to_electricity_rural": 29.0,
+        "access_to_electricity_urban": 78.1
+      },
+      {
+        "year": "2015",
+        "country": "Tanzania",
+        "access_to_electricity_rural": 11.3,
+        "access_to_electricity_urban": 58.4
+      },
+      {
+        "year": "2015",
+        "country": "Uganda",
+        "access_to_electricity_rural": 9.0,
+        "access_to_electricity_urban": 51.9
+      },
+      {
+        "year": "2016",
+        "country": "Kenya",
+        "access_to_electricity_rural": 42.1,
+        "access_to_electricity_urban": 84.3
+      },
+      {
+        "year": "2016",
+        "country": "Tanzania",
+        "access_to_electricity_rural": 17.3,
+        "access_to_electricity_urban": 65.3
+      },
+      {
+        "year": "2016",
+        "country": "Uganda",
+        "access_to_electricity_rural": 17.7,
+        "access_to_electricity_urban": 57.5
+      },
+      {
+        "year": "2017",
+        "country": "Kenya",
+        "access_to_electricity_rural": 45.8,
+        "access_to_electricity_urban": 83.6
+      },
+      {
+        "year": "2017",
+        "country": "Tanzania",
+        "access_to_electricity_rural": 16.0,
+        "access_to_electricity_urban": 64.8
+      },
+      {
+        "year": "2017",
+        "country": "Uganda",
+        "access_to_electricity_rural": 23.0,
+        "access_to_electricity_urban": 63.4
+      },
+      {
+        "year": "2018",
+        "country": "Kenya",
+        "access_to_electricity_rural": 51.6,
+        "access_to_electricity_urban": 87.2
+      },
+      {
+        "year": "2018",
+        "country": "Tanzania",
+        "access_to_electricity_rural": 18.1,
+        "access_to_electricity_urban": 67.9
+      },
+      {
+        "year": "2018",
+        "country": "Uganda",
+        "access_to_electricity_rural": 32.5,
+        "access_to_electricity_urban": 72.0
+      },
+      {
+        "year": "2019",
+        "country": "Kenya",
+        "access_to_electricity_rural": 61.7,
+        "access_to_electricity_urban": 90.8
+      },
+      {
+        "year": "2019",
+        "country": "Tanzania",
+        "access_to_electricity_rural": 19.0,
+        "access_to_electricity_urban": 73.2
+      },
+      {
+        "year": "2019",
+        "country": "Uganda",
+        "access_to_electricity_rural": 31.8,
+        "access_to_electricity_urban": 70.8
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "access_to_electricity_rural": 62.7,
+        "access_to_electricity_urban": 94.1
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "access_to_electricity_rural": 22.0,
+        "access_to_electricity_urban": 72.9
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "access_to_electricity_rural": 32.8,
+        "access_to_electricity_urban": 70.1
+      },
+      {
+        "year": "2021",
+        "country": "Kenya",
+        "access_to_electricity_rural": 68.2,
+        "access_to_electricity_urban": 97.5
+      },
+      {
+        "year": "2021",
+        "country": "Tanzania",
+        "access_to_electricity_rural": 23.3,
+        "access_to_electricity_urban": 77.3
+      },
+      {
+        "year": "2021",
+        "country": "Uganda",
+        "access_to_electricity_rural": 35.9,
+        "access_to_electricity_urban": 72.3
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2,
+        "opacity": 0.6,
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "access_to_electricity_rural",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Rural (Percentage of rural population)"
+          },
+          "scale": {
+            "zero": false,
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "y": {
+          "field": "access_to_electricity_urban",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Urban (Percentage of urban population)"
+          },
+          "scale": {
+            "zero": false,
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 40,
+        "opacity": 0.9
+      },
+      "encoding": {
+        "x": {
+          "field": "access_to_electricity_rural",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Rural (Percentage of rural population)"
+          },
+          "scale": {
+            "zero": false,
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "y": {
+          "field": "access_to_electricity_urban",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Urban (Percentage of urban population)"
+          },
+          "scale": {
+            "zero": false,
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "access_to_electricity_rural",
+            "title": "Rural (Percentage of rural population)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "access_to_electricity_urban",
+            "title": "Urban (Percentage of urban population)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "width": 550,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

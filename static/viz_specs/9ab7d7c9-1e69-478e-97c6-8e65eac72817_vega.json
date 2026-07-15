@@ -1,0 +1,592 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "People in each phase of food insecurity classification"
+    ],
+    "subtitle": [
+      "Mozambique",
+      "Series: 1 - Minimal, 2 - Stressed, 3 - Crisis, 4 - Emergency, 5 - Famine"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020-06",
+        "value": 1336095.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 1336095.0
+      },
+      {
+        "year": "2020-05",
+        "value": 386752.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 386752.0
+      },
+      {
+        "year": "2020-10",
+        "value": 6695577.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 6695577.0
+      },
+      {
+        "year": "2021-04",
+        "value": 151915.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 151915.0
+      },
+      {
+        "year": "2021-11",
+        "value": 6516368.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 6516368.0
+      },
+      {
+        "year": "2022-11",
+        "value": 16026000.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 16026000.0
+      },
+      {
+        "year": "2023-07",
+        "value": 7541238.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 7541238.0
+      },
+      {
+        "year": "2024-06",
+        "value": 3639958.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 3939866.42
+      },
+      {
+        "year": "2020-06",
+        "value": 728779.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 728779.0
+      },
+      {
+        "year": "2020-05",
+        "value": 420020.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 420020.0
+      },
+      {
+        "year": "2020-10",
+        "value": 8772570.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 8772570.0
+      },
+      {
+        "year": "2021-04",
+        "value": 189739.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 189739.0
+      },
+      {
+        "year": "2021-11",
+        "value": 6145701.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 6145701.0
+      },
+      {
+        "year": "2022-11",
+        "value": 12974000.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 12974000.0
+      },
+      {
+        "year": "2023-07",
+        "value": 5685585.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 5685585.0
+      },
+      {
+        "year": "2024-06",
+        "value": 3600015.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 3300106.58
+      },
+      {
+        "year": "2020-06",
+        "value": 364389.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 364389.0
+      },
+      {
+        "year": "2020-05",
+        "value": 251171.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 251171.0
+      },
+      {
+        "year": "2020-10",
+        "value": 2368993.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 2368993.0
+      },
+      {
+        "year": "2021-04",
+        "value": 132717.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 132717.0
+      },
+      {
+        "year": "2021-11",
+        "value": 1818432.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 1818432.0
+      },
+      {
+        "year": "2022-11",
+        "value": 2748872.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 2748872.0
+      },
+      {
+        "year": "2023-07",
+        "value": 2477381.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 2477381.0
+      },
+      {
+        "year": "2024-06",
+        "value": 2275600.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 2275600.0
+      },
+      {
+        "year": "2020-06",
+        "value": null,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": null
+      },
+      {
+        "year": "2020-05",
+        "value": 32004.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 32004.0
+      },
+      {
+        "year": "2020-10",
+        "value": 305929.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 305929.0
+      },
+      {
+        "year": "2021-04",
+        "value": 56247.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 56247.0
+      },
+      {
+        "year": "2021-11",
+        "value": 39208.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 39208.0
+      },
+      {
+        "year": "2022-11",
+        "value": 397551.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 397551.0
+      },
+      {
+        "year": "2023-07",
+        "value": 125730.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 125730.0
+      },
+      {
+        "year": "2024-06",
+        "value": 510151.0,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 510151.0
+      },
+      {
+        "year": "2020-06",
+        "value": null,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2020-05",
+        "value": null,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2020-10",
+        "value": null,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2021-04",
+        "value": null,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2021-11",
+        "value": null,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2022-11",
+        "value": null,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2023-07",
+        "value": null,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2024-06",
+        "value": null,
+        "country": "Mozambique",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyearmonth",
+          "axis": {
+            "title": null,
+            "format": "%b %Y",
+            "tickCount": 8,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "People in each phase of food insecurity classification",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyearmonth",
+            "format": "%b %Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_2",
+            "title": "Dimension 2",
+            "type": "nominal"
+          },
+          {
+            "field": "_label_y",
+            "title": " Label Y"
+          },
+          {
+            "value": "People in each phase of food insecurity classification",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "comp_breakdown_2",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "comp_breakdown_2"
+          ]
+        },
+        {
+          "calculate": "datum._last._label_y",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "comp_breakdown_2",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "comp_breakdown_2",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

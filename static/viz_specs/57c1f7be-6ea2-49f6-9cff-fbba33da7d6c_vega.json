@@ -1,0 +1,5169 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Latest total population in South and Southeast Asia",
+    "subtitle": [
+      "Bangladesh, Bhutan, Brunei Darussalam, Cambodia, India, Indonesia, Lao PDR, Malaysia, Maldives, Myanmar, \u2026 (+6 more), 1960-2024",
+      "Persons"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1999",
+        "value": 76287452,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2001",
+        "value": 77969361,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2008",
+        "value": 85175788,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2005",
+        "value": 81088313,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2007",
+        "value": 83633375,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2000",
+        "value": 77154011,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2017",
+        "value": 1359657400,
+        "country": "India"
+      },
+      {
+        "year": "2017",
+        "value": 267346658,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011",
+        "value": 88468314,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018",
+        "value": 1374659064,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 269951846,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2012",
+        "value": 405557,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2012",
+        "value": 14945085,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2014",
+        "value": 30696137,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2009",
+        "value": 48660459,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2009",
+        "value": 27173035,
+        "country": "Nepal"
+      },
+      {
+        "year": "2009",
+        "value": 1225524753,
+        "country": "India"
+      },
+      {
+        "year": "2009",
+        "value": 243220028,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2006",
+        "value": 146405973,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2006",
+        "value": 670799,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2013",
+        "value": 102076336,
+        "country": "Philippines"
+      },
+      {
+        "year": "2013",
+        "value": 30174265,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2013",
+        "value": 400070,
+        "country": "Maldives"
+      },
+      {
+        "year": "1999",
+        "value": 44787724,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1999",
+        "value": 24125199,
+        "country": "Nepal"
+      },
+      {
+        "year": "2020",
+        "value": 16725474,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2016",
+        "value": 70859841,
+        "country": "Thailand"
+      },
+      {
+        "year": "2010",
+        "value": 701632,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2010",
+        "value": 392332,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2014",
+        "value": 91679578,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018",
+        "value": 437810,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2018",
+        "value": 16274522,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2005",
+        "value": 1154676322,
+        "country": "India"
+      },
+      {
+        "year": "2005",
+        "value": 230871650,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2013",
+        "value": 5399162,
+        "country": "Singapore"
+      },
+      {
+        "year": "2013",
+        "value": 20585000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2011",
+        "value": 49419820,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2011",
+        "value": 27464494,
+        "country": "Nepal"
+      },
+      {
+        "year": "2011",
+        "value": 69007208,
+        "country": "Thailand"
+      },
+      {
+        "year": "2020",
+        "value": 53016522,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2020",
+        "value": 28966574,
+        "country": "Nepal"
+      },
+      {
+        "year": "2008",
+        "value": 6148969,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2009",
+        "value": 384952,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2009",
+        "value": 14276810,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1999",
+        "value": 18944731,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2020",
+        "value": 166298024,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2004",
+        "value": 47068772,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2004",
+        "value": 26016656,
+        "country": "Nepal"
+      },
+      {
+        "year": "2003",
+        "value": 13050968,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2017",
+        "value": 95176977,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2008",
+        "value": 27570059,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2008",
+        "value": 336170,
+        "country": "Maldives"
+      },
+      {
+        "year": "2007",
+        "value": 13841770,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2012",
+        "value": 89510356,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1993",
+        "value": 69586384,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2009",
+        "value": 28124778,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2009",
+        "value": 348275,
+        "country": "Maldives"
+      },
+      {
+        "year": "2006",
+        "value": 82167897,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2007",
+        "value": 48125043,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2007",
+        "value": 26788492,
+        "country": "Nepal"
+      },
+      {
+        "year": "2019",
+        "value": 1389030312,
+        "country": "India"
+      },
+      {
+        "year": "2019",
+        "value": 272489381,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2001",
+        "value": 136805810,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2001",
+        "value": 610794,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2014",
+        "value": 413617,
+        "country": "Maldives"
+      },
+      {
+        "year": "2008",
+        "value": 92699095,
+        "country": "Philippines"
+      },
+      {
+        "year": "2011",
+        "value": 21009048,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2016",
+        "value": 21209000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2003",
+        "value": 140970351,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2018",
+        "value": 96237319,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2015",
+        "value": 27823629,
+        "country": "Nepal"
+      },
+      {
+        "year": "2011",
+        "value": 153591076,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2001",
+        "value": 5521482,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2017",
+        "value": 108119693,
+        "country": "Philippines"
+      },
+      {
+        "year": "2004",
+        "value": 301413,
+        "country": "Maldives"
+      },
+      {
+        "year": "2010",
+        "value": 5076732,
+        "country": "Singapore"
+      },
+      {
+        "year": "2005",
+        "value": 13439202,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2019",
+        "value": 110804683,
+        "country": "Philippines"
+      },
+      {
+        "year": "2018",
+        "value": 21670000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2002",
+        "value": 83068889,
+        "country": "Philippines"
+      },
+      {
+        "year": "1999",
+        "value": 77753257,
+        "country": "Philippines"
+      },
+      {
+        "year": "2010",
+        "value": 152201981,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2005",
+        "value": 144715786,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2015",
+        "value": 70540795,
+        "country": "Thailand"
+      },
+      {
+        "year": "2002",
+        "value": 5610889,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2003",
+        "value": 84731835,
+        "country": "Philippines"
+      },
+      {
+        "year": "2000",
+        "value": 4027887,
+        "country": "Singapore"
+      },
+      {
+        "year": "2000",
+        "value": 5431212,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2021",
+        "value": 71727332,
+        "country": "Thailand"
+      },
+      {
+        "year": "2018",
+        "value": 109465287,
+        "country": "Philippines"
+      },
+      {
+        "year": "2004",
+        "value": 4166664,
+        "country": "Singapore"
+      },
+      {
+        "year": "2007",
+        "value": 4588599,
+        "country": "Singapore"
+      },
+      {
+        "year": "2007",
+        "value": 20492545,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2008",
+        "value": 20629378,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2001",
+        "value": 63651141,
+        "country": "Thailand"
+      },
+      {
+        "year": "2022",
+        "value": 5637022,
+        "country": "Singapore"
+      },
+      {
+        "year": "2023",
+        "value": 171466990,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2023",
+        "value": 786385,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1998",
+        "value": 5248266,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2005",
+        "value": 306429,
+        "country": "Maldives"
+      },
+      {
+        "year": "1988",
+        "value": 62843228,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1985",
+        "value": 59060622,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1998",
+        "value": 1018665080,
+        "country": "India"
+      },
+      {
+        "year": "1998",
+        "value": 209826788,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1994",
+        "value": 3419048,
+        "country": "Singapore"
+      },
+      {
+        "year": "1992",
+        "value": 20609707,
+        "country": "Nepal"
+      },
+      {
+        "year": "1979",
+        "value": 51378211,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1998",
+        "value": 129622332,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1998",
+        "value": 569435,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1997",
+        "value": 5152011,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1995",
+        "value": 960301044,
+        "country": "India"
+      },
+      {
+        "year": "1995",
+        "value": 199888057,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1998",
+        "value": 21906713,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1998",
+        "value": 272723,
+        "country": "Maldives"
+      },
+      {
+        "year": "1994",
+        "value": 69019291,
+        "country": "Philippines"
+      },
+      {
+        "year": "1997",
+        "value": 3796038,
+        "country": "Singapore"
+      },
+      {
+        "year": "1997",
+        "value": 18248200,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1991",
+        "value": 4435118,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1993",
+        "value": 3313471,
+        "country": "Singapore"
+      },
+      {
+        "year": "1993",
+        "value": 17025918,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1994",
+        "value": 120343179,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1977",
+        "value": 48954872,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1992",
+        "value": 269839,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1992",
+        "value": 8113083,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1991",
+        "value": 64382249,
+        "country": "Philippines"
+      },
+      {
+        "year": "1991",
+        "value": 3135083,
+        "country": "Singapore"
+      },
+      {
+        "year": "1990",
+        "value": 3047132,
+        "country": "Singapore"
+      },
+      {
+        "year": "1990",
+        "value": 16352458,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2024",
+        "value": 1450935791,
+        "country": "India"
+      },
+      {
+        "year": "2024",
+        "value": 283487931,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1987",
+        "value": 18250505,
+        "country": "Nepal"
+      },
+      {
+        "year": "1987",
+        "value": 58157496,
+        "country": "Philippines"
+      },
+      {
+        "year": "2024",
+        "value": 7769819,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1985",
+        "value": 166776185,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1985",
+        "value": 3739985,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2024",
+        "value": 462721,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2024",
+        "value": 17638801,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1989",
+        "value": 4190974,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1989",
+        "value": 17314997,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1989",
+        "value": 217738,
+        "country": "Maldives"
+      },
+      {
+        "year": "1987",
+        "value": 104959291,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1987",
+        "value": 540557,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1987",
+        "value": 233860,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1987",
+        "value": 6557970,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2024",
+        "value": 100987686,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1971",
+        "value": 42449276,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1981",
+        "value": 703696250,
+        "country": "India"
+      },
+      {
+        "year": "1981",
+        "value": 152485035,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1986",
+        "value": 102635572,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1986",
+        "value": 524324,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1986",
+        "value": 226495,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1986",
+        "value": 6285693,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1988",
+        "value": 107216008,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1988",
+        "value": 556986,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1988",
+        "value": 240913,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1988",
+        "value": 2846108,
+        "country": "Singapore"
+      },
+      {
+        "year": "1988",
+        "value": 16078621,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1981",
+        "value": 49311727,
+        "country": "Philippines"
+      },
+      {
+        "year": "1981",
+        "value": 2532835,
+        "country": "Singapore"
+      },
+      {
+        "year": "1987",
+        "value": 3957612,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1987",
+        "value": 16276737,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1987",
+        "value": 203944,
+        "country": "Maldives"
+      },
+      {
+        "year": "1987",
+        "value": 37971594,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1979",
+        "value": 46807103,
+        "country": "Philippines"
+      },
+      {
+        "year": "1979",
+        "value": 2383500,
+        "country": "Singapore"
+      },
+      {
+        "year": "1986",
+        "value": 2733373,
+        "country": "Singapore"
+      },
+      {
+        "year": "1986",
+        "value": 15731256,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1978",
+        "value": 3171740,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1978",
+        "value": 12328157,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1978",
+        "value": 156159,
+        "country": "Maldives"
+      },
+      {
+        "year": "1975",
+        "value": 611309535,
+        "country": "India"
+      },
+      {
+        "year": "1975",
+        "value": 131843848,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1974",
+        "value": 597041391,
+        "country": "India"
+      },
+      {
+        "year": "1974",
+        "value": 128555045,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1982",
+        "value": 47494577,
+        "country": "Thailand"
+      },
+      {
+        "year": "1982",
+        "value": 55011289,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1985",
+        "value": 100253825,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1985",
+        "value": 508392,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1985",
+        "value": 218919,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1985",
+        "value": 6043783,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1979",
+        "value": 14579614,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1979",
+        "value": 44718434,
+        "country": "Thailand"
+      },
+      {
+        "year": "1982",
+        "value": 3450026,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1982",
+        "value": 13832798,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1982",
+        "value": 174333,
+        "country": "Maldives"
+      },
+      {
+        "year": "1978",
+        "value": 31972976,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1978",
+        "value": 14839695,
+        "country": "Nepal"
+      },
+      {
+        "year": "1980",
+        "value": 88016432,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1980",
+        "value": 433404,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1980",
+        "value": 186111,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1967",
+        "value": 11457328,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1967",
+        "value": 33037801,
+        "country": "Thailand"
+      },
+      {
+        "year": "1967",
+        "value": 38895080,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1976",
+        "value": 163607,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1976",
+        "value": 6134991,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1972",
+        "value": 2152400,
+        "country": "Singapore"
+      },
+      {
+        "year": "1972",
+        "value": 12809205,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1972",
+        "value": 37933929,
+        "country": "Thailand"
+      },
+      {
+        "year": "1973",
+        "value": 40294130,
+        "country": "Philippines"
+      },
+      {
+        "year": "1973",
+        "value": 2870573,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1973",
+        "value": 10935621,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1973",
+        "value": 134952,
+        "country": "Maldives"
+      },
+      {
+        "year": "1973",
+        "value": 29026388,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1973",
+        "value": 13275239,
+        "country": "Nepal"
+      },
+      {
+        "year": "1966",
+        "value": 61669806,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1966",
+        "value": 269820,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1966",
+        "value": 115874,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1966",
+        "value": 6201232,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1965",
+        "value": 37129656,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1964",
+        "value": 252987,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1964",
+        "value": 105922,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1964",
+        "value": 5946178,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1970",
+        "value": 69058894,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1970",
+        "value": 308528,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1970",
+        "value": 135138,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1970",
+        "value": 6639182,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1961",
+        "value": 5571168,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1961",
+        "value": 28792621,
+        "country": "Philippines"
+      },
+      {
+        "year": "1961",
+        "value": 1702400,
+        "country": "Singapore"
+      },
+      {
+        "year": "1961",
+        "value": 9899372,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1961",
+        "value": 27650334,
+        "country": "Thailand"
+      },
+      {
+        "year": "1961",
+        "value": 33409059,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1961",
+        "value": 53310348,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1961",
+        "value": 230602,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1961",
+        "value": 92517,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2009",
+        "value": 86460018,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2003",
+        "value": 79563777,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2016",
+        "value": 51495696,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2016",
+        "value": 27955462,
+        "country": "Nepal"
+      },
+      {
+        "year": "2019",
+        "value": 97173776,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2013",
+        "value": 50262658,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2013",
+        "value": 27589996,
+        "country": "Nepal"
+      },
+      {
+        "year": "2016",
+        "value": 6908802,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2011",
+        "value": 14722584,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2017",
+        "value": 432772,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2017",
+        "value": 16073372,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2016",
+        "value": 31789685,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2016",
+        "value": 443308,
+        "country": "Maldives"
+      },
+      {
+        "year": "2016",
+        "value": 160811932,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1998",
+        "value": 75299660,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2008",
+        "value": 48390793,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2008",
+        "value": 26990037,
+        "country": "Nepal"
+      },
+      {
+        "year": "2008",
+        "value": 1207930964,
+        "country": "India"
+      },
+      {
+        "year": "2008",
+        "value": 240157903,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2005",
+        "value": 66017420,
+        "country": "Thailand"
+      },
+      {
+        "year": "2013",
+        "value": 156532141,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2013",
+        "value": 725273,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2019",
+        "value": 52640713,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2019",
+        "value": 28414064,
+        "country": "Nepal"
+      },
+      {
+        "year": "2012",
+        "value": 1278674502,
+        "country": "India"
+      },
+      {
+        "year": "2012",
+        "value": 252698525,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2002",
+        "value": 1097600380,
+        "country": "India"
+      },
+      {
+        "year": "2002",
+        "value": 222088495,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2008",
+        "value": 67619830,
+        "country": "Thailand"
+      },
+      {
+        "year": "2003",
+        "value": 637663,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2003",
+        "value": 346637,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2008",
+        "value": 377793,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2008",
+        "value": 14053479,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2006",
+        "value": 1172878890,
+        "country": "India"
+      },
+      {
+        "year": "2021",
+        "value": 451721,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2021",
+        "value": 16974305,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2011",
+        "value": 6426590,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2016",
+        "value": 94000117,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2020",
+        "value": 98079191,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1996",
+        "value": 73156447,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2018",
+        "value": 5638676,
+        "country": "Singapore"
+      },
+      {
+        "year": "2012",
+        "value": 29662831,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2012",
+        "value": 386818,
+        "country": "Maldives"
+      },
+      {
+        "year": "2021",
+        "value": 167658854,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2017",
+        "value": 21453000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2018",
+        "value": 163523103,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2018",
+        "value": 759759,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2004",
+        "value": 5781626,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2004",
+        "value": 25256772,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2010",
+        "value": 96337125,
+        "country": "Philippines"
+      },
+      {
+        "year": "2010",
+        "value": 1243481564,
+        "country": "India"
+      },
+      {
+        "year": "2010",
+        "value": 246305322,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2023",
+        "value": 7664993,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2001",
+        "value": 333345,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2001",
+        "value": 12658484,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2009",
+        "value": 68121080,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 98935098,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2023",
+        "value": 35126298,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2023",
+        "value": 525994,
+        "country": "Maldives"
+      },
+      {
+        "year": "2021",
+        "value": 5453566,
+        "country": "Singapore"
+      },
+      {
+        "year": "2019",
+        "value": 5703569,
+        "country": "Singapore"
+      },
+      {
+        "year": "2019",
+        "value": 21803000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2007",
+        "value": 147989278,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2020",
+        "value": 112081264,
+        "country": "Philippines"
+      },
+      {
+        "year": "2010",
+        "value": 28655776,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2010",
+        "value": 360792,
+        "country": "Maldives"
+      },
+      {
+        "year": "2021",
+        "value": 276758053,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2002",
+        "value": 4175950,
+        "country": "Singapore"
+      },
+      {
+        "year": "2002",
+        "value": 19805752,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2000",
+        "value": 12462336,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2001",
+        "value": 45771139,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2001",
+        "value": 24946748,
+        "country": "Nepal"
+      },
+      {
+        "year": "2006",
+        "value": 4401365,
+        "country": "Singapore"
+      },
+      {
+        "year": "2017",
+        "value": 32355644,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2017",
+        "value": 458287,
+        "country": "Maldives"
+      },
+      {
+        "year": "2023",
+        "value": 100352192,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1998",
+        "value": 75791024,
+        "country": "Philippines"
+      },
+      {
+        "year": "2001",
+        "value": 81401488,
+        "country": "Philippines"
+      },
+      {
+        "year": "2002",
+        "value": 24102477,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2002",
+        "value": 291616,
+        "country": "Maldives"
+      },
+      {
+        "year": "2010",
+        "value": 20879089,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2022",
+        "value": 7559007,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2006",
+        "value": 5963200,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2005",
+        "value": 4265762,
+        "country": "Singapore"
+      },
+      {
+        "year": "2022",
+        "value": 22181000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2022",
+        "value": 71735329,
+        "country": "Thailand"
+      },
+      {
+        "year": "2023",
+        "value": 22037000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2023",
+        "value": 71702435,
+        "country": "Thailand"
+      },
+      {
+        "year": "2003",
+        "value": 19951521,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2003",
+        "value": 64868166,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 775442,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2022",
+        "value": 53756787,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2022",
+        "value": 29715436,
+        "country": "Nepal"
+      },
+      {
+        "year": "2004",
+        "value": 86394504,
+        "country": "Philippines"
+      },
+      {
+        "year": "1997",
+        "value": 11570982,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1993",
+        "value": 276971,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1993",
+        "value": 8616381,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1996",
+        "value": 59920064,
+        "country": "Thailand"
+      },
+      {
+        "year": "1994",
+        "value": 17275773,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1994",
+        "value": 58260854,
+        "country": "Thailand"
+      },
+      {
+        "year": "1992",
+        "value": 16739284,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1992",
+        "value": 56528834,
+        "country": "Thailand"
+      },
+      {
+        "year": "1991",
+        "value": 16475354,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1991",
+        "value": 55637434,
+        "country": "Thailand"
+      },
+      {
+        "year": "1999",
+        "value": 3958723,
+        "country": "Singapore"
+      },
+      {
+        "year": "1993",
+        "value": 41502429,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1993",
+        "value": 21180159,
+        "country": "Nepal"
+      },
+      {
+        "year": "1996",
+        "value": 262347,
+        "country": "Maldives"
+      },
+      {
+        "year": "1996",
+        "value": 43154860,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1996",
+        "value": 22741862,
+        "country": "Nepal"
+      },
+      {
+        "year": "1996",
+        "value": 5045678,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1996",
+        "value": 20850087,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1992",
+        "value": 4559646,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1976",
+        "value": 47684931,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1991",
+        "value": 18342464,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1991",
+        "value": 231802,
+        "country": "Maldives"
+      },
+      {
+        "year": "1991",
+        "value": 40394154,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1974",
+        "value": 45413537,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1994",
+        "value": 4809220,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1994",
+        "value": 19820446,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1994",
+        "value": 250822,
+        "country": "Maldives"
+      },
+      {
+        "year": "1980",
+        "value": 52490101,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1990",
+        "value": 54738329,
+        "country": "Thailand"
+      },
+      {
+        "year": "1995",
+        "value": 4929409,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1995",
+        "value": 20330599,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1995",
+        "value": 256649,
+        "country": "Maldives"
+      },
+      {
+        "year": "1973",
+        "value": 44409861,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1972",
+        "value": 43429168,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1983",
+        "value": 56337921,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1983",
+        "value": 737372681,
+        "country": "India"
+      },
+      {
+        "year": "1983",
+        "value": 159651381,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1983",
+        "value": 3541001,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2024",
+        "value": 115843670,
+        "country": "Philippines"
+      },
+      {
+        "year": "2024",
+        "value": 6036860,
+        "country": "Singapore"
+      },
+      {
+        "year": "1986",
+        "value": 56645077,
+        "country": "Philippines"
+      },
+      {
+        "year": "1988",
+        "value": 4072601,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1988",
+        "value": 16796605,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1988",
+        "value": 210885,
+        "country": "Maldives"
+      },
+      {
+        "year": "1989",
+        "value": 16248557,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1989",
+        "value": 53848956,
+        "country": "Thailand"
+      },
+      {
+        "year": "1986",
+        "value": 15760419,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1986",
+        "value": 196935,
+        "country": "Maldives"
+      },
+      {
+        "year": "1986",
+        "value": 37314878,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1986",
+        "value": 17868124,
+        "country": "Nepal"
+      },
+      {
+        "year": "1989",
+        "value": 61265260,
+        "country": "Philippines"
+      },
+      {
+        "year": "1989",
+        "value": 2930901,
+        "country": "Singapore"
+      },
+      {
+        "year": "1985",
+        "value": 55213006,
+        "country": "Philippines"
+      },
+      {
+        "year": "2024",
+        "value": 21916000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2024",
+        "value": 71668011,
+        "country": "Thailand"
+      },
+      {
+        "year": "1980",
+        "value": 5199872,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1979",
+        "value": 3228202,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1979",
+        "value": 12627862,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1980",
+        "value": 2413945,
+        "country": "Singapore"
+      },
+      {
+        "year": "1980",
+        "value": 14847974,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1980",
+        "value": 45650022,
+        "country": "Thailand"
+      },
+      {
+        "year": "1980",
+        "value": 48043740,
+        "country": "Philippines"
+      },
+      {
+        "year": "1981",
+        "value": 3366631,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1981",
+        "value": 13399203,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1981",
+        "value": 169532,
+        "country": "Maldives"
+      },
+      {
+        "year": "1977",
+        "value": 12035713,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1977",
+        "value": 151930,
+        "country": "Maldives"
+      },
+      {
+        "year": "1977",
+        "value": 31355966,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1977",
+        "value": 14499175,
+        "country": "Nepal"
+      },
+      {
+        "year": "1981",
+        "value": 15099414,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1981",
+        "value": 46575855,
+        "country": "Thailand"
+      },
+      {
+        "year": "1968",
+        "value": 34002560,
+        "country": "Thailand"
+      },
+      {
+        "year": "1968",
+        "value": 39734609,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1983",
+        "value": 95335155,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1983",
+        "value": 477460,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1983",
+        "value": 204741,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1983",
+        "value": 5636203,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1975",
+        "value": 30176565,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1975",
+        "value": 13870695,
+        "country": "Nepal"
+      },
+      {
+        "year": "1975",
+        "value": 42120826,
+        "country": "Philippines"
+      },
+      {
+        "year": "1984",
+        "value": 97814966,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1984",
+        "value": 492784,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1984",
+        "value": 211661,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1984",
+        "value": 5845117,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1964",
+        "value": 30232141,
+        "country": "Thailand"
+      },
+      {
+        "year": "1964",
+        "value": 36201563,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1974",
+        "value": 2229800,
+        "country": "Singapore"
+      },
+      {
+        "year": "1974",
+        "value": 13305693,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1974",
+        "value": 39952891,
+        "country": "Thailand"
+      },
+      {
+        "year": "1978",
+        "value": 83889655,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1978",
+        "value": 405243,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1978",
+        "value": 174884,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1978",
+        "value": 5211653,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1974",
+        "value": 75839348,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1974",
+        "value": 353538,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1974",
+        "value": 152656,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1974",
+        "value": 6783240,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1977",
+        "value": 81867264,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1977",
+        "value": 391639,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1977",
+        "value": 169277,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1973",
+        "value": 73722294,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1973",
+        "value": 341705,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1973",
+        "value": 147369,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1973",
+        "value": 6739726,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1971",
+        "value": 2112900,
+        "country": "Singapore"
+      },
+      {
+        "year": "1971",
+        "value": 12551910,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1971",
+        "value": 36937387,
+        "country": "Thailand"
+      },
+      {
+        "year": "1971",
+        "value": 137921,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1971",
+        "value": 6620880,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1963",
+        "value": 1795000,
+        "country": "Singapore"
+      },
+      {
+        "year": "1963",
+        "value": 10395040,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1963",
+        "value": 29342322,
+        "country": "Thailand"
+      },
+      {
+        "year": "1963",
+        "value": 35249101,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1968",
+        "value": 126222,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1968",
+        "value": 6467324,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1969",
+        "value": 26585112,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1969",
+        "value": 12167036,
+        "country": "Nepal"
+      },
+      {
+        "year": "1969",
+        "value": 36660799,
+        "country": "Philippines"
+      },
+      {
+        "year": "1969",
+        "value": 2042500,
+        "country": "Singapore"
+      },
+      {
+        "year": "1969",
+        "value": 12013858,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1967",
+        "value": 511606372,
+        "country": "India"
+      },
+      {
+        "year": "1967",
+        "value": 106526393,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1967",
+        "value": 2487715,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1967",
+        "value": 63510929,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1967",
+        "value": 278852,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1967",
+        "value": 121017,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1967",
+        "value": 6332944,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1962",
+        "value": 22704719,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1962",
+        "value": 10521116,
+        "country": "Nepal"
+      },
+      {
+        "year": "1962",
+        "value": 29723536,
+        "country": "Philippines"
+      },
+      {
+        "year": "1962",
+        "value": 1750200,
+        "country": "Singapore"
+      },
+      {
+        "year": "1962",
+        "value": 10143754,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1965",
+        "value": 32625316,
+        "country": "Philippines"
+      },
+      {
+        "year": "1965",
+        "value": 1886900,
+        "country": "Singapore"
+      },
+      {
+        "year": "1965",
+        "value": 10916965,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1965",
+        "value": 31149337,
+        "country": "Thailand"
+      },
+      {
+        "year": "1964",
+        "value": 58178374,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1962",
+        "value": 457283090,
+        "country": "India"
+      },
+      {
+        "year": "1962",
+        "value": 93375850,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1962",
+        "value": 2219910,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1962",
+        "value": 8380172,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1962",
+        "value": 95802,
+        "country": "Maldives"
+      },
+      {
+        "year": "1961",
+        "value": 446564729,
+        "country": "India"
+      },
+      {
+        "year": "1961",
+        "value": 90791249,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1961",
+        "value": 2169796,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1961",
+        "value": 8164443,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1961",
+        "value": 93450,
+        "country": "Maldives"
+      },
+      {
+        "year": "1961",
+        "value": 22210581,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1961",
+        "value": 10318396,
+        "country": "Nepal"
+      },
+      {
+        "year": "1960",
+        "value": 88347,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1960",
+        "value": 5449966,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1960",
+        "value": 435990338,
+        "country": "India"
+      },
+      {
+        "year": "2002",
+        "value": 78772224,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2010",
+        "value": 87455152,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2015",
+        "value": 92823254,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2014",
+        "value": 70216367,
+        "country": "Thailand"
+      },
+      {
+        "year": "2016",
+        "value": 1343944296,
+        "country": "India"
+      },
+      {
+        "year": "2016",
+        "value": 264627418,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1999",
+        "value": 12265731,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2013",
+        "value": 6611385,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2017",
+        "value": 51894938,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2017",
+        "value": 28011258,
+        "country": "Nepal"
+      },
+      {
+        "year": "2014",
+        "value": 416750,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2014",
+        "value": 15396772,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2006",
+        "value": 233951652,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1999",
+        "value": 1038225823,
+        "country": "India"
+      },
+      {
+        "year": "1999",
+        "value": 213004668,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2009",
+        "value": 6241642,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2004",
+        "value": 1135991513,
+        "country": "India"
+      },
+      {
+        "year": "2004",
+        "value": 227926649,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1999",
+        "value": 62299043,
+        "country": "Thailand"
+      },
+      {
+        "year": "2017",
+        "value": 7018147,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2009",
+        "value": 4987573,
+        "country": "Singapore"
+      },
+      {
+        "year": "2020",
+        "value": 1402617695,
+        "country": "India"
+      },
+      {
+        "year": "2020",
+        "value": 274814866,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2005",
+        "value": 47438365,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2005",
+        "value": 26309458,
+        "country": "Nepal"
+      },
+      {
+        "year": "1990",
+        "value": 65504552,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2012",
+        "value": 5312437,
+        "country": "Singapore"
+      },
+      {
+        "year": "2013",
+        "value": 411202,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2013",
+        "value": 15170208,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2013",
+        "value": 1295829511,
+        "country": "India"
+      },
+      {
+        "year": "2013",
+        "value": 255852467,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2000",
+        "value": 1057922733,
+        "country": "India"
+      },
+      {
+        "year": "2000",
+        "value": 216077790,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2020",
+        "value": 71641484,
+        "country": "Thailand"
+      },
+      {
+        "year": "1989",
+        "value": 64147348,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2006",
+        "value": 66567687,
+        "country": "Thailand"
+      },
+      {
+        "year": "2018",
+        "value": 71376079,
+        "country": "Thailand"
+      },
+      {
+        "year": "2018",
+        "value": 7128045,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2012",
+        "value": 100175512,
+        "country": "Philippines"
+      },
+      {
+        "year": "2013",
+        "value": 69845114,
+        "country": "Thailand"
+      },
+      {
+        "year": "2004",
+        "value": 65452047,
+        "country": "Thailand"
+      },
+      {
+        "year": "2004",
+        "value": 142902856,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2004",
+        "value": 650544,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2019",
+        "value": 7237636,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2007",
+        "value": 678641,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2007",
+        "value": 370873,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2017",
+        "value": 71160187,
+        "country": "Thailand"
+      },
+      {
+        "year": "2000",
+        "value": 596863,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2000",
+        "value": 326424,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2010",
+        "value": 49024382,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2020",
+        "value": 33889558,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2020",
+        "value": 502118,
+        "country": "Maldives"
+      },
+      {
+        "year": "2008",
+        "value": 4839396,
+        "country": "Singapore"
+      },
+      {
+        "year": "2007",
+        "value": 1190676021,
+        "country": "India"
+      },
+      {
+        "year": "2007",
+        "value": 237062337,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2006",
+        "value": 47785135,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2006",
+        "value": 26565425,
+        "country": "Nepal"
+      },
+      {
+        "year": "2002",
+        "value": 138933658,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2003",
+        "value": 5697945,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2000",
+        "value": 24546509,
+        "country": "Nepal"
+      },
+      {
+        "year": "2001",
+        "value": 4138012,
+        "country": "Singapore"
+      },
+      {
+        "year": "2001",
+        "value": 19600362,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2006",
+        "value": 89508986,
+        "country": "Philippines"
+      },
+      {
+        "year": "2003",
+        "value": 46667192,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2003",
+        "value": 25688758,
+        "country": "Nepal"
+      },
+      {
+        "year": "2006",
+        "value": 26417909,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2006",
+        "value": 313851,
+        "country": "Maldives"
+      },
+      {
+        "year": "2010",
+        "value": 68579447,
+        "country": "Thailand"
+      },
+      {
+        "year": "2002",
+        "value": 624409,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2002",
+        "value": 340099,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2019",
+        "value": 164913055,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2019",
+        "value": 764824,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2002",
+        "value": 46232653,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2002",
+        "value": 25328981,
+        "country": "Nepal"
+      },
+      {
+        "year": "2012",
+        "value": 6518978,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2022",
+        "value": 1425423212,
+        "country": "India"
+      },
+      {
+        "year": "2022",
+        "value": 278830529,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011",
+        "value": 29162039,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2011",
+        "value": 373674,
+        "country": "Maldives"
+      },
+      {
+        "year": "2015",
+        "value": 422212,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2015",
+        "value": 15623251,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2005",
+        "value": 661865,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2005",
+        "value": 358916,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1997",
+        "value": 74226889,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2015",
+        "value": 105312992,
+        "country": "Philippines"
+      },
+      {
+        "year": "2000",
+        "value": 63007815,
+        "country": "Thailand"
+      },
+      {
+        "year": "2002",
+        "value": 64266437,
+        "country": "Thailand"
+      },
+      {
+        "year": "2000",
+        "value": 45290841,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2020",
+        "value": 7346533,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2015",
+        "value": 159383179,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2015",
+        "value": 740618,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2006",
+        "value": 20352411,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2012",
+        "value": 21169458,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2007",
+        "value": 6056236,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2020",
+        "value": 5685807,
+        "country": "Singapore"
+      },
+      {
+        "year": "2000",
+        "value": 22967816,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2000",
+        "value": 282019,
+        "country": "Maldives"
+      },
+      {
+        "year": "2000",
+        "value": 79625397,
+        "country": "Philippines"
+      },
+      {
+        "year": "2018",
+        "value": 32910967,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2018",
+        "value": 473099,
+        "country": "Maldives"
+      },
+      {
+        "year": "2009",
+        "value": 20756435,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2007",
+        "value": 67102394,
+        "country": "Thailand"
+      },
+      {
+        "year": "2023",
+        "value": 1438069596,
+        "country": "India"
+      },
+      {
+        "year": "2023",
+        "value": 281190067,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2001",
+        "value": 23526538,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2001",
+        "value": 286767,
+        "country": "Maldives"
+      },
+      {
+        "year": "2022",
+        "value": 169384897,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2022",
+        "value": 34695493,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2022",
+        "value": 524106,
+        "country": "Maldives"
+      },
+      {
+        "year": "2021",
+        "value": 22156000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2015",
+        "value": 5535002,
+        "country": "Singapore"
+      },
+      {
+        "year": "2015",
+        "value": 20970000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1998",
+        "value": 18596003,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1998",
+        "value": 61522630,
+        "country": "Thailand"
+      },
+      {
+        "year": "1991",
+        "value": 883927600,
+        "country": "India"
+      },
+      {
+        "year": "1991",
+        "value": 186778238,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1990",
+        "value": 864972221,
+        "country": "India"
+      },
+      {
+        "year": "1990",
+        "value": 183501098,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1996",
+        "value": 979678458,
+        "country": "India"
+      },
+      {
+        "year": "1996",
+        "value": 203204348,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1992",
+        "value": 902957070,
+        "country": "India"
+      },
+      {
+        "year": "1992",
+        "value": 190043744,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1999",
+        "value": 22435531,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1999",
+        "value": 277412,
+        "country": "Maldives"
+      },
+      {
+        "year": "1994",
+        "value": 70854391,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1981",
+        "value": 53738141,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1995",
+        "value": 291195,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1995",
+        "value": 10018497,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1995",
+        "value": 72049940,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1994",
+        "value": 554497,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1994",
+        "value": 284091,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1994",
+        "value": 9239162,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1991",
+        "value": 66891775,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1997",
+        "value": 127198069,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1997",
+        "value": 558697,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1997",
+        "value": 305341,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1993",
+        "value": 19322664,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1993",
+        "value": 244884,
+        "country": "Maldives"
+      },
+      {
+        "year": "1990",
+        "value": 39817251,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1990",
+        "value": 19524573,
+        "country": "Nepal"
+      },
+      {
+        "year": "1995",
+        "value": 122600370,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1995",
+        "value": 547989,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1993",
+        "value": 118132360,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1993",
+        "value": 554673,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1992",
+        "value": 65926125,
+        "country": "Philippines"
+      },
+      {
+        "year": "1992",
+        "value": 3230698,
+        "country": "Singapore"
+      },
+      {
+        "year": "1986",
+        "value": 51177834,
+        "country": "Thailand"
+      },
+      {
+        "year": "1986",
+        "value": 60347048,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1986",
+        "value": 790689978,
+        "country": "India"
+      },
+      {
+        "year": "1986",
+        "value": 170175065,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1986",
+        "value": 3846715,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1991",
+        "value": 113787109,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1980",
+        "value": 12983363,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1980",
+        "value": 164835,
+        "country": "Maldives"
+      },
+      {
+        "year": "1980",
+        "value": 33227204,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1980",
+        "value": 15553105,
+        "country": "Nepal"
+      },
+      {
+        "year": "1989",
+        "value": 109433799,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1989",
+        "value": 573586,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1990",
+        "value": 111633717,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1990",
+        "value": 589287,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1988",
+        "value": 38600927,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1988",
+        "value": 18638661,
+        "country": "Nepal"
+      },
+      {
+        "year": "1988",
+        "value": 59739052,
+        "country": "Philippines"
+      },
+      {
+        "year": "1988",
+        "value": 52969595,
+        "country": "Thailand"
+      },
+      {
+        "year": "1980",
+        "value": 687354025,
+        "country": "India"
+      },
+      {
+        "year": "1980",
+        "value": 148950540,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1980",
+        "value": 3292573,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2024",
+        "value": 29651054,
+        "country": "Nepal"
+      },
+      {
+        "year": "1987",
+        "value": 2774789,
+        "country": "Singapore"
+      },
+      {
+        "year": "1987",
+        "value": 15916576,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1982",
+        "value": 720313473,
+        "country": "India"
+      },
+      {
+        "year": "1982",
+        "value": 156052152,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1984",
+        "value": 754875449,
+        "country": "India"
+      },
+      {
+        "year": "1984",
+        "value": 163251124,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1984",
+        "value": 3637843,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1990",
+        "value": 4311955,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1990",
+        "value": 17833171,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1990",
+        "value": 224762,
+        "country": "Maldives"
+      },
+      {
+        "year": "2024",
+        "value": 35557673,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2024",
+        "value": 527799,
+        "country": "Maldives"
+      },
+      {
+        "year": "2024",
+        "value": 54500091,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1989",
+        "value": 248064,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1989",
+        "value": 7073473,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1976",
+        "value": 625861883,
+        "country": "India"
+      },
+      {
+        "year": "1976",
+        "value": 135173655,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1976",
+        "value": 3064876,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1982",
+        "value": 92814507,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1982",
+        "value": 462485,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1977",
+        "value": 640801103,
+        "country": "India"
+      },
+      {
+        "year": "1977",
+        "value": 138533541,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1977",
+        "value": 3118923,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1978",
+        "value": 655728229,
+        "country": "India"
+      },
+      {
+        "year": "1978",
+        "value": 141953163,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1979",
+        "value": 671155747,
+        "country": "India"
+      },
+      {
+        "year": "1979",
+        "value": 145434834,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1983",
+        "value": 14285907,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1983",
+        "value": 179128,
+        "country": "Maldives"
+      },
+      {
+        "year": "1983",
+        "value": 35162715,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1983",
+        "value": 16689119,
+        "country": "Nepal"
+      },
+      {
+        "year": "1983",
+        "value": 52194620,
+        "country": "Philippines"
+      },
+      {
+        "year": "1985",
+        "value": 15252258,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1985",
+        "value": 190169,
+        "country": "Maldives"
+      },
+      {
+        "year": "1985",
+        "value": 36622827,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1985",
+        "value": 17477692,
+        "country": "Nepal"
+      },
+      {
+        "year": "1982",
+        "value": 2646466,
+        "country": "Singapore"
+      },
+      {
+        "year": "1982",
+        "value": 15286567,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1978",
+        "value": 43788976,
+        "country": "Thailand"
+      },
+      {
+        "year": "1975",
+        "value": 2262600,
+        "country": "Singapore"
+      },
+      {
+        "year": "1975",
+        "value": 13548984,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1975",
+        "value": 40940005,
+        "country": "Thailand"
+      },
+      {
+        "year": "1977",
+        "value": 5668551,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1981",
+        "value": 447836,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1981",
+        "value": 191977,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1981",
+        "value": 5284495,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1977",
+        "value": 44367962,
+        "country": "Philippines"
+      },
+      {
+        "year": "1977",
+        "value": 2325300,
+        "country": "Singapore"
+      },
+      {
+        "year": "1975",
+        "value": 3005521,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1975",
+        "value": 11471914,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1975",
+        "value": 143158,
+        "country": "Maldives"
+      },
+      {
+        "year": "1974",
+        "value": 41174341,
+        "country": "Philippines"
+      },
+      {
+        "year": "1970",
+        "value": 35954408,
+        "country": "Thailand"
+      },
+      {
+        "year": "1970",
+        "value": 41475230,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1973",
+        "value": 2193000,
+        "country": "Singapore"
+      },
+      {
+        "year": "1973",
+        "value": 13060916,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1973",
+        "value": 38947787,
+        "country": "Thailand"
+      },
+      {
+        "year": "1971",
+        "value": 27807219,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1971",
+        "value": 12710061,
+        "country": "Nepal"
+      },
+      {
+        "year": "1971",
+        "value": 38518659,
+        "country": "Philippines"
+      },
+      {
+        "year": "1970",
+        "value": 545864268,
+        "country": "India"
+      },
+      {
+        "year": "1970",
+        "value": 115657495,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1970",
+        "value": 2669702,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1972",
+        "value": 2801660,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1972",
+        "value": 10676835,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1972",
+        "value": 130968,
+        "country": "Maldives"
+      },
+      {
+        "year": "1972",
+        "value": 28428324,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1968",
+        "value": 25989662,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1968",
+        "value": 11906266,
+        "country": "Nepal"
+      },
+      {
+        "year": "1968",
+        "value": 35638342,
+        "country": "Philippines"
+      },
+      {
+        "year": "1968",
+        "value": 2012000,
+        "country": "Singapore"
+      },
+      {
+        "year": "1968",
+        "value": 11736088,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1976",
+        "value": 79855318,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1976",
+        "value": 378490,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1968",
+        "value": 522716889,
+        "country": "India"
+      },
+      {
+        "year": "1968",
+        "value": 109450006,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1968",
+        "value": 2546377,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1968",
+        "value": 9725281,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1968",
+        "value": 116075,
+        "country": "Maldives"
+      },
+      {
+        "year": "1969",
+        "value": 533880544,
+        "country": "India"
+      },
+      {
+        "year": "1969",
+        "value": 112517639,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1969",
+        "value": 2606959,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1969",
+        "value": 9947597,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1969",
+        "value": 119564,
+        "country": "Maldives"
+      },
+      {
+        "year": "1962",
+        "value": 54881146,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1962",
+        "value": 237636,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1962",
+        "value": 96719,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1962",
+        "value": 5697558,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1960",
+        "value": 1646400,
+        "country": "Singapore"
+      },
+      {
+        "year": "1960",
+        "value": 9661389,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1960",
+        "value": 26851747,
+        "country": "Thailand"
+      },
+      {
+        "year": "1960",
+        "value": 32531933,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1970",
+        "value": 37622204,
+        "country": "Philippines"
+      },
+      {
+        "year": "1970",
+        "value": 2074507,
+        "country": "Singapore"
+      },
+      {
+        "year": "1970",
+        "value": 12287110,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1963",
+        "value": 56504402,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1963",
+        "value": 245156,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1963",
+        "value": 101159,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1963",
+        "value": 5823010,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1964",
+        "value": 479229598,
+        "country": "India"
+      },
+      {
+        "year": "1964",
+        "value": 98833749,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1964",
+        "value": 2322826,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1964",
+        "value": 8828406,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1964",
+        "value": 100662,
+        "country": "Maldives"
+      },
+      {
+        "year": "1971",
+        "value": 70276758,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1971",
+        "value": 319211,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1963",
+        "value": 2271061,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1963",
+        "value": 8602160,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1963",
+        "value": 98222,
+        "country": "Maldives"
+      },
+      {
+        "year": "1963",
+        "value": 23213408,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1963",
+        "value": 10729818,
+        "country": "Nepal"
+      },
+      {
+        "year": "1963",
+        "value": 30674731,
+        "country": "Philippines"
+      },
+      {
+        "year": "1965",
+        "value": 59902519,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1965",
+        "value": 261200,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1965",
+        "value": 110838,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1965",
+        "value": 6072289,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2013",
+        "value": 90573104,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2022",
+        "value": 99680655,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2014",
+        "value": 6703172,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2016",
+        "value": 747866,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1998",
+        "value": 312385,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1998",
+        "value": 12058173,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2014",
+        "value": 1312277191,
+        "country": "India"
+      },
+      {
+        "year": "2014",
+        "value": 258877399,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2012",
+        "value": 49837446,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2012",
+        "value": 27534915,
+        "country": "Nepal"
+      },
+      {
+        "year": "1999",
+        "value": 5340784,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2014",
+        "value": 733139,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2014",
+        "value": 157964929,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2017",
+        "value": 5612253,
+        "country": "Singapore"
+      },
+      {
+        "year": "2010",
+        "value": 14500726,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2014",
+        "value": 50681634,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2014",
+        "value": 27672370,
+        "country": "Nepal"
+      },
+      {
+        "year": "2014",
+        "value": 5469724,
+        "country": "Singapore"
+      },
+      {
+        "year": "2016",
+        "value": 427564,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2016",
+        "value": 15852803,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2004",
+        "value": 352911,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2004",
+        "value": 13244731,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2017",
+        "value": 162186147,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2017",
+        "value": 754335,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2016",
+        "value": 5607283,
+        "country": "Singapore"
+      },
+      {
+        "year": "2003",
+        "value": 1116803006,
+        "country": "India"
+      },
+      {
+        "year": "2003",
+        "value": 225048008,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2001",
+        "value": 1077898575,
+        "country": "India"
+      },
+      {
+        "year": "2001",
+        "value": 219097902,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016",
+        "value": 106735719,
+        "country": "Philippines"
+      },
+      {
+        "year": "2018",
+        "value": 52272247,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2018",
+        "value": 28079689,
+        "country": "Nepal"
+      },
+      {
+        "year": "2015",
+        "value": 1328024498,
+        "country": "India"
+      },
+      {
+        "year": "2015",
+        "value": 261799249,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011",
+        "value": 5183688,
+        "country": "Singapore"
+      },
+      {
+        "year": "2011",
+        "value": 1261224954,
+        "country": "India"
+      },
+      {
+        "year": "2011",
+        "value": 249470032,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011",
+        "value": 98248614,
+        "country": "Philippines"
+      },
+      {
+        "year": "1998",
+        "value": 44257793,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1998",
+        "value": 23680357,
+        "country": "Nepal"
+      },
+      {
+        "year": "2002",
+        "value": 12855241,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2011",
+        "value": 709377,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2011",
+        "value": 399389,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2010",
+        "value": 27341952,
+        "country": "Nepal"
+      },
+      {
+        "year": "2009",
+        "value": 150873714,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2009",
+        "value": 693988,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1999",
+        "value": 132108065,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1999",
+        "value": 582579,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1999",
+        "value": 319411,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2012",
+        "value": 69436098,
+        "country": "Thailand"
+      },
+      {
+        "year": "2019",
+        "value": 442680,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2019",
+        "value": 16481304,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2012",
+        "value": 155070101,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2012",
+        "value": 717279,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2009",
+        "value": 94384250,
+        "country": "Philippines"
+      },
+      {
+        "year": "2014",
+        "value": 20778000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2010",
+        "value": 6334194,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2023",
+        "value": 458949,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2023",
+        "value": 17423880,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2023",
+        "value": 5917648,
+        "country": "Singapore"
+      },
+      {
+        "year": "2004",
+        "value": 80338971,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2021",
+        "value": 1414203896,
+        "country": "India"
+      },
+      {
+        "year": "2019",
+        "value": 33440596,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2019",
+        "value": 487731,
+        "country": "Maldives"
+      },
+      {
+        "year": "2006",
+        "value": 364663,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2006",
+        "value": 13639028,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2003",
+        "value": 4114826,
+        "country": "Singapore"
+      },
+      {
+        "year": "2023",
+        "value": 114891199,
+        "country": "Philippines"
+      },
+      {
+        "year": "2007",
+        "value": 91075184,
+        "country": "Philippines"
+      },
+      {
+        "year": "2000",
+        "value": 134544304,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2020",
+        "value": 21919000,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2021",
+        "value": 113100950,
+        "country": "Philippines"
+      },
+      {
+        "year": "2014",
+        "value": 103767130,
+        "country": "Philippines"
+      },
+      {
+        "year": "2023",
+        "value": 54133798,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2020",
+        "value": 770006,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2020",
+        "value": 447404,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2008",
+        "value": 149474264,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2008",
+        "value": 686351,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2023",
+        "value": 29694614,
+        "country": "Nepal"
+      },
+      {
+        "year": "2004",
+        "value": 20087605,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2019",
+        "value": 71522271,
+        "country": "Thailand"
+      },
+      {
+        "year": "2007",
+        "value": 26998389,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2007",
+        "value": 324479,
+        "country": "Maldives"
+      },
+      {
+        "year": "2000",
+        "value": 19293054,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "2021",
+        "value": 34282399,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021",
+        "value": 516154,
+        "country": "Maldives"
+      },
+      {
+        "year": "2005",
+        "value": 5869523,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2005",
+        "value": 25836071,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2022",
+        "value": 780914,
+        "country": "Bhutan"
+      },
+      {
+        "year": "2022",
+        "value": 455370,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "2022",
+        "value": 17201724,
+        "country": "Cambodia"
+      },
+      {
+        "year": "2015",
+        "value": 6801645,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2015",
+        "value": 51089056,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2003",
+        "value": 24679602,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2003",
+        "value": 296491,
+        "country": "Maldives"
+      },
+      {
+        "year": "2021",
+        "value": 53387102,
+        "country": "Myanmar"
+      },
+      {
+        "year": "2021",
+        "value": 29475010,
+        "country": "Nepal"
+      },
+      {
+        "year": "2015",
+        "value": 31232798,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2015",
+        "value": 428154,
+        "country": "Maldives"
+      },
+      {
+        "year": "2021",
+        "value": 7453194,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2022",
+        "value": 113964338,
+        "country": "Philippines"
+      },
+      {
+        "year": "2005",
+        "value": 88015962,
+        "country": "Philippines"
+      },
+      {
+        "year": "1997",
+        "value": 999133762,
+        "country": "India"
+      },
+      {
+        "year": "1997",
+        "value": 206536095,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1994",
+        "value": 941163767,
+        "country": "India"
+      },
+      {
+        "year": "1994",
+        "value": 196591828,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2005",
+        "value": 20216524,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1993",
+        "value": 922118387,
+        "country": "India"
+      },
+      {
+        "year": "1993",
+        "value": 193305168,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1993",
+        "value": 57408198,
+        "country": "Thailand"
+      },
+      {
+        "year": "1998",
+        "value": 3927213,
+        "country": "Singapore"
+      },
+      {
+        "year": "1994",
+        "value": 42055143,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1994",
+        "value": 21717479,
+        "country": "Nepal"
+      },
+      {
+        "year": "1997",
+        "value": 43708798,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1997",
+        "value": 23219463,
+        "country": "Nepal"
+      },
+      {
+        "year": "1995",
+        "value": 42605338,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1995",
+        "value": 22245439,
+        "country": "Nepal"
+      },
+      {
+        "year": "1993",
+        "value": 4685060,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1993",
+        "value": 67530621,
+        "country": "Philippines"
+      },
+      {
+        "year": "1992",
+        "value": 68260337,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1991",
+        "value": 599784,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1991",
+        "value": 262596,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1991",
+        "value": 7686850,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1991",
+        "value": 20036500,
+        "country": "Nepal"
+      },
+      {
+        "year": "1984",
+        "value": 57706067,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1988",
+        "value": 827342990,
+        "country": "India"
+      },
+      {
+        "year": "1988",
+        "value": 176855065,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1996",
+        "value": 72190242,
+        "country": "Philippines"
+      },
+      {
+        "year": "1996",
+        "value": 3670704,
+        "country": "Singapore"
+      },
+      {
+        "year": "1995",
+        "value": 17564068,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1995",
+        "value": 59098232,
+        "country": "Thailand"
+      },
+      {
+        "year": "1997",
+        "value": 60724584,
+        "country": "Thailand"
+      },
+      {
+        "year": "1996",
+        "value": 124862179,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1995",
+        "value": 3524506,
+        "country": "Singapore"
+      },
+      {
+        "year": "1987",
+        "value": 808931270,
+        "country": "India"
+      },
+      {
+        "year": "1987",
+        "value": 173511154,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1996",
+        "value": 548784,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1996",
+        "value": 298276,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1996",
+        "value": 10801270,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1992",
+        "value": 115952192,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1992",
+        "value": 577774,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1996",
+        "value": 17905018,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1995",
+        "value": 70546246,
+        "country": "Philippines"
+      },
+      {
+        "year": "1997",
+        "value": 73908810,
+        "country": "Philippines"
+      },
+      {
+        "year": "1992",
+        "value": 18834572,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1992",
+        "value": 238543,
+        "country": "Maldives"
+      },
+      {
+        "year": "1992",
+        "value": 40950342,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1978",
+        "value": 50249552,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1990",
+        "value": 62854666,
+        "country": "Philippines"
+      },
+      {
+        "year": "1997",
+        "value": 21375218,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1997",
+        "value": 267707,
+        "country": "Maldives"
+      },
+      {
+        "year": "1989",
+        "value": 846039529,
+        "country": "India"
+      },
+      {
+        "year": "1989",
+        "value": 180201630,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1988",
+        "value": 6812014,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1990",
+        "value": 255292,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1990",
+        "value": 7374752,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1989",
+        "value": 39214618,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1989",
+        "value": 19057807,
+        "country": "Nepal"
+      },
+      {
+        "year": "1987",
+        "value": 52074105,
+        "country": "Thailand"
+      },
+      {
+        "year": "1987",
+        "value": 61584651,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1975",
+        "value": 46482903,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2024",
+        "value": 173562364,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2024",
+        "value": 791524,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1985",
+        "value": 2735957,
+        "country": "Singapore"
+      },
+      {
+        "year": "1985",
+        "value": 15544154,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1985",
+        "value": 50270753,
+        "country": "Thailand"
+      },
+      {
+        "year": "1982",
+        "value": 198165,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1982",
+        "value": 5436432,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1982",
+        "value": 34482965,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1982",
+        "value": 16297987,
+        "country": "Nepal"
+      },
+      {
+        "year": "1982",
+        "value": 50695707,
+        "country": "Philippines"
+      },
+      {
+        "year": "1981",
+        "value": 33858783,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1981",
+        "value": 15922423,
+        "country": "Nepal"
+      },
+      {
+        "year": "1985",
+        "value": 772647793,
+        "country": "India"
+      },
+      {
+        "year": "1984",
+        "value": 14759009,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1984",
+        "value": 184198,
+        "country": "Maldives"
+      },
+      {
+        "year": "1984",
+        "value": 35899313,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1984",
+        "value": 17085242,
+        "country": "Nepal"
+      },
+      {
+        "year": "1978",
+        "value": 45575281,
+        "country": "Philippines"
+      },
+      {
+        "year": "1978",
+        "value": 2353600,
+        "country": "Singapore"
+      },
+      {
+        "year": "1978",
+        "value": 14310128,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1983",
+        "value": 2681061,
+        "country": "Singapore"
+      },
+      {
+        "year": "1983",
+        "value": 15388794,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1983",
+        "value": 48423309,
+        "country": "Thailand"
+      },
+      {
+        "year": "1972",
+        "value": 570482142,
+        "country": "India"
+      },
+      {
+        "year": "1972",
+        "value": 122039841,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1976",
+        "value": 13796770,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1976",
+        "value": 41896504,
+        "country": "Thailand"
+      },
+      {
+        "year": "1984",
+        "value": 53726181,
+        "country": "Philippines"
+      },
+      {
+        "year": "1979",
+        "value": 160360,
+        "country": "Maldives"
+      },
+      {
+        "year": "1979",
+        "value": 32596550,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1979",
+        "value": 15190590,
+        "country": "Nepal"
+      },
+      {
+        "year": "1984",
+        "value": 2732221,
+        "country": "Singapore"
+      },
+      {
+        "year": "1984",
+        "value": 15441860,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1984",
+        "value": 49351708,
+        "country": "Thailand"
+      },
+      {
+        "year": "1977",
+        "value": 14049371,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1977",
+        "value": 42843974,
+        "country": "Thailand"
+      },
+      {
+        "year": "1973",
+        "value": 583465598,
+        "country": "India"
+      },
+      {
+        "year": "1973",
+        "value": 125288515,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1976",
+        "value": 11750097,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1976",
+        "value": 147525,
+        "country": "Maldives"
+      },
+      {
+        "year": "1976",
+        "value": 30758811,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1976",
+        "value": 14177649,
+        "country": "Nepal"
+      },
+      {
+        "year": "1969",
+        "value": 34973782,
+        "country": "Thailand"
+      },
+      {
+        "year": "1969",
+        "value": 40582096,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1979",
+        "value": 85935072,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1979",
+        "value": 419200,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1979",
+        "value": 180422,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1979",
+        "value": 5088808,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1976",
+        "value": 43201488,
+        "country": "Philippines"
+      },
+      {
+        "year": "1976",
+        "value": 2293300,
+        "country": "Singapore"
+      },
+      {
+        "year": "1972",
+        "value": 12989099,
+        "country": "Nepal"
+      },
+      {
+        "year": "1972",
+        "value": 39408560,
+        "country": "Philippines"
+      },
+      {
+        "year": "1975",
+        "value": 77854351,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1975",
+        "value": 365791,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1975",
+        "value": 158070,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1975",
+        "value": 6581371,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1981",
+        "value": 90303105,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1974",
+        "value": 2939761,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1974",
+        "value": 11200906,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1974",
+        "value": 138978,
+        "country": "Maldives"
+      },
+      {
+        "year": "1974",
+        "value": 29598167,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1974",
+        "value": 13568435,
+        "country": "Nepal"
+      },
+      {
+        "year": "1971",
+        "value": 558096387,
+        "country": "India"
+      },
+      {
+        "year": "1971",
+        "value": 118833702,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1962",
+        "value": 28481040,
+        "country": "Thailand"
+      },
+      {
+        "year": "1962",
+        "value": 34288560,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1966",
+        "value": 1934400,
+        "country": "Singapore"
+      },
+      {
+        "year": "1966",
+        "value": 11183928,
+        "country": "Sri Lanka"
+      },
+      {
+        "year": "1966",
+        "value": 32086071,
+        "country": "Thailand"
+      },
+      {
+        "year": "1966",
+        "value": 38024836,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "1971",
+        "value": 2734628,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "1971",
+        "value": 10423453,
+        "country": "Malaysia"
+      },
+      {
+        "year": "1971",
+        "value": 127035,
+        "country": "Maldives"
+      },
+      {
+        "year": "1966",
+        "value": 500740247,
+        "country": "India"
+      },
+      {
+        "year": "1966",
+        "value": 103792754,
+        "country": "Indonesia"
+      },
+      {
+        "year": "1972",
+        "value": 71641519,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1972",
+        "value": 330264,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1972",
+        "value": 142189,
+        "country": "Brunei Darussalam"
+      },
+      {
+        "year": "1972",
+        "value": 6673886,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1969",
+        "value": 6604725,
+        "country": "Cambodia"
+      },
+      {
+        "year": "1968",
+        "value": 65408276,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "1968",
+        "value": 288311,
+        "country": "Bhutan"
+      },
+      {
+        "year": "1964",
+        "value": 23737315,
+        "country": "Myanmar"
+      },
+      {
+        "year": "1964",
+        "value": 10946392,
+        "country": "Nepal"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          88347.0,
+          1450935791.0
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Persons",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.0f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

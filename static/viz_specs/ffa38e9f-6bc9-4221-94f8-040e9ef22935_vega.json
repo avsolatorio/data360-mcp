@@ -1,0 +1,380 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Labor force participation rate, female vs. Labor force participation rate, male"
+    ],
+    "subtitle": [
+      "India, 2010-2022"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "country": "India",
+        "indicator": "Female",
+        "value": 28.425
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "indicator": "Female",
+        "value": 27.583
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "indicator": "Female",
+        "value": 26.764
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "Female",
+        "value": 26.669
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "Female",
+        "value": 26.607
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "Female",
+        "value": 26.582
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "Female",
+        "value": 26.575
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "Female",
+        "value": 26.578
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "Female",
+        "value": 26.568
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "indicator": "Female",
+        "value": 26.539
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "indicator": "Female",
+        "value": 25.998
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "indicator": "Female",
+        "value": 27.724
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "indicator": "Female",
+        "value": 29.348
+      },
+      {
+        "year": "2010",
+        "country": "India",
+        "indicator": "Male",
+        "value": 79.669
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "indicator": "Male",
+        "value": 79.231
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "indicator": "Male",
+        "value": 78.797
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "Male",
+        "value": 78.605
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "Male",
+        "value": 78.354
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "Male",
+        "value": 78.035
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "Male",
+        "value": 77.692
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "Male",
+        "value": 77.336
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "Male",
+        "value": 76.974
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "indicator": "Male",
+        "value": 76.613
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "indicator": "Male",
+        "value": 75.693
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "indicator": "Male",
+        "value": 75.964
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "indicator": "Male",
+        "value": 76.503
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "independent"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "Female, Male",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 180,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "oneOf": [
+              "Female",
+              "Male"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "indicator",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Female",
+              "Male"
+            ],
+            "range": [
+              "#34A7F2",
+              "#FF9800"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "labelFontSize": 11,
+            "symbolSize": 80,
+            "labelLimit": 200
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ]
+      }
+    }
+  ],
+  "columns": 1,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

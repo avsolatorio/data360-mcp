@@ -1,0 +1,318 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP (annual % growth) vs. Inflation, consumer prices (annual % growth)"
+    ],
+    "subtitle": [
+      "Germany, 2010-2020",
+      "Percentage change per annum"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 4.134638
+      },
+      {
+        "year": "2011",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 3.757969
+      },
+      {
+        "year": "2012",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 0.463512
+      },
+      {
+        "year": "2013",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 0.396996
+      },
+      {
+        "year": "2014",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.180186
+      },
+      {
+        "year": "2015",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 1.663006
+      },
+      {
+        "year": "2016",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.222222
+      },
+      {
+        "year": "2017",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.797907
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 1.135696
+      },
+      {
+        "year": "2019",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 0.977735
+      },
+      {
+        "year": "2020",
+        "country": "Germany",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": -4.131914
+      },
+      {
+        "year": "2010",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.10381
+      },
+      {
+        "year": "2011",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.075173
+      },
+      {
+        "year": "2012",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.008489
+      },
+      {
+        "year": "2013",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.504723
+      },
+      {
+        "year": "2014",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 0.906794
+      },
+      {
+        "year": "2015",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 0.514426
+      },
+      {
+        "year": "2016",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 0.491747
+      },
+      {
+        "year": "2017",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.509495
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.732169
+      },
+      {
+        "year": "2019",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.44566
+      },
+      {
+        "year": "2020",
+        "country": "Germany",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 0.144878
+      }
+    ]
+  },
+  "width": 680,
+  "height": 350,
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    },
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "indicator_value_melted",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Percentage change per annum",
+        "labelExpr": "format(datum.value, '.1f') + '%'"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "color": {
+      "field": "indicator_name_melted",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800"
+        ]
+      },
+      "legend": {
+        "title": null,
+        "orient": "bottom",
+        "offset": 12
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "field": "indicator_name_melted",
+        "title": "Indicator",
+        "type": "nominal"
+      },
+      {
+        "field": "indicator_value_melted",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      }
+    ]
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

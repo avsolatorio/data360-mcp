@@ -1,0 +1,198 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP: Kenya vs Neighboring East African Countries (2024)",
+    "subtitle": [
+      "2024",
+      "US Dollars"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2024",
+        "value": 149740297952.37485,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2024",
+        "value": 120397537849.82584,
+        "country": "Kenya"
+      },
+      {
+        "year": "2024",
+        "value": 79235713444.97768,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2024",
+        "value": 53911907079.048515,
+        "country": "Uganda"
+      },
+      {
+        "year": "2024",
+        "value": 11967000000.0,
+        "country": "Somalia"
+      }
+    ]
+  },
+  "mark": {
+    "type": "bar",
+    "cornerRadiusTopRight": 3,
+    "cornerRadiusBottomRight": 3
+  },
+  "encoding": {
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "sort": "-x",
+      "axis": {
+        "title": null,
+        "labelColor": "#111111",
+        "labelFontWeight": "bold",
+        "labelLimit": 150
+      }
+    },
+    "x": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "GDP",
+        "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1~f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1~f') : '$'+format(datum.value,'.2~f')"
+      },
+      "scale": {
+        "zero": true
+      }
+    },
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": null
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "nominal"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": "$,.2f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "GDP",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 500,
+  "height": 180,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

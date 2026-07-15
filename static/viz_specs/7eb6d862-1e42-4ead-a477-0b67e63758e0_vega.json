@@ -1,0 +1,411 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Sub-Saharan Africa \u2014 Population, total (2024)",
+    "subtitle": [
+      "Angola, Benin, Botswana, Burkina Faso, Burundi, Cabo Verde, Cameroon, Central African Republic, Chad, Comoros, \u2026 (+38 more), 2024",
+      "Persons"
+    ]
+  },
+  "width": 800,
+  "height": 450,
+  "data": {
+    "url": "https://unpkg.com/world-atlas@2.0.2/countries-110m.json",
+    "format": {
+      "type": "topojson",
+      "feature": "countries"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "year": "2024",
+              "value": 14754785,
+              "country": "Guinea"
+            },
+            {
+              "year": "2024",
+              "value": 2201352,
+              "country": "Guinea-Bissau"
+            },
+            {
+              "year": "2024",
+              "value": 56432944,
+              "country": "Kenya"
+            },
+            {
+              "year": "2024",
+              "value": 2337423,
+              "country": "Lesotho"
+            },
+            {
+              "year": "2024",
+              "value": 5612817,
+              "country": "Liberia"
+            },
+            {
+              "year": "2024",
+              "value": 31964956,
+              "country": "Madagascar"
+            },
+            {
+              "year": "2024",
+              "value": 23548781,
+              "country": "Burkina Faso"
+            },
+            {
+              "year": "2024",
+              "value": 14047786,
+              "country": "Burundi"
+            },
+            {
+              "year": "2024",
+              "value": 524877,
+              "country": "Cabo Verde"
+            },
+            {
+              "year": "2024",
+              "value": 29123744,
+              "country": "Cameroon"
+            },
+            {
+              "year": "2024",
+              "value": 5330690,
+              "country": "Central African Republic"
+            },
+            {
+              "year": "2024",
+              "value": 20299123,
+              "country": "Chad"
+            },
+            {
+              "year": "2024",
+              "value": 866628,
+              "country": "Comoros"
+            },
+            {
+              "year": "2024",
+              "value": 1242822,
+              "country": "Eswatini"
+            },
+            {
+              "year": "2024",
+              "value": 132059767,
+              "country": "Ethiopia"
+            },
+            {
+              "year": "2024",
+              "value": 2538952,
+              "country": "Gabon"
+            },
+            {
+              "year": "2024",
+              "value": 2759988,
+              "country": "Gambia, The"
+            },
+            {
+              "year": "2024",
+              "value": 34427414,
+              "country": "Ghana"
+            },
+            {
+              "year": "2024",
+              "value": 9515236,
+              "country": "Togo"
+            },
+            {
+              "year": "2024",
+              "value": 50015092,
+              "country": "Uganda"
+            },
+            {
+              "year": "2024",
+              "value": 14256567,
+              "country": "Rwanda"
+            },
+            {
+              "year": "2024",
+              "value": 235536,
+              "country": "Sao Tome and Principe"
+            },
+            {
+              "year": "2024",
+              "value": 18501984,
+              "country": "Senegal"
+            },
+            {
+              "year": "2024",
+              "value": 121354,
+              "country": "Seychelles"
+            },
+            {
+              "year": "2024",
+              "value": 8642022,
+              "country": "Sierra Leone"
+            },
+            {
+              "year": "2024",
+              "value": 19009151,
+              "country": "Somalia"
+            },
+            {
+              "year": "2024",
+              "value": 64007187,
+              "country": "South Africa"
+            },
+            {
+              "year": "2024",
+              "value": 11943408,
+              "country": "South Sudan"
+            },
+            {
+              "year": "2024",
+              "value": 50448963,
+              "country": "Sudan"
+            },
+            {
+              "year": "2024",
+              "value": 68560157,
+              "country": "Tanzania"
+            },
+            {
+              "year": "2024",
+              "value": 37885849,
+              "country": "Angola"
+            },
+            {
+              "year": "2024",
+              "value": 3030131,
+              "country": "Namibia"
+            },
+            {
+              "year": "2024",
+              "value": 27032412,
+              "country": "Niger"
+            },
+            {
+              "year": "2024",
+              "value": 232679478,
+              "country": "Nigeria"
+            },
+            {
+              "year": "2024",
+              "value": 21655286,
+              "country": "Malawi"
+            },
+            {
+              "year": "2024",
+              "value": 24478595,
+              "country": "Mali"
+            },
+            {
+              "year": "2024",
+              "value": 5169395,
+              "country": "Mauritania"
+            },
+            {
+              "year": "2024",
+              "value": 1245779,
+              "country": "Mauritius"
+            },
+            {
+              "year": "2024",
+              "value": 34631766,
+              "country": "Mozambique"
+            },
+            {
+              "year": "2024",
+              "value": 21314956,
+              "country": "Zambia"
+            },
+            {
+              "year": "2024",
+              "value": 16634373,
+              "country": "Zimbabwe"
+            },
+            {
+              "year": "2024",
+              "value": 109276265,
+              "country": "Congo, Dem. Rep."
+            },
+            {
+              "year": "2024",
+              "value": 6332961,
+              "country": "Congo, Rep."
+            },
+            {
+              "year": "2024",
+              "value": 31934230,
+              "country": "Cote d'Ivoire"
+            },
+            {
+              "year": "2024",
+              "value": 1892516,
+              "country": "Equatorial Guinea"
+            },
+            {
+              "year": "2024",
+              "value": 3535603,
+              "country": "Eritrea"
+            },
+            {
+              "year": "2024",
+              "value": 14462724,
+              "country": "Benin"
+            },
+            {
+              "year": "2024",
+              "value": 2521139,
+              "country": "Botswana"
+            }
+          ]
+        },
+        "key": "country",
+        "fields": [
+          "year",
+          "value",
+          "country"
+        ]
+      }
+    }
+  ],
+  "projection": {
+    "type": "equalEarth"
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "fill": "#eee",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      },
+      "transform": [
+        {
+          "filter": "isValid(datum.value)"
+        }
+      ],
+      "encoding": {
+        "color": {
+          "field": "value",
+          "type": "quantitative",
+          "scale": {
+            "scheme": "blues"
+          },
+          "legend": {
+            "title": "Persons",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.0f"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

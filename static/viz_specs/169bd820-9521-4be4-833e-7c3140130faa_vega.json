@@ -1,0 +1,255 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Renewable energy consumption vs. Inflation, consumer prices"
+    ],
+    "subtitle": [
+      "Saudi Arabia, 2019"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2019",
+        "country": "Saudi Arabia",
+        "renewable_energy_consumption": 0.0,
+        "inflation_consumer_prices": -1.192986
+      }
+    ],
+    "format": {
+      "parse": {
+        "year": "string"
+      }
+    }
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Renewable energy consumption (Percentage)",
+        "color": "#34A7F2",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "bar",
+        "color": "#34A7F2",
+        "size": 40,
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "nominal",
+          "axis": {
+            "title": null,
+            "labels": false,
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "renewable_energy_consumption",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": true
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "renewable_energy_consumption",
+            "title": "Renewable energy consumption (Percentage)",
+            "format": ".2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "Inflation, consumer prices (Percentage change per annum)",
+        "color": "#FF9800",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "bar",
+        "color": "#FF9800",
+        "size": 40,
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "nominal",
+          "axis": {
+            "title": null,
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "inflation_consumer_prices",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": true
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "inflation_consumer_prices",
+            "title": "Inflation, consumer prices (Percentage change per annum)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared"
+    },
+    "axis": {
+      "x": "independent"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

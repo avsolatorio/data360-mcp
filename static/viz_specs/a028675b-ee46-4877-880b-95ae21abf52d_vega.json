@@ -1,0 +1,1087 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "WGI Indicators for India (2020\u20132024) \u2014 Set 1",
+    "subtitle": [
+      "India, 2020-2024",
+      "Unitless"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 0.349289
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 58.132069
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Government Effectiveness",
+        "value": 50.925333
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Government Effectiveness",
+        "value": 9.0
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Government Effectiveness",
+        "value": 0.226
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Government Effectiveness",
+        "value": 65.338804
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 0.240014
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 56.007308
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Government Effectiveness",
+        "value": 48.800572
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Government Effectiveness",
+        "value": 9.0
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Government Effectiveness",
+        "value": 0.226
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Government Effectiveness",
+        "value": 63.214043
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 0.339253
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 57.936913
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Government Effectiveness",
+        "value": 51.008853
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Government Effectiveness",
+        "value": 10.0
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Government Effectiveness",
+        "value": 0.217261
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Government Effectiveness",
+        "value": 64.864973
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 0.422603
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 59.55758
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Government Effectiveness",
+        "value": 52.662909
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Government Effectiveness",
+        "value": 11.0
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Government Effectiveness",
+        "value": 0.216214
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Government Effectiveness",
+        "value": 66.45225
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 0.404605
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Government Effectiveness",
+        "value": 59.207628
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Government Effectiveness",
+        "value": 52.31107
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Government Effectiveness",
+        "value": 10.0
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Government Effectiveness",
+        "value": 0.216273
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Government Effectiveness",
+        "value": 66.104187
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": -0.148653
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": 52.518317
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Regulatory Quality",
+        "value": 47.593571
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Regulatory Quality",
+        "value": 9.0
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Regulatory Quality",
+        "value": 0.190401
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Regulatory Quality",
+        "value": 57.443062
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": -0.169915
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": 52.182993
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Regulatory Quality",
+        "value": 47.258247
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Regulatory Quality",
+        "value": 9.0
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Regulatory Quality",
+        "value": 0.190401
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Regulatory Quality",
+        "value": 57.107738
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": -0.087658
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": 53.480301
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Regulatory Quality",
+        "value": 48.555555
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Regulatory Quality",
+        "value": 9.0
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Regulatory Quality",
+        "value": 0.190401
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Regulatory Quality",
+        "value": 58.405047
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": -0.12717
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": 52.857142
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Regulatory Quality",
+        "value": 47.938395
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Regulatory Quality",
+        "value": 10.0
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Regulatory Quality",
+        "value": 0.190169
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Regulatory Quality",
+        "value": 57.775888
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": -0.09607
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Regulatory Quality",
+        "value": 53.347638
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Regulatory Quality",
+        "value": 48.428891
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Regulatory Quality",
+        "value": 10.0
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Regulatory Quality",
+        "value": 0.190169
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Regulatory Quality",
+        "value": 58.266384
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": -0.720631
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": 53.584859
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Political Stability",
+        "value": 47.319844
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Political Stability",
+        "value": 11.0
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Political Stability",
+        "value": 0.22364
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Political Stability",
+        "value": 59.849874
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": -0.601599
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": 55.618123
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Political Stability",
+        "value": 49.353108
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Political Stability",
+        "value": 11.0
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Political Stability",
+        "value": 0.22364
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Political Stability",
+        "value": 61.883138
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": -0.753504
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": 53.023344
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Political Stability",
+        "value": 46.758329
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Political Stability",
+        "value": 11.0
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Political Stability",
+        "value": 0.22364
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Political Stability",
+        "value": 59.288359
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": -0.837974
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": 51.580456
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Political Stability",
+        "value": 45.258493
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Political Stability",
+        "value": 11.0
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Political Stability",
+        "value": 0.225673
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Political Stability",
+        "value": 57.90242
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": -0.785762
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Political Stability",
+        "value": 52.472312
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Political Stability",
+        "value": 46.244354
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Political Stability",
+        "value": 12.0
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Political Stability",
+        "value": 0.222317
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Political Stability",
+        "value": 58.700271
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": -0.102973
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": 55.192481
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Rule of Law",
+        "value": 50.948625
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Rule of Law",
+        "value": 13.0
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Rule of Law",
+        "value": 0.150355
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Rule of Law",
+        "value": 59.436338
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": -0.184103
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": 53.796175
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Rule of Law",
+        "value": 49.552319
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Rule of Law",
+        "value": 13.0
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Rule of Law",
+        "value": 0.150355
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Rule of Law",
+        "value": 58.040032
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": -0.110488
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": 55.063127
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Rule of Law",
+        "value": 50.892382
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Rule of Law",
+        "value": 14.0
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Rule of Law",
+        "value": 0.147765
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Rule of Law",
+        "value": 59.233873
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": -0.087907
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": 55.451771
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Rule of Law",
+        "value": 51.301167
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Rule of Law",
+        "value": 15.0
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Rule of Law",
+        "value": 0.147051
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Rule of Law",
+        "value": 59.602375
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": -0.039229
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "est",
+        "indicator": "Rule of Law",
+        "value": 56.289557
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "lower",
+        "indicator": "Rule of Law",
+        "value": 52.13891
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "Number of sources",
+        "indicator": "Rule of Law",
+        "value": 14.0
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "se",
+        "indicator": "Rule of Law",
+        "value": 0.147053
+      },
+      {
+        "year": "2024",
+        "country": "India",
+        "comp_breakdown_1": "upper",
+        "indicator": "Rule of Law",
+        "value": 60.440204
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "transform": [
+        {
+          "pivot": "comp_breakdown_1",
+          "value": "value",
+          "groupby": [
+            "year",
+            "country"
+          ]
+        }
+      ],
+      "mark": {
+        "type": "area",
+        "opacity": 0.2,
+        "color": "#34A7F2"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "lower",
+          "type": "quantitative",
+          "scale": {
+            "zero": false
+          }
+        },
+        "y2": {
+          "field": "upper"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.comp_breakdown_1 == 'est'"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Unitless",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "indicator",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Regulatory Quality",
+              "Political Stability",
+              "Rule of Law",
+              "Government Effectiveness"
+            ],
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

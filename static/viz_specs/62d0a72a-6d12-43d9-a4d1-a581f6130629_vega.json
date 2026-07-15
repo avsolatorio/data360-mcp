@@ -1,0 +1,458 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Trade (% of GDP) vs. Foreign direct investment, net inflows (% of GDP)"
+    ],
+    "subtitle": [
+      "2015-2020",
+      "Percentage of GDP"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "trade_of_gdp": 26.953626,
+        "foreign_direct_investment_net_inflows_of": 3.592149
+      },
+      {
+        "year": "2015",
+        "country": "China",
+        "trade_of_gdp": 38.697185,
+        "foreign_direct_investment_net_inflows_of": 2.149573
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "trade_of_gdp": 41.922914,
+        "foreign_direct_investment_net_inflows_of": 2.092115
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "trade_of_gdp": 49.359349,
+        "foreign_direct_investment_net_inflows_of": 0.502608
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "trade_of_gdp": 56.726676,
+        "foreign_direct_investment_net_inflows_of": 0.438736
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "trade_of_gdp": 24.533682,
+        "foreign_direct_investment_net_inflows_of": 4.137378
+      },
+      {
+        "year": "2016",
+        "country": "China",
+        "trade_of_gdp": 36.177171,
+        "foreign_direct_investment_net_inflows_of": 1.525395
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "trade_of_gdp": 40.082486,
+        "foreign_direct_investment_net_inflows_of": 1.937364
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "trade_of_gdp": 46.51812,
+        "foreign_direct_investment_net_inflows_of": 2.5485
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "trade_of_gdp": 55.861258,
+        "foreign_direct_investment_net_inflows_of": 0.684613
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "trade_of_gdp": 24.319734,
+        "foreign_direct_investment_net_inflows_of": 3.33826
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "trade_of_gdp": 36.950853,
+        "foreign_direct_investment_net_inflows_of": 1.32469
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "trade_of_gdp": 40.742497,
+        "foreign_direct_investment_net_inflows_of": 1.507316
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "trade_of_gdp": 46.876524,
+        "foreign_direct_investment_net_inflows_of": 1.814093
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "trade_of_gdp": 53.535932,
+        "foreign_direct_investment_net_inflows_of": 0.539674
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "trade_of_gdp": 28.876203,
+        "foreign_direct_investment_net_inflows_of": 4.078588
+      },
+      {
+        "year": "2018",
+        "country": "China",
+        "trade_of_gdp": 36.894384,
+        "foreign_direct_investment_net_inflows_of": 1.66362
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "trade_of_gdp": 43.616969,
+        "foreign_direct_investment_net_inflows_of": 1.558215
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "trade_of_gdp": 51.5809,
+        "foreign_direct_investment_net_inflows_of": 0.530061
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "trade_of_gdp": 54.485545,
+        "foreign_direct_investment_net_inflows_of": 1.374291
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "trade_of_gdp": 28.890258,
+        "foreign_direct_investment_net_inflows_of": 3.692673
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "trade_of_gdp": 35.454435,
+        "foreign_direct_investment_net_inflows_of": 1.285492
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "trade_of_gdp": 39.905404,
+        "foreign_direct_investment_net_inflows_of": 1.784826
+      },
+      {
+        "year": "2019",
+        "country": "Russian Federation",
+        "trade_of_gdp": 49.228754,
+        "foreign_direct_investment_net_inflows_of": 1.888517
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "trade_of_gdp": 53.897996,
+        "foreign_direct_investment_net_inflows_of": 1.314078
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "trade_of_gdp": 32.302079,
+        "foreign_direct_investment_net_inflows_of": 2.592638
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "trade_of_gdp": 34.337778,
+        "foreign_direct_investment_net_inflows_of": 1.687708
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "trade_of_gdp": 37.758105,
+        "foreign_direct_investment_net_inflows_of": 2.406203
+      },
+      {
+        "year": "2020",
+        "country": "Russian Federation",
+        "trade_of_gdp": 45.966908,
+        "foreign_direct_investment_net_inflows_of": 0.634851
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "trade_of_gdp": 50.759659,
+        "foreign_direct_investment_net_inflows_of": 0.933074
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2,
+        "opacity": 0.6
+      },
+      "encoding": {
+        "x": {
+          "field": "trade_of_gdp",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Trade (% of GDP) (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "foreign_direct_investment_net_inflows_of",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Foreign direct investment, net inflows (% of GDP) (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 40,
+        "opacity": 0.9
+      },
+      "encoding": {
+        "x": {
+          "field": "trade_of_gdp",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Trade (% of GDP) (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "foreign_direct_investment_net_inflows_of",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Foreign direct investment, net inflows (% of GDP) (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "trade_of_gdp",
+            "title": "Trade (% of GDP) (Percentage of GDP)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "foreign_direct_investment_net_inflows_of",
+            "title": "Foreign direct investment, net inflows (% of GDP) (Percentage of GDP)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "width": 550,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

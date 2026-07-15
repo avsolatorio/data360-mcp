@@ -1,0 +1,737 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "WGI Control of Corruption Estimate (2015\u20132023)",
+    "subtitle": [
+      "2015-2023"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "value": -0.645136,
+        "country": "Argentina",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2015",
+        "value": -0.351268,
+        "country": "Brazil",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2015",
+        "value": 1.143849,
+        "country": "Chile",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2015",
+        "value": -0.317337,
+        "country": "Colombia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2015",
+        "value": -0.840904,
+        "country": "Mexico",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2016",
+        "value": -0.219363,
+        "country": "Argentina",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2016",
+        "value": -0.366818,
+        "country": "Brazil",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2016",
+        "value": 1.103647,
+        "country": "Chile",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2016",
+        "value": -0.369489,
+        "country": "Colombia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2016",
+        "value": -0.821167,
+        "country": "Mexico",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2017",
+        "value": -0.178142,
+        "country": "Argentina",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2017",
+        "value": -0.469369,
+        "country": "Brazil",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2017",
+        "value": 1.112364,
+        "country": "Chile",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2017",
+        "value": -0.410863,
+        "country": "Colombia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2017",
+        "value": -0.948133,
+        "country": "Mexico",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2018",
+        "value": -0.005735,
+        "country": "Argentina",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2018",
+        "value": -0.407628,
+        "country": "Brazil",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2018",
+        "value": 1.112123,
+        "country": "Chile",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2018",
+        "value": -0.318594,
+        "country": "Colombia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2018",
+        "value": -0.942749,
+        "country": "Mexico",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2019",
+        "value": -0.084705,
+        "country": "Argentina",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2019",
+        "value": -0.372764,
+        "country": "Brazil",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2019",
+        "value": 1.157037,
+        "country": "Chile",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2019",
+        "value": -0.272275,
+        "country": "Colombia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2019",
+        "value": -0.889652,
+        "country": "Mexico",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2020",
+        "value": -0.13447,
+        "country": "Argentina",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2020",
+        "value": -0.337232,
+        "country": "Brazil",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2020",
+        "value": 1.215627,
+        "country": "Chile",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2020",
+        "value": -0.256464,
+        "country": "Colombia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2020",
+        "value": -0.853792,
+        "country": "Mexico",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2021",
+        "value": -0.32733,
+        "country": "Argentina",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2021",
+        "value": -0.404589,
+        "country": "Brazil",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2021",
+        "value": 1.146301,
+        "country": "Chile",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2021",
+        "value": -0.269745,
+        "country": "Colombia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2021",
+        "value": -0.873387,
+        "country": "Mexico",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2022",
+        "value": -0.340233,
+        "country": "Argentina",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2022",
+        "value": -0.456279,
+        "country": "Brazil",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2022",
+        "value": 1.145297,
+        "country": "Chile",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2022",
+        "value": -0.2564,
+        "country": "Colombia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2022",
+        "value": -0.875754,
+        "country": "Mexico",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2023",
+        "value": -0.354078,
+        "country": "Argentina",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2023",
+        "value": -0.451506,
+        "country": "Brazil",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2023",
+        "value": 1.031834,
+        "country": "Chile",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2023",
+        "value": -0.309005,
+        "country": "Colombia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2023",
+        "value": -0.932163,
+        "country": "Mexico",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2015",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2015",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2015",
+        "value": 0.162418,
+        "country": "Chile",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2015",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2015",
+        "value": 0.159218,
+        "country": "Mexico",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2016",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2016",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2016",
+        "value": 0.162418,
+        "country": "Chile",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2016",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2016",
+        "value": 0.159218,
+        "country": "Mexico",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2017",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2017",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2017",
+        "value": 0.162418,
+        "country": "Chile",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2017",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2017",
+        "value": 0.159218,
+        "country": "Mexico",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2018",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2018",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2018",
+        "value": 0.162418,
+        "country": "Chile",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2018",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2018",
+        "value": 0.159218,
+        "country": "Mexico",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2019",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2019",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2019",
+        "value": 0.162418,
+        "country": "Chile",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2019",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2019",
+        "value": 0.159218,
+        "country": "Mexico",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2020",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2020",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2020",
+        "value": 0.162418,
+        "country": "Chile",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2020",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2020",
+        "value": 0.159218,
+        "country": "Mexico",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2021",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2021",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2021",
+        "value": 0.162418,
+        "country": "Chile",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2021",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2021",
+        "value": 0.159218,
+        "country": "Mexico",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2022",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2022",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2022",
+        "value": 0.162418,
+        "country": "Chile",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2022",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2022",
+        "value": 0.159218,
+        "country": "Mexico",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2023",
+        "value": 0.162418,
+        "country": "Argentina",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2023",
+        "value": 0.162418,
+        "country": "Brazil",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2023",
+        "value": 0.162418,
+        "country": "Chile",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2023",
+        "value": 0.161122,
+        "country": "Colombia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2023",
+        "value": 0.161122,
+        "country": "Mexico",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      }
+    ]
+  },
+  "facet": {
+    "field": "country",
+    "type": "nominal",
+    "columns": 2,
+    "header": {
+      "title": null,
+      "labelFontWeight": "bold"
+    }
+  },
+  "spec": {
+    "mark": {
+      "type": "line",
+      "tooltip": true,
+      "interpolate": "monotone"
+    },
+    "encoding": {
+      "x": {
+        "field": "year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "axis": {
+          "title": null,
+          "format": "%Y",
+          "tickCount": 5,
+          "labelAngle": 0,
+          "grid": false,
+          "gridColor": "#CED4DE",
+          "gridDash": [
+            4,
+            2
+          ],
+          "labelColor": "#666666",
+          "titleColor": "#111111",
+          "titleFontWeight": "bold"
+        }
+      },
+      "y": {
+        "field": "value",
+        "type": "quantitative",
+        "axis": {
+          "grid": false,
+          "gridColor": "#CED4DE",
+          "gridDash": [
+            4,
+            2
+          ],
+          "labelColor": "#666666",
+          "titleColor": "#111111",
+          "titleFontWeight": "bold",
+          "tickCount": 5,
+          "title": "Worldwide Governance Indicators: Control of Corruption"
+        }
+      },
+      "color": {
+        "field": "comp_breakdown_1",
+        "type": "nominal",
+        "scale": {
+          "range": [
+            "#34A7F2",
+            "#FF9800",
+            "#664AB6",
+            "#4EC2C0",
+            "#F3578E",
+            "#081079",
+            "#0C7C68",
+            "#AA0000",
+            "#DDDA21"
+          ]
+        },
+        "legend": {
+          "orient": "bottom",
+          "direction": "vertical",
+          "title": "Dimension 1",
+          "labelLimit": 0,
+          "symbolType": "stroke"
+        }
+      },
+      "tooltip": [
+        {
+          "field": "year",
+          "title": "Year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "format": "%Y"
+        },
+        {
+          "field": "value",
+          "title": "Value",
+          "type": "quantitative",
+          "format": ".1f"
+        },
+        {
+          "field": "country",
+          "title": "Economy",
+          "type": "nominal"
+        },
+        {
+          "field": "comp_breakdown_1",
+          "title": "Dimension 1",
+          "type": "nominal"
+        }
+      ]
+    },
+    "width": 300,
+    "height": 180
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,947 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years)"
+    ],
+    "subtitle": [
+      "2010-2020",
+      "Years"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2012",
+        "value": 73.086,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2013",
+        "value": 75.829,
+        "country": "Argentina"
+      },
+      {
+        "year": "2011",
+        "value": 81.482683,
+        "country": "Canada"
+      },
+      {
+        "year": "2011",
+        "value": 79.236,
+        "country": "Chile"
+      },
+      {
+        "year": "2011",
+        "value": 75.18,
+        "country": "Colombia"
+      },
+      {
+        "year": "2014",
+        "value": 75.95,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 76.105,
+        "country": "Argentina"
+      },
+      {
+        "year": "2011",
+        "value": 78.641463,
+        "country": "United States"
+      },
+      {
+        "year": "2011",
+        "value": 76.614,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2015",
+        "value": 81.825854,
+        "country": "Canada"
+      },
+      {
+        "year": "2015",
+        "value": 80.008,
+        "country": "Chile"
+      },
+      {
+        "year": "2015",
+        "value": 76.067,
+        "country": "Colombia"
+      },
+      {
+        "year": "2020",
+        "value": 79.349,
+        "country": "Chile"
+      },
+      {
+        "year": "2020",
+        "value": 74.757,
+        "country": "Colombia"
+      },
+      {
+        "year": "2010",
+        "value": 66.003,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2010",
+        "value": 73.779,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 82.158537,
+        "country": "Canada"
+      },
+      {
+        "year": "2019",
+        "value": 80.324,
+        "country": "Chile"
+      },
+      {
+        "year": "2019",
+        "value": 76.793,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 75.081,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013",
+        "value": 73.292,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2013",
+        "value": 74.591,
+        "country": "Peru"
+      },
+      {
+        "year": "2017",
+        "value": 78.539024,
+        "country": "United States"
+      },
+      {
+        "year": "2017",
+        "value": 77.618,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2017",
+        "value": 71.903,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2016",
+        "value": 78.539024,
+        "country": "United States"
+      },
+      {
+        "year": "2016",
+        "value": 77.351,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2017",
+        "value": 67.536,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2017",
+        "value": 75.383,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 76.418,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 74.376,
+        "country": "Mexico"
+      },
+      {
+        "year": "2019",
+        "value": 78.787805,
+        "country": "United States"
+      },
+      {
+        "year": "2019",
+        "value": 77.503,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2019",
+        "value": 72.766,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2019",
+        "value": 75.809,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": 66.282,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2011",
+        "value": 74.047,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 74.506,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 81.53,
+        "country": "Canada"
+      },
+      {
+        "year": "2019",
+        "value": 71.639,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2020",
+        "value": 76.980488,
+        "country": "United States"
+      },
+      {
+        "year": "2020",
+        "value": 78.381,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2020",
+        "value": 72.369,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2015",
+        "value": 70.915,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2018",
+        "value": 78.639024,
+        "country": "United States"
+      },
+      {
+        "year": "2018",
+        "value": 77.527,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2018",
+        "value": 72.641,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2018",
+        "value": 74.301,
+        "country": "Mexico"
+      },
+      {
+        "year": "2010",
+        "value": 73.092,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2012",
+        "value": 75.802,
+        "country": "Argentina"
+      },
+      {
+        "year": "2016",
+        "value": 72.002,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2018",
+        "value": 80.559,
+        "country": "Chile"
+      },
+      {
+        "year": "2018",
+        "value": 76.579,
+        "country": "Colombia"
+      },
+      {
+        "year": "2012",
+        "value": 66.586,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2012",
+        "value": 74.335,
+        "country": "Brazil"
+      },
+      {
+        "year": "2012",
+        "value": 78.741463,
+        "country": "United States"
+      },
+      {
+        "year": "2012",
+        "value": 76.691,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2013",
+        "value": 75.832,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2013",
+        "value": 70.878,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2013",
+        "value": 74.289,
+        "country": "Mexico"
+      },
+      {
+        "year": "2017",
+        "value": 71.583,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2013",
+        "value": 78.741463,
+        "country": "United States"
+      },
+      {
+        "year": "2013",
+        "value": 76.953,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2015",
+        "value": 76.6,
+        "country": "Argentina"
+      },
+      {
+        "year": "2011",
+        "value": 75.179,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2013",
+        "value": 66.777,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2013",
+        "value": 74.609,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": 73.921,
+        "country": "Mexico"
+      },
+      {
+        "year": "2016",
+        "value": 67.392,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2019",
+        "value": 73.668,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2012",
+        "value": 75.486,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2016",
+        "value": 76.094,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2018",
+        "value": 76.77,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": 71.496,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2017",
+        "value": 74.261,
+        "country": "Mexico"
+      },
+      {
+        "year": "2012",
+        "value": 70.722,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2010",
+        "value": 78.541463,
+        "country": "United States"
+      },
+      {
+        "year": "2010",
+        "value": 76.691,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2018",
+        "value": 73.627,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2010",
+        "value": 72.551,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2010",
+        "value": 72.886,
+        "country": "Peru"
+      },
+      {
+        "year": "2015",
+        "value": 67.205,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2015",
+        "value": 75.106,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 70.449,
+        "country": "Mexico"
+      },
+      {
+        "year": "2018",
+        "value": 76.018,
+        "country": "Peru"
+      },
+      {
+        "year": "2019",
+        "value": 67.82,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2014",
+        "value": 76.268,
+        "country": "Argentina"
+      },
+      {
+        "year": "2015",
+        "value": 74.431,
+        "country": "Mexico"
+      },
+      {
+        "year": "2011",
+        "value": 76.1,
+        "country": "Argentina"
+      },
+      {
+        "year": "2011",
+        "value": 73.09,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2016",
+        "value": 81.94,
+        "country": "Canada"
+      },
+      {
+        "year": "2016",
+        "value": 80.295,
+        "country": "Chile"
+      },
+      {
+        "year": "2016",
+        "value": 76.228,
+        "country": "Colombia"
+      },
+      {
+        "year": "2017",
+        "value": 81.807805,
+        "country": "Canada"
+      },
+      {
+        "year": "2017",
+        "value": 80.61,
+        "country": "Chile"
+      },
+      {
+        "year": "2014",
+        "value": 81.78439,
+        "country": "Canada"
+      },
+      {
+        "year": "2014",
+        "value": 79.714,
+        "country": "Chile"
+      },
+      {
+        "year": "2014",
+        "value": 73.415,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2014",
+        "value": 75.26,
+        "country": "Peru"
+      },
+      {
+        "year": "2017",
+        "value": 73.45,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2017",
+        "value": 75.958,
+        "country": "Peru"
+      },
+      {
+        "year": "2013",
+        "value": 81.744878,
+        "country": "Canada"
+      },
+      {
+        "year": "2013",
+        "value": 79.551,
+        "country": "Chile"
+      },
+      {
+        "year": "2013",
+        "value": 75.834,
+        "country": "Colombia"
+      },
+      {
+        "year": "2011",
+        "value": 70.321,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2018",
+        "value": 75.633,
+        "country": "Brazil"
+      },
+      {
+        "year": "2018",
+        "value": 81.803659,
+        "country": "Canada"
+      },
+      {
+        "year": "2012",
+        "value": 74.128,
+        "country": "Mexico"
+      },
+      {
+        "year": "2014",
+        "value": 78.841463,
+        "country": "United States"
+      },
+      {
+        "year": "2014",
+        "value": 77.194,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2014",
+        "value": 72.837,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2010",
+        "value": 69.885,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2014",
+        "value": 66.97,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2014",
+        "value": 74.823,
+        "country": "Brazil"
+      },
+      {
+        "year": "2010",
+        "value": 75.188,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2011",
+        "value": 72.787,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2011",
+        "value": 73.327,
+        "country": "Peru"
+      },
+      {
+        "year": "2017",
+        "value": 76.22,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2015",
+        "value": 78.690244,
+        "country": "United States"
+      },
+      {
+        "year": "2015",
+        "value": 77.285,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2015",
+        "value": 73.004,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2014",
+        "value": 74.404,
+        "country": "Mexico"
+      },
+      {
+        "year": "2010",
+        "value": 73.718,
+        "country": "Mexico"
+      },
+      {
+        "year": "2015",
+        "value": 73.454,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2015",
+        "value": 75.732,
+        "country": "Peru"
+      },
+      {
+        "year": "2020",
+        "value": 69.971,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2020",
+        "value": 72.004,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2019",
+        "value": 77.286,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2017",
+        "value": 76.543,
+        "country": "Argentina"
+      },
+      {
+        "year": "2013",
+        "value": 73.076,
+        "country": "Venezuela, RB"
+      },
+      {
+        "year": "2012",
+        "value": 81.663659,
+        "country": "Canada"
+      },
+      {
+        "year": "2012",
+        "value": 79.221,
+        "country": "Chile"
+      },
+      {
+        "year": "2012",
+        "value": 75.611,
+        "country": "Colombia"
+      },
+      {
+        "year": "2019",
+        "value": 76.847,
+        "country": "Argentina"
+      },
+      {
+        "year": "2016",
+        "value": 71.215,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2010",
+        "value": 81.322195,
+        "country": "Canada"
+      },
+      {
+        "year": "2010",
+        "value": 79.095,
+        "country": "Chile"
+      },
+      {
+        "year": "2010",
+        "value": 74.876,
+        "country": "Colombia"
+      },
+      {
+        "year": "2014",
+        "value": 70.942,
+        "country": "Guatemala"
+      },
+      {
+        "year": "2016",
+        "value": 73.487,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2016",
+        "value": 75.951,
+        "country": "Peru"
+      },
+      {
+        "year": "2012",
+        "value": 73.105,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2012",
+        "value": 73.979,
+        "country": "Peru"
+      },
+      {
+        "year": "2010",
+        "value": 75.68,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": 67.699,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2020",
+        "value": 75.878,
+        "country": "Argentina"
+      },
+      {
+        "year": "2019",
+        "value": 76.275,
+        "country": "Peru"
+      },
+      {
+        "year": "2020",
+        "value": 62.906,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2014",
+        "value": 76.141,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2020",
+        "value": 72.72,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2020",
+        "value": 73.832,
+        "country": "Peru"
+      },
+      {
+        "year": "2015",
+        "value": 76.222,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2018",
+        "value": 77.248,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2019",
+        "value": 74.53,
+        "country": "Mexico"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          62.906,
+          82.158537
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Years",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Life expectancy at birth, total (years)",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

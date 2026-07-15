@@ -1,0 +1,268 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP (current US$) \u2014 Sub-Saharan Africa economies (2024)",
+    "subtitle": [
+      "2024",
+      "US Dollars",
+      "Showing 20 of 46 economies by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2024",
+        "value": 149740297952.37485,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2024",
+        "value": 103080538044.05838,
+        "country": "Angola"
+      },
+      {
+        "year": "2024",
+        "value": 87113179149.28401,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2024",
+        "value": 83288585604.02676,
+        "country": "Ghana"
+      },
+      {
+        "year": "2024",
+        "value": 75716176105.07037,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2024",
+        "value": 53296694320.20565,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2024",
+        "value": 25008678293.407265,
+        "country": "Guinea"
+      },
+      {
+        "year": "2024",
+        "value": 23136514855.76458,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2024",
+        "value": 21482643706.42485,
+        "country": "Benin"
+      },
+      {
+        "year": "2024",
+        "value": 20895684425.67522,
+        "country": "Gabon"
+      },
+      {
+        "year": "2024",
+        "value": 19906706689.758152,
+        "country": "Chad"
+      },
+      {
+        "year": "2024",
+        "value": 19286251067.50778,
+        "country": "Botswana"
+      },
+      {
+        "year": "2024",
+        "value": 15719986076.64638,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2024",
+        "value": 13254388261.12576,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2024",
+        "value": 4858885840.772364,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2024",
+        "value": 3037579858.381424,
+        "country": "Burundi"
+      },
+      {
+        "year": "2024",
+        "value": 2751494281.068871,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2024",
+        "value": 2713721857.391531,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2024",
+        "value": 2404888737.548534,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2024",
+        "value": 1610082688.266172,
+        "country": "Comoros"
+      }
+    ]
+  },
+  "mark": {
+    "type": "bar",
+    "cornerRadiusTopRight": 3,
+    "cornerRadiusBottomRight": 3
+  },
+  "encoding": {
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "sort": "-x",
+      "axis": {
+        "title": null,
+        "labelColor": "#111111",
+        "labelFontWeight": "bold",
+        "labelLimit": 150
+      }
+    },
+    "x": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1f') : '$'+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": true
+      }
+    },
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": null
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "nominal"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": "$,.2f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 500,
+  "height": 560,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

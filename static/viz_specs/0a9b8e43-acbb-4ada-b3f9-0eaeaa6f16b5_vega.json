@@ -1,0 +1,837 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years)"
+    ],
+    "subtitle": [
+      "2011-2021",
+      "Years"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2011",
+        "value": 81.482683,
+        "country": "Canada"
+      },
+      {
+        "year": "2011",
+        "value": 75.889,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 82.946341,
+        "country": "Italy"
+      },
+      {
+        "year": "2017",
+        "value": 84.099756,
+        "country": "Japan"
+      },
+      {
+        "year": "2016",
+        "value": 82.44878,
+        "country": "Australia"
+      },
+      {
+        "year": "2016",
+        "value": 83.243902,
+        "country": "Italy"
+      },
+      {
+        "year": "2016",
+        "value": 83.984878,
+        "country": "Japan"
+      },
+      {
+        "year": "2016",
+        "value": 82.27561,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2011",
+        "value": 80.95122,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2011",
+        "value": 78.641463,
+        "country": "United States"
+      },
+      {
+        "year": "2015",
+        "value": 81.825854,
+        "country": "Canada"
+      },
+      {
+        "year": "2015",
+        "value": 76.975,
+        "country": "China"
+      },
+      {
+        "year": "2020",
+        "value": 78.019,
+        "country": "China"
+      },
+      {
+        "year": "2013",
+        "value": 81.270732,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2019",
+        "value": 82.158537,
+        "country": "Canada"
+      },
+      {
+        "year": "2019",
+        "value": 77.94,
+        "country": "China"
+      },
+      {
+        "year": "2016",
+        "value": 75.081,
+        "country": "Brazil"
+      },
+      {
+        "year": "2014",
+        "value": 82.3,
+        "country": "Australia"
+      },
+      {
+        "year": "2017",
+        "value": 81.256098,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2017",
+        "value": 78.539024,
+        "country": "United States"
+      },
+      {
+        "year": "2016",
+        "value": 81.156098,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2016",
+        "value": 78.539024,
+        "country": "United States"
+      },
+      {
+        "year": "2017",
+        "value": 75.383,
+        "country": "Brazil"
+      },
+      {
+        "year": "2016",
+        "value": 74.376,
+        "country": "Mexico"
+      },
+      {
+        "year": "2011",
+        "value": 81.895122,
+        "country": "Australia"
+      },
+      {
+        "year": "2019",
+        "value": 81.369122,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2019",
+        "value": 78.787805,
+        "country": "United States"
+      },
+      {
+        "year": "2019",
+        "value": 75.809,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013",
+        "value": 82.219512,
+        "country": "France"
+      },
+      {
+        "year": "2013",
+        "value": 80.490244,
+        "country": "Germany"
+      },
+      {
+        "year": "2011",
+        "value": 74.047,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 74.506,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 81.53,
+        "country": "Canada"
+      },
+      {
+        "year": "2019",
+        "value": 81.292683,
+        "country": "Germany"
+      },
+      {
+        "year": "2020",
+        "value": 80.331756,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2020",
+        "value": 76.980488,
+        "country": "United States"
+      },
+      {
+        "year": "2018",
+        "value": 81.256098,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2018",
+        "value": 78.639024,
+        "country": "United States"
+      },
+      {
+        "year": "2019",
+        "value": 82.826829,
+        "country": "France"
+      },
+      {
+        "year": "2018",
+        "value": 74.301,
+        "country": "Mexico"
+      },
+      {
+        "year": "2015",
+        "value": 82.02439,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2021",
+        "value": 73.038,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 82.321951,
+        "country": "France"
+      },
+      {
+        "year": "2015",
+        "value": 80.641463,
+        "country": "Germany"
+      },
+      {
+        "year": "2014",
+        "value": 81.721951,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2017",
+        "value": 82.626829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2014",
+        "value": 83.090244,
+        "country": "Italy"
+      },
+      {
+        "year": "2014",
+        "value": 83.587805,
+        "country": "Japan"
+      },
+      {
+        "year": "2018",
+        "value": 77.709,
+        "country": "China"
+      },
+      {
+        "year": "2012",
+        "value": 74.335,
+        "country": "Brazil"
+      },
+      {
+        "year": "2012",
+        "value": 80.904878,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2012",
+        "value": 78.741463,
+        "country": "United States"
+      },
+      {
+        "year": "2013",
+        "value": 74.289,
+        "country": "Mexico"
+      },
+      {
+        "year": "2013",
+        "value": 82.690244,
+        "country": "Italy"
+      },
+      {
+        "year": "2013",
+        "value": 83.331951,
+        "country": "Japan"
+      },
+      {
+        "year": "2013",
+        "value": 81.004878,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2013",
+        "value": 78.741463,
+        "country": "United States"
+      },
+      {
+        "year": "2015",
+        "value": 82.4,
+        "country": "Australia"
+      },
+      {
+        "year": "2011",
+        "value": 82.187805,
+        "country": "Italy"
+      },
+      {
+        "year": "2011",
+        "value": 82.59122,
+        "country": "Japan"
+      },
+      {
+        "year": "2013",
+        "value": 74.609,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": 73.921,
+        "country": "Mexico"
+      },
+      {
+        "year": "2018",
+        "value": 82.67561,
+        "country": "France"
+      },
+      {
+        "year": "2012",
+        "value": 82.239024,
+        "country": "Italy"
+      },
+      {
+        "year": "2012",
+        "value": 83.096098,
+        "country": "Japan"
+      },
+      {
+        "year": "2012",
+        "value": 82.046341,
+        "country": "Australia"
+      },
+      {
+        "year": "2018",
+        "value": 82.74878,
+        "country": "Australia"
+      },
+      {
+        "year": "2018",
+        "value": 80.892683,
+        "country": "Germany"
+      },
+      {
+        "year": "2017",
+        "value": 74.261,
+        "country": "Mexico"
+      },
+      {
+        "year": "2020",
+        "value": 84.56,
+        "country": "Japan"
+      },
+      {
+        "year": "2020",
+        "value": 83.426829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2021",
+        "value": 69.75,
+        "country": "Mexico"
+      },
+      {
+        "year": "2015",
+        "value": 75.106,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 70.449,
+        "country": "Mexico"
+      },
+      {
+        "year": "2015",
+        "value": 74.431,
+        "country": "Mexico"
+      },
+      {
+        "year": "2016",
+        "value": 81.94,
+        "country": "Canada"
+      },
+      {
+        "year": "2016",
+        "value": 77.214,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 81.807805,
+        "country": "Canada"
+      },
+      {
+        "year": "2017",
+        "value": 77.235,
+        "country": "China"
+      },
+      {
+        "year": "2014",
+        "value": 81.78439,
+        "country": "Canada"
+      },
+      {
+        "year": "2014",
+        "value": 76.714,
+        "country": "China"
+      },
+      {
+        "year": "2018",
+        "value": 83.346341,
+        "country": "Italy"
+      },
+      {
+        "year": "2018",
+        "value": 84.210976,
+        "country": "Japan"
+      },
+      {
+        "year": "2018",
+        "value": 82.626829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2013",
+        "value": 81.744878,
+        "country": "Canada"
+      },
+      {
+        "year": "2013",
+        "value": 76.452,
+        "country": "China"
+      },
+      {
+        "year": "2014",
+        "value": 82.719512,
+        "country": "France"
+      },
+      {
+        "year": "2014",
+        "value": 81.090244,
+        "country": "Germany"
+      },
+      {
+        "year": "2016",
+        "value": 82.573171,
+        "country": "France"
+      },
+      {
+        "year": "2018",
+        "value": 75.633,
+        "country": "Brazil"
+      },
+      {
+        "year": "2018",
+        "value": 81.803659,
+        "country": "Canada"
+      },
+      {
+        "year": "2012",
+        "value": 74.128,
+        "country": "Mexico"
+      },
+      {
+        "year": "2014",
+        "value": 81.304878,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2014",
+        "value": 78.841463,
+        "country": "United States"
+      },
+      {
+        "year": "2011",
+        "value": 80.568293,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2017",
+        "value": 82.57561,
+        "country": "France"
+      },
+      {
+        "year": "2017",
+        "value": 80.992683,
+        "country": "Germany"
+      },
+      {
+        "year": "2019",
+        "value": 83.497561,
+        "country": "Italy"
+      },
+      {
+        "year": "2019",
+        "value": 84.356341,
+        "country": "Japan"
+      },
+      {
+        "year": "2019",
+        "value": 83.226829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2014",
+        "value": 74.823,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013",
+        "value": 82.14878,
+        "country": "Australia"
+      },
+      {
+        "year": "2021",
+        "value": 82.32439,
+        "country": "France"
+      },
+      {
+        "year": "2021",
+        "value": 80.790244,
+        "country": "Germany"
+      },
+      {
+        "year": "2015",
+        "value": 80.956098,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2015",
+        "value": 78.690244,
+        "country": "United States"
+      },
+      {
+        "year": "2014",
+        "value": 74.404,
+        "country": "Mexico"
+      },
+      {
+        "year": "2020",
+        "value": 81.041463,
+        "country": "Germany"
+      },
+      {
+        "year": "2021",
+        "value": 83.3,
+        "country": "Australia"
+      },
+      {
+        "year": "2021",
+        "value": 83.526829,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2012",
+        "value": 81.663659,
+        "country": "Canada"
+      },
+      {
+        "year": "2012",
+        "value": 76.2,
+        "country": "China"
+      },
+      {
+        "year": "2019",
+        "value": 82.9,
+        "country": "Australia"
+      },
+      {
+        "year": "2016",
+        "value": 80.990244,
+        "country": "Germany"
+      },
+      {
+        "year": "2012",
+        "value": 80.819512,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2015",
+        "value": 82.543902,
+        "country": "Italy"
+      },
+      {
+        "year": "2015",
+        "value": 83.793902,
+        "country": "Japan"
+      },
+      {
+        "year": "2021",
+        "value": 81.451463,
+        "country": "Canada"
+      },
+      {
+        "year": "2021",
+        "value": 78.117,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 82.5,
+        "country": "Australia"
+      },
+      {
+        "year": "2020",
+        "value": 82.17561,
+        "country": "France"
+      },
+      {
+        "year": "2020",
+        "value": 83.2,
+        "country": "Australia"
+      },
+      {
+        "year": "2021",
+        "value": 82.646341,
+        "country": "Italy"
+      },
+      {
+        "year": "2021",
+        "value": 84.44561,
+        "country": "Japan"
+      },
+      {
+        "year": "2011",
+        "value": 82.114634,
+        "country": "France"
+      },
+      {
+        "year": "2011",
+        "value": 80.436585,
+        "country": "Germany"
+      },
+      {
+        "year": "2012",
+        "value": 81.968293,
+        "country": "France"
+      },
+      {
+        "year": "2012",
+        "value": 80.539024,
+        "country": "Germany"
+      },
+      {
+        "year": "2020",
+        "value": 82.195122,
+        "country": "Italy"
+      },
+      {
+        "year": "2021",
+        "value": 80.647317,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2021",
+        "value": 76.329268,
+        "country": "United States"
+      },
+      {
+        "year": "2019",
+        "value": 74.53,
+        "country": "Mexico"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          69.75,
+          84.56
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Years",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Life expectancy at birth, total (years)",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

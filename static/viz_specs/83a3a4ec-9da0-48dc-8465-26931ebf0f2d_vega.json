@@ -1,0 +1,368 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Carbon dioxide (CO2) emissions excluding LULUCF per capita vs. Labor force",
+      "participation rate, female"
+    ],
+    "subtitle": [
+      "2019"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2019",
+        "country": "Argentina",
+        "carbon_dioxide_co2_emissions_excluding_l": 4.075041,
+        "labor_force_participation_rate_female": 50.0,
+        "_x_norm": 0.1569115577343384,
+        "_y_norm": 0.674825979405166,
+        "_dist_from_center": 0.14827380229125373,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Australia",
+        "carbon_dioxide_co2_emissions_excluding_l": 16.100707,
+        "labor_force_participation_rate_female": 61.031,
+        "_x_norm": 1.0,
+        "_y_norm": 0.9921187366967726,
+        "_dist_from_center": 0.49218085100802744,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "carbon_dioxide_co2_emissions_excluding_l": 2.258699,
+        "labor_force_participation_rate_female": 55.306,
+        "_x_norm": 0.02957250246690492,
+        "_y_norm": 0.8274463556348155,
+        "_dist_from_center": 0.32852314625377227,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "carbon_dioxide_co2_emissions_excluding_l": 8.391476,
+        "labor_force_participation_rate_female": 61.305,
+        "_x_norm": 0.4595256882357993,
+        "_y_norm": 1.0,
+        "_dist_from_center": 0.2516381699127857,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "France",
+        "carbon_dioxide_co2_emissions_excluding_l": 4.79214,
+        "labor_force_participation_rate_female": 50.615,
+        "_x_norm": 0.20718552001303994,
+        "_y_norm": 0.6925156762354024,
+        "_dist_from_center": 0.12280260528640814,
+        "_show_label": false
+      },
+      {
+        "year": "2019",
+        "country": "Germany",
+        "carbon_dioxide_co2_emissions_excluding_l": 8.38218,
+        "labor_force_participation_rate_female": 55.709,
+        "_x_norm": 0.45887396963998084,
+        "_y_norm": 0.8390381407121902,
+        "_dist_from_center": 0.11663821123075209,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "carbon_dioxide_co2_emissions_excluding_l": 1.836882,
+        "labor_force_participation_rate_female": 26.539,
+        "_x_norm": 0.0,
+        "_y_norm": 0.0,
+        "_dist_from_center": 0.5,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Indonesia",
+        "carbon_dioxide_co2_emissions_excluding_l": 2.339795,
+        "labor_force_participation_rate_female": 53.949,
+        "_x_norm": 0.03525793396932451,
+        "_y_norm": 0.7884139676695622,
+        "_dist_from_center": 0.29916780468536,
+        "_show_label": false
+      },
+      {
+        "year": "2019",
+        "country": "Italy",
+        "carbon_dioxide_co2_emissions_excluding_l": 5.567841,
+        "labor_force_participation_rate_female": 40.908,
+        "_x_norm": 0.2615679174414997,
+        "_y_norm": 0.4133061036644998,
+        "_dist_from_center": 0.06436568965501395,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Japan",
+        "carbon_dioxide_co2_emissions_excluding_l": 8.874567,
+        "labor_force_participation_rate_female": 53.24,
+        "_x_norm": 0.493393952884307,
+        "_y_norm": 0.7680204797790946,
+        "_dist_from_center": 0.07187861743951082,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Korea, Rep.",
+        "carbon_dioxide_co2_emissions_excluding_l": 12.653189,
+        "labor_force_participation_rate_female": 53.772,
+        "_x_norm": 0.7583034003852402,
+        "_y_norm": 0.783322786630616,
+        "_dist_from_center": 0.14699244807471532,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Mexico",
+        "carbon_dioxide_co2_emissions_excluding_l": 3.925424,
+        "labor_force_participation_rate_female": 45.573,
+        "_x_norm": 0.14642229556237546,
+        "_y_norm": 0.5474889259621469,
+        "_dist_from_center": 0.12727239116441844,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "carbon_dioxide_co2_emissions_excluding_l": 8.014122,
+        "labor_force_participation_rate_female": 48.579,
+        "_x_norm": 0.43307037207761595,
+        "_y_norm": 0.6339527124201807,
+        "_dist_from_center": 0.022422904258552402,
+        "_show_label": true
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "carbon_dioxide_co2_emissions_excluding_l",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Carbon dioxide (CO2) emissions excluding LULUCF per capita (Tonnes)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "labor_force_participation_rate_female",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Labor force participation rate, female (Percentage of women)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "carbon_dioxide_co2_emissions_excluding_l",
+            "title": "Carbon dioxide (CO2) emissions excluding LULUCF per capita (Tonnes)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "labor_force_participation_rate_female",
+            "title": "Labor force participation rate, female (Percentage of women)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "carbon_dioxide_co2_emissions_excluding_l",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "labor_force_participation_rate_female",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum._show_label",
+            "value": 1
+          },
+          "value": 0
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

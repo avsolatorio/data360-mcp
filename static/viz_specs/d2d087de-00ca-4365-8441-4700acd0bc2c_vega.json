@@ -1,0 +1,5169 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Population, total (latest available) \u2014 Sub-Saharan Africa countries",
+    "subtitle": [
+      "Angola, Benin, Botswana, Burkina Faso, Burundi, Cabo Verde, Cameroon, Central African Republic, Chad, Comoros, \u2026 (+38 more), 1961-2024",
+      "Persons"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1999",
+        "value": 9740005,
+        "country": "Zambia"
+      },
+      {
+        "year": "1999",
+        "value": 11783458,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2011",
+        "value": 14437796,
+        "country": "Zambia"
+      },
+      {
+        "year": "2011",
+        "value": 13595424,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2012",
+        "value": 14913629,
+        "country": "Zambia"
+      },
+      {
+        "year": "2012",
+        "value": 13817887,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2001",
+        "value": 10325185,
+        "country": "Zambia"
+      },
+      {
+        "year": "2001",
+        "value": 11971901,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2008",
+        "value": 13021324,
+        "country": "Zambia"
+      },
+      {
+        "year": "2008",
+        "value": 12959149,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2005",
+        "value": 11718819,
+        "country": "Zambia"
+      },
+      {
+        "year": "2005",
+        "value": 12483432,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2007",
+        "value": 12565085,
+        "country": "Zambia"
+      },
+      {
+        "year": "2007",
+        "value": 12804058,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2000",
+        "value": 10017631,
+        "country": "Zambia"
+      },
+      {
+        "year": "2000",
+        "value": 11892055,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2009",
+        "value": 4529047,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2009",
+        "value": 11893754,
+        "country": "Chad"
+      },
+      {
+        "year": "2009",
+        "value": 641947,
+        "country": "Comoros"
+      },
+      {
+        "year": "2009",
+        "value": 66412044,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2009",
+        "value": 4281219,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2009",
+        "value": 21997940,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2011",
+        "value": 33354543,
+        "country": "Uganda"
+      },
+      {
+        "year": "2012",
+        "value": 2108617,
+        "country": "Botswana"
+      },
+      {
+        "year": "2012",
+        "value": 17172287,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2012",
+        "value": 10071028,
+        "country": "Burundi"
+      },
+      {
+        "year": "2012",
+        "value": 511955,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2012",
+        "value": 20809529,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2004",
+        "value": 12365896,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2014",
+        "value": 2080089,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2014",
+        "value": 4564293,
+        "country": "Liberia"
+      },
+      {
+        "year": "2014",
+        "value": 24764348,
+        "country": "Madagascar"
+      },
+      {
+        "year": "2014",
+        "value": 16621538,
+        "country": "Malawi"
+      },
+      {
+        "year": "2009",
+        "value": 2077394,
+        "country": "Namibia"
+      },
+      {
+        "year": "2009",
+        "value": 15943675,
+        "country": "Niger"
+      },
+      {
+        "year": "2009",
+        "value": 162049464,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2006",
+        "value": 8693242,
+        "country": "Benin"
+      },
+      {
+        "year": "2006",
+        "value": 1874516,
+        "country": "Botswana"
+      },
+      {
+        "year": "2013",
+        "value": 2056504,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2013",
+        "value": 4470239,
+        "country": "Liberia"
+      },
+      {
+        "year": "2013",
+        "value": 24109290,
+        "country": "Madagascar"
+      },
+      {
+        "year": "2013",
+        "value": 16161816,
+        "country": "Malawi"
+      },
+      {
+        "year": "2019",
+        "value": 4944703,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2019",
+        "value": 16685223,
+        "country": "Chad"
+      },
+      {
+        "year": "2019",
+        "value": 786578,
+        "country": "Comoros"
+      },
+      {
+        "year": "2019",
+        "value": 92947442,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2019",
+        "value": 5616661,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2019",
+        "value": 28193009,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1999",
+        "value": 1175267,
+        "country": "Mauritius"
+      },
+      {
+        "year": "1999",
+        "value": 17734506,
+        "country": "Mozambique"
+      },
+      {
+        "year": "1999",
+        "value": 1776368,
+        "country": "Namibia"
+      },
+      {
+        "year": "2020",
+        "value": 12617036,
+        "country": "Burundi"
+      },
+      {
+        "year": "2020",
+        "value": 514679,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2020",
+        "value": 26210558,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2020",
+        "value": 5026628,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2020",
+        "value": 17224679,
+        "country": "Chad"
+      },
+      {
+        "year": "2016",
+        "value": 53824013,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2016",
+        "value": 7858289,
+        "country": "Togo"
+      },
+      {
+        "year": "2016",
+        "value": 38799152,
+        "country": "Uganda"
+      },
+      {
+        "year": "2010",
+        "value": 2033111,
+        "country": "Botswana"
+      },
+      {
+        "year": "2010",
+        "value": 16176498,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2010",
+        "value": 9376444,
+        "country": "Burundi"
+      },
+      {
+        "year": "2018",
+        "value": 2299141,
+        "country": "Botswana"
+      },
+      {
+        "year": "2018",
+        "value": 20438288,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2018",
+        "value": 11859446,
+        "country": "Burundi"
+      },
+      {
+        "year": "2018",
+        "value": 513415,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2018",
+        "value": 24806383,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2013",
+        "value": 89949,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2013",
+        "value": 6714051,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2013",
+        "value": 12869594,
+        "country": "Somalia"
+      },
+      {
+        "year": "2013",
+        "value": 54678791,
+        "country": "South Africa"
+      },
+      {
+        "year": "2013",
+        "value": 11166275,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2011",
+        "value": 23649039,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2011",
+        "value": 2146325,
+        "country": "Namibia"
+      },
+      {
+        "year": "2011",
+        "value": 46029367,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2011",
+        "value": 6916474,
+        "country": "Togo"
+      },
+      {
+        "year": "2009",
+        "value": 22414773,
+        "country": "Angola"
+      },
+      {
+        "year": "2018",
+        "value": 1616422,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2018",
+        "value": 3192760,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2018",
+        "value": 1168929,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2018",
+        "value": 112664152,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2018",
+        "value": 2212318,
+        "country": "Gabon"
+      },
+      {
+        "year": "2020",
+        "value": 30783688,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2020",
+        "value": 2728762,
+        "country": "Namibia"
+      },
+      {
+        "year": "2006",
+        "value": 20015279,
+        "country": "Angola"
+      },
+      {
+        "year": "2008",
+        "value": 39206351,
+        "country": "Kenya"
+      },
+      {
+        "year": "2009",
+        "value": 1990673,
+        "country": "Botswana"
+      },
+      {
+        "year": "2009",
+        "value": 15710066,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2009",
+        "value": 8947646,
+        "country": "Burundi"
+      },
+      {
+        "year": "2009",
+        "value": 506141,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2009",
+        "value": 19113974,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1999",
+        "value": 8492059,
+        "country": "Somalia"
+      },
+      {
+        "year": "1999",
+        "value": 46730335,
+        "country": "South Africa"
+      },
+      {
+        "year": "1999",
+        "value": 5771628,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1999",
+        "value": 27130613,
+        "country": "Sudan"
+      },
+      {
+        "year": "2017",
+        "value": 30008354,
+        "country": "Ghana"
+      },
+      {
+        "year": "2017",
+        "value": 12385659,
+        "country": "Guinea"
+      },
+      {
+        "year": "2017",
+        "value": 1877072,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2004",
+        "value": 19840313,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2004",
+        "value": 1942082,
+        "country": "Namibia"
+      },
+      {
+        "year": "2004",
+        "value": 13265836,
+        "country": "Niger"
+      },
+      {
+        "year": "2004",
+        "value": 141057045,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2003",
+        "value": 13082532,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2003",
+        "value": 7043154,
+        "country": "Burundi"
+      },
+      {
+        "year": "2003",
+        "value": 473383,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2003",
+        "value": 16160340,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2003",
+        "value": 4103086,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2003",
+        "value": 9487833,
+        "country": "Chad"
+      },
+      {
+        "year": "2003",
+        "value": 569798,
+        "country": "Comoros"
+      },
+      {
+        "year": "2008",
+        "value": 18574056,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2008",
+        "value": 4558984,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2008",
+        "value": 11476296,
+        "country": "Chad"
+      },
+      {
+        "year": "2008",
+        "value": 629307,
+        "country": "Comoros"
+      },
+      {
+        "year": "2008",
+        "value": 64390664,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2008",
+        "value": 4113517,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2009",
+        "value": 24862664,
+        "country": "Ghana"
+      },
+      {
+        "year": "2009",
+        "value": 10143534,
+        "country": "Guinea"
+      },
+      {
+        "year": "2009",
+        "value": 1526377,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2017",
+        "value": 40177388,
+        "country": "Uganda"
+      },
+      {
+        "year": "2008",
+        "value": 1966541,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2008",
+        "value": 3821003,
+        "country": "Liberia"
+      },
+      {
+        "year": "2008",
+        "value": 20923840,
+        "country": "Madagascar"
+      },
+      {
+        "year": "2008",
+        "value": 13976417,
+        "country": "Malawi"
+      },
+      {
+        "year": "2007",
+        "value": 496190,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2007",
+        "value": 18049896,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2007",
+        "value": 4462770,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2007",
+        "value": 11081660,
+        "country": "Chad"
+      },
+      {
+        "year": "2007",
+        "value": 616927,
+        "country": "Comoros"
+      },
+      {
+        "year": "2019",
+        "value": 8463068,
+        "country": "Togo"
+      },
+      {
+        "year": "2019",
+        "value": 42999637,
+        "country": "Uganda"
+      },
+      {
+        "year": "1993",
+        "value": 8373921,
+        "country": "Zambia"
+      },
+      {
+        "year": "1993",
+        "value": 10860288,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2009",
+        "value": 1980883,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2009",
+        "value": 3943028,
+        "country": "Liberia"
+      },
+      {
+        "year": "2009",
+        "value": 21547280,
+        "country": "Madagascar"
+      },
+      {
+        "year": "2009",
+        "value": 14395788,
+        "country": "Malawi"
+      },
+      {
+        "year": "2009",
+        "value": 15435539,
+        "country": "Mali"
+      },
+      {
+        "year": "2006",
+        "value": 12129553,
+        "country": "Zambia"
+      },
+      {
+        "year": "2006",
+        "value": 12636445,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2007",
+        "value": 21287635,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2007",
+        "value": 2018600,
+        "country": "Namibia"
+      },
+      {
+        "year": "2007",
+        "value": 14803610,
+        "country": "Niger"
+      },
+      {
+        "year": "2001",
+        "value": 7445596,
+        "country": "Benin"
+      },
+      {
+        "year": "2001",
+        "value": 1712254,
+        "country": "Botswana"
+      },
+      {
+        "year": "2014",
+        "value": 18020267,
+        "country": "Mali"
+      },
+      {
+        "year": "2014",
+        "value": 3848514,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2014",
+        "value": 1261208,
+        "country": "Mauritius"
+      },
+      {
+        "year": "2011",
+        "value": 12348830,
+        "country": "Somalia"
+      },
+      {
+        "year": "2011",
+        "value": 52995205,
+        "country": "South Africa"
+      },
+      {
+        "year": "2011",
+        "value": 10288109,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2011",
+        "value": 36140806,
+        "country": "Sudan"
+      },
+      {
+        "year": "2002",
+        "value": 12349144,
+        "country": "Niger"
+      },
+      {
+        "year": "2002",
+        "value": 133471989,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2016",
+        "value": 41259892,
+        "country": "Sudan"
+      },
+      {
+        "year": "2003",
+        "value": 17943712,
+        "country": "Angola"
+      },
+      {
+        "year": "2010",
+        "value": 1719879,
+        "country": "Gabon"
+      },
+      {
+        "year": "2010",
+        "value": 1926630,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2010",
+        "value": 25474995,
+        "country": "Ghana"
+      },
+      {
+        "year": "2018",
+        "value": 41565831,
+        "country": "Uganda"
+      },
+      {
+        "year": "2015",
+        "value": 19939498,
+        "country": "Niger"
+      },
+      {
+        "year": "2015",
+        "value": 190671878,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2011",
+        "value": 10093623,
+        "country": "Benin"
+      },
+      {
+        "year": "2023",
+        "value": 128691692,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2023",
+        "value": 2484789,
+        "country": "Gabon"
+      },
+      {
+        "year": "2023",
+        "value": 2697845,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2023",
+        "value": 33787914,
+        "country": "Ghana"
+      },
+      {
+        "year": "2001",
+        "value": 31619170,
+        "country": "Kenya"
+      },
+      {
+        "year": "2017",
+        "value": 12202060,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2017",
+        "value": 206970,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2004",
+        "value": 13102409,
+        "country": "Mali"
+      },
+      {
+        "year": "2004",
+        "value": 2868664,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2004",
+        "value": 1221003,
+        "country": "Mauritius"
+      },
+      {
+        "year": "2010",
+        "value": 10317553,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2010",
+        "value": 181802,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2010",
+        "value": 12635413,
+        "country": "Senegal"
+      },
+      {
+        "year": "2010",
+        "value": 89770,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2010",
+        "value": 6222714,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2019",
+        "value": 3240194,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2019",
+        "value": 1179874,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2019",
+        "value": 115737383,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2019",
+        "value": 2267706,
+        "country": "Gabon"
+      },
+      {
+        "year": "2019",
+        "value": 2456844,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2018",
+        "value": 22188069,
+        "country": "Niger"
+      },
+      {
+        "year": "2018",
+        "value": 204938755,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2005",
+        "value": 7587299,
+        "country": "Burundi"
+      },
+      {
+        "year": "2005",
+        "value": 485115,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2005",
+        "value": 17074594,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2005",
+        "value": 4288810,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2005",
+        "value": 10328092,
+        "country": "Chad"
+      },
+      {
+        "year": "2005",
+        "value": 592677,
+        "country": "Comoros"
+      },
+      {
+        "year": "2008",
+        "value": 24249946,
+        "country": "Ghana"
+      },
+      {
+        "year": "2008",
+        "value": 9898870,
+        "country": "Guinea"
+      },
+      {
+        "year": "2008",
+        "value": 1488054,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2018",
+        "value": 58613001,
+        "country": "South Africa"
+      },
+      {
+        "year": "2018",
+        "value": 10122977,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2018",
+        "value": 44230596,
+        "country": "Sudan"
+      },
+      {
+        "year": "2002",
+        "value": 8400180,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2002",
+        "value": 149922,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2016",
+        "value": 19191289,
+        "country": "Mali"
+      },
+      {
+        "year": "2016",
+        "value": 4086657,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2016",
+        "value": 1263747,
+        "country": "Mauritius"
+      },
+      {
+        "year": "2005",
+        "value": 1463495,
+        "country": "Gabon"
+      },
+      {
+        "year": "2005",
+        "value": 1667037,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2005",
+        "value": 22449438,
+        "country": "Ghana"
+      },
+      {
+        "year": "2005",
+        "value": 9245844,
+        "country": "Guinea"
+      },
+      {
+        "year": "2005",
+        "value": 1381585,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2002",
+        "value": 797957,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2002",
+        "value": 2392978,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2002",
+        "value": 1059441,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2002",
+        "value": 71635517,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2002",
+        "value": 1345135,
+        "country": "Gabon"
+      },
+      {
+        "year": "1999",
+        "value": 11117411,
+        "country": "Niger"
+      },
+      {
+        "year": "1999",
+        "value": 123047320,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2001",
+        "value": 749836,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2001",
+        "value": 2312079,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2001",
+        "value": 1051064,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2001",
+        "value": 69487762,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2010",
+        "value": 9797484,
+        "country": "Benin"
+      },
+      {
+        "year": "2021",
+        "value": 24502140,
+        "country": "Niger"
+      },
+      {
+        "year": "2021",
+        "value": 218529286,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2012",
+        "value": 2043094,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2012",
+        "value": 26734268,
+        "country": "Ghana"
+      },
+      {
+        "year": "2012",
+        "value": 10921581,
+        "country": "Guinea"
+      },
+      {
+        "year": "2012",
+        "value": 1651417,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2011",
+        "value": 4609724,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2011",
+        "value": 22982000,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2001",
+        "value": 547220,
+        "country": "Comoros"
+      },
+      {
+        "year": "2001",
+        "value": 52132646,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2001",
+        "value": 3272537,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2001",
+        "value": 18178913,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2000",
+        "value": 536080,
+        "country": "Comoros"
+      },
+      {
+        "year": "2000",
+        "value": 50507442,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2000",
+        "value": 3151345,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2000",
+        "value": 17699004,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2015",
+        "value": 40024431,
+        "country": "Sudan"
+      },
+      {
+        "year": "2015",
+        "value": 52020962,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2015",
+        "value": 7663195,
+        "country": "Togo"
+      },
+      {
+        "year": "2002",
+        "value": 32629808,
+        "country": "Kenya"
+      },
+      {
+        "year": "2002",
+        "value": 1994679,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2001",
+        "value": 16747208,
+        "country": "Angola"
+      },
+      {
+        "year": "2003",
+        "value": 8586875,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2000",
+        "value": 144018,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2000",
+        "value": 9968260,
+        "country": "Senegal"
+      },
+      {
+        "year": "2000",
+        "value": 81131,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2000",
+        "value": 4423611,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2000",
+        "value": 8838713,
+        "country": "Somalia"
+      },
+      {
+        "year": "2000",
+        "value": 47159719,
+        "country": "South Africa"
+      },
+      {
+        "year": "2000",
+        "value": 30642890,
+        "country": "Kenya"
+      },
+      {
+        "year": "2005",
+        "value": 58775724,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2005",
+        "value": 3696393,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2005",
+        "value": 20068458,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2021",
+        "value": 62830412,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2021",
+        "value": 8878379,
+        "country": "Togo"
+      },
+      {
+        "year": "2018",
+        "value": 12487996,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2018",
+        "value": 210187,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2004",
+        "value": 8816844,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2004",
+        "value": 157705,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2004",
+        "value": 10975704,
+        "country": "Senegal"
+      },
+      {
+        "year": "2004",
+        "value": 82475,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2004",
+        "value": 5355717,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2007",
+        "value": 85033,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2007",
+        "value": 5749352,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2007",
+        "value": 11322582,
+        "country": "Somalia"
+      },
+      {
+        "year": "2007",
+        "value": 50528584,
+        "country": "South Africa"
+      },
+      {
+        "year": "2007",
+        "value": 8388788,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2008",
+        "value": 11663084,
+        "country": "Somalia"
+      },
+      {
+        "year": "2008",
+        "value": 51114599,
+        "country": "South Africa"
+      },
+      {
+        "year": "2008",
+        "value": 8817647,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2008",
+        "value": 33623980,
+        "country": "Sudan"
+      },
+      {
+        "year": "2001",
+        "value": 28516770,
+        "country": "Sudan"
+      },
+      {
+        "year": "2001",
+        "value": 35198299,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2001",
+        "value": 5277382,
+        "country": "Togo"
+      },
+      {
+        "year": "2022",
+        "value": 17651103,
+        "country": "Senegal"
+      },
+      {
+        "year": "2022",
+        "value": 119878,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2022",
+        "value": 8276807,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2022",
+        "value": 17801897,
+        "country": "Somalia"
+      },
+      {
+        "year": "2022",
+        "value": 62378410,
+        "country": "South Africa"
+      },
+      {
+        "year": "2022",
+        "value": 11021177,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2023",
+        "value": 14111034,
+        "country": "Benin"
+      },
+      {
+        "year": "2006",
+        "value": 990343,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2006",
+        "value": 2703502,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2006",
+        "value": 1084436,
+        "country": "Eswatini"
+      },
+      {
+        "year": "1998",
+        "value": 28888057,
+        "country": "Kenya"
+      },
+      {
+        "year": "2021",
+        "value": 1758786,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2021",
+        "value": 3350183,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2021",
+        "value": 1206593,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2005",
+        "value": 13538647,
+        "country": "Mali"
+      },
+      {
+        "year": "2005",
+        "value": 2939059,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2005",
+        "value": 1228254,
+        "country": "Mauritius"
+      },
+      {
+        "year": "1988",
+        "value": 7391440,
+        "country": "Zambia"
+      },
+      {
+        "year": "1988",
+        "value": 9583094,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2022",
+        "value": 30395002,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1985",
+        "value": 15023681,
+        "country": "Uganda"
+      },
+      {
+        "year": "1985",
+        "value": 6780953,
+        "country": "Zambia"
+      },
+      {
+        "year": "1985",
+        "value": 8686813,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "1998",
+        "value": 18688036,
+        "country": "Ghana"
+      },
+      {
+        "year": "1998",
+        "value": 8081990,
+        "country": "Guinea"
+      },
+      {
+        "year": "1998",
+        "value": 1187473,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "1994",
+        "value": 6792352,
+        "country": "Rwanda"
+      },
+      {
+        "year": "1994",
+        "value": 132732,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "1994",
+        "value": 8624078,
+        "country": "Senegal"
+      },
+      {
+        "year": "1994",
+        "value": 74205,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1994",
+        "value": 4173105,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1994",
+        "value": 7026797,
+        "country": "Somalia"
+      },
+      {
+        "year": "1994",
+        "value": 44004139,
+        "country": "South Africa"
+      },
+      {
+        "year": "1994",
+        "value": 5071184,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1992",
+        "value": 8817633,
+        "country": "Niger"
+      },
+      {
+        "year": "1992",
+        "value": 102372770,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1979",
+        "value": 5631728,
+        "country": "Zambia"
+      },
+      {
+        "year": "1979",
+        "value": 6647556,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "1998",
+        "value": 6789489,
+        "country": "Benin"
+      },
+      {
+        "year": "1996",
+        "value": 10044852,
+        "country": "Niger"
+      },
+      {
+        "year": "1996",
+        "value": 113754779,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1997",
+        "value": 28101768,
+        "country": "Kenya"
+      },
+      {
+        "year": "1997",
+        "value": 1988130,
+        "country": "Lesotho"
+      },
+      {
+        "year": "1997",
+        "value": 2412989,
+        "country": "Liberia"
+      },
+      {
+        "year": "1995",
+        "value": 17399017,
+        "country": "Ghana"
+      },
+      {
+        "year": "1995",
+        "value": 7553249,
+        "country": "Guinea"
+      },
+      {
+        "year": "1995",
+        "value": 1119949,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "1998",
+        "value": 1998049,
+        "country": "Lesotho"
+      },
+      {
+        "year": "1998",
+        "value": 2670124,
+        "country": "Liberia"
+      },
+      {
+        "year": "1998",
+        "value": 15489364,
+        "country": "Madagascar"
+      },
+      {
+        "year": "1998",
+        "value": 10792876,
+        "country": "Malawi"
+      },
+      {
+        "year": "1998",
+        "value": 10919573,
+        "country": "Mali"
+      },
+      {
+        "year": "1998",
+        "value": 2474651,
+        "country": "Mauritania"
+      },
+      {
+        "year": "1997",
+        "value": 1181439,
+        "country": "Gabon"
+      },
+      {
+        "year": "1997",
+        "value": 1338889,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "1997",
+        "value": 18238958,
+        "country": "Ghana"
+      },
+      {
+        "year": "1997",
+        "value": 7931370,
+        "country": "Guinea"
+      },
+      {
+        "year": "1997",
+        "value": 1165545,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "1994",
+        "value": 9398258,
+        "country": "Niger"
+      },
+      {
+        "year": "1994",
+        "value": 107935714,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1997",
+        "value": 9283495,
+        "country": "Senegal"
+      },
+      {
+        "year": "1997",
+        "value": 77319,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1997",
+        "value": 4253716,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1997",
+        "value": 7824525,
+        "country": "Somalia"
+      },
+      {
+        "year": "1997",
+        "value": 45666838,
+        "country": "South Africa"
+      },
+      {
+        "year": "1997",
+        "value": 5509136,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1997",
+        "value": 25799821,
+        "country": "Sudan"
+      },
+      {
+        "year": "1991",
+        "value": 23646514,
+        "country": "Kenya"
+      },
+      {
+        "year": "1991",
+        "value": 1842379,
+        "country": "Lesotho"
+      },
+      {
+        "year": "1991",
+        "value": 1956518,
+        "country": "Liberia"
+      },
+      {
+        "year": "1993",
+        "value": 4157130,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1993",
+        "value": 6681399,
+        "country": "Somalia"
+      },
+      {
+        "year": "1993",
+        "value": 43297156,
+        "country": "South Africa"
+      },
+      {
+        "year": "1993",
+        "value": 4956002,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1993",
+        "value": 23445592,
+        "country": "Sudan"
+      },
+      {
+        "year": "1998",
+        "value": 516597,
+        "country": "Comoros"
+      },
+      {
+        "year": "1998",
+        "value": 47297600,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "1998",
+        "value": 2952061,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "1998",
+        "value": 16663948,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1994",
+        "value": 13249764,
+        "country": "Angola"
+      },
+      {
+        "year": "1977",
+        "value": 5302480,
+        "country": "Zambia"
+      },
+      {
+        "year": "1977",
+        "value": 6449512,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "1996",
+        "value": 593492,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "1996",
+        "value": 2128464,
+        "country": "Eritrea"
+      },
+      {
+        "year": "1996",
+        "value": 989841,
+        "country": "Eswatini"
+      },
+      {
+        "year": "1996",
+        "value": 59467635,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1992",
+        "value": 465113,
+        "country": "Comoros"
+      },
+      {
+        "year": "1992",
+        "value": 39228910,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "1992",
+        "value": 2519465,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "1992",
+        "value": 13200310,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1992",
+        "value": 510770,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "1992",
+        "value": 9629275,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1992",
+        "value": 5858407,
+        "country": "Burundi"
+      },
+      {
+        "year": "1992",
+        "value": 393415,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1992",
+        "value": 12006353,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1992",
+        "value": 3058831,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1992",
+        "value": 6474656,
+        "country": "Chad"
+      },
+      {
+        "year": "1991",
+        "value": 7526966,
+        "country": "Rwanda"
+      },
+      {
+        "year": "1991",
+        "value": 125697,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "1991",
+        "value": 7943085,
+        "country": "Senegal"
+      },
+      {
+        "year": "1991",
+        "value": 70439,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1991",
+        "value": 4246267,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1990",
+        "value": 7720523,
+        "country": "Senegal"
+      },
+      {
+        "year": "1990",
+        "value": 69507,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1990",
+        "value": 4196828,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1990",
+        "value": 7082811,
+        "country": "Somalia"
+      },
+      {
+        "year": "1990",
+        "value": 40746268,
+        "country": "South Africa"
+      },
+      {
+        "year": "1990",
+        "value": 4737633,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1990",
+        "value": 22021481,
+        "country": "Sudan"
+      },
+      {
+        "year": "2024",
+        "value": 14754785,
+        "country": "Guinea"
+      },
+      {
+        "year": "2024",
+        "value": 2201352,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "1987",
+        "value": 1167889,
+        "country": "Namibia"
+      },
+      {
+        "year": "1987",
+        "value": 7561150,
+        "country": "Niger"
+      },
+      {
+        "year": "1987",
+        "value": 89591716,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2024",
+        "value": 56432944,
+        "country": "Kenya"
+      },
+      {
+        "year": "2024",
+        "value": 2337423,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2024",
+        "value": 5612817,
+        "country": "Liberia"
+      },
+      {
+        "year": "2024",
+        "value": 31964956,
+        "country": "Madagascar"
+      },
+      {
+        "year": "1985",
+        "value": 19201768,
+        "country": "Kenya"
+      },
+      {
+        "year": "1985",
+        "value": 1624379,
+        "country": "Lesotho"
+      },
+      {
+        "year": "1985",
+        "value": 2240539,
+        "country": "Liberia"
+      },
+      {
+        "year": "2024",
+        "value": 23548781,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2024",
+        "value": 14047786,
+        "country": "Burundi"
+      },
+      {
+        "year": "2024",
+        "value": 524877,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2024",
+        "value": 29123744,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2024",
+        "value": 5330690,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2024",
+        "value": 20299123,
+        "country": "Chad"
+      },
+      {
+        "year": "2024",
+        "value": 866628,
+        "country": "Comoros"
+      },
+      {
+        "year": "1989",
+        "value": 22118434,
+        "country": "Kenya"
+      },
+      {
+        "year": "1989",
+        "value": 1775436,
+        "country": "Lesotho"
+      },
+      {
+        "year": "1989",
+        "value": 2517858,
+        "country": "Liberia"
+      },
+      {
+        "year": "1989",
+        "value": 11704998,
+        "country": "Madagascar"
+      },
+      {
+        "year": "1989",
+        "value": 9176220,
+        "country": "Malawi"
+      },
+      {
+        "year": "1989",
+        "value": 8999938,
+        "country": "Mali"
+      },
+      {
+        "year": "2016",
+        "value": 29183070,
+        "country": "Angola"
+      },
+      {
+        "year": "1986",
+        "value": 734732,
+        "country": "Eswatini"
+      },
+      {
+        "year": "1986",
+        "value": 41037656,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1986",
+        "value": 880705,
+        "country": "Gabon"
+      },
+      {
+        "year": "1986",
+        "value": 894019,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "1986",
+        "value": 13965217,
+        "country": "Ghana"
+      },
+      {
+        "year": "1986",
+        "value": 5750668,
+        "country": "Guinea"
+      },
+      {
+        "year": "1986",
+        "value": 912126,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "1987",
+        "value": 4818486,
+        "country": "Benin"
+      },
+      {
+        "year": "1987",
+        "value": 1199167,
+        "country": "Botswana"
+      },
+      {
+        "year": "1987",
+        "value": 8457109,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1987",
+        "value": 5247787,
+        "country": "Burundi"
+      },
+      {
+        "year": "1987",
+        "value": 357302,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2024",
+        "value": 1242822,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2024",
+        "value": 132059767,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2024",
+        "value": 2538952,
+        "country": "Gabon"
+      },
+      {
+        "year": "2024",
+        "value": 2759988,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2024",
+        "value": 34427414,
+        "country": "Ghana"
+      },
+      {
+        "year": "2024",
+        "value": 9515236,
+        "country": "Togo"
+      },
+      {
+        "year": "2024",
+        "value": 50015092,
+        "country": "Uganda"
+      },
+      {
+        "year": "1971",
+        "value": 10618206,
+        "country": "Uganda"
+      },
+      {
+        "year": "1971",
+        "value": 4442525,
+        "country": "Zambia"
+      },
+      {
+        "year": "1971",
+        "value": 5374712,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "1981",
+        "value": 739125,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "1981",
+        "value": 12281712,
+        "country": "Ghana"
+      },
+      {
+        "year": "1981",
+        "value": 5143288,
+        "country": "Guinea"
+      },
+      {
+        "year": "1981",
+        "value": 842432,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "1986",
+        "value": 4675420,
+        "country": "Benin"
+      },
+      {
+        "year": "1986",
+        "value": 1160650,
+        "country": "Botswana"
+      },
+      {
+        "year": "1986",
+        "value": 8228847,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1986",
+        "value": 5129414,
+        "country": "Burundi"
+      },
+      {
+        "year": "1986",
+        "value": 352312,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1986",
+        "value": 10060342,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1986",
+        "value": 2634258,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1988",
+        "value": 10861291,
+        "country": "Angola"
+      },
+      {
+        "year": "1988",
+        "value": 4967341,
+        "country": "Benin"
+      },
+      {
+        "year": "1988",
+        "value": 1235476,
+        "country": "Botswana"
+      },
+      {
+        "year": "1988",
+        "value": 6968071,
+        "country": "Rwanda"
+      },
+      {
+        "year": "1988",
+        "value": 116939,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "1988",
+        "value": 7289618,
+        "country": "Senegal"
+      },
+      {
+        "year": "1988",
+        "value": 68755,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1988",
+        "value": 3934517,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1988",
+        "value": 7235360,
+        "country": "Somalia"
+      },
+      {
+        "year": "1988",
+        "value": 38480649,
+        "country": "South Africa"
+      },
+      {
+        "year": "1988",
+        "value": 4848029,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1981",
+        "value": 5527230,
+        "country": "Rwanda"
+      },
+      {
+        "year": "1981",
+        "value": 100615,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "1981",
+        "value": 5997160,
+        "country": "Senegal"
+      },
+      {
+        "year": "1981",
+        "value": 64035,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1981",
+        "value": 3338940,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1981",
+        "value": 5982849,
+        "country": "Somalia"
+      },
+      {
+        "year": "1981",
+        "value": 30541044,
+        "country": "South Africa"
+      },
+      {
+        "year": "1981",
+        "value": 4447272,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1987",
+        "value": 1703390,
+        "country": "Lesotho"
+      },
+      {
+        "year": "1987",
+        "value": 2377229,
+        "country": "Liberia"
+      },
+      {
+        "year": "1987",
+        "value": 11047291,
+        "country": "Madagascar"
+      },
+      {
+        "year": "1987",
+        "value": 8293174,
+        "country": "Malawi"
+      },
+      {
+        "year": "1987",
+        "value": 8681164,
+        "country": "Mali"
+      },
+      {
+        "year": "1987",
+        "value": 1803014,
+        "country": "Mauritania"
+      },
+      {
+        "year": "1987",
+        "value": 1036082,
+        "country": "Mauritius"
+      },
+      {
+        "year": "1987",
+        "value": 12822574,
+        "country": "Mozambique"
+      },
+      {
+        "year": "1979",
+        "value": 5189541,
+        "country": "Rwanda"
+      },
+      {
+        "year": "1979",
+        "value": 96252,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "1979",
+        "value": 5702895,
+        "country": "Senegal"
+      },
+      {
+        "year": "1979",
+        "value": 62686,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1979",
+        "value": 3207499,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1979",
+        "value": 5449117,
+        "country": "Somalia"
+      },
+      {
+        "year": "1979",
+        "value": 28634162,
+        "country": "South Africa"
+      },
+      {
+        "year": "1979",
+        "value": 4232605,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1986",
+        "value": 6878192,
+        "country": "Senegal"
+      },
+      {
+        "year": "1986",
+        "value": 65652,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1986",
+        "value": 3728380,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1986",
+        "value": 6974788,
+        "country": "Somalia"
+      },
+      {
+        "year": "1986",
+        "value": 36180515,
+        "country": "South Africa"
+      },
+      {
+        "year": "1986",
+        "value": 4921240,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1986",
+        "value": 20288238,
+        "country": "Sudan"
+      },
+      {
+        "year": "1986",
+        "value": 23258959,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1978",
+        "value": 14934126,
+        "country": "Kenya"
+      },
+      {
+        "year": "1978",
+        "value": 1327240,
+        "country": "Lesotho"
+      },
+      {
+        "year": "1978",
+        "value": 1818247,
+        "country": "Liberia"
+      },
+      {
+        "year": "1978",
+        "value": 8475864,
+        "country": "Madagascar"
+      },
+      {
+        "year": "1978",
+        "value": 5810132,
+        "country": "Malawi"
+      },
+      {
+        "year": "1975",
+        "value": 662197,
+        "country": "Gabon"
+      },
+      {
+        "year": "1975",
+        "value": 606821,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "1975",
+        "value": 10294308,
+        "country": "Ghana"
+      },
+      {
+        "year": "1975",
+        "value": 4653876,
+        "country": "Guinea"
+      },
+      {
+        "year": "1975",
+        "value": 650966,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "1974",
+        "value": 10000523,
+        "country": "Ghana"
+      },
+      {
+        "year": "1974",
+        "value": 4580510,
+        "country": "Guinea"
+      },
+      {
+        "year": "1974",
+        "value": 613338,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "1974",
+        "value": 13070078,
+        "country": "Kenya"
+      },
+      {
+        "year": "1982",
+        "value": 20398571,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1982",
+        "value": 3115042,
+        "country": "Togo"
+      },
+      {
+        "year": "1982",
+        "value": 13873631,
+        "country": "Uganda"
+      },
+      {
+        "year": "1982",
+        "value": 6178637,
+        "country": "Zambia"
+      },
+      {
+        "year": "1985",
+        "value": 4538012,
+        "country": "Benin"
+      },
+      {
+        "year": "1985",
+        "value": 1121945,
+        "country": "Botswana"
+      },
+      {
+        "year": "1985",
+        "value": 7999935,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1985",
+        "value": 5034042,
+        "country": "Burundi"
+      },
+      {
+        "year": "1985",
+        "value": 347365,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1985",
+        "value": 9761730,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1985",
+        "value": 2600932,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1985",
+        "value": 5096269,
+        "country": "Chad"
+      },
+      {
+        "year": "1983",
+        "value": 9215397,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1983",
+        "value": 2537399,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1983",
+        "value": 4979130,
+        "country": "Chad"
+      },
+      {
+        "year": "1983",
+        "value": 367233,
+        "country": "Comoros"
+      },
+      {
+        "year": "1983",
+        "value": 29250963,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "1983",
+        "value": 1950321,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "1983",
+        "value": 9272744,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1979",
+        "value": 16355352,
+        "country": "Sudan"
+      },
+      {
+        "year": "1979",
+        "value": 18592038,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1979",
+        "value": 2839854,
+        "country": "Togo"
+      },
+      {
+        "year": "1979",
+        "value": 13002163,
+        "country": "Uganda"
+      },
+      {
+        "year": "1982",
+        "value": 1490732,
+        "country": "Lesotho"
+      },
+      {
+        "year": "1982",
+        "value": 2045073,
+        "country": "Liberia"
+      },
+      {
+        "year": "1982",
+        "value": 9557671,
+        "country": "Madagascar"
+      },
+      {
+        "year": "1982",
+        "value": 6778879,
+        "country": "Malawi"
+      },
+      {
+        "year": "1982",
+        "value": 7860194,
+        "country": "Mali"
+      },
+      {
+        "year": "1982",
+        "value": 1561176,
+        "country": "Mauritania"
+      },
+      {
+        "year": "1982",
+        "value": 992521,
+        "country": "Mauritius"
+      },
+      {
+        "year": "1993",
+        "value": 12827135,
+        "country": "Angola"
+      },
+      {
+        "year": "1978",
+        "value": 7229651,
+        "country": "Mali"
+      },
+      {
+        "year": "1978",
+        "value": 1392713,
+        "country": "Mauritania"
+      },
+      {
+        "year": "1978",
+        "value": 933499,
+        "country": "Mauritius"
+      },
+      {
+        "year": "1978",
+        "value": 10618250,
+        "country": "Mozambique"
+      },
+      {
+        "year": "1978",
+        "value": 947269,
+        "country": "Namibia"
+      },
+      {
+        "year": "1978",
+        "value": 5782932,
+        "country": "Niger"
+      },
+      {
+        "year": "1978",
+        "value": 69326532,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1980",
+        "value": 8133872,
+        "country": "Angola"
+      },
+      {
+        "year": "1980",
+        "value": 3925251,
+        "country": "Benin"
+      },
+      {
+        "year": "1980",
+        "value": 937485,
+        "country": "Botswana"
+      },
+      {
+        "year": "1980",
+        "value": 6947900,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1980",
+        "value": 4383706,
+        "country": "Burundi"
+      },
+      {
+        "year": "1967",
+        "value": 3454537,
+        "country": "Somalia"
+      },
+      {
+        "year": "1967",
+        "value": 20314066,
+        "country": "South Africa"
+      },
+      {
+        "year": "1967",
+        "value": 3277648,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1967",
+        "value": 10550597,
+        "country": "Sudan"
+      },
+      {
+        "year": "1967",
+        "value": 12200109,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1967",
+        "value": 1995890,
+        "country": "Togo"
+      },
+      {
+        "year": "1967",
+        "value": 9408924,
+        "country": "Uganda"
+      },
+      {
+        "year": "1967",
+        "value": 3936343,
+        "country": "Zambia"
+      },
+      {
+        "year": "1967",
+        "value": 4748307,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "1978",
+        "value": 2397961,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1978",
+        "value": 4411366,
+        "country": "Chad"
+      },
+      {
+        "year": "1978",
+        "value": 317688,
+        "country": "Comoros"
+      },
+      {
+        "year": "1978",
+        "value": 24992689,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "1978",
+        "value": 1748089,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "1978",
+        "value": 7603130,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1978",
+        "value": 276531,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "1978",
+        "value": 1522378,
+        "country": "Eritrea"
+      },
+      {
+        "year": "1978",
+        "value": 558446,
+        "country": "Eswatini"
+      },
+      {
+        "year": "1976",
+        "value": 758508,
+        "country": "Botswana"
+      },
+      {
+        "year": "1976",
+        "value": 6280635,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1976",
+        "value": 3882626,
+        "country": "Burundi"
+      },
+      {
+        "year": "1976",
+        "value": 309455,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1976",
+        "value": 7597962,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1976",
+        "value": 2348566,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1976",
+        "value": 4251297,
+        "country": "Chad"
+      },
+      {
+        "year": "1976",
+        "value": 297538,
+        "country": "Comoros"
+      },
+      {
+        "year": "1976",
+        "value": 23624031,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "1976",
+        "value": 1667225,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "1976",
+        "value": 7057958,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1986",
+        "value": 10139450,
+        "country": "Angola"
+      },
+      {
+        "year": "1984",
+        "value": 9425917,
+        "country": "Angola"
+      },
+      {
+        "year": "1985",
+        "value": 9779120,
+        "country": "Angola"
+      },
+      {
+        "year": "1972",
+        "value": 56029,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1972",
+        "value": 2814388,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1972",
+        "value": 3939436,
+        "country": "Somalia"
+      },
+      {
+        "year": "1972",
+        "value": 23609456,
+        "country": "South Africa"
+      },
+      {
+        "year": "1972",
+        "value": 3542497,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1972",
+        "value": 12527856,
+        "country": "Sudan"
+      },
+      {
+        "year": "1972",
+        "value": 14479308,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1972",
+        "value": 2384994,
+        "country": "Togo"
+      },
+      {
+        "year": "1972",
+        "value": 10885796,
+        "country": "Uganda"
+      },
+      {
+        "year": "1973",
+        "value": 5037865,
+        "country": "Niger"
+      },
+      {
+        "year": "1973",
+        "value": 60082139,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1973",
+        "value": 4345047,
+        "country": "Rwanda"
+      },
+      {
+        "year": "1973",
+        "value": 82798,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "1973",
+        "value": 4885181,
+        "country": "Senegal"
+      },
+      {
+        "year": "1973",
+        "value": 56892,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1973",
+        "value": 2866955,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1973",
+        "value": 1132697,
+        "country": "Lesotho"
+      },
+      {
+        "year": "1973",
+        "value": 1583588,
+        "country": "Liberia"
+      },
+      {
+        "year": "1973",
+        "value": 7288048,
+        "country": "Madagascar"
+      },
+      {
+        "year": "1973",
+        "value": 5003938,
+        "country": "Malawi"
+      },
+      {
+        "year": "1973",
+        "value": 6597106,
+        "country": "Mali"
+      },
+      {
+        "year": "1973",
+        "value": 1203838,
+        "country": "Mauritania"
+      },
+      {
+        "year": "1973",
+        "value": 864819,
+        "country": "Mauritius"
+      },
+      {
+        "year": "1973",
+        "value": 8954242,
+        "country": "Mozambique"
+      },
+      {
+        "year": "1973",
+        "value": 828928,
+        "country": "Namibia"
+      },
+      {
+        "year": "1966",
+        "value": 5581386,
+        "country": "Angola"
+      },
+      {
+        "year": "1966",
+        "value": 2814317,
+        "country": "Benin"
+      },
+      {
+        "year": "1966",
+        "value": 577866,
+        "country": "Botswana"
+      },
+      {
+        "year": "1966",
+        "value": 5237933,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1966",
+        "value": 3217960,
+        "country": "Burundi"
+      },
+      {
+        "year": "1966",
+        "value": 252976,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1966",
+        "value": 5837295,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1966",
+        "value": 1918082,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1966",
+        "value": 3440903,
+        "country": "Chad"
+      },
+      {
+        "year": "1966",
+        "value": 218663,
+        "country": "Comoros"
+      },
+      {
+        "year": "1966",
+        "value": 17931929,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "1966",
+        "value": 1242534,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "1966",
+        "value": 4617519,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1983",
+        "value": 9082983,
+        "country": "Angola"
+      },
+      {
+        "year": "1965",
+        "value": 3692086,
+        "country": "Zambia"
+      },
+      {
+        "year": "1965",
+        "value": 4458462,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "1964",
+        "value": 2704003,
+        "country": "Benin"
+      },
+      {
+        "year": "1964",
+        "value": 566266,
+        "country": "Botswana"
+      },
+      {
+        "year": "1964",
+        "value": 5071034,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1964",
+        "value": 3055650,
+        "country": "Burundi"
+      },
+      {
+        "year": "1964",
+        "value": 237006,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1964",
+        "value": 5578257,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1964",
+        "value": 1839583,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1964",
+        "value": 3307479,
+        "country": "Chad"
+      },
+      {
+        "year": "1964",
+        "value": 211644,
+        "country": "Comoros"
+      },
+      {
+        "year": "1964",
+        "value": 16955327,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "1964",
+        "value": 1174816,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "1964",
+        "value": 4273952,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1964",
+        "value": 291942,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "1964",
+        "value": 1071287,
+        "country": "Eritrea"
+      },
+      {
+        "year": "1964",
+        "value": 378656,
+        "country": "Eswatini"
+      },
+      {
+        "year": "1964",
+        "value": 23666548,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1964",
+        "value": 538657,
+        "country": "Gabon"
+      },
+      {
+        "year": "1964",
+        "value": 443687,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "1967",
+        "value": 5641807,
+        "country": "Angola"
+      },
+      {
+        "year": "1970",
+        "value": 5852788,
+        "country": "Angola"
+      },
+      {
+        "year": "1970",
+        "value": 3065057,
+        "country": "Benin"
+      },
+      {
+        "year": "1970",
+        "value": 590334,
+        "country": "Botswana"
+      },
+      {
+        "year": "1970",
+        "value": 5610304,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1970",
+        "value": 3530432,
+        "country": "Burundi"
+      },
+      {
+        "year": "1970",
+        "value": 287885,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1970",
+        "value": 6449793,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1970",
+        "value": 2097505,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1961",
+        "value": 2835119,
+        "country": "Burundi"
+      },
+      {
+        "year": "1961",
+        "value": 215087,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1961",
+        "value": 5239273,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1961",
+        "value": 1734580,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1961",
+        "value": 3111947,
+        "country": "Chad"
+      },
+      {
+        "year": "1961",
+        "value": 201201,
+        "country": "Comoros"
+      },
+      {
+        "year": "1961",
+        "value": 15662374,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "1961",
+        "value": 1084389,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "1961",
+        "value": 3810151,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1961",
+        "value": 274896,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "1961",
+        "value": 995573,
+        "country": "Eritrea"
+      },
+      {
+        "year": "1961",
+        "value": 353264,
+        "country": "Eswatini"
+      },
+      {
+        "year": "1961",
+        "value": 21906102,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1961",
+        "value": 518266,
+        "country": "Gabon"
+      },
+      {
+        "year": "1961",
+        "value": 408930,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "1961",
+        "value": 7162667,
+        "country": "Ghana"
+      },
+      {
+        "year": "1961",
+        "value": 3619551,
+        "country": "Guinea"
+      },
+      {
+        "year": "1961",
+        "value": 582532,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "1961",
+        "value": 3106779,
+        "country": "Rwanda"
+      },
+      {
+        "year": "1961",
+        "value": 68707,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "1961",
+        "value": 3436375,
+        "country": "Senegal"
+      },
+      {
+        "year": "1961",
+        "value": 42889,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1961",
+        "value": 2304227,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1961",
+        "value": 2952054,
+        "country": "Somalia"
+      },
+      {
+        "year": "1961",
+        "value": 16908035,
+        "country": "South Africa"
+      },
+      {
+        "year": "1961",
+        "value": 2976724,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1961",
+        "value": 8634941,
+        "country": "Sudan"
+      },
+      {
+        "year": "1961",
+        "value": 10187886,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1961",
+        "value": 1702717,
+        "country": "Togo"
+      },
+      {
+        "year": "1961",
+        "value": 7862217,
+        "country": "Uganda"
+      },
+      {
+        "year": "1961",
+        "value": 3254086,
+        "country": "Zambia"
+      },
+      {
+        "year": "1961",
+        "value": 5301583,
+        "country": "Angola"
+      },
+      {
+        "year": "1961",
+        "value": 2559223,
+        "country": "Benin"
+      },
+      {
+        "year": "1961",
+        "value": 527942,
+        "country": "Botswana"
+      },
+      {
+        "year": "1961",
+        "value": 4848224,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2016",
+        "value": 16914423,
+        "country": "Zambia"
+      },
+      {
+        "year": "2016",
+        "value": 14600294,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2009",
+        "value": 13490389,
+        "country": "Zambia"
+      },
+      {
+        "year": "2009",
+        "value": 13142790,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2018",
+        "value": 17973569,
+        "country": "Zambia"
+      },
+      {
+        "year": "2018",
+        "value": 15034452,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2020",
+        "value": 19059395,
+        "country": "Zambia"
+      },
+      {
+        "year": "2020",
+        "value": 15526888,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2003",
+        "value": 10983595,
+        "country": "Zambia"
+      },
+      {
+        "year": "2003",
+        "value": 12232323,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2021",
+        "value": 19603607,
+        "country": "Zambia"
+      },
+      {
+        "year": "2021",
+        "value": 15797210,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2016",
+        "value": 27337105,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2016",
+        "value": 2439213,
+        "country": "Namibia"
+      },
+      {
+        "year": "2016",
+        "value": 20685753,
+        "country": "Niger"
+      },
+      {
+        "year": "2019",
+        "value": 18513839,
+        "country": "Zambia"
+      },
+      {
+        "year": "2019",
+        "value": 15271368,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2013",
+        "value": 25051611,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2013",
+        "value": 2252508,
+        "country": "Namibia"
+      },
+      {
+        "year": "2013",
+        "value": 18519898,
+        "country": "Niger"
+      },
+      {
+        "year": "2013",
+        "value": 181049443,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2016",
+        "value": 48139687,
+        "country": "Kenya"
+      },
+      {
+        "year": "2011",
+        "value": 20232304,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2011",
+        "value": 4565021,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2011",
+        "value": 12754997,
+        "country": "Chad"
+      },
+      {
+        "year": "2011",
+        "value": 668056,
+        "country": "Comoros"
+      },
+      {
+        "year": "2011",
+        "value": 70849311,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2017",
+        "value": 2266747,
+        "country": "Botswana"
+      },
+      {
+        "year": "2017",
+        "value": 19894407,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2017",
+        "value": 11506762,
+        "country": "Burundi"
+      },
+      {
+        "year": "2017",
+        "value": 512893,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2017",
+        "value": 24128601,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2016",
+        "value": 29356742,
+        "country": "Ghana"
+      },
+      {
+        "year": "2016",
+        "value": 12073030,
+        "country": "Guinea"
+      },
+      {
+        "year": "2016",
+        "value": 1831893,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2017",
+        "value": 30234839,
+        "country": "Angola"
+      },
+      {
+        "year": "2013",
+        "value": 11093340,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2013",
+        "value": 193148,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2013",
+        "value": 13710849,
+        "country": "Senegal"
+      },
+      {
+        "year": "2016",
+        "value": 2130422,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2016",
+        "value": 4755608,
+        "country": "Liberia"
+      },
+      {
+        "year": "2016",
+        "value": 26099952,
+        "country": "Madagascar"
+      },
+      {
+        "year": "2016",
+        "value": 17557739,
+        "country": "Malawi"
+      },
+      {
+        "year": "2012",
+        "value": 43888303,
+        "country": "Kenya"
+      },
+      {
+        "year": "1998",
+        "value": 9482408,
+        "country": "Zambia"
+      },
+      {
+        "year": "1998",
+        "value": 11594297,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2008",
+        "value": 2047056,
+        "country": "Namibia"
+      },
+      {
+        "year": "2008",
+        "value": 15361915,
+        "country": "Niger"
+      },
+      {
+        "year": "2008",
+        "value": 157595014,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2014",
+        "value": 185896915,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2013",
+        "value": 26165620,
+        "country": "Angola"
+      },
+      {
+        "year": "2005",
+        "value": 39182076,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2005",
+        "value": 5844631,
+        "country": "Togo"
+      },
+      {
+        "year": "2006",
+        "value": 604753,
+        "country": "Comoros"
+      },
+      {
+        "year": "2006",
+        "value": 60615908,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2006",
+        "value": 3837409,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2006",
+        "value": 20546802,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2018",
+        "value": 50207107,
+        "country": "Kenya"
+      },
+      {
+        "year": "2013",
+        "value": 10708834,
+        "country": "Benin"
+      },
+      {
+        "year": "2013",
+        "value": 2140682,
+        "country": "Botswana"
+      },
+      {
+        "year": "2019",
+        "value": 29884380,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2019",
+        "value": 2650494,
+        "country": "Namibia"
+      },
+      {
+        "year": "2019",
+        "value": 22947757,
+        "country": "Niger"
+      },
+      {
+        "year": "2019",
+        "value": 209485641,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2008",
+        "value": 30539553,
+        "country": "Uganda"
+      },
+      {
+        "year": "2023",
+        "value": 5152421,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2023",
+        "value": 19319064,
+        "country": "Chad"
+      },
+      {
+        "year": "2023",
+        "value": 850387,
+        "country": "Comoros"
+      },
+      {
+        "year": "2023",
+        "value": 105789731,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2023",
+        "value": 6182885,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2023",
+        "value": 31165654,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2008",
+        "value": 42570728,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2008",
+        "value": 6368812,
+        "country": "Togo"
+      },
+      {
+        "year": "2003",
+        "value": 7913070,
+        "country": "Benin"
+      },
+      {
+        "year": "2003",
+        "value": 1775736,
+        "country": "Botswana"
+      },
+      {
+        "year": "2008",
+        "value": 1949970,
+        "country": "Botswana"
+      },
+      {
+        "year": "2008",
+        "value": 15258093,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2008",
+        "value": 8505637,
+        "country": "Burundi"
+      },
+      {
+        "year": "2008",
+        "value": 501355,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2006",
+        "value": 9441171,
+        "country": "Guinea"
+      },
+      {
+        "year": "2006",
+        "value": 1415303,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2021",
+        "value": 21995243,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2021",
+        "value": 12965481,
+        "country": "Burundi"
+      },
+      {
+        "year": "2021",
+        "value": 516649,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2021",
+        "value": 26915758,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2021",
+        "value": 5112100,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2021",
+        "value": 17828273,
+        "country": "Chad"
+      },
+      {
+        "year": "2019",
+        "value": 32375632,
+        "country": "Angola"
+      },
+      {
+        "year": "2011",
+        "value": 2014009,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2011",
+        "value": 4221178,
+        "country": "Liberia"
+      },
+      {
+        "year": "2010",
+        "value": 1189085,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2010",
+        "value": 2945186,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2010",
+        "value": 1111650,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2010",
+        "value": 90538514,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2020",
+        "value": 44457152,
+        "country": "Uganda"
+      },
+      {
+        "year": "1996",
+        "value": 9004053,
+        "country": "Zambia"
+      },
+      {
+        "year": "1996",
+        "value": 11158360,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "1995",
+        "value": 8785763,
+        "country": "Zambia"
+      },
+      {
+        "year": "1995",
+        "value": 10974599,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2018",
+        "value": 15914498,
+        "country": "Senegal"
+      },
+      {
+        "year": "2018",
+        "value": 96762,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2018",
+        "value": 7554563,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2018",
+        "value": 15452487,
+        "country": "Somalia"
+      },
+      {
+        "year": "2021",
+        "value": 818174,
+        "country": "Comoros"
+      },
+      {
+        "year": "2021",
+        "value": 99148932,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2021",
+        "value": 5892183,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2021",
+        "value": 29639736,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2012",
+        "value": 15709577,
+        "country": "Malawi"
+      },
+      {
+        "year": "2012",
+        "value": 16957033,
+        "country": "Mali"
+      },
+      {
+        "year": "2012",
+        "value": 3619034,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2012",
+        "value": 1255882,
+        "country": "Mauritius"
+      },
+      {
+        "year": "2007",
+        "value": 29653430,
+        "country": "Uganda"
+      },
+      {
+        "year": "2011",
+        "value": 17176283,
+        "country": "Niger"
+      },
+      {
+        "year": "2011",
+        "value": 171379598,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2021",
+        "value": 34532429,
+        "country": "Angola"
+      },
+      {
+        "year": "2017",
+        "value": 57635162,
+        "country": "South Africa"
+      },
+      {
+        "year": "2017",
+        "value": 10259154,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2017",
+        "value": 42714306,
+        "country": "Sudan"
+      },
+      {
+        "year": "2018",
+        "value": 12383347,
+        "country": "Benin"
+      },
+      {
+        "year": "2019",
+        "value": 12776103,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2019",
+        "value": 213392,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2019",
+        "value": 16352922,
+        "country": "Senegal"
+      },
+      {
+        "year": "2002",
+        "value": 25532870,
+        "country": "Uganda"
+      },
+      {
+        "year": "2004",
+        "value": 1971129,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2004",
+        "value": 3156892,
+        "country": "Liberia"
+      },
+      {
+        "year": "2004",
+        "value": 18606608,
+        "country": "Madagascar"
+      },
+      {
+        "year": "2004",
+        "value": 12500737,
+        "country": "Malawi"
+      },
+      {
+        "year": "2016",
+        "value": 1508186,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2016",
+        "value": 3124698,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2010",
+        "value": 10396086,
+        "country": "Guinea"
+      },
+      {
+        "year": "2010",
+        "value": 1566347,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2011",
+        "value": 1241835,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2011",
+        "value": 2998485,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2011",
+        "value": 1117833,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2011",
+        "value": 93149970,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2001",
+        "value": 11920647,
+        "country": "Niger"
+      },
+      {
+        "year": "2001",
+        "value": 129862595,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2009",
+        "value": 3284448,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2009",
+        "value": 1247429,
+        "country": "Mauritius"
+      },
+      {
+        "year": "2009",
+        "value": 22391745,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2023",
+        "value": 55339003,
+        "country": "Kenya"
+      },
+      {
+        "year": "2001",
+        "value": 12295001,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2001",
+        "value": 6634365,
+        "country": "Burundi"
+      },
+      {
+        "year": "2001",
+        "value": 460293,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2001",
+        "value": 15309490,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2001",
+        "value": 3919487,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2001",
+        "value": 8804124,
+        "country": "Chad"
+      },
+      {
+        "year": "2006",
+        "value": 14268581,
+        "country": "Niger"
+      },
+      {
+        "year": "2006",
+        "value": 149077334,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2018",
+        "value": 2399632,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2018",
+        "value": 30637585,
+        "country": "Ghana"
+      },
+      {
+        "year": "2018",
+        "value": 12704774,
+        "country": "Guinea"
+      },
+      {
+        "year": "2018",
+        "value": 1922168,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2009",
+        "value": 43633982,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2009",
+        "value": 6551865,
+        "country": "Togo"
+      },
+      {
+        "year": "2021",
+        "value": 45910930,
+        "country": "Uganda"
+      },
+      {
+        "year": "2023",
+        "value": 2311472,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2023",
+        "value": 5493031,
+        "country": "Liberia"
+      },
+      {
+        "year": "2023",
+        "value": 31195932,
+        "country": "Madagascar"
+      },
+      {
+        "year": "2023",
+        "value": 21104482,
+        "country": "Malawi"
+      },
+      {
+        "year": "2023",
+        "value": 23769127,
+        "country": "Mali"
+      },
+      {
+        "year": "2021",
+        "value": 221961,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2021",
+        "value": 17220867,
+        "country": "Senegal"
+      },
+      {
+        "year": "2021",
+        "value": 99258,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2021",
+        "value": 8094602,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2019",
+        "value": 97625,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2019",
+        "value": 7731991,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2019",
+        "value": 16030971,
+        "country": "Somalia"
+      },
+      {
+        "year": "2019",
+        "value": 59587885,
+        "country": "South Africa"
+      },
+      {
+        "year": "2019",
+        "value": 10423384,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2007",
+        "value": 20778561,
+        "country": "Angola"
+      },
+      {
+        "year": "2020",
+        "value": 13065837,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2010",
+        "value": 68563038,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2010",
+        "value": 4462290,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2010",
+        "value": 22488065,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2019",
+        "value": 1670177,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2010",
+        "value": 22183340,
+        "country": "Madagascar"
+      },
+      {
+        "year": "2010",
+        "value": 14826463,
+        "country": "Malawi"
+      },
+      {
+        "year": "2010",
+        "value": 15945198,
+        "country": "Mali"
+      },
+      {
+        "year": "2010",
+        "value": 3390965,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2010",
+        "value": 1250400,
+        "country": "Mauritius"
+      },
+      {
+        "year": "2007",
+        "value": 1556237,
+        "country": "Gabon"
+      },
+      {
+        "year": "2007",
+        "value": 1765774,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2007",
+        "value": 23642279,
+        "country": "Ghana"
+      },
+      {
+        "year": "2007",
+        "value": 9662281,
+        "country": "Guinea"
+      },
+      {
+        "year": "2002",
+        "value": 10466214,
+        "country": "Senegal"
+      },
+      {
+        "year": "2002",
+        "value": 83723,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2002",
+        "value": 4971435,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2002",
+        "value": 9550063,
+        "country": "Somalia"
+      },
+      {
+        "year": "2002",
+        "value": 48019415,
+        "country": "South Africa"
+      },
+      {
+        "year": "2002",
+        "value": 6596806,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2012",
+        "value": 23467078,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2000",
+        "value": 11925546,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "2000",
+        "value": 6470194,
+        "country": "Burundi"
+      },
+      {
+        "year": "2000",
+        "value": 453317,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "2000",
+        "value": 14912631,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2000",
+        "value": 3833416,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2000",
+        "value": 8512093,
+        "country": "Chad"
+      },
+      {
+        "year": "2022",
+        "value": 27632771,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2022",
+        "value": 5098039,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "2022",
+        "value": 18455316,
+        "country": "Chad"
+      },
+      {
+        "year": "2022",
+        "value": 834188,
+        "country": "Comoros"
+      },
+      {
+        "year": "2022",
+        "value": 102396968,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "2022",
+        "value": 6035104,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "2004",
+        "value": 1421609,
+        "country": "Gabon"
+      },
+      {
+        "year": "2004",
+        "value": 1621312,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "2004",
+        "value": 21868298,
+        "country": "Ghana"
+      },
+      {
+        "year": "2004",
+        "value": 9062726,
+        "country": "Guinea"
+      },
+      {
+        "year": "2001",
+        "value": 2678760,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2001",
+        "value": 1196287,
+        "country": "Mauritius"
+      },
+      {
+        "year": "2001",
+        "value": 18537729,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2001",
+        "value": 1857048,
+        "country": "Namibia"
+      },
+      {
+        "year": "2006",
+        "value": 11500094,
+        "country": "Senegal"
+      },
+      {
+        "year": "2006",
+        "value": 84600,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2006",
+        "value": 5624466,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2006",
+        "value": 10975502,
+        "country": "Somalia"
+      },
+      {
+        "year": "2006",
+        "value": 49998277,
+        "country": "South Africa"
+      },
+      {
+        "year": "2006",
+        "value": 7976526,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2017",
+        "value": 19813011,
+        "country": "Mali"
+      },
+      {
+        "year": "2017",
+        "value": 4210600,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2017",
+        "value": 1264887,
+        "country": "Mauritius"
+      },
+      {
+        "year": "1999",
+        "value": 17215935,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1999",
+        "value": 667214,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2023",
+        "value": 20723965,
+        "country": "Zambia"
+      },
+      {
+        "year": "2023",
+        "value": 16340822,
+        "country": "Zimbabwe"
+      },
+      {
+        "year": "2008",
+        "value": 21514439,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2020",
+        "value": 23717613,
+        "country": "Niger"
+      },
+      {
+        "year": "2020",
+        "value": 213996181,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1998",
+        "value": 10741413,
+        "country": "Niger"
+      },
+      {
+        "year": "1998",
+        "value": 119846254,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2001",
+        "value": 8287094,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2001",
+        "value": 146375,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2002",
+        "value": 3094782,
+        "country": "Liberia"
+      },
+      {
+        "year": "2002",
+        "value": 17549913,
+        "country": "Madagascar"
+      },
+      {
+        "year": "2002",
+        "value": 11880440,
+        "country": "Malawi"
+      },
+      {
+        "year": "2002",
+        "value": 12288050,
+        "country": "Mali"
+      },
+      {
+        "year": "2002",
+        "value": 2738655,
+        "country": "Mauritania"
+      },
+      {
+        "year": "2010",
+        "value": 12261756,
+        "country": "Somalia"
+      },
+      {
+        "year": "2010",
+        "value": 52344051,
+        "country": "South Africa"
+      },
+      {
+        "year": "2010",
+        "value": 9745953,
+        "country": "South Sudan"
+      },
+      {
+        "year": "2010",
+        "value": 35414399,
+        "country": "Sudan"
+      },
+      {
+        "year": "2003",
+        "value": 847862,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "2003",
+        "value": 2493903,
+        "country": "Eritrea"
+      },
+      {
+        "year": "2003",
+        "value": 1066700,
+        "country": "Eswatini"
+      },
+      {
+        "year": "2003",
+        "value": 73832663,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1997",
+        "value": 14660413,
+        "country": "Angola"
+      },
+      {
+        "year": "2022",
+        "value": 54252461,
+        "country": "Kenya"
+      },
+      {
+        "year": "2022",
+        "value": 2286110,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2022",
+        "value": 5373294,
+        "country": "Liberia"
+      },
+      {
+        "year": "2006",
+        "value": 1945063,
+        "country": "Lesotho"
+      },
+      {
+        "year": "2006",
+        "value": 3490787,
+        "country": "Liberia"
+      },
+      {
+        "year": "2005",
+        "value": 9054528,
+        "country": "Rwanda"
+      },
+      {
+        "year": "2005",
+        "value": 161639,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "2005",
+        "value": 11235472,
+        "country": "Senegal"
+      },
+      {
+        "year": "2005",
+        "value": 82858,
+        "country": "Seychelles"
+      },
+      {
+        "year": "2005",
+        "value": 5501712,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "2022",
+        "value": 49383346,
+        "country": "Sudan"
+      },
+      {
+        "year": "2022",
+        "value": 64711821,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2023",
+        "value": 50042791,
+        "country": "Sudan"
+      },
+      {
+        "year": "2023",
+        "value": 66617606,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2023",
+        "value": 9304337,
+        "country": "Togo"
+      },
+      {
+        "year": "2003",
+        "value": 29896035,
+        "country": "Sudan"
+      },
+      {
+        "year": "2003",
+        "value": 37089555,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2018",
+        "value": 27464173,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2021",
+        "value": 13413417,
+        "country": "Benin"
+      },
+      {
+        "year": "2021",
+        "value": 2401441,
+        "country": "Botswana"
+      },
+      {
+        "year": "2022",
+        "value": 32656246,
+        "country": "Mozambique"
+      },
+      {
+        "year": "2022",
+        "value": 2889662,
+        "country": "Namibia"
+      },
+      {
+        "year": "2022",
+        "value": 33149152,
+        "country": "Ghana"
+      },
+      {
+        "year": "2022",
+        "value": 14055137,
+        "country": "Guinea"
+      },
+      {
+        "year": "2022",
+        "value": 2105529,
+        "country": "Guinea-Bissau"
+      },
+      {
+        "year": "2015",
+        "value": 25246342,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1997",
+        "value": 432798,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1997",
+        "value": 13775214,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1997",
+        "value": 3531700,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1997",
+        "value": 7670366,
+        "country": "Chad"
+      },
+      {
+        "year": "1997",
+        "value": 507777,
+        "country": "Comoros"
+      },
+      {
+        "year": "1997",
+        "value": 46029902,
+        "country": "Congo, Dem. Rep."
+      },
+      {
+        "year": "1997",
+        "value": 2887862,
+        "country": "Congo, Rep."
+      },
+      {
+        "year": "1997",
+        "value": 16047170,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1993",
+        "value": 1420115,
+        "country": "Botswana"
+      },
+      {
+        "year": "1993",
+        "value": 9871713,
+        "country": "Burkina Faso"
+      },
+      {
+        "year": "1993",
+        "value": 5676843,
+        "country": "Burundi"
+      },
+      {
+        "year": "1993",
+        "value": 401965,
+        "country": "Cabo Verde"
+      },
+      {
+        "year": "1993",
+        "value": 12353131,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1993",
+        "value": 3157839,
+        "country": "Central African Republic"
+      },
+      {
+        "year": "1993",
+        "value": 6629146,
+        "country": "Chad"
+      },
+      {
+        "year": "1996",
+        "value": 30945762,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1996",
+        "value": 4577860,
+        "country": "Togo"
+      },
+      {
+        "year": "1996",
+        "value": 21231550,
+        "country": "Uganda"
+      },
+      {
+        "year": "1995",
+        "value": 26601751,
+        "country": "Kenya"
+      },
+      {
+        "year": "1994",
+        "value": 24043948,
+        "country": "Sudan"
+      },
+      {
+        "year": "1994",
+        "value": 29442356,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1994",
+        "value": 4222940,
+        "country": "Togo"
+      },
+      {
+        "year": "1992",
+        "value": 6495107,
+        "country": "Somalia"
+      },
+      {
+        "year": "1992",
+        "value": 42443509,
+        "country": "South Africa"
+      },
+      {
+        "year": "1992",
+        "value": 4909749,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1992",
+        "value": 22927355,
+        "country": "Sudan"
+      },
+      {
+        "year": "1992",
+        "value": 27457588,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1991",
+        "value": 6813760,
+        "country": "Somalia"
+      },
+      {
+        "year": "1991",
+        "value": 41687898,
+        "country": "South Africa"
+      },
+      {
+        "year": "1991",
+        "value": 4836677,
+        "country": "South Sudan"
+      },
+      {
+        "year": "1991",
+        "value": 22470676,
+        "country": "Sudan"
+      },
+      {
+        "year": "1991",
+        "value": 26780436,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1999",
+        "value": 8147912,
+        "country": "Rwanda"
+      },
+      {
+        "year": "1999",
+        "value": 142442,
+        "country": "Sao Tome and Principe"
+      },
+      {
+        "year": "1999",
+        "value": 9730887,
+        "country": "Senegal"
+      },
+      {
+        "year": "1999",
+        "value": 80410,
+        "country": "Seychelles"
+      },
+      {
+        "year": "1999",
+        "value": 4318043,
+        "country": "Sierra Leone"
+      },
+      {
+        "year": "1993",
+        "value": 14051192,
+        "country": "Mozambique"
+      },
+      {
+        "year": "1993",
+        "value": 1508697,
+        "country": "Namibia"
+      },
+      {
+        "year": "1993",
+        "value": 9100789,
+        "country": "Niger"
+      },
+      {
+        "year": "1993",
+        "value": 105122069,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1991",
+        "value": 492217,
+        "country": "Equatorial Guinea"
+      },
+      {
+        "year": "1991",
+        "value": 1919571,
+        "country": "Eritrea"
+      },
+      {
+        "year": "1991",
+        "value": 908189,
+        "country": "Eswatini"
+      },
+      {
+        "year": "1991",
+        "value": 49717198,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1991",
+        "value": 1010818,
+        "country": "Gabon"
+      },
+      {
+        "year": "1991",
+        "value": 1099959,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "1991",
+        "value": 15787496,
+        "country": "Ghana"
+      },
+      {
+        "year": "1996",
+        "value": 1152015,
+        "country": "Gabon"
+      },
+      {
+        "year": "1996",
+        "value": 1301410,
+        "country": "Gambia, The"
+      },
+      {
+        "year": "1996",
+        "value": 17810181,
+        "country": "Ghana"
+      },
+      {
+        "year": "1996",
+        "value": 7770035,
+        "country": "Guinea"
+      },
+      {
+        "year": "1996",
+        "value": 1143535,
+        "country": "Guinea-Bissau"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          42889.0,
+          218529286.0
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Persons",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.0f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

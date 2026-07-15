@@ -1,0 +1,855 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Agriculture, forestry, and fishing, value added (% of GDP) | Industry, including",
+      "construction, value added (% of GDP) | Services, value added (% of GDP)"
+    ],
+    "subtitle": [
+      "South Africa, 2000-2020",
+      "Percentage of GDP"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2000",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.614748
+      },
+      {
+        "year": "2001",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.812452
+      },
+      {
+        "year": "2002",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.956972
+      },
+      {
+        "year": "2003",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.653978
+      },
+      {
+        "year": "2004",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.411716
+      },
+      {
+        "year": "2005",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.085118
+      },
+      {
+        "year": "2006",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.050977
+      },
+      {
+        "year": "2007",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.355914
+      },
+      {
+        "year": "2008",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.572489
+      },
+      {
+        "year": "2009",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.399496
+      },
+      {
+        "year": "2010",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.107787
+      },
+      {
+        "year": "2011",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.043893
+      },
+      {
+        "year": "2012",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.97671
+      },
+      {
+        "year": "2013",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.926849
+      },
+      {
+        "year": "2014",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.125749
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.233978
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.414186
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.493799
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.260704
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.950321
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.578661
+      },
+      {
+        "year": "2000",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 28.229756
+      },
+      {
+        "year": "2001",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 28.531613
+      },
+      {
+        "year": "2002",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 28.505916
+      },
+      {
+        "year": "2003",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 26.892868
+      },
+      {
+        "year": "2004",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 26.303637
+      },
+      {
+        "year": "2005",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 26.015079
+      },
+      {
+        "year": "2006",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 24.859118
+      },
+      {
+        "year": "2007",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 25.294618
+      },
+      {
+        "year": "2008",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 26.941556
+      },
+      {
+        "year": "2009",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 25.743076
+      },
+      {
+        "year": "2010",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 25.303463
+      },
+      {
+        "year": "2011",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 24.839491
+      },
+      {
+        "year": "2012",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 24.4686
+      },
+      {
+        "year": "2013",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 24.551742
+      },
+      {
+        "year": "2014",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 24.305282
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 23.732308
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 23.782537
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 23.610556
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 23.537061
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 23.622015
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 23.339438
+      },
+      {
+        "year": "2000",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 61.185981
+      },
+      {
+        "year": "2001",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 60.78315
+      },
+      {
+        "year": "2002",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 60.79179
+      },
+      {
+        "year": "2003",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 62.576942
+      },
+      {
+        "year": "2004",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 62.529502
+      },
+      {
+        "year": "2005",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 62.644774
+      },
+      {
+        "year": "2006",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 63.499432
+      },
+      {
+        "year": "2007",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 62.754513
+      },
+      {
+        "year": "2008",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 61.537141
+      },
+      {
+        "year": "2009",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 63.636088
+      },
+      {
+        "year": "2010",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.275263
+      },
+      {
+        "year": "2011",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.342198
+      },
+      {
+        "year": "2012",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.304511
+      },
+      {
+        "year": "2013",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.053743
+      },
+      {
+        "year": "2014",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.011782
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.102576
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 63.913402
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.330426
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.253176
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.347305
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.610254
+      }
+    ]
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 214,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Agriculture, forestry, and fishing, value added (% of GDP)"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Agriculture, forestry, and fishing, value added (% of GDP)",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "South Africa"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "Industry, including construction, value added (% of GDP)",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 214,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Industry, including construction, value added (% of GDP)"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Industry, including construction, value added (% of GDP)",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "South Africa"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "Services, value added (% of GDP)",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 214,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Services, value added (% of GDP)"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Services, value added (% of GDP)",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "South Africa"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

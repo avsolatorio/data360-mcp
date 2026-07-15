@@ -1,0 +1,590 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Labor force participation rate, female (% of female population ages 15+)",
+      "(modeled ILO estimate)"
+    ],
+    "subtitle": [
+      "2010-2022",
+      "Percentage of women"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2016",
+        "value": 26.575,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2017",
+        "value": 26.578,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2018",
+        "value": 26.568,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2013",
+        "value": 22.79,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2014",
+        "value": 33.571,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2011",
+        "value": 35.021,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2015",
+        "value": 26.582,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2021",
+        "value": 27.724,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2011",
+        "value": 33.946,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2022",
+        "value": 29.348,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2022",
+        "value": 31.605,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2014",
+        "value": 26.607,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2013",
+        "value": 26.669,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2016",
+        "value": 33.497,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2019",
+        "value": 23.241,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2017",
+        "value": 36.094,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2012",
+        "value": 34.316,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2018",
+        "value": 33.105,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2012",
+        "value": 26.764,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2018",
+        "value": 21.571,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2019",
+        "value": 39.33,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2014",
+        "value": 22.987,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2017",
+        "value": 22.358,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2016",
+        "value": 23.162,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2010",
+        "value": 28.425,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2011",
+        "value": 27.583,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2019",
+        "value": 26.539,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2010",
+        "value": 22.036,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2014",
+        "value": 33.211,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2013",
+        "value": 33.616,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2015",
+        "value": 23.983,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2010",
+        "value": 35.723,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2021",
+        "value": 31.329,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2010",
+        "value": 33.965,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2021",
+        "value": 42.181,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2015",
+        "value": 33.531,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2022",
+        "value": 43.687,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2022",
+        "value": 24.027,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2015",
+        "value": 35.33,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2011",
+        "value": 22.228,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2012",
+        "value": 22.508,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2018",
+        "value": 38.056,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2017",
+        "value": 36.676,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2020",
+        "value": 40.323,
+        "country": "Bangladesh",
+        "sex": "Female"
+      },
+      {
+        "year": "2020",
+        "value": 23.406,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2013",
+        "value": 33.869,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2016",
+        "value": 35.252,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2020",
+        "value": 25.998,
+        "country": "India",
+        "sex": "Female"
+      },
+      {
+        "year": "2020",
+        "value": 31.663,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2021",
+        "value": 24.365,
+        "country": "Pakistan",
+        "sex": "Female"
+      },
+      {
+        "year": "2012",
+        "value": 32.649,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      },
+      {
+        "year": "2019",
+        "value": 34.051,
+        "country": "Sri Lanka",
+        "sex": "Female"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Percentage of women",
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "sex",
+            "title": "Sex",
+            "type": "nominal"
+          },
+          {
+            "value": "Labor force participation rate, female (% of female population ages 15+) (modeled ILO estimate)",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}
