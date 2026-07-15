@@ -1,0 +1,315 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Trade (% of GDP) vs. Foreign direct investment, net inflows (% of GDP)"
+    ],
+    "subtitle": [
+      "2020",
+      "Percentage of GDP"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020",
+        "country": "Algeria",
+        "trade_of_gdp": 40.389757,
+        "foreign_direct_investment_net_inflows_of": 0.693816
+      },
+      {
+        "year": "2020",
+        "country": "Angola",
+        "trade_of_gdp": 54.660403,
+        "foreign_direct_investment_net_inflows_of": -3.189888
+      },
+      {
+        "year": "2020",
+        "country": "Burkina Faso",
+        "trade_of_gdp": 60.739779,
+        "foreign_direct_investment_net_inflows_of": -0.55728
+      },
+      {
+        "year": "2020",
+        "country": "Cameroon",
+        "trade_of_gdp": 33.738831,
+        "foreign_direct_investment_net_inflows_of": 1.655956
+      },
+      {
+        "year": "2020",
+        "country": "Cote d'Ivoire",
+        "trade_of_gdp": 41.942632,
+        "foreign_direct_investment_net_inflows_of": 1.131112
+      },
+      {
+        "year": "2020",
+        "country": "Ethiopia",
+        "trade_of_gdp": 24.006114,
+        "foreign_direct_investment_net_inflows_of": 2.427926
+      },
+      {
+        "year": "2020",
+        "country": "Ghana",
+        "trade_of_gdp": 66.575499,
+        "foreign_direct_investment_net_inflows_of": 2.679374
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "trade_of_gdp": 30.399139,
+        "foreign_direct_investment_net_inflows_of": -0.005368
+      },
+      {
+        "year": "2020",
+        "country": "Madagascar",
+        "trade_of_gdp": 49.010707,
+        "foreign_direct_investment_net_inflows_of": 2.746571
+      },
+      {
+        "year": "2020",
+        "country": "Mali",
+        "trade_of_gdp": 56.041547,
+        "foreign_direct_investment_net_inflows_of": 2.593667
+      },
+      {
+        "year": "2020",
+        "country": "Mozambique",
+        "trade_of_gdp": 99.906146,
+        "foreign_direct_investment_net_inflows_of": 22.394437
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "trade_of_gdp": 50.759659,
+        "foreign_direct_investment_net_inflows_of": 0.933074
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "trade_of_gdp": 27.963015,
+        "foreign_direct_investment_net_inflows_of": 1.42846
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "trade_of_gdp": 37.000692,
+        "foreign_direct_investment_net_inflows_of": 3.168813
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "trade_of_gdp",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Trade (% of GDP) (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "foreign_direct_investment_net_inflows_of",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Foreign direct investment, net inflows (% of GDP) (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "trade_of_gdp",
+            "title": "Trade (% of GDP) (Percentage of GDP)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "foreign_direct_investment_net_inflows_of",
+            "title": "Foreign direct investment, net inflows (% of GDP) (Percentage of GDP)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "trade_of_gdp",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "foreign_direct_investment_net_inflows_of",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

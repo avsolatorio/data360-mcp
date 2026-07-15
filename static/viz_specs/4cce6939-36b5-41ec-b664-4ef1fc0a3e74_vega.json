@@ -1,0 +1,360 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years) vs. GDP per capita (constant 2015 US$)"
+    ],
+    "subtitle": [
+      "India, 2010-2022"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 67.162,
+        "gdp_per_capita_constant_2015_us": 1235.159391
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 67.623,
+        "gdp_per_capita_constant_2015_us": 1281.610544
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 68.076,
+        "gdp_per_capita_constant_2015_us": 1333.096266
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 68.499,
+        "gdp_per_capita_constant_2015_us": 1399.453798
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 68.932,
+        "gdp_per_capita_constant_2015_us": 1484.316407
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 69.326,
+        "gdp_per_capita_constant_2015_us": 1583.998159
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 69.709,
+        "gdp_per_capita_constant_2015_us": 1694.46535
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 70.068,
+        "gdp_per_capita_constant_2015_us": 1788.697703
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 70.415,
+        "gdp_per_capita_constant_2015_us": 1883.357727
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 70.746,
+        "gdp_per_capita_constant_2015_us": 1936.030677
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 70.156,
+        "gdp_per_capita_constant_2015_us": 1806.501106
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 67.282,
+        "gdp_per_capita_constant_2015_us": 1965.309434
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 71.698,
+        "gdp_per_capita_constant_2015_us": 2098.211245
+      }
+    ]
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Life expectancy at birth, total (years)",
+        "color": "#34A7F2",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#34A7F2",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "life_expectancy_at_birth_total_years",
+            "title": "Life expectancy at birth, total (years)",
+            "format": ",.1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)",
+        "color": "#FF9800",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#FF9800",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "gdp_per_capita_constant_2015_us",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_per_capita_constant_2015_us",
+            "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)",
+            "format": ",.0f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared"
+    },
+    "axis": {
+      "x": "independent"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,341 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP per capita and renewable energy share, 2020",
+    "subtitle": [
+      "2020"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020",
+        "country": "Bangladesh",
+        "gdp_per_capita": 1604.665923,
+        "renewable_energy_consumption": 27.2,
+        "_x_norm": 0.013865605352590312,
+        "_y_norm": 0.31105710814094767,
+        "_dist_from_center": 0.27202606604326507,
+        "_show_label": true
+      },
+      {
+        "year": "2020",
+        "country": "Bhutan",
+        "gdp_per_capita": 3092.124284,
+        "renewable_energy_consumption": 83.9,
+        "_x_norm": 0.04985136800375831,
+        "_y_norm": 1.0,
+        "_dist_from_center": 0.4526337908880878,
+        "_show_label": true
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "gdp_per_capita": 8435.011433,
+        "renewable_energy_consumption": 50.0,
+        "_x_norm": 0.17911069643741634,
+        "_y_norm": 0.5880923450789792,
+        "_dist_from_center": 0.11073020640239392,
+        "_show_label": true
+      },
+      {
+        "year": "2020",
+        "country": "Canada",
+        "gdp_per_capita": 42366.171094,
+        "renewable_energy_consumption": 23.9,
+        "_x_norm": 1.0,
+        "_y_norm": 0.27095990279465365,
+        "_dist_from_center": 0.30245936612783453,
+        "_show_label": true
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "gdp_per_capita": 1806.501106,
+        "renewable_energy_consumption": 36.1,
+        "_x_norm": 0.01874856085610444,
+        "_y_norm": 0.4191980558930741,
+        "_dist_from_center": 0.23813190184952937,
+        "_show_label": true
+      },
+      {
+        "year": "2020",
+        "country": "Maldives",
+        "gdp_per_capita": 7295.60221,
+        "renewable_energy_consumption": 1.6,
+        "_x_norm": 0.15154521229582044,
+        "_y_norm": 0.0,
+        "_dist_from_center": 0.3714207390739649,
+        "_show_label": true
+      },
+      {
+        "year": "2020",
+        "country": "Nepal",
+        "gdp_per_capita": 1031.536188,
+        "renewable_energy_consumption": 73.1,
+        "_x_norm": 0.0,
+        "_y_norm": 0.8687727825030376,
+        "_dist_from_center": 0.3859933651150327,
+        "_show_label": true
+      },
+      {
+        "year": "2020",
+        "country": "Sri Lanka",
+        "gdp_per_capita": 4227.233145,
+        "renewable_energy_consumption": 49.3,
+        "_x_norm": 0.0773128144053384,
+        "_y_norm": 0.5795868772782502,
+        "_dist_from_center": 0.18499852790083918,
+        "_show_label": true
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP per capita (US dollars, 2015 constant prices)"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log",
+            "domain": [
+              1.0,
+              46602.7882034
+            ]
+          }
+        },
+        "y": {
+          "field": "renewable_energy_consumption",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Renewable energy consumption (Percentage)"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log",
+            "domain": [
+              1.0,
+              92.29000000000002
+            ]
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_per_capita",
+            "title": "GDP per capita (US dollars, 2015 constant prices)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "renewable_energy_consumption",
+            "title": "Renewable energy consumption (Percentage)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita",
+          "type": "quantitative",
+          "scale": {
+            "type": "log",
+            "zero": false,
+            "domain": [
+              1.0,
+              46602.7882034
+            ]
+          }
+        },
+        "y": {
+          "field": "renewable_energy_consumption",
+          "type": "quantitative",
+          "scale": {
+            "type": "log",
+            "zero": false,
+            "domain": [
+              1.0,
+              92.29000000000002
+            ]
+          }
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum._show_label",
+            "value": 1
+          },
+          "value": 0
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

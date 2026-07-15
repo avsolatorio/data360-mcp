@@ -1,0 +1,1073 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Control of Corruption Estimate (2010-2022)",
+    "subtitle": [
+      "Argentina, Brazil, Colombia, 2010-2022"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "value": -0.367297,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2010",
+        "value": -0.015097,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2010",
+        "value": -0.376108,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2011",
+        "value": -0.339635,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2011",
+        "value": 0.209751,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2011",
+        "value": -0.206675,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2012",
+        "value": -0.516814,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2012",
+        "value": -0.011387,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2012",
+        "value": -0.409987,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2013",
+        "value": -0.517294,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2013",
+        "value": -0.060864,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2013",
+        "value": -0.441234,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2014",
+        "value": -0.666054,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2014",
+        "value": -0.235179,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2014",
+        "value": -0.371322,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": -0.645136,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": -0.351268,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2015",
+        "value": -0.317337,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": -0.219363,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": -0.366818,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2016",
+        "value": -0.369489,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": -0.178142,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": -0.469369,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2017",
+        "value": -0.410863,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": -0.005735,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": -0.407628,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2018",
+        "value": -0.318594,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": -0.084705,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": -0.372764,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2019",
+        "value": -0.272275,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": -0.13447,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": -0.337232,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2020",
+        "value": -0.256464,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": -0.32733,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": -0.404589,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2021",
+        "value": -0.269745,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": -0.340233,
+        "country": "Argentina",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": -0.456279,
+        "country": "Brazil",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2022",
+        "value": -0.2564,
+        "country": "Colombia",
+        "comp_breakdown_1": "est"
+      },
+      {
+        "year": "2010",
+        "value": 0.172684,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2010",
+        "value": 0.172684,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2010",
+        "value": 0.172684,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2011",
+        "value": 0.156277,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2011",
+        "value": 0.156277,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2011",
+        "value": 0.156277,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2012",
+        "value": 0.156277,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2012",
+        "value": 0.156277,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2012",
+        "value": 0.158202,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2013",
+        "value": 0.157256,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2013",
+        "value": 0.157256,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2013",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2014",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2014",
+        "value": 0.157256,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2014",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2015",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2015",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2015",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2016",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2016",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2016",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2017",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2017",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2017",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2018",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2018",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2018",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2019",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2019",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2019",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2020",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2020",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2020",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2021",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2021",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2021",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2022",
+        "value": 0.159218,
+        "country": "Argentina",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2022",
+        "value": 0.159218,
+        "country": "Brazil",
+        "comp_breakdown_1": "se"
+      },
+      {
+        "year": "2022",
+        "value": 0.159218,
+        "country": "Colombia",
+        "comp_breakdown_1": "se"
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "Argentina",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Argentina"
+              }
+            },
+            {
+              "pivot": "comp_breakdown_1",
+              "value": "value",
+              "groupby": [
+                "year",
+                "country"
+              ]
+            },
+            {
+              "calculate": "datum.est - 1.645 * datum.se",
+              "as": "lower"
+            },
+            {
+              "calculate": "datum.est + 1.645 * datum.se",
+              "as": "upper"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "opacity": 0.2,
+            "color": "#34A7F2"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "lower",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "y2": {
+              "field": "upper"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Argentina"
+              }
+            },
+            {
+              "filter": "datum.comp_breakdown_1 == 'est'"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": {
+              "filled": true,
+              "size": 56
+            }
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "value",
+              "type": "quantitative",
+              "axis": {
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold",
+                "tickCount": 5,
+                "title": null,
+                "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+              },
+              "scale": {
+                "zero": false
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "title": "Year",
+                "type": "temporal",
+                "timeUnit": "utcyear",
+                "format": "%Y"
+              },
+              {
+                "field": "value",
+                "title": "Argentina",
+                "format": ".2f",
+                "type": "quantitative"
+              },
+              {
+                "field": "country",
+                "title": "Economy",
+                "type": "nominal"
+              },
+              {
+                "field": "comp_breakdown_1",
+                "title": "Dimension 1",
+                "type": "nominal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "Brazil",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Brazil"
+              }
+            },
+            {
+              "pivot": "comp_breakdown_1",
+              "value": "value",
+              "groupby": [
+                "year",
+                "country"
+              ]
+            },
+            {
+              "calculate": "datum.est - 1.645 * datum.se",
+              "as": "lower"
+            },
+            {
+              "calculate": "datum.est + 1.645 * datum.se",
+              "as": "upper"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "opacity": 0.2,
+            "color": "#34A7F2"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "lower",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "y2": {
+              "field": "upper"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Brazil"
+              }
+            },
+            {
+              "filter": "datum.comp_breakdown_1 == 'est'"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": {
+              "filled": true,
+              "size": 56
+            }
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "value",
+              "type": "quantitative",
+              "axis": {
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold",
+                "tickCount": 5,
+                "title": null,
+                "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+              },
+              "scale": {
+                "zero": false
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "title": "Year",
+                "type": "temporal",
+                "timeUnit": "utcyear",
+                "format": "%Y"
+              },
+              {
+                "field": "value",
+                "title": "Brazil",
+                "format": ".2f",
+                "type": "quantitative"
+              },
+              {
+                "field": "country",
+                "title": "Economy",
+                "type": "nominal"
+              },
+              {
+                "field": "comp_breakdown_1",
+                "title": "Dimension 1",
+                "type": "nominal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "Colombia",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Colombia"
+              }
+            },
+            {
+              "pivot": "comp_breakdown_1",
+              "value": "value",
+              "groupby": [
+                "year",
+                "country"
+              ]
+            },
+            {
+              "calculate": "datum.est - 1.645 * datum.se",
+              "as": "lower"
+            },
+            {
+              "calculate": "datum.est + 1.645 * datum.se",
+              "as": "upper"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "opacity": 0.2,
+            "color": "#34A7F2"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "lower",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "y2": {
+              "field": "upper"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "field": "country",
+                "equal": "Colombia"
+              }
+            },
+            {
+              "filter": "datum.comp_breakdown_1 == 'est'"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "strokeCap": "round",
+            "point": {
+              "filled": true,
+              "size": 56
+            }
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "temporal",
+              "timeUnit": "utcyear",
+              "axis": {
+                "title": null,
+                "format": "%Y",
+                "tickCount": 5,
+                "labelAngle": 0,
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold"
+              }
+            },
+            "y": {
+              "field": "value",
+              "type": "quantitative",
+              "axis": {
+                "grid": false,
+                "gridColor": "#CED4DE",
+                "gridDash": [
+                  4,
+                  2
+                ],
+                "labelColor": "#666666",
+                "titleColor": "#111111",
+                "titleFontWeight": "bold",
+                "tickCount": 5,
+                "title": null,
+                "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+              },
+              "scale": {
+                "zero": false
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "title": "Year",
+                "type": "temporal",
+                "timeUnit": "utcyear",
+                "format": "%Y"
+              },
+              {
+                "field": "value",
+                "title": "Colombia",
+                "format": ".2f",
+                "type": "quantitative"
+              },
+              {
+                "field": "country",
+                "title": "Economy",
+                "type": "nominal"
+              },
+              {
+                "field": "comp_breakdown_1",
+                "title": "Dimension 1",
+                "type": "nominal"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "columns": 1,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

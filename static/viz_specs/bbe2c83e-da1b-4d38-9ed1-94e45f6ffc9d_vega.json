@@ -1,0 +1,475 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "India: Energy imports (net, % of energy use) vs Fossil fuel energy consumption (% of total), 1990\u20132023",
+    "subtitle": [
+      "India, 1990-2023",
+      "Percentage"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1990",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 11.302943,
+        "fossil_fuel_energy_consumption_of_total": 58.721967
+      },
+      {
+        "year": "1991",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 12.000667,
+        "fossil_fuel_energy_consumption_of_total": 59.90358
+      },
+      {
+        "year": "1992",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 13.879986,
+        "fossil_fuel_energy_consumption_of_total": 60.977556
+      },
+      {
+        "year": "1993",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 14.324885,
+        "fossil_fuel_energy_consumption_of_total": 61.587765
+      },
+      {
+        "year": "1994",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 14.034293,
+        "fossil_fuel_energy_consumption_of_total": 62.212982
+      },
+      {
+        "year": "1995",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 15.387787,
+        "fossil_fuel_energy_consumption_of_total": 64.118859
+      },
+      {
+        "year": "1996",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 16.962491,
+        "fossil_fuel_energy_consumption_of_total": 64.595023
+      },
+      {
+        "year": "1997",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 17.940018,
+        "fossil_fuel_energy_consumption_of_total": 65.368672
+      },
+      {
+        "year": "1998",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 19.34307,
+        "fossil_fuel_energy_consumption_of_total": 65.543558
+      },
+      {
+        "year": "1999",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 21.326073,
+        "fossil_fuel_energy_consumption_of_total": 66.99998
+      },
+      {
+        "year": "2000",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 21.884802,
+        "fossil_fuel_energy_consumption_of_total": 67.2516
+      },
+      {
+        "year": "2001",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 21.607118,
+        "fossil_fuel_energy_consumption_of_total": 67.129017
+      },
+      {
+        "year": "2002",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 22.196927,
+        "fossil_fuel_energy_consumption_of_total": 67.936664
+      },
+      {
+        "year": "2003",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 22.352892,
+        "fossil_fuel_energy_consumption_of_total": 68.165462
+      },
+      {
+        "year": "2004",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 23.051162,
+        "fossil_fuel_energy_consumption_of_total": 69.018287
+      },
+      {
+        "year": "2005",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 24.740371,
+        "fossil_fuel_energy_consumption_of_total": 69.347508
+      },
+      {
+        "year": "2006",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 26.047314,
+        "fossil_fuel_energy_consumption_of_total": 70.043891
+      },
+      {
+        "year": "2007",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 27.060126,
+        "fossil_fuel_energy_consumption_of_total": 70.953175
+      },
+      {
+        "year": "2008",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 28.455574,
+        "fossil_fuel_energy_consumption_of_total": 71.439967
+      },
+      {
+        "year": "2009",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 29.342648,
+        "fossil_fuel_energy_consumption_of_total": 75.572445
+      },
+      {
+        "year": "2010",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 30.221921,
+        "fossil_fuel_energy_consumption_of_total": 74.845694
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 31.160959,
+        "fossil_fuel_energy_consumption_of_total": 74.910974
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 32.822839,
+        "fossil_fuel_energy_consumption_of_total": 75.074748
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 34.024001,
+        "fossil_fuel_energy_consumption_of_total": 74.981867
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 36.542303,
+        "fossil_fuel_energy_consumption_of_total": 75.785729
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 37.282782,
+        "fossil_fuel_energy_consumption_of_total": 45.956629
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 37.387419,
+        "fossil_fuel_energy_consumption_of_total": 0.0
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 37.471311,
+        "fossil_fuel_energy_consumption_of_total": 0.0
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 37.584347,
+        "fossil_fuel_energy_consumption_of_total": 0.0
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 39.299698,
+        "fossil_fuel_energy_consumption_of_total": 0.0
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 37.481253,
+        "fossil_fuel_energy_consumption_of_total": 0.0
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 35.03558,
+        "fossil_fuel_energy_consumption_of_total": 0.0
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 36.529412,
+        "fossil_fuel_energy_consumption_of_total": 0.0
+      },
+      {
+        "year": "2023",
+        "country": "India",
+        "energy_imports_net_of_energy_use": 36.087184,
+        "fossil_fuel_energy_consumption_of_total": 0.0
+      }
+    ]
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Energy imports, net (% of energy use) (Percentage)",
+        "color": "#34A7F2",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#34A7F2",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "year",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "energy_imports_net_of_energy_use",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "year",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "energy_imports_net_of_energy_use",
+            "title": "Energy imports, net (% of energy use) (Percentage)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "Fossil fuel energy consumption (% of total) (Percentage)",
+        "color": "#FF9800",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#FF9800",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "year",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "fossil_fuel_energy_consumption_of_total",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "year",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "fossil_fuel_energy_consumption_of_total",
+            "title": "Fossil fuel energy consumption (% of total) (Percentage)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

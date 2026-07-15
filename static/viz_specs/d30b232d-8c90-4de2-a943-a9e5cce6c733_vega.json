@@ -1,0 +1,386 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP per capita (const 2015 USD): BRA vs ARG (2010-2022)",
+    "subtitle": [
+      "Argentina, Brazil, 2010-2022",
+      "US dollars, 2015 constant prices"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2013",
+        "value": 13946.095083,
+        "country": "Argentina"
+      },
+      {
+        "year": "2016",
+        "value": 13265.886064,
+        "country": "Argentina"
+      },
+      {
+        "year": "2010",
+        "value": 8792.634361,
+        "country": "Brazil"
+      },
+      {
+        "year": "2016",
+        "value": 8577.843767,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 8628.253089,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 8771.440513,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": 9067.993163,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 8435.011433,
+        "country": "Brazil"
+      },
+      {
+        "year": "2021",
+        "value": 8799.229458,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 9032.084816,
+        "country": "Brazil"
+      },
+      {
+        "year": "2012",
+        "value": 13754.425424,
+        "country": "Argentina"
+      },
+      {
+        "year": "2012",
+        "value": 9167.499239,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 13679.626498,
+        "country": "Argentina"
+      },
+      {
+        "year": "2013",
+        "value": 9366.739324,
+        "country": "Brazil"
+      },
+      {
+        "year": "2018",
+        "value": 13058.328545,
+        "country": "Argentina"
+      },
+      {
+        "year": "2015",
+        "value": 8936.196617,
+        "country": "Brazil"
+      },
+      {
+        "year": "2014",
+        "value": 13456.131916,
+        "country": "Argentina"
+      },
+      {
+        "year": "2022",
+        "value": 13276.823211,
+        "country": "Argentina"
+      },
+      {
+        "year": "2011",
+        "value": 14040.618912,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": 8722.336303,
+        "country": "Brazil"
+      },
+      {
+        "year": "2014",
+        "value": 9338.342783,
+        "country": "Brazil"
+      },
+      {
+        "year": "2021",
+        "value": 12549.28117,
+        "country": "Argentina"
+      },
+      {
+        "year": "2017",
+        "value": 13520.112985,
+        "country": "Argentina"
+      },
+      {
+        "year": "2019",
+        "value": 12706.397811,
+        "country": "Argentina"
+      },
+      {
+        "year": "2010",
+        "value": 13387.155375,
+        "country": "Argentina"
+      },
+      {
+        "year": "2020",
+        "value": 11393.050596,
+        "country": "Argentina"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "US dollars, 2015 constant prices",
+            "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1f') : '$'+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": "$,.2f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "GDP per capita (constant 2015 US$)",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

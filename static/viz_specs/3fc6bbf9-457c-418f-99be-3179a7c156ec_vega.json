@@ -1,0 +1,321 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP (annual % growth) vs. Inflation, consumer prices (annual % growth)"
+    ],
+    "subtitle": [
+      "Nigeria, 2010-2020",
+      "Percentage change per annum"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 8.005656
+      },
+      {
+        "year": "2011",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 5.307924
+      },
+      {
+        "year": "2012",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 4.230061
+      },
+      {
+        "year": "2013",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 6.671335
+      },
+      {
+        "year": "2014",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 6.309719
+      },
+      {
+        "year": "2015",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.652693
+      },
+      {
+        "year": "2016",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": -1.616869
+      },
+      {
+        "year": "2017",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 0.805887
+      },
+      {
+        "year": "2018",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 1.922757
+      },
+      {
+        "year": "2019",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.208429
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": -6.368898
+      },
+      {
+        "year": "2010",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 13.740052
+      },
+      {
+        "year": "2011",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 10.826137
+      },
+      {
+        "year": "2012",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 12.224241
+      },
+      {
+        "year": "2013",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 8.495518
+      },
+      {
+        "year": "2014",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 8.047411
+      },
+      {
+        "year": "2015",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 9.009435
+      },
+      {
+        "year": "2016",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 15.696813
+      },
+      {
+        "year": "2017",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 16.502266
+      },
+      {
+        "year": "2018",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 12.095107
+      },
+      {
+        "year": "2019",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 11.396422
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 13.246023
+      }
+    ]
+  },
+  "width": 680,
+  "height": 350,
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    },
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "indicator_value_melted",
+      "type": "quantitative",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Percentage change per annum",
+        "labelExpr": "format(datum.value, '.1f') + '%'"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "color": {
+      "field": "indicator_name_melted",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800"
+        ]
+      },
+      "legend": {
+        "title": null,
+        "orient": "bottom",
+        "offset": 12
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "field": "indicator_name_melted",
+        "title": "Indicator",
+        "type": "nominal"
+      },
+      {
+        "field": "indicator_value_melted",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      }
+    ]
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

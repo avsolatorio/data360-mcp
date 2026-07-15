@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Data360 Embed Viewer</title>
+    <script src="/static/libs/vega.js"></script>
+    <script src="/static/libs/vega-lite.js"></script>
+    <script src="/static/libs/vega-embed.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: transparent;
+        }
+        #vis {
+            width: 100%;
+            height: 100vh;
+        }
+        /* Hide Vega actions menu if it somehow appears */
+        .vega-bind {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="vis"></div>
+    <script>
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const specStr = params.get('spec');
+            if (specStr) {
+                const spec = JSON.parse(specStr);
+                vegaEmbed('#vis', spec, {
+                    actions: false,
+                    theme: 'default',
+                    width: 'container',
+                    height: 'container'
+                }).catch(err => {
+                    document.getElementById('vis').innerHTML = "<p style='color:red;padding:10px;'>Render Error: " + err.message + "</p>";
+                });
+            } else {
+                document.getElementById('vis').innerHTML = "<p style='padding:10px;'>No visualization spec provided.</p>";
+            }
+        } catch (e) {
+            document.getElementById('vis').innerHTML = "<p style='color:red;padding:10px;'>Error parsing spec: " + e.message + "</p>";
+        }
+    </script>
+</body>
+</html>

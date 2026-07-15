@@ -1,0 +1,681 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Generated Visualization"
+    ],
+    "subtitle": [
+      "2015-2024"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "value": 0.748,
+        "country": "Japan",
+        "_label_y": 0.748
+      },
+      {
+        "year": "2016",
+        "value": 0.748,
+        "country": "Japan",
+        "_label_y": 0.748
+      },
+      {
+        "year": "2017",
+        "value": 0.747,
+        "country": "Japan",
+        "_label_y": 0.747
+      },
+      {
+        "year": "2018",
+        "value": 0.76,
+        "country": "Japan",
+        "_label_y": 0.76
+      },
+      {
+        "year": "2019",
+        "value": 0.762,
+        "country": "Japan",
+        "_label_y": 0.762
+      },
+      {
+        "year": "2020",
+        "value": 0.748,
+        "country": "Japan",
+        "_label_y": 0.748
+      },
+      {
+        "year": "2021",
+        "value": 0.738,
+        "country": "Japan",
+        "_label_y": 0.738
+      },
+      {
+        "year": "2022",
+        "value": 0.738,
+        "country": "Japan",
+        "_label_y": 0.738
+      },
+      {
+        "year": "2023",
+        "value": 0.742,
+        "country": "Japan",
+        "_label_y": 0.742
+      },
+      {
+        "year": "2024",
+        "value": 0.734,
+        "country": "Japan",
+        "_label_y": 0.734
+      },
+      {
+        "year": "2015",
+        "value": 0.848,
+        "country": "United States",
+        "_label_y": 0.848
+      },
+      {
+        "year": "2016",
+        "value": 0.832,
+        "country": "United States",
+        "_label_y": 0.832
+      },
+      {
+        "year": "2017",
+        "value": 0.745,
+        "country": "United States",
+        "_label_y": 0.745
+      },
+      {
+        "year": "2018",
+        "value": 0.742,
+        "country": "United States",
+        "_label_y": 0.742
+      },
+      {
+        "year": "2019",
+        "value": 0.735,
+        "country": "United States",
+        "_label_y": 0.735
+      },
+      {
+        "year": "2020",
+        "value": 0.725,
+        "country": "United States",
+        "_label_y": 0.725
+      },
+      {
+        "year": "2021",
+        "value": 0.752,
+        "country": "United States",
+        "_label_y": 0.752
+      },
+      {
+        "year": "2022",
+        "value": 0.763,
+        "country": "United States",
+        "_label_y": 0.763
+      },
+      {
+        "year": "2023",
+        "value": 0.771,
+        "country": "United States",
+        "_label_y": 0.771
+      },
+      {
+        "year": "2024",
+        "value": 0.748,
+        "country": "United States",
+        "_label_y": 0.7479999982833863
+      },
+      {
+        "year": "2015",
+        "value": 0.745,
+        "country": "Canada",
+        "_label_y": 0.745
+      },
+      {
+        "year": "2016",
+        "value": 0.765,
+        "country": "Canada",
+        "_label_y": 0.765
+      },
+      {
+        "year": "2017",
+        "value": 0.769,
+        "country": "Canada",
+        "_label_y": 0.769
+      },
+      {
+        "year": "2018",
+        "value": 0.765,
+        "country": "Canada",
+        "_label_y": 0.765
+      },
+      {
+        "year": "2019",
+        "value": 0.768,
+        "country": "Canada",
+        "_label_y": 0.768
+      },
+      {
+        "year": "2020",
+        "value": 0.75,
+        "country": "Canada",
+        "_label_y": 0.75
+      },
+      {
+        "year": "2021",
+        "value": 0.756,
+        "country": "Canada",
+        "_label_y": 0.756
+      },
+      {
+        "year": "2022",
+        "value": 0.749,
+        "country": "Canada",
+        "_label_y": 0.749
+      },
+      {
+        "year": "2023",
+        "value": 0.746,
+        "country": "Canada",
+        "_label_y": 0.746
+      },
+      {
+        "year": "2024",
+        "value": 0.744,
+        "country": "Canada",
+        "_label_y": 0.7422000034332276
+      },
+      {
+        "year": "2015",
+        "value": 0.813,
+        "country": "France",
+        "_label_y": 0.813
+      },
+      {
+        "year": "2016",
+        "value": 0.813,
+        "country": "France",
+        "_label_y": 0.813
+      },
+      {
+        "year": "2017",
+        "value": 0.815,
+        "country": "France",
+        "_label_y": 0.815
+      },
+      {
+        "year": "2018",
+        "value": 0.797,
+        "country": "France",
+        "_label_y": 0.797
+      },
+      {
+        "year": "2019",
+        "value": 0.793,
+        "country": "France",
+        "_label_y": 0.793
+      },
+      {
+        "year": "2020",
+        "value": 0.789,
+        "country": "France",
+        "_label_y": 0.789
+      },
+      {
+        "year": "2021",
+        "value": 0.788,
+        "country": "France",
+        "_label_y": 0.788
+      },
+      {
+        "year": "2022",
+        "value": 0.808,
+        "country": "France",
+        "_label_y": 0.808
+      },
+      {
+        "year": "2023",
+        "value": 0.81,
+        "country": "France",
+        "_label_y": 0.81
+      },
+      {
+        "year": "2024",
+        "value": 0.799,
+        "country": "France",
+        "_label_y": 0.799
+      },
+      {
+        "year": "2015",
+        "value": 0.847,
+        "country": "Germany",
+        "_label_y": 0.847
+      },
+      {
+        "year": "2016",
+        "value": 0.85,
+        "country": "Germany",
+        "_label_y": 0.85
+      },
+      {
+        "year": "2017",
+        "value": 0.843,
+        "country": "Germany",
+        "_label_y": 0.843
+      },
+      {
+        "year": "2018",
+        "value": 0.834,
+        "country": "Germany",
+        "_label_y": 0.834
+      },
+      {
+        "year": "2019",
+        "value": 0.836,
+        "country": "Germany",
+        "_label_y": 0.836
+      },
+      {
+        "year": "2020",
+        "value": 0.824,
+        "country": "Germany",
+        "_label_y": 0.824
+      },
+      {
+        "year": "2021",
+        "value": 0.816,
+        "country": "Germany",
+        "_label_y": 0.816
+      },
+      {
+        "year": "2022",
+        "value": 0.805,
+        "country": "Germany",
+        "_label_y": 0.805
+      },
+      {
+        "year": "2023",
+        "value": 0.812,
+        "country": "Germany",
+        "_label_y": 0.812
+      },
+      {
+        "year": "2024",
+        "value": 0.792,
+        "country": "Germany",
+        "_label_y": 0.792
+      },
+      {
+        "year": "2015",
+        "value": 0.787,
+        "country": "Italy",
+        "_label_y": 0.787
+      },
+      {
+        "year": "2016",
+        "value": 0.794,
+        "country": "Italy",
+        "_label_y": 0.794
+      },
+      {
+        "year": "2017",
+        "value": 0.795,
+        "country": "Italy",
+        "_label_y": 0.795
+      },
+      {
+        "year": "2018",
+        "value": 0.788,
+        "country": "Italy",
+        "_label_y": 0.788
+      },
+      {
+        "year": "2019",
+        "value": 0.783,
+        "country": "Italy",
+        "_label_y": 0.783
+      },
+      {
+        "year": "2020",
+        "value": 0.78,
+        "country": "Italy",
+        "_label_y": 0.78
+      },
+      {
+        "year": "2021",
+        "value": 0.781,
+        "country": "Italy",
+        "_label_y": 0.781
+      },
+      {
+        "year": "2022",
+        "value": 0.766,
+        "country": "Italy",
+        "_label_y": 0.766
+      },
+      {
+        "year": "2023",
+        "value": 0.732,
+        "country": "Italy",
+        "_label_y": 0.732
+      },
+      {
+        "year": "2024",
+        "value": 0.705,
+        "country": "Italy",
+        "_label_y": 0.705
+      },
+      {
+        "year": "2015",
+        "value": 0.791,
+        "country": "United Kingdom",
+        "_label_y": 0.791
+      },
+      {
+        "year": "2016",
+        "value": 0.788,
+        "country": "United Kingdom",
+        "_label_y": 0.788
+      },
+      {
+        "year": "2017",
+        "value": 0.804,
+        "country": "United Kingdom",
+        "_label_y": 0.804
+      },
+      {
+        "year": "2018",
+        "value": 0.809,
+        "country": "United Kingdom",
+        "_label_y": 0.809
+      },
+      {
+        "year": "2019",
+        "value": 0.787,
+        "country": "United Kingdom",
+        "_label_y": 0.787
+      },
+      {
+        "year": "2020",
+        "value": 0.8,
+        "country": "United Kingdom",
+        "_label_y": 0.8
+      },
+      {
+        "year": "2021",
+        "value": 0.782,
+        "country": "United Kingdom",
+        "_label_y": 0.782
+      },
+      {
+        "year": "2022",
+        "value": 0.766,
+        "country": "United Kingdom",
+        "_label_y": 0.766
+      },
+      {
+        "year": "2023",
+        "value": 0.768,
+        "country": "United Kingdom",
+        "_label_y": 0.768
+      },
+      {
+        "year": "2024",
+        "value": 0.752,
+        "country": "United Kingdom",
+        "_label_y": 0.7537999982833862
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "VDEM_CORE_V2X_LIBDEM",
+            "labelExpr": "format(datum.value, '.0%')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "_label_y",
+            "title": " Label Y"
+          },
+          {
+            "value": "VDEM_CORE_V2X_LIBDEM",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last._label_y",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

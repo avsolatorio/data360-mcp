@@ -1,0 +1,4029 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP (current US$), latest available year (2025) \u2014 selected Sub-Saharan Africa countries",
+    "subtitle": [
+      "1960-2025",
+      "US Dollars"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "value": 21251216798.776245,
+        "country": "Zambia"
+      },
+      {
+        "year": "2005",
+        "value": 8331870169.149771,
+        "country": "Zambia"
+      },
+      {
+        "year": "2018",
+        "value": 26311507273.67354,
+        "country": "Zambia"
+      },
+      {
+        "year": "2012",
+        "value": 25503060420.026028,
+        "country": "Zambia"
+      },
+      {
+        "year": "1999",
+        "value": 3404284890.530603,
+        "country": "Zambia"
+      },
+      {
+        "year": "2004",
+        "value": 6221110219.455416,
+        "country": "Zambia"
+      },
+      {
+        "year": "2021",
+        "value": 22096416932.008896,
+        "country": "Zambia"
+      },
+      {
+        "year": "2013",
+        "value": 148845200696.33517,
+        "country": "Angola"
+      },
+      {
+        "year": "2011",
+        "value": 30630910495.21702,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2014",
+        "value": 48843005613.70906,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2016",
+        "value": 60770049747.38317,
+        "country": "Angola"
+      },
+      {
+        "year": "2016",
+        "value": 74815144163.89308,
+        "country": "Kenya"
+      },
+      {
+        "year": "2003",
+        "value": 20342128111.94057,
+        "country": "Angola"
+      },
+      {
+        "year": "2011",
+        "value": 27871725241.4723,
+        "country": "Uganda"
+      },
+      {
+        "year": "2015",
+        "value": 32210233020.456917,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2020",
+        "value": 63027852805.42045,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2016",
+        "value": 33814337044.376472,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2013",
+        "value": 45648857242.314995,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1999",
+        "value": 12896010459.371077,
+        "country": "Kenya"
+      },
+      {
+        "year": "2016",
+        "value": 49774409374.453766,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2017",
+        "value": 25873601260.835304,
+        "country": "Zambia"
+      },
+      {
+        "year": "2016",
+        "value": 29203988696.262615,
+        "country": "Uganda"
+      },
+      {
+        "year": "2023",
+        "value": 48814501547.431274,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1999",
+        "value": 11565826464.892147,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2017",
+        "value": 52512343996.68996,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2018",
+        "value": 57003712892.08581,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1995",
+        "value": 3806983413.164159,
+        "country": "Zambia"
+      },
+      {
+        "year": "1996",
+        "value": 9433528150.36609,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1996",
+        "value": 6044585326.938001,
+        "country": "Uganda"
+      },
+      {
+        "year": "1992",
+        "value": 3182810841.017044,
+        "country": "Zambia"
+      },
+      {
+        "year": "2008",
+        "value": 14440404132.204687,
+        "country": "Uganda"
+      },
+      {
+        "year": "2010",
+        "value": 45405615063.75513,
+        "country": "Kenya"
+      },
+      {
+        "year": "2003",
+        "value": 21251754340.430546,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1996",
+        "value": 3597220962.000166,
+        "country": "Zambia"
+      },
+      {
+        "year": "2019",
+        "value": 35353061003.435905,
+        "country": "Uganda"
+      },
+      {
+        "year": "2010",
+        "value": 16121315909.07576,
+        "country": "Senegal"
+      },
+      {
+        "year": "2006",
+        "value": 9977647682.969542,
+        "country": "Uganda"
+      },
+      {
+        "year": "2019",
+        "value": 39667757527.65778,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2013",
+        "value": 62845721959.82703,
+        "country": "Ghana"
+      },
+      {
+        "year": "2020",
+        "value": 40773241177.05051,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2019",
+        "value": 61026731925.92128,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2006",
+        "value": 20910512974.933037,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2019",
+        "value": 68352629246.15547,
+        "country": "Ghana"
+      },
+      {
+        "year": "2015",
+        "value": 17774766696.175896,
+        "country": "Senegal"
+      },
+      {
+        "year": "2002",
+        "value": 6166197847.850311,
+        "country": "Ghana"
+      },
+      {
+        "year": "2002",
+        "value": 13147736898.517572,
+        "country": "Kenya"
+      },
+      {
+        "year": "2020",
+        "value": 18137764930.65097,
+        "country": "Zambia"
+      },
+      {
+        "year": "2000",
+        "value": 16577533891.878548,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2018",
+        "value": 32927025619.679543,
+        "country": "Uganda"
+      },
+      {
+        "year": "2017",
+        "value": 30744473841.42399,
+        "country": "Uganda"
+      },
+      {
+        "year": "2008",
+        "value": 27947821397.927227,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2001",
+        "value": 73557840064.48904,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2019",
+        "value": 91834517113.63857,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2010",
+        "value": 32012892919.369995,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2003",
+        "value": 15211487708.76844,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2023",
+        "value": 48768955863.31749,
+        "country": "Uganda"
+      },
+      {
+        "year": "1999",
+        "value": 12704334195.815088,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1999",
+        "value": 5998563257.946589,
+        "country": "Uganda"
+      },
+      {
+        "year": "2007",
+        "value": 11902564494.883345,
+        "country": "Uganda"
+      },
+      {
+        "year": "2012",
+        "value": 36302302877.297745,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2022",
+        "value": 29163782140.485832,
+        "country": "Zambia"
+      },
+      {
+        "year": "2003",
+        "value": 8768721563.182106,
+        "country": "Senegal"
+      },
+      {
+        "year": "2023",
+        "value": 107500884685.01266,
+        "country": "Kenya"
+      },
+      {
+        "year": "2004",
+        "value": 135764731645.61142,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2022",
+        "value": 123140304665.399,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2015",
+        "value": 49436806230.48395,
+        "country": "Ghana"
+      },
+      {
+        "year": "2005",
+        "value": 18737895512.737766,
+        "country": "Kenya"
+      },
+      {
+        "year": "1999",
+        "value": 151516957078.53558,
+        "country": "South Africa"
+      },
+      {
+        "year": "2015",
+        "value": 346709790458.56305,
+        "country": "South Africa"
+      },
+      {
+        "year": "1989",
+        "value": 5276480799.338676,
+        "country": "Uganda"
+      },
+      {
+        "year": "1989",
+        "value": 3994673161.026491,
+        "country": "Zambia"
+      },
+      {
+        "year": "2020",
+        "value": 24530513037.751846,
+        "country": "Senegal"
+      },
+      {
+        "year": "2011",
+        "value": 458199494830.8336,
+        "country": "South Africa"
+      },
+      {
+        "year": "2015",
+        "value": 32387183730.10015,
+        "country": "Uganda"
+      },
+      {
+        "year": "2015",
+        "value": 45815005169.26511,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2005",
+        "value": 11009033437.93904,
+        "country": "Senegal"
+      },
+      {
+        "year": "2022",
+        "value": 45565333210.91079,
+        "country": "Uganda"
+      },
+      {
+        "year": "2001",
+        "value": 6507824829.262536,
+        "country": "Senegal"
+      },
+      {
+        "year": "2001",
+        "value": 135429905922.5262,
+        "country": "South Africa"
+      },
+      {
+        "year": "2022",
+        "value": 73919003212.19975,
+        "country": "Ghana"
+      },
+      {
+        "year": "1997",
+        "value": 7648380195.599022,
+        "country": "Angola"
+      },
+      {
+        "year": "1988",
+        "value": 3728878148.807922,
+        "country": "Zambia"
+      },
+      {
+        "year": "2022",
+        "value": 75749121846.97034,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1994",
+        "value": 7148148564.042385,
+        "country": "Kenya"
+      },
+      {
+        "year": "1996",
+        "value": 18071152830.61015,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1986",
+        "value": 1664413508.098526,
+        "country": "Zambia"
+      },
+      {
+        "year": "1998",
+        "value": 8013274131.697146,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1994",
+        "value": 3990430446.71216,
+        "country": "Uganda"
+      },
+      {
+        "year": "1994",
+        "value": 3656806165.788479,
+        "country": "Zambia"
+      },
+      {
+        "year": "1992",
+        "value": 146956150986.6361,
+        "country": "South Africa"
+      },
+      {
+        "year": "1992",
+        "value": 6681997469.312918,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1996",
+        "value": 8761215548.486143,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2024",
+        "value": 87113179149.28401,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1991",
+        "value": 135203698237.9772,
+        "country": "South Africa"
+      },
+      {
+        "year": "1991",
+        "value": 7197768158.583471,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1997",
+        "value": 200850397618.18185,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1994",
+        "value": 7100806753.929418,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1999",
+        "value": 7892973531.800449,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2024",
+        "value": 53911907079.048515,
+        "country": "Uganda"
+      },
+      {
+        "year": "1988",
+        "value": 5197765031.64557,
+        "country": "Ghana"
+      },
+      {
+        "year": "1992",
+        "value": 12071775335.04334,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2008",
+        "value": 98790432989.30766,
+        "country": "Angola"
+      },
+      {
+        "year": "1975",
+        "value": 2442672140.946996,
+        "country": "Zambia"
+      },
+      {
+        "year": "1992",
+        "value": 7769817839.956441,
+        "country": "Senegal"
+      },
+      {
+        "year": "1989",
+        "value": 8283114514.170809,
+        "country": "Kenya"
+      },
+      {
+        "year": "1991",
+        "value": 10603784541.19696,
+        "country": "Angola"
+      },
+      {
+        "year": "1987",
+        "value": 6487353102.814825,
+        "country": "Senegal"
+      },
+      {
+        "year": "1987",
+        "value": 96535763418.37288,
+        "country": "South Africa"
+      },
+      {
+        "year": "1987",
+        "value": 13049659981.137337,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1987",
+        "value": 10087654464.81683,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1988",
+        "value": 12236057362.491734,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1988",
+        "value": 10255169805.799646,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1984",
+        "value": 6191437070.184111,
+        "country": "Kenya"
+      },
+      {
+        "year": "1987",
+        "value": 52676041931.10873,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2024",
+        "value": 149740297952.37485,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1982",
+        "value": 6431579356.959255,
+        "country": "Kenya"
+      },
+      {
+        "year": "1988",
+        "value": 7406614407.461266,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1988",
+        "value": 6508931651.666667,
+        "country": "Uganda"
+      },
+      {
+        "year": "1977",
+        "value": 3189428571.428571,
+        "country": "Ghana"
+      },
+      {
+        "year": "1983",
+        "value": 6838184772.520635,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1983",
+        "value": 8781664427.05314,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1980",
+        "value": 4445228215.767634,
+        "country": "Ghana"
+      },
+      {
+        "year": "1968",
+        "value": 4895251824.059271,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1968",
+        "value": 1037379252.414952,
+        "country": "Uganda"
+      },
+      {
+        "year": "1968",
+        "value": 1573739371.133747,
+        "country": "Zambia"
+      },
+      {
+        "year": "1979",
+        "value": 4084877822.916788,
+        "country": "Senegal"
+      },
+      {
+        "year": "1979",
+        "value": 63038658088.91206,
+        "country": "South Africa"
+      },
+      {
+        "year": "1979",
+        "value": 9804637490.818918,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1977",
+        "value": 36035407725.32189,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1976",
+        "value": 3474542391.699916,
+        "country": "Kenya"
+      },
+      {
+        "year": "1996",
+        "value": 7526421519.16979,
+        "country": "Angola"
+      },
+      {
+        "year": "1982",
+        "value": 4013951442.670813,
+        "country": "Senegal"
+      },
+      {
+        "year": "1967",
+        "value": 4565132047.527181,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1967",
+        "value": 967240655.186896,
+        "country": "Uganda"
+      },
+      {
+        "year": "1967",
+        "value": 1340639464.280469,
+        "country": "Zambia"
+      },
+      {
+        "year": "1980",
+        "value": 11409228086.746296,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1980",
+        "value": 1244610000.0,
+        "country": "Uganda"
+      },
+      {
+        "year": "2025",
+        "value": 37006536238.37308,
+        "country": "Senegal"
+      },
+      {
+        "year": "1974",
+        "value": 24846641318.124207,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1976",
+        "value": 4662053824.83955,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1976",
+        "value": 4943806093.236715,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1975",
+        "value": 2857037371.058858,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1971",
+        "value": 2417108577.527386,
+        "country": "Ghana"
+      },
+      {
+        "year": "2024",
+        "value": 103080538044.05838,
+        "country": "Angola"
+      },
+      {
+        "year": "1980",
+        "value": 5930503400.962599,
+        "country": "Angola"
+      },
+      {
+        "year": "1983",
+        "value": 5784341596.363394,
+        "country": "Angola"
+      },
+      {
+        "year": "1982",
+        "value": 5550483035.964938,
+        "country": "Angola"
+      },
+      {
+        "year": "1972",
+        "value": 1498251889.662874,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1966",
+        "value": 851112534.552636,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1966",
+        "value": 1024102880.058619,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1969",
+        "value": 1361360293.426649,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1969",
+        "value": 2768987372.0,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1969",
+        "value": 1962050555.777498,
+        "country": "Ghana"
+      },
+      {
+        "year": "1964",
+        "value": 5552931318.827473,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1964",
+        "value": 1188930645.344233,
+        "country": "Senegal"
+      },
+      {
+        "year": "1964",
+        "value": 11955995217.601912,
+        "country": "South Africa"
+      },
+      {
+        "year": "1964",
+        "value": 3748840925.06363,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1962",
+        "value": 694247864.3789,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1962",
+        "value": 645284473.733691,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1962",
+        "value": 1747566307.099703,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1962",
+        "value": 1382515654.473428,
+        "country": "Ghana"
+      },
+      {
+        "year": "1962",
+        "value": 868111400.75544,
+        "country": "Kenya"
+      },
+      {
+        "year": "1963",
+        "value": 5165590253.763899,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1965",
+        "value": 814083265.511426,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1960",
+        "value": 614206068.497266,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1960",
+        "value": 546203559.344361,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1960",
+        "value": 1610511693.842147,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1960",
+        "value": 1217230094.972045,
+        "country": "Ghana"
+      },
+      {
+        "year": "2009",
+        "value": 15328342303.957512,
+        "country": "Zambia"
+      },
+      {
+        "year": "2010",
+        "value": 20265559483.854828,
+        "country": "Zambia"
+      },
+      {
+        "year": "2012",
+        "value": 143572907527.97626,
+        "country": "Angola"
+      },
+      {
+        "year": "2016",
+        "value": 20958412538.309345,
+        "country": "Zambia"
+      },
+      {
+        "year": "2017",
+        "value": 375745731053.4268,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2014",
+        "value": 68285796514.28962,
+        "country": "Kenya"
+      },
+      {
+        "year": "2017",
+        "value": 82036510877.25989,
+        "country": "Kenya"
+      },
+      {
+        "year": "2018",
+        "value": 58522477786.68885,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2005",
+        "value": 41396636383.82305,
+        "country": "Angola"
+      },
+      {
+        "year": "2012",
+        "value": 27305915910.78771,
+        "country": "Uganda"
+      },
+      {
+        "year": "1998",
+        "value": 12172790056.373257,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1998",
+        "value": 6584815846.527538,
+        "country": "Uganda"
+      },
+      {
+        "year": "2013",
+        "value": 47648276605.012314,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2011",
+        "value": 17814283639.311874,
+        "country": "Senegal"
+      },
+      {
+        "year": "2013",
+        "value": 61671440407.83867,
+        "country": "Kenya"
+      },
+      {
+        "year": "2014",
+        "value": 49986726460.68049,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2014",
+        "value": 32612397257.44579,
+        "country": "Uganda"
+      },
+      {
+        "year": "2013",
+        "value": 28915786516.61233,
+        "country": "Uganda"
+      },
+      {
+        "year": "2015",
+        "value": 102543067840.81906,
+        "country": "Angola"
+      },
+      {
+        "year": "2011",
+        "value": 31952763089.330025,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2011",
+        "value": 46869473150.60999,
+        "country": "Kenya"
+      },
+      {
+        "year": "2022",
+        "value": 44347206072.55133,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2018",
+        "value": 83337901071.9697,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2006",
+        "value": 20885037596.696342,
+        "country": "Ghana"
+      },
+      {
+        "year": "2020",
+        "value": 598586817817.3922,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2008",
+        "value": 28679383241.07291,
+        "country": "Ghana"
+      },
+      {
+        "year": "2019",
+        "value": 668219992686.575,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2012",
+        "value": 43310721414.08288,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2006",
+        "value": 58653659979.55009,
+        "country": "Angola"
+      },
+      {
+        "year": "2017",
+        "value": 53274884532.78861,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2018",
+        "value": 23116701556.138107,
+        "country": "Senegal"
+      },
+      {
+        "year": "2012",
+        "value": 56396704671.57766,
+        "country": "Kenya"
+      },
+      {
+        "year": "1990",
+        "value": 3288381797.324149,
+        "country": "Zambia"
+      },
+      {
+        "year": "2016",
+        "value": 48407761036.82379,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2002",
+        "value": 4193850445.426323,
+        "country": "Zambia"
+      },
+      {
+        "year": "2005",
+        "value": 175670569969.3456,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2002",
+        "value": 12417251350.488165,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2018",
+        "value": 90506061877.27652,
+        "country": "Angola"
+      },
+      {
+        "year": "2019",
+        "value": 23403995992.135414,
+        "country": "Senegal"
+      },
+      {
+        "year": "2018",
+        "value": 405260723892.5169,
+        "country": "South Africa"
+      },
+      {
+        "year": "2008",
+        "value": 16853989627.548038,
+        "country": "Senegal"
+      },
+      {
+        "year": "2008",
+        "value": 316131258616.309,
+        "country": "South Africa"
+      },
+      {
+        "year": "2020",
+        "value": 37600368241.66573,
+        "country": "Uganda"
+      },
+      {
+        "year": "2018",
+        "value": 67259353965.60871,
+        "country": "Ghana"
+      },
+      {
+        "year": "2020",
+        "value": 100657505750.545,
+        "country": "Kenya"
+      },
+      {
+        "year": "2006",
+        "value": 11697918243.00349,
+        "country": "Senegal"
+      },
+      {
+        "year": "2006",
+        "value": 303858675363.64276,
+        "country": "South Africa"
+      },
+      {
+        "year": "2007",
+        "value": 24827339138.49064,
+        "country": "Ghana"
+      },
+      {
+        "year": "2023",
+        "value": 106042349567.30316,
+        "country": "Angola"
+      },
+      {
+        "year": "2008",
+        "value": 17910858637.904797,
+        "country": "Zambia"
+      },
+      {
+        "year": "2002",
+        "value": 7850809498.168027,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2010",
+        "value": 26673441430.785694,
+        "country": "Uganda"
+      },
+      {
+        "year": "2004",
+        "value": 16095337093.836596,
+        "country": "Kenya"
+      },
+      {
+        "year": "2018",
+        "value": 421739251509.0796,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2007",
+        "value": 28760090953.30806,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1998",
+        "value": 218416200672.7273,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2007",
+        "value": 278260846800.103,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2021",
+        "value": 27520784129.750805,
+        "country": "Senegal"
+      },
+      {
+        "year": "2021",
+        "value": 419986284375.36835,
+        "country": "South Africa"
+      },
+      {
+        "year": "2004",
+        "value": 8881417906.714323,
+        "country": "Ghana"
+      },
+      {
+        "year": "2001",
+        "value": 12986007425.878052,
+        "country": "Kenya"
+      },
+      {
+        "year": "2001",
+        "value": 5314872854.440497,
+        "country": "Ghana"
+      },
+      {
+        "year": "1993",
+        "value": 3273505343.855394,
+        "country": "Zambia"
+      },
+      {
+        "year": "2021",
+        "value": 109070960370.97188,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2001",
+        "value": 5840503868.515731,
+        "country": "Uganda"
+      },
+      {
+        "year": "2000",
+        "value": 13371767081.742811,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2000",
+        "value": 6193246837.096873,
+        "country": "Uganda"
+      },
+      {
+        "year": "2005",
+        "value": 10744568381.44561,
+        "country": "Ghana"
+      },
+      {
+        "year": "1999",
+        "value": 18870992455.567986,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2002",
+        "value": 129087556612.44882,
+        "country": "South Africa"
+      },
+      {
+        "year": "2002",
+        "value": 14129651895.69114,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2022",
+        "value": 114448978152.6374,
+        "country": "Kenya"
+      },
+      {
+        "year": "2000",
+        "value": 4982850662.208511,
+        "country": "Ghana"
+      },
+      {
+        "year": "2005",
+        "value": 288867217196.534,
+        "country": "South Africa"
+      },
+      {
+        "year": "2014",
+        "value": 153449860495.9659,
+        "country": "Angola"
+      },
+      {
+        "year": "2007",
+        "value": 21860434823.480766,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2021",
+        "value": 72794636653.77934,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2022",
+        "value": 128233959333.27457,
+        "country": "Angola"
+      },
+      {
+        "year": "1997",
+        "value": 4303288479.708604,
+        "country": "Zambia"
+      },
+      {
+        "year": "1987",
+        "value": 2265250972.34879,
+        "country": "Zambia"
+      },
+      {
+        "year": "1996",
+        "value": 11093538846.448252,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1998",
+        "value": 6505607909.053245,
+        "country": "Senegal"
+      },
+      {
+        "year": "1993",
+        "value": 16181814712.529512,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1994",
+        "value": 80399613063.63637,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1994",
+        "value": 5034588195.558058,
+        "country": "Senegal"
+      },
+      {
+        "year": "1994",
+        "value": 153512712381.83646,
+        "country": "South Africa"
+      },
+      {
+        "year": "1993",
+        "value": 5751786642.558715,
+        "country": "Kenya"
+      },
+      {
+        "year": "1998",
+        "value": 152982984557.2333,
+        "country": "South Africa"
+      },
+      {
+        "year": "1995",
+        "value": 11000146266.51352,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1996",
+        "value": 6932991739.377671,
+        "country": "Ghana"
+      },
+      {
+        "year": "1993",
+        "value": 7367986241.218689,
+        "country": "Senegal"
+      },
+      {
+        "year": "1993",
+        "value": 6182872707.825234,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1993",
+        "value": 3220439044.189487,
+        "country": "Uganda"
+      },
+      {
+        "year": "2024",
+        "value": 25303185342.251072,
+        "country": "Zambia"
+      },
+      {
+        "year": "1994",
+        "value": 6550480483.938498,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1994",
+        "value": 8902446252.183718,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1991",
+        "value": 7255210469.517427,
+        "country": "Senegal"
+      },
+      {
+        "year": "1995",
+        "value": 7631431840.499919,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1999",
+        "value": 6152923310.445457,
+        "country": "Angola"
+      },
+      {
+        "year": "2024",
+        "value": 252261880140.2709,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2024",
+        "value": 53296694320.20565,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1990",
+        "value": 54035795387.80861,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1990",
+        "value": 6184384225.027124,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1990",
+        "value": 4304399310.30967,
+        "country": "Uganda"
+      },
+      {
+        "year": "1981",
+        "value": 6854491705.883771,
+        "country": "Kenya"
+      },
+      {
+        "year": "2024",
+        "value": 401144998373.5852,
+        "country": "South Africa"
+      },
+      {
+        "year": "2024",
+        "value": 79235713444.97768,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1988",
+        "value": 6418419388.634989,
+        "country": "Senegal"
+      },
+      {
+        "year": "1988",
+        "value": 103976831870.95662,
+        "country": "South Africa"
+      },
+      {
+        "year": "1977",
+        "value": 7732598995.10303,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1977",
+        "value": 2936470588.235294,
+        "country": "Uganda"
+      },
+      {
+        "year": "1977",
+        "value": 2515296939.606858,
+        "country": "Zambia"
+      },
+      {
+        "year": "1989",
+        "value": 5251858439.874004,
+        "country": "Ghana"
+      },
+      {
+        "year": "1988",
+        "value": 8355380879.129548,
+        "country": "Kenya"
+      },
+      {
+        "year": "1972",
+        "value": 1872416680.07912,
+        "country": "Zambia"
+      },
+      {
+        "year": "1990",
+        "value": 11229515599.304768,
+        "country": "Angola"
+      },
+      {
+        "year": "1987",
+        "value": 10790001557.971016,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1987",
+        "value": 5074829931.972789,
+        "country": "Ghana"
+      },
+      {
+        "year": "1980",
+        "value": 7265315820.207766,
+        "country": "Kenya"
+      },
+      {
+        "year": "1983",
+        "value": 4057275132.275132,
+        "country": "Ghana"
+      },
+      {
+        "year": "1975",
+        "value": 3259345083.262826,
+        "country": "Kenya"
+      },
+      {
+        "year": "1987",
+        "value": 8084412414.26566,
+        "country": "Angola"
+      },
+      {
+        "year": "1978",
+        "value": 36527862208.71327,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1982",
+        "value": 4035994397.759104,
+        "country": "Ghana"
+      },
+      {
+        "year": "1981",
+        "value": 164475209515.9386,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1982",
+        "value": 142769363314.17624,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1979",
+        "value": 47259911894.273125,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1983",
+        "value": 97094911792.04892,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1989",
+        "value": 108055624081.80647,
+        "country": "South Africa"
+      },
+      {
+        "year": "1989",
+        "value": 6418799006.802469,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1979",
+        "value": 6586048398.067634,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1979",
+        "value": 4020227920.22792,
+        "country": "Ghana"
+      },
+      {
+        "year": "1978",
+        "value": 3280354920.851601,
+        "country": "Senegal"
+      },
+      {
+        "year": "1978",
+        "value": 51607412901.853226,
+        "country": "South Africa"
+      },
+      {
+        "year": "1978",
+        "value": 9261675709.83072,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1986",
+        "value": 7072536108.697072,
+        "country": "Angola"
+      },
+      {
+        "year": "1980",
+        "value": 64201788122.60536,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1986",
+        "value": 5392093445.510533,
+        "country": "Senegal"
+      },
+      {
+        "year": "1986",
+        "value": 73354771399.26268,
+        "country": "South Africa"
+      },
+      {
+        "year": "1980",
+        "value": 6674569046.683197,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1977",
+        "value": 2938046462.709796,
+        "country": "Senegal"
+      },
+      {
+        "year": "1977",
+        "value": 45328411332.10283,
+        "country": "South Africa"
+      },
+      {
+        "year": "1974",
+        "value": 4977337978.35959,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1974",
+        "value": 2098944967.208441,
+        "country": "Uganda"
+      },
+      {
+        "year": "1974",
+        "value": 2910981262.100179,
+        "country": "Zambia"
+      },
+      {
+        "year": "1982",
+        "value": 6611255963.835844,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1976",
+        "value": 2869777884.451664,
+        "country": "Senegal"
+      },
+      {
+        "year": "1976",
+        "value": 41150460287.615074,
+        "country": "South Africa"
+      },
+      {
+        "year": "1983",
+        "value": 6870200009.900646,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1981",
+        "value": 5550483035.964938,
+        "country": "Angola"
+      },
+      {
+        "year": "1964",
+        "value": 589247687.30035,
+        "country": "Uganda"
+      },
+      {
+        "year": "1964",
+        "value": 822639671.273187,
+        "country": "Zambia"
+      },
+      {
+        "year": "1971",
+        "value": 1236941394.114466,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2025",
+        "value": 427184325997.307,
+        "country": "South Africa"
+      },
+      {
+        "year": "2025",
+        "value": 90143496090.44116,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2025",
+        "value": 61985829288.14961,
+        "country": "Uganda"
+      },
+      {
+        "year": "1963",
+        "value": 1122139861.678048,
+        "country": "Senegal"
+      },
+      {
+        "year": "1963",
+        "value": 10854195658.321735,
+        "country": "South Africa"
+      },
+      {
+        "year": "1963",
+        "value": 3456579293.448283,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1963",
+        "value": 516315231.449087,
+        "country": "Uganda"
+      },
+      {
+        "year": "1963",
+        "value": 704339718.545848,
+        "country": "Zambia"
+      },
+      {
+        "year": "1973",
+        "value": 1901393361.022818,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1973",
+        "value": 2508421426.175715,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1989",
+        "value": 10201780976.66953,
+        "country": "Angola"
+      },
+      {
+        "year": "1971",
+        "value": 9181769911.504423,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1971",
+        "value": 1339549032.837825,
+        "country": "Senegal"
+      },
+      {
+        "year": "1968",
+        "value": 5200997919.600832,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1968",
+        "value": 1309384861.922193,
+        "country": "Senegal"
+      },
+      {
+        "year": "1968",
+        "value": 17124793150.08274,
+        "country": "South Africa"
+      },
+      {
+        "year": "1960",
+        "value": 1003692370.468691,
+        "country": "Senegal"
+      },
+      {
+        "year": "1960",
+        "value": 8748596500.5614,
+        "country": "South Africa"
+      },
+      {
+        "year": "1960",
+        "value": 2651729807.388077,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1960",
+        "value": 423145605.043164,
+        "country": "Uganda"
+      },
+      {
+        "year": "1960",
+        "value": 698739720.783607,
+        "country": "Zambia"
+      },
+      {
+        "year": "1970",
+        "value": 1603447358.621057,
+        "country": "Kenya"
+      },
+      {
+        "year": "1968",
+        "value": 1046191217.799417,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1968",
+        "value": 1281281276.72357,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1968",
+        "value": 2619948864.8,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1968",
+        "value": 1666909517.652047,
+        "country": "Ghana"
+      },
+      {
+        "year": "1969",
+        "value": 6634317346.273062,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1969",
+        "value": 1245234931.432333,
+        "country": "Senegal"
+      },
+      {
+        "year": "1969",
+        "value": 19256992297.203083,
+        "country": "South Africa"
+      },
+      {
+        "year": "1969",
+        "value": 5142066811.473275,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1967",
+        "value": 1747187644.903099,
+        "country": "Ghana"
+      },
+      {
+        "year": "1967",
+        "value": 1232559506.976197,
+        "country": "Kenya"
+      },
+      {
+        "year": "1967",
+        "value": 936175260.030919,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1967",
+        "value": 1082922724.871887,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1967",
+        "value": 2461762002.8,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1964",
+        "value": 776650176.904453,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1964",
+        "value": 921063326.589918,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1964",
+        "value": 1984129185.6,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1964",
+        "value": 1731296199.522955,
+        "country": "Ghana"
+      },
+      {
+        "year": "1963",
+        "value": 1825058827.838533,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1963",
+        "value": 1540797588.572209,
+        "country": "Ghana"
+      },
+      {
+        "year": "1963",
+        "value": 926589349.36426,
+        "country": "Kenya"
+      },
+      {
+        "year": "1970",
+        "value": 1151216992.880945,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1970",
+        "value": 12546094981.562008,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1965",
+        "value": 919771228.816095,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1965",
+        "value": 2159998591.2,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1965",
+        "value": 2053462968.042599,
+        "country": "Ghana"
+      },
+      {
+        "year": "1963",
+        "value": 718320845.044338,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1963",
+        "value": 761047198.029653,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1969",
+        "value": 1100551488.626887,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1960",
+        "value": 791265459.493816,
+        "country": "Kenya"
+      },
+      {
+        "year": "1960",
+        "value": 4196174501.5302,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2014",
+        "value": 27141023558.08286,
+        "country": "Zambia"
+      },
+      {
+        "year": "2011",
+        "value": 125551634704.94148,
+        "country": "Angola"
+      },
+      {
+        "year": "2011",
+        "value": 23459515275.577595,
+        "country": "Zambia"
+      },
+      {
+        "year": "2019",
+        "value": 23308667781.225754,
+        "country": "Zambia"
+      },
+      {
+        "year": "2013",
+        "value": 520117180313.906,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2001",
+        "value": 8936079117.731356,
+        "country": "Angola"
+      },
+      {
+        "year": "2001",
+        "value": 4094441301.214229,
+        "country": "Zambia"
+      },
+      {
+        "year": "2017",
+        "value": 36098547033.16547,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2014",
+        "value": 36386544706.08061,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2014",
+        "value": 574183763411.5076,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2014",
+        "value": 19797253440.267914,
+        "country": "Senegal"
+      },
+      {
+        "year": "2014",
+        "value": 381198869776.10565,
+        "country": "South Africa"
+      },
+      {
+        "year": "2018",
+        "value": 92202979985.2863,
+        "country": "Kenya"
+      },
+      {
+        "year": "2013",
+        "value": 33728621180.323067,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2006",
+        "value": 25825512284.28908,
+        "country": "Kenya"
+      },
+      {
+        "year": "2014",
+        "value": 55612228233.51786,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2014",
+        "value": 54678533805.906425,
+        "country": "Ghana"
+      },
+      {
+        "year": "2016",
+        "value": 404649125252.15955,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2016",
+        "value": 68475871209.606995,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2016",
+        "value": 19040312333.186382,
+        "country": "Senegal"
+      },
+      {
+        "year": "2007",
+        "value": 31958195182.240604,
+        "country": "Kenya"
+      },
+      {
+        "year": "2009",
+        "value": 295008835380.9966,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2004",
+        "value": 7939487547.773837,
+        "country": "Uganda"
+      },
+      {
+        "year": "2004",
+        "value": 23510575681.368645,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2018",
+        "value": 39955552189.79499,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2023",
+        "value": 487387801877.803,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2010",
+        "value": 32197655566.534702,
+        "country": "Ghana"
+      },
+      {
+        "year": "2017",
+        "value": 76366081766.66667,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2017",
+        "value": 60385409434.856674,
+        "country": "Ghana"
+      },
+      {
+        "year": "2010",
+        "value": 366990417129.0396,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2009",
+        "value": 26048720005.52326,
+        "country": "Ghana"
+      },
+      {
+        "year": "2013",
+        "value": 42760235484.609314,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2019",
+        "value": 100378436207.37134,
+        "country": "Kenya"
+      },
+      {
+        "year": "2009",
+        "value": 27932970317.129013,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2004",
+        "value": 10131187261.442078,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2012",
+        "value": 17660870411.523518,
+        "country": "Senegal"
+      },
+      {
+        "year": "2012",
+        "value": 463971018239.2805,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1998",
+        "value": 7482069162.420078,
+        "country": "Ghana"
+      },
+      {
+        "year": "2001",
+        "value": 16810537043.840742,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2004",
+        "value": 16673062473.398092,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2011",
+        "value": 34657140096.4836,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2021",
+        "value": 79514204730.3979,
+        "country": "Ghana"
+      },
+      {
+        "year": "2010",
+        "value": 29933790334.34179,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2007",
+        "value": 13994218412.961872,
+        "country": "Senegal"
+      },
+      {
+        "year": "2007",
+        "value": 333077117253.6838,
+        "country": "South Africa"
+      },
+      {
+        "year": "2017",
+        "value": 20965069572.716755,
+        "country": "Senegal"
+      },
+      {
+        "year": "2008",
+        "value": 34078240293.255936,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2005",
+        "value": 19509852206.93408,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2003",
+        "value": 104738954264.2257,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2015",
+        "value": 493026682800.6295,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2008",
+        "value": 27066912635.222847,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2020",
+        "value": 337974655408.0553,
+        "country": "South Africa"
+      },
+      {
+        "year": "2009",
+        "value": 33886813250.203587,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2005",
+        "value": 12401139453.973831,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2021",
+        "value": 70655628147.89859,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2021",
+        "value": 40529788748.67369,
+        "country": "Uganda"
+      },
+      {
+        "year": "2020",
+        "value": 70008243859.86661,
+        "country": "Ghana"
+      },
+      {
+        "year": "2023",
+        "value": 80780312569.16455,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2008",
+        "value": 339476276257.7929,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2005",
+        "value": 24036918703.174747,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2023",
+        "value": 135874093203.17972,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2007",
+        "value": 14056957976.264832,
+        "country": "Zambia"
+      },
+      {
+        "year": "2003",
+        "value": 15970315034.990343,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2011",
+        "value": 36693710801.39765,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2019",
+        "value": 60382894697.35568,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2006",
+        "value": 12756858899.281174,
+        "country": "Zambia"
+      },
+      {
+        "year": "2010",
+        "value": 417363822801.71265,
+        "country": "South Africa"
+      },
+      {
+        "year": "2000",
+        "value": 10566579294.983051,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2000",
+        "value": 6013185003.975251,
+        "country": "Senegal"
+      },
+      {
+        "year": "2022",
+        "value": 646950257575.4548,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2021",
+        "value": 78283923543.82367,
+        "country": "Angola"
+      },
+      {
+        "year": "2001",
+        "value": 13563990022.364098,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2017",
+        "value": 85629598654.19057,
+        "country": "Angola"
+      },
+      {
+        "year": "2003",
+        "value": 197018965308.69696,
+        "country": "South Africa"
+      },
+      {
+        "year": "2002",
+        "value": 7006402319.758565,
+        "country": "Senegal"
+      },
+      {
+        "year": "1998",
+        "value": 14093998843.733383,
+        "country": "Kenya"
+      },
+      {
+        "year": "2006",
+        "value": 15280861834.602404,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2015",
+        "value": 47413919817.12405,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2022",
+        "value": 70922824813.9102,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1994",
+        "value": 8313557510.147573,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1997",
+        "value": 10789458432.641554,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1997",
+        "value": 18047558037.70358,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1993",
+        "value": 11045760288.120558,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1997",
+        "value": 6041478725.904432,
+        "country": "Senegal"
+      },
+      {
+        "year": "1997",
+        "value": 168978057327.7297,
+        "country": "South Africa"
+      },
+      {
+        "year": "1992",
+        "value": 10754799036.574486,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1992",
+        "value": 6416103925.832665,
+        "country": "Ghana"
+      },
+      {
+        "year": "1997",
+        "value": 8803539988.332483,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1997",
+        "value": 6891443192.249848,
+        "country": "Ghana"
+      },
+      {
+        "year": "1996",
+        "value": 163234925380.56342,
+        "country": "South Africa"
+      },
+      {
+        "year": "1998",
+        "value": 19619654755.67897,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1995",
+        "value": 10864772470.904276,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1995",
+        "value": 6326342633.403396,
+        "country": "Senegal"
+      },
+      {
+        "year": "1995",
+        "value": 171735933897.33078,
+        "country": "South Africa"
+      },
+      {
+        "year": "1991",
+        "value": 59526833412.35814,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1991",
+        "value": 11840192296.38931,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1991",
+        "value": 13799799323.6715,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1991",
+        "value": 6603185267.796426,
+        "country": "Ghana"
+      },
+      {
+        "year": "1994",
+        "value": 4438321017.390678,
+        "country": "Angola"
+      },
+      {
+        "year": "1992",
+        "value": 52058181853.805466,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1991",
+        "value": 10492628580.748444,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1992",
+        "value": 11152971273.938326,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1995",
+        "value": 140919776986.36365,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1993",
+        "value": 147194747565.75027,
+        "country": "South Africa"
+      },
+      {
+        "year": "1979",
+        "value": 2139025000.0,
+        "country": "Uganda"
+      },
+      {
+        "year": "1979",
+        "value": 3353445378.151262,
+        "country": "Zambia"
+      },
+      {
+        "year": "1986",
+        "value": 7239126568.140921,
+        "country": "Kenya"
+      },
+      {
+        "year": "1990",
+        "value": 12478943895.169085,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1990",
+        "value": 5889106573.460878,
+        "country": "Ghana"
+      },
+      {
+        "year": "1991",
+        "value": 3321729159.622774,
+        "country": "Uganda"
+      },
+      {
+        "year": "1990",
+        "value": 12314482627.84536,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1990",
+        "value": 10795850582.778996,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1988",
+        "value": 8769836768.834784,
+        "country": "Angola"
+      },
+      {
+        "year": "1986",
+        "value": 11857056199.076525,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1986",
+        "value": 9158302099.579569,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1978",
+        "value": 2420260869.565218,
+        "country": "Uganda"
+      },
+      {
+        "year": "1978",
+        "value": 2811032472.939216,
+        "country": "Zambia"
+      },
+      {
+        "year": "1971",
+        "value": 1653259341.291134,
+        "country": "Zambia"
+      },
+      {
+        "year": "1989",
+        "value": 9757410644.667898,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1989",
+        "value": 11762932007.246378,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2009",
+        "value": 81705175408.88094,
+        "country": "Angola"
+      },
+      {
+        "year": "2024",
+        "value": 83288585604.02676,
+        "country": "Ghana"
+      },
+      {
+        "year": "1981",
+        "value": 1337300000.0,
+        "country": "Uganda"
+      },
+      {
+        "year": "1981",
+        "value": 4008126497.36464,
+        "country": "Zambia"
+      },
+      {
+        "year": "1990",
+        "value": 7390967360.421208,
+        "country": "Senegal"
+      },
+      {
+        "year": "1990",
+        "value": 126048140141.86874,
+        "country": "South Africa"
+      },
+      {
+        "year": "2024",
+        "value": 32169996051.85015,
+        "country": "Senegal"
+      },
+      {
+        "year": "1985",
+        "value": 73745821158.22536,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1985",
+        "value": 8544810497.988902,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1985",
+        "value": 6977650643.994885,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1986",
+        "value": 10840864521.23381,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1986",
+        "value": 3923244049.957956,
+        "country": "Uganda"
+      },
+      {
+        "year": "1987",
+        "value": 7824193222.119082,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1987",
+        "value": 6269522042.115557,
+        "country": "Uganda"
+      },
+      {
+        "year": "1985",
+        "value": 15328295175.406742,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1985",
+        "value": 3519695443.525158,
+        "country": "Uganda"
+      },
+      {
+        "year": "1985",
+        "value": 2252454500.148963,
+        "country": "Zambia"
+      },
+      {
+        "year": "1984",
+        "value": 73484359521.4887,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1980",
+        "value": 4510108290.695709,
+        "country": "Senegal"
+      },
+      {
+        "year": "1980",
+        "value": 89411864402.42722,
+        "country": "South Africa"
+      },
+      {
+        "year": "1986",
+        "value": 10094328898.067636,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1986",
+        "value": 5735677433.826828,
+        "country": "Ghana"
+      },
+      {
+        "year": "1987",
+        "value": 7970820369.294901,
+        "country": "Kenya"
+      },
+      {
+        "year": "1985",
+        "value": 3818944917.567131,
+        "country": "Senegal"
+      },
+      {
+        "year": "1985",
+        "value": 64459376086.68828,
+        "country": "South Africa"
+      },
+      {
+        "year": "1969",
+        "value": 1168556628.867423,
+        "country": "Uganda"
+      },
+      {
+        "year": "1969",
+        "value": 1926399230.210867,
+        "country": "Zambia"
+      },
+      {
+        "year": "1979",
+        "value": 6234391113.464339,
+        "country": "Kenya"
+      },
+      {
+        "year": "1984",
+        "value": 7311938026.367127,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1984",
+        "value": 6841639246.8996,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1978",
+        "value": 5303735110.551515,
+        "country": "Kenya"
+      },
+      {
+        "year": "1983",
+        "value": 14049883809.008934,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1983",
+        "value": 2240333333.333334,
+        "country": "Uganda"
+      },
+      {
+        "year": "1983",
+        "value": 3569356124.931585,
+        "country": "Senegal"
+      },
+      {
+        "year": "1983",
+        "value": 96204110941.56715,
+        "country": "South Africa"
+      },
+      {
+        "year": "1978",
+        "value": 7900526298.319929,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1978",
+        "value": 6014961434.782609,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1978",
+        "value": 3662478184.991274,
+        "country": "Ghana"
+      },
+      {
+        "year": "1980",
+        "value": 10175617609.096155,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1980",
+        "value": 7012585454.10628,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1982",
+        "value": 7567110848.922282,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1982",
+        "value": 7899988840.579711,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1974",
+        "value": 2969958812.016475,
+        "country": "Kenya"
+      },
+      {
+        "year": "1970",
+        "value": 1259554808.903822,
+        "country": "Uganda"
+      },
+      {
+        "year": "1970",
+        "value": 1788779285.203797,
+        "country": "Zambia"
+      },
+      {
+        "year": "1981",
+        "value": 6610938616.664299,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1981",
+        "value": 8432589942.39434,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1975",
+        "value": 42906905672.42004,
+        "country": "South Africa"
+      },
+      {
+        "year": "1975",
+        "value": 5729917839.54264,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1975",
+        "value": 2359555555.555556,
+        "country": "Uganda"
+      },
+      {
+        "year": "1976",
+        "value": 36308883248.730965,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1984",
+        "value": 3485165431.713542,
+        "country": "Senegal"
+      },
+      {
+        "year": "1984",
+        "value": 84870163365.9306,
+        "country": "South Africa"
+      },
+      {
+        "year": "1985",
+        "value": 9717392686.956522,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1985",
+        "value": 4504306722.689075,
+        "country": "Ghana"
+      },
+      {
+        "year": "1977",
+        "value": 3394664024.055029,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1998",
+        "value": 6506221615.787223,
+        "country": "Angola"
+      },
+      {
+        "year": "1978",
+        "value": 4662852583.132564,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1995",
+        "value": 5538749259.94714,
+        "country": "Angola"
+      },
+      {
+        "year": "1976",
+        "value": 2898090001.856201,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1972",
+        "value": 3472787266.096404,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1972",
+        "value": 1490970180.596388,
+        "country": "Uganda"
+      },
+      {
+        "year": "1974",
+        "value": 2099325228.956507,
+        "country": "Senegal"
+      },
+      {
+        "year": "1974",
+        "value": 41389186094.59923,
+        "country": "South Africa"
+      },
+      {
+        "year": "2025",
+        "value": 58933453923.76096,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1973",
+        "value": 4070570549.864202,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1973",
+        "value": 3006766758.439771,
+        "country": "Ghana"
+      },
+      {
+        "year": "1974",
+        "value": 4577209966.183576,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1974",
+        "value": 2894409937.888198,
+        "country": "Ghana"
+      },
+      {
+        "year": "1973",
+        "value": 1863398590.455599,
+        "country": "Senegal"
+      },
+      {
+        "year": "1973",
+        "value": 33262772008.144573,
+        "country": "South Africa"
+      },
+      {
+        "year": "2025",
+        "value": 290794361542.1119,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1972",
+        "value": 12274416017.797552,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1971",
+        "value": 23411076638.27901,
+        "country": "South Africa"
+      },
+      {
+        "year": "1971",
+        "value": 3050673517.330593,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1971",
+        "value": 1417191656.166877,
+        "country": "Uganda"
+      },
+      {
+        "year": "1966",
+        "value": 2324466416.0,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1966",
+        "value": 2126300672.229649,
+        "country": "Ghana"
+      },
+      {
+        "year": "1966",
+        "value": 1164519674.19213,
+        "country": "Kenya"
+      },
+      {
+        "year": "1968",
+        "value": 1353295458.681817,
+        "country": "Kenya"
+      },
+      {
+        "year": "1970",
+        "value": 1297407654.928316,
+        "country": "Senegal"
+      },
+      {
+        "year": "1970",
+        "value": 21218391512.64339,
+        "country": "South Africa"
+      },
+      {
+        "year": "1970",
+        "value": 2851419386.072246,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1962",
+        "value": 4909399176.24033,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1962",
+        "value": 1085475790.591121,
+        "country": "Senegal"
+      },
+      {
+        "year": "1962",
+        "value": 9813996074.401571,
+        "country": "South Africa"
+      },
+      {
+        "year": "1962",
+        "value": 3101589992.664003,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1961",
+        "value": 652777608.320492,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1961",
+        "value": 618245634.179831,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1961",
+        "value": 1680859514.101599,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1961",
+        "value": 1302674324.883777,
+        "country": "Ghana"
+      },
+      {
+        "year": "1970",
+        "value": 1455482795.406913,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1970",
+        "value": 3045354454.8,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1970",
+        "value": 2215028588.456456,
+        "country": "Ghana"
+      },
+      {
+        "year": "1965",
+        "value": 1061199575.944649,
+        "country": "Zambia"
+      },
+      {
+        "year": "1961",
+        "value": 1058975256.970251,
+        "country": "Senegal"
+      },
+      {
+        "year": "1961",
+        "value": 9225996309.601477,
+        "country": "South Africa"
+      },
+      {
+        "year": "1961",
+        "value": 2826179031.228388,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1961",
+        "value": 441667334.611947,
+        "country": "Uganda"
+      },
+      {
+        "year": "1961",
+        "value": 682359727.329053,
+        "country": "Zambia"
+      },
+      {
+        "year": "1965",
+        "value": 997919320.832272,
+        "country": "Kenya"
+      },
+      {
+        "year": "1965",
+        "value": 5874537650.18494,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2013",
+        "value": 28037239462.71422,
+        "country": "Zambia"
+      },
+      {
+        "year": "2023",
+        "value": 27577956471.243988,
+        "country": "Zambia"
+      },
+      {
+        "year": "2012",
+        "value": 30155062329.282063,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2011",
+        "value": 414466676831.15967,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2009",
+        "value": 42347217912.91757,
+        "country": "Kenya"
+      },
+      {
+        "year": "2019",
+        "value": 81193813808.03824,
+        "country": "Angola"
+      },
+      {
+        "year": "1998",
+        "value": 3537741941.893668,
+        "country": "Zambia"
+      },
+      {
+        "year": "2016",
+        "value": 56144179397.85165,
+        "country": "Ghana"
+      },
+      {
+        "year": "2010",
+        "value": 27507501821.02961,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2013",
+        "value": 18918667724.881683,
+        "country": "Senegal"
+      },
+      {
+        "year": "2009",
+        "value": 16145867494.940493,
+        "country": "Senegal"
+      },
+      {
+        "year": "2015",
+        "value": 70120446896.8359,
+        "country": "Kenya"
+      },
+      {
+        "year": "1998",
+        "value": 11298144990.410444,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2010",
+        "value": 95546919754.28732,
+        "country": "Angola"
+      },
+      {
+        "year": "2002",
+        "value": 95054059302.69946,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2007",
+        "value": 23928250433.037815,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2021",
+        "value": 45011937346.83839,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2020",
+        "value": 98676811061.99854,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2004",
+        "value": 18826214135.641937,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2006",
+        "value": 25281413263.371223,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2012",
+        "value": 39650394362.92873,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2008",
+        "value": 35895153327.849686,
+        "country": "Kenya"
+      },
+      {
+        "year": "2020",
+        "value": 58512033805.89815,
+        "country": "Angola"
+      },
+      {
+        "year": "2017",
+        "value": 381448814653.4564,
+        "country": "South Africa"
+      },
+      {
+        "year": "1999",
+        "value": 7718109982.260925,
+        "country": "Ghana"
+      },
+      {
+        "year": "2003",
+        "value": 14904517649.847569,
+        "country": "Kenya"
+      },
+      {
+        "year": "2000",
+        "value": 69171451627.24646,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2009",
+        "value": 25127805566.658375,
+        "country": "Uganda"
+      },
+      {
+        "year": "1991",
+        "value": 3376806697.121805,
+        "country": "Zambia"
+      },
+      {
+        "year": "2010",
+        "value": 34936307980.063034,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2007",
+        "value": 19707616772.799637,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2008",
+        "value": 27715142032.912952,
+        "country": "Cameroon"
+      },
+      {
+        "year": "2023",
+        "value": 381440724491.2316,
+        "country": "South Africa"
+      },
+      {
+        "year": "2003",
+        "value": 6606884275.23087,
+        "country": "Uganda"
+      },
+      {
+        "year": "2003",
+        "value": 4901869764.059568,
+        "country": "Zambia"
+      },
+      {
+        "year": "2021",
+        "value": 109703658904.99371,
+        "country": "Kenya"
+      },
+      {
+        "year": "2000",
+        "value": 12705350097.80436,
+        "country": "Kenya"
+      },
+      {
+        "year": "2011",
+        "value": 39336668080.55898,
+        "country": "Ghana"
+      },
+      {
+        "year": "2000",
+        "value": 9129594970.153011,
+        "country": "Angola"
+      },
+      {
+        "year": "2003",
+        "value": 7632723555.66221,
+        "country": "Ghana"
+      },
+      {
+        "year": "2009",
+        "value": 29400573553.60746,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2022",
+        "value": 27783332222.675926,
+        "country": "Senegal"
+      },
+      {
+        "year": "2022",
+        "value": 407596043067.88525,
+        "country": "South Africa"
+      },
+      {
+        "year": "2012",
+        "value": 41271701060.95403,
+        "country": "Ghana"
+      },
+      {
+        "year": "2013",
+        "value": 400886013595.5732,
+        "country": "South Africa"
+      },
+      {
+        "year": "2016",
+        "value": 323585509674.4806,
+        "country": "South Africa"
+      },
+      {
+        "year": "2015",
+        "value": 62103418181.818184,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2009",
+        "value": 32437389116.03801,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2005",
+        "value": 18395383647.497456,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2023",
+        "value": 79030935638.13165,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2006",
+        "value": 238454997161.47983,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2005",
+        "value": 9239221763.057926,
+        "country": "Uganda"
+      },
+      {
+        "year": "2002",
+        "value": 17311512433.193806,
+        "country": "Angola"
+      },
+      {
+        "year": "2002",
+        "value": 6178563591.120514,
+        "country": "Uganda"
+      },
+      {
+        "year": "2023",
+        "value": 30696331295.782555,
+        "country": "Senegal"
+      },
+      {
+        "year": "2020",
+        "value": 66068737786.06392,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2021",
+        "value": 609147716965.3478,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2002",
+        "value": 18054383320.847363,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2012",
+        "value": 434400545085.8111,
+        "country": "South Africa"
+      },
+      {
+        "year": "2023",
+        "value": 80547146875.9526,
+        "country": "Ghana"
+      },
+      {
+        "year": "2006",
+        "value": 18619859795.285236,
+        "country": "Tanzania"
+      },
+      {
+        "year": "2000",
+        "value": 3600632111.414137,
+        "country": "Zambia"
+      },
+      {
+        "year": "2004",
+        "value": 10076816666.619638,
+        "country": "Senegal"
+      },
+      {
+        "year": "2004",
+        "value": 255806908594.57257,
+        "country": "South Africa"
+      },
+      {
+        "year": "2000",
+        "value": 8242349617.863803,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2004",
+        "value": 26997977896.29073,
+        "country": "Angola"
+      },
+      {
+        "year": "2003",
+        "value": 8623691300.040789,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2000",
+        "value": 151752757215.3085,
+        "country": "South Africa"
+      },
+      {
+        "year": "2001",
+        "value": 8231326016.47494,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2019",
+        "value": 389330032224.2691,
+        "country": "South Africa"
+      },
+      {
+        "year": "2009",
+        "value": 329754060647.12897,
+        "country": "South Africa"
+      },
+      {
+        "year": "1996",
+        "value": 12045865396.132324,
+        "country": "Kenya"
+      },
+      {
+        "year": "2001",
+        "value": 10953485349.113462,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1980",
+        "value": 3884530853.761622,
+        "country": "Zambia"
+      },
+      {
+        "year": "1983",
+        "value": 3321048451.151708,
+        "country": "Zambia"
+      },
+      {
+        "year": "1999",
+        "value": 6592834932.808764,
+        "country": "Senegal"
+      },
+      {
+        "year": "1982",
+        "value": 3871117092.866756,
+        "country": "Zambia"
+      },
+      {
+        "year": "1991",
+        "value": 8151488783.190641,
+        "country": "Kenya"
+      },
+      {
+        "year": "1996",
+        "value": 185730236700.0,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1996",
+        "value": 6559712165.96508,
+        "country": "Senegal"
+      },
+      {
+        "year": "1995",
+        "value": 9046320255.405067,
+        "country": "Kenya"
+      },
+      {
+        "year": "1997",
+        "value": 13115764358.284555,
+        "country": "Kenya"
+      },
+      {
+        "year": "2024",
+        "value": 120397537849.82584,
+        "country": "Kenya"
+      },
+      {
+        "year": "1997",
+        "value": 11158197941.915222,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1997",
+        "value": 6269333313.171083,
+        "country": "Uganda"
+      },
+      {
+        "year": "1993",
+        "value": 56721051402.47319,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2007",
+        "value": 73037821926.46553,
+        "country": "Angola"
+      },
+      {
+        "year": "1999",
+        "value": 59145077039.14369,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1994",
+        "value": 5446383726.770467,
+        "country": "Ghana"
+      },
+      {
+        "year": "1993",
+        "value": 9051043870.121964,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1993",
+        "value": 5968922939.371985,
+        "country": "Ghana"
+      },
+      {
+        "year": "1995",
+        "value": 5755818842.492457,
+        "country": "Uganda"
+      },
+      {
+        "year": "1992",
+        "value": 8209120763.049552,
+        "country": "Kenya"
+      },
+      {
+        "year": "1995",
+        "value": 7855205206.934051,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1995",
+        "value": 6464382807.678836,
+        "country": "Ghana"
+      },
+      {
+        "year": "1992",
+        "value": 2857457761.909216,
+        "country": "Uganda"
+      },
+      {
+        "year": "1985",
+        "value": 6135034213.789982,
+        "country": "Kenya"
+      },
+      {
+        "year": "1988",
+        "value": 11181119717.874395,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1986",
+        "value": 54805852580.91286,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1989",
+        "value": 11012566195.02554,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1989",
+        "value": 6366039372.536825,
+        "country": "Senegal"
+      },
+      {
+        "year": "1990",
+        "value": 8572359038.169579,
+        "country": "Kenya"
+      },
+      {
+        "year": "1989",
+        "value": 44003061108.400505,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1981",
+        "value": 4095892780.582894,
+        "country": "Senegal"
+      },
+      {
+        "year": "1981",
+        "value": 93141472163.7596,
+        "country": "South Africa"
+      },
+      {
+        "year": "1981",
+        "value": 13161540377.579165,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1988",
+        "value": 49648470440.459335,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1984",
+        "value": 12906635133.155684,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1984",
+        "value": 3615647477.054337,
+        "country": "Uganda"
+      },
+      {
+        "year": "1984",
+        "value": 2719518932.995407,
+        "country": "Zambia"
+      },
+      {
+        "year": "1976",
+        "value": 2765254237.288136,
+        "country": "Ghana"
+      },
+      {
+        "year": "1976",
+        "value": 6472511987.847351,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1976",
+        "value": 2447300000.0,
+        "country": "Uganda"
+      },
+      {
+        "year": "1976",
+        "value": 2742859262.979402,
+        "country": "Zambia"
+      },
+      {
+        "year": "1982",
+        "value": 85904057409.3585,
+        "country": "South Africa"
+      },
+      {
+        "year": "1982",
+        "value": 13927383239.832151,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1982",
+        "value": 2177500000.0,
+        "country": "Uganda"
+      },
+      {
+        "year": "2025",
+        "value": 135941278878.81458,
+        "country": "Kenya"
+      },
+      {
+        "year": "1975",
+        "value": 3893839190.268061,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1975",
+        "value": 4577047854.10628,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1975",
+        "value": 2810106382.978724,
+        "country": "Ghana"
+      },
+      {
+        "year": "1973",
+        "value": 2509001324.345912,
+        "country": "Kenya"
+      },
+      {
+        "year": "1972",
+        "value": 2107279157.088337,
+        "country": "Kenya"
+      },
+      {
+        "year": "1984",
+        "value": 6131475065.178155,
+        "country": "Angola"
+      },
+      {
+        "year": "1973",
+        "value": 4144104535.496553,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1973",
+        "value": 1701829789.021266,
+        "country": "Uganda"
+      },
+      {
+        "year": "1973",
+        "value": 2434255236.999353,
+        "country": "Zambia"
+      },
+      {
+        "year": "1985",
+        "value": 7554065410.120965,
+        "country": "Angola"
+      },
+      {
+        "year": "1983",
+        "value": 5979198313.760933,
+        "country": "Kenya"
+      },
+      {
+        "year": "1977",
+        "value": 6265068189.377822,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1977",
+        "value": 5651840584.541063,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1979",
+        "value": 5919002982.601996,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1979",
+        "value": 9142933966.794653,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1981",
+        "value": 7507663566.666667,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1981",
+        "value": 4222441860.465117,
+        "country": "Ghana"
+      },
+      {
+        "year": "1984",
+        "value": 8298309580.67633,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1984",
+        "value": 4412279843.444227,
+        "country": "Ghana"
+      },
+      {
+        "year": "1975",
+        "value": 27778934624.69734,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1975",
+        "value": 2830388404.897698,
+        "country": "Senegal"
+      },
+      {
+        "year": "1977",
+        "value": 4494378764.320108,
+        "country": "Kenya"
+      },
+      {
+        "year": "1966",
+        "value": 14211394315.442274,
+        "country": "South Africa"
+      },
+      {
+        "year": "1966",
+        "value": 4377998825.12047,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1966",
+        "value": 925381492.370153,
+        "country": "Uganda"
+      },
+      {
+        "year": "1966",
+        "value": 1238999504.895797,
+        "country": "Zambia"
+      },
+      {
+        "year": "1992",
+        "value": 8307810973.588479,
+        "country": "Angola"
+      },
+      {
+        "year": "1993",
+        "value": 5768720421.613673,
+        "country": "Angola"
+      },
+      {
+        "year": "1974",
+        "value": 2157415532.54796,
+        "country": "Cameroon"
+      },
+      {
+        "year": "1974",
+        "value": 3070152309.21903,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1973",
+        "value": 15162871287.128712,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1972",
+        "value": 1620857103.534923,
+        "country": "Senegal"
+      },
+      {
+        "year": "1972",
+        "value": 24515919216.8851,
+        "country": "South Africa"
+      },
+      {
+        "year": "1972",
+        "value": 1849400401.647237,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1972",
+        "value": 3520252938.26087,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1972",
+        "value": 2112293279.985067,
+        "country": "Ghana"
+      },
+      {
+        "year": "1962",
+        "value": 449158233.391351,
+        "country": "Uganda"
+      },
+      {
+        "year": "1962",
+        "value": 679279728.55982,
+        "country": "Zambia"
+      },
+      {
+        "year": "2025",
+        "value": 99773555666.19878,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "2025",
+        "value": 126358758448.356,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2025",
+        "value": 114209905278.71709,
+        "country": "Ghana"
+      },
+      {
+        "year": "1971",
+        "value": 1584128509.468729,
+        "country": "Cote d'Ivoire"
+      },
+      {
+        "year": "1971",
+        "value": 3224280834.970924,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "1969",
+        "value": 1458379416.648233,
+        "country": "Kenya"
+      },
+      {
+        "year": "1967",
+        "value": 5203237918.704833,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1967",
+        "value": 1246480765.979844,
+        "country": "Senegal"
+      },
+      {
+        "year": "1967",
+        "value": 15821393671.442532,
+        "country": "South Africa"
+      },
+      {
+        "year": "2025",
+        "value": 122174889423.63512,
+        "country": "Angola"
+      },
+      {
+        "year": "1971",
+        "value": 1778391288.643485,
+        "country": "Kenya"
+      },
+      {
+        "year": "1965",
+        "value": 1210058228.171121,
+        "country": "Senegal"
+      },
+      {
+        "year": "1965",
+        "value": 13068994772.402092,
+        "country": "South Africa"
+      },
+      {
+        "year": "1965",
+        "value": 3817226546.229382,
+        "country": "Tanzania"
+      },
+      {
+        "year": "1965",
+        "value": 884502309.953801,
+        "country": "Uganda"
+      },
+      {
+        "year": "1966",
+        "value": 6366917453.233019,
+        "country": "Nigeria"
+      },
+      {
+        "year": "1966",
+        "value": 1246908185.963427,
+        "country": "Senegal"
+      },
+      {
+        "year": "1964",
+        "value": 998759334.496266,
+        "country": "Kenya"
+      },
+      {
+        "year": "1961",
+        "value": 792959472.816211,
+        "country": "Kenya"
+      },
+      {
+        "year": "1961",
+        "value": 4467287893.084843,
+        "country": "Nigeria"
+      },
+      {
+        "year": "2025",
+        "value": 28879806220.12635,
+        "country": "Zambia"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          423145605.043164,
+          668219992686.575
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "US Dollars",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": "$,.2f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -17,6 +17,7 @@ if not _os.environ.get("PYTEST_CURRENT_TEST") and not _os.environ.get("PYTEST_RU
     load_dotenv()
 del _os
 
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -67,6 +68,7 @@ class MCPServerSettings(BaseSettings):
         default=5.0,
         description="Per-check timeout in seconds for GET /ready outbound probes.",
     )
+
 
     model_config = SettingsConfigDict(env_prefix="MCP_")
 

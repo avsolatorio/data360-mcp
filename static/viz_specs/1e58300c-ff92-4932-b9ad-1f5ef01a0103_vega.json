@@ -1,0 +1,1283 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP vs. Inflation, consumer prices"
+    ],
+    "subtitle": [
+      "2018-2022",
+      "Percentage change per annum"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2018",
+        "country": "Austria",
+        "indicator": "GDP",
+        "value": 2.484221
+      },
+      {
+        "year": "2018",
+        "country": "Belgium",
+        "indicator": "GDP",
+        "value": 1.877968
+      },
+      {
+        "year": "2018",
+        "country": "Czechia",
+        "indicator": "GDP",
+        "value": 2.830306
+      },
+      {
+        "year": "2018",
+        "country": "France",
+        "indicator": "GDP",
+        "value": 1.645909
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "indicator": "GDP",
+        "value": 1.135696
+      },
+      {
+        "year": "2018",
+        "country": "Hungary",
+        "indicator": "GDP",
+        "value": 5.606138
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "indicator": "GDP",
+        "value": 0.826647
+      },
+      {
+        "year": "2018",
+        "country": "Netherlands",
+        "indicator": "GDP",
+        "value": 2.258732
+      },
+      {
+        "year": "2018",
+        "country": "Poland",
+        "indicator": "GDP",
+        "value": 6.245858
+      },
+      {
+        "year": "2018",
+        "country": "Portugal",
+        "indicator": "GDP",
+        "value": 2.946283
+      },
+      {
+        "year": "2018",
+        "country": "Romania",
+        "indicator": "GDP",
+        "value": 5.394522
+      },
+      {
+        "year": "2018",
+        "country": "Spain",
+        "indicator": "GDP",
+        "value": 2.395411
+      },
+      {
+        "year": "2018",
+        "country": "Sweden",
+        "indicator": "GDP",
+        "value": 1.770255
+      },
+      {
+        "year": "2018",
+        "country": "Switzerland",
+        "indicator": "GDP",
+        "value": 3.327433
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "GDP",
+        "value": 1.551331
+      },
+      {
+        "year": "2019",
+        "country": "Austria",
+        "indicator": "GDP",
+        "value": 1.754976
+      },
+      {
+        "year": "2019",
+        "country": "Belgium",
+        "indicator": "GDP",
+        "value": 2.44289
+      },
+      {
+        "year": "2019",
+        "country": "Czechia",
+        "indicator": "GDP",
+        "value": 3.565777
+      },
+      {
+        "year": "2019",
+        "country": "France",
+        "indicator": "GDP",
+        "value": 2.027446
+      },
+      {
+        "year": "2019",
+        "country": "Germany",
+        "indicator": "GDP",
+        "value": 0.977735
+      },
+      {
+        "year": "2019",
+        "country": "Hungary",
+        "indicator": "GDP",
+        "value": 5.077185
+      },
+      {
+        "year": "2019",
+        "country": "Italy",
+        "indicator": "GDP",
+        "value": 0.429163
+      },
+      {
+        "year": "2019",
+        "country": "Netherlands",
+        "indicator": "GDP",
+        "value": 2.300162
+      },
+      {
+        "year": "2019",
+        "country": "Poland",
+        "indicator": "GDP",
+        "value": 4.580458
+      },
+      {
+        "year": "2019",
+        "country": "Portugal",
+        "indicator": "GDP",
+        "value": 2.745684
+      },
+      {
+        "year": "2019",
+        "country": "Romania",
+        "indicator": "GDP",
+        "value": 3.96029
+      },
+      {
+        "year": "2019",
+        "country": "Spain",
+        "indicator": "GDP",
+        "value": 1.961179
+      },
+      {
+        "year": "2019",
+        "country": "Sweden",
+        "indicator": "GDP",
+        "value": 2.60823
+      },
+      {
+        "year": "2019",
+        "country": "Switzerland",
+        "indicator": "GDP",
+        "value": 1.115322
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "indicator": "GDP",
+        "value": 1.256299
+      },
+      {
+        "year": "2020",
+        "country": "Austria",
+        "indicator": "GDP",
+        "value": -6.318255
+      },
+      {
+        "year": "2020",
+        "country": "Belgium",
+        "indicator": "GDP",
+        "value": -4.792984
+      },
+      {
+        "year": "2020",
+        "country": "Czechia",
+        "indicator": "GDP",
+        "value": -5.30488
+      },
+      {
+        "year": "2020",
+        "country": "France",
+        "indicator": "GDP",
+        "value": -7.440646
+      },
+      {
+        "year": "2020",
+        "country": "Germany",
+        "indicator": "GDP",
+        "value": -4.131914
+      },
+      {
+        "year": "2020",
+        "country": "Hungary",
+        "indicator": "GDP",
+        "value": -4.338725
+      },
+      {
+        "year": "2020",
+        "country": "Italy",
+        "indicator": "GDP",
+        "value": -8.868221
+      },
+      {
+        "year": "2020",
+        "country": "Netherlands",
+        "indicator": "GDP",
+        "value": -3.867997
+      },
+      {
+        "year": "2020",
+        "country": "Poland",
+        "indicator": "GDP",
+        "value": -2.035569
+      },
+      {
+        "year": "2020",
+        "country": "Portugal",
+        "indicator": "GDP",
+        "value": -8.204632
+      },
+      {
+        "year": "2020",
+        "country": "Romania",
+        "indicator": "GDP",
+        "value": -3.598025
+      },
+      {
+        "year": "2020",
+        "country": "Spain",
+        "indicator": "GDP",
+        "value": -10.940071
+      },
+      {
+        "year": "2020",
+        "country": "Sweden",
+        "indicator": "GDP",
+        "value": -1.933797
+      },
+      {
+        "year": "2020",
+        "country": "Switzerland",
+        "indicator": "GDP",
+        "value": -2.255258
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "indicator": "GDP",
+        "value": -10.047897
+      },
+      {
+        "year": "2021",
+        "country": "Austria",
+        "indicator": "GDP",
+        "value": 4.923092
+      },
+      {
+        "year": "2021",
+        "country": "Belgium",
+        "indicator": "GDP",
+        "value": 6.254457
+      },
+      {
+        "year": "2021",
+        "country": "Czechia",
+        "indicator": "GDP",
+        "value": 4.029018
+      },
+      {
+        "year": "2021",
+        "country": "France",
+        "indicator": "GDP",
+        "value": 6.882338
+      },
+      {
+        "year": "2021",
+        "country": "Germany",
+        "indicator": "GDP",
+        "value": 3.91
+      },
+      {
+        "year": "2021",
+        "country": "Hungary",
+        "indicator": "GDP",
+        "value": 7.222916
+      },
+      {
+        "year": "2021",
+        "country": "Italy",
+        "indicator": "GDP",
+        "value": 8.931062
+      },
+      {
+        "year": "2021",
+        "country": "Netherlands",
+        "indicator": "GDP",
+        "value": 6.276836
+      },
+      {
+        "year": "2021",
+        "country": "Poland",
+        "indicator": "GDP",
+        "value": 6.927183
+      },
+      {
+        "year": "2021",
+        "country": "Portugal",
+        "indicator": "GDP",
+        "value": 5.558757
+      },
+      {
+        "year": "2021",
+        "country": "Romania",
+        "indicator": "GDP",
+        "value": 5.587351
+      },
+      {
+        "year": "2021",
+        "country": "Spain",
+        "indicator": "GDP",
+        "value": 6.683144
+      },
+      {
+        "year": "2021",
+        "country": "Sweden",
+        "indicator": "GDP",
+        "value": 5.225864
+      },
+      {
+        "year": "2021",
+        "country": "Switzerland",
+        "indicator": "GDP",
+        "value": 6.176228
+      },
+      {
+        "year": "2021",
+        "country": "United Kingdom",
+        "indicator": "GDP",
+        "value": 8.543112
+      },
+      {
+        "year": "2022",
+        "country": "Austria",
+        "indicator": "GDP",
+        "value": 5.330964
+      },
+      {
+        "year": "2022",
+        "country": "Belgium",
+        "indicator": "GDP",
+        "value": 4.024609
+      },
+      {
+        "year": "2022",
+        "country": "Czechia",
+        "indicator": "GDP",
+        "value": 2.847171
+      },
+      {
+        "year": "2022",
+        "country": "France",
+        "indicator": "GDP",
+        "value": 2.716763
+      },
+      {
+        "year": "2022",
+        "country": "Germany",
+        "indicator": "GDP",
+        "value": 1.809258
+      },
+      {
+        "year": "2022",
+        "country": "Hungary",
+        "indicator": "GDP",
+        "value": 4.152381
+      },
+      {
+        "year": "2022",
+        "country": "Italy",
+        "indicator": "GDP",
+        "value": 4.821177
+      },
+      {
+        "year": "2022",
+        "country": "Netherlands",
+        "indicator": "GDP",
+        "value": 5.007235
+      },
+      {
+        "year": "2022",
+        "country": "Poland",
+        "indicator": "GDP",
+        "value": 5.255457
+      },
+      {
+        "year": "2022",
+        "country": "Portugal",
+        "indicator": "GDP",
+        "value": 6.985841
+      },
+      {
+        "year": "2022",
+        "country": "Romania",
+        "indicator": "GDP",
+        "value": 4.187713
+      },
+      {
+        "year": "2022",
+        "country": "Spain",
+        "indicator": "GDP",
+        "value": 6.370317
+      },
+      {
+        "year": "2022",
+        "country": "Sweden",
+        "indicator": "GDP",
+        "value": 1.255436
+      },
+      {
+        "year": "2022",
+        "country": "Switzerland",
+        "indicator": "GDP",
+        "value": 3.534303
+      },
+      {
+        "year": "2022",
+        "country": "United Kingdom",
+        "indicator": "GDP",
+        "value": 5.149704
+      },
+      {
+        "year": "2018",
+        "country": "Austria",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.99838
+      },
+      {
+        "year": "2018",
+        "country": "Belgium",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.053165
+      },
+      {
+        "year": "2018",
+        "country": "Czechia",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.149495
+      },
+      {
+        "year": "2018",
+        "country": "France",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.850815
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.732169
+      },
+      {
+        "year": "2018",
+        "country": "Hungary",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.850248
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.137488
+      },
+      {
+        "year": "2018",
+        "country": "Netherlands",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.703498
+      },
+      {
+        "year": "2018",
+        "country": "Poland",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.812952
+      },
+      {
+        "year": "2018",
+        "country": "Portugal",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.993716
+      },
+      {
+        "year": "2018",
+        "country": "Romania",
+        "indicator": "Inflation, consumer prices",
+        "value": 4.625484
+      },
+      {
+        "year": "2018",
+        "country": "Spain",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.674981
+      },
+      {
+        "year": "2018",
+        "country": "Sweden",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.953535
+      },
+      {
+        "year": "2018",
+        "country": "Switzerland",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.936335
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.29284
+      },
+      {
+        "year": "2019",
+        "country": "Austria",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.530896
+      },
+      {
+        "year": "2019",
+        "country": "Belgium",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.43682
+      },
+      {
+        "year": "2019",
+        "country": "Czechia",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.847876
+      },
+      {
+        "year": "2019",
+        "country": "France",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.108255
+      },
+      {
+        "year": "2019",
+        "country": "Germany",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.44566
+      },
+      {
+        "year": "2019",
+        "country": "Hungary",
+        "indicator": "Inflation, consumer prices",
+        "value": 3.338586
+      },
+      {
+        "year": "2019",
+        "country": "Italy",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.611247
+      },
+      {
+        "year": "2019",
+        "country": "Netherlands",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.633699
+      },
+      {
+        "year": "2019",
+        "country": "Poland",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.227479
+      },
+      {
+        "year": "2019",
+        "country": "Portugal",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.338178
+      },
+      {
+        "year": "2019",
+        "country": "Romania",
+        "indicator": "Inflation, consumer prices",
+        "value": 3.827854
+      },
+      {
+        "year": "2019",
+        "country": "Spain",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.699519
+      },
+      {
+        "year": "2019",
+        "country": "Sweden",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.784151
+      },
+      {
+        "year": "2019",
+        "country": "Switzerland",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.362886
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.738105
+      },
+      {
+        "year": "2020",
+        "country": "Austria",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.381911
+      },
+      {
+        "year": "2020",
+        "country": "Belgium",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.740792
+      },
+      {
+        "year": "2020",
+        "country": "Czechia",
+        "indicator": "Inflation, consumer prices",
+        "value": 3.161295
+      },
+      {
+        "year": "2020",
+        "country": "France",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.476499
+      },
+      {
+        "year": "2020",
+        "country": "Germany",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.144878
+      },
+      {
+        "year": "2020",
+        "country": "Hungary",
+        "indicator": "Inflation, consumer prices",
+        "value": 3.326744
+      },
+      {
+        "year": "2020",
+        "country": "Italy",
+        "indicator": "Inflation, consumer prices",
+        "value": -0.137708
+      },
+      {
+        "year": "2020",
+        "country": "Netherlands",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.27246
+      },
+      {
+        "year": "2020",
+        "country": "Poland",
+        "indicator": "Inflation, consumer prices",
+        "value": 3.37447
+      },
+      {
+        "year": "2020",
+        "country": "Portugal",
+        "indicator": "Inflation, consumer prices",
+        "value": -0.012438
+      },
+      {
+        "year": "2020",
+        "country": "Romania",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.631073
+      },
+      {
+        "year": "2020",
+        "country": "Spain",
+        "indicator": "Inflation, consumer prices",
+        "value": -0.322753
+      },
+      {
+        "year": "2020",
+        "country": "Sweden",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.497367
+      },
+      {
+        "year": "2020",
+        "country": "Switzerland",
+        "indicator": "Inflation, consumer prices",
+        "value": -0.725875
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.989487
+      },
+      {
+        "year": "2021",
+        "country": "Austria",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.766667
+      },
+      {
+        "year": "2021",
+        "country": "Belgium",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.440249
+      },
+      {
+        "year": "2021",
+        "country": "Czechia",
+        "indicator": "Inflation, consumer prices",
+        "value": 3.839845
+      },
+      {
+        "year": "2021",
+        "country": "France",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.642331
+      },
+      {
+        "year": "2021",
+        "country": "Germany",
+        "indicator": "Inflation, consumer prices",
+        "value": 3.066667
+      },
+      {
+        "year": "2021",
+        "country": "Hungary",
+        "indicator": "Inflation, consumer prices",
+        "value": 5.110965
+      },
+      {
+        "year": "2021",
+        "country": "Italy",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.873783
+      },
+      {
+        "year": "2021",
+        "country": "Netherlands",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.67572
+      },
+      {
+        "year": "2021",
+        "country": "Poland",
+        "indicator": "Inflation, consumer prices",
+        "value": 5.055027
+      },
+      {
+        "year": "2021",
+        "country": "Portugal",
+        "indicator": "Inflation, consumer prices",
+        "value": 1.265657
+      },
+      {
+        "year": "2021",
+        "country": "Romania",
+        "indicator": "Inflation, consumer prices",
+        "value": 5.052329
+      },
+      {
+        "year": "2021",
+        "country": "Spain",
+        "indicator": "Inflation, consumer prices",
+        "value": 3.093135
+      },
+      {
+        "year": "2021",
+        "country": "Sweden",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.163197
+      },
+      {
+        "year": "2021",
+        "country": "Switzerland",
+        "indicator": "Inflation, consumer prices",
+        "value": 0.581814
+      },
+      {
+        "year": "2021",
+        "country": "United Kingdom",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.518371
+      },
+      {
+        "year": "2022",
+        "country": "Austria",
+        "indicator": "Inflation, consumer prices",
+        "value": 8.54687
+      },
+      {
+        "year": "2022",
+        "country": "Belgium",
+        "indicator": "Inflation, consumer prices",
+        "value": 9.597512
+      },
+      {
+        "year": "2022",
+        "country": "Czechia",
+        "indicator": "Inflation, consumer prices",
+        "value": 15.100165
+      },
+      {
+        "year": "2022",
+        "country": "France",
+        "indicator": "Inflation, consumer prices",
+        "value": 5.222367
+      },
+      {
+        "year": "2022",
+        "country": "Germany",
+        "indicator": "Inflation, consumer prices",
+        "value": 6.872574
+      },
+      {
+        "year": "2022",
+        "country": "Hungary",
+        "indicator": "Inflation, consumer prices",
+        "value": 14.608144
+      },
+      {
+        "year": "2022",
+        "country": "Italy",
+        "indicator": "Inflation, consumer prices",
+        "value": 8.20129
+      },
+      {
+        "year": "2022",
+        "country": "Netherlands",
+        "indicator": "Inflation, consumer prices",
+        "value": 10.001208
+      },
+      {
+        "year": "2022",
+        "country": "Poland",
+        "indicator": "Inflation, consumer prices",
+        "value": 14.429451
+      },
+      {
+        "year": "2022",
+        "country": "Portugal",
+        "indicator": "Inflation, consumer prices",
+        "value": 7.832691
+      },
+      {
+        "year": "2022",
+        "country": "Romania",
+        "indicator": "Inflation, consumer prices",
+        "value": 13.795489
+      },
+      {
+        "year": "2022",
+        "country": "Spain",
+        "indicator": "Inflation, consumer prices",
+        "value": 8.390576
+      },
+      {
+        "year": "2022",
+        "country": "Sweden",
+        "indicator": "Inflation, consumer prices",
+        "value": 8.369291
+      },
+      {
+        "year": "2022",
+        "country": "Switzerland",
+        "indicator": "Inflation, consumer prices",
+        "value": 2.835028
+      },
+      {
+        "year": "2022",
+        "country": "United Kingdom",
+        "indicator": "Inflation, consumer prices",
+        "value": 7.922049
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "GDP",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "GDP"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "GDP",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Austria",
+              "Belgium",
+              "Czechia",
+              "France",
+              "Germany",
+              "Hungary",
+              "Italy",
+              "Netherlands",
+              "Poland",
+              "Portugal",
+              "Romania",
+              "Spain",
+              "Sweden",
+              "Switzerland",
+              "United Kingdom"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "Inflation, consumer prices",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Inflation, consumer prices"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Inflation, consumer prices",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Austria",
+              "Belgium",
+              "Czechia",
+              "France",
+              "Germany",
+              "Hungary",
+              "Italy",
+              "Netherlands",
+              "Poland",
+              "Portugal",
+              "Romania",
+              "Spain",
+              "Sweden",
+              "Switzerland",
+              "United Kingdom"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "columns": 2,
+  "config": {
+    "legend": {
+      "orient": "bottom",
+      "direction": "horizontal",
+      "columns": 5,
+      "title": "Country",
+      "labelLimit": 200,
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

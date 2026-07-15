@@ -1,0 +1,4916 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Gender Development Index over Time",
+    "subtitle": [
+      "1990-2013",
+      "Score",
+      "Showing 50 of 56 economies by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1998",
+        "value": 0.826514,
+        "country": "BDI"
+      },
+      {
+        "year": "1999",
+        "value": 0.826723,
+        "country": "BDI"
+      },
+      {
+        "year": "2000",
+        "value": 0.827621,
+        "country": "BDI"
+      },
+      {
+        "year": "2001",
+        "value": 0.829486,
+        "country": "BDI"
+      },
+      {
+        "year": "2002",
+        "value": 0.832174,
+        "country": "BDI"
+      },
+      {
+        "year": "2003",
+        "value": 0.834198,
+        "country": "BDI"
+      },
+      {
+        "year": "2004",
+        "value": 0.842923,
+        "country": "BDI"
+      },
+      {
+        "year": "2005",
+        "value": 0.85101,
+        "country": "BDI"
+      },
+      {
+        "year": "2006",
+        "value": 0.87107,
+        "country": "BDI"
+      },
+      {
+        "year": "2007",
+        "value": 0.875609,
+        "country": "BDI"
+      },
+      {
+        "year": "2008",
+        "value": 0.880208,
+        "country": "BDI"
+      },
+      {
+        "year": "2009",
+        "value": 0.884455,
+        "country": "BDI"
+      },
+      {
+        "year": "2010",
+        "value": 0.90374,
+        "country": "BDI"
+      },
+      {
+        "year": "2011",
+        "value": 0.909029,
+        "country": "BDI"
+      },
+      {
+        "year": "2012",
+        "value": 0.91283,
+        "country": "BDI"
+      },
+      {
+        "year": "2013",
+        "value": 0.919405,
+        "country": "BDI"
+      },
+      {
+        "year": "1990",
+        "value": 0.908439,
+        "country": "CHL"
+      },
+      {
+        "year": "1997",
+        "value": 0.825611,
+        "country": "BDI"
+      },
+      {
+        "year": "1996",
+        "value": 0.826049,
+        "country": "BDI"
+      },
+      {
+        "year": "1995",
+        "value": 0.826708,
+        "country": "BDI"
+      },
+      {
+        "year": "1994",
+        "value": 0.825603,
+        "country": "BDI"
+      },
+      {
+        "year": "1993",
+        "value": 0.8247,
+        "country": "BDI"
+      },
+      {
+        "year": "1992",
+        "value": 0.824602,
+        "country": "BDI"
+      },
+      {
+        "year": "1991",
+        "value": 0.829659,
+        "country": "BDI"
+      },
+      {
+        "year": "1990",
+        "value": 0.821531,
+        "country": "BDI"
+      },
+      {
+        "year": "1991",
+        "value": 0.90933,
+        "country": "CHL"
+      },
+      {
+        "year": "1992",
+        "value": 0.915813,
+        "country": "CHL"
+      },
+      {
+        "year": "1993",
+        "value": 0.921447,
+        "country": "CHL"
+      },
+      {
+        "year": "1994",
+        "value": 0.922528,
+        "country": "CHL"
+      },
+      {
+        "year": "1995",
+        "value": 0.923183,
+        "country": "CHL"
+      },
+      {
+        "year": "1996",
+        "value": 0.925447,
+        "country": "CHL"
+      },
+      {
+        "year": "1997",
+        "value": 0.928433,
+        "country": "CHL"
+      },
+      {
+        "year": "1998",
+        "value": 0.927637,
+        "country": "CHL"
+      },
+      {
+        "year": "1999",
+        "value": 0.928047,
+        "country": "CHL"
+      },
+      {
+        "year": "2000",
+        "value": 0.929642,
+        "country": "CHL"
+      },
+      {
+        "year": "2001",
+        "value": 0.928915,
+        "country": "CHL"
+      },
+      {
+        "year": "2002",
+        "value": 0.930321,
+        "country": "CHL"
+      },
+      {
+        "year": "2003",
+        "value": 0.935273,
+        "country": "CHL"
+      },
+      {
+        "year": "2004",
+        "value": 0.938804,
+        "country": "CHL"
+      },
+      {
+        "year": "2005",
+        "value": 0.941693,
+        "country": "CHL"
+      },
+      {
+        "year": "2006",
+        "value": 0.944281,
+        "country": "CHL"
+      },
+      {
+        "year": "2007",
+        "value": 0.94544,
+        "country": "CHL"
+      },
+      {
+        "year": "2008",
+        "value": 0.947842,
+        "country": "CHL"
+      },
+      {
+        "year": "2009",
+        "value": 0.951787,
+        "country": "CHL"
+      },
+      {
+        "year": "2010",
+        "value": 0.959563,
+        "country": "CHL"
+      },
+      {
+        "year": "2011",
+        "value": 0.961744,
+        "country": "CHL"
+      },
+      {
+        "year": "2012",
+        "value": 0.963955,
+        "country": "CHL"
+      },
+      {
+        "year": "2013",
+        "value": 0.963257,
+        "country": "CHL"
+      },
+      {
+        "year": "1990",
+        "value": 0.904489,
+        "country": "CHN"
+      },
+      {
+        "year": "1994",
+        "value": 0.914904,
+        "country": "CHN"
+      },
+      {
+        "year": "1995",
+        "value": 0.913298,
+        "country": "CHN"
+      },
+      {
+        "year": "1996",
+        "value": 0.911685,
+        "country": "CHN"
+      },
+      {
+        "year": "1997",
+        "value": 0.909886,
+        "country": "CHN"
+      },
+      {
+        "year": "1998",
+        "value": 0.906423,
+        "country": "CHN"
+      },
+      {
+        "year": "1999",
+        "value": 0.901771,
+        "country": "CHN"
+      },
+      {
+        "year": "2000",
+        "value": 0.899677,
+        "country": "CHN"
+      },
+      {
+        "year": "2001",
+        "value": 0.895653,
+        "country": "CHN"
+      },
+      {
+        "year": "2002",
+        "value": 0.897711,
+        "country": "CHN"
+      },
+      {
+        "year": "2003",
+        "value": 0.914846,
+        "country": "CHN"
+      },
+      {
+        "year": "2004",
+        "value": 0.91833,
+        "country": "CHN"
+      },
+      {
+        "year": "2005",
+        "value": 0.918624,
+        "country": "CHN"
+      },
+      {
+        "year": "2006",
+        "value": 0.927319,
+        "country": "CHN"
+      },
+      {
+        "year": "2007",
+        "value": 0.930975,
+        "country": "CHN"
+      },
+      {
+        "year": "2008",
+        "value": 0.934724,
+        "country": "CHN"
+      },
+      {
+        "year": "2009",
+        "value": 0.939197,
+        "country": "CHN"
+      },
+      {
+        "year": "2010",
+        "value": 0.939609,
+        "country": "CHN"
+      },
+      {
+        "year": "2011",
+        "value": 0.939828,
+        "country": "CHN"
+      },
+      {
+        "year": "2012",
+        "value": 0.940933,
+        "country": "CHN"
+      },
+      {
+        "year": "2013",
+        "value": 0.943047,
+        "country": "CHN"
+      },
+      {
+        "year": "1995",
+        "value": 0.792804,
+        "country": "GMB"
+      },
+      {
+        "year": "1996",
+        "value": 0.791912,
+        "country": "GMB"
+      },
+      {
+        "year": "1997",
+        "value": 0.791076,
+        "country": "GMB"
+      },
+      {
+        "year": "1998",
+        "value": 0.790417,
+        "country": "GMB"
+      },
+      {
+        "year": "1999",
+        "value": 0.789742,
+        "country": "GMB"
+      },
+      {
+        "year": "2000",
+        "value": 0.788816,
+        "country": "GMB"
+      },
+      {
+        "year": "2001",
+        "value": 0.79052,
+        "country": "GMB"
+      },
+      {
+        "year": "2002",
+        "value": 0.791588,
+        "country": "GMB"
+      },
+      {
+        "year": "2003",
+        "value": 0.793079,
+        "country": "GMB"
+      },
+      {
+        "year": "2004",
+        "value": 0.794899,
+        "country": "GMB"
+      },
+      {
+        "year": "2005",
+        "value": 0.795493,
+        "country": "GMB"
+      },
+      {
+        "year": "2008",
+        "value": 0.886539,
+        "country": "GMB"
+      },
+      {
+        "year": "2009",
+        "value": 0.887685,
+        "country": "GMB"
+      },
+      {
+        "year": "2010",
+        "value": 0.885497,
+        "country": "GMB"
+      },
+      {
+        "year": "2011",
+        "value": 0.884725,
+        "country": "GMB"
+      },
+      {
+        "year": "2012",
+        "value": 0.88533,
+        "country": "GMB"
+      },
+      {
+        "year": "2013",
+        "value": 0.886136,
+        "country": "GMB"
+      },
+      {
+        "year": "2002",
+        "value": 0.921787,
+        "country": "GEO"
+      },
+      {
+        "year": "2003",
+        "value": 0.925921,
+        "country": "GEO"
+      },
+      {
+        "year": "2004",
+        "value": 0.92939,
+        "country": "GEO"
+      },
+      {
+        "year": "2005",
+        "value": 0.921266,
+        "country": "GEO"
+      },
+      {
+        "year": "2006",
+        "value": 0.929709,
+        "country": "GEO"
+      },
+      {
+        "year": "2007",
+        "value": 0.93372,
+        "country": "GEO"
+      },
+      {
+        "year": "2008",
+        "value": 0.935753,
+        "country": "GEO"
+      },
+      {
+        "year": "2009",
+        "value": 0.940704,
+        "country": "GEO"
+      },
+      {
+        "year": "2010",
+        "value": 0.939653,
+        "country": "GEO"
+      },
+      {
+        "year": "2011",
+        "value": 0.940946,
+        "country": "GEO"
+      },
+      {
+        "year": "2012",
+        "value": 0.942822,
+        "country": "GEO"
+      },
+      {
+        "year": "2013",
+        "value": 0.948812,
+        "country": "GEO"
+      },
+      {
+        "year": "1992",
+        "value": 0.940928,
+        "country": "DEU"
+      },
+      {
+        "year": "1993",
+        "value": 0.939269,
+        "country": "DEU"
+      },
+      {
+        "year": "1994",
+        "value": 0.939847,
+        "country": "DEU"
+      },
+      {
+        "year": "1995",
+        "value": 0.940615,
+        "country": "DEU"
+      },
+      {
+        "year": "1996",
+        "value": 0.941494,
+        "country": "DEU"
+      },
+      {
+        "year": "1997",
+        "value": 0.943293,
+        "country": "DEU"
+      },
+      {
+        "year": "1998",
+        "value": 0.941922,
+        "country": "DEU"
+      },
+      {
+        "year": "1999",
+        "value": 0.941917,
+        "country": "DEU"
+      },
+      {
+        "year": "2000",
+        "value": 0.942314,
+        "country": "DEU"
+      },
+      {
+        "year": "2001",
+        "value": 0.945572,
+        "country": "DEU"
+      },
+      {
+        "year": "2002",
+        "value": 0.949563,
+        "country": "DEU"
+      },
+      {
+        "year": "2003",
+        "value": 0.953097,
+        "country": "DEU"
+      },
+      {
+        "year": "2004",
+        "value": 0.956837,
+        "country": "DEU"
+      },
+      {
+        "year": "2005",
+        "value": 0.959301,
+        "country": "DEU"
+      },
+      {
+        "year": "2006",
+        "value": 0.960632,
+        "country": "DEU"
+      },
+      {
+        "year": "2007",
+        "value": 0.960367,
+        "country": "DEU"
+      },
+      {
+        "year": "2013",
+        "value": 0.963047,
+        "country": "DEU"
+      },
+      {
+        "year": "1990",
+        "value": 0.816934,
+        "country": "GHA"
+      },
+      {
+        "year": "1991",
+        "value": 0.819472,
+        "country": "GHA"
+      },
+      {
+        "year": "1992",
+        "value": 0.821816,
+        "country": "GHA"
+      },
+      {
+        "year": "1999",
+        "value": 0.85138,
+        "country": "GHA"
+      },
+      {
+        "year": "2000",
+        "value": 0.857789,
+        "country": "GHA"
+      },
+      {
+        "year": "2001",
+        "value": 0.860771,
+        "country": "GHA"
+      },
+      {
+        "year": "2002",
+        "value": 0.863404,
+        "country": "GHA"
+      },
+      {
+        "year": "2003",
+        "value": 0.869366,
+        "country": "GHA"
+      },
+      {
+        "year": "2004",
+        "value": 0.867469,
+        "country": "GHA"
+      },
+      {
+        "year": "2005",
+        "value": 0.873838,
+        "country": "GHA"
+      },
+      {
+        "year": "2006",
+        "value": 0.879406,
+        "country": "GHA"
+      },
+      {
+        "year": "2007",
+        "value": 0.883907,
+        "country": "GHA"
+      },
+      {
+        "year": "2008",
+        "value": 0.885211,
+        "country": "GHA"
+      },
+      {
+        "year": "2009",
+        "value": 0.888743,
+        "country": "GHA"
+      },
+      {
+        "year": "2010",
+        "value": 0.890237,
+        "country": "GHA"
+      },
+      {
+        "year": "2011",
+        "value": 0.892887,
+        "country": "GHA"
+      },
+      {
+        "year": "2012",
+        "value": 0.890823,
+        "country": "GHA"
+      },
+      {
+        "year": "2013",
+        "value": 0.896214,
+        "country": "GHA"
+      },
+      {
+        "year": "1990",
+        "value": 0.915461,
+        "country": "GRC"
+      },
+      {
+        "year": "1991",
+        "value": 0.915281,
+        "country": "GRC"
+      },
+      {
+        "year": "1992",
+        "value": 0.921082,
+        "country": "GRC"
+      },
+      {
+        "year": "1993",
+        "value": 0.922337,
+        "country": "GRC"
+      },
+      {
+        "year": "1994",
+        "value": 0.917959,
+        "country": "GRC"
+      },
+      {
+        "year": "1995",
+        "value": 0.929776,
+        "country": "GRC"
+      },
+      {
+        "year": "1996",
+        "value": 0.932649,
+        "country": "GRC"
+      },
+      {
+        "year": "1997",
+        "value": 0.933884,
+        "country": "GRC"
+      },
+      {
+        "year": "1998",
+        "value": 0.939936,
+        "country": "GRC"
+      },
+      {
+        "year": "1999",
+        "value": 0.944318,
+        "country": "GRC"
+      },
+      {
+        "year": "2000",
+        "value": 0.944988,
+        "country": "GRC"
+      },
+      {
+        "year": "2001",
+        "value": 0.948346,
+        "country": "GRC"
+      },
+      {
+        "year": "2002",
+        "value": 0.947026,
+        "country": "GRC"
+      },
+      {
+        "year": "2003",
+        "value": 0.948061,
+        "country": "GRC"
+      },
+      {
+        "year": "2004",
+        "value": 0.952345,
+        "country": "GRC"
+      },
+      {
+        "year": "2005",
+        "value": 0.951313,
+        "country": "GRC"
+      },
+      {
+        "year": "2006",
+        "value": 0.953703,
+        "country": "GRC"
+      },
+      {
+        "year": "2007",
+        "value": 0.951976,
+        "country": "GRC"
+      },
+      {
+        "year": "2008",
+        "value": 0.95356,
+        "country": "GRC"
+      },
+      {
+        "year": "2009",
+        "value": 0.957512,
+        "country": "GRC"
+      },
+      {
+        "year": "2010",
+        "value": 0.95885,
+        "country": "GRC"
+      },
+      {
+        "year": "2011",
+        "value": 0.961139,
+        "country": "GRC"
+      },
+      {
+        "year": "2012",
+        "value": 0.960001,
+        "country": "GRC"
+      },
+      {
+        "year": "2013",
+        "value": 0.960401,
+        "country": "GRC"
+      },
+      {
+        "year": "1990",
+        "value": 0.796914,
+        "country": "LBY"
+      },
+      {
+        "year": "1991",
+        "value": 0.801695,
+        "country": "LBY"
+      },
+      {
+        "year": "1992",
+        "value": 0.806533,
+        "country": "LBY"
+      },
+      {
+        "year": "1993",
+        "value": 0.81136,
+        "country": "LBY"
+      },
+      {
+        "year": "2002",
+        "value": 0.90688,
+        "country": "LBY"
+      },
+      {
+        "year": "2003",
+        "value": 0.910254,
+        "country": "LBY"
+      },
+      {
+        "year": "2004",
+        "value": 0.91635,
+        "country": "LBY"
+      },
+      {
+        "year": "2005",
+        "value": 0.920137,
+        "country": "LBY"
+      },
+      {
+        "year": "2006",
+        "value": 0.925433,
+        "country": "LBY"
+      },
+      {
+        "year": "2007",
+        "value": 0.930307,
+        "country": "LBY"
+      },
+      {
+        "year": "2008",
+        "value": 0.933023,
+        "country": "LBY"
+      },
+      {
+        "year": "2009",
+        "value": 0.938859,
+        "country": "LBY"
+      },
+      {
+        "year": "2010",
+        "value": 0.941199,
+        "country": "LBY"
+      },
+      {
+        "year": "2011",
+        "value": 0.927899,
+        "country": "LBY"
+      },
+      {
+        "year": "2012",
+        "value": 0.938785,
+        "country": "LBY"
+      },
+      {
+        "year": "2013",
+        "value": 0.937283,
+        "country": "LBY"
+      },
+      {
+        "year": "1993",
+        "value": 1.00052,
+        "country": "LTU"
+      },
+      {
+        "year": "1994",
+        "value": 1.00418,
+        "country": "LTU"
+      },
+      {
+        "year": "1995",
+        "value": 1.00979,
+        "country": "LTU"
+      },
+      {
+        "year": "1996",
+        "value": 1.00647,
+        "country": "LTU"
+      },
+      {
+        "year": "1997",
+        "value": 1.00618,
+        "country": "LTU"
+      },
+      {
+        "year": "1998",
+        "value": 1.00736,
+        "country": "LTU"
+      },
+      {
+        "year": "1999",
+        "value": 1.01187,
+        "country": "LTU"
+      },
+      {
+        "year": "2000",
+        "value": 1.01562,
+        "country": "LTU"
+      },
+      {
+        "year": "2001",
+        "value": 1.02204,
+        "country": "LTU"
+      },
+      {
+        "year": "2002",
+        "value": 1.02102,
+        "country": "LTU"
+      },
+      {
+        "year": "2003",
+        "value": 1.02407,
+        "country": "LTU"
+      },
+      {
+        "year": "2004",
+        "value": 1.02576,
+        "country": "LTU"
+      },
+      {
+        "year": "2005",
+        "value": 1.0336,
+        "country": "LTU"
+      },
+      {
+        "year": "2006",
+        "value": 1.03419,
+        "country": "LTU"
+      },
+      {
+        "year": "2007",
+        "value": 1.03674,
+        "country": "LTU"
+      },
+      {
+        "year": "2008",
+        "value": 1.03136,
+        "country": "LTU"
+      },
+      {
+        "year": "2009",
+        "value": 1.03613,
+        "country": "LTU"
+      },
+      {
+        "year": "2010",
+        "value": 1.03207,
+        "country": "LTU"
+      },
+      {
+        "year": "2011",
+        "value": 1.03043,
+        "country": "LTU"
+      },
+      {
+        "year": "2012",
+        "value": 1.02914,
+        "country": "LTU"
+      },
+      {
+        "year": "2013",
+        "value": 1.02793,
+        "country": "LTU"
+      },
+      {
+        "year": "1990",
+        "value": 0.940211,
+        "country": "LUX"
+      },
+      {
+        "year": "1991",
+        "value": 0.942098,
+        "country": "LUX"
+      },
+      {
+        "year": "1992",
+        "value": 0.942774,
+        "country": "LUX"
+      },
+      {
+        "year": "1993",
+        "value": 0.94556,
+        "country": "LUX"
+      },
+      {
+        "year": "1994",
+        "value": 0.943641,
+        "country": "LUX"
+      },
+      {
+        "year": "1995",
+        "value": 0.945447,
+        "country": "LUX"
+      },
+      {
+        "year": "1996",
+        "value": 0.954224,
+        "country": "LUX"
+      },
+      {
+        "year": "1997",
+        "value": 0.942338,
+        "country": "LUX"
+      },
+      {
+        "year": "2001",
+        "value": 0.960599,
+        "country": "LUX"
+      },
+      {
+        "year": "2002",
+        "value": 0.964685,
+        "country": "LUX"
+      },
+      {
+        "year": "2003",
+        "value": 0.960329,
+        "country": "LUX"
+      },
+      {
+        "year": "2004",
+        "value": 0.96478,
+        "country": "LUX"
+      },
+      {
+        "year": "2005",
+        "value": 0.961482,
+        "country": "LUX"
+      },
+      {
+        "year": "2006",
+        "value": 0.959228,
+        "country": "LUX"
+      },
+      {
+        "year": "2007",
+        "value": 0.962639,
+        "country": "LUX"
+      },
+      {
+        "year": "2008",
+        "value": 0.958351,
+        "country": "LUX"
+      },
+      {
+        "year": "2009",
+        "value": 0.95824,
+        "country": "LUX"
+      },
+      {
+        "year": "2010",
+        "value": 0.962346,
+        "country": "LUX"
+      },
+      {
+        "year": "2011",
+        "value": 0.962653,
+        "country": "LUX"
+      },
+      {
+        "year": "2012",
+        "value": 0.961609,
+        "country": "LUX"
+      },
+      {
+        "year": "2013",
+        "value": 0.960265,
+        "country": "LUX"
+      },
+      {
+        "year": "1990",
+        "value": 0.802018,
+        "country": "MWI"
+      },
+      {
+        "year": "1991",
+        "value": 0.806712,
+        "country": "MWI"
+      },
+      {
+        "year": "1992",
+        "value": 0.806659,
+        "country": "MWI"
+      },
+      {
+        "year": "1993",
+        "value": 0.82872,
+        "country": "MWI"
+      },
+      {
+        "year": "1994",
+        "value": 0.836822,
+        "country": "MWI"
+      },
+      {
+        "year": "1995",
+        "value": 0.839409,
+        "country": "MWI"
+      },
+      {
+        "year": "1996",
+        "value": 0.836531,
+        "country": "MWI"
+      },
+      {
+        "year": "1997",
+        "value": 0.833854,
+        "country": "MWI"
+      },
+      {
+        "year": "1998",
+        "value": 0.830953,
+        "country": "MWI"
+      },
+      {
+        "year": "1999",
+        "value": 0.82927,
+        "country": "MWI"
+      },
+      {
+        "year": "2000",
+        "value": 0.829314,
+        "country": "MWI"
+      },
+      {
+        "year": "2001",
+        "value": 0.827667,
+        "country": "MWI"
+      },
+      {
+        "year": "2002",
+        "value": 0.828408,
+        "country": "MWI"
+      },
+      {
+        "year": "2003",
+        "value": 0.828253,
+        "country": "MWI"
+      },
+      {
+        "year": "2004",
+        "value": 0.837701,
+        "country": "MWI"
+      },
+      {
+        "year": "2005",
+        "value": 0.841564,
+        "country": "MWI"
+      },
+      {
+        "year": "2006",
+        "value": 0.855744,
+        "country": "MWI"
+      },
+      {
+        "year": "2007",
+        "value": 0.866347,
+        "country": "MWI"
+      },
+      {
+        "year": "2008",
+        "value": 0.874982,
+        "country": "MWI"
+      },
+      {
+        "year": "2009",
+        "value": 0.878246,
+        "country": "MWI"
+      },
+      {
+        "year": "2010",
+        "value": 0.885941,
+        "country": "MWI"
+      },
+      {
+        "year": "2011",
+        "value": 0.888617,
+        "country": "MWI"
+      },
+      {
+        "year": "2012",
+        "value": 0.888644,
+        "country": "MWI"
+      },
+      {
+        "year": "2013",
+        "value": 0.889213,
+        "country": "MWI"
+      },
+      {
+        "year": "1990",
+        "value": 0.923941,
+        "country": "PAN"
+      },
+      {
+        "year": "1991",
+        "value": 0.92957,
+        "country": "PAN"
+      },
+      {
+        "year": "1992",
+        "value": 0.932272,
+        "country": "PAN"
+      },
+      {
+        "year": "1993",
+        "value": 0.934642,
+        "country": "PAN"
+      },
+      {
+        "year": "1994",
+        "value": 0.93817,
+        "country": "PAN"
+      },
+      {
+        "year": "1995",
+        "value": 0.940824,
+        "country": "PAN"
+      },
+      {
+        "year": "1996",
+        "value": 0.943657,
+        "country": "PAN"
+      },
+      {
+        "year": "1997",
+        "value": 0.942656,
+        "country": "PAN"
+      },
+      {
+        "year": "1998",
+        "value": 0.949347,
+        "country": "PAN"
+      },
+      {
+        "year": "1999",
+        "value": 0.95656,
+        "country": "PAN"
+      },
+      {
+        "year": "2000",
+        "value": 0.95893,
+        "country": "PAN"
+      },
+      {
+        "year": "2001",
+        "value": 0.964392,
+        "country": "PAN"
+      },
+      {
+        "year": "2002",
+        "value": 0.966445,
+        "country": "PAN"
+      },
+      {
+        "year": "2003",
+        "value": 0.967215,
+        "country": "PAN"
+      },
+      {
+        "year": "2004",
+        "value": 0.971551,
+        "country": "PAN"
+      },
+      {
+        "year": "2005",
+        "value": 0.975946,
+        "country": "PAN"
+      },
+      {
+        "year": "2006",
+        "value": 0.976535,
+        "country": "PAN"
+      },
+      {
+        "year": "2007",
+        "value": 0.978991,
+        "country": "PAN"
+      },
+      {
+        "year": "2008",
+        "value": 0.980297,
+        "country": "PAN"
+      },
+      {
+        "year": "2009",
+        "value": 0.981164,
+        "country": "PAN"
+      },
+      {
+        "year": "2010",
+        "value": 0.982153,
+        "country": "PAN"
+      },
+      {
+        "year": "2011",
+        "value": 0.983954,
+        "country": "PAN"
+      },
+      {
+        "year": "2012",
+        "value": 0.984259,
+        "country": "PAN"
+      },
+      {
+        "year": "2013",
+        "value": 0.985427,
+        "country": "PAN"
+      },
+      {
+        "year": "1993",
+        "value": 0.911901,
+        "country": "PRY"
+      },
+      {
+        "year": "1994",
+        "value": 0.914259,
+        "country": "PRY"
+      },
+      {
+        "year": "1995",
+        "value": 0.916328,
+        "country": "PRY"
+      },
+      {
+        "year": "1996",
+        "value": 0.921759,
+        "country": "PRY"
+      },
+      {
+        "year": "1997",
+        "value": 0.920059,
+        "country": "PRY"
+      },
+      {
+        "year": "1998",
+        "value": 0.916664,
+        "country": "PRY"
+      },
+      {
+        "year": "1999",
+        "value": 0.919519,
+        "country": "PRY"
+      },
+      {
+        "year": "2000",
+        "value": 0.921302,
+        "country": "PRY"
+      },
+      {
+        "year": "2001",
+        "value": 0.921256,
+        "country": "PRY"
+      },
+      {
+        "year": "2002",
+        "value": 0.922212,
+        "country": "PRY"
+      },
+      {
+        "year": "2003",
+        "value": 0.922458,
+        "country": "PRY"
+      },
+      {
+        "year": "2004",
+        "value": 0.92824,
+        "country": "PRY"
+      },
+      {
+        "year": "2005",
+        "value": 0.92271,
+        "country": "PRY"
+      },
+      {
+        "year": "2006",
+        "value": 0.928183,
+        "country": "PRY"
+      },
+      {
+        "year": "2007",
+        "value": 0.932514,
+        "country": "PRY"
+      },
+      {
+        "year": "2008",
+        "value": 0.935502,
+        "country": "PRY"
+      },
+      {
+        "year": "2009",
+        "value": 0.941097,
+        "country": "PRY"
+      },
+      {
+        "year": "2010",
+        "value": 0.941892,
+        "country": "PRY"
+      },
+      {
+        "year": "2011",
+        "value": 0.944021,
+        "country": "PRY"
+      },
+      {
+        "year": "2012",
+        "value": 0.945078,
+        "country": "PRY"
+      },
+      {
+        "year": "2013",
+        "value": 0.947792,
+        "country": "PRY"
+      },
+      {
+        "year": "1990",
+        "value": 0.868862,
+        "country": "PER"
+      },
+      {
+        "year": "2001",
+        "value": 0.921717,
+        "country": "PER"
+      },
+      {
+        "year": "2002",
+        "value": 0.926945,
+        "country": "PER"
+      },
+      {
+        "year": "2003",
+        "value": 0.93221,
+        "country": "PER"
+      },
+      {
+        "year": "2004",
+        "value": 0.927014,
+        "country": "PER"
+      },
+      {
+        "year": "2005",
+        "value": 0.930411,
+        "country": "PER"
+      },
+      {
+        "year": "2006",
+        "value": 0.934069,
+        "country": "PER"
+      },
+      {
+        "year": "2007",
+        "value": 0.943388,
+        "country": "PER"
+      },
+      {
+        "year": "2008",
+        "value": 0.935598,
+        "country": "PER"
+      },
+      {
+        "year": "2009",
+        "value": 0.941547,
+        "country": "PER"
+      },
+      {
+        "year": "2010",
+        "value": 0.942663,
+        "country": "PER"
+      },
+      {
+        "year": "2011",
+        "value": 0.944007,
+        "country": "PER"
+      },
+      {
+        "year": "2012",
+        "value": 0.949141,
+        "country": "PER"
+      },
+      {
+        "year": "2013",
+        "value": 0.950248,
+        "country": "PER"
+      },
+      {
+        "year": "1990",
+        "value": 0.961776,
+        "country": "PHL"
+      },
+      {
+        "year": "1991",
+        "value": 0.961924,
+        "country": "PHL"
+      },
+      {
+        "year": "1992",
+        "value": 0.964213,
+        "country": "PHL"
+      },
+      {
+        "year": "1998",
+        "value": 0.976745,
+        "country": "PHL"
+      },
+      {
+        "year": "1999",
+        "value": 0.978551,
+        "country": "PHL"
+      },
+      {
+        "year": "2000",
+        "value": 0.976614,
+        "country": "PHL"
+      },
+      {
+        "year": "2001",
+        "value": 0.982104,
+        "country": "PHL"
+      },
+      {
+        "year": "2002",
+        "value": 0.985952,
+        "country": "PHL"
+      },
+      {
+        "year": "2003",
+        "value": 0.983582,
+        "country": "PHL"
+      },
+      {
+        "year": "2004",
+        "value": 0.988035,
+        "country": "PHL"
+      },
+      {
+        "year": "2005",
+        "value": 0.984685,
+        "country": "PHL"
+      },
+      {
+        "year": "2006",
+        "value": 0.982508,
+        "country": "PHL"
+      },
+      {
+        "year": "2007",
+        "value": 0.984894,
+        "country": "PHL"
+      },
+      {
+        "year": "2008",
+        "value": 0.98641,
+        "country": "PHL"
+      },
+      {
+        "year": "2009",
+        "value": 0.986171,
+        "country": "PHL"
+      },
+      {
+        "year": "2010",
+        "value": 0.98897,
+        "country": "PHL"
+      },
+      {
+        "year": "2011",
+        "value": 0.990935,
+        "country": "PHL"
+      },
+      {
+        "year": "2012",
+        "value": 0.991776,
+        "country": "PHL"
+      },
+      {
+        "year": "2013",
+        "value": 0.991452,
+        "country": "PHL"
+      },
+      {
+        "year": "1999",
+        "value": 0.892222,
+        "country": "TJK"
+      },
+      {
+        "year": "2000",
+        "value": 0.896782,
+        "country": "TJK"
+      },
+      {
+        "year": "2001",
+        "value": 0.897409,
+        "country": "TJK"
+      },
+      {
+        "year": "2002",
+        "value": 0.900682,
+        "country": "TJK"
+      },
+      {
+        "year": "2003",
+        "value": 0.905377,
+        "country": "TJK"
+      },
+      {
+        "year": "2004",
+        "value": 0.91014,
+        "country": "TJK"
+      },
+      {
+        "year": "2005",
+        "value": 0.908415,
+        "country": "TJK"
+      },
+      {
+        "year": "2006",
+        "value": 0.910636,
+        "country": "TJK"
+      },
+      {
+        "year": "2007",
+        "value": 0.917102,
+        "country": "TJK"
+      },
+      {
+        "year": "2008",
+        "value": 0.920073,
+        "country": "TJK"
+      },
+      {
+        "year": "2009",
+        "value": 0.927961,
+        "country": "TJK"
+      },
+      {
+        "year": "2010",
+        "value": 0.927567,
+        "country": "TJK"
+      },
+      {
+        "year": "2011",
+        "value": 0.931301,
+        "country": "TJK"
+      },
+      {
+        "year": "2012",
+        "value": 0.934917,
+        "country": "TJK"
+      },
+      {
+        "year": "2013",
+        "value": 0.936751,
+        "country": "TJK"
+      },
+      {
+        "year": "1990",
+        "value": 0.8501,
+        "country": "TZA"
+      },
+      {
+        "year": "1991",
+        "value": 0.853811,
+        "country": "TZA"
+      },
+      {
+        "year": "1992",
+        "value": 0.853095,
+        "country": "TZA"
+      },
+      {
+        "year": "1993",
+        "value": 0.854537,
+        "country": "TZA"
+      },
+      {
+        "year": "1994",
+        "value": 0.855813,
+        "country": "TZA"
+      },
+      {
+        "year": "1995",
+        "value": 0.856515,
+        "country": "TZA"
+      },
+      {
+        "year": "1996",
+        "value": 0.859635,
+        "country": "TZA"
+      },
+      {
+        "year": "1997",
+        "value": 0.862729,
+        "country": "TZA"
+      },
+      {
+        "year": "1998",
+        "value": 0.865559,
+        "country": "TZA"
+      },
+      {
+        "year": "1999",
+        "value": 0.868725,
+        "country": "TZA"
+      },
+      {
+        "year": "2000",
+        "value": 0.868247,
+        "country": "TZA"
+      },
+      {
+        "year": "2001",
+        "value": 0.872428,
+        "country": "TZA"
+      },
+      {
+        "year": "2002",
+        "value": 0.87396,
+        "country": "TZA"
+      },
+      {
+        "year": "2003",
+        "value": 0.875942,
+        "country": "TZA"
+      },
+      {
+        "year": "2004",
+        "value": 0.878461,
+        "country": "TZA"
+      },
+      {
+        "year": "2005",
+        "value": 0.877961,
+        "country": "TZA"
+      },
+      {
+        "year": "2006",
+        "value": 0.883139,
+        "country": "TZA"
+      },
+      {
+        "year": "2007",
+        "value": 0.88772,
+        "country": "TZA"
+      },
+      {
+        "year": "2010",
+        "value": 0.910408,
+        "country": "TZA"
+      },
+      {
+        "year": "2011",
+        "value": 0.912618,
+        "country": "TZA"
+      },
+      {
+        "year": "2012",
+        "value": 0.915826,
+        "country": "TZA"
+      },
+      {
+        "year": "2013",
+        "value": 0.919371,
+        "country": "TZA"
+      },
+      {
+        "year": "1993",
+        "value": 0.959387,
+        "country": "THA"
+      },
+      {
+        "year": "1994",
+        "value": 0.959801,
+        "country": "THA"
+      },
+      {
+        "year": "1995",
+        "value": 0.964188,
+        "country": "THA"
+      },
+      {
+        "year": "1996",
+        "value": 0.967977,
+        "country": "THA"
+      },
+      {
+        "year": "1997",
+        "value": 0.970239,
+        "country": "THA"
+      },
+      {
+        "year": "1998",
+        "value": 0.969422,
+        "country": "THA"
+      },
+      {
+        "year": "1999",
+        "value": 0.96967,
+        "country": "THA"
+      },
+      {
+        "year": "2000",
+        "value": 0.97086,
+        "country": "THA"
+      },
+      {
+        "year": "2001",
+        "value": 0.974953,
+        "country": "THA"
+      },
+      {
+        "year": "2002",
+        "value": 0.974802,
+        "country": "THA"
+      },
+      {
+        "year": "2003",
+        "value": 0.975099,
+        "country": "THA"
+      },
+      {
+        "year": "2004",
+        "value": 0.983598,
+        "country": "THA"
+      },
+      {
+        "year": "2005",
+        "value": 0.982072,
+        "country": "THA"
+      },
+      {
+        "year": "2006",
+        "value": 0.985162,
+        "country": "THA"
+      },
+      {
+        "year": "2007",
+        "value": 0.992888,
+        "country": "THA"
+      },
+      {
+        "year": "2008",
+        "value": 0.993721,
+        "country": "THA"
+      },
+      {
+        "year": "2009",
+        "value": 0.994719,
+        "country": "THA"
+      },
+      {
+        "year": "2010",
+        "value": 0.997599,
+        "country": "THA"
+      },
+      {
+        "year": "2011",
+        "value": 0.99747,
+        "country": "THA"
+      },
+      {
+        "year": "2012",
+        "value": 0.998611,
+        "country": "THA"
+      },
+      {
+        "year": "2013",
+        "value": 1.00144,
+        "country": "THA"
+      },
+      {
+        "year": "1990",
+        "value": 0.719295,
+        "country": "TGO"
+      },
+      {
+        "year": "1991",
+        "value": 0.722306,
+        "country": "TGO"
+      },
+      {
+        "year": "1992",
+        "value": 0.724649,
+        "country": "TGO"
+      },
+      {
+        "year": "1993",
+        "value": 0.722115,
+        "country": "TGO"
+      },
+      {
+        "year": "1994",
+        "value": 0.723321,
+        "country": "TGO"
+      },
+      {
+        "year": "1995",
+        "value": 0.731884,
+        "country": "TGO"
+      },
+      {
+        "year": "1996",
+        "value": 0.739149,
+        "country": "TGO"
+      },
+      {
+        "year": "1997",
+        "value": 0.742852,
+        "country": "TGO"
+      },
+      {
+        "year": "1998",
+        "value": 0.744725,
+        "country": "TGO"
+      },
+      {
+        "year": "1999",
+        "value": 0.74706,
+        "country": "TGO"
+      },
+      {
+        "year": "2000",
+        "value": 0.770244,
+        "country": "TGO"
+      },
+      {
+        "year": "2001",
+        "value": 0.775633,
+        "country": "TGO"
+      },
+      {
+        "year": "2002",
+        "value": 0.777209,
+        "country": "TGO"
+      },
+      {
+        "year": "2003",
+        "value": 0.786558,
+        "country": "TGO"
+      },
+      {
+        "year": "2004",
+        "value": 0.791788,
+        "country": "TGO"
+      },
+      {
+        "year": "2005",
+        "value": 0.79541,
+        "country": "TGO"
+      },
+      {
+        "year": "2006",
+        "value": 0.800297,
+        "country": "TGO"
+      },
+      {
+        "year": "2007",
+        "value": 0.797948,
+        "country": "TGO"
+      },
+      {
+        "year": "2008",
+        "value": 0.797542,
+        "country": "TGO"
+      },
+      {
+        "year": "2009",
+        "value": 0.798275,
+        "country": "TGO"
+      },
+      {
+        "year": "2010",
+        "value": 0.799132,
+        "country": "TGO"
+      },
+      {
+        "year": "2011",
+        "value": 0.799838,
+        "country": "TGO"
+      },
+      {
+        "year": "2012",
+        "value": 0.800519,
+        "country": "TGO"
+      },
+      {
+        "year": "2013",
+        "value": 0.801365,
+        "country": "TGO"
+      },
+      {
+        "year": "1990",
+        "value": 0.907629,
+        "country": "TON"
+      },
+      {
+        "year": "1991",
+        "value": 0.914595,
+        "country": "TON"
+      },
+      {
+        "year": "1992",
+        "value": 0.921226,
+        "country": "TON"
+      },
+      {
+        "year": "1993",
+        "value": 0.927576,
+        "country": "TON"
+      },
+      {
+        "year": "1994",
+        "value": 0.933687,
+        "country": "TON"
+      },
+      {
+        "year": "1995",
+        "value": 0.93627,
+        "country": "TON"
+      },
+      {
+        "year": "1999",
+        "value": 0.946184,
+        "country": "TON"
+      },
+      {
+        "year": "2000",
+        "value": 0.949834,
+        "country": "TON"
+      },
+      {
+        "year": "2001",
+        "value": 0.947721,
+        "country": "TON"
+      },
+      {
+        "year": "2002",
+        "value": 0.949811,
+        "country": "TON"
+      },
+      {
+        "year": "2003",
+        "value": 0.95251,
+        "country": "TON"
+      },
+      {
+        "year": "2004",
+        "value": 0.95644,
+        "country": "TON"
+      },
+      {
+        "year": "2005",
+        "value": 0.956706,
+        "country": "TON"
+      },
+      {
+        "year": "2006",
+        "value": 0.958323,
+        "country": "TON"
+      },
+      {
+        "year": "2007",
+        "value": 0.959091,
+        "country": "TON"
+      },
+      {
+        "year": "2008",
+        "value": 0.959803,
+        "country": "TON"
+      },
+      {
+        "year": "2009",
+        "value": 0.961776,
+        "country": "TON"
+      },
+      {
+        "year": "2010",
+        "value": 0.962595,
+        "country": "TON"
+      },
+      {
+        "year": "2011",
+        "value": 0.96296,
+        "country": "TON"
+      },
+      {
+        "year": "2012",
+        "value": 0.962759,
+        "country": "TON"
+      },
+      {
+        "year": "2013",
+        "value": 0.962447,
+        "country": "TON"
+      },
+      {
+        "year": "2000",
+        "value": 0.854483,
+        "country": "KHM"
+      },
+      {
+        "year": "2001",
+        "value": 0.854396,
+        "country": "KHM"
+      },
+      {
+        "year": "2002",
+        "value": 0.86066,
+        "country": "KHM"
+      },
+      {
+        "year": "2003",
+        "value": 0.859558,
+        "country": "KHM"
+      },
+      {
+        "year": "2004",
+        "value": 0.880208,
+        "country": "KHM"
+      },
+      {
+        "year": "2005",
+        "value": 0.875287,
+        "country": "KHM"
+      },
+      {
+        "year": "2006",
+        "value": 0.87708,
+        "country": "KHM"
+      },
+      {
+        "year": "2007",
+        "value": 0.872759,
+        "country": "KHM"
+      },
+      {
+        "year": "2008",
+        "value": 0.880114,
+        "country": "KHM"
+      },
+      {
+        "year": "2009",
+        "value": 0.883499,
+        "country": "KHM"
+      },
+      {
+        "year": "2010",
+        "value": 0.8941,
+        "country": "KHM"
+      },
+      {
+        "year": "2011",
+        "value": 0.892805,
+        "country": "KHM"
+      },
+      {
+        "year": "2012",
+        "value": 0.892598,
+        "country": "KHM"
+      },
+      {
+        "year": "2013",
+        "value": 0.89239,
+        "country": "KHM"
+      },
+      {
+        "year": "2001",
+        "value": 0.8499,
+        "country": "CMR"
+      },
+      {
+        "year": "2002",
+        "value": 0.839261,
+        "country": "CMR"
+      },
+      {
+        "year": "2003",
+        "value": 0.851357,
+        "country": "CMR"
+      },
+      {
+        "year": "2004",
+        "value": 0.851118,
+        "country": "CMR"
+      },
+      {
+        "year": "2005",
+        "value": 0.849387,
+        "country": "CMR"
+      },
+      {
+        "year": "2006",
+        "value": 0.852953,
+        "country": "CMR"
+      },
+      {
+        "year": "2007",
+        "value": 0.85899,
+        "country": "CMR"
+      },
+      {
+        "year": "2008",
+        "value": 0.863388,
+        "country": "CMR"
+      },
+      {
+        "year": "2009",
+        "value": 0.8695,
+        "country": "CMR"
+      },
+      {
+        "year": "2010",
+        "value": 0.872865,
+        "country": "CMR"
+      },
+      {
+        "year": "2011",
+        "value": 0.87516,
+        "country": "CMR"
+      },
+      {
+        "year": "2012",
+        "value": 0.876486,
+        "country": "CMR"
+      },
+      {
+        "year": "2013",
+        "value": 0.877782,
+        "country": "CMR"
+      },
+      {
+        "year": "1990",
+        "value": 0.974382,
+        "country": "CAN"
+      },
+      {
+        "year": "1991",
+        "value": 0.974757,
+        "country": "CAN"
+      },
+      {
+        "year": "1992",
+        "value": 0.969916,
+        "country": "CAN"
+      },
+      {
+        "year": "1993",
+        "value": 0.971592,
+        "country": "CAN"
+      },
+      {
+        "year": "1994",
+        "value": 0.97099,
+        "country": "CAN"
+      },
+      {
+        "year": "1995",
+        "value": 0.9726,
+        "country": "CAN"
+      },
+      {
+        "year": "1996",
+        "value": 0.972847,
+        "country": "CAN"
+      },
+      {
+        "year": "1997",
+        "value": 0.973891,
+        "country": "CAN"
+      },
+      {
+        "year": "1998",
+        "value": 0.973561,
+        "country": "CAN"
+      },
+      {
+        "year": "1999",
+        "value": 0.976401,
+        "country": "CAN"
+      },
+      {
+        "year": "2000",
+        "value": 0.975451,
+        "country": "CAN"
+      },
+      {
+        "year": "2001",
+        "value": 0.976115,
+        "country": "CAN"
+      },
+      {
+        "year": "2002",
+        "value": 0.976624,
+        "country": "CAN"
+      },
+      {
+        "year": "2003",
+        "value": 0.978716,
+        "country": "CAN"
+      },
+      {
+        "year": "2004",
+        "value": 0.979018,
+        "country": "CAN"
+      },
+      {
+        "year": "2005",
+        "value": 0.979163,
+        "country": "CAN"
+      },
+      {
+        "year": "2006",
+        "value": 0.979796,
+        "country": "CAN"
+      },
+      {
+        "year": "2007",
+        "value": 0.980978,
+        "country": "CAN"
+      },
+      {
+        "year": "2008",
+        "value": 0.98082,
+        "country": "CAN"
+      },
+      {
+        "year": "2009",
+        "value": 0.981997,
+        "country": "CAN"
+      },
+      {
+        "year": "2010",
+        "value": 0.982199,
+        "country": "CAN"
+      },
+      {
+        "year": "2011",
+        "value": 0.983005,
+        "country": "CAN"
+      },
+      {
+        "year": "2012",
+        "value": 0.983118,
+        "country": "CAN"
+      },
+      {
+        "year": "2013",
+        "value": 0.983295,
+        "country": "CAN"
+      },
+      {
+        "year": "1990",
+        "value": 0.738777,
+        "country": "CAF"
+      },
+      {
+        "year": "1991",
+        "value": 0.74071,
+        "country": "CAF"
+      },
+      {
+        "year": "1992",
+        "value": 0.740395,
+        "country": "CAF"
+      },
+      {
+        "year": "1993",
+        "value": 0.73927,
+        "country": "CAF"
+      },
+      {
+        "year": "1994",
+        "value": 0.73755,
+        "country": "CAF"
+      },
+      {
+        "year": "1995",
+        "value": 0.735513,
+        "country": "CAF"
+      },
+      {
+        "year": "1996",
+        "value": 0.735445,
+        "country": "CAF"
+      },
+      {
+        "year": "1997",
+        "value": 0.734363,
+        "country": "CAF"
+      },
+      {
+        "year": "1998",
+        "value": 0.733397,
+        "country": "CAF"
+      },
+      {
+        "year": "1999",
+        "value": 0.732679,
+        "country": "CAF"
+      },
+      {
+        "year": "2000",
+        "value": 0.73235,
+        "country": "CAF"
+      },
+      {
+        "year": "2001",
+        "value": 0.730763,
+        "country": "CAF"
+      },
+      {
+        "year": "2002",
+        "value": 0.732313,
+        "country": "CAF"
+      },
+      {
+        "year": "2009",
+        "value": 0.777849,
+        "country": "CAF"
+      },
+      {
+        "year": "2010",
+        "value": 0.780765,
+        "country": "CAF"
+      },
+      {
+        "year": "2011",
+        "value": 0.782485,
+        "country": "CAF"
+      },
+      {
+        "year": "2012",
+        "value": 0.78809,
+        "country": "CAF"
+      },
+      {
+        "year": "2013",
+        "value": 0.777907,
+        "country": "CAF"
+      },
+      {
+        "year": "2004",
+        "value": 0.721759,
+        "country": "TCD"
+      },
+      {
+        "year": "2005",
+        "value": 0.724852,
+        "country": "TCD"
+      },
+      {
+        "year": "2006",
+        "value": 0.723575,
+        "country": "TCD"
+      },
+      {
+        "year": "2007",
+        "value": 0.724727,
+        "country": "TCD"
+      },
+      {
+        "year": "2008",
+        "value": 0.73855,
+        "country": "TCD"
+      },
+      {
+        "year": "2009",
+        "value": 0.740497,
+        "country": "TCD"
+      },
+      {
+        "year": "2010",
+        "value": 0.749483,
+        "country": "TCD"
+      },
+      {
+        "year": "2011",
+        "value": 0.760983,
+        "country": "TCD"
+      },
+      {
+        "year": "2012",
+        "value": 0.762802,
+        "country": "TCD"
+      },
+      {
+        "year": "2013",
+        "value": 0.763668,
+        "country": "TCD"
+      },
+      {
+        "year": "2002",
+        "value": 0.884756,
+        "country": "GTM"
+      },
+      {
+        "year": "2003",
+        "value": 0.88547,
+        "country": "GTM"
+      },
+      {
+        "year": "2004",
+        "value": 0.886221,
+        "country": "GTM"
+      },
+      {
+        "year": "2005",
+        "value": 0.888466,
+        "country": "GTM"
+      },
+      {
+        "year": "2006",
+        "value": 0.895674,
+        "country": "GTM"
+      },
+      {
+        "year": "2007",
+        "value": 0.911408,
+        "country": "GTM"
+      },
+      {
+        "year": "2008",
+        "value": 0.913428,
+        "country": "GTM"
+      },
+      {
+        "year": "2009",
+        "value": 0.918208,
+        "country": "GTM"
+      },
+      {
+        "year": "2010",
+        "value": 0.9219,
+        "country": "GTM"
+      },
+      {
+        "year": "2011",
+        "value": 0.921416,
+        "country": "GTM"
+      },
+      {
+        "year": "2012",
+        "value": 0.935431,
+        "country": "GTM"
+      },
+      {
+        "year": "2013",
+        "value": 0.939647,
+        "country": "GTM"
+      },
+      {
+        "year": "2007",
+        "value": 0.883024,
+        "country": "LBN"
+      },
+      {
+        "year": "2008",
+        "value": 0.884513,
+        "country": "LBN"
+      },
+      {
+        "year": "2009",
+        "value": 0.901712,
+        "country": "LBN"
+      },
+      {
+        "year": "2010",
+        "value": 0.887912,
+        "country": "LBN"
+      },
+      {
+        "year": "2011",
+        "value": 0.888198,
+        "country": "LBN"
+      },
+      {
+        "year": "2012",
+        "value": 0.891308,
+        "country": "LBN"
+      },
+      {
+        "year": "2013",
+        "value": 0.892925,
+        "country": "LBN"
+      },
+      {
+        "year": "1990",
+        "value": 1.03125,
+        "country": "LSO"
+      },
+      {
+        "year": "1991",
+        "value": 1.0325,
+        "country": "LSO"
+      },
+      {
+        "year": "1992",
+        "value": 1.02888,
+        "country": "LSO"
+      },
+      {
+        "year": "1993",
+        "value": 1.02554,
+        "country": "LSO"
+      },
+      {
+        "year": "1994",
+        "value": 1.02167,
+        "country": "LSO"
+      },
+      {
+        "year": "1995",
+        "value": 1.02001,
+        "country": "LSO"
+      },
+      {
+        "year": "1996",
+        "value": 1.01141,
+        "country": "LSO"
+      },
+      {
+        "year": "1997",
+        "value": 1.00805,
+        "country": "LSO"
+      },
+      {
+        "year": "1998",
+        "value": 1.00191,
+        "country": "LSO"
+      },
+      {
+        "year": "1999",
+        "value": 0.989485,
+        "country": "LSO"
+      },
+      {
+        "year": "2000",
+        "value": 0.972041,
+        "country": "LSO"
+      },
+      {
+        "year": "2001",
+        "value": 0.965045,
+        "country": "LSO"
+      },
+      {
+        "year": "2002",
+        "value": 0.959791,
+        "country": "LSO"
+      },
+      {
+        "year": "2003",
+        "value": 0.957798,
+        "country": "LSO"
+      },
+      {
+        "year": "2004",
+        "value": 0.957796,
+        "country": "LSO"
+      },
+      {
+        "year": "2005",
+        "value": 0.957944,
+        "country": "LSO"
+      },
+      {
+        "year": "2006",
+        "value": 0.955878,
+        "country": "LSO"
+      },
+      {
+        "year": "2007",
+        "value": 0.954844,
+        "country": "LSO"
+      },
+      {
+        "year": "2008",
+        "value": 0.954097,
+        "country": "LSO"
+      },
+      {
+        "year": "2009",
+        "value": 0.953187,
+        "country": "LSO"
+      },
+      {
+        "year": "2010",
+        "value": 0.951779,
+        "country": "LSO"
+      },
+      {
+        "year": "2011",
+        "value": 0.95263,
+        "country": "LSO"
+      },
+      {
+        "year": "2012",
+        "value": 0.960454,
+        "country": "LSO"
+      },
+      {
+        "year": "2013",
+        "value": 0.961164,
+        "country": "LSO"
+      },
+      {
+        "year": "2000",
+        "value": 0.76261,
+        "country": "LBR"
+      },
+      {
+        "year": "2001",
+        "value": 0.757304,
+        "country": "LBR"
+      },
+      {
+        "year": "2002",
+        "value": 0.766665,
+        "country": "LBR"
+      },
+      {
+        "year": "2004",
+        "value": 0.755241,
+        "country": "LBR"
+      },
+      {
+        "year": "2005",
+        "value": 0.761961,
+        "country": "LBR"
+      },
+      {
+        "year": "2006",
+        "value": 0.767317,
+        "country": "LBR"
+      },
+      {
+        "year": "2007",
+        "value": 0.771298,
+        "country": "LBR"
+      },
+      {
+        "year": "2008",
+        "value": 0.774712,
+        "country": "LBR"
+      },
+      {
+        "year": "2009",
+        "value": 0.779228,
+        "country": "LBR"
+      },
+      {
+        "year": "2010",
+        "value": 0.782117,
+        "country": "LBR"
+      },
+      {
+        "year": "2011",
+        "value": 0.784501,
+        "country": "LBR"
+      },
+      {
+        "year": "2012",
+        "value": 0.785813,
+        "country": "LBR"
+      },
+      {
+        "year": "2013",
+        "value": 0.786875,
+        "country": "LBR"
+      },
+      {
+        "year": "2005",
+        "value": 0.943026,
+        "country": "MKD"
+      },
+      {
+        "year": "2006",
+        "value": 0.941067,
+        "country": "MKD"
+      },
+      {
+        "year": "2007",
+        "value": 0.940852,
+        "country": "MKD"
+      },
+      {
+        "year": "2008",
+        "value": 0.939159,
+        "country": "MKD"
+      },
+      {
+        "year": "2009",
+        "value": 0.939456,
+        "country": "MKD"
+      },
+      {
+        "year": "2010",
+        "value": 0.941263,
+        "country": "MKD"
+      },
+      {
+        "year": "2011",
+        "value": 0.941347,
+        "country": "MKD"
+      },
+      {
+        "year": "2012",
+        "value": 0.943794,
+        "country": "MKD"
+      },
+      {
+        "year": "2013",
+        "value": 0.944713,
+        "country": "MKD"
+      },
+      {
+        "year": "1990",
+        "value": 0.971681,
+        "country": "BWA"
+      },
+      {
+        "year": "1991",
+        "value": 0.978963,
+        "country": "BWA"
+      },
+      {
+        "year": "1992",
+        "value": 0.981361,
+        "country": "BWA"
+      },
+      {
+        "year": "1993",
+        "value": 0.978404,
+        "country": "BWA"
+      },
+      {
+        "year": "1994",
+        "value": 0.97526,
+        "country": "BWA"
+      },
+      {
+        "year": "1995",
+        "value": 0.976036,
+        "country": "BWA"
+      },
+      {
+        "year": "1996",
+        "value": 0.973405,
+        "country": "BWA"
+      },
+      {
+        "year": "1997",
+        "value": 0.97035,
+        "country": "BWA"
+      },
+      {
+        "year": "1998",
+        "value": 0.966171,
+        "country": "BWA"
+      },
+      {
+        "year": "1999",
+        "value": 0.958475,
+        "country": "BWA"
+      },
+      {
+        "year": "2000",
+        "value": 0.952153,
+        "country": "BWA"
+      },
+      {
+        "year": "2001",
+        "value": 0.945998,
+        "country": "BWA"
+      },
+      {
+        "year": "2002",
+        "value": 0.939647,
+        "country": "BWA"
+      },
+      {
+        "year": "2003",
+        "value": 0.933409,
+        "country": "BWA"
+      },
+      {
+        "year": "2004",
+        "value": 0.927116,
+        "country": "BWA"
+      },
+      {
+        "year": "2005",
+        "value": 0.921591,
+        "country": "BWA"
+      },
+      {
+        "year": "2006",
+        "value": 0.916578,
+        "country": "BWA"
+      },
+      {
+        "year": "2007",
+        "value": 0.917865,
+        "country": "BWA"
+      },
+      {
+        "year": "2008",
+        "value": 0.908187,
+        "country": "BWA"
+      },
+      {
+        "year": "2009",
+        "value": 0.906867,
+        "country": "BWA"
+      },
+      {
+        "year": "2010",
+        "value": 0.902996,
+        "country": "BWA"
+      },
+      {
+        "year": "2011",
+        "value": 0.900128,
+        "country": "BWA"
+      },
+      {
+        "year": "2012",
+        "value": 0.899047,
+        "country": "BWA"
+      },
+      {
+        "year": "2013",
+        "value": 0.898538,
+        "country": "BWA"
+      },
+      {
+        "year": "1990",
+        "value": 0.934574,
+        "country": "BRN"
+      },
+      {
+        "year": "1991",
+        "value": 0.938452,
+        "country": "BRN"
+      },
+      {
+        "year": "1992",
+        "value": 0.943456,
+        "country": "BRN"
+      },
+      {
+        "year": "1993",
+        "value": 0.948095,
+        "country": "BRN"
+      },
+      {
+        "year": "1994",
+        "value": 0.949953,
+        "country": "BRN"
+      },
+      {
+        "year": "1995",
+        "value": 0.953277,
+        "country": "BRN"
+      },
+      {
+        "year": "1996",
+        "value": 0.955195,
+        "country": "BRN"
+      },
+      {
+        "year": "1997",
+        "value": 0.957096,
+        "country": "BRN"
+      },
+      {
+        "year": "1998",
+        "value": 0.960416,
+        "country": "BRN"
+      },
+      {
+        "year": "1999",
+        "value": 0.960825,
+        "country": "BRN"
+      },
+      {
+        "year": "2000",
+        "value": 0.961706,
+        "country": "BRN"
+      },
+      {
+        "year": "2001",
+        "value": 0.958736,
+        "country": "BRN"
+      },
+      {
+        "year": "2002",
+        "value": 0.959347,
+        "country": "BRN"
+      },
+      {
+        "year": "2003",
+        "value": 0.961561,
+        "country": "BRN"
+      },
+      {
+        "year": "2004",
+        "value": 0.963494,
+        "country": "BRN"
+      },
+      {
+        "year": "2005",
+        "value": 0.962832,
+        "country": "BRN"
+      },
+      {
+        "year": "2006",
+        "value": 0.963913,
+        "country": "BRN"
+      },
+      {
+        "year": "2007",
+        "value": 0.963106,
+        "country": "BRN"
+      },
+      {
+        "year": "2008",
+        "value": 0.964492,
+        "country": "BRN"
+      },
+      {
+        "year": "2009",
+        "value": 0.964666,
+        "country": "BRN"
+      },
+      {
+        "year": "2010",
+        "value": 0.965582,
+        "country": "BRN"
+      },
+      {
+        "year": "2011",
+        "value": 0.963159,
+        "country": "BRN"
+      },
+      {
+        "year": "2012",
+        "value": 0.965468,
+        "country": "BRN"
+      },
+      {
+        "year": "2013",
+        "value": 0.966805,
+        "country": "BRN"
+      },
+      {
+        "year": "1990",
+        "value": 0.973715,
+        "country": "BGR"
+      },
+      {
+        "year": "1991",
+        "value": 0.972626,
+        "country": "BGR"
+      },
+      {
+        "year": "1992",
+        "value": 0.980206,
+        "country": "BGR"
+      },
+      {
+        "year": "1993",
+        "value": 0.98891,
+        "country": "BGR"
+      },
+      {
+        "year": "1994",
+        "value": 0.994797,
+        "country": "BGR"
+      },
+      {
+        "year": "1995",
+        "value": 0.995722,
+        "country": "BGR"
+      },
+      {
+        "year": "1996",
+        "value": 0.995993,
+        "country": "BGR"
+      },
+      {
+        "year": "1997",
+        "value": 0.994158,
+        "country": "BGR"
+      },
+      {
+        "year": "1998",
+        "value": 0.994815,
+        "country": "BGR"
+      },
+      {
+        "year": "1999",
+        "value": 0.992393,
+        "country": "BGR"
+      },
+      {
+        "year": "2000",
+        "value": 0.988575,
+        "country": "BGR"
+      },
+      {
+        "year": "2001",
+        "value": 0.98497,
+        "country": "BGR"
+      },
+      {
+        "year": "2002",
+        "value": 0.985894,
+        "country": "BGR"
+      },
+      {
+        "year": "2003",
+        "value": 0.985805,
+        "country": "BGR"
+      },
+      {
+        "year": "2004",
+        "value": 0.987451,
+        "country": "BGR"
+      },
+      {
+        "year": "2005",
+        "value": 0.987867,
+        "country": "BGR"
+      },
+      {
+        "year": "2006",
+        "value": 0.991344,
+        "country": "BGR"
+      },
+      {
+        "year": "2007",
+        "value": 0.991606,
+        "country": "BGR"
+      },
+      {
+        "year": "2008",
+        "value": 0.99301,
+        "country": "BGR"
+      },
+      {
+        "year": "2009",
+        "value": 0.992881,
+        "country": "BGR"
+      },
+      {
+        "year": "2010",
+        "value": 0.993236,
+        "country": "BGR"
+      },
+      {
+        "year": "2011",
+        "value": 0.991735,
+        "country": "BGR"
+      },
+      {
+        "year": "2012",
+        "value": 0.991366,
+        "country": "BGR"
+      },
+      {
+        "year": "2013",
+        "value": 0.99044,
+        "country": "BGR"
+      },
+      {
+        "year": "1990",
+        "value": 0.977813,
+        "country": "FRA"
+      },
+      {
+        "year": "1991",
+        "value": 0.980791,
+        "country": "FRA"
+      },
+      {
+        "year": "1992",
+        "value": 0.981651,
+        "country": "FRA"
+      },
+      {
+        "year": "1993",
+        "value": 0.983561,
+        "country": "FRA"
+      },
+      {
+        "year": "1994",
+        "value": 0.981866,
+        "country": "FRA"
+      },
+      {
+        "year": "1995",
+        "value": 0.982143,
+        "country": "FRA"
+      },
+      {
+        "year": "1996",
+        "value": 0.982436,
+        "country": "FRA"
+      },
+      {
+        "year": "1997",
+        "value": 0.983072,
+        "country": "FRA"
+      },
+      {
+        "year": "1998",
+        "value": 0.984623,
+        "country": "FRA"
+      },
+      {
+        "year": "1999",
+        "value": 0.985153,
+        "country": "FRA"
+      },
+      {
+        "year": "2000",
+        "value": 0.986751,
+        "country": "FRA"
+      },
+      {
+        "year": "2001",
+        "value": 0.985216,
+        "country": "FRA"
+      },
+      {
+        "year": "2002",
+        "value": 0.982409,
+        "country": "FRA"
+      },
+      {
+        "year": "2003",
+        "value": 0.982326,
+        "country": "FRA"
+      },
+      {
+        "year": "2004",
+        "value": 0.982243,
+        "country": "FRA"
+      },
+      {
+        "year": "2005",
+        "value": 0.982212,
+        "country": "FRA"
+      },
+      {
+        "year": "2006",
+        "value": 0.984106,
+        "country": "FRA"
+      },
+      {
+        "year": "2007",
+        "value": 0.985502,
+        "country": "FRA"
+      },
+      {
+        "year": "2008",
+        "value": 0.985407,
+        "country": "FRA"
+      },
+      {
+        "year": "2009",
+        "value": 0.987803,
+        "country": "FRA"
+      },
+      {
+        "year": "2010",
+        "value": 0.990184,
+        "country": "FRA"
+      },
+      {
+        "year": "2011",
+        "value": 0.991914,
+        "country": "FRA"
+      },
+      {
+        "year": "2012",
+        "value": 0.991349,
+        "country": "FRA"
+      },
+      {
+        "year": "2013",
+        "value": 0.991444,
+        "country": "FRA"
+      },
+      {
+        "year": "1990",
+        "value": 0.863633,
+        "country": "KEN"
+      },
+      {
+        "year": "1991",
+        "value": 0.866334,
+        "country": "KEN"
+      },
+      {
+        "year": "1992",
+        "value": 0.866528,
+        "country": "KEN"
+      },
+      {
+        "year": "1993",
+        "value": 0.866268,
+        "country": "KEN"
+      },
+      {
+        "year": "1994",
+        "value": 0.866284,
+        "country": "KEN"
+      },
+      {
+        "year": "1995",
+        "value": 0.866212,
+        "country": "KEN"
+      },
+      {
+        "year": "1996",
+        "value": 0.865477,
+        "country": "KEN"
+      },
+      {
+        "year": "1997",
+        "value": 0.863964,
+        "country": "KEN"
+      },
+      {
+        "year": "2000",
+        "value": 0.867017,
+        "country": "KEN"
+      },
+      {
+        "year": "2001",
+        "value": 0.868071,
+        "country": "KEN"
+      },
+      {
+        "year": "2002",
+        "value": 0.86468,
+        "country": "KEN"
+      },
+      {
+        "year": "2003",
+        "value": 0.865584,
+        "country": "KEN"
+      },
+      {
+        "year": "2004",
+        "value": 0.869365,
+        "country": "KEN"
+      },
+      {
+        "year": "2005",
+        "value": 0.873287,
+        "country": "KEN"
+      },
+      {
+        "year": "2006",
+        "value": 0.880015,
+        "country": "KEN"
+      },
+      {
+        "year": "2007",
+        "value": 0.886972,
+        "country": "KEN"
+      },
+      {
+        "year": "2008",
+        "value": 0.893575,
+        "country": "KEN"
+      },
+      {
+        "year": "2009",
+        "value": 0.901419,
+        "country": "KEN"
+      },
+      {
+        "year": "2010",
+        "value": 0.908059,
+        "country": "KEN"
+      },
+      {
+        "year": "2011",
+        "value": 0.910543,
+        "country": "KEN"
+      },
+      {
+        "year": "2012",
+        "value": 0.912569,
+        "country": "KEN"
+      },
+      {
+        "year": "2013",
+        "value": 0.914365,
+        "country": "KEN"
+      },
+      {
+        "year": "1990",
+        "value": 0.895956,
+        "country": "KOR"
+      },
+      {
+        "year": "1991",
+        "value": 0.8988,
+        "country": "KOR"
+      },
+      {
+        "year": "1992",
+        "value": 0.901214,
+        "country": "KOR"
+      },
+      {
+        "year": "1993",
+        "value": 0.904996,
+        "country": "KOR"
+      },
+      {
+        "year": "1994",
+        "value": 0.906174,
+        "country": "KOR"
+      },
+      {
+        "year": "1995",
+        "value": 0.91004,
+        "country": "KOR"
+      },
+      {
+        "year": "1996",
+        "value": 0.912165,
+        "country": "KOR"
+      },
+      {
+        "year": "1997",
+        "value": 0.915665,
+        "country": "KOR"
+      },
+      {
+        "year": "1998",
+        "value": 0.909463,
+        "country": "KOR"
+      },
+      {
+        "year": "1999",
+        "value": 0.91082,
+        "country": "KOR"
+      },
+      {
+        "year": "2000",
+        "value": 0.911378,
+        "country": "KOR"
+      },
+      {
+        "year": "2001",
+        "value": 0.913573,
+        "country": "KOR"
+      },
+      {
+        "year": "2002",
+        "value": 0.913799,
+        "country": "KOR"
+      },
+      {
+        "year": "2003",
+        "value": 0.912555,
+        "country": "KOR"
+      },
+      {
+        "year": "2004",
+        "value": 0.914037,
+        "country": "KOR"
+      },
+      {
+        "year": "2005",
+        "value": 0.916114,
+        "country": "KOR"
+      },
+      {
+        "year": "2006",
+        "value": 0.91812,
+        "country": "KOR"
+      },
+      {
+        "year": "2007",
+        "value": 0.919923,
+        "country": "KOR"
+      },
+      {
+        "year": "2008",
+        "value": 0.922804,
+        "country": "KOR"
+      },
+      {
+        "year": "2009",
+        "value": 0.923486,
+        "country": "KOR"
+      },
+      {
+        "year": "2010",
+        "value": 0.926226,
+        "country": "KOR"
+      },
+      {
+        "year": "2011",
+        "value": 0.926371,
+        "country": "KOR"
+      },
+      {
+        "year": "2012",
+        "value": 0.926283,
+        "country": "KOR"
+      },
+      {
+        "year": "2013",
+        "value": 0.926677,
+        "country": "KOR"
+      },
+      {
+        "year": "1990",
+        "value": 0.905038,
+        "country": "KWT"
+      },
+      {
+        "year": "1991",
+        "value": 0.905869,
+        "country": "KWT"
+      },
+      {
+        "year": "1992",
+        "value": 0.914937,
+        "country": "KWT"
+      },
+      {
+        "year": "1993",
+        "value": 0.919336,
+        "country": "KWT"
+      },
+      {
+        "year": "1994",
+        "value": 0.922874,
+        "country": "KWT"
+      },
+      {
+        "year": "1995",
+        "value": 0.933031,
+        "country": "KWT"
+      },
+      {
+        "year": "1996",
+        "value": 0.931073,
+        "country": "KWT"
+      },
+      {
+        "year": "1997",
+        "value": 0.940661,
+        "country": "KWT"
+      },
+      {
+        "year": "1998",
+        "value": 0.943941,
+        "country": "KWT"
+      },
+      {
+        "year": "1999",
+        "value": 0.943853,
+        "country": "KWT"
+      },
+      {
+        "year": "2000",
+        "value": 0.947109,
+        "country": "KWT"
+      },
+      {
+        "year": "2001",
+        "value": 0.948301,
+        "country": "KWT"
+      },
+      {
+        "year": "2002",
+        "value": 0.951467,
+        "country": "KWT"
+      },
+      {
+        "year": "2003",
+        "value": 0.962372,
+        "country": "KWT"
+      },
+      {
+        "year": "2004",
+        "value": 0.962941,
+        "country": "KWT"
+      },
+      {
+        "year": "2005",
+        "value": 0.964396,
+        "country": "KWT"
+      },
+      {
+        "year": "2006",
+        "value": 0.965288,
+        "country": "KWT"
+      },
+      {
+        "year": "2007",
+        "value": 0.965755,
+        "country": "KWT"
+      },
+      {
+        "year": "2008",
+        "value": 0.964736,
+        "country": "KWT"
+      },
+      {
+        "year": "2009",
+        "value": 0.967355,
+        "country": "KWT"
+      },
+      {
+        "year": "2010",
+        "value": 0.966358,
+        "country": "KWT"
+      },
+      {
+        "year": "2011",
+        "value": 0.967288,
+        "country": "KWT"
+      },
+      {
+        "year": "2012",
+        "value": 0.955247,
+        "country": "KWT"
+      },
+      {
+        "year": "2013",
+        "value": 0.955978,
+        "country": "KWT"
+      },
+      {
+        "year": "1990",
+        "value": 0.918968,
+        "country": "NLD"
+      },
+      {
+        "year": "1991",
+        "value": 0.921098,
+        "country": "NLD"
+      },
+      {
+        "year": "1992",
+        "value": 0.923788,
+        "country": "NLD"
+      },
+      {
+        "year": "1993",
+        "value": 0.928042,
+        "country": "NLD"
+      },
+      {
+        "year": "1994",
+        "value": 0.923452,
+        "country": "NLD"
+      },
+      {
+        "year": "1995",
+        "value": 0.928006,
+        "country": "NLD"
+      },
+      {
+        "year": "1996",
+        "value": 0.929846,
+        "country": "NLD"
+      },
+      {
+        "year": "1997",
+        "value": 0.931264,
+        "country": "NLD"
+      },
+      {
+        "year": "1998",
+        "value": 0.933534,
+        "country": "NLD"
+      },
+      {
+        "year": "1999",
+        "value": 0.933911,
+        "country": "NLD"
+      },
+      {
+        "year": "2000",
+        "value": 0.935528,
+        "country": "NLD"
+      },
+      {
+        "year": "2001",
+        "value": 0.937722,
+        "country": "NLD"
+      },
+      {
+        "year": "2002",
+        "value": 0.937323,
+        "country": "NLD"
+      },
+      {
+        "year": "2003",
+        "value": 0.940254,
+        "country": "NLD"
+      },
+      {
+        "year": "2004",
+        "value": 0.940075,
+        "country": "NLD"
+      },
+      {
+        "year": "2005",
+        "value": 0.940568,
+        "country": "NLD"
+      },
+      {
+        "year": "2006",
+        "value": 0.941793,
+        "country": "NLD"
+      },
+      {
+        "year": "2007",
+        "value": 0.944162,
+        "country": "NLD"
+      },
+      {
+        "year": "2008",
+        "value": 0.944101,
+        "country": "NLD"
+      },
+      {
+        "year": "2009",
+        "value": 0.945676,
+        "country": "NLD"
+      },
+      {
+        "year": "2010",
+        "value": 0.94549,
+        "country": "NLD"
+      },
+      {
+        "year": "2011",
+        "value": 0.947083,
+        "country": "NLD"
+      },
+      {
+        "year": "2012",
+        "value": 0.946918,
+        "country": "NLD"
+      },
+      {
+        "year": "2013",
+        "value": 0.947238,
+        "country": "NLD"
+      },
+      {
+        "year": "1990",
+        "value": 0.563385,
+        "country": "PAK"
+      },
+      {
+        "year": "1991",
+        "value": 0.568346,
+        "country": "PAK"
+      },
+      {
+        "year": "1992",
+        "value": 0.5718,
+        "country": "PAK"
+      },
+      {
+        "year": "1993",
+        "value": 0.57673,
+        "country": "PAK"
+      },
+      {
+        "year": "1994",
+        "value": 0.580661,
+        "country": "PAK"
+      },
+      {
+        "year": "1995",
+        "value": 0.569505,
+        "country": "PAK"
+      },
+      {
+        "year": "1996",
+        "value": 0.56894,
+        "country": "PAK"
+      },
+      {
+        "year": "1997",
+        "value": 0.565078,
+        "country": "PAK"
+      },
+      {
+        "year": "1998",
+        "value": 0.577361,
+        "country": "PAK"
+      },
+      {
+        "year": "1999",
+        "value": 0.57866,
+        "country": "PAK"
+      },
+      {
+        "year": "2000",
+        "value": 0.581183,
+        "country": "PAK"
+      },
+      {
+        "year": "2006",
+        "value": 0.692424,
+        "country": "PAK"
+      },
+      {
+        "year": "2007",
+        "value": 0.693717,
+        "country": "PAK"
+      },
+      {
+        "year": "2008",
+        "value": 0.692782,
+        "country": "PAK"
+      },
+      {
+        "year": "2009",
+        "value": 0.715068,
+        "country": "PAK"
+      },
+      {
+        "year": "2010",
+        "value": 0.717367,
+        "country": "PAK"
+      },
+      {
+        "year": "2011",
+        "value": 0.716711,
+        "country": "PAK"
+      },
+      {
+        "year": "2012",
+        "value": 0.719118,
+        "country": "PAK"
+      },
+      {
+        "year": "2013",
+        "value": 0.719867,
+        "country": "PAK"
+      },
+      {
+        "year": "1990",
+        "value": 0.930511,
+        "country": "ESP"
+      },
+      {
+        "year": "1991",
+        "value": 0.936169,
+        "country": "ESP"
+      },
+      {
+        "year": "1992",
+        "value": 0.941726,
+        "country": "ESP"
+      },
+      {
+        "year": "1993",
+        "value": 0.94511,
+        "country": "ESP"
+      },
+      {
+        "year": "1994",
+        "value": 0.948179,
+        "country": "ESP"
+      },
+      {
+        "year": "1995",
+        "value": 0.953735,
+        "country": "ESP"
+      },
+      {
+        "year": "1996",
+        "value": 0.957396,
+        "country": "ESP"
+      },
+      {
+        "year": "1997",
+        "value": 0.955293,
+        "country": "ESP"
+      },
+      {
+        "year": "1998",
+        "value": 0.957761,
+        "country": "ESP"
+      },
+      {
+        "year": "1999",
+        "value": 0.959126,
+        "country": "ESP"
+      },
+      {
+        "year": "2000",
+        "value": 0.962656,
+        "country": "ESP"
+      },
+      {
+        "year": "2001",
+        "value": 0.960173,
+        "country": "ESP"
+      },
+      {
+        "year": "2002",
+        "value": 0.963461,
+        "country": "ESP"
+      },
+      {
+        "year": "2003",
+        "value": 0.964399,
+        "country": "ESP"
+      },
+      {
+        "year": "2004",
+        "value": 0.966962,
+        "country": "ESP"
+      },
+      {
+        "year": "2005",
+        "value": 0.966689,
+        "country": "ESP"
+      },
+      {
+        "year": "2006",
+        "value": 0.970192,
+        "country": "ESP"
+      },
+      {
+        "year": "2007",
+        "value": 0.973137,
+        "country": "ESP"
+      },
+      {
+        "year": "2008",
+        "value": 0.977482,
+        "country": "ESP"
+      },
+      {
+        "year": "2009",
+        "value": 0.979907,
+        "country": "ESP"
+      },
+      {
+        "year": "2010",
+        "value": 0.979984,
+        "country": "ESP"
+      },
+      {
+        "year": "2011",
+        "value": 0.977502,
+        "country": "ESP"
+      },
+      {
+        "year": "2012",
+        "value": 0.977948,
+        "country": "ESP"
+      },
+      {
+        "year": "2013",
+        "value": 0.979419,
+        "country": "ESP"
+      },
+      {
+        "year": "1990",
+        "value": 0.923037,
+        "country": "LKA"
+      },
+      {
+        "year": "1991",
+        "value": 0.924764,
+        "country": "LKA"
+      },
+      {
+        "year": "1992",
+        "value": 0.92669,
+        "country": "LKA"
+      },
+      {
+        "year": "1993",
+        "value": 0.927593,
+        "country": "LKA"
+      },
+      {
+        "year": "1994",
+        "value": 0.930311,
+        "country": "LKA"
+      },
+      {
+        "year": "1995",
+        "value": 0.93415,
+        "country": "LKA"
+      },
+      {
+        "year": "1996",
+        "value": 0.933131,
+        "country": "LKA"
+      },
+      {
+        "year": "1997",
+        "value": 0.93358,
+        "country": "LKA"
+      },
+      {
+        "year": "1998",
+        "value": 0.939986,
+        "country": "LKA"
+      },
+      {
+        "year": "1999",
+        "value": 0.933891,
+        "country": "LKA"
+      },
+      {
+        "year": "2000",
+        "value": 0.93808,
+        "country": "LKA"
+      },
+      {
+        "year": "2001",
+        "value": 0.937072,
+        "country": "LKA"
+      },
+      {
+        "year": "2002",
+        "value": 0.937741,
+        "country": "LKA"
+      },
+      {
+        "year": "2003",
+        "value": 0.935735,
+        "country": "LKA"
+      },
+      {
+        "year": "2004",
+        "value": 0.935036,
+        "country": "LKA"
+      },
+      {
+        "year": "2010",
+        "value": 0.93773,
+        "country": "LKA"
+      },
+      {
+        "year": "2011",
+        "value": 0.93824,
+        "country": "LKA"
+      },
+      {
+        "year": "2012",
+        "value": 0.943189,
+        "country": "LKA"
+      },
+      {
+        "year": "2013",
+        "value": 0.944682,
+        "country": "LKA"
+      },
+      {
+        "year": "1990",
+        "value": 0.87813,
+        "country": "ZWE"
+      },
+      {
+        "year": "1991",
+        "value": 0.880273,
+        "country": "ZWE"
+      },
+      {
+        "year": "1992",
+        "value": 0.882704,
+        "country": "ZWE"
+      },
+      {
+        "year": "1993",
+        "value": 0.881127,
+        "country": "ZWE"
+      },
+      {
+        "year": "1994",
+        "value": 0.879483,
+        "country": "ZWE"
+      },
+      {
+        "year": "1995",
+        "value": 0.875977,
+        "country": "ZWE"
+      },
+      {
+        "year": "1996",
+        "value": 0.871653,
+        "country": "ZWE"
+      },
+      {
+        "year": "1997",
+        "value": 0.865639,
+        "country": "ZWE"
+      },
+      {
+        "year": "1998",
+        "value": 0.857603,
+        "country": "ZWE"
+      },
+      {
+        "year": "1999",
+        "value": 0.852472,
+        "country": "ZWE"
+      },
+      {
+        "year": "2000",
+        "value": 0.848226,
+        "country": "ZWE"
+      },
+      {
+        "year": "2001",
+        "value": 0.849889,
+        "country": "ZWE"
+      },
+      {
+        "year": "2002",
+        "value": 0.848819,
+        "country": "ZWE"
+      },
+      {
+        "year": "2003",
+        "value": 0.848363,
+        "country": "ZWE"
+      },
+      {
+        "year": "2004",
+        "value": 0.849575,
+        "country": "ZWE"
+      },
+      {
+        "year": "2005",
+        "value": 0.849968,
+        "country": "ZWE"
+      },
+      {
+        "year": "2006",
+        "value": 0.854933,
+        "country": "ZWE"
+      },
+      {
+        "year": "2007",
+        "value": 0.862342,
+        "country": "ZWE"
+      },
+      {
+        "year": "2008",
+        "value": 0.868701,
+        "country": "ZWE"
+      },
+      {
+        "year": "2009",
+        "value": 0.880101,
+        "country": "ZWE"
+      },
+      {
+        "year": "2010",
+        "value": 0.891641,
+        "country": "ZWE"
+      },
+      {
+        "year": "2011",
+        "value": 0.899988,
+        "country": "ZWE"
+      },
+      {
+        "year": "2012",
+        "value": 0.911006,
+        "country": "ZWE"
+      },
+      {
+        "year": "2013",
+        "value": 0.915687,
+        "country": "ZWE"
+      },
+      {
+        "year": "1990",
+        "value": 0.684367,
+        "country": "BEN"
+      },
+      {
+        "year": "1991",
+        "value": 0.685124,
+        "country": "BEN"
+      },
+      {
+        "year": "1992",
+        "value": 0.684754,
+        "country": "BEN"
+      },
+      {
+        "year": "1993",
+        "value": 0.687883,
+        "country": "BEN"
+      },
+      {
+        "year": "1994",
+        "value": 0.689911,
+        "country": "BEN"
+      },
+      {
+        "year": "1995",
+        "value": 0.693011,
+        "country": "BEN"
+      },
+      {
+        "year": "1996",
+        "value": 0.696691,
+        "country": "BEN"
+      },
+      {
+        "year": "1997",
+        "value": 0.700644,
+        "country": "BEN"
+      },
+      {
+        "year": "1999",
+        "value": 0.748778,
+        "country": "BEN"
+      },
+      {
+        "year": "2000",
+        "value": 0.75599,
+        "country": "BEN"
+      },
+      {
+        "year": "2001",
+        "value": 0.763244,
+        "country": "BEN"
+      },
+      {
+        "year": "2002",
+        "value": 0.769693,
+        "country": "BEN"
+      },
+      {
+        "year": "2003",
+        "value": 0.772326,
+        "country": "BEN"
+      },
+      {
+        "year": "2004",
+        "value": 0.778176,
+        "country": "BEN"
+      },
+      {
+        "year": "2005",
+        "value": 0.78812,
+        "country": "BEN"
+      },
+      {
+        "year": "2006",
+        "value": 0.788273,
+        "country": "BEN"
+      },
+      {
+        "year": "2007",
+        "value": 0.788663,
+        "country": "BEN"
+      },
+      {
+        "year": "2008",
+        "value": 0.789426,
+        "country": "BEN"
+      },
+      {
+        "year": "2009",
+        "value": 0.790419,
+        "country": "BEN"
+      },
+      {
+        "year": "2010",
+        "value": 0.791263,
+        "country": "BEN"
+      },
+      {
+        "year": "2011",
+        "value": 0.816954,
+        "country": "BEN"
+      },
+      {
+        "year": "2012",
+        "value": 0.81799,
+        "country": "BEN"
+      },
+      {
+        "year": "2013",
+        "value": 0.819064,
+        "country": "BEN"
+      },
+      {
+        "year": "2007",
+        "value": 0.919083,
+        "country": "BOL"
+      },
+      {
+        "year": "2008",
+        "value": 0.919294,
+        "country": "BOL"
+      },
+      {
+        "year": "2009",
+        "value": 0.923084,
+        "country": "BOL"
+      },
+      {
+        "year": "2010",
+        "value": 0.925115,
+        "country": "BOL"
+      },
+      {
+        "year": "2011",
+        "value": 0.926837,
+        "country": "BOL"
+      },
+      {
+        "year": "2012",
+        "value": 0.93343,
+        "country": "BOL"
+      },
+      {
+        "year": "2013",
+        "value": 0.93507,
+        "country": "BOL"
+      },
+      {
+        "year": "1992",
+        "value": 1.00817,
+        "country": "EST"
+      },
+      {
+        "year": "1993",
+        "value": 1.01073,
+        "country": "EST"
+      },
+      {
+        "year": "1994",
+        "value": 1.02274,
+        "country": "EST"
+      },
+      {
+        "year": "1995",
+        "value": 1.02407,
+        "country": "EST"
+      },
+      {
+        "year": "1996",
+        "value": 1.014,
+        "country": "EST"
+      },
+      {
+        "year": "1997",
+        "value": 1.01587,
+        "country": "EST"
+      },
+      {
+        "year": "1998",
+        "value": 1.02035,
+        "country": "EST"
+      },
+      {
+        "year": "1999",
+        "value": 1.01758,
+        "country": "EST"
+      },
+      {
+        "year": "2000",
+        "value": 1.01921,
+        "country": "EST"
+      },
+      {
+        "year": "2001",
+        "value": 1.02865,
+        "country": "EST"
+      },
+      {
+        "year": "2002",
+        "value": 1.03369,
+        "country": "EST"
+      },
+      {
+        "year": "2003",
+        "value": 1.02961,
+        "country": "EST"
+      },
+      {
+        "year": "2004",
+        "value": 1.03702,
+        "country": "EST"
+      },
+      {
+        "year": "2005",
+        "value": 1.03154,
+        "country": "EST"
+      },
+      {
+        "year": "2006",
+        "value": 1.03393,
+        "country": "EST"
+      },
+      {
+        "year": "2007",
+        "value": 1.03296,
+        "country": "EST"
+      },
+      {
+        "year": "2008",
+        "value": 1.03348,
+        "country": "EST"
+      },
+      {
+        "year": "2009",
+        "value": 1.03643,
+        "country": "EST"
+      },
+      {
+        "year": "2010",
+        "value": 1.03323,
+        "country": "EST"
+      },
+      {
+        "year": "2011",
+        "value": 1.03088,
+        "country": "EST"
+      },
+      {
+        "year": "2012",
+        "value": 1.03205,
+        "country": "EST"
+      },
+      {
+        "year": "2013",
+        "value": 1.03228,
+        "country": "EST"
+      },
+      {
+        "year": "2007",
+        "value": 0.800749,
+        "country": "ETH"
+      },
+      {
+        "year": "2011",
+        "value": 0.802608,
+        "country": "ETH"
+      },
+      {
+        "year": "2012",
+        "value": 0.805193,
+        "country": "ETH"
+      },
+      {
+        "year": "2013",
+        "value": 0.807669,
+        "country": "ETH"
+      },
+      {
+        "year": "1990",
+        "value": 0.888791,
+        "country": "FJI"
+      },
+      {
+        "year": "1991",
+        "value": 0.894385,
+        "country": "FJI"
+      },
+      {
+        "year": "1992",
+        "value": 0.899888,
+        "country": "FJI"
+      },
+      {
+        "year": "1993",
+        "value": 0.905282,
+        "country": "FJI"
+      },
+      {
+        "year": "1994",
+        "value": 0.910553,
+        "country": "FJI"
+      },
+      {
+        "year": "1995",
+        "value": 0.915707,
+        "country": "FJI"
+      },
+      {
+        "year": "1996",
+        "value": 0.921198,
+        "country": "FJI"
+      },
+      {
+        "year": "2003",
+        "value": 0.927732,
+        "country": "FJI"
+      },
+      {
+        "year": "2004",
+        "value": 0.929905,
+        "country": "FJI"
+      },
+      {
+        "year": "2005",
+        "value": 0.929694,
+        "country": "FJI"
+      },
+      {
+        "year": "2006",
+        "value": 0.932472,
+        "country": "FJI"
+      },
+      {
+        "year": "2007",
+        "value": 0.932342,
+        "country": "FJI"
+      },
+      {
+        "year": "2008",
+        "value": 0.933464,
+        "country": "FJI"
+      },
+      {
+        "year": "2009",
+        "value": 0.935046,
+        "country": "FJI"
+      },
+      {
+        "year": "2010",
+        "value": 0.935514,
+        "country": "FJI"
+      },
+      {
+        "year": "2011",
+        "value": 0.933737,
+        "country": "FJI"
+      },
+      {
+        "year": "2012",
+        "value": 0.932923,
+        "country": "FJI"
+      },
+      {
+        "year": "2013",
+        "value": 0.93296,
+        "country": "FJI"
+      },
+      {
+        "year": "1990",
+        "value": 0.991459,
+        "country": "FIN"
+      },
+      {
+        "year": "1991",
+        "value": 0.994688,
+        "country": "FIN"
+      },
+      {
+        "year": "1992",
+        "value": 0.999956,
+        "country": "FIN"
+      },
+      {
+        "year": "1993",
+        "value": 0.997674,
+        "country": "FIN"
+      },
+      {
+        "year": "1994",
+        "value": 0.999845,
+        "country": "FIN"
+      },
+      {
+        "year": "1995",
+        "value": 1.00205,
+        "country": "FIN"
+      },
+      {
+        "year": "1996",
+        "value": 1.00645,
+        "country": "FIN"
+      },
+      {
+        "year": "1997",
+        "value": 1.00166,
+        "country": "FIN"
+      },
+      {
+        "year": "1998",
+        "value": 1.00259,
+        "country": "FIN"
+      },
+      {
+        "year": "1999",
+        "value": 1.00235,
+        "country": "FIN"
+      },
+      {
+        "year": "2000",
+        "value": 1.00188,
+        "country": "FIN"
+      },
+      {
+        "year": "2001",
+        "value": 1.00496,
+        "country": "FIN"
+      },
+      {
+        "year": "2002",
+        "value": 1.00538,
+        "country": "FIN"
+      },
+      {
+        "year": "2003",
+        "value": 1.00442,
+        "country": "FIN"
+      },
+      {
+        "year": "2004",
+        "value": 1.00262,
+        "country": "FIN"
+      },
+      {
+        "year": "2005",
+        "value": 1.00306,
+        "country": "FIN"
+      },
+      {
+        "year": "2006",
+        "value": 1.00471,
+        "country": "FIN"
+      },
+      {
+        "year": "2007",
+        "value": 1.00633,
+        "country": "FIN"
+      },
+      {
+        "year": "2008",
+        "value": 1.00473,
+        "country": "FIN"
+      },
+      {
+        "year": "2009",
+        "value": 1.00532,
+        "country": "FIN"
+      },
+      {
+        "year": "2010",
+        "value": 1.00333,
+        "country": "FIN"
+      },
+      {
+        "year": "2011",
+        "value": 1.00363,
+        "country": "FIN"
+      },
+      {
+        "year": "2012",
+        "value": 1.00046,
+        "country": "FIN"
+      },
+      {
+        "year": "2013",
+        "value": 1.00278,
+        "country": "FIN"
+      },
+      {
+        "year": "2004",
+        "value": 0.800117,
+        "country": "DZA"
+      },
+      {
+        "year": "2005",
+        "value": 0.80784,
+        "country": "DZA"
+      },
+      {
+        "year": "2006",
+        "value": 0.81433,
+        "country": "DZA"
+      },
+      {
+        "year": "2007",
+        "value": 0.822472,
+        "country": "DZA"
+      },
+      {
+        "year": "2008",
+        "value": 0.827167,
+        "country": "DZA"
+      },
+      {
+        "year": "2009",
+        "value": 0.835007,
+        "country": "DZA"
+      },
+      {
+        "year": "2010",
+        "value": 0.838938,
+        "country": "DZA"
+      },
+      {
+        "year": "2011",
+        "value": 0.843351,
+        "country": "DZA"
+      },
+      {
+        "year": "2012",
+        "value": 0.845182,
+        "country": "DZA"
+      },
+      {
+        "year": "2013",
+        "value": 0.847723,
+        "country": "DZA"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          0.563385,
+          1.03702
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Index",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Gender Development Index",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

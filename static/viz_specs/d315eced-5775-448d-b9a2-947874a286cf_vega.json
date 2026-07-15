@@ -1,0 +1,1718 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "CO2 emissions (metric tons per capita) vs. Renewable energy consumption (% of",
+      "total final energy consumption)"
+    ],
+    "subtitle": [
+      "2000-2020",
+      "Showing 6 of 7 economies by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2000",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 16.7575
+      },
+      {
+        "year": "2000",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.12679
+      },
+      {
+        "year": "2000",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 10.0994
+      },
+      {
+        "year": "2000",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.66211
+      },
+      {
+        "year": "2000",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.33772
+      },
+      {
+        "year": "2000",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.01453
+      },
+      {
+        "year": "2001",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 16.3315
+      },
+      {
+        "year": "2001",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.14135
+      },
+      {
+        "year": "2001",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 10.2936
+      },
+      {
+        "year": "2001",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.66224
+      },
+      {
+        "year": "2001",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.2202
+      },
+      {
+        "year": "2001",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.22302
+      },
+      {
+        "year": "2002",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 16.7209
+      },
+      {
+        "year": "2002",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.00476
+      },
+      {
+        "year": "2002",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 10.103
+      },
+      {
+        "year": "2002",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.76799
+      },
+      {
+        "year": "2002",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.46887
+      },
+      {
+        "year": "2002",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.94023
+      },
+      {
+        "year": "2003",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 17.2092
+      },
+      {
+        "year": "2003",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.05365
+      },
+      {
+        "year": "2003",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 10.1388
+      },
+      {
+        "year": "2003",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.05234
+      },
+      {
+        "year": "2003",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.50476
+      },
+      {
+        "year": "2003",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.10409
+      },
+      {
+        "year": "2004",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 16.7952
+      },
+      {
+        "year": "2004",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.02716
+      },
+      {
+        "year": "2004",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.95045
+      },
+      {
+        "year": "2004",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.16911
+      },
+      {
+        "year": "2004",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.44956
+      },
+      {
+        "year": "2004",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.05309
+      },
+      {
+        "year": "2005",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 17.0281
+      },
+      {
+        "year": "2005",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.0274
+      },
+      {
+        "year": "2005",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.72946
+      },
+      {
+        "year": "2005",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.1461
+      },
+      {
+        "year": "2005",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.51276
+      },
+      {
+        "year": "2005",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.9554
+      },
+      {
+        "year": "2006",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 16.5952
+      },
+      {
+        "year": "2006",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.84293
+      },
+      {
+        "year": "2006",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.88648
+      },
+      {
+        "year": "2006",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.99068
+      },
+      {
+        "year": "2006",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.33129
+      },
+      {
+        "year": "2006",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.90861
+      },
+      {
+        "year": "2007",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 17.3807
+      },
+      {
+        "year": "2007",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.67119
+      },
+      {
+        "year": "2007",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.52762
+      },
+      {
+        "year": "2007",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.81825
+      },
+      {
+        "year": "2007",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.5936
+      },
+      {
+        "year": "2007",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.65103
+      },
+      {
+        "year": "2008",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 16.5593
+      },
+      {
+        "year": "2008",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.56444
+      },
+      {
+        "year": "2008",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.61746
+      },
+      {
+        "year": "2008",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.51521
+      },
+      {
+        "year": "2008",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.04895
+      },
+      {
+        "year": "2008",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.33782
+      },
+      {
+        "year": "2009",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.504
+      },
+      {
+        "year": "2009",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.3145
+      },
+      {
+        "year": "2009",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.97173
+      },
+      {
+        "year": "2009",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.66702
+      },
+      {
+        "year": "2009",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.60923
+      },
+      {
+        "year": "2009",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.49069
+      },
+      {
+        "year": "2010",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.7941
+      },
+      {
+        "year": "2010",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.35077
+      },
+      {
+        "year": "2010",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.45339
+      },
+      {
+        "year": "2010",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.77493
+      },
+      {
+        "year": "2010",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.03601
+      },
+      {
+        "year": "2010",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.68957
+      },
+      {
+        "year": "2011",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.9983
+      },
+      {
+        "year": "2011",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.12745
+      },
+      {
+        "year": "2011",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.299
+      },
+      {
+        "year": "2011",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.6085
+      },
+      {
+        "year": "2011",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.49501
+      },
+      {
+        "year": "2011",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.04484
+      },
+      {
+        "year": "2012",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.7372
+      },
+      {
+        "year": "2012",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.15272
+      },
+      {
+        "year": "2012",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.45129
+      },
+      {
+        "year": "2012",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.25917
+      },
+      {
+        "year": "2012",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.82786
+      },
+      {
+        "year": "2012",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.34302
+      },
+      {
+        "year": "2013",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.8417
+      },
+      {
+        "year": "2013",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.12824
+      },
+      {
+        "year": "2013",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.62423
+      },
+      {
+        "year": "2013",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.74447
+      },
+      {
+        "year": "2013",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.94449
+      },
+      {
+        "year": "2013",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.07492
+      },
+      {
+        "year": "2014",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.8537
+      },
+      {
+        "year": "2014",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 4.61481
+      },
+      {
+        "year": "2014",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.08853
+      },
+      {
+        "year": "2014",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.42928
+      },
+      {
+        "year": "2014",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.56431
+      },
+      {
+        "year": "2014",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.43159
+      },
+      {
+        "year": "2015",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.6492
+      },
+      {
+        "year": "2015",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 4.67594
+      },
+      {
+        "year": "2015",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.08734
+      },
+      {
+        "year": "2015",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.60957
+      },
+      {
+        "year": "2015",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.26805
+      },
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 6.16205
+      },
+      {
+        "year": "2016",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.4213
+      },
+      {
+        "year": "2016",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 4.70348
+      },
+      {
+        "year": "2016",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.07297
+      },
+      {
+        "year": "2016",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.5451
+      },
+      {
+        "year": "2016",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.16671
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.82491
+      },
+      {
+        "year": "2017",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.5473
+      },
+      {
+        "year": "2017",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 4.74792
+      },
+      {
+        "year": "2017",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.85834
+      },
+      {
+        "year": "2017",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.48635
+      },
+      {
+        "year": "2017",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 9.06369
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.56111
+      },
+      {
+        "year": "2018",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.6335
+      },
+      {
+        "year": "2018",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 4.57052
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.53704
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.40135
+      },
+      {
+        "year": "2018",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.76198
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.43915
+      },
+      {
+        "year": "2019",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 15.0458
+      },
+      {
+        "year": "2019",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 4.46056
+      },
+      {
+        "year": "2019",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.92719
+      },
+      {
+        "year": "2019",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.31103
+      },
+      {
+        "year": "2019",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.4784
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 5.19179
+      },
+      {
+        "year": "2020",
+        "country": "Canada",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 13.5917
+      },
+      {
+        "year": "2020",
+        "country": "France",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 3.95193
+      },
+      {
+        "year": "2020",
+        "country": "Germany",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 7.25522
+      },
+      {
+        "year": "2020",
+        "country": "Italy",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 4.73237
+      },
+      {
+        "year": "2020",
+        "country": "Japan",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 8.0315
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "indicator": "CO2 emissions (metric tons per capita)",
+        "value": 4.62439
+      },
+      {
+        "year": "2000",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 20.3
+      },
+      {
+        "year": "2000",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 9.3
+      },
+      {
+        "year": "2000",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 3.7
+      },
+      {
+        "year": "2000",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 5.1
+      },
+      {
+        "year": "2000",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 3.7
+      },
+      {
+        "year": "2000",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 1.0
+      },
+      {
+        "year": "2001",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 19.8
+      },
+      {
+        "year": "2001",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 9.4
+      },
+      {
+        "year": "2001",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 3.9
+      },
+      {
+        "year": "2001",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 5.4
+      },
+      {
+        "year": "2001",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 3.5
+      },
+      {
+        "year": "2001",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 0.8
+      },
+      {
+        "year": "2002",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 20.1
+      },
+      {
+        "year": "2002",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 8.7
+      },
+      {
+        "year": "2002",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.4
+      },
+      {
+        "year": "2002",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 5.6
+      },
+      {
+        "year": "2002",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 3.7
+      },
+      {
+        "year": "2002",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 1.0
+      },
+      {
+        "year": "2003",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 19.7
+      },
+      {
+        "year": "2003",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 8.8
+      },
+      {
+        "year": "2003",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 5.4
+      },
+      {
+        "year": "2003",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 6.2
+      },
+      {
+        "year": "2003",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.2
+      },
+      {
+        "year": "2003",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 0.9
+      },
+      {
+        "year": "2004",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 20.4
+      },
+      {
+        "year": "2004",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 8.9
+      },
+      {
+        "year": "2004",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 6.3
+      },
+      {
+        "year": "2004",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 5.9
+      },
+      {
+        "year": "2004",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.3
+      },
+      {
+        "year": "2004",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 1.1
+      },
+      {
+        "year": "2005",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 21.6
+      },
+      {
+        "year": "2005",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 8.6
+      },
+      {
+        "year": "2005",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 7.3
+      },
+      {
+        "year": "2005",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 6.7
+      },
+      {
+        "year": "2005",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.0
+      },
+      {
+        "year": "2005",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 1.4
+      },
+      {
+        "year": "2006",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 21.5
+      },
+      {
+        "year": "2006",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 8.5
+      },
+      {
+        "year": "2006",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 8.6
+      },
+      {
+        "year": "2006",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 7.5
+      },
+      {
+        "year": "2006",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.4
+      },
+      {
+        "year": "2006",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 1.6
+      },
+      {
+        "year": "2007",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 21.6
+      },
+      {
+        "year": "2007",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 9.4
+      },
+      {
+        "year": "2007",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 10.5
+      },
+      {
+        "year": "2007",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 8.7
+      },
+      {
+        "year": "2007",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.3
+      },
+      {
+        "year": "2007",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 1.8
+      },
+      {
+        "year": "2008",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 21.6
+      },
+      {
+        "year": "2008",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 10.5
+      },
+      {
+        "year": "2008",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 10.2
+      },
+      {
+        "year": "2008",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 10.8
+      },
+      {
+        "year": "2008",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.4
+      },
+      {
+        "year": "2008",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 2.4
+      },
+      {
+        "year": "2009",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 22.2
+      },
+      {
+        "year": "2009",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 11.2
+      },
+      {
+        "year": "2009",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 10.7
+      },
+      {
+        "year": "2009",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 12.5
+      },
+      {
+        "year": "2009",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.5
+      },
+      {
+        "year": "2009",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 3.0
+      },
+      {
+        "year": "2010",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 21.4
+      },
+      {
+        "year": "2010",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 11.9
+      },
+      {
+        "year": "2010",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 11.6
+      },
+      {
+        "year": "2010",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 12.8
+      },
+      {
+        "year": "2010",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.7
+      },
+      {
+        "year": "2010",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 3.2
+      },
+      {
+        "year": "2011",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 21.5
+      },
+      {
+        "year": "2011",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 10.6
+      },
+      {
+        "year": "2011",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 12.5
+      },
+      {
+        "year": "2011",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 11.9
+      },
+      {
+        "year": "2011",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.8
+      },
+      {
+        "year": "2011",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.0
+      },
+      {
+        "year": "2012",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 21.8
+      },
+      {
+        "year": "2012",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 12.3
+      },
+      {
+        "year": "2012",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 13.6
+      },
+      {
+        "year": "2012",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 14.4
+      },
+      {
+        "year": "2012",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.7
+      },
+      {
+        "year": "2012",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 4.2
+      },
+      {
+        "year": "2013",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 22.2
+      },
+      {
+        "year": "2013",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 13.4
+      },
+      {
+        "year": "2013",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 13.6
+      },
+      {
+        "year": "2013",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 16.3
+      },
+      {
+        "year": "2013",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 5.0
+      },
+      {
+        "year": "2013",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 5.2
+      },
+      {
+        "year": "2014",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 22.2
+      },
+      {
+        "year": "2014",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 13.2
+      },
+      {
+        "year": "2014",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 14.0
+      },
+      {
+        "year": "2014",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 17.1
+      },
+      {
+        "year": "2014",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 5.6
+      },
+      {
+        "year": "2014",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 6.6
+      },
+      {
+        "year": "2015",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 22.3
+      },
+      {
+        "year": "2015",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 13.3
+      },
+      {
+        "year": "2015",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 14.6
+      },
+      {
+        "year": "2015",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 16.6
+      },
+      {
+        "year": "2015",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 6.2
+      },
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 7.7
+      },
+      {
+        "year": "2016",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 22.1
+      },
+      {
+        "year": "2016",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 14.2
+      },
+      {
+        "year": "2016",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 14.2
+      },
+      {
+        "year": "2016",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 16.1
+      },
+      {
+        "year": "2016",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 6.4
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 7.7
+      },
+      {
+        "year": "2017",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 22.8
+      },
+      {
+        "year": "2017",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 14.1
+      },
+      {
+        "year": "2017",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 15.2
+      },
+      {
+        "year": "2017",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 16.4
+      },
+      {
+        "year": "2017",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 6.9
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 8.8
+      },
+      {
+        "year": "2018",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 22.3
+      },
+      {
+        "year": "2018",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 15.2
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 16.0
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 17.1
+      },
+      {
+        "year": "2018",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 7.3
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 10.2
+      },
+      {
+        "year": "2019",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 22.4
+      },
+      {
+        "year": "2019",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 15.5
+      },
+      {
+        "year": "2019",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 17.1
+      },
+      {
+        "year": "2019",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 17.3
+      },
+      {
+        "year": "2019",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 7.8
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 11.4
+      },
+      {
+        "year": "2020",
+        "country": "Canada",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 23.9
+      },
+      {
+        "year": "2020",
+        "country": "France",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 16.8
+      },
+      {
+        "year": "2020",
+        "country": "Germany",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 18.5
+      },
+      {
+        "year": "2020",
+        "country": "Italy",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 18.7
+      },
+      {
+        "year": "2020",
+        "country": "Japan",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 8.5
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "indicator": "Renewable energy consumption (% of total final energy consumption)",
+        "value": 13.6
+      }
+    ]
+  },
+  "facet": {
+    "field": "country",
+    "type": "nominal",
+    "columns": 2,
+    "header": {
+      "title": null,
+      "labelFontWeight": "bold"
+    }
+  },
+  "spec": {
+    "mark": {
+      "type": "line",
+      "tooltip": true,
+      "interpolate": "monotone",
+      "point": {
+        "filled": true,
+        "size": 56
+      }
+    },
+    "encoding": {
+      "x": {
+        "field": "year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "axis": {
+          "title": null,
+          "format": "%Y",
+          "tickCount": 5,
+          "labelAngle": 0,
+          "grid": false,
+          "gridColor": "#CED4DE",
+          "gridDash": [
+            4,
+            2
+          ],
+          "labelColor": "#666666",
+          "titleColor": "#111111",
+          "titleFontWeight": "bold"
+        }
+      },
+      "y": {
+        "field": "value",
+        "type": "quantitative",
+        "axis": {
+          "grid": false,
+          "gridColor": "#CED4DE",
+          "gridDash": [
+            4,
+            2
+          ],
+          "labelColor": "#666666",
+          "titleColor": "#111111",
+          "titleFontWeight": "bold",
+          "tickCount": 5,
+          "title": "Renewable energy consumption (% of total final energy consumption) (Percentage of total final energy consumption)",
+          "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+        },
+        "scale": {}
+      },
+      "color": {
+        "field": "indicator",
+        "type": "nominal",
+        "scale": {
+          "range": [
+            "#34A7F2",
+            "#FF9800",
+            "#664AB6",
+            "#4EC2C0",
+            "#F3578E",
+            "#081079",
+            "#0C7C68",
+            "#AA0000",
+            "#DDDA21"
+          ]
+        },
+        "legend": {
+          "orient": "bottom",
+          "direction": "vertical",
+          "title": "Indicator",
+          "labelLimit": 0,
+          "symbolType": "stroke"
+        }
+      },
+      "tooltip": [
+        {
+          "field": "year",
+          "title": "Year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "format": "%Y"
+        },
+        {
+          "field": "value",
+          "title": "Value",
+          "type": "quantitative",
+          "format": ",.1f"
+        },
+        {
+          "field": "country",
+          "title": "Economy",
+          "type": "nominal"
+        },
+        {
+          "field": "indicator",
+          "title": "Indicator"
+        }
+      ]
+    },
+    "width": 300,
+    "height": 180
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

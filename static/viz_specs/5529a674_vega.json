@@ -1,0 +1,1917 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "WB_WDI_FP_CPI_TOTL_ZG | WB_WDI_SL_TLF_CACT_MA_ZS | WB_WDI_SP_POP_TOTL"
+    ],
+    "subtitle": [
+      "2013-2018"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2013",
+        "country": "Australia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 7709400.9736273335
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 66159460.49910367
+      },
+      {
+        "year": "2013",
+        "country": "Germany",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 26881891.069907665
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 431943199.8742927
+      },
+      {
+        "year": "2013",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 85284185.44383167
+      },
+      {
+        "year": "2013",
+        "country": "Italy",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 20103890.883664336
+      },
+      {
+        "year": "2013",
+        "country": "Japan",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 42481690.243346006
+      },
+      {
+        "year": "2013",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 16809655.41478267
+      },
+      {
+        "year": "2013",
+        "country": "Mexico",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 39447885.247130334
+      },
+      {
+        "year": "2013",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 47935238.63388933
+      },
+      {
+        "year": "2013",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 9208028.053014
+      },
+      {
+        "year": "2013",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 25382567.572696667
+      },
+      {
+        "year": "2013",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 21379356.804888997
+      },
+      {
+        "year": "2014",
+        "country": "Australia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 7825253.175309666
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 66695069.72868
+      },
+      {
+        "year": "2014",
+        "country": "Germany",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 26994189.16826467
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 437425758.67321897
+      },
+      {
+        "year": "2014",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 86292496.03797634
+      },
+      {
+        "year": "2014",
+        "country": "Italy",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 20106921.898349
+      },
+      {
+        "year": "2014",
+        "country": "Japan",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 42425357.70007567
+      },
+      {
+        "year": "2014",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 16915577.661258
+      },
+      {
+        "year": "2014",
+        "country": "Mexico",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 39928114.604871996
+      },
+      {
+        "year": "2014",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 48079100.686056666
+      },
+      {
+        "year": "2014",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 9436451.088617668
+      },
+      {
+        "year": "2014",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 25727321.301857665
+      },
+      {
+        "year": "2014",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 21539689.845039997
+      },
+      {
+        "year": "2015",
+        "country": "Australia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 7938689.228122667
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 67225205.57963367
+      },
+      {
+        "year": "2015",
+        "country": "Germany",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 27228892.591142002
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 442674860.313991
+      },
+      {
+        "year": "2015",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 87266445.95037366
+      },
+      {
+        "year": "2015",
+        "country": "Italy",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 20076554.543263335
+      },
+      {
+        "year": "2015",
+        "country": "Japan",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 42380357.00142667
+      },
+      {
+        "year": "2015",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 17005006.836110666
+      },
+      {
+        "year": "2015",
+        "country": "Mexico",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 40357462.429547004
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 48213600.948798664
+      },
+      {
+        "year": "2015",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 9938820.768897668
+      },
+      {
+        "year": "2015",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 26072852.68495133
+      },
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 21695689.490349002
+      },
+      {
+        "year": "2016",
+        "country": "Australia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 8063659.658331334
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 67739399.42638133
+      },
+      {
+        "year": "2016",
+        "country": "Germany",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 27449578.575582333
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 447981459.5467387
+      },
+      {
+        "year": "2016",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 88209167.765935
+      },
+      {
+        "year": "2016",
+        "country": "Italy",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 20038427.287994333
+      },
+      {
+        "year": "2016",
+        "country": "Japan",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 42358690.078913674
+      },
+      {
+        "year": "2016",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 17072625.570228666
+      },
+      {
+        "year": "2016",
+        "country": "Mexico",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 40750477.36490267
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 48338512.856812336
+      },
+      {
+        "year": "2016",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 10318093.289823666
+      },
+      {
+        "year": "2016",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 26426013.867378
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 21868689.68380567
+      },
+      {
+        "year": "2017",
+        "country": "Australia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 8197553.579881
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 68234507.868791
+      },
+      {
+        "year": "2017",
+        "country": "Germany",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 27552356.634831667
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 453219160.22139096
+      },
+      {
+        "year": "2017",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 89115581.11259967
+      },
+      {
+        "year": "2017",
+        "country": "Italy",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 20000770.766844336
+      },
+      {
+        "year": "2017",
+        "country": "Japan",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 42324023.6404
+      },
+      {
+        "year": "2017",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 17120661.918110665
+      },
+      {
+        "year": "2017",
+        "country": "Mexico",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 41133380.42615233
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 48431111.599777
+      },
+      {
+        "year": "2017",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 10325811.126051333
+      },
+      {
+        "year": "2017",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 26770927.163437
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 21988023.464252
+      },
+      {
+        "year": "2018",
+        "country": "Australia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 8321110.3518
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 68702446.51528333
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 27635283.485389665
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 458219714.970942
+      },
+      {
+        "year": "2018",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 89983977.14978267
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 19959093.73782933
+      },
+      {
+        "year": "2018",
+        "country": "Japan",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 42270357.357698336
+      },
+      {
+        "year": "2018",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 17195043.944946334
+      },
+      {
+        "year": "2018",
+        "country": "Mexico",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 41524598.02145
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 48466059.926771335
+      },
+      {
+        "year": "2018",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 10065454.335981
+      },
+      {
+        "year": "2018",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 27135764.288488
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 22095690.09428
+      },
+      {
+        "year": "2013",
+        "country": "Australia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 7709400.9736273335
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 66159460.49910367
+      },
+      {
+        "year": "2013",
+        "country": "Germany",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 26881891.069907665
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 431943199.8742927
+      },
+      {
+        "year": "2013",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 85284185.44383167
+      },
+      {
+        "year": "2013",
+        "country": "Italy",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 20103890.883664336
+      },
+      {
+        "year": "2013",
+        "country": "Japan",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 42481690.243346006
+      },
+      {
+        "year": "2013",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 16809655.414782666
+      },
+      {
+        "year": "2013",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 39447885.247130334
+      },
+      {
+        "year": "2013",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 47935238.63388933
+      },
+      {
+        "year": "2013",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 9208028.053014
+      },
+      {
+        "year": "2013",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 25382567.572696667
+      },
+      {
+        "year": "2013",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 21379356.804888997
+      },
+      {
+        "year": "2014",
+        "country": "Australia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 7825253.175309666
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 66695069.72868
+      },
+      {
+        "year": "2014",
+        "country": "Germany",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 26994189.16826467
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 437425758.67321897
+      },
+      {
+        "year": "2014",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 86292496.03797634
+      },
+      {
+        "year": "2014",
+        "country": "Italy",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 20106921.898349002
+      },
+      {
+        "year": "2014",
+        "country": "Japan",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 42425357.70007566
+      },
+      {
+        "year": "2014",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 16915577.661258
+      },
+      {
+        "year": "2014",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 39928114.604871996
+      },
+      {
+        "year": "2014",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 48079100.686056666
+      },
+      {
+        "year": "2014",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 9436451.088617668
+      },
+      {
+        "year": "2014",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 25727321.301857665
+      },
+      {
+        "year": "2014",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 21539689.845039997
+      },
+      {
+        "year": "2015",
+        "country": "Australia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 7938689.228122667
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 67225205.57963367
+      },
+      {
+        "year": "2015",
+        "country": "Germany",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 27228892.591142002
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 442674860.313991
+      },
+      {
+        "year": "2015",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 87266445.95037366
+      },
+      {
+        "year": "2015",
+        "country": "Italy",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 20076554.543263335
+      },
+      {
+        "year": "2015",
+        "country": "Japan",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 42380357.00142667
+      },
+      {
+        "year": "2015",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 17005006.836110666
+      },
+      {
+        "year": "2015",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 40357462.429547004
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 48213600.948798664
+      },
+      {
+        "year": "2015",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 9938820.768897668
+      },
+      {
+        "year": "2015",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 26072852.68495133
+      },
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 21695689.490349002
+      },
+      {
+        "year": "2016",
+        "country": "Australia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 8063659.658331334
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 67739399.42638133
+      },
+      {
+        "year": "2016",
+        "country": "Germany",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 27449578.575582333
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 447981459.5467387
+      },
+      {
+        "year": "2016",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 88209167.765935
+      },
+      {
+        "year": "2016",
+        "country": "Italy",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 20038427.287994333
+      },
+      {
+        "year": "2016",
+        "country": "Japan",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 42358690.078913674
+      },
+      {
+        "year": "2016",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 17072625.570228666
+      },
+      {
+        "year": "2016",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 40750477.36490267
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 48338512.856812336
+      },
+      {
+        "year": "2016",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 10318093.289823666
+      },
+      {
+        "year": "2016",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 26426013.867378
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 21868689.68380567
+      },
+      {
+        "year": "2017",
+        "country": "Australia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 8197553.579881
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 68234507.868791
+      },
+      {
+        "year": "2017",
+        "country": "Germany",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 27552356.634831667
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 453219160.22139096
+      },
+      {
+        "year": "2017",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 89115581.11259967
+      },
+      {
+        "year": "2017",
+        "country": "Italy",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 20000770.766844336
+      },
+      {
+        "year": "2017",
+        "country": "Japan",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 42324023.6404
+      },
+      {
+        "year": "2017",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 17120661.918110665
+      },
+      {
+        "year": "2017",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 41133380.42615233
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 48431111.599777
+      },
+      {
+        "year": "2017",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 10325811.126051333
+      },
+      {
+        "year": "2017",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 26770927.163437
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 21988023.464252
+      },
+      {
+        "year": "2018",
+        "country": "Australia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 8321110.3518
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 68702446.51528333
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 27635283.485389665
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 458219714.97094196
+      },
+      {
+        "year": "2018",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 89983977.14978266
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 19959093.73782933
+      },
+      {
+        "year": "2018",
+        "country": "Japan",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 42270357.357698336
+      },
+      {
+        "year": "2018",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 17195043.944946334
+      },
+      {
+        "year": "2018",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 41524598.02145
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 48466059.926771335
+      },
+      {
+        "year": "2018",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 10065454.335981
+      },
+      {
+        "year": "2018",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 27135764.288488
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "value": 22095690.09428
+      },
+      {
+        "year": "2013",
+        "country": "Australia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 7709400.9736273335
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 66159460.49910367
+      },
+      {
+        "year": "2013",
+        "country": "Germany",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 26881891.069907665
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 431943199.87429273
+      },
+      {
+        "year": "2013",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 85284185.44383165
+      },
+      {
+        "year": "2013",
+        "country": "Italy",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 20103890.883664336
+      },
+      {
+        "year": "2013",
+        "country": "Japan",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 42481690.243346006
+      },
+      {
+        "year": "2013",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 16809655.414782666
+      },
+      {
+        "year": "2013",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 39447885.247130334
+      },
+      {
+        "year": "2013",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 47935238.63388934
+      },
+      {
+        "year": "2013",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 9208028.053014
+      },
+      {
+        "year": "2013",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 25382567.572696667
+      },
+      {
+        "year": "2013",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 21379356.804888997
+      },
+      {
+        "year": "2014",
+        "country": "Australia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 7825253.175309666
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 66695069.72868
+      },
+      {
+        "year": "2014",
+        "country": "Germany",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 26994189.16826467
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 437425758.67321897
+      },
+      {
+        "year": "2014",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 86292496.03797634
+      },
+      {
+        "year": "2014",
+        "country": "Italy",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 20106921.898349
+      },
+      {
+        "year": "2014",
+        "country": "Japan",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 42425357.70007566
+      },
+      {
+        "year": "2014",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 16915577.661258
+      },
+      {
+        "year": "2014",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 39928114.604871996
+      },
+      {
+        "year": "2014",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 48079100.686056666
+      },
+      {
+        "year": "2014",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 9436451.088617666
+      },
+      {
+        "year": "2014",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 25727321.301857665
+      },
+      {
+        "year": "2014",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 21539689.845039997
+      },
+      {
+        "year": "2015",
+        "country": "Australia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 7938689.228122667
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 67225205.57963365
+      },
+      {
+        "year": "2015",
+        "country": "Germany",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 27228892.591142002
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 442674860.313991
+      },
+      {
+        "year": "2015",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 87266445.95037366
+      },
+      {
+        "year": "2015",
+        "country": "Italy",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 20076554.543263335
+      },
+      {
+        "year": "2015",
+        "country": "Japan",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 42380357.00142667
+      },
+      {
+        "year": "2015",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 17005006.836110666
+      },
+      {
+        "year": "2015",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 40357462.429547004
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 48213600.948798664
+      },
+      {
+        "year": "2015",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 9938820.768897666
+      },
+      {
+        "year": "2015",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 26072852.684951335
+      },
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 21695689.490349002
+      },
+      {
+        "year": "2016",
+        "country": "Australia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 8063659.658331334
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 67739399.42638133
+      },
+      {
+        "year": "2016",
+        "country": "Germany",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 27449578.575582337
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 447981459.54673874
+      },
+      {
+        "year": "2016",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 88209167.765935
+      },
+      {
+        "year": "2016",
+        "country": "Italy",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 20038427.287994333
+      },
+      {
+        "year": "2016",
+        "country": "Japan",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 42358690.078913674
+      },
+      {
+        "year": "2016",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 17072625.570228666
+      },
+      {
+        "year": "2016",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 40750477.36490267
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 48338512.856812336
+      },
+      {
+        "year": "2016",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 10318093.289823666
+      },
+      {
+        "year": "2016",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 26426013.867378
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 21868689.68380567
+      },
+      {
+        "year": "2017",
+        "country": "Australia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 8197553.579881
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 68234507.868791
+      },
+      {
+        "year": "2017",
+        "country": "Germany",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 27552356.634831667
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 453219160.22139096
+      },
+      {
+        "year": "2017",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 89115581.11259967
+      },
+      {
+        "year": "2017",
+        "country": "Italy",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 20000770.766844336
+      },
+      {
+        "year": "2017",
+        "country": "Japan",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 42324023.6404
+      },
+      {
+        "year": "2017",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 17120661.918110665
+      },
+      {
+        "year": "2017",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 41133380.42615233
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 48431111.599777
+      },
+      {
+        "year": "2017",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 10325811.126051333
+      },
+      {
+        "year": "2017",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 26770927.163437
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 21988023.464252
+      },
+      {
+        "year": "2018",
+        "country": "Australia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 8321110.3518
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 68702446.51528333
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 27635283.485389665
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 458219714.970942
+      },
+      {
+        "year": "2018",
+        "country": "Indonesia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 89983977.14978266
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 19959093.73782933
+      },
+      {
+        "year": "2018",
+        "country": "Japan",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 42270357.357698336
+      },
+      {
+        "year": "2018",
+        "country": "Korea, Rep.",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 17195043.944946334
+      },
+      {
+        "year": "2018",
+        "country": "Mexico",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 41524598.02145
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 48466059.926771335
+      },
+      {
+        "year": "2018",
+        "country": "Saudi Arabia",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 10065454.335981
+      },
+      {
+        "year": "2018",
+        "country": "Turkiye",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 27135764.288488
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "indicator": "WB_WDI_SP_POP_TOTL",
+        "value": 22095690.09428
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "WB_WDI_FP_CPI_TOTL_ZG",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "WB_WDI_FP_CPI_TOTL_ZG"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "WB_WDI_FP_CPI_TOTL_ZG",
+            "format": ",.0f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Australia",
+              "Brazil",
+              "Germany",
+              "India",
+              "Indonesia",
+              "Italy",
+              "Japan",
+              "Korea, Rep.",
+              "Mexico",
+              "Russian Federation",
+              "Saudi Arabia",
+              "Turkiye",
+              "United Kingdom"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "WB_WDI_SL_TLF_CACT_MA_ZS",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "WB_WDI_SL_TLF_CACT_MA_ZS"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "WB_WDI_SL_TLF_CACT_MA_ZS",
+            "format": ",.0f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Australia",
+              "Brazil",
+              "Germany",
+              "India",
+              "Indonesia",
+              "Italy",
+              "Japan",
+              "Korea, Rep.",
+              "Mexico",
+              "Russian Federation",
+              "Saudi Arabia",
+              "Turkiye",
+              "United Kingdom"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "WB_WDI_SP_POP_TOTL",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "WB_WDI_SP_POP_TOTL"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "WB_WDI_SP_POP_TOTL",
+            "format": ",.0f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Australia",
+              "Brazil",
+              "Germany",
+              "India",
+              "Indonesia",
+              "Italy",
+              "Japan",
+              "Korea, Rep.",
+              "Mexico",
+              "Russian Federation",
+              "Saudi Arabia",
+              "Turkiye",
+              "United Kingdom"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "columns": 2,
+  "config": {
+    "legend": {
+      "orient": "bottom",
+      "direction": "horizontal",
+      "columns": 5,
+      "title": "Country",
+      "labelLimit": 200,
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

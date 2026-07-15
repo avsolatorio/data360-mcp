@@ -1,0 +1,941 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP (annual % growth)"
+    ],
+    "subtitle": [
+      "2011-2021",
+      "Percentage change per annum"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2012",
+        "value": 5.504545,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2016",
+        "value": 8.256306,
+        "country": "India"
+      },
+      {
+        "year": "2016",
+        "value": 5.033069,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011",
+        "value": 9.462052,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 6.795383,
+        "country": "India"
+      },
+      {
+        "year": "2017",
+        "value": 5.069786,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2017",
+        "value": 1.623451,
+        "country": "Japan"
+      },
+      {
+        "year": "2018",
+        "value": 6.453851,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 5.174292,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016",
+        "value": 2.755641,
+        "country": "Australia"
+      },
+      {
+        "year": "2016",
+        "value": 0.704986,
+        "country": "Japan"
+      },
+      {
+        "year": "2016",
+        "value": 3.171527,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2015",
+        "value": 6.981623,
+        "country": "China"
+      },
+      {
+        "year": "2020",
+        "value": 2.339504,
+        "country": "China"
+      },
+      {
+        "year": "2016",
+        "value": 4.449781,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2013",
+        "value": 3.291396,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2019",
+        "value": 6.067378,
+        "country": "China"
+      },
+      {
+        "year": "2013",
+        "value": 4.366865,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2013",
+        "value": 6.750531,
+        "country": "Philippines"
+      },
+      {
+        "year": "2013",
+        "value": 2.687496,
+        "country": "Thailand"
+      },
+      {
+        "year": "2014",
+        "value": 2.60119,
+        "country": "Australia"
+      },
+      {
+        "year": "2014",
+        "value": 6.061059,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2016",
+        "value": 3.435158,
+        "country": "Thailand"
+      },
+      {
+        "year": "2017",
+        "value": 6.94019,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2019",
+        "value": 2.323717,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2018",
+        "value": 4.22287,
+        "country": "Thailand"
+      },
+      {
+        "year": "2011",
+        "value": 2.394735,
+        "country": "Australia"
+      },
+      {
+        "year": "2011",
+        "value": 6.464379,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2019",
+        "value": 7.359263,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2019",
+        "value": 2.114558,
+        "country": "Thailand"
+      },
+      {
+        "year": "2020",
+        "value": 2.865413,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2015",
+        "value": 7.996254,
+        "country": "India"
+      },
+      {
+        "year": "2015",
+        "value": 4.876322,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2018",
+        "value": 7.465007,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2017",
+        "value": 4.177681,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 9.689592,
+        "country": "India"
+      },
+      {
+        "year": "2021",
+        "value": 3.702886,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2020",
+        "value": -5.456847,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021",
+        "value": 5.714733,
+        "country": "Philippines"
+      },
+      {
+        "year": "2018",
+        "value": 4.843087,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2015",
+        "value": 2.920293,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2015",
+        "value": 2.976799,
+        "country": "Singapore"
+      },
+      {
+        "year": "2015",
+        "value": 3.134047,
+        "country": "Thailand"
+      },
+      {
+        "year": "2016",
+        "value": 6.690009,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2017",
+        "value": 3.315686,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2014",
+        "value": 3.21468,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2017",
+        "value": 3.433192,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2014",
+        "value": 7.410228,
+        "country": "India"
+      },
+      {
+        "year": "2014",
+        "value": 5.006668,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2014",
+        "value": 0.905915,
+        "country": "Japan"
+      },
+      {
+        "year": "2018",
+        "value": 6.757806,
+        "country": "China"
+      },
+      {
+        "year": "2014",
+        "value": 3.819336,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2013",
+        "value": 6.386106,
+        "country": "India"
+      },
+      {
+        "year": "2011",
+        "value": 6.214934,
+        "country": "Singapore"
+      },
+      {
+        "year": "2013",
+        "value": 5.557264,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2013",
+        "value": 1.997277,
+        "country": "Japan"
+      },
+      {
+        "year": "2014",
+        "value": 0.984469,
+        "country": "Thailand"
+      },
+      {
+        "year": "2015",
+        "value": 2.164348,
+        "country": "Australia"
+      },
+      {
+        "year": "2011",
+        "value": -0.200358,
+        "country": "Japan"
+      },
+      {
+        "year": "2016",
+        "value": 7.113478,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2020",
+        "value": -0.240916,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2019",
+        "value": 2.497637,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2018",
+        "value": 3.186608,
+        "country": "Singapore"
+      },
+      {
+        "year": "2012",
+        "value": 6.030051,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2012",
+        "value": 1.648935,
+        "country": "Japan"
+      },
+      {
+        "year": "2012",
+        "value": 3.952471,
+        "country": "Australia"
+      },
+      {
+        "year": "2012",
+        "value": 6.521459,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2018",
+        "value": 2.87417,
+        "country": "Australia"
+      },
+      {
+        "year": "2019",
+        "value": 1.158779,
+        "country": "Singapore"
+      },
+      {
+        "year": "2012",
+        "value": 5.456388,
+        "country": "India"
+      },
+      {
+        "year": "2020",
+        "value": -4.283279,
+        "country": "Japan"
+      },
+      {
+        "year": "2020",
+        "value": -0.700242,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2018",
+        "value": 6.151703,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2021",
+        "value": 10.141085,
+        "country": "Singapore"
+      },
+      {
+        "year": "2021",
+        "value": 3.31535,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2015",
+        "value": 5.091532,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2018",
+        "value": 6.341486,
+        "country": "Philippines"
+      },
+      {
+        "year": "2019",
+        "value": 7.881915,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2011",
+        "value": 6.413169,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2016",
+        "value": 6.773689,
+        "country": "China"
+      },
+      {
+        "year": "2013",
+        "value": 2.564836,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2017",
+        "value": 6.891239,
+        "country": "China"
+      },
+      {
+        "year": "2014",
+        "value": 7.461007,
+        "country": "China"
+      },
+      {
+        "year": "2014",
+        "value": 4.116428,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2014",
+        "value": 6.347987,
+        "country": "Philippines"
+      },
+      {
+        "year": "2014",
+        "value": 3.93554,
+        "country": "Singapore"
+      },
+      {
+        "year": "2017",
+        "value": 4.432626,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2017",
+        "value": 6.930988,
+        "country": "Philippines"
+      },
+      {
+        "year": "2017",
+        "value": 5.812722,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2018",
+        "value": 0.834144,
+        "country": "Japan"
+      },
+      {
+        "year": "2018",
+        "value": 3.176116,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2013",
+        "value": 7.77843,
+        "country": "China"
+      },
+      {
+        "year": "2016",
+        "value": 3.743525,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2016",
+        "value": 6.573838,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2016",
+        "value": 3.910953,
+        "country": "Singapore"
+      },
+      {
+        "year": "2014",
+        "value": 6.006722,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2011",
+        "value": 5.241316,
+        "country": "India"
+      },
+      {
+        "year": "2011",
+        "value": 6.169784,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2019",
+        "value": 3.871437,
+        "country": "India"
+      },
+      {
+        "year": "2019",
+        "value": 5.019288,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2014",
+        "value": 6.422243,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2011",
+        "value": 3.688032,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2019",
+        "value": -0.308497,
+        "country": "Japan"
+      },
+      {
+        "year": "2019",
+        "value": 2.313802,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2012",
+        "value": 4.435498,
+        "country": "Singapore"
+      },
+      {
+        "year": "2012",
+        "value": 2.302564,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2013",
+        "value": 2.654453,
+        "country": "Australia"
+      },
+      {
+        "year": "2013",
+        "value": 6.013606,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2013",
+        "value": 4.693723,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2011",
+        "value": 0.840132,
+        "country": "Thailand"
+      },
+      {
+        "year": "2011",
+        "value": 3.858233,
+        "country": "Philippines"
+      },
+      {
+        "year": "2015",
+        "value": 6.987154,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2015",
+        "value": 3.729683,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2011",
+        "value": 5.293913,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021",
+        "value": 4.29916,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2020",
+        "value": -3.610843,
+        "country": "Singapore"
+      },
+      {
+        "year": "2015",
+        "value": 4.217942,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2015",
+        "value": 6.34831,
+        "country": "Philippines"
+      },
+      {
+        "year": "2021",
+        "value": 1.558582,
+        "country": "Thailand"
+      },
+      {
+        "year": "2012",
+        "value": 5.473454,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021",
+        "value": 2.006948,
+        "country": "Australia"
+      },
+      {
+        "year": "2021",
+        "value": 6.938679,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2015",
+        "value": 6.55264,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2013",
+        "value": 5.553511,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2012",
+        "value": 7.85782,
+        "country": "China"
+      },
+      {
+        "year": "2018",
+        "value": 3.322197,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2011",
+        "value": 2.1445,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2011",
+        "value": 2.680117,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2019",
+        "value": 2.194017,
+        "country": "Australia"
+      },
+      {
+        "year": "2013",
+        "value": 4.817631,
+        "country": "Singapore"
+      },
+      {
+        "year": "2012",
+        "value": 2.547666,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2016",
+        "value": 7.149457,
+        "country": "Philippines"
+      },
+      {
+        "year": "2015",
+        "value": 1.799977,
+        "country": "Japan"
+      },
+      {
+        "year": "2012",
+        "value": 3.027584,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2012",
+        "value": 6.896952,
+        "country": "Philippines"
+      },
+      {
+        "year": "2018",
+        "value": 7.319413,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2021",
+        "value": 8.570384,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 2.29331,
+        "country": "Australia"
+      },
+      {
+        "year": "2017",
+        "value": 6.59025,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2012",
+        "value": 7.242796,
+        "country": "Thailand"
+      },
+      {
+        "year": "2020",
+        "value": -0.133532,
+        "country": "Australia"
+      },
+      {
+        "year": "2017",
+        "value": 4.326794,
+        "country": "Singapore"
+      },
+      {
+        "year": "2019",
+        "value": 6.118526,
+        "country": "Philippines"
+      },
+      {
+        "year": "2020",
+        "value": 3.448018,
+        "country": "Bangladesh"
+      },
+      {
+        "year": "2021",
+        "value": 3.564195,
+        "country": "Japan"
+      },
+      {
+        "year": "2021",
+        "value": 4.612968,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2020",
+        "value": -1.274087,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2020",
+        "value": -9.518295,
+        "country": "Philippines"
+      },
+      {
+        "year": "2020",
+        "value": -5.777725,
+        "country": "India"
+      },
+      {
+        "year": "2020",
+        "value": -2.065512,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2021",
+        "value": 2.553729,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2020",
+        "value": -6.093063,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 6.513886,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2019",
+        "value": 4.413187,
+        "country": "Malaysia"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "redblue",
+        "domain": [
+          -10.141085,
+          10.141085
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Percentage change per annum",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

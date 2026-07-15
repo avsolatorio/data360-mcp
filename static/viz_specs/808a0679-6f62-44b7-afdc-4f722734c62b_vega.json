@@ -1,0 +1,327 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Trade (% of GDP) vs. Foreign direct investment, net inflows (% of GDP)"
+    ],
+    "subtitle": [
+      "2018",
+      "Percentage of GDP"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2018",
+        "country": "Austria",
+        "trade_of_gdp": 108.37797,
+        "foreign_direct_investment_net_inflows_of": -6.151192
+      },
+      {
+        "year": "2018",
+        "country": "Belgium",
+        "trade_of_gdp": 168.277693,
+        "foreign_direct_investment_net_inflows_of": -7.666495
+      },
+      {
+        "year": "2018",
+        "country": "Czechia",
+        "trade_of_gdp": 145.141718,
+        "foreign_direct_investment_net_inflows_of": 3.30354
+      },
+      {
+        "year": "2018",
+        "country": "France",
+        "trade_of_gdp": 66.802261,
+        "foreign_direct_investment_net_inflows_of": 2.785942
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "trade_of_gdp": 79.125226,
+        "foreign_direct_investment_net_inflows_of": 4.000829
+      },
+      {
+        "year": "2018",
+        "country": "Greece",
+        "trade_of_gdp": 79.237991,
+        "foreign_direct_investment_net_inflows_of": 1.887233
+      },
+      {
+        "year": "2018",
+        "country": "Hungary",
+        "trade_of_gdp": 162.700859,
+        "foreign_direct_investment_net_inflows_of": -40.108246
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "trade_of_gdp": 59.274984,
+        "foreign_direct_investment_net_inflows_of": 2.107696
+      },
+      {
+        "year": "2018",
+        "country": "Netherlands",
+        "trade_of_gdp": 163.559147,
+        "foreign_direct_investment_net_inflows_of": -30.657677
+      },
+      {
+        "year": "2018",
+        "country": "Poland",
+        "trade_of_gdp": 102.442462,
+        "foreign_direct_investment_net_inflows_of": 3.34804
+      },
+      {
+        "year": "2018",
+        "country": "Portugal",
+        "trade_of_gdp": 86.735695,
+        "foreign_direct_investment_net_inflows_of": 3.465843
+      },
+      {
+        "year": "2018",
+        "country": "Romania",
+        "trade_of_gdp": 87.09117,
+        "foreign_direct_investment_net_inflows_of": 3.037147
+      },
+      {
+        "year": "2018",
+        "country": "Spain",
+        "trade_of_gdp": 67.00941,
+        "foreign_direct_investment_net_inflows_of": 4.467485
+      },
+      {
+        "year": "2018",
+        "country": "Sweden",
+        "trade_of_gdp": 90.408714,
+        "foreign_direct_investment_net_inflows_of": -0.129929
+      },
+      {
+        "year": "2018",
+        "country": "Switzerland",
+        "trade_of_gdp": 123.49983,
+        "foreign_direct_investment_net_inflows_of": -21.841732
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "trade_of_gdp": 64.909772,
+        "foreign_direct_investment_net_inflows_of": -0.864867
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "trade_of_gdp",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Trade (% of GDP) (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "foreign_direct_investment_net_inflows_of",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Foreign direct investment, net inflows (% of GDP) (Percentage of GDP)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "trade_of_gdp",
+            "title": "Trade (% of GDP) (Percentage of GDP)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "foreign_direct_investment_net_inflows_of",
+            "title": "Foreign direct investment, net inflows (% of GDP) (Percentage of GDP)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "trade_of_gdp",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "foreign_direct_investment_net_inflows_of",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

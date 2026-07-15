@@ -1,0 +1,396 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP Shares by Economic Sector across European Countries (2022)",
+    "subtitle": [
+      "2022",
+      "Percentage of GDP"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2022",
+        "country": "Austria",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.346496
+      },
+      {
+        "year": "2022",
+        "country": "Belgium",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 0.670989
+      },
+      {
+        "year": "2022",
+        "country": "Denmark",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.002285
+      },
+      {
+        "year": "2022",
+        "country": "France",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.720171
+      },
+      {
+        "year": "2022",
+        "country": "Germany",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 0.994638
+      },
+      {
+        "year": "2022",
+        "country": "Italy",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.890372
+      },
+      {
+        "year": "2022",
+        "country": "Netherlands",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.641947
+      },
+      {
+        "year": "2022",
+        "country": "Norway",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.517565
+      },
+      {
+        "year": "2022",
+        "country": "Poland",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.806069
+      },
+      {
+        "year": "2022",
+        "country": "Spain",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 2.36964
+      },
+      {
+        "year": "2022",
+        "country": "Sweden",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 1.23877
+      },
+      {
+        "year": "2022",
+        "country": "Switzerland",
+        "indicator": "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "value": 0.597978
+      },
+      {
+        "year": "2022",
+        "country": "Austria",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 25.844468
+      },
+      {
+        "year": "2022",
+        "country": "Belgium",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 19.989044
+      },
+      {
+        "year": "2022",
+        "country": "Denmark",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 20.668857
+      },
+      {
+        "year": "2022",
+        "country": "France",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 15.769154
+      },
+      {
+        "year": "2022",
+        "country": "Germany",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 25.560349
+      },
+      {
+        "year": "2022",
+        "country": "Italy",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 23.279144
+      },
+      {
+        "year": "2022",
+        "country": "Netherlands",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 18.656397
+      },
+      {
+        "year": "2022",
+        "country": "Norway",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 47.867165
+      },
+      {
+        "year": "2022",
+        "country": "Poland",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 29.181482
+      },
+      {
+        "year": "2022",
+        "country": "Spain",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 21.223479
+      },
+      {
+        "year": "2022",
+        "country": "Sweden",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 23.759206
+      },
+      {
+        "year": "2022",
+        "country": "Switzerland",
+        "indicator": "Industry, including construction, value added (% of GDP)",
+        "value": 25.974644
+      },
+      {
+        "year": "2022",
+        "country": "Austria",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 62.435894
+      },
+      {
+        "year": "2022",
+        "country": "Belgium",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 69.437553
+      },
+      {
+        "year": "2022",
+        "country": "Denmark",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 66.429807
+      },
+      {
+        "year": "2022",
+        "country": "France",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 71.757544
+      },
+      {
+        "year": "2022",
+        "country": "Germany",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 63.480683
+      },
+      {
+        "year": "2022",
+        "country": "Italy",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 64.597322
+      },
+      {
+        "year": "2022",
+        "country": "Netherlands",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 69.071361
+      },
+      {
+        "year": "2022",
+        "country": "Norway",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 43.455262
+      },
+      {
+        "year": "2022",
+        "country": "Poland",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 57.22173
+      },
+      {
+        "year": "2022",
+        "country": "Spain",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 67.601643
+      },
+      {
+        "year": "2022",
+        "country": "Sweden",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 63.685397
+      },
+      {
+        "year": "2022",
+        "country": "Switzerland",
+        "indicator": "Services, value added (% of GDP)",
+        "value": 70.790328
+      }
+    ]
+  },
+  "mark": {
+    "type": "bar",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "stack": "zero",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Percentage of GDP",
+        "labelExpr": "format(datum.value, '.1f') + '%'"
+      },
+      "scale": {
+        "zero": true
+      }
+    },
+    "color": {
+      "field": "indicator",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ],
+        "domain": [
+          "Agriculture, forestry, and fishing, value added (% of GDP)",
+          "Industry, including construction, value added (% of GDP)",
+          "Services, value added (% of GDP)"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "title": "Indicator",
+        "labelLimit": 100,
+        "columns": 3
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "nominal"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "field": "indicator",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 960,
+  "height": 320,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

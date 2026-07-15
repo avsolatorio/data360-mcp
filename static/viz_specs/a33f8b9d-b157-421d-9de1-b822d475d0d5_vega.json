@@ -1,0 +1,1645 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Access to electricity | Individuals using the Internet | Mobile cellular",
+      "subscriptions"
+    ],
+    "subtitle": [
+      "2015-2022"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "country": "Ethiopia",
+        "indicator": "Access to electricity",
+        "value": 29.0
+      },
+      {
+        "year": "2015",
+        "country": "Ghana",
+        "indicator": "Access to electricity",
+        "value": 74.0
+      },
+      {
+        "year": "2015",
+        "country": "Kenya",
+        "indicator": "Access to electricity",
+        "value": 41.6
+      },
+      {
+        "year": "2015",
+        "country": "Nigeria",
+        "indicator": "Access to electricity",
+        "value": 52.5
+      },
+      {
+        "year": "2015",
+        "country": "Rwanda",
+        "indicator": "Access to electricity",
+        "value": 22.8
+      },
+      {
+        "year": "2015",
+        "country": "Senegal",
+        "indicator": "Access to electricity",
+        "value": 60.5
+      },
+      {
+        "year": "2015",
+        "country": "Tanzania",
+        "indicator": "Access to electricity",
+        "value": 26.2
+      },
+      {
+        "year": "2015",
+        "country": "Uganda",
+        "indicator": "Access to electricity",
+        "value": 18.5
+      },
+      {
+        "year": "2016",
+        "country": "Ethiopia",
+        "indicator": "Access to electricity",
+        "value": 42.9
+      },
+      {
+        "year": "2016",
+        "country": "Ghana",
+        "indicator": "Access to electricity",
+        "value": 79.3
+      },
+      {
+        "year": "2016",
+        "country": "Kenya",
+        "indicator": "Access to electricity",
+        "value": 53.1
+      },
+      {
+        "year": "2016",
+        "country": "Nigeria",
+        "indicator": "Access to electricity",
+        "value": 59.3
+      },
+      {
+        "year": "2016",
+        "country": "Rwanda",
+        "indicator": "Access to electricity",
+        "value": 29.4
+      },
+      {
+        "year": "2016",
+        "country": "Senegal",
+        "indicator": "Access to electricity",
+        "value": 64.5
+      },
+      {
+        "year": "2016",
+        "country": "Tanzania",
+        "indicator": "Access to electricity",
+        "value": 32.8
+      },
+      {
+        "year": "2016",
+        "country": "Uganda",
+        "indicator": "Access to electricity",
+        "value": 26.7
+      },
+      {
+        "year": "2017",
+        "country": "Ethiopia",
+        "indicator": "Access to electricity",
+        "value": 44.3
+      },
+      {
+        "year": "2017",
+        "country": "Ghana",
+        "indicator": "Access to electricity",
+        "value": 79.0
+      },
+      {
+        "year": "2017",
+        "country": "Kenya",
+        "indicator": "Access to electricity",
+        "value": 55.8
+      },
+      {
+        "year": "2017",
+        "country": "Nigeria",
+        "indicator": "Access to electricity",
+        "value": 54.4
+      },
+      {
+        "year": "2017",
+        "country": "Rwanda",
+        "indicator": "Access to electricity",
+        "value": 34.1
+      },
+      {
+        "year": "2017",
+        "country": "Senegal",
+        "indicator": "Access to electricity",
+        "value": 61.7
+      },
+      {
+        "year": "2017",
+        "country": "Tanzania",
+        "indicator": "Access to electricity",
+        "value": 32.1
+      },
+      {
+        "year": "2017",
+        "country": "Uganda",
+        "indicator": "Access to electricity",
+        "value": 32.4
+      },
+      {
+        "year": "2018",
+        "country": "Ethiopia",
+        "indicator": "Access to electricity",
+        "value": 44.8
+      },
+      {
+        "year": "2018",
+        "country": "Ghana",
+        "indicator": "Access to electricity",
+        "value": 80.4
+      },
+      {
+        "year": "2018",
+        "country": "Kenya",
+        "indicator": "Access to electricity",
+        "value": 61.2
+      },
+      {
+        "year": "2018",
+        "country": "Nigeria",
+        "indicator": "Access to electricity",
+        "value": 56.5
+      },
+      {
+        "year": "2018",
+        "country": "Rwanda",
+        "indicator": "Access to electricity",
+        "value": 38.0
+      },
+      {
+        "year": "2018",
+        "country": "Senegal",
+        "indicator": "Access to electricity",
+        "value": 66.0
+      },
+      {
+        "year": "2018",
+        "country": "Tanzania",
+        "indicator": "Access to electricity",
+        "value": 34.9
+      },
+      {
+        "year": "2018",
+        "country": "Uganda",
+        "indicator": "Access to electricity",
+        "value": 41.9
+      },
+      {
+        "year": "2019",
+        "country": "Ethiopia",
+        "indicator": "Access to electricity",
+        "value": 48.0
+      },
+      {
+        "year": "2019",
+        "country": "Ghana",
+        "indicator": "Access to electricity",
+        "value": 83.5
+      },
+      {
+        "year": "2019",
+        "country": "Kenya",
+        "indicator": "Access to electricity",
+        "value": 69.7
+      },
+      {
+        "year": "2019",
+        "country": "Nigeria",
+        "indicator": "Access to electricity",
+        "value": 55.4
+      },
+      {
+        "year": "2019",
+        "country": "Rwanda",
+        "indicator": "Access to electricity",
+        "value": 46.6
+      },
+      {
+        "year": "2019",
+        "country": "Senegal",
+        "indicator": "Access to electricity",
+        "value": 70.4
+      },
+      {
+        "year": "2019",
+        "country": "Tanzania",
+        "indicator": "Access to electricity",
+        "value": 37.7
+      },
+      {
+        "year": "2019",
+        "country": "Uganda",
+        "indicator": "Access to electricity",
+        "value": 41.3
+      },
+      {
+        "year": "2020",
+        "country": "Ethiopia",
+        "indicator": "Access to electricity",
+        "value": 51.1
+      },
+      {
+        "year": "2020",
+        "country": "Ghana",
+        "indicator": "Access to electricity",
+        "value": 85.4
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "indicator": "Access to electricity",
+        "value": 71.5
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "indicator": "Access to electricity",
+        "value": 55.4
+      },
+      {
+        "year": "2020",
+        "country": "Rwanda",
+        "indicator": "Access to electricity",
+        "value": 45.2
+      },
+      {
+        "year": "2020",
+        "country": "Senegal",
+        "indicator": "Access to electricity",
+        "value": 64.3
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "indicator": "Access to electricity",
+        "value": 39.9
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "indicator": "Access to electricity",
+        "value": 42.1
+      },
+      {
+        "year": "2021",
+        "country": "Ethiopia",
+        "indicator": "Access to electricity",
+        "value": 54.2
+      },
+      {
+        "year": "2021",
+        "country": "Ghana",
+        "indicator": "Access to electricity",
+        "value": 86.3
+      },
+      {
+        "year": "2021",
+        "country": "Kenya",
+        "indicator": "Access to electricity",
+        "value": 76.5
+      },
+      {
+        "year": "2021",
+        "country": "Nigeria",
+        "indicator": "Access to electricity",
+        "value": 59.5
+      },
+      {
+        "year": "2021",
+        "country": "Rwanda",
+        "indicator": "Access to electricity",
+        "value": 48.7
+      },
+      {
+        "year": "2021",
+        "country": "Senegal",
+        "indicator": "Access to electricity",
+        "value": 68.0
+      },
+      {
+        "year": "2021",
+        "country": "Tanzania",
+        "indicator": "Access to electricity",
+        "value": 42.7
+      },
+      {
+        "year": "2021",
+        "country": "Uganda",
+        "indicator": "Access to electricity",
+        "value": 45.2
+      },
+      {
+        "year": "2022",
+        "country": "Ethiopia",
+        "indicator": "Access to electricity",
+        "value": 55.4
+      },
+      {
+        "year": "2022",
+        "country": "Ghana",
+        "indicator": "Access to electricity",
+        "value": 85.1
+      },
+      {
+        "year": "2022",
+        "country": "Kenya",
+        "indicator": "Access to electricity",
+        "value": 76.0
+      },
+      {
+        "year": "2022",
+        "country": "Nigeria",
+        "indicator": "Access to electricity",
+        "value": 60.5
+      },
+      {
+        "year": "2022",
+        "country": "Rwanda",
+        "indicator": "Access to electricity",
+        "value": 50.6
+      },
+      {
+        "year": "2022",
+        "country": "Senegal",
+        "indicator": "Access to electricity",
+        "value": 67.9
+      },
+      {
+        "year": "2022",
+        "country": "Tanzania",
+        "indicator": "Access to electricity",
+        "value": 45.8
+      },
+      {
+        "year": "2022",
+        "country": "Uganda",
+        "indicator": "Access to electricity",
+        "value": 47.1
+      },
+      {
+        "year": "2015",
+        "country": "Ethiopia",
+        "indicator": "Individuals using the Internet",
+        "value": 13.855176
+      },
+      {
+        "year": "2015",
+        "country": "Ghana",
+        "indicator": "Individuals using the Internet",
+        "value": 23.0
+      },
+      {
+        "year": "2015",
+        "country": "Kenya",
+        "indicator": "Individuals using the Internet",
+        "value": 16.587855
+      },
+      {
+        "year": "2015",
+        "country": "Nigeria",
+        "indicator": "Individuals using the Internet",
+        "value": 22.5142
+      },
+      {
+        "year": "2015",
+        "country": "Rwanda",
+        "indicator": "Individuals using the Internet",
+        "value": 12.456
+      },
+      {
+        "year": "2015",
+        "country": "Senegal",
+        "indicator": "Individuals using the Internet",
+        "value": 21.700001
+      },
+      {
+        "year": "2015",
+        "country": "Tanzania",
+        "indicator": "Individuals using the Internet",
+        "value": 10.0
+      },
+      {
+        "year": "2015",
+        "country": "Uganda",
+        "indicator": "Individuals using the Internet",
+        "value": 5.7
+      },
+      {
+        "year": "2016",
+        "country": "Ethiopia",
+        "indicator": "Individuals using the Internet",
+        "value": 15.366924
+      },
+      {
+        "year": "2016",
+        "country": "Ghana",
+        "indicator": "Individuals using the Internet",
+        "value": 28.0
+      },
+      {
+        "year": "2016",
+        "country": "Kenya",
+        "indicator": "Individuals using the Internet",
+        "value": 16.6
+      },
+      {
+        "year": "2016",
+        "country": "Nigeria",
+        "indicator": "Individuals using the Internet",
+        "value": 24.137501
+      },
+      {
+        "year": "2016",
+        "country": "Rwanda",
+        "indicator": "Individuals using the Internet",
+        "value": 14.6371
+      },
+      {
+        "year": "2016",
+        "country": "Senegal",
+        "indicator": "Individuals using the Internet",
+        "value": 25.664801
+      },
+      {
+        "year": "2016",
+        "country": "Tanzania",
+        "indicator": "Individuals using the Internet",
+        "value": 13.504233
+      },
+      {
+        "year": "2016",
+        "country": "Uganda",
+        "indicator": "Individuals using the Internet",
+        "value": 5.9
+      },
+      {
+        "year": "2017",
+        "country": "Ethiopia",
+        "indicator": "Individuals using the Internet",
+        "value": 15.6244
+      },
+      {
+        "year": "2017",
+        "country": "Ghana",
+        "indicator": "Individuals using the Internet",
+        "value": 37.884201
+      },
+      {
+        "year": "2017",
+        "country": "Kenya",
+        "indicator": "Individuals using the Internet",
+        "value": 17.827101
+      },
+      {
+        "year": "2017",
+        "country": "Nigeria",
+        "indicator": "Individuals using the Internet",
+        "value": 25.877899
+      },
+      {
+        "year": "2017",
+        "country": "Rwanda",
+        "indicator": "Individuals using the Internet",
+        "value": 17.2
+      },
+      {
+        "year": "2017",
+        "country": "Senegal",
+        "indicator": "Individuals using the Internet",
+        "value": 29.643101
+      },
+      {
+        "year": "2017",
+        "country": "Tanzania",
+        "indicator": "Individuals using the Internet",
+        "value": 14.4634
+      },
+      {
+        "year": "2017",
+        "country": "Uganda",
+        "indicator": "Individuals using the Internet",
+        "value": 7.4179
+      },
+      {
+        "year": "2018",
+        "country": "Ethiopia",
+        "indicator": "Individuals using the Internet",
+        "value": 15.8862
+      },
+      {
+        "year": "2018",
+        "country": "Ghana",
+        "indicator": "Individuals using the Internet",
+        "value": 43.0
+      },
+      {
+        "year": "2018",
+        "country": "Kenya",
+        "indicator": "Individuals using the Internet",
+        "value": 19.5
+      },
+      {
+        "year": "2018",
+        "country": "Nigeria",
+        "indicator": "Individuals using the Internet",
+        "value": 27.7437
+      },
+      {
+        "year": "2018",
+        "country": "Rwanda",
+        "indicator": "Individuals using the Internet",
+        "value": 19.166599
+      },
+      {
+        "year": "2018",
+        "country": "Senegal",
+        "indicator": "Individuals using the Internet",
+        "value": 35.299999
+      },
+      {
+        "year": "2018",
+        "country": "Tanzania",
+        "indicator": "Individuals using the Internet",
+        "value": 15.4907
+      },
+      {
+        "year": "2018",
+        "country": "Uganda",
+        "indicator": "Individuals using the Internet",
+        "value": 9.3263
+      },
+      {
+        "year": "2019",
+        "country": "Ethiopia",
+        "indicator": "Individuals using the Internet",
+        "value": 15.9846
+      },
+      {
+        "year": "2019",
+        "country": "Ghana",
+        "indicator": "Individuals using the Internet",
+        "value": 22.0732
+      },
+      {
+        "year": "2019",
+        "country": "Kenya",
+        "indicator": "Individuals using the Internet",
+        "value": 22.668773
+      },
+      {
+        "year": "2019",
+        "country": "Nigeria",
+        "indicator": "Individuals using the Internet",
+        "value": 29.744101
+      },
+      {
+        "year": "2019",
+        "country": "Rwanda",
+        "indicator": "Individuals using the Internet",
+        "value": 21.358
+      },
+      {
+        "year": "2019",
+        "country": "Senegal",
+        "indicator": "Individuals using the Internet",
+        "value": 43.3797
+      },
+      {
+        "year": "2019",
+        "country": "Tanzania",
+        "indicator": "Individuals using the Internet",
+        "value": 16.5909
+      },
+      {
+        "year": "2019",
+        "country": "Uganda",
+        "indicator": "Individuals using the Internet",
+        "value": 11.7258
+      },
+      {
+        "year": "2020",
+        "country": "Ethiopia",
+        "indicator": "Individuals using the Internet",
+        "value": 16.069599
+      },
+      {
+        "year": "2020",
+        "country": "Ghana",
+        "indicator": "Individuals using the Internet",
+        "value": 62.517601
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "indicator": "Individuals using the Internet",
+        "value": 24.722799
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "indicator": "Individuals using the Internet",
+        "value": 31.8888
+      },
+      {
+        "year": "2020",
+        "country": "Rwanda",
+        "indicator": "Individuals using the Internet",
+        "value": 23.8
+      },
+      {
+        "year": "2020",
+        "country": "Senegal",
+        "indicator": "Individuals using the Internet",
+        "value": 53.3088
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "indicator": "Individuals using the Internet",
+        "value": 19.4814
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "indicator": "Individuals using the Internet",
+        "value": 7.4
+      },
+      {
+        "year": "2021",
+        "country": "Ethiopia",
+        "indicator": "Individuals using the Internet",
+        "value": 16.698103
+      },
+      {
+        "year": "2021",
+        "country": "Ghana",
+        "indicator": "Individuals using the Internet",
+        "value": 68.6
+      },
+      {
+        "year": "2021",
+        "country": "Kenya",
+        "indicator": "Individuals using the Internet",
+        "value": 26.9629
+      },
+      {
+        "year": "2021",
+        "country": "Nigeria",
+        "indicator": "Individuals using the Internet",
+        "value": 35.5098
+      },
+      {
+        "year": "2021",
+        "country": "Rwanda",
+        "indicator": "Individuals using the Internet",
+        "value": 24.441601
+      },
+      {
+        "year": "2021",
+        "country": "Senegal",
+        "indicator": "Individuals using the Internet",
+        "value": 55.040401
+      },
+      {
+        "year": "2021",
+        "country": "Tanzania",
+        "indicator": "Individuals using the Internet",
+        "value": 22.875401
+      },
+      {
+        "year": "2021",
+        "country": "Uganda",
+        "indicator": "Individuals using the Internet",
+        "value": 10.0
+      },
+      {
+        "year": "2022",
+        "country": "Ethiopia",
+        "indicator": "Individuals using the Internet",
+        "value": 17.9837
+      },
+      {
+        "year": "2022",
+        "country": "Ghana",
+        "indicator": "Individuals using the Internet",
+        "value": 69.9133
+      },
+      {
+        "year": "2022",
+        "country": "Kenya",
+        "indicator": "Individuals using the Internet",
+        "value": 29.405899
+      },
+      {
+        "year": "2022",
+        "country": "Nigeria",
+        "indicator": "Individuals using the Internet",
+        "value": 39.147202
+      },
+      {
+        "year": "2022",
+        "country": "Rwanda",
+        "indicator": "Individuals using the Internet",
+        "value": 28.0168
+      },
+      {
+        "year": "2022",
+        "country": "Senegal",
+        "indicator": "Individuals using the Internet",
+        "value": 56.8283
+      },
+      {
+        "year": "2022",
+        "country": "Tanzania",
+        "indicator": "Individuals using the Internet",
+        "value": 26.8606
+      },
+      {
+        "year": "2022",
+        "country": "Uganda",
+        "indicator": "Individuals using the Internet",
+        "value": 9.6369
+      },
+      {
+        "year": "2015",
+        "country": "Ethiopia",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 40.736301
+      },
+      {
+        "year": "2015",
+        "country": "Ghana",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 121.997157
+      },
+      {
+        "year": "2015",
+        "country": "Kenya",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 80.095826
+      },
+      {
+        "year": "2015",
+        "country": "Nigeria",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 79.104528
+      },
+      {
+        "year": "2015",
+        "country": "Rwanda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 75.254317
+      },
+      {
+        "year": "2015",
+        "country": "Senegal",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 102.508995
+      },
+      {
+        "year": "2015",
+        "country": "Tanzania",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 76.249263
+      },
+      {
+        "year": "2015",
+        "country": "Uganda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 53.87555
+      },
+      {
+        "year": "2016",
+        "country": "Ethiopia",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 47.999327
+      },
+      {
+        "year": "2016",
+        "country": "Ghana",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 130.481366
+      },
+      {
+        "year": "2016",
+        "country": "Kenya",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 80.977236
+      },
+      {
+        "year": "2016",
+        "country": "Nigeria",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 78.970142
+      },
+      {
+        "year": "2016",
+        "country": "Rwanda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 74.850206
+      },
+      {
+        "year": "2016",
+        "country": "Senegal",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 101.010767
+      },
+      {
+        "year": "2016",
+        "country": "Tanzania",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 74.398366
+      },
+      {
+        "year": "2016",
+        "country": "Uganda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 58.863364
+      },
+      {
+        "year": "2017",
+        "country": "Ethiopia",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 36.109484
+      },
+      {
+        "year": "2017",
+        "country": "Ghana",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 122.471766
+      },
+      {
+        "year": "2017",
+        "country": "Kenya",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 87.026531
+      },
+      {
+        "year": "2017",
+        "country": "Nigeria",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 72.367968
+      },
+      {
+        "year": "2017",
+        "country": "Rwanda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 72.27646
+      },
+      {
+        "year": "2017",
+        "country": "Senegal",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 101.831108
+      },
+      {
+        "year": "2017",
+        "country": "Tanzania",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 71.791168
+      },
+      {
+        "year": "2017",
+        "country": "Uganda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 62.096814
+      },
+      {
+        "year": "2018",
+        "country": "Ghana",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 133.609992
+      },
+      {
+        "year": "2018",
+        "country": "Kenya",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 98.594468
+      },
+      {
+        "year": "2018",
+        "country": "Nigeria",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 84.284011
+      },
+      {
+        "year": "2018",
+        "country": "Rwanda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 77.679469
+      },
+      {
+        "year": "2018",
+        "country": "Senegal",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 104.055698
+      },
+      {
+        "year": "2018",
+        "country": "Tanzania",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 75.730193
+      },
+      {
+        "year": "2018",
+        "country": "Uganda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 58.875361
+      },
+      {
+        "year": "2019",
+        "country": "Ethiopia",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 36.219931
+      },
+      {
+        "year": "2019",
+        "country": "Ghana",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 130.705233
+      },
+      {
+        "year": "2019",
+        "country": "Kenya",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 106.547822
+      },
+      {
+        "year": "2019",
+        "country": "Nigeria",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 88.116901
+      },
+      {
+        "year": "2019",
+        "country": "Rwanda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 75.598545
+      },
+      {
+        "year": "2019",
+        "country": "Senegal",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 109.34189
+      },
+      {
+        "year": "2019",
+        "country": "Tanzania",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 80.583557
+      },
+      {
+        "year": "2019",
+        "country": "Uganda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 59.059808
+      },
+      {
+        "year": "2020",
+        "country": "Ethiopia",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 37.420847
+      },
+      {
+        "year": "2020",
+        "country": "Ghana",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 126.887391
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 117.602526
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 95.435665
+      },
+      {
+        "year": "2020",
+        "country": "Rwanda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 81.237872
+      },
+      {
+        "year": "2020",
+        "country": "Senegal",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 113.638091
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 84.005056
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 62.282413
+      },
+      {
+        "year": "2021",
+        "country": "Ethiopia",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 52.808863
+      },
+      {
+        "year": "2021",
+        "country": "Ghana",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 124.402625
+      },
+      {
+        "year": "2021",
+        "country": "Kenya",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 122.29752
+      },
+      {
+        "year": "2021",
+        "country": "Nigeria",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 89.291586
+      },
+      {
+        "year": "2021",
+        "country": "Rwanda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 81.638164
+      },
+      {
+        "year": "2021",
+        "country": "Senegal",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 115.325094
+      },
+      {
+        "year": "2021",
+        "country": "Tanzania",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 86.016281
+      },
+      {
+        "year": "2021",
+        "country": "Uganda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 65.622073
+      },
+      {
+        "year": "2022",
+        "country": "Ethiopia",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 56.964299
+      },
+      {
+        "year": "2022",
+        "country": "Ghana",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 120.803416
+      },
+      {
+        "year": "2022",
+        "country": "Kenya",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 121.168999
+      },
+      {
+        "year": "2022",
+        "country": "Nigeria",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 99.585215
+      },
+      {
+        "year": "2022",
+        "country": "Rwanda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 80.595222
+      },
+      {
+        "year": "2022",
+        "country": "Senegal",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 118.150293
+      },
+      {
+        "year": "2022",
+        "country": "Tanzania",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 93.015975
+      },
+      {
+        "year": "2022",
+        "country": "Uganda",
+        "indicator": "Mobile cellular subscriptions",
+        "value": 70.140112
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "Access to electricity",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 220,
+      "height": 130,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Access to electricity"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Access to electricity",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Ethiopia",
+              "Ghana",
+              "Kenya",
+              "Nigeria",
+              "Rwanda",
+              "Senegal",
+              "Tanzania",
+              "Uganda"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "Individuals using the Internet",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 220,
+      "height": 130,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Individuals using the Internet"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Individuals using the Internet",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Ethiopia",
+              "Ghana",
+              "Kenya",
+              "Nigeria",
+              "Rwanda",
+              "Senegal",
+              "Tanzania",
+              "Uganda"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "Mobile cellular subscriptions",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 220,
+      "height": 130,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "Mobile cellular subscriptions"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Mobile cellular subscriptions",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Ethiopia",
+              "Ghana",
+              "Kenya",
+              "Nigeria",
+              "Rwanda",
+              "Senegal",
+              "Tanzania",
+              "Uganda"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "columns": 3,
+  "config": {
+    "legend": {
+      "orient": "bottom",
+      "direction": "horizontal",
+      "columns": 4,
+      "title": "Country",
+      "labelLimit": 200,
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Renewable energy consumption vs. Inflation, consumer prices"
+    ],
+    "subtitle": [
+      "Saudi Arabia, 2019"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2019",
+        "country": "Saudi Arabia",
+        "indicator": "Renewable energy consumption",
+        "value": 0.0
+      },
+      {
+        "year": "2019",
+        "country": "Saudi Arabia",
+        "indicator": "Inflation, consumer prices",
+        "value": -1.192986
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "independent",
+      "color": "independent"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Renewable energy consumption, Infl\u2026",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 180,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "oneOf": [
+              "Renewable energy consumption",
+              "Inflation, consumer prices"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "bar",
+        "cornerRadiusTopRight": 2,
+        "cornerRadiusTopLeft": 2,
+        "size": 40
+      },
+      "encoding": {
+        "x": {
+          "field": "indicator",
+          "type": "nominal",
+          "axis": {
+            "title": null,
+            "tickCount": 5,
+            "labelAngle": -45,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labelAlign": "right",
+            "labelBaseline": "middle",
+            "labelLimit": 150,
+            "labelOverlap": false
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": true,
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "color": {
+          "field": "indicator",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Renewable energy consumption",
+              "Inflation, consumer prices"
+            ],
+            "range": [
+              "#34A7F2",
+              "#FF9800"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "labelFontSize": 11,
+            "symbolSize": 80,
+            "labelLimit": 200
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

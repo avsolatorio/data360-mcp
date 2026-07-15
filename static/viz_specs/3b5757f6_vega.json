@@ -1,0 +1,392 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Generated Visualization"
+    ],
+    "subtitle": [
+      "2015-2019"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2016",
+        "value": 27.8,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2017",
+        "value": 25.2,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2018",
+        "value": 22.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016",
+        "value": 2.6,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2016",
+        "value": 45.4,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 45.3,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 47.5,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 3.2,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2015",
+        "value": 0.0,
+        "country": "Saudi Arabia"
+      },
+      {
+        "year": "2015",
+        "value": 2.7,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2017",
+        "value": 2.8,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2018",
+        "value": 0.0,
+        "country": "Saudi Arabia"
+      },
+      {
+        "year": "2019",
+        "value": 0.0,
+        "country": "Saudi Arabia"
+      },
+      {
+        "year": "2015",
+        "value": 43.7,
+        "country": "Brazil"
+      },
+      {
+        "year": "2018",
+        "value": 3.2,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2018",
+        "value": 3.2,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2016",
+        "value": 3.4,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2016",
+        "value": 0.0,
+        "country": "Saudi Arabia"
+      },
+      {
+        "year": "2019",
+        "value": 19.8,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2018",
+        "value": 46.9,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 3.2,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2017",
+        "value": 3.2,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2017",
+        "value": 0.0,
+        "country": "Saudi Arabia"
+      },
+      {
+        "year": "2015",
+        "value": 26.6,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2019",
+        "value": 3.2,
+        "country": "Russian Federation"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "WB_WDI_EG_FEC_RNEW_ZS",
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false,
+            "domain": [
+              0,
+              50
+            ]
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "WB_WDI_EG_FEC_RNEW_ZS",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              50
+            ]
+          }
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

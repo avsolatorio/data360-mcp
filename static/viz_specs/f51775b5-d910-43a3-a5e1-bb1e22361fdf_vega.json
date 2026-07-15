@@ -1,0 +1,1331 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "World Population, Total (2016-2025)",
+    "subtitle": [
+      "2016-2025",
+      "Persons",
+      "Showing 50 of 218 economies by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020",
+        "value": 50629997,
+        "country": "COL"
+      },
+      {
+        "year": "2019",
+        "value": 49907985,
+        "country": "COL"
+      },
+      {
+        "year": "2016",
+        "value": 7200884,
+        "country": "TGO"
+      },
+      {
+        "year": "2016",
+        "value": 105524,
+        "country": "TON"
+      },
+      {
+        "year": "2017",
+        "value": 9223225,
+        "country": "ARE"
+      },
+      {
+        "year": "2017",
+        "value": 65964000,
+        "country": "GBR"
+      },
+      {
+        "year": "2017",
+        "value": 326608609,
+        "country": "USA"
+      },
+      {
+        "year": "2017",
+        "value": 3388438,
+        "country": "URY"
+      },
+      {
+        "year": "2017",
+        "value": 31819178,
+        "country": "UZB"
+      },
+      {
+        "year": "2017",
+        "value": 278507,
+        "country": "VUT"
+      },
+      {
+        "year": "2017",
+        "value": 30565323,
+        "country": "VEN"
+      },
+      {
+        "year": "2016",
+        "value": 1353895,
+        "country": "TTO"
+      },
+      {
+        "year": "2016",
+        "value": 11528674,
+        "country": "TUN"
+      },
+      {
+        "year": "2016",
+        "value": 79277962,
+        "country": "TUR"
+      },
+      {
+        "year": "2016",
+        "value": 6360041,
+        "country": "TKM"
+      },
+      {
+        "year": "2016",
+        "value": 38315,
+        "country": "TCA"
+      },
+      {
+        "year": "2016",
+        "value": 10930,
+        "country": "TUV"
+      },
+      {
+        "year": "2016",
+        "value": 38799152,
+        "country": "UGA"
+      },
+      {
+        "year": "2016",
+        "value": 45616832,
+        "country": "UKR"
+      },
+      {
+        "year": "2016",
+        "value": 8935095,
+        "country": "ARE"
+      },
+      {
+        "year": "2016",
+        "value": 65606000,
+        "country": "GBR"
+      },
+      {
+        "year": "2016",
+        "value": 324353340,
+        "country": "USA"
+      },
+      {
+        "year": "2023",
+        "value": 52321152,
+        "country": "COL"
+      },
+      {
+        "year": "2017",
+        "value": 48131078,
+        "country": "COL"
+      },
+      {
+        "year": "2018",
+        "value": 7458206,
+        "country": "TGO"
+      },
+      {
+        "year": "2018",
+        "value": 105567,
+        "country": "TON"
+      },
+      {
+        "year": "2018",
+        "value": 1359193,
+        "country": "TTO"
+      },
+      {
+        "year": "2018",
+        "value": 11765514,
+        "country": "TUN"
+      },
+      {
+        "year": "2018",
+        "value": 81407204,
+        "country": "TUR"
+      },
+      {
+        "year": "2018",
+        "value": 6655524,
+        "country": "TKM"
+      },
+      {
+        "year": "2018",
+        "value": 41559,
+        "country": "TCA"
+      },
+      {
+        "year": "2019",
+        "value": 10581,
+        "country": "TUV"
+      },
+      {
+        "year": "2019",
+        "value": 42999637,
+        "country": "UGA"
+      },
+      {
+        "year": "2019",
+        "value": 44957458,
+        "country": "UKR"
+      },
+      {
+        "year": "2019",
+        "value": 9445785,
+        "country": "ARE"
+      },
+      {
+        "year": "2019",
+        "value": 66628000,
+        "country": "GBR"
+      },
+      {
+        "year": "2019",
+        "value": 330226227,
+        "country": "USA"
+      },
+      {
+        "year": "2019",
+        "value": 3397206,
+        "country": "URY"
+      },
+      {
+        "year": "2019",
+        "value": 32964701,
+        "country": "UZB"
+      },
+      {
+        "year": "2019",
+        "value": 291985,
+        "country": "VUT"
+      },
+      {
+        "year": "2019",
+        "value": 28938098,
+        "country": "VEN"
+      },
+      {
+        "year": "2019",
+        "value": 7619925,
+        "country": "TGO"
+      },
+      {
+        "year": "2019",
+        "value": 105669,
+        "country": "TON"
+      },
+      {
+        "year": "2019",
+        "value": 1363985,
+        "country": "TTO"
+      },
+      {
+        "year": "2019",
+        "value": 11875081,
+        "country": "TUN"
+      },
+      {
+        "year": "2019",
+        "value": 82579440,
+        "country": "TUR"
+      },
+      {
+        "year": "2019",
+        "value": 6803944,
+        "country": "TKM"
+      },
+      {
+        "year": "2019",
+        "value": 43166,
+        "country": "TCA"
+      },
+      {
+        "year": "2020",
+        "value": 66740000,
+        "country": "GBR"
+      },
+      {
+        "year": "2020",
+        "value": 331578104,
+        "country": "USA"
+      },
+      {
+        "year": "2020",
+        "value": 3398968,
+        "country": "URY"
+      },
+      {
+        "year": "2020",
+        "value": 33586372,
+        "country": "UZB"
+      },
+      {
+        "year": "2020",
+        "value": 298858,
+        "country": "VUT"
+      },
+      {
+        "year": "2020",
+        "value": 28444077,
+        "country": "VEN"
+      },
+      {
+        "year": "2018",
+        "value": 10751,
+        "country": "TUV"
+      },
+      {
+        "year": "2018",
+        "value": 41565831,
+        "country": "UGA"
+      },
+      {
+        "year": "2018",
+        "value": 45208907,
+        "country": "UKR"
+      },
+      {
+        "year": "2018",
+        "value": 9346701,
+        "country": "ARE"
+      },
+      {
+        "year": "2018",
+        "value": 66287000,
+        "country": "GBR"
+      },
+      {
+        "year": "2018",
+        "value": 328529577,
+        "country": "USA"
+      },
+      {
+        "year": "2018",
+        "value": 3394534,
+        "country": "URY"
+      },
+      {
+        "year": "2018",
+        "value": 32373490,
+        "country": "UZB"
+      },
+      {
+        "year": "2018",
+        "value": 285259,
+        "country": "VUT"
+      },
+      {
+        "year": "2018",
+        "value": 29807592,
+        "country": "VEN"
+      },
+      {
+        "year": "2017",
+        "value": 7324386,
+        "country": "TGO"
+      },
+      {
+        "year": "2017",
+        "value": 105356,
+        "country": "TON"
+      },
+      {
+        "year": "2017",
+        "value": 1356633,
+        "country": "TTO"
+      },
+      {
+        "year": "2017",
+        "value": 11650498,
+        "country": "TUN"
+      },
+      {
+        "year": "2017",
+        "value": 80312698,
+        "country": "TUR"
+      },
+      {
+        "year": "2017",
+        "value": 6507061,
+        "country": "TKM"
+      },
+      {
+        "year": "2017",
+        "value": 39913,
+        "country": "TCA"
+      },
+      {
+        "year": "2017",
+        "value": 10869,
+        "country": "TUV"
+      },
+      {
+        "year": "2017",
+        "value": 40177388,
+        "country": "UGA"
+      },
+      {
+        "year": "2017",
+        "value": 45436041,
+        "country": "UKR"
+      },
+      {
+        "year": "2021",
+        "value": 6684182,
+        "country": "PRY"
+      },
+      {
+        "year": "2021",
+        "value": 33155882,
+        "country": "PER"
+      },
+      {
+        "year": "2021",
+        "value": 113100950,
+        "country": "PHL"
+      },
+      {
+        "year": "2021",
+        "value": 36981559,
+        "country": "POL"
+      },
+      {
+        "year": "2021",
+        "value": 10361831,
+        "country": "PRT"
+      },
+      {
+        "year": "2021",
+        "value": 3262731,
+        "country": "PRI"
+      },
+      {
+        "year": "2021",
+        "value": 2504910,
+        "country": "QAT"
+      },
+      {
+        "year": "2021",
+        "value": 19122059,
+        "country": "ROU"
+      },
+      {
+        "year": "2021",
+        "value": 144746762,
+        "country": "RUS"
+      },
+      {
+        "year": "2021",
+        "value": 13355260,
+        "country": "RWA"
+      },
+      {
+        "year": "2021",
+        "value": 213779,
+        "country": "WSM"
+      },
+      {
+        "year": "2021",
+        "value": 34252,
+        "country": "SMR"
+      },
+      {
+        "year": "2023",
+        "value": 12200431,
+        "country": "TUN"
+      },
+      {
+        "year": "2023",
+        "value": 85325965,
+        "country": "TUR"
+      },
+      {
+        "year": "2023",
+        "value": 7364438,
+        "country": "TKM"
+      },
+      {
+        "year": "2023",
+        "value": 46198,
+        "country": "TCA"
+      },
+      {
+        "year": "2023",
+        "value": 9816,
+        "country": "TUV"
+      },
+      {
+        "year": "2023",
+        "value": 48656601,
+        "country": "UGA"
+      },
+      {
+        "year": "2023",
+        "value": 37732836,
+        "country": "UKR"
+      },
+      {
+        "year": "2023",
+        "value": 10483751,
+        "country": "ARE"
+      },
+      {
+        "year": "2023",
+        "value": 68526000,
+        "country": "GBR"
+      },
+      {
+        "year": "2023",
+        "value": 336755052,
+        "country": "USA"
+      },
+      {
+        "year": "2023",
+        "value": 3388081,
+        "country": "URY"
+      },
+      {
+        "year": "2023",
+        "value": 35652307,
+        "country": "UZB"
+      },
+      {
+        "year": "2023",
+        "value": 320409,
+        "country": "VUT"
+      },
+      {
+        "year": "2023",
+        "value": 28300854,
+        "country": "VEN"
+      },
+      {
+        "year": "2022",
+        "value": 10074977,
+        "country": "ARE"
+      },
+      {
+        "year": "2022",
+        "value": 67636000,
+        "country": "GBR"
+      },
+      {
+        "year": "2022",
+        "value": 333996304,
+        "country": "USA"
+      },
+      {
+        "year": "2022",
+        "value": 3390913,
+        "country": "URY"
+      },
+      {
+        "year": "2022",
+        "value": 34938955,
+        "country": "UZB"
+      },
+      {
+        "year": "2022",
+        "value": 313046,
+        "country": "VUT"
+      },
+      {
+        "year": "2022",
+        "value": 28213017,
+        "country": "VEN"
+      },
+      {
+        "year": "2020",
+        "value": 37515748,
+        "country": "POL"
+      },
+      {
+        "year": "2020",
+        "value": 10297081,
+        "country": "PRT"
+      },
+      {
+        "year": "2020",
+        "value": 3281591,
+        "country": "PRI"
+      },
+      {
+        "year": "2020",
+        "value": 2794148,
+        "country": "QAT"
+      },
+      {
+        "year": "2020",
+        "value": 19265250,
+        "country": "ROU"
+      },
+      {
+        "year": "2020",
+        "value": 145245148,
+        "country": "RUS"
+      },
+      {
+        "year": "2020",
+        "value": 13065837,
+        "country": "RWA"
+      },
+      {
+        "year": "2020",
+        "value": 211944,
+        "country": "WSM"
+      },
+      {
+        "year": "2020",
+        "value": 34770,
+        "country": "SMR"
+      },
+      {
+        "year": "2020",
+        "value": 217435,
+        "country": "STP"
+      },
+      {
+        "year": "2020",
+        "value": 31552510,
+        "country": "SAU"
+      },
+      {
+        "year": "2020",
+        "value": 16789219,
+        "country": "SEN"
+      },
+      {
+        "year": "2022",
+        "value": 8068616,
+        "country": "TGO"
+      },
+      {
+        "year": "2022",
+        "value": 105042,
+        "country": "TON"
+      },
+      {
+        "year": "2022",
+        "value": 1365805,
+        "country": "TTO"
+      },
+      {
+        "year": "2022",
+        "value": 12119334,
+        "country": "TUN"
+      },
+      {
+        "year": "2022",
+        "value": 84979913,
+        "country": "TUR"
+      },
+      {
+        "year": "2022",
+        "value": 7230193,
+        "country": "TKM"
+      },
+      {
+        "year": "2022",
+        "value": 45847,
+        "country": "TCA"
+      },
+      {
+        "year": "2022",
+        "value": 9992,
+        "country": "TUV"
+      },
+      {
+        "year": "2022",
+        "value": 47312719,
+        "country": "UGA"
+      },
+      {
+        "year": "2022",
+        "value": 41048766,
+        "country": "UKR"
+      },
+      {
+        "year": "2024",
+        "value": 52886363,
+        "country": "COL"
+      },
+      {
+        "year": "2024",
+        "value": 8406558,
+        "country": "TGO"
+      },
+      {
+        "year": "2024",
+        "value": 104175,
+        "country": "TON"
+      },
+      {
+        "year": "2024",
+        "value": 1368333,
+        "country": "TTO"
+      },
+      {
+        "year": "2024",
+        "value": 12277109,
+        "country": "TUN"
+      },
+      {
+        "year": "2024",
+        "value": 85518661,
+        "country": "TUR"
+      },
+      {
+        "year": "2024",
+        "value": 7494498,
+        "country": "TKM"
+      },
+      {
+        "year": "2024",
+        "value": 46535,
+        "country": "TCA"
+      },
+      {
+        "year": "2024",
+        "value": 9646,
+        "country": "TUV"
+      },
+      {
+        "year": "2024",
+        "value": 50015092,
+        "country": "UGA"
+      },
+      {
+        "year": "2024",
+        "value": 37860221,
+        "country": "UKR"
+      },
+      {
+        "year": "2024",
+        "value": 10986400,
+        "country": "ARE"
+      },
+      {
+        "year": "2024",
+        "value": 69281000,
+        "country": "GBR"
+      },
+      {
+        "year": "2024",
+        "value": 340003797,
+        "country": "USA"
+      },
+      {
+        "year": "2024",
+        "value": 3386588,
+        "country": "URY"
+      },
+      {
+        "year": "2024",
+        "value": 36361859,
+        "country": "UZB"
+      },
+      {
+        "year": "2024",
+        "value": 327777,
+        "country": "VUT"
+      },
+      {
+        "year": "2024",
+        "value": 28405543,
+        "country": "VEN"
+      },
+      {
+        "year": "2025",
+        "value": 237527782,
+        "country": "NGA"
+      },
+      {
+        "year": "2025",
+        "value": 1820909,
+        "country": "MKD"
+      },
+      {
+        "year": "2025",
+        "value": 43541,
+        "country": "MNP"
+      },
+      {
+        "year": "2025",
+        "value": 5610870,
+        "country": "NOR"
+      },
+      {
+        "year": "2025",
+        "value": 5494691,
+        "country": "OMN"
+      },
+      {
+        "year": "2025",
+        "value": 255219554,
+        "country": "PAK"
+      },
+      {
+        "year": "2025",
+        "value": 17663,
+        "country": "PLW"
+      },
+      {
+        "year": "2025",
+        "value": 4571189,
+        "country": "PAN"
+      },
+      {
+        "year": "2025",
+        "value": 10762817,
+        "country": "PNG"
+      },
+      {
+        "year": "2025",
+        "value": 7013078,
+        "country": "PRY"
+      },
+      {
+        "year": "2025",
+        "value": 34576665,
+        "country": "PER"
+      },
+      {
+        "year": "2025",
+        "value": 116786962,
+        "country": "PHL"
+      },
+      {
+        "year": "2025",
+        "value": 36435861,
+        "country": "POL"
+      },
+      {
+        "year": "2025",
+        "value": 10804871,
+        "country": "PRT"
+      },
+      {
+        "year": "2025",
+        "value": 3184835,
+        "country": "PRI"
+      },
+      {
+        "year": "2025",
+        "value": 2972215,
+        "country": "QAT"
+      },
+      {
+        "year": "2025",
+        "value": 19020271,
+        "country": "ROU"
+      },
+      {
+        "year": "2025",
+        "value": 143513328,
+        "country": "RUS"
+      },
+      {
+        "year": "2025",
+        "value": 14569341,
+        "country": "RWA"
+      },
+      {
+        "year": "2025",
+        "value": 219306,
+        "country": "WSM"
+      },
+      {
+        "year": "2025",
+        "value": 34109,
+        "country": "SMR"
+      },
+      {
+        "year": "2025",
+        "value": 240254,
+        "country": "STP"
+      },
+      {
+        "year": "2025",
+        "value": 36973555,
+        "country": "SAU"
+      },
+      {
+        "year": "2025",
+        "value": 18931966,
+        "country": "SEN"
+      },
+      {
+        "year": "2025",
+        "value": 6549143,
+        "country": "SRB"
+      },
+      {
+        "year": "2025",
+        "value": 122730,
+        "country": "SYC"
+      },
+      {
+        "year": "2025",
+        "value": 8819794,
+        "country": "SLE"
+      },
+      {
+        "year": "2025",
+        "value": 6111175,
+        "country": "SGP"
+      },
+      {
+        "year": "2025",
+        "value": 43923,
+        "country": "SXM"
+      },
+      {
+        "year": "2025",
+        "value": 5413813,
+        "country": "SVK"
+      },
+      {
+        "year": "2025",
+        "value": 2130986,
+        "country": "SVN"
+      },
+      {
+        "year": "2025",
+        "value": 838645,
+        "country": "SLB"
+      },
+      {
+        "year": "2016",
+        "value": 3379283,
+        "country": "URY"
+      },
+      {
+        "year": "2016",
+        "value": 31284568,
+        "country": "UZB"
+      },
+      {
+        "year": "2016",
+        "value": 272087,
+        "country": "VUT"
+      },
+      {
+        "year": "2016",
+        "value": 30765720,
+        "country": "VEN"
+      },
+      {
+        "year": "2017",
+        "value": 200254579,
+        "country": "NGA"
+      },
+      {
+        "year": "2017",
+        "value": 1898657,
+        "country": "MKD"
+      },
+      {
+        "year": "2018",
+        "value": 49024465,
+        "country": "COL"
+      },
+      {
+        "year": "2022",
+        "value": 51737944,
+        "country": "COL"
+      },
+      {
+        "year": "2020",
+        "value": 213996181,
+        "country": "NGA"
+      },
+      {
+        "year": "2019",
+        "value": 209485641,
+        "country": "NGA"
+      },
+      {
+        "year": "2019",
+        "value": 1876262,
+        "country": "MKD"
+      },
+      {
+        "year": "2019",
+        "value": 48129,
+        "country": "MNP"
+      },
+      {
+        "year": "2019",
+        "value": 5347896,
+        "country": "NOR"
+      },
+      {
+        "year": "2019",
+        "value": 4591241,
+        "country": "OMN"
+      },
+      {
+        "year": "2019",
+        "value": 230800899,
+        "country": "PAK"
+      },
+      {
+        "year": "2019",
+        "value": 17798,
+        "country": "PLW"
+      },
+      {
+        "year": "2019",
+        "value": 4234700,
+        "country": "PAN"
+      },
+      {
+        "year": "2019",
+        "value": 9609010,
+        "country": "PNG"
+      },
+      {
+        "year": "2019",
+        "value": 6515058,
+        "country": "PRY"
+      },
+      {
+        "year": "2018",
+        "value": 210187,
+        "country": "STP"
+      },
+      {
+        "year": "2018",
+        "value": 30196281,
+        "country": "SAU"
+      },
+      {
+        "year": "2018",
+        "value": 15914498,
+        "country": "SEN"
+      },
+      {
+        "year": "2018",
+        "value": 6982604,
+        "country": "SRB"
+      },
+      {
+        "year": "2018",
+        "value": 96762,
+        "country": "SYC"
+      },
+      {
+        "year": "2018",
+        "value": 7554563,
+        "country": "SLE"
+      },
+      {
+        "year": "2018",
+        "value": 5638676,
+        "country": "SGP"
+      },
+      {
+        "year": "2018",
+        "value": 39712,
+        "country": "SXM"
+      },
+      {
+        "year": "2018",
+        "value": 5446771,
+        "country": "SVK"
+      },
+      {
+        "year": "2018",
+        "value": 2073894,
+        "country": "SVN"
+      },
+      {
+        "year": "2018",
+        "value": 709101,
+        "country": "SLB"
+      },
+      {
+        "year": "2019",
+        "value": 213392,
+        "country": "STP"
+      },
+      {
+        "year": "2019",
+        "value": 30063799,
+        "country": "SAU"
+      },
+      {
+        "year": "2019",
+        "value": 16352922,
+        "country": "SEN"
+      },
+      {
+        "year": "2019",
+        "value": 6945235,
+        "country": "SRB"
+      },
+      {
+        "year": "2019",
+        "value": 97625,
+        "country": "SYC"
+      },
+      {
+        "year": "2019",
+        "value": 7731991,
+        "country": "SLE"
+      },
+      {
+        "year": "2019",
+        "value": 5703569,
+        "country": "SGP"
+      },
+      {
+        "year": "2019",
+        "value": 40385,
+        "country": "SXM"
+      },
+      {
+        "year": "2019",
+        "value": 5454147,
+        "country": "SVK"
+      },
+      {
+        "year": "2019",
+        "value": 2088385,
+        "country": "SVN"
+      },
+      {
+        "year": "2019",
+        "value": 728147,
+        "country": "SLB"
+      },
+      {
+        "year": "2020",
+        "value": 7788054,
+        "country": "TGO"
+      },
+      {
+        "year": "2020",
+        "value": 105704,
+        "country": "TON"
+      },
+      {
+        "year": "2020",
+        "value": 1366725,
+        "country": "TTO"
+      },
+      {
+        "year": "2020",
+        "value": 11974057,
+        "country": "TUN"
+      },
+      {
+        "year": "2020",
+        "value": 83384680,
+        "country": "TUR"
+      },
+      {
+        "year": "2020",
+        "value": 6949912,
+        "country": "TKM"
+      },
+      {
+        "year": "2020",
+        "value": 44386,
+        "country": "TCA"
+      },
+      {
+        "year": "2020",
+        "value": 10399,
+        "country": "TUV"
+      },
+      {
+        "year": "2020",
+        "value": 44457152,
+        "country": "UGA"
+      },
+      {
+        "year": "2020",
+        "value": 44680014,
+        "country": "UKR"
+      },
+      {
+        "year": "2020",
+        "value": 9401038,
+        "country": "ARE"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          9646.0,
+          340003797.0
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Persons",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.0f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Population, total",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

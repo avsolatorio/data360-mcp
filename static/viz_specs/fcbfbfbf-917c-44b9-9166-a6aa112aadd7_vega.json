@@ -1,0 +1,379 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Number of total species"
+    ],
+    "subtitle": [
+      "2024",
+      "Count",
+      "Gray: countries not in selected set or no data for this year."
+    ]
+  },
+  "width": 800,
+  "height": 450,
+  "data": {
+    "url": "https://unpkg.com/world-atlas@2.0.2/countries-110m.json",
+    "format": {
+      "type": "topojson",
+      "feature": "countries"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "year": "2024",
+              "value": 20209,
+              "country": "Argentina"
+            },
+            {
+              "year": "2024",
+              "value": 44232,
+              "country": "Belgium"
+            },
+            {
+              "year": "2024",
+              "value": 59191,
+              "country": "Brazil"
+            },
+            {
+              "year": "2024",
+              "value": 45433,
+              "country": "Canada"
+            },
+            {
+              "year": "2024",
+              "value": 11566,
+              "country": "Chile"
+            },
+            {
+              "year": "2024",
+              "value": 48825,
+              "country": "China"
+            },
+            {
+              "year": "2024",
+              "value": 47834,
+              "country": "Colombia"
+            },
+            {
+              "year": "2024",
+              "value": 37811,
+              "country": "Costa Rica"
+            },
+            {
+              "year": "2024",
+              "value": 16331,
+              "country": "Cuba"
+            },
+            {
+              "year": "2024",
+              "value": 11302,
+              "country": "Dominican Republic"
+            },
+            {
+              "year": "2024",
+              "value": 32315,
+              "country": "Ecuador"
+            },
+            {
+              "year": "2024",
+              "value": 15996,
+              "country": "El Salvador"
+            },
+            {
+              "year": "2024",
+              "value": 88726,
+              "country": "France"
+            },
+            {
+              "year": "2024",
+              "value": 56172,
+              "country": "Germany"
+            },
+            {
+              "year": "2024",
+              "value": 23068,
+              "country": "Guatemala"
+            },
+            {
+              "year": "2024",
+              "value": 10357,
+              "country": "Haiti"
+            },
+            {
+              "year": "2024",
+              "value": 22423,
+              "country": "Honduras"
+            },
+            {
+              "year": "2024",
+              "value": 20793,
+              "country": "India"
+            },
+            {
+              "year": "2024",
+              "value": 27489,
+              "country": "Indonesia"
+            },
+            {
+              "year": "2024",
+              "value": 50458,
+              "country": "Italy"
+            },
+            {
+              "year": "2024",
+              "value": 29339,
+              "country": "Japan"
+            },
+            {
+              "year": "2024",
+              "value": 14101,
+              "country": "South Korea"
+            },
+            {
+              "year": "2024",
+              "value": 19662,
+              "country": "Malaysia"
+            },
+            {
+              "year": "2024",
+              "value": 66986,
+              "country": "Mexico"
+            },
+            {
+              "year": "2024",
+              "value": 44198,
+              "country": "Netherlands"
+            },
+            {
+              "year": "2024",
+              "value": 27797,
+              "country": "Nicaragua"
+            },
+            {
+              "year": "2024",
+              "value": 32359,
+              "country": "Panama"
+            },
+            {
+              "year": "2024",
+              "value": 31935,
+              "country": "Peru"
+            },
+            {
+              "year": "2024",
+              "value": 16960,
+              "country": "Philippines"
+            },
+            {
+              "year": "2024",
+              "value": 36330,
+              "country": "Poland"
+            },
+            {
+              "year": "2024",
+              "value": 18891,
+              "country": "Romania"
+            },
+            {
+              "year": "2024",
+              "value": 48625,
+              "country": "Spain"
+            },
+            {
+              "year": "2024",
+              "value": 50874,
+              "country": "Sweden"
+            },
+            {
+              "year": "2024",
+              "value": 19278,
+              "country": "Thailand"
+            },
+            {
+              "year": "2024",
+              "value": 44450,
+              "country": "United Kingdom"
+            },
+            {
+              "year": "2024",
+              "value": 102900,
+              "country": "United States of America"
+            },
+            {
+              "year": "2024",
+              "value": 6548,
+              "country": "Uruguay"
+            },
+            {
+              "year": "2024",
+              "value": 29394,
+              "country": "Venezuela"
+            },
+            {
+              "year": "2024",
+              "value": 22699,
+              "country": "Bolivia"
+            },
+            {
+              "year": "2024",
+              "value": 12475,
+              "country": "Paraguay"
+            }
+          ]
+        },
+        "key": "country",
+        "fields": [
+          "year",
+          "value",
+          "country"
+        ]
+      }
+    }
+  ],
+  "projection": {
+    "type": "equalEarth"
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "fill": "#eee",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      },
+      "transform": [
+        {
+          "filter": "isValid(datum.value)"
+        }
+      ],
+      "encoding": {
+        "color": {
+          "field": "value",
+          "type": "quantitative",
+          "scale": {
+            "scheme": "blues"
+          },
+          "legend": {
+            "title": "Count",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.0f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "Number of total species",
+            "title": "Indicator"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

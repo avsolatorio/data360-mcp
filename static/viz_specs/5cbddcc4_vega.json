@@ -1,0 +1,405 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "WB_WDI_EG_ELC_ACCS_RU_ZS vs. WB_WDI_EG_ELC_ACCS_UR_ZS"
+    ],
+    "subtitle": [
+      "Kenya, Tanzania, Uganda, 2015-2021"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "country": "Kenya",
+        "wb_wdi_eg_elc_accs_ru_zs": 29.0,
+        "wb_wdi_eg_elc_accs_ur_zs": 78.1
+      },
+      {
+        "year": "2015",
+        "country": "Tanzania",
+        "wb_wdi_eg_elc_accs_ru_zs": 11.3,
+        "wb_wdi_eg_elc_accs_ur_zs": 58.4
+      },
+      {
+        "year": "2015",
+        "country": "Uganda",
+        "wb_wdi_eg_elc_accs_ru_zs": 9.0,
+        "wb_wdi_eg_elc_accs_ur_zs": 51.9
+      },
+      {
+        "year": "2016",
+        "country": "Kenya",
+        "wb_wdi_eg_elc_accs_ru_zs": 42.1,
+        "wb_wdi_eg_elc_accs_ur_zs": 84.3
+      },
+      {
+        "year": "2016",
+        "country": "Tanzania",
+        "wb_wdi_eg_elc_accs_ru_zs": 17.3,
+        "wb_wdi_eg_elc_accs_ur_zs": 65.3
+      },
+      {
+        "year": "2016",
+        "country": "Uganda",
+        "wb_wdi_eg_elc_accs_ru_zs": 17.7,
+        "wb_wdi_eg_elc_accs_ur_zs": 57.5
+      },
+      {
+        "year": "2017",
+        "country": "Kenya",
+        "wb_wdi_eg_elc_accs_ru_zs": 45.8,
+        "wb_wdi_eg_elc_accs_ur_zs": 83.6
+      },
+      {
+        "year": "2017",
+        "country": "Tanzania",
+        "wb_wdi_eg_elc_accs_ru_zs": 16.0,
+        "wb_wdi_eg_elc_accs_ur_zs": 64.8
+      },
+      {
+        "year": "2017",
+        "country": "Uganda",
+        "wb_wdi_eg_elc_accs_ru_zs": 23.0,
+        "wb_wdi_eg_elc_accs_ur_zs": 63.4
+      },
+      {
+        "year": "2018",
+        "country": "Kenya",
+        "wb_wdi_eg_elc_accs_ru_zs": 51.6,
+        "wb_wdi_eg_elc_accs_ur_zs": 87.2
+      },
+      {
+        "year": "2018",
+        "country": "Tanzania",
+        "wb_wdi_eg_elc_accs_ru_zs": 18.1,
+        "wb_wdi_eg_elc_accs_ur_zs": 67.9
+      },
+      {
+        "year": "2018",
+        "country": "Uganda",
+        "wb_wdi_eg_elc_accs_ru_zs": 32.5,
+        "wb_wdi_eg_elc_accs_ur_zs": 72.0
+      },
+      {
+        "year": "2019",
+        "country": "Kenya",
+        "wb_wdi_eg_elc_accs_ru_zs": 61.7,
+        "wb_wdi_eg_elc_accs_ur_zs": 90.8
+      },
+      {
+        "year": "2019",
+        "country": "Tanzania",
+        "wb_wdi_eg_elc_accs_ru_zs": 19.0,
+        "wb_wdi_eg_elc_accs_ur_zs": 73.2
+      },
+      {
+        "year": "2019",
+        "country": "Uganda",
+        "wb_wdi_eg_elc_accs_ru_zs": 31.8,
+        "wb_wdi_eg_elc_accs_ur_zs": 70.8
+      },
+      {
+        "year": "2020",
+        "country": "Kenya",
+        "wb_wdi_eg_elc_accs_ru_zs": 62.7,
+        "wb_wdi_eg_elc_accs_ur_zs": 94.1
+      },
+      {
+        "year": "2020",
+        "country": "Tanzania",
+        "wb_wdi_eg_elc_accs_ru_zs": 22.0,
+        "wb_wdi_eg_elc_accs_ur_zs": 72.9
+      },
+      {
+        "year": "2020",
+        "country": "Uganda",
+        "wb_wdi_eg_elc_accs_ru_zs": 32.8,
+        "wb_wdi_eg_elc_accs_ur_zs": 70.1
+      },
+      {
+        "year": "2021",
+        "country": "Kenya",
+        "wb_wdi_eg_elc_accs_ru_zs": 68.2,
+        "wb_wdi_eg_elc_accs_ur_zs": 97.5
+      },
+      {
+        "year": "2021",
+        "country": "Tanzania",
+        "wb_wdi_eg_elc_accs_ru_zs": 23.3,
+        "wb_wdi_eg_elc_accs_ur_zs": 77.3
+      },
+      {
+        "year": "2021",
+        "country": "Uganda",
+        "wb_wdi_eg_elc_accs_ru_zs": 35.9,
+        "wb_wdi_eg_elc_accs_ur_zs": 72.3
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2,
+        "opacity": 0.6,
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "wb_wdi_eg_elc_accs_ru_zs",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "WB_WDI_EG_ELC_ACCS_RU_ZS"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "wb_wdi_eg_elc_accs_ur_zs",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "WB_WDI_EG_ELC_ACCS_UR_ZS"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 40,
+        "opacity": 0.9
+      },
+      "encoding": {
+        "x": {
+          "field": "wb_wdi_eg_elc_accs_ru_zs",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "WB_WDI_EG_ELC_ACCS_RU_ZS"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "wb_wdi_eg_elc_accs_ur_zs",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "WB_WDI_EG_ELC_ACCS_UR_ZS"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "wb_wdi_eg_elc_accs_ru_zs",
+            "title": "WB_WDI_EG_ELC_ACCS_RU_ZS",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "wb_wdi_eg_elc_accs_ur_zs",
+            "title": "WB_WDI_EG_ELC_ACCS_UR_ZS",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "width": 550,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

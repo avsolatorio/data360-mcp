@@ -1,0 +1,233 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Top 12 Internet Access in Asia (2021)",
+    "subtitle": [
+      "2021",
+      "Percentage of population"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2021",
+        "value": 97.571327,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2021",
+        "value": 96.972198,
+        "country": "Australia"
+      },
+      {
+        "year": "2021",
+        "value": 96.924682,
+        "country": "Singapore"
+      },
+      {
+        "year": "2021",
+        "value": 96.751428,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021",
+        "value": 91.990601,
+        "country": "New Zealand"
+      },
+      {
+        "year": "2021",
+        "value": 85.269567,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 82.914079,
+        "country": "Japan"
+      },
+      {
+        "year": "2021",
+        "value": 81.606823,
+        "country": "Mongolia"
+      },
+      {
+        "year": "2021",
+        "value": 74.21,
+        "country": "Viet Nam"
+      },
+      {
+        "year": "2021",
+        "value": 73.053235,
+        "country": "China"
+      },
+      {
+        "year": "2021",
+        "value": 66.907799,
+        "country": "Philippines"
+      },
+      {
+        "year": "2021",
+        "value": 62.104478,
+        "country": "Indonesia"
+      }
+    ]
+  },
+  "mark": {
+    "type": "bar",
+    "cornerRadiusTopRight": 3,
+    "cornerRadiusBottomRight": 3
+  },
+  "encoding": {
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "sort": "-x",
+      "axis": {
+        "title": null,
+        "labelColor": "#111111",
+        "labelFontWeight": "bold",
+        "labelLimit": 150
+      }
+    },
+    "x": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Individuals using the Internet (% of population)",
+        "labelExpr": "format(datum.value, '.1f') + '%'"
+      },
+      "scale": {
+        "zero": true
+      }
+    },
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": null
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "nominal"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Individuals using the Internet (% of population)",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 500,
+  "height": 336,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

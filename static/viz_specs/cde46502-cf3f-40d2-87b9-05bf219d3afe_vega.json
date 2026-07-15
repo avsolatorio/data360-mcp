@@ -1,0 +1,257 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Latest Available Population by Country",
+    "subtitle": [
+      "Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola, Antigua and Barbuda, ARB, Argentina, Armenia, \u2026 (+226 more), 1993-2023",
+      "Persons",
+      "Note: Map displays data for the most recent year (2023)"
+    ]
+  },
+  "width": 800,
+  "height": 450,
+  "data": {
+    "url": "https://unpkg.com/world-atlas@2.0.2/countries-110m.json",
+    "format": {
+      "type": "topojson",
+      "feature": "countries"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "year": "2023",
+              "value": 128691692,
+              "country": "Ethiopia"
+            },
+            {
+              "year": "2023",
+              "value": 54414,
+              "country": "Faroe Islands"
+            },
+            {
+              "year": "2023",
+              "value": 924145,
+              "country": "Fiji"
+            },
+            {
+              "year": "2023",
+              "value": 5583911,
+              "country": "Finland"
+            },
+            {
+              "year": "2023",
+              "value": 68372286,
+              "country": "France"
+            },
+            {
+              "year": "2023",
+              "value": 281118,
+              "country": "French Polynesia"
+            },
+            {
+              "year": "2023",
+              "value": 2484789,
+              "country": "Gabon"
+            },
+            {
+              "year": "2023",
+              "value": 2697845,
+              "country": "Gambia, The"
+            },
+            {
+              "year": "2023",
+              "value": 3715483,
+              "country": "Georgia"
+            },
+            {
+              "year": "2023",
+              "value": 83287273,
+              "country": "Germany"
+            },
+            {
+              "year": "2023",
+              "value": 33787914,
+              "country": "Ghana"
+            },
+            {
+              "year": "2023",
+              "value": 38471,
+              "country": "Gibraltar"
+            },
+            {
+              "year": "2023",
+              "value": 10407351,
+              "country": "Greece"
+            },
+            {
+              "year": "2023",
+              "value": 56865,
+              "country": "Greenland"
+            },
+            {
+              "year": "2023",
+              "value": 117081,
+              "country": "Grenada"
+            },
+            {
+              "year": "2023",
+              "value": 166506,
+              "country": "Guam"
+            },
+            {
+              "year": "2023",
+              "value": 18124838,
+              "country": "Guatemala"
+            }
+          ]
+        },
+        "key": "country",
+        "fields": [
+          "year",
+          "value",
+          "country"
+        ]
+      }
+    }
+  ],
+  "projection": {
+    "type": "equalEarth"
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "fill": "#eee",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      },
+      "transform": [
+        {
+          "filter": "isValid(datum.value)"
+        }
+      ],
+      "encoding": {
+        "color": {
+          "field": "value",
+          "type": "quantitative",
+          "scale": {
+            "scheme": "blues"
+          },
+          "legend": {
+            "title": "Persons",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.0f"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

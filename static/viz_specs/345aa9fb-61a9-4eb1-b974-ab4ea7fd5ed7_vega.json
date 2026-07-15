@@ -1,0 +1,946 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "CO2 Emissions Per Capita (Our World in Data)",
+    "subtitle": [
+      "2000-2022",
+      "Ratio"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2000",
+        "value": 1.955,
+        "country": "Brazil"
+      },
+      {
+        "year": "2001",
+        "value": 1.963,
+        "country": "Brazil"
+      },
+      {
+        "year": "2002",
+        "value": 1.948,
+        "country": "Brazil"
+      },
+      {
+        "year": "2003",
+        "value": 1.908,
+        "country": "Brazil"
+      },
+      {
+        "year": "2004",
+        "value": 1.979,
+        "country": "Brazil"
+      },
+      {
+        "year": "2005",
+        "value": 1.973,
+        "country": "Brazil"
+      },
+      {
+        "year": "2006",
+        "value": 1.976,
+        "country": "Brazil"
+      },
+      {
+        "year": "2007",
+        "value": 2.071,
+        "country": "Brazil"
+      },
+      {
+        "year": "2008",
+        "value": 2.168,
+        "country": "Brazil"
+      },
+      {
+        "year": "2009",
+        "value": 2.029,
+        "country": "Brazil"
+      },
+      {
+        "year": "2010",
+        "value": 2.273,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": 2.369,
+        "country": "Brazil"
+      },
+      {
+        "year": "2012",
+        "value": 2.531,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013",
+        "value": 2.682,
+        "country": "Brazil"
+      },
+      {
+        "year": "2014",
+        "value": 2.788,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 2.625,
+        "country": "Brazil"
+      },
+      {
+        "year": "2016",
+        "value": 2.425,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 2.434,
+        "country": "Brazil"
+      },
+      {
+        "year": "2018",
+        "value": 2.321,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 2.282,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 2.134,
+        "country": "Brazil"
+      },
+      {
+        "year": "2021",
+        "value": 2.377,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 2.301,
+        "country": "Brazil"
+      },
+      {
+        "year": "2000",
+        "value": 2.874,
+        "country": "China"
+      },
+      {
+        "year": "2001",
+        "value": 2.916,
+        "country": "China"
+      },
+      {
+        "year": "2002",
+        "value": 3.188,
+        "country": "China"
+      },
+      {
+        "year": "2003",
+        "value": 3.74,
+        "country": "China"
+      },
+      {
+        "year": "2004",
+        "value": 4.007,
+        "country": "China"
+      },
+      {
+        "year": "2005",
+        "value": 4.49,
+        "country": "China"
+      },
+      {
+        "year": "2006",
+        "value": 4.927,
+        "country": "China"
+      },
+      {
+        "year": "2007",
+        "value": 5.267,
+        "country": "China"
+      },
+      {
+        "year": "2008",
+        "value": 5.624,
+        "country": "China"
+      },
+      {
+        "year": "2009",
+        "value": 5.878,
+        "country": "China"
+      },
+      {
+        "year": "2010",
+        "value": 6.378,
+        "country": "China"
+      },
+      {
+        "year": "2011",
+        "value": 7.008,
+        "country": "China"
+      },
+      {
+        "year": "2012",
+        "value": 7.141,
+        "country": "China"
+      },
+      {
+        "year": "2013",
+        "value": 7.22,
+        "country": "China"
+      },
+      {
+        "year": "2014",
+        "value": 7.198,
+        "country": "China"
+      },
+      {
+        "year": "2015",
+        "value": 7.065,
+        "country": "China"
+      },
+      {
+        "year": "2016",
+        "value": 6.953,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 7.085,
+        "country": "China"
+      },
+      {
+        "year": "2018",
+        "value": 7.282,
+        "country": "China"
+      },
+      {
+        "year": "2019",
+        "value": 7.526,
+        "country": "China"
+      },
+      {
+        "year": "2020",
+        "value": 7.647,
+        "country": "China"
+      },
+      {
+        "year": "2021",
+        "value": 8.026,
+        "country": "China"
+      },
+      {
+        "year": "2022",
+        "value": 7.964,
+        "country": "China"
+      },
+      {
+        "year": "2000",
+        "value": 10.99,
+        "country": "Germany"
+      },
+      {
+        "year": "2001",
+        "value": 11.171,
+        "country": "Germany"
+      },
+      {
+        "year": "2002",
+        "value": 10.952,
+        "country": "Germany"
+      },
+      {
+        "year": "2003",
+        "value": 10.894,
+        "country": "Germany"
+      },
+      {
+        "year": "2004",
+        "value": 10.678,
+        "country": "Germany"
+      },
+      {
+        "year": "2005",
+        "value": 10.578,
+        "country": "Germany"
+      },
+      {
+        "year": "2006",
+        "value": 10.85,
+        "country": "Germany"
+      },
+      {
+        "year": "2007",
+        "value": 10.408,
+        "country": "Germany"
+      },
+      {
+        "year": "2008",
+        "value": 10.561,
+        "country": "Germany"
+      },
+      {
+        "year": "2009",
+        "value": 9.76,
+        "country": "Germany"
+      },
+      {
+        "year": "2010",
+        "value": 10.227,
+        "country": "Germany"
+      },
+      {
+        "year": "2011",
+        "value": 9.95,
+        "country": "Germany"
+      },
+      {
+        "year": "2012",
+        "value": 10.061,
+        "country": "Germany"
+      },
+      {
+        "year": "2013",
+        "value": 10.263,
+        "country": "Germany"
+      },
+      {
+        "year": "2014",
+        "value": 9.74,
+        "country": "Germany"
+      },
+      {
+        "year": "2015",
+        "value": 9.757,
+        "country": "Germany"
+      },
+      {
+        "year": "2016",
+        "value": 9.642,
+        "country": "Germany"
+      },
+      {
+        "year": "2017",
+        "value": 9.441,
+        "country": "Germany"
+      },
+      {
+        "year": "2018",
+        "value": 9.117,
+        "country": "Germany"
+      },
+      {
+        "year": "2019",
+        "value": 8.495,
+        "country": "Germany"
+      },
+      {
+        "year": "2020",
+        "value": 7.753,
+        "country": "Germany"
+      },
+      {
+        "year": "2021",
+        "value": 8.11,
+        "country": "Germany"
+      },
+      {
+        "year": "2022",
+        "value": 7.986,
+        "country": "Germany"
+      },
+      {
+        "year": "2000",
+        "value": 0.932,
+        "country": "India"
+      },
+      {
+        "year": "2001",
+        "value": 0.928,
+        "country": "India"
+      },
+      {
+        "year": "2002",
+        "value": 0.94,
+        "country": "India"
+      },
+      {
+        "year": "2003",
+        "value": 0.956,
+        "country": "India"
+      },
+      {
+        "year": "2004",
+        "value": 0.998,
+        "country": "India"
+      },
+      {
+        "year": "2005",
+        "value": 1.035,
+        "country": "India"
+      },
+      {
+        "year": "2006",
+        "value": 1.102,
+        "country": "India"
+      },
+      {
+        "year": "2007",
+        "value": 1.17,
+        "country": "India"
+      },
+      {
+        "year": "2008",
+        "value": 1.233,
+        "country": "India"
+      },
+      {
+        "year": "2009",
+        "value": 1.316,
+        "country": "India"
+      },
+      {
+        "year": "2010",
+        "value": 1.349,
+        "country": "India"
+      },
+      {
+        "year": "2011",
+        "value": 1.399,
+        "country": "India"
+      },
+      {
+        "year": "2012",
+        "value": 1.506,
+        "country": "India"
+      },
+      {
+        "year": "2013",
+        "value": 1.54,
+        "country": "India"
+      },
+      {
+        "year": "2014",
+        "value": 1.637,
+        "country": "India"
+      },
+      {
+        "year": "2015",
+        "value": 1.682,
+        "country": "India"
+      },
+      {
+        "year": "2016",
+        "value": 1.752,
+        "country": "India"
+      },
+      {
+        "year": "2017",
+        "value": 1.785,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 1.886,
+        "country": "India"
+      },
+      {
+        "year": "2019",
+        "value": 1.881,
+        "country": "India"
+      },
+      {
+        "year": "2020",
+        "value": 1.726,
+        "country": "India"
+      },
+      {
+        "year": "2021",
+        "value": 1.891,
+        "country": "India"
+      },
+      {
+        "year": "2022",
+        "value": 1.986,
+        "country": "India"
+      },
+      {
+        "year": "2000",
+        "value": 9.951,
+        "country": "Japan"
+      },
+      {
+        "year": "2001",
+        "value": 9.818,
+        "country": "Japan"
+      },
+      {
+        "year": "2002",
+        "value": 10.033,
+        "country": "Japan"
+      },
+      {
+        "year": "2003",
+        "value": 10.084,
+        "country": "Japan"
+      },
+      {
+        "year": "2004",
+        "value": 10.037,
+        "country": "Japan"
+      },
+      {
+        "year": "2005",
+        "value": 10.087,
+        "country": "Japan"
+      },
+      {
+        "year": "2006",
+        "value": 9.901,
+        "country": "Japan"
+      },
+      {
+        "year": "2007",
+        "value": 10.173,
+        "country": "Japan"
+      },
+      {
+        "year": "2008",
+        "value": 9.615,
+        "country": "Japan"
+      },
+      {
+        "year": "2009",
+        "value": 9.075,
+        "country": "Japan"
+      },
+      {
+        "year": "2010",
+        "value": 9.477,
+        "country": "Japan"
+      },
+      {
+        "year": "2011",
+        "value": 9.874,
+        "country": "Japan"
+      },
+      {
+        "year": "2012",
+        "value": 10.209,
+        "country": "Japan"
+      },
+      {
+        "year": "2013",
+        "value": 10.298,
+        "country": "Japan"
+      },
+      {
+        "year": "2014",
+        "value": 9.913,
+        "country": "Japan"
+      },
+      {
+        "year": "2015",
+        "value": 9.611,
+        "country": "Japan"
+      },
+      {
+        "year": "2016",
+        "value": 9.462,
+        "country": "Japan"
+      },
+      {
+        "year": "2017",
+        "value": 9.346,
+        "country": "Japan"
+      },
+      {
+        "year": "2018",
+        "value": 9.002,
+        "country": "Japan"
+      },
+      {
+        "year": "2019",
+        "value": 8.725,
+        "country": "Japan"
+      },
+      {
+        "year": "2020",
+        "value": 8.238,
+        "country": "Japan"
+      },
+      {
+        "year": "2021",
+        "value": 8.449,
+        "country": "Japan"
+      },
+      {
+        "year": "2022",
+        "value": 8.262,
+        "country": "Japan"
+      },
+      {
+        "year": "2000",
+        "value": 21.352,
+        "country": "United States"
+      },
+      {
+        "year": "2001",
+        "value": 20.781,
+        "country": "United States"
+      },
+      {
+        "year": "2002",
+        "value": 20.713,
+        "country": "United States"
+      },
+      {
+        "year": "2003",
+        "value": 20.731,
+        "country": "United States"
+      },
+      {
+        "year": "2004",
+        "value": 20.878,
+        "country": "United States"
+      },
+      {
+        "year": "2005",
+        "value": 20.737,
+        "country": "United States"
+      },
+      {
+        "year": "2006",
+        "value": 20.261,
+        "country": "United States"
+      },
+      {
+        "year": "2007",
+        "value": 20.309,
+        "country": "United States"
+      },
+      {
+        "year": "2008",
+        "value": 19.396,
+        "country": "United States"
+      },
+      {
+        "year": "2009",
+        "value": 17.793,
+        "country": "United States"
+      },
+      {
+        "year": "2010",
+        "value": 18.259,
+        "country": "United States"
+      },
+      {
+        "year": "2011",
+        "value": 17.657,
+        "country": "United States"
+      },
+      {
+        "year": "2012",
+        "value": 16.852,
+        "country": "United States"
+      },
+      {
+        "year": "2013",
+        "value": 17.12,
+        "country": "United States"
+      },
+      {
+        "year": "2014",
+        "value": 17.111,
+        "country": "United States"
+      },
+      {
+        "year": "2015",
+        "value": 16.486,
+        "country": "United States"
+      },
+      {
+        "year": "2016",
+        "value": 15.958,
+        "country": "United States"
+      },
+      {
+        "year": "2017",
+        "value": 15.69,
+        "country": "United States"
+      },
+      {
+        "year": "2018",
+        "value": 16.05,
+        "country": "United States"
+      },
+      {
+        "year": "2019",
+        "value": 15.578,
+        "country": "United States"
+      },
+      {
+        "year": "2020",
+        "value": 13.89,
+        "country": "United States"
+      },
+      {
+        "year": "2021",
+        "value": 14.794,
+        "country": "United States"
+      },
+      {
+        "year": "2022",
+        "value": 14.871,
+        "country": "United States"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Ratio",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "Annual CO2 emissions (per capita)",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

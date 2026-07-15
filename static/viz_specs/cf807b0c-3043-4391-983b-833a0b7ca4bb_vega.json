@@ -1,0 +1,738 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP per capita (constant 2015 US$)"
+    ],
+    "subtitle": [
+      "2005-2020",
+      "US dollars, 2015 constant prices"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2013",
+        "value": 13946.095083,
+        "country": "Argentina"
+      },
+      {
+        "year": "2011",
+        "value": 12252.844107,
+        "country": "Chile"
+      },
+      {
+        "year": "2011",
+        "value": 5517.101109,
+        "country": "Colombia"
+      },
+      {
+        "year": "2014",
+        "value": 6121.83982,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 13265.886064,
+        "country": "Argentina"
+      },
+      {
+        "year": "2015",
+        "value": 13433.920299,
+        "country": "Chile"
+      },
+      {
+        "year": "2015",
+        "value": 6248.514905,
+        "country": "Colombia"
+      },
+      {
+        "year": "2009",
+        "value": 8246.09707,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 12680.776152,
+        "country": "Chile"
+      },
+      {
+        "year": "2020",
+        "value": 5891.955232,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 10100.50212,
+        "country": "Mexico"
+      },
+      {
+        "year": "2010",
+        "value": 8792.634361,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 13631.928489,
+        "country": "Chile"
+      },
+      {
+        "year": "2019",
+        "value": 6439.963598,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 8577.843767,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013",
+        "value": 6021.461428,
+        "country": "Peru"
+      },
+      {
+        "year": "2017",
+        "value": 8628.253089,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 6309.677453,
+        "country": "Colombia"
+      },
+      {
+        "year": "2010",
+        "value": 9389.067221,
+        "country": "Mexico"
+      },
+      {
+        "year": "2019",
+        "value": 8771.440513,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": 9067.993163,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 8435.011433,
+        "country": "Brazil"
+      },
+      {
+        "year": "2006",
+        "value": 10611.614401,
+        "country": "Chile"
+      },
+      {
+        "year": "2006",
+        "value": 9813.828042,
+        "country": "Mexico"
+      },
+      {
+        "year": "2018",
+        "value": 10296.869094,
+        "country": "Mexico"
+      },
+      {
+        "year": "2008",
+        "value": 9826.342184,
+        "country": "Mexico"
+      },
+      {
+        "year": "2012",
+        "value": 13754.425424,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": 13763.006884,
+        "country": "Chile"
+      },
+      {
+        "year": "2018",
+        "value": 6353.546429,
+        "country": "Colombia"
+      },
+      {
+        "year": "2012",
+        "value": 9167.499239,
+        "country": "Brazil"
+      },
+      {
+        "year": "2005",
+        "value": 11099.750919,
+        "country": "Argentina"
+      },
+      {
+        "year": "2013",
+        "value": 9738.710597,
+        "country": "Mexico"
+      },
+      {
+        "year": "2015",
+        "value": 13679.626498,
+        "country": "Argentina"
+      },
+      {
+        "year": "2006",
+        "value": 7622.040071,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013",
+        "value": 9366.739324,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": 9575.934377,
+        "country": "Mexico"
+      },
+      {
+        "year": "2007",
+        "value": 8003.254131,
+        "country": "Brazil"
+      },
+      {
+        "year": "2006",
+        "value": 11870.279156,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": 13058.328545,
+        "country": "Argentina"
+      },
+      {
+        "year": "2017",
+        "value": 10193.772719,
+        "country": "Mexico"
+      },
+      {
+        "year": "2010",
+        "value": 5167.392593,
+        "country": "Peru"
+      },
+      {
+        "year": "2015",
+        "value": 8936.196617,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 9234.643622,
+        "country": "Mexico"
+      },
+      {
+        "year": "2007",
+        "value": 9877.695326,
+        "country": "Mexico"
+      },
+      {
+        "year": "2018",
+        "value": 6593.144375,
+        "country": "Peru"
+      },
+      {
+        "year": "2014",
+        "value": 13456.131916,
+        "country": "Argentina"
+      },
+      {
+        "year": "2015",
+        "value": 10021.238611,
+        "country": "Mexico"
+      },
+      {
+        "year": "2011",
+        "value": 14040.618912,
+        "country": "Argentina"
+      },
+      {
+        "year": "2016",
+        "value": 13505.097711,
+        "country": "Chile"
+      },
+      {
+        "year": "2016",
+        "value": 6316.070678,
+        "country": "Colombia"
+      },
+      {
+        "year": "2017",
+        "value": 13473.345853,
+        "country": "Chile"
+      },
+      {
+        "year": "2014",
+        "value": 13285.954036,
+        "country": "Chile"
+      },
+      {
+        "year": "2014",
+        "value": 6103.918647,
+        "country": "Peru"
+      },
+      {
+        "year": "2017",
+        "value": 6457.419403,
+        "country": "Peru"
+      },
+      {
+        "year": "2013",
+        "value": 13182.732962,
+        "country": "Chile"
+      },
+      {
+        "year": "2013",
+        "value": 5910.805923,
+        "country": "Colombia"
+      },
+      {
+        "year": "2009",
+        "value": 12285.378465,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": 8722.336303,
+        "country": "Brazil"
+      },
+      {
+        "year": "2012",
+        "value": 9782.517763,
+        "country": "Mexico"
+      },
+      {
+        "year": "2009",
+        "value": 11116.409344,
+        "country": "Chile"
+      },
+      {
+        "year": "2006",
+        "value": 4091.362686,
+        "country": "Peru"
+      },
+      {
+        "year": "2014",
+        "value": 9338.342783,
+        "country": "Brazil"
+      },
+      {
+        "year": "2009",
+        "value": 9074.118814,
+        "country": "Mexico"
+      },
+      {
+        "year": "2011",
+        "value": 5453.457187,
+        "country": "Peru"
+      },
+      {
+        "year": "2014",
+        "value": 9862.481253,
+        "country": "Mexico"
+      },
+      {
+        "year": "2005",
+        "value": 7409.569132,
+        "country": "Brazil"
+      },
+      {
+        "year": "2009",
+        "value": 5046.971218,
+        "country": "Colombia"
+      },
+      {
+        "year": "2015",
+        "value": 6231.711503,
+        "country": "Peru"
+      },
+      {
+        "year": "2005",
+        "value": 10104.420839,
+        "country": "Chile"
+      },
+      {
+        "year": "2005",
+        "value": 4457.275375,
+        "country": "Colombia"
+      },
+      {
+        "year": "2008",
+        "value": 4778.526422,
+        "country": "Peru"
+      },
+      {
+        "year": "2005",
+        "value": 9491.517303,
+        "country": "Mexico"
+      },
+      {
+        "year": "2017",
+        "value": 13520.112985,
+        "country": "Argentina"
+      },
+      {
+        "year": "2012",
+        "value": 12882.834418,
+        "country": "Chile"
+      },
+      {
+        "year": "2012",
+        "value": 5675.75618,
+        "country": "Colombia"
+      },
+      {
+        "year": "2019",
+        "value": 12706.397811,
+        "country": "Argentina"
+      },
+      {
+        "year": "2010",
+        "value": 11649.289709,
+        "country": "Chile"
+      },
+      {
+        "year": "2010",
+        "value": 5214.245476,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 6392.254749,
+        "country": "Peru"
+      },
+      {
+        "year": "2012",
+        "value": 5740.043463,
+        "country": "Peru"
+      },
+      {
+        "year": "2010",
+        "value": 13387.155375,
+        "country": "Argentina"
+      },
+      {
+        "year": "2007",
+        "value": 11051.345072,
+        "country": "Chile"
+      },
+      {
+        "year": "2007",
+        "value": 4947.252608,
+        "country": "Colombia"
+      },
+      {
+        "year": "2009",
+        "value": 4801.171537,
+        "country": "Peru"
+      },
+      {
+        "year": "2008",
+        "value": 8330.764598,
+        "country": "Brazil"
+      },
+      {
+        "year": "2006",
+        "value": 4694.034429,
+        "country": "Colombia"
+      },
+      {
+        "year": "2020",
+        "value": 11393.050596,
+        "country": "Argentina"
+      },
+      {
+        "year": "2008",
+        "value": 11356.092211,
+        "country": "Chile"
+      },
+      {
+        "year": "2008",
+        "value": 5048.571872,
+        "country": "Colombia"
+      },
+      {
+        "year": "2019",
+        "value": 6626.260835,
+        "country": "Peru"
+      },
+      {
+        "year": "2008",
+        "value": 13197.357027,
+        "country": "Argentina"
+      },
+      {
+        "year": "2020",
+        "value": 5831.830248,
+        "country": "Peru"
+      },
+      {
+        "year": "2007",
+        "value": 4407.791217,
+        "country": "Peru"
+      },
+      {
+        "year": "2005",
+        "value": 3835.132193,
+        "country": "Peru"
+      },
+      {
+        "year": "2019",
+        "value": 10159.444837,
+        "country": "Mexico"
+      },
+      {
+        "year": "2007",
+        "value": 12811.902121,
+        "country": "Argentina"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "US dollars, 2015 constant prices",
+            "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1f') : '$'+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": "$,.2f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "GDP per capita (constant 2015 US$)",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

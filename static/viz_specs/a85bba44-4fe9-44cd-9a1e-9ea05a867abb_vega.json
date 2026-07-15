@@ -1,0 +1,512 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years)"
+    ],
+    "subtitle": [
+      "United States, 1960-2022",
+      "Years"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1999",
+        "value": 76.582927,
+        "country": "United States"
+      },
+      {
+        "year": "2011",
+        "value": 78.641463,
+        "country": "United States"
+      },
+      {
+        "year": "2017",
+        "value": 78.539024,
+        "country": "United States"
+      },
+      {
+        "year": "2016",
+        "value": 78.539024,
+        "country": "United States"
+      },
+      {
+        "year": "1996",
+        "value": 76.026829,
+        "country": "United States"
+      },
+      {
+        "year": "2019",
+        "value": 78.787805,
+        "country": "United States"
+      },
+      {
+        "year": "2020",
+        "value": 76.980488,
+        "country": "United States"
+      },
+      {
+        "year": "2018",
+        "value": 78.639024,
+        "country": "United States"
+      },
+      {
+        "year": "2022",
+        "value": 77.434146,
+        "country": "United States"
+      },
+      {
+        "year": "1989",
+        "value": 75.017073,
+        "country": "United States"
+      },
+      {
+        "year": "1988",
+        "value": 74.765854,
+        "country": "United States"
+      },
+      {
+        "year": "1994",
+        "value": 75.619512,
+        "country": "United States"
+      },
+      {
+        "year": "1975",
+        "value": 72.604878,
+        "country": "United States"
+      },
+      {
+        "year": "1968",
+        "value": 69.95122,
+        "country": "United States"
+      },
+      {
+        "year": "1967",
+        "value": 70.560976,
+        "country": "United States"
+      },
+      {
+        "year": "1980",
+        "value": 73.609756,
+        "country": "United States"
+      },
+      {
+        "year": "2012",
+        "value": 78.741463,
+        "country": "United States"
+      },
+      {
+        "year": "1998",
+        "value": 76.580488,
+        "country": "United States"
+      },
+      {
+        "year": "2013",
+        "value": 78.741463,
+        "country": "United States"
+      },
+      {
+        "year": "1990",
+        "value": 75.214634,
+        "country": "United States"
+      },
+      {
+        "year": "2002",
+        "value": 76.936585,
+        "country": "United States"
+      },
+      {
+        "year": "2008",
+        "value": 78.039024,
+        "country": "United States"
+      },
+      {
+        "year": "2010",
+        "value": 78.541463,
+        "country": "United States"
+      },
+      {
+        "year": "1997",
+        "value": 76.429268,
+        "country": "United States"
+      },
+      {
+        "year": "1993",
+        "value": 75.419512,
+        "country": "United States"
+      },
+      {
+        "year": "1977",
+        "value": 73.256098,
+        "country": "United States"
+      },
+      {
+        "year": "1974",
+        "value": 71.956098,
+        "country": "United States"
+      },
+      {
+        "year": "1964",
+        "value": 70.165854,
+        "country": "United States"
+      },
+      {
+        "year": "1963",
+        "value": 69.917073,
+        "country": "United States"
+      },
+      {
+        "year": "1960",
+        "value": 69.770732,
+        "country": "United States"
+      },
+      {
+        "year": "2001",
+        "value": 76.836585,
+        "country": "United States"
+      },
+      {
+        "year": "2004",
+        "value": 77.487805,
+        "country": "United States"
+      },
+      {
+        "year": "2014",
+        "value": 78.841463,
+        "country": "United States"
+      },
+      {
+        "year": "2015",
+        "value": 78.690244,
+        "country": "United States"
+      },
+      {
+        "year": "2007",
+        "value": 77.987805,
+        "country": "United States"
+      },
+      {
+        "year": "2006",
+        "value": 77.687805,
+        "country": "United States"
+      },
+      {
+        "year": "1979",
+        "value": 73.804878,
+        "country": "United States"
+      },
+      {
+        "year": "1991",
+        "value": 75.365854,
+        "country": "United States"
+      },
+      {
+        "year": "1978",
+        "value": 73.356098,
+        "country": "United States"
+      },
+      {
+        "year": "1971",
+        "value": 71.107317,
+        "country": "United States"
+      },
+      {
+        "year": "1981",
+        "value": 74.009756,
+        "country": "United States"
+      },
+      {
+        "year": "1986",
+        "value": 74.614634,
+        "country": "United States"
+      },
+      {
+        "year": "1987",
+        "value": 74.765854,
+        "country": "United States"
+      },
+      {
+        "year": "1985",
+        "value": 74.563415,
+        "country": "United States"
+      },
+      {
+        "year": "1969",
+        "value": 70.507317,
+        "country": "United States"
+      },
+      {
+        "year": "1983",
+        "value": 74.463415,
+        "country": "United States"
+      },
+      {
+        "year": "1970",
+        "value": 70.807317,
+        "country": "United States"
+      },
+      {
+        "year": "1972",
+        "value": 71.156098,
+        "country": "United States"
+      },
+      {
+        "year": "1961",
+        "value": 70.270732,
+        "country": "United States"
+      },
+      {
+        "year": "2009",
+        "value": 78.390244,
+        "country": "United States"
+      },
+      {
+        "year": "2003",
+        "value": 77.036585,
+        "country": "United States"
+      },
+      {
+        "year": "2005",
+        "value": 77.487805,
+        "country": "United States"
+      },
+      {
+        "year": "2021",
+        "value": 76.329268,
+        "country": "United States"
+      },
+      {
+        "year": "2000",
+        "value": 76.636585,
+        "country": "United States"
+      },
+      {
+        "year": "1982",
+        "value": 74.360976,
+        "country": "United States"
+      },
+      {
+        "year": "1995",
+        "value": 75.621951,
+        "country": "United States"
+      },
+      {
+        "year": "1992",
+        "value": 75.617073,
+        "country": "United States"
+      },
+      {
+        "year": "1984",
+        "value": 74.563415,
+        "country": "United States"
+      },
+      {
+        "year": "1976",
+        "value": 72.856098,
+        "country": "United States"
+      },
+      {
+        "year": "1973",
+        "value": 71.356098,
+        "country": "United States"
+      },
+      {
+        "year": "1966",
+        "value": 70.212195,
+        "country": "United States"
+      },
+      {
+        "year": "1962",
+        "value": 70.119512,
+        "country": "United States"
+      },
+      {
+        "year": "1965",
+        "value": 70.214634,
+        "country": "United States"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Years",
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Life expectancy at birth, total (years)",
+        "title": "Indicator"
+      }
+    ],
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Economy",
+        "labelLimit": 250,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

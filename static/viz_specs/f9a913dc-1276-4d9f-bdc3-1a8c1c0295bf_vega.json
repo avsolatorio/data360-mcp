@@ -1,0 +1,717 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Renewable energy consumption (% of total final energy consumption)"
+    ],
+    "subtitle": [
+      "2012-2020",
+      "Percentage of total final energy consumption"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2012",
+        "value": 7.7,
+        "country": "Belgium"
+      },
+      {
+        "year": "2012",
+        "value": 12.8,
+        "country": "Czechia"
+      },
+      {
+        "year": "2012",
+        "value": 13.6,
+        "country": "Germany"
+      },
+      {
+        "year": "2012",
+        "value": 15.8,
+        "country": "Spain"
+      },
+      {
+        "year": "2012",
+        "value": 12.3,
+        "country": "France"
+      },
+      {
+        "year": "2012",
+        "value": 4.2,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2012",
+        "value": 16.5,
+        "country": "Hungary"
+      },
+      {
+        "year": "2012",
+        "value": 14.4,
+        "country": "Italy"
+      },
+      {
+        "year": "2012",
+        "value": 4.9,
+        "country": "Netherlands"
+      },
+      {
+        "year": "2012",
+        "value": 10.9,
+        "country": "Poland"
+      },
+      {
+        "year": "2012",
+        "value": 21.5,
+        "country": "Romania"
+      },
+      {
+        "year": "2012",
+        "value": 48.3,
+        "country": "Sweden"
+      },
+      {
+        "year": "2013",
+        "value": 8.3,
+        "country": "Belgium"
+      },
+      {
+        "year": "2013",
+        "value": 13.9,
+        "country": "Czechia"
+      },
+      {
+        "year": "2013",
+        "value": 13.6,
+        "country": "Germany"
+      },
+      {
+        "year": "2013",
+        "value": 16.9,
+        "country": "Spain"
+      },
+      {
+        "year": "2013",
+        "value": 13.4,
+        "country": "France"
+      },
+      {
+        "year": "2013",
+        "value": 5.2,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2013",
+        "value": 17.2,
+        "country": "Hungary"
+      },
+      {
+        "year": "2013",
+        "value": 16.3,
+        "country": "Italy"
+      },
+      {
+        "year": "2013",
+        "value": 5.0,
+        "country": "Netherlands"
+      },
+      {
+        "year": "2013",
+        "value": 11.4,
+        "country": "Poland"
+      },
+      {
+        "year": "2013",
+        "value": 23.1,
+        "country": "Romania"
+      },
+      {
+        "year": "2013",
+        "value": 47.3,
+        "country": "Sweden"
+      },
+      {
+        "year": "2014",
+        "value": 9.1,
+        "country": "Belgium"
+      },
+      {
+        "year": "2014",
+        "value": 14.8,
+        "country": "Czechia"
+      },
+      {
+        "year": "2014",
+        "value": 14.0,
+        "country": "Germany"
+      },
+      {
+        "year": "2014",
+        "value": 17.3,
+        "country": "Spain"
+      },
+      {
+        "year": "2014",
+        "value": 13.2,
+        "country": "France"
+      },
+      {
+        "year": "2014",
+        "value": 6.6,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2014",
+        "value": 15.7,
+        "country": "Hungary"
+      },
+      {
+        "year": "2014",
+        "value": 17.1,
+        "country": "Italy"
+      },
+      {
+        "year": "2014",
+        "value": 5.6,
+        "country": "Netherlands"
+      },
+      {
+        "year": "2014",
+        "value": 11.6,
+        "country": "Poland"
+      },
+      {
+        "year": "2014",
+        "value": 24.3,
+        "country": "Romania"
+      },
+      {
+        "year": "2014",
+        "value": 48.6,
+        "country": "Sweden"
+      },
+      {
+        "year": "2015",
+        "value": 9.4,
+        "country": "Belgium"
+      },
+      {
+        "year": "2015",
+        "value": 14.8,
+        "country": "Czechia"
+      },
+      {
+        "year": "2015",
+        "value": 14.6,
+        "country": "Germany"
+      },
+      {
+        "year": "2015",
+        "value": 16.3,
+        "country": "Spain"
+      },
+      {
+        "year": "2015",
+        "value": 13.3,
+        "country": "France"
+      },
+      {
+        "year": "2015",
+        "value": 7.7,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2015",
+        "value": 15.6,
+        "country": "Hungary"
+      },
+      {
+        "year": "2015",
+        "value": 16.6,
+        "country": "Italy"
+      },
+      {
+        "year": "2015",
+        "value": 5.8,
+        "country": "Netherlands"
+      },
+      {
+        "year": "2015",
+        "value": 11.9,
+        "country": "Poland"
+      },
+      {
+        "year": "2015",
+        "value": 23.7,
+        "country": "Romania"
+      },
+      {
+        "year": "2015",
+        "value": 51.9,
+        "country": "Sweden"
+      },
+      {
+        "year": "2016",
+        "value": 9.2,
+        "country": "Belgium"
+      },
+      {
+        "year": "2016",
+        "value": 14.8,
+        "country": "Czechia"
+      },
+      {
+        "year": "2016",
+        "value": 14.2,
+        "country": "Germany"
+      },
+      {
+        "year": "2016",
+        "value": 16.7,
+        "country": "Spain"
+      },
+      {
+        "year": "2016",
+        "value": 14.2,
+        "country": "France"
+      },
+      {
+        "year": "2016",
+        "value": 7.7,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2016",
+        "value": 15.3,
+        "country": "Hungary"
+      },
+      {
+        "year": "2016",
+        "value": 16.1,
+        "country": "Italy"
+      },
+      {
+        "year": "2016",
+        "value": 5.6,
+        "country": "Netherlands"
+      },
+      {
+        "year": "2016",
+        "value": 11.3,
+        "country": "Poland"
+      },
+      {
+        "year": "2016",
+        "value": 24.4,
+        "country": "Romania"
+      },
+      {
+        "year": "2016",
+        "value": 50.9,
+        "country": "Sweden"
+      },
+      {
+        "year": "2017",
+        "value": 9.7,
+        "country": "Belgium"
+      },
+      {
+        "year": "2017",
+        "value": 14.5,
+        "country": "Czechia"
+      },
+      {
+        "year": "2017",
+        "value": 15.2,
+        "country": "Germany"
+      },
+      {
+        "year": "2017",
+        "value": 15.2,
+        "country": "Spain"
+      },
+      {
+        "year": "2017",
+        "value": 14.1,
+        "country": "France"
+      },
+      {
+        "year": "2017",
+        "value": 8.8,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2017",
+        "value": 14.6,
+        "country": "Hungary"
+      },
+      {
+        "year": "2017",
+        "value": 16.4,
+        "country": "Italy"
+      },
+      {
+        "year": "2017",
+        "value": 6.4,
+        "country": "Netherlands"
+      },
+      {
+        "year": "2017",
+        "value": 11.1,
+        "country": "Poland"
+      },
+      {
+        "year": "2017",
+        "value": 23.4,
+        "country": "Romania"
+      },
+      {
+        "year": "2017",
+        "value": 51.8,
+        "country": "Sweden"
+      },
+      {
+        "year": "2018",
+        "value": 10.7,
+        "country": "Belgium"
+      },
+      {
+        "year": "2018",
+        "value": 14.7,
+        "country": "Czechia"
+      },
+      {
+        "year": "2018",
+        "value": 16.0,
+        "country": "Germany"
+      },
+      {
+        "year": "2018",
+        "value": 16.9,
+        "country": "Spain"
+      },
+      {
+        "year": "2018",
+        "value": 15.2,
+        "country": "France"
+      },
+      {
+        "year": "2018",
+        "value": 10.2,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2018",
+        "value": 13.6,
+        "country": "Hungary"
+      },
+      {
+        "year": "2018",
+        "value": 17.1,
+        "country": "Italy"
+      },
+      {
+        "year": "2018",
+        "value": 7.4,
+        "country": "Netherlands"
+      },
+      {
+        "year": "2018",
+        "value": 15.1,
+        "country": "Poland"
+      },
+      {
+        "year": "2018",
+        "value": 23.0,
+        "country": "Romania"
+      },
+      {
+        "year": "2018",
+        "value": 51.6,
+        "country": "Sweden"
+      },
+      {
+        "year": "2019",
+        "value": 10.2,
+        "country": "Belgium"
+      },
+      {
+        "year": "2019",
+        "value": 15.9,
+        "country": "Czechia"
+      },
+      {
+        "year": "2019",
+        "value": 17.1,
+        "country": "Germany"
+      },
+      {
+        "year": "2019",
+        "value": 16.7,
+        "country": "Spain"
+      },
+      {
+        "year": "2019",
+        "value": 15.5,
+        "country": "France"
+      },
+      {
+        "year": "2019",
+        "value": 11.4,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2019",
+        "value": 13.6,
+        "country": "Hungary"
+      },
+      {
+        "year": "2019",
+        "value": 17.3,
+        "country": "Italy"
+      },
+      {
+        "year": "2019",
+        "value": 8.6,
+        "country": "Netherlands"
+      },
+      {
+        "year": "2019",
+        "value": 15.6,
+        "country": "Poland"
+      },
+      {
+        "year": "2019",
+        "value": 23.5,
+        "country": "Romania"
+      },
+      {
+        "year": "2019",
+        "value": 52.9,
+        "country": "Sweden"
+      },
+      {
+        "year": "2020",
+        "value": 12.3,
+        "country": "Belgium"
+      },
+      {
+        "year": "2020",
+        "value": 17.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2020",
+        "value": 18.5,
+        "country": "Germany"
+      },
+      {
+        "year": "2020",
+        "value": 19.3,
+        "country": "Spain"
+      },
+      {
+        "year": "2020",
+        "value": 16.8,
+        "country": "France"
+      },
+      {
+        "year": "2020",
+        "value": 13.6,
+        "country": "United Kingdom"
+      },
+      {
+        "year": "2020",
+        "value": 14.8,
+        "country": "Hungary"
+      },
+      {
+        "year": "2020",
+        "value": 18.7,
+        "country": "Italy"
+      },
+      {
+        "year": "2020",
+        "value": 10.7,
+        "country": "Netherlands"
+      },
+      {
+        "year": "2020",
+        "value": 16.1,
+        "country": "Poland"
+      },
+      {
+        "year": "2020",
+        "value": 24.1,
+        "country": "Romania"
+      },
+      {
+        "year": "2020",
+        "value": 57.8,
+        "country": "Sweden"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          4.2,
+          57.8
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Percentage of total final energy consumption",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Renewable energy consumption (% of total final energy consumption)",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

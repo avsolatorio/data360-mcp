@@ -1,0 +1,268 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Latest population in Latin America & Caribbean (42 economies)",
+    "subtitle": [
+      "Antigua and Barbuda, Argentina, Aruba, Bahamas, The, Barbados, Belize, Bolivia, Brazil, British Virgin Islands, Cayman Islands, \u2026 (+32 more), 2024",
+      "Persons",
+      "Showing 20 of 42 countries by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2024",
+        "value": 211998573,
+        "country": "Brazil"
+      },
+      {
+        "year": "2024",
+        "value": 52886363,
+        "country": "Colombia"
+      },
+      {
+        "year": "2024",
+        "value": 45696159,
+        "country": "Argentina"
+      },
+      {
+        "year": "2024",
+        "value": 19764771,
+        "country": "Chile"
+      },
+      {
+        "year": "2024",
+        "value": 18135478,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2024",
+        "value": 12413315,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2024",
+        "value": 11427557,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2024",
+        "value": 10979783,
+        "country": "Cuba"
+      },
+      {
+        "year": "2024",
+        "value": 6338193,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2024",
+        "value": 5129910,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2024",
+        "value": 417072,
+        "country": "Belize"
+      },
+      {
+        "year": "2024",
+        "value": 401283,
+        "country": "Bahamas, The"
+      },
+      {
+        "year": "2024",
+        "value": 282467,
+        "country": "Barbados"
+      },
+      {
+        "year": "2024",
+        "value": 155967,
+        "country": "Curacao"
+      },
+      {
+        "year": "2024",
+        "value": 117207,
+        "country": "Grenada"
+      },
+      {
+        "year": "2024",
+        "value": 107995,
+        "country": "Aruba"
+      },
+      {
+        "year": "2024",
+        "value": 93772,
+        "country": "Antigua and Barbuda"
+      },
+      {
+        "year": "2024",
+        "value": 74457,
+        "country": "Cayman Islands"
+      },
+      {
+        "year": "2024",
+        "value": 66205,
+        "country": "Dominica"
+      },
+      {
+        "year": "2024",
+        "value": 39471,
+        "country": "British Virgin Islands"
+      }
+    ]
+  },
+  "mark": {
+    "type": "bar",
+    "cornerRadiusTopRight": 3,
+    "cornerRadiusBottomRight": 3
+  },
+  "encoding": {
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "sort": "-x",
+      "axis": {
+        "title": null,
+        "labelColor": "#111111",
+        "labelFontWeight": "bold",
+        "labelLimit": 150
+      }
+    },
+    "x": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": null,
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": true
+      }
+    },
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": null
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "nominal"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.0f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 500,
+  "height": 560,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}
