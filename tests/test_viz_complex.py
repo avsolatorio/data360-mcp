@@ -211,7 +211,7 @@ class TestStrategyRouter:
         """
         df = _two_ind_ts_df()  # 2 countries × 6 years — within threshold
         ind_cols = ["gdp_per_capita", "life_expectancy"]
-        r = select_strategy(df, n_indicators=2, indicator_cols=ind_cols)
+        r = select_strategy(df, n_indicators=2, indicator_cols=ind_cols, chart_type_hint="scatter")
         assert r.strategy == ChartStrategy.CORRELATION_TEMPORAL, (
             f"2 countries × 6 years with 2 indicators should now route to "
             f"CORRELATION_TEMPORAL (connected scatter), not SMALL_MULTIPLES. "
