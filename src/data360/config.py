@@ -77,7 +77,7 @@ class Data360Settings(BaseSettings):
     """Configuration settings for Data360 API integration."""
 
     api_base_url: str = Field(
-        ...,
+        default="https://data360api.worldbank.org",
         description="Base URL for the Data360 API",
     )
     codelist_api_base_url: str = Field(

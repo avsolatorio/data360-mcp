@@ -211,3 +211,15 @@ node_modules/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Data360 Eval outputs and caches
+evals/cache/
+evals/reports/
+evals/scratch/
+evals/deepeval_visualization/src/
+evals/deepeval_visualization/pyproject.toml
+evals/deepeval_visualization/uv.lock
+evals/deepeval_visualization/evals/
+evals/deepeval_visualization/.venv/
+evals/deepeval_visualization/.git/
+static/viz_specs/
