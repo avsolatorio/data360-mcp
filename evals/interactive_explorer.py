@@ -1558,6 +1558,37 @@ async def search_countries(query: str):
     except Exception as exc:
         return JSONResponse(status_code=500, content={"error": str(exc)})
 
+@app.get("/api/groups")
+async def get_all_groups():
+    """Retrieve all FMR groups filtering to region, income, and lending types."""
+    try:
+        from data360.providers import get_group_hierarchy_manager
+        ghm = get_group_hierarchy_manager()
+        groups = []
+        for code, info in ghm._groups.items():
+            if info["type"] in {"REGION", "INCOME", "LENDING", "OTHER"}:
+                groups.append({
+                    "code": code,
+                    "name": info["name"],
+                    "type": info["type"],
+                    "count": len(info["countries"])
+                })
+        groups.sort(key=lambda x: x["name"])
+        return groups
+    except Exception as exc:
+        return JSONResponse(status_code=500, content={"error": str(exc)})
+
+
+@app.get("/api/groups/{group_code}/expand")
+async def expand_group_endpoint(group_code: str):
+    """Retrieve member country codes for a given FMR group."""
+    try:
+        from data360.providers import get_group_hierarchy_manager
+        ghm = get_group_hierarchy_manager()
+        return ghm.expand_group(group_code)
+    except Exception as exc:
+        return JSONResponse(status_code=500, content={"error": str(exc)})
+
 
 @app.get("/api/indicator-disaggregation")
 async def get_disaggregation_options(database_id: str, indicator_id: str):
@@ -1599,7 +1630,9 @@ async def generate_custom_chart(req: CustomChartRequest):
     database_id = req.database_id
     indicator_id = req.indicator_id
     indicator_name = req.indicator_name
-    country_code = req.country_code
+    country_code = req.country_code.strip() if req.country_code else None
+    if not country_code:
+        country_code = None
     start_year = req.start_year
     end_year = req.end_year
     chart_type = req.chart_type if req.chart_type else None
@@ -1790,33 +1823,7 @@ HTML_CONTENT = """
     @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
 
     :root {
-      /* WBG Dark Theme (Default) */
-      --bg: #0b1329;
-      --surface1: #111a36;
-      --surface2: #1c274c;
-      --border: #29386c;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent: #0071BC;
-      --accent-hover: #008be5;
-      --accent-glow: rgba(0, 113, 188, 0.25);
-      --wbg-gold: #CA8A04;
-      --wbg-gold-hover: #eab308;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --card-bg: rgba(17, 26, 54, 0.45);
-      --sidebar-bg: #0a1024;
-      --header-bg: rgba(10, 16, 36, 0.85);
-      --header-border: #1c274c;
-      --glass-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
-      --transition-speed: 0.22s;
-      --font-body: 'Fira Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
-    }
-
-    [data-theme="light"] {
-      /* WBG Light Theme */
+      /* WBG Light Theme (Default) */
       --bg: #f8fafc;
       --surface1: #ffffff;
       --surface2: #f1f5f9;
@@ -1836,6 +1843,32 @@ HTML_CONTENT = """
       --header-bg: rgba(255, 255, 255, 0.9);
       --header-border: #cbd5e1;
       --glass-glow: 0 8px 32px 0 rgba(0, 113, 188, 0.05);
+      --transition-speed: 0.22s;
+      --font-body: 'Fira Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="dark"] {
+      /* WBG Dark Theme */
+      --bg: #0b1329;
+      --surface1: #111a36;
+      --surface2: #1c274c;
+      --border: #29386c;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #0071BC;
+      --accent-hover: #008be5;
+      --accent-glow: rgba(0, 113, 188, 0.25);
+      --wbg-gold: #CA8A04;
+      --wbg-gold-hover: #eab308;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --card-bg: rgba(17, 26, 54, 0.45);
+      --sidebar-bg: #0a1024;
+      --header-bg: rgba(10, 16, 36, 0.85);
+      --header-border: #1c274c;
+      --glass-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
     }
 
     * {
@@ -2668,22 +2701,46 @@ HTML_CONTENT = """
               <div style="font-size: 11px; font-weight: 700; color: var(--accent);" id="selected-indicator-db"></div>
               <div style="font-size: 13px; font-weight: 600; margin-top: 2px; color: var(--text);" id="selected-indicator-name"></div>
               <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;" id="selected-indicator-id"></div>
-            </div>
-
-            <!-- Countries selector -->
+            </div>            <!-- Countries selector -->
             <div style="display: flex; flex-direction: column; gap: 4px; position: relative;">
               <label style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">2. Selected Economies / Country Codes</label>
               <input type="text" id="builder-countries" value="USA;BRA;KEN;COL" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text); font-family: var(--font-mono); font-size: 13px; outline: none;" placeholder="e.g. USA;BRA;KEN;COL" oninput="updateCountryBadges()">
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px; margin-bottom: 2px;">Leave blank to query all economies.</div>
 
               <!-- Assisted Country Search -->
               <div style="display: flex; gap: 6px; margin-top: 4px;">
                 <input type="text" id="builder-country-search" placeholder="Type country to add (e.g. India)..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text); font-family: var(--font-body); font-size: 12px; outline: none;" onkeydown="if(event.key==='Enter') { event.preventDefault(); searchBuilderCountries(); }">
                 <button type="button" onclick="searchBuilderCountries()" style="padding: 6px 10px; border: none; background: var(--accent); color: white; font-weight: 600; border-radius: 6px; cursor: pointer; font-size: 12px;">Add</button>
               </div>
-              <div id="builder-country-results" style="max-height: 120px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); display: none; margin-top: 4px; position: absolute; z-index: 10; width: 100%; top: 68px;">
+              <div id="builder-country-results" style="max-height: 120px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); display: none; margin-top: 4px; position: absolute; z-index: 10; width: 100%; top: 86px;">
                 <!-- Country search results list -->
               </div>
-              <div id="builder-selected-countries-badges" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+
+              <!-- Economy Group (FMR) Selector -->
+              <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px;">
+                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Add Economy Group (FMR)</label>
+                <select id="builder-group-select" onchange="onGroupSelected()" style="padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text); font-family: var(--font-body); font-size: 13px; outline: none; width: 100%;">
+                  <option value="">Select a group...</option>
+                </select>
+              </div>
+
+              <!-- Economy Group Mode Configuration -->
+              <div id="builder-group-config" style="display: none; flex-direction: column; gap: 6px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 10px; border-radius: 6px; margin-top: 6px;">
+                <div style="font-size: 12px; font-weight: 600; color: var(--text);" id="builder-selected-group-name"></div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text); cursor: pointer;">
+                    <input type="radio" name="builder-group-mode" value="direct" checked style="cursor: pointer;">
+                    <span>Use group code directly (e.g. <span id="builder-selected-group-code-direct" style="font-family: monospace; font-weight: 600;"></span>)</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text); cursor: pointer;">
+                    <input type="radio" name="builder-group-mode" value="expand" style="cursor: pointer;">
+                    <span>Expand to its member economies (<span id="builder-selected-group-count" style="font-weight: 600;"></span> countries)</span>
+                  </label>
+                </div>
+                <button type="button" onclick="addGroupToBuilder()" style="margin-top: 4px; padding: 6px 12px; border: none; background: var(--accent); color: white; font-weight: 600; border-radius: 6px; cursor: pointer; font-size: 12px; align-self: flex-start;">Add Group</button>
+              </div>
+
+              <div id="builder-selected-countries-badges" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
                 <!-- Dynamically populated badges for active countries -->
               </div>
             </div>
@@ -3008,12 +3065,12 @@ HTML_CONTENT = """
 
     // Theme switching logic
     function initTheme() {
-      const savedTheme = localStorage.getItem("theme") || "dark";
+      const savedTheme = localStorage.getItem("theme") || "light";
       document.documentElement.setAttribute("data-theme", savedTheme);
     }
 
     function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+      const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
       const newTheme = currentTheme === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", newTheme);
       localStorage.setItem("theme", newTheme);
@@ -3191,7 +3248,7 @@ HTML_CONTENT = """
       document.querySelector(".details-card").style.display = "block";
       document.getElementById("btn-clear-selection").style.display = "block";
 
-      const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+      const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
       const isDark = currentTheme === "dark";
 
       document.getElementById("btn-rerun").style.display = "flex";
@@ -3787,6 +3844,87 @@ HTML_CONTENT = """
     let selectedIndicator = null;
     let currentDisaggregation = null;
 
+    let allGroups = [];
+
+    async function loadBuilderGroups() {
+      try {
+        const res = await fetch('/api/groups');
+        allGroups = await res.json();
+        const select = document.getElementById('builder-group-select');
+        if (!select) return;
+        select.innerHTML = '<option value="">Select a group...</option>';
+
+        const types = {
+          'REGION': 'Regions',
+          'INCOME': 'Income Groups (e.g. Low Income, LMIC)',
+          'LENDING': 'Lending Groups',
+          'OTHER': 'Other Groups'
+        };
+
+        Object.keys(types).forEach(type => {
+          const typeGroups = allGroups.filter(g => g.type === type);
+          if (typeGroups.length > 0) {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = types[type];
+            typeGroups.forEach(g => {
+              const opt = document.createElement('option');
+              opt.value = g.code;
+              opt.innerText = `${g.name} (${g.code})`;
+              optgroup.appendChild(opt);
+            });
+            select.appendChild(optgroup);
+          }
+        });
+      } catch (err) {
+        console.error("Failed to load builder groups:", err);
+      }
+    }
+
+    window.onGroupSelected = function() {
+      const select = document.getElementById('builder-group-select');
+      const configDiv = document.getElementById('builder-group-config');
+      if (!select || !configDiv) return;
+      const code = select.value;
+      if (!code) {
+        configDiv.style.display = 'none';
+        return;
+      }
+
+      const group = allGroups.find(g => g.code === code);
+      if (!group) return;
+
+      document.getElementById('builder-selected-group-name').innerText = `${group.name} (${group.code})`;
+      document.getElementById('builder-selected-group-code-direct').innerText = group.code;
+      document.getElementById('builder-selected-group-count').innerText = group.count;
+      configDiv.style.display = 'flex';
+    };
+
+    window.addGroupToBuilder = async function() {
+      const select = document.getElementById('builder-group-select');
+      const configDiv = document.getElementById('builder-group-config');
+      if (!select || !configDiv) return;
+      const code = select.value;
+      if (!code) return;
+
+      const mode = document.querySelector('input[name="builder-group-mode"]:checked').value;
+      if (mode === 'direct') {
+        addCountryCode(code);
+      } else {
+        try {
+          const res = await fetch(`/api/groups/${code}/expand`);
+          const countries = await res.json();
+          if (Array.isArray(countries)) {
+            countries.forEach(c => addCountryCode(c));
+          }
+        } catch (err) {
+          alert(`Failed to expand group: ${err}`);
+        }
+      }
+
+      select.value = '';
+      configDiv.style.display = 'none';
+    };
+
     // Assisted country selection helpers
     function updateCountryBadges() {
       const input = document.getElementById('builder-countries');
@@ -3877,9 +4015,10 @@ HTML_CONTENT = """
       }
     }
 
-    // Call updateCountryBadges on load
+    // Call updateCountryBadges and load groups on load
     document.addEventListener("DOMContentLoaded", () => {
       setTimeout(updateCountryBadges, 100);
+      loadBuilderGroups();
     });
 
     async function searchBuilderIndicators() {
@@ -3982,7 +4121,7 @@ HTML_CONTENT = """
 
         // 2. Populate Disaggregation Dimensions (excluding TIME_PERIOD and REF_AREA)
         disaggList.innerHTML = '';
-        const otherDims = data.dimensions ? data.dimensions.filter(d => d.field_name !== 'TIME_PERIOD' && d.field_name !== 'REF_AREA') : [];
+        const otherDims = data.dimensions ? data.dimensions.filter(d => d.field_name !== 'TIME_PERIOD' && d.field_name !== 'REF_AREA' && d.field_name.toUpperCase() !== 'REGION') : [];
 
         if (!otherDims.length) {
           disaggList.innerHTML = '<div style="color: var(--text-muted); font-size:12px;">No breakdowns available (National values only).</div>';
@@ -4054,7 +4193,7 @@ HTML_CONTENT = """
       // Build filters
       const disaggregation_filters = {};
       const otherDims = currentDisaggregation && currentDisaggregation.dimensions
-        ? currentDisaggregation.dimensions.filter(d => d.field_name !== 'TIME_PERIOD' && d.field_name !== 'REF_AREA')
+        ? currentDisaggregation.dimensions.filter(d => d.field_name !== 'TIME_PERIOD' && d.field_name !== 'REF_AREA' && d.field_name.toUpperCase() !== 'REGION')
         : [];
 
       otherDims.forEach(dim => {
