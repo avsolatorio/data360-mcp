@@ -2617,6 +2617,39 @@ HTML_CONTENT = """
       font-size: 12px;
       color: #38bdf8;
     }
+
+    /* Responsive breakpoints for small monitors, laptops, and tablets */
+    @media (max-width: 1200px) {
+      .viz-grid {
+        grid-template-columns: 1fr; /* Stack charts vertically on smaller monitors */
+        gap: 16px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr; /* Stack sidebar and main content vertically */
+        height: auto;
+        overflow: auto;
+      }
+      body {
+        height: auto;
+        overflow: auto;
+      }
+      .sidebar {
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .controls-row div[style*="display: flex"] {
+        flex-direction: column;
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
