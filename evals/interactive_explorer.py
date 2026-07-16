@@ -2289,6 +2289,11 @@ HTML_CONTENT = """
       width: 100%;
       min-height: 320px;
       display: none;
+      overflow-x: auto;
+    }
+
+    .vega-embed canvas, .vega-embed svg {
+      max-width: none !important;
     }
 
     /* Score Header Section */
@@ -3350,6 +3355,12 @@ HTML_CONTENT = """
         if (!spec.config.title) spec.config.title = {};
         spec.config.title.color = textColor;
         spec.config.title.subtitleColor = mutedColor;
+
+        // Make the chart responsive if it's a single/layered spec (not faceted or concatenated)
+        if (spec && !spec.facet && !spec.concat && !spec.hconcat && !spec.vconcat) {
+          spec.width = "container";
+          spec.autosize = { type: "fit", contains: "padding" };
+        }
 
         vegaEmbed("#system-chart-container", spec, {
           actions: { export: true, source: false, editor: false },
