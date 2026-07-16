@@ -2293,7 +2293,8 @@ HTML_CONTENT = """
     }
 
     .vega-embed canvas, .vega-embed svg {
-      max-width: none !important;
+      max-width: 100% !important;
+      height: auto !important;
     }
 
     /* Score Header Section */
@@ -2624,7 +2625,7 @@ HTML_CONTENT = """
     }
 
     /* Responsive breakpoints for small monitors, laptops, and tablets */
-    @media (max-width: 1200px) {
+    @media (max-width: 1400px) {
       .viz-grid {
         grid-template-columns: 1fr; /* Stack charts vertically on smaller monitors */
         gap: 16px;
@@ -3356,11 +3357,7 @@ HTML_CONTENT = """
         spec.config.title.color = textColor;
         spec.config.title.subtitleColor = mutedColor;
 
-        // Make the chart responsive if it's a single/layered spec (not faceted or concatenated)
-        if (spec && !spec.facet && !spec.concat && !spec.hconcat && !spec.vconcat) {
-          spec.width = "container";
-          spec.autosize = { type: "fit", contains: "padding" };
-        }
+        // Render at default specs, scaled proportionally in CSS to avoid squishing
 
         vegaEmbed("#system-chart-container", spec, {
           actions: { export: true, source: false, editor: false },
