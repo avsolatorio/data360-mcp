@@ -2721,6 +2721,21 @@ HTML_CONTENT = """
                 <label style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Add Economy Group (FMR)</label>
                 <select id="builder-group-select" onchange="onGroupSelected()" style="padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text); font-family: var(--font-body); font-size: 13px; outline: none; width: 100%;">
                   <option value="">Select a group...</option>
+                  <optgroup label="Regions">
+                    <option value="EAS">East Asia & Pacific</option>
+                    <option value="ECS">Europe & Central Asia</option>
+                    <option value="LCN">Latin America & Caribbean</option>
+                    <option value="MEA">Middle East & North Africa</option>
+                    <option value="NAC">North America</option>
+                    <option value="SAS">South Asia</option>
+                    <option value="SSF">Sub-Saharan Africa</option>
+                  </optgroup>
+                  <optgroup label="Income Groups">
+                    <option value="LIC">Low income</option>
+                    <option value="LMC">Lower middle income</option>
+                    <option value="UMC">Upper middle income</option>
+                    <option value="HIC">High income</option>
+                  </optgroup>
                 </select>
               </div>
 
@@ -3843,44 +3858,22 @@ HTML_CONTENT = """
 
     let selectedIndicator = null;
     let currentDisaggregation = null;
+    const allGroups = [
+      { code: 'EAS', name: 'East Asia & Pacific' },
+      { code: 'ECS', name: 'Europe & Central Asia' },
+      { code: 'LCN', name: 'Latin America & Caribbean' },
+      { code: 'MEA', name: 'Middle East & North Africa' },
+      { code: 'NAC', name: 'North America' },
+      { code: 'SAS', name: 'South Asia' },
+      { code: 'SSF', name: 'Sub-Saharan Africa' },
+      { code: 'LIC', name: 'Low income' },
+      { code: 'LMC', name: 'Lower middle income' },
+      { code: 'UMC', name: 'Upper middle income' },
+      { code: 'HIC', name: 'High income' }
+    ];
+    let selectedGroupCountries = [];
 
-    let allGroups = [];
-
-    async function loadBuilderGroups() {
-      try {
-        const res = await fetch('/api/groups');
-        allGroups = await res.json();
-        const select = document.getElementById('builder-group-select');
-        if (!select) return;
-        select.innerHTML = '<option value="">Select a group...</option>';
-
-        const types = {
-          'REGION': 'Regions',
-          'INCOME': 'Income Groups (e.g. Low Income, LMIC)',
-          'LENDING': 'Lending Groups',
-          'OTHER': 'Other Groups'
-        };
-
-        Object.keys(types).forEach(type => {
-          const typeGroups = allGroups.filter(g => g.type === type);
-          if (typeGroups.length > 0) {
-            const optgroup = document.createElement('optgroup');
-            optgroup.label = types[type];
-            typeGroups.forEach(g => {
-              const opt = document.createElement('option');
-              opt.value = g.code;
-              opt.innerText = `${g.name} (${g.code})`;
-              optgroup.appendChild(opt);
-            });
-            select.appendChild(optgroup);
-          }
-        });
-      } catch (err) {
-        console.error("Failed to load builder groups:", err);
-      }
-    }
-
-    window.onGroupSelected = function() {
+    window.onGroupSelected = async function() {
       const select = document.getElementById('builder-group-select');
       const configDiv = document.getElementById('builder-group-config');
       if (!select || !configDiv) return;
@@ -3895,11 +3888,20 @@ HTML_CONTENT = """
 
       document.getElementById('builder-selected-group-name').innerText = `${group.name} (${group.code})`;
       document.getElementById('builder-selected-group-code-direct').innerText = group.code;
-      document.getElementById('builder-selected-group-count').innerText = group.count;
+      document.getElementById('builder-selected-group-count').innerText = "...";
       configDiv.style.display = 'flex';
+
+      try {
+        const res = await fetch(`/api/groups/${code}/expand`);
+        selectedGroupCountries = await res.json();
+        document.getElementById('builder-selected-group-count').innerText = selectedGroupCountries.length;
+      } catch (err) {
+        console.error("Failed to load group details:", err);
+        document.getElementById('builder-selected-group-count').innerText = "error";
+      }
     };
 
-    window.addGroupToBuilder = async function() {
+    window.addGroupToBuilder = function() {
       const select = document.getElementById('builder-group-select');
       const configDiv = document.getElementById('builder-group-config');
       if (!select || !configDiv) return;
@@ -3910,14 +3912,8 @@ HTML_CONTENT = """
       if (mode === 'direct') {
         addCountryCode(code);
       } else {
-        try {
-          const res = await fetch(`/api/groups/${code}/expand`);
-          const countries = await res.json();
-          if (Array.isArray(countries)) {
-            countries.forEach(c => addCountryCode(c));
-          }
-        } catch (err) {
-          alert(`Failed to expand group: ${err}`);
+        if (Array.isArray(selectedGroupCountries)) {
+          selectedGroupCountries.forEach(c => addCountryCode(c));
         }
       }
 
@@ -4015,10 +4011,9 @@ HTML_CONTENT = """
       }
     }
 
-    // Call updateCountryBadges and load groups on load
+    // Call updateCountryBadges on load
     document.addEventListener("DOMContentLoaded", () => {
       setTimeout(updateCountryBadges, 100);
-      loadBuilderGroups();
     });
 
     async function searchBuilderIndicators() {
