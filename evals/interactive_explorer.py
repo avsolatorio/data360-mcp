@@ -2625,7 +2625,7 @@ HTML_CONTENT = """
     }
 
     /* Responsive breakpoints for small monitors, laptops, and tablets */
-    @media (max-width: 1400px) {
+    @media (max-width: 1550px) {
       .viz-grid {
         grid-template-columns: 1fr; /* Stack charts vertically on smaller monitors */
         gap: 16px;
@@ -3356,6 +3356,16 @@ HTML_CONTENT = """
         if (!spec.config.title) spec.config.title = {};
         spec.config.title.color = textColor;
         spec.config.title.subtitleColor = mutedColor;
+
+        // Apply dynamic subtitle and title limits to prevent layout squeezing
+        const containerWidth = systemContainer.clientWidth || 500;
+        const textLimit = Math.max(300, containerWidth - 40);
+        spec.config.title.limit = textLimit;
+        spec.config.title.subtitleLimit = textLimit;
+        if (spec.title && typeof spec.title === "object") {
+          if (spec.title.limit === undefined) spec.title.limit = textLimit;
+          if (spec.title.subtitleLimit === undefined) spec.title.subtitleLimit = textLimit;
+        }
 
         // Render at default specs, scaled proportionally in CSS to avoid squishing
 
