@@ -2125,6 +2125,7 @@ HTML_CONTENT = """
 
     .query-display {
       flex: 1;
+      min-width: 0;
     }
 
     .query-label {
@@ -2140,6 +2141,8 @@ HTML_CONTENT = """
       font-size: 15px;
       font-weight: 500;
       line-height: 1.4;
+      word-break: break-all;
+      overflow-wrap: break-word;
     }
 
     .btn-surprise, .btn-batch {
@@ -2820,7 +2823,7 @@ HTML_CONTENT = """
 
       <!-- Controls Row -->
       <div class="controls-row">
-        <div class="query-display" style="display: flex; flex-direction: column; width: 100%; flex: 1;">
+        <div class="query-display" style="display: flex; flex-direction: column; width: 100%; flex: 1; min-width: 0;">
           <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
             <div class="query-label">Active Scenario Query</div>
             <button id="btn-clear-selection" onclick="showHomepage()" style="display: none; background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 4px; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-muted)'" title="Return to Homepage">
