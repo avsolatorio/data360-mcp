@@ -844,6 +844,7 @@ source = { editable = "." }
 dependencies = [
     { name = "azure-monitor-opentelemetry" },
     { name = "cachetools" },
+    { name = "deepeval" },
     { name = "draco" },
     { name = "fastapi" },
     { name = "fastmcp" },
@@ -873,7 +874,6 @@ agent = [
 [package.dev-dependencies]
 dev = [
     { name = "data360-mcp-agent" },
-    { name = "deepeval" },
     { name = "pip-audit" },
     { name = "pip-licenses" },
     { name = "poethepoet" },
@@ -892,6 +892,7 @@ requires-dist = [
     { name = "azure-monitor-opentelemetry", specifier = ">=1.6.0" },
     { name = "cachetools", specifier = ">=6.2.4" },
     { name = "data360-mcp-agent", marker = "extra == 'agent'", editable = "packages/data360-mcp-agent" },
+    { name = "deepeval", specifier = ">=4.1.0" },
     { name = "draco", git = "https://github.com/avsolatorio/draco2.git?rev=data360-mcp" },
     { name = "fastapi", specifier = ">=0.115.0" },
     { name = "fastmcp", specifier = ">=3.4.3" },
@@ -917,7 +918,6 @@ provides-extras = ["agent"]
 [package.metadata.requires-dev]
 dev = [
     { name = "data360-mcp-agent", editable = "packages/data360-mcp-agent" },
-    { name = "deepeval", specifier = ">=4.1.0" },
     { name = "pip-audit", specifier = ">=2.10.0" },
     { name = "pip-licenses", specifier = ">=5.0.0" },
     { name = "poethepoet", specifier = ">=0.27.0" },
