@@ -1,0 +1,325 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "India PM2.5 Exposure Trend",
+    "subtitle": [
+      "India, 1990-2020",
+      "Micrograms per cubic meter"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2016",
+        "value": 54.421876,
+        "country": "India"
+      },
+      {
+        "year": "2017",
+        "value": 55.172425,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 56.679524,
+        "country": "India"
+      },
+      {
+        "year": "2005",
+        "value": 51.336928,
+        "country": "India"
+      },
+      {
+        "year": "2015",
+        "value": 51.435593,
+        "country": "India"
+      },
+      {
+        "year": "1997",
+        "value": 49.902049,
+        "country": "India"
+      },
+      {
+        "year": "1993",
+        "value": 50.078146,
+        "country": "India"
+      },
+      {
+        "year": "1994",
+        "value": 50.034122,
+        "country": "India"
+      },
+      {
+        "year": "2014",
+        "value": 51.687221,
+        "country": "India"
+      },
+      {
+        "year": "2013",
+        "value": 52.269379,
+        "country": "India"
+      },
+      {
+        "year": "2002",
+        "value": 51.254454,
+        "country": "India"
+      },
+      {
+        "year": "2001",
+        "value": 50.453785,
+        "country": "India"
+      },
+      {
+        "year": "2000",
+        "value": 50.763026,
+        "country": "India"
+      },
+      {
+        "year": "2012",
+        "value": 53.019629,
+        "country": "India"
+      },
+      {
+        "year": "1992",
+        "value": 50.12217,
+        "country": "India"
+      },
+      {
+        "year": "1995",
+        "value": 48.004,
+        "country": "India"
+      },
+      {
+        "year": "1991",
+        "value": 50.166194,
+        "country": "India"
+      },
+      {
+        "year": "2010",
+        "value": 51.71882,
+        "country": "India"
+      },
+      {
+        "year": "2004",
+        "value": 50.844616,
+        "country": "India"
+      },
+      {
+        "year": "2011",
+        "value": 55.025828,
+        "country": "India"
+      },
+      {
+        "year": "2019",
+        "value": 53.598149,
+        "country": "India"
+      },
+      {
+        "year": "2008",
+        "value": 51.266482,
+        "country": "India"
+      },
+      {
+        "year": "2003",
+        "value": 52.514984,
+        "country": "India"
+      },
+      {
+        "year": "1998",
+        "value": 49.858025,
+        "country": "India"
+      },
+      {
+        "year": "2007",
+        "value": 49.451335,
+        "country": "India"
+      },
+      {
+        "year": "1990",
+        "value": 51.203267,
+        "country": "India"
+      },
+      {
+        "year": "2009",
+        "value": 52.262673,
+        "country": "India"
+      },
+      {
+        "year": "2006",
+        "value": 49.254606,
+        "country": "India"
+      },
+      {
+        "year": "1999",
+        "value": 49.814001,
+        "country": "India"
+      },
+      {
+        "year": "2020",
+        "value": 52.193367,
+        "country": "India"
+      },
+      {
+        "year": "1996",
+        "value": 49.946073,
+        "country": "India"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Micrograms per cubic meter",
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "PM2.5 air pollution, mean annual exposure",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,369 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Distribution of Values across Economies",
+  "data": {
+    "values": [
+      {
+        "country": "Economy 39",
+        "year": "2020",
+        "value": 11.6
+      },
+      {
+        "country": "Economy 29",
+        "year": "2020",
+        "value": 10.933333333333334
+      },
+      {
+        "country": "Economy 38",
+        "year": "2020",
+        "value": 10.533333333333333
+      },
+      {
+        "country": "Economy 19",
+        "year": "2020",
+        "value": 10.266666666666666
+      },
+      {
+        "country": "Economy 28",
+        "year": "2020",
+        "value": 9.866666666666667
+      },
+      {
+        "country": "Economy 9",
+        "year": "2020",
+        "value": 9.6
+      },
+      {
+        "country": "Economy 37",
+        "year": "2020",
+        "value": 9.466666666666667
+      },
+      {
+        "country": "Economy 18",
+        "year": "2020",
+        "value": 9.2
+      },
+      {
+        "country": "Economy 27",
+        "year": "2020",
+        "value": 8.8
+      },
+      {
+        "country": "Economy 8",
+        "year": "2020",
+        "value": 8.533333333333333
+      },
+      {
+        "country": "Economy 36",
+        "year": "2020",
+        "value": 8.4
+      },
+      {
+        "country": "Economy 17",
+        "year": "2020",
+        "value": 8.133333333333333
+      },
+      {
+        "country": "Economy 26",
+        "year": "2020",
+        "value": 7.733333333333333
+      },
+      {
+        "country": "Economy 7",
+        "year": "2020",
+        "value": 7.466666666666667
+      },
+      {
+        "country": "Economy 35",
+        "year": "2020",
+        "value": 7.333333333333334
+      },
+      {
+        "country": "Economy 16",
+        "year": "2020",
+        "value": 7.066666666666666
+      },
+      {
+        "country": "Economy 25",
+        "year": "2020",
+        "value": 6.666666666666667
+      },
+      {
+        "country": "Economy 6",
+        "year": "2020",
+        "value": 6.4
+      },
+      {
+        "country": "Economy 34",
+        "year": "2020",
+        "value": 6.266666666666667
+      },
+      {
+        "country": "Economy 15",
+        "year": "2020",
+        "value": 6.0
+      },
+      {
+        "country": "Economy 24",
+        "year": "2020",
+        "value": 5.6
+      },
+      {
+        "country": "Economy 5",
+        "year": "2020",
+        "value": 5.333333333333333
+      },
+      {
+        "country": "Economy 33",
+        "year": "2020",
+        "value": 5.2
+      },
+      {
+        "country": "Economy 14",
+        "year": "2020",
+        "value": 4.933333333333334
+      },
+      {
+        "country": "Economy 23",
+        "year": "2020",
+        "value": 4.533333333333333
+      },
+      {
+        "country": "Economy 4",
+        "year": "2020",
+        "value": 4.266666666666667
+      },
+      {
+        "country": "Economy 32",
+        "year": "2020",
+        "value": 4.133333333333333
+      },
+      {
+        "country": "Economy 13",
+        "year": "2020",
+        "value": 3.8666666666666667
+      },
+      {
+        "country": "Economy 22",
+        "year": "2020",
+        "value": 3.466666666666667
+      },
+      {
+        "country": "Economy 3",
+        "year": "2020",
+        "value": 3.2
+      },
+      {
+        "country": "Economy 31",
+        "year": "2020",
+        "value": 3.066666666666667
+      },
+      {
+        "country": "Economy 12",
+        "year": "2020",
+        "value": 2.8
+      },
+      {
+        "country": "Economy 21",
+        "year": "2020",
+        "value": 2.4
+      },
+      {
+        "country": "Economy 2",
+        "year": "2020",
+        "value": 2.1333333333333333
+      },
+      {
+        "country": "Economy 30",
+        "year": "2020",
+        "value": 2.0
+      },
+      {
+        "country": "Economy 11",
+        "year": "2020",
+        "value": 1.7333333333333334
+      },
+      {
+        "country": "Economy 20",
+        "year": "2020",
+        "value": 1.3333333333333333
+      },
+      {
+        "country": "Economy 1",
+        "year": "2020",
+        "value": 1.0666666666666667
+      },
+      {
+        "country": "Economy 10",
+        "year": "2020",
+        "value": 0.6666666666666666
+      },
+      {
+        "country": "Economy 0",
+        "year": "2020",
+        "value": 0.0
+      }
+    ]
+  },
+  "transform": [
+    {
+      "calculate": "random()",
+      "as": "jitter"
+    }
+  ],
+  "mark": {
+    "type": "circle",
+    "size": 100,
+    "opacity": 0.85,
+    "stroke": "white",
+    "strokeWidth": 1
+  },
+  "encoding": {
+    "x": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Value",
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "y": {
+      "field": "jitter",
+      "type": "quantitative",
+      "axis": null,
+      "scale": {
+        "domain": [
+          0,
+          1
+        ]
+      }
+    },
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": null
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "nominal"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 200,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

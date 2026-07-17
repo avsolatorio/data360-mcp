@@ -1,0 +1,513 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Japan \u2014 Population, total (1960\u20132025)",
+    "subtitle": [
+      "Japan, 1960-2024",
+      "Persons"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2009",
+        "value": 128047000,
+        "country": "Japan"
+      },
+      {
+        "year": "2008",
+        "value": 128063000,
+        "country": "Japan"
+      },
+      {
+        "year": "2019",
+        "value": 126633000,
+        "country": "Japan"
+      },
+      {
+        "year": "2001",
+        "value": 127149000,
+        "country": "Japan"
+      },
+      {
+        "year": "2002",
+        "value": 127445000,
+        "country": "Japan"
+      },
+      {
+        "year": "2000",
+        "value": 126843000,
+        "country": "Japan"
+      },
+      {
+        "year": "1998",
+        "value": 126400000,
+        "country": "Japan"
+      },
+      {
+        "year": "1991",
+        "value": 123964000,
+        "country": "Japan"
+      },
+      {
+        "year": "2024",
+        "value": 123975371,
+        "country": "Japan"
+      },
+      {
+        "year": "1985",
+        "value": 120837000,
+        "country": "Japan"
+      },
+      {
+        "year": "1989",
+        "value": 123069000,
+        "country": "Japan"
+      },
+      {
+        "year": "1978",
+        "value": 114913000,
+        "country": "Japan"
+      },
+      {
+        "year": "1974",
+        "value": 110162000,
+        "country": "Japan"
+      },
+      {
+        "year": "2012",
+        "value": 127629000,
+        "country": "Japan"
+      },
+      {
+        "year": "2018",
+        "value": 126811000,
+        "country": "Japan"
+      },
+      {
+        "year": "2023",
+        "value": 124516650,
+        "country": "Japan"
+      },
+      {
+        "year": "2021",
+        "value": 125681593,
+        "country": "Japan"
+      },
+      {
+        "year": "1995",
+        "value": 125472000,
+        "country": "Japan"
+      },
+      {
+        "year": "1992",
+        "value": 124425000,
+        "country": "Japan"
+      },
+      {
+        "year": "1983",
+        "value": 119307000,
+        "country": "Japan"
+      },
+      {
+        "year": "1979",
+        "value": 115890000,
+        "country": "Japan"
+      },
+      {
+        "year": "1981",
+        "value": 117661000,
+        "country": "Japan"
+      },
+      {
+        "year": "1967",
+        "value": 99879000,
+        "country": "Japan"
+      },
+      {
+        "year": "1962",
+        "value": 94933000,
+        "country": "Japan"
+      },
+      {
+        "year": "1961",
+        "value": 94055000,
+        "country": "Japan"
+      },
+      {
+        "year": "2016",
+        "value": 127076000,
+        "country": "Japan"
+      },
+      {
+        "year": "2013",
+        "value": 127445000,
+        "country": "Japan"
+      },
+      {
+        "year": "2006",
+        "value": 127854000,
+        "country": "Japan"
+      },
+      {
+        "year": "2010",
+        "value": 128070000,
+        "country": "Japan"
+      },
+      {
+        "year": "2011",
+        "value": 127833000,
+        "country": "Japan"
+      },
+      {
+        "year": "2004",
+        "value": 127761000,
+        "country": "Japan"
+      },
+      {
+        "year": "2015",
+        "value": 127141000,
+        "country": "Japan"
+      },
+      {
+        "year": "2020",
+        "value": 126261000,
+        "country": "Japan"
+      },
+      {
+        "year": "2003",
+        "value": 127718000,
+        "country": "Japan"
+      },
+      {
+        "year": "2022",
+        "value": 125124989,
+        "country": "Japan"
+      },
+      {
+        "year": "1990",
+        "value": 123478000,
+        "country": "Japan"
+      },
+      {
+        "year": "1996",
+        "value": 125757000,
+        "country": "Japan"
+      },
+      {
+        "year": "1986",
+        "value": 121482000,
+        "country": "Japan"
+      },
+      {
+        "year": "1980",
+        "value": 116807000,
+        "country": "Japan"
+      },
+      {
+        "year": "1982",
+        "value": 118480000,
+        "country": "Japan"
+      },
+      {
+        "year": "1984",
+        "value": 120083000,
+        "country": "Japan"
+      },
+      {
+        "year": "1976",
+        "value": 112775000,
+        "country": "Japan"
+      },
+      {
+        "year": "1977",
+        "value": 113872000,
+        "country": "Japan"
+      },
+      {
+        "year": "1975",
+        "value": 111573000,
+        "country": "Japan"
+      },
+      {
+        "year": "1970",
+        "value": 103403000,
+        "country": "Japan"
+      },
+      {
+        "year": "1968",
+        "value": 101011000,
+        "country": "Japan"
+      },
+      {
+        "year": "1969",
+        "value": 102219000,
+        "country": "Japan"
+      },
+      {
+        "year": "1964",
+        "value": 96903000,
+        "country": "Japan"
+      },
+      {
+        "year": "2014",
+        "value": 127276000,
+        "country": "Japan"
+      },
+      {
+        "year": "2017",
+        "value": 126972000,
+        "country": "Japan"
+      },
+      {
+        "year": "1999",
+        "value": 126631000,
+        "country": "Japan"
+      },
+      {
+        "year": "2007",
+        "value": 128001000,
+        "country": "Japan"
+      },
+      {
+        "year": "2005",
+        "value": 127773000,
+        "country": "Japan"
+      },
+      {
+        "year": "1997",
+        "value": 126057000,
+        "country": "Japan"
+      },
+      {
+        "year": "1994",
+        "value": 125178000,
+        "country": "Japan"
+      },
+      {
+        "year": "1993",
+        "value": 124829000,
+        "country": "Japan"
+      },
+      {
+        "year": "1988",
+        "value": 122578000,
+        "country": "Japan"
+      },
+      {
+        "year": "1987",
+        "value": 122069000,
+        "country": "Japan"
+      },
+      {
+        "year": "1972",
+        "value": 107188000,
+        "country": "Japan"
+      },
+      {
+        "year": "1973",
+        "value": 108707000,
+        "country": "Japan"
+      },
+      {
+        "year": "1971",
+        "value": 105697000,
+        "country": "Japan"
+      },
+      {
+        "year": "1966",
+        "value": 98851000,
+        "country": "Japan"
+      },
+      {
+        "year": "1963",
+        "value": 95900000,
+        "country": "Japan"
+      },
+      {
+        "year": "1965",
+        "value": 97952000,
+        "country": "Japan"
+      },
+      {
+        "year": "1960",
+        "value": 93216000,
+        "country": "Japan"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Persons",
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.0f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      }
+    ],
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Economy",
+        "labelLimit": 250,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

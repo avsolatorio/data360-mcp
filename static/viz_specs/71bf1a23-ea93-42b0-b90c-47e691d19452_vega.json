@@ -1,0 +1,524 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years) vs. GDP per capita (constant 2015 US$)"
+    ],
+    "subtitle": [
+      "2015-2020"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "country": "Canada",
+        "life_expectancy_at_birth_total_years": 81.825854,
+        "gdp_per_capita_constant_2015_us": 43594.237908
+      },
+      {
+        "year": "2015",
+        "country": "France",
+        "life_expectancy_at_birth_total_years": 82.321951,
+        "gdp_per_capita_constant_2015_us": 36702.432373
+      },
+      {
+        "year": "2015",
+        "country": "Germany",
+        "life_expectancy_at_birth_total_years": 80.641463,
+        "gdp_per_capita_constant_2015_us": 41929.754911
+      },
+      {
+        "year": "2015",
+        "country": "Italy",
+        "life_expectancy_at_birth_total_years": 82.543902,
+        "gdp_per_capita_constant_2015_us": 30639.882975
+      },
+      {
+        "year": "2015",
+        "country": "Japan",
+        "life_expectancy_at_birth_total_years": 83.793902,
+        "gdp_per_capita_constant_2015_us": 35664.644611
+      },
+      {
+        "year": "2015",
+        "country": "United Kingdom",
+        "life_expectancy_at_birth_total_years": 80.956098,
+        "gdp_per_capita_constant_2015_us": 45256.040227
+      },
+      {
+        "year": "2015",
+        "country": "United States",
+        "life_expectancy_at_birth_total_years": 78.690244,
+        "gdp_per_capita_constant_2015_us": 56849.469792
+      },
+      {
+        "year": "2016",
+        "country": "Canada",
+        "life_expectancy_at_birth_total_years": 81.94,
+        "gdp_per_capita_constant_2015_us": 43551.386356
+      },
+      {
+        "year": "2016",
+        "country": "France",
+        "life_expectancy_at_birth_total_years": 82.573171,
+        "gdp_per_capita_constant_2015_us": 36920.534285
+      },
+      {
+        "year": "2016",
+        "country": "Germany",
+        "life_expectancy_at_birth_total_years": 80.990244,
+        "gdp_per_capita_constant_2015_us": 42516.933706
+      },
+      {
+        "year": "2016",
+        "country": "Italy",
+        "life_expectancy_at_birth_total_years": 83.243902,
+        "gdp_per_capita_constant_2015_us": 31077.679268
+      },
+      {
+        "year": "2016",
+        "country": "Japan",
+        "life_expectancy_at_birth_total_years": 83.984878,
+        "gdp_per_capita_constant_2015_us": 35934.446789
+      },
+      {
+        "year": "2016",
+        "country": "United Kingdom",
+        "life_expectancy_at_birth_total_years": 81.156098,
+        "gdp_per_capita_constant_2015_us": 45888.709961
+      },
+      {
+        "year": "2016",
+        "country": "United States",
+        "life_expectancy_at_birth_total_years": 78.539024,
+        "gdp_per_capita_constant_2015_us": 57430.84993
+      },
+      {
+        "year": "2017",
+        "country": "Canada",
+        "life_expectancy_at_birth_total_years": 81.807805,
+        "gdp_per_capita_constant_2015_us": 44339.433222
+      },
+      {
+        "year": "2017",
+        "country": "France",
+        "life_expectancy_at_birth_total_years": 82.57561,
+        "gdp_per_capita_constant_2015_us": 37580.597933
+      },
+      {
+        "year": "2017",
+        "country": "Germany",
+        "life_expectancy_at_birth_total_years": 80.992683,
+        "gdp_per_capita_constant_2015_us": 43543.480705
+      },
+      {
+        "year": "2017",
+        "country": "Italy",
+        "life_expectancy_at_birth_total_years": 82.946341,
+        "gdp_per_capita_constant_2015_us": 31635.522771
+      },
+      {
+        "year": "2017",
+        "country": "Japan",
+        "life_expectancy_at_birth_total_years": 84.099756,
+        "gdp_per_capita_constant_2015_us": 36547.735744
+      },
+      {
+        "year": "2017",
+        "country": "United Kingdom",
+        "life_expectancy_at_birth_total_years": 81.256098,
+        "gdp_per_capita_constant_2015_us": 47019.451042
+      },
+      {
+        "year": "2017",
+        "country": "United States",
+        "life_expectancy_at_birth_total_years": 78.539024,
+        "gdp_per_capita_constant_2015_us": 58435.970754
+      },
+      {
+        "year": "2018",
+        "country": "Canada",
+        "life_expectancy_at_birth_total_years": 81.803659,
+        "gdp_per_capita_constant_2015_us": 44907.388799
+      },
+      {
+        "year": "2018",
+        "country": "France",
+        "life_expectancy_at_birth_total_years": 82.67561,
+        "gdp_per_capita_constant_2015_us": 38062.443596
+      },
+      {
+        "year": "2018",
+        "country": "Germany",
+        "life_expectancy_at_birth_total_years": 80.892683,
+        "gdp_per_capita_constant_2015_us": 43905.855006
+      },
+      {
+        "year": "2018",
+        "country": "Italy",
+        "life_expectancy_at_birth_total_years": 83.346341,
+        "gdp_per_capita_constant_2015_us": 31963.641715
+      },
+      {
+        "year": "2018",
+        "country": "Japan",
+        "life_expectancy_at_birth_total_years": 84.210976,
+        "gdp_per_capita_constant_2015_us": 36899.384708
+      },
+      {
+        "year": "2018",
+        "country": "United Kingdom",
+        "life_expectancy_at_birth_total_years": 81.256098,
+        "gdp_per_capita_constant_2015_us": 47516.209977
+      },
+      {
+        "year": "2018",
+        "country": "United States",
+        "life_expectancy_at_birth_total_years": 78.639024,
+        "gdp_per_capita_constant_2015_us": 59817.65568
+      },
+      {
+        "year": "2019",
+        "country": "Canada",
+        "life_expectancy_at_birth_total_years": 82.158537,
+        "gdp_per_capita_constant_2015_us": 45100.336806
+      },
+      {
+        "year": "2019",
+        "country": "France",
+        "life_expectancy_at_birth_total_years": 82.826829,
+        "gdp_per_capita_constant_2015_us": 38705.207294
+      },
+      {
+        "year": "2019",
+        "country": "Germany",
+        "life_expectancy_at_birth_total_years": 81.292683,
+        "gdp_per_capita_constant_2015_us": 44235.265895
+      },
+      {
+        "year": "2019",
+        "country": "Italy",
+        "life_expectancy_at_birth_total_years": 83.497561,
+        "gdp_per_capita_constant_2015_us": 32180.434102
+      },
+      {
+        "year": "2019",
+        "country": "Japan",
+        "life_expectancy_at_birth_total_years": 84.356341,
+        "gdp_per_capita_constant_2015_us": 36837.258365
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "life_expectancy_at_birth_total_years": 81.369122,
+        "gdp_per_capita_constant_2015_us": 47866.914035
+      },
+      {
+        "year": "2019",
+        "country": "United States",
+        "life_expectancy_at_birth_total_years": 78.787805,
+        "gdp_per_capita_constant_2015_us": 61047.964824
+      },
+      {
+        "year": "2020",
+        "country": "Canada",
+        "life_expectancy_at_birth_total_years": 81.53,
+        "gdp_per_capita_constant_2015_us": 42366.171094
+      },
+      {
+        "year": "2020",
+        "country": "France",
+        "life_expectancy_at_birth_total_years": 82.17561,
+        "gdp_per_capita_constant_2015_us": 35709.204593
+      },
+      {
+        "year": "2020",
+        "country": "Germany",
+        "life_expectancy_at_birth_total_years": 81.041463,
+        "gdp_per_capita_constant_2015_us": 42372.872678
+      },
+      {
+        "year": "2020",
+        "country": "Italy",
+        "life_expectancy_at_birth_total_years": 82.195122,
+        "gdp_per_capita_constant_2015_us": 29469.798924
+      },
+      {
+        "year": "2020",
+        "country": "Japan",
+        "life_expectancy_at_birth_total_years": 84.56,
+        "gdp_per_capita_constant_2015_us": 35363.299695
+      },
+      {
+        "year": "2020",
+        "country": "United Kingdom",
+        "life_expectancy_at_birth_total_years": 80.331756,
+        "gdp_per_capita_constant_2015_us": 42985.039215
+      },
+      {
+        "year": "2020",
+        "country": "United States",
+        "life_expectancy_at_birth_total_years": 76.980488,
+        "gdp_per_capita_constant_2015_us": 59533.609024
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2,
+        "opacity": 0.6
+      },
+      "encoding": {
+        "x": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Life expectancy at birth, total (years)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "gdp_per_capita_constant_2015_us",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 40,
+        "opacity": 0.9
+      },
+      "encoding": {
+        "x": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Life expectancy at birth, total (years)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "gdp_per_capita_constant_2015_us",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3
+          }
+        },
+        "order": {
+          "field": "year",
+          "type": "temporal"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "life_expectancy_at_birth_total_years",
+            "title": "Life expectancy at birth, total (years)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "gdp_per_capita_constant_2015_us",
+            "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "width": 550,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,1496 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Total population by country (2023)",
+    "subtitle": [
+      "Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola, Antigua and Barbuda, ARB, Argentina, Armenia, \u2026 (+253 more), 2023",
+      "Persons"
+    ]
+  },
+  "width": 800,
+  "height": 450,
+  "data": {
+    "url": "https://unpkg.com/world-atlas@2.0.2/countries-110m.json",
+    "format": {
+      "type": "topojson",
+      "feature": "countries"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "year": "2023",
+              "value": 128691692,
+              "country": "Ethiopia"
+            },
+            {
+              "year": "2023",
+              "value": 54414,
+              "country": "Faroe Islands"
+            },
+            {
+              "year": "2023",
+              "value": 924145,
+              "country": "Fiji"
+            },
+            {
+              "year": "2023",
+              "value": 5583911,
+              "country": "Finland"
+            },
+            {
+              "year": "2023",
+              "value": 68372286,
+              "country": "France"
+            },
+            {
+              "year": "2023",
+              "value": 281118,
+              "country": "French Polynesia"
+            },
+            {
+              "year": "2023",
+              "value": 2484789,
+              "country": "Gabon"
+            },
+            {
+              "year": "2023",
+              "value": 2697845,
+              "country": "Gambia, The"
+            },
+            {
+              "year": "2023",
+              "value": 3715483,
+              "country": "Georgia"
+            },
+            {
+              "year": "2023",
+              "value": 83287273,
+              "country": "Germany"
+            },
+            {
+              "year": "2023",
+              "value": 33787914,
+              "country": "Ghana"
+            },
+            {
+              "year": "2023",
+              "value": 38471,
+              "country": "Gibraltar"
+            },
+            {
+              "year": "2023",
+              "value": 10407351,
+              "country": "Greece"
+            },
+            {
+              "year": "2023",
+              "value": 56865,
+              "country": "Greenland"
+            },
+            {
+              "year": "2023",
+              "value": 117081,
+              "country": "Grenada"
+            },
+            {
+              "year": "2023",
+              "value": 166506,
+              "country": "Guam"
+            },
+            {
+              "year": "2023",
+              "value": 18124838,
+              "country": "Guatemala"
+            },
+            {
+              "year": "2023",
+              "value": 2964300,
+              "country": "Armenia"
+            },
+            {
+              "year": "2023",
+              "value": 107359,
+              "country": "Aruba"
+            },
+            {
+              "year": "2023",
+              "value": 26659922,
+              "country": "Australia"
+            },
+            {
+              "year": "2023",
+              "value": 9131761,
+              "country": "Austria"
+            },
+            {
+              "year": "2023",
+              "value": 10153958,
+              "country": "Azerbaijan"
+            },
+            {
+              "year": "2023",
+              "value": 399440,
+              "country": "Bahamas, The"
+            },
+            {
+              "year": "2023",
+              "value": 1577059,
+              "country": "Bahrain"
+            },
+            {
+              "year": "2023",
+              "value": 171466990,
+              "country": "Bangladesh"
+            },
+            {
+              "year": "2023",
+              "value": 282336,
+              "country": "Barbados"
+            },
+            {
+              "year": "2023",
+              "value": 9178298,
+              "country": "Belarus"
+            },
+            {
+              "year": "2023",
+              "value": 11779946,
+              "country": "Belgium"
+            },
+            {
+              "year": "2023",
+              "value": 411106,
+              "country": "Belize"
+            },
+            {
+              "year": "2023",
+              "value": 14111034,
+              "country": "Benin"
+            },
+            {
+              "year": "2023",
+              "value": 64698,
+              "country": "Bermuda"
+            },
+            {
+              "year": "2023",
+              "value": 786385,
+              "country": "Bhutan"
+            },
+            {
+              "year": "2023",
+              "value": 73038,
+              "country": "Cayman Islands"
+            },
+            {
+              "year": "2023",
+              "value": 5152421,
+              "country": "Central African Republic"
+            },
+            {
+              "year": "2023",
+              "value": 19319064,
+              "country": "Chad"
+            },
+            {
+              "year": "2023",
+              "value": 167691,
+              "country": "Channel Islands"
+            },
+            {
+              "year": "2023",
+              "value": 19658835,
+              "country": "Chile"
+            },
+            {
+              "year": "2023",
+              "value": 1410710000,
+              "country": "China"
+            },
+            {
+              "year": "2023",
+              "value": 52321152,
+              "country": "Colombia"
+            },
+            {
+              "year": "2023",
+              "value": 850387,
+              "country": "Comoros"
+            },
+            {
+              "year": "2023",
+              "value": 105789731,
+              "country": "Congo, Dem. Rep."
+            },
+            {
+              "year": "2023",
+              "value": 6182885,
+              "country": "Congo, Rep."
+            },
+            {
+              "year": "2023",
+              "value": 5105525,
+              "country": "Costa Rica"
+            },
+            {
+              "year": "2023",
+              "value": 31165654,
+              "country": "Cote d'Ivoire"
+            },
+            {
+              "year": "2023",
+              "value": 3859686,
+              "country": "Croatia"
+            },
+            {
+              "year": "2023",
+              "value": 11019931,
+              "country": "Cuba"
+            },
+            {
+              "year": "2023",
+              "value": 154654,
+              "country": "Curacao"
+            },
+            {
+              "year": "2023",
+              "value": 9849000,
+              "country": "Israel"
+            },
+            {
+              "year": "2023",
+              "value": 58984216,
+              "country": "Italy"
+            },
+            {
+              "year": "2023",
+              "value": 2839786,
+              "country": "Jamaica"
+            },
+            {
+              "year": "2023",
+              "value": 124516650,
+              "country": "Japan"
+            },
+            {
+              "year": "2023",
+              "value": 11439213,
+              "country": "Jordan"
+            },
+            {
+              "year": "2023",
+              "value": 20330104,
+              "country": "Kazakhstan"
+            },
+            {
+              "year": "2023",
+              "value": 55339003,
+              "country": "Kenya"
+            },
+            {
+              "year": "2023",
+              "value": 132530,
+              "country": "Kiribati"
+            },
+            {
+              "year": "2023",
+              "value": 26418204,
+              "country": "Korea, Dem. People's Rep."
+            },
+            {
+              "year": "2023",
+              "value": 51712619,
+              "country": "Korea, Rep."
+            },
+            {
+              "year": "2023",
+              "value": 1682668,
+              "country": "Kosovo"
+            },
+            {
+              "year": "2023",
+              "value": 4853420,
+              "country": "Kuwait"
+            },
+            {
+              "year": "2023",
+              "value": 7099750,
+              "country": "Kyrgyz Republic"
+            },
+            {
+              "year": "2023",
+              "value": 7664993,
+              "country": "Lao PDR"
+            },
+            {
+              "year": "2023",
+              "value": 1883710,
+              "country": "Latvia"
+            },
+            {
+              "year": "2023",
+              "value": 5773493,
+              "country": "Lebanon"
+            },
+            {
+              "year": "2023",
+              "value": 2311472,
+              "country": "Lesotho"
+            },
+            {
+              "year": "2023",
+              "value": 5493031,
+              "country": "Liberia"
+            },
+            {
+              "year": "2023",
+              "value": 7305659,
+              "country": "Libya"
+            },
+            {
+              "year": "2023",
+              "value": 39846,
+              "country": "Liechtenstein"
+            },
+            {
+              "year": "2023",
+              "value": 2871585,
+              "country": "Lithuania"
+            },
+            {
+              "year": "2023",
+              "value": 666430,
+              "country": "Luxembourg"
+            },
+            {
+              "year": "2023",
+              "value": 678800,
+              "country": "Macao SAR, China"
+            },
+            {
+              "year": "2023",
+              "value": 31195932,
+              "country": "Madagascar"
+            },
+            {
+              "year": "2023",
+              "value": 21104482,
+              "country": "Malawi"
+            },
+            {
+              "year": "2023",
+              "value": 35126298,
+              "country": "Malaysia"
+            },
+            {
+              "year": "2023",
+              "value": 525994,
+              "country": "Maldives"
+            },
+            {
+              "year": "2023",
+              "value": 23769127,
+              "country": "Mali"
+            },
+            {
+              "year": "2023",
+              "value": 100352192,
+              "country": "Viet Nam"
+            },
+            {
+              "year": "2023",
+              "value": 104917,
+              "country": "Virgin Islands (U.S.)"
+            },
+            {
+              "year": "2023",
+              "value": 5165775,
+              "country": "West Bank and Gaza"
+            },
+            {
+              "year": "2023",
+              "value": 39390799,
+              "country": "Yemen, Rep."
+            },
+            {
+              "year": "2023",
+              "value": 20723965,
+              "country": "Zambia"
+            },
+            {
+              "year": "2023",
+              "value": 16340822,
+              "country": "Zimbabwe"
+            },
+            {
+              "year": "2023",
+              "value": 22037000,
+              "country": "Sri Lanka"
+            },
+            {
+              "year": "2023",
+              "value": 46758,
+              "country": "St. Kitts and Nevis"
+            },
+            {
+              "year": "2023",
+              "value": 179285,
+              "country": "St. Lucia"
+            },
+            {
+              "year": "2023",
+              "value": 27515,
+              "country": "St. Martin (French part)"
+            },
+            {
+              "year": "2023",
+              "value": 101323,
+              "country": "St. Vincent and the Grenadines"
+            },
+            {
+              "year": "2023",
+              "value": 50042791,
+              "country": "Sudan"
+            },
+            {
+              "year": "2023",
+              "value": 628886,
+              "country": "Suriname"
+            },
+            {
+              "year": "2023",
+              "value": 10536632,
+              "country": "Sweden"
+            },
+            {
+              "year": "2023",
+              "value": 8888822,
+              "country": "Switzerland"
+            },
+            {
+              "year": "2023",
+              "value": 23594623,
+              "country": "Syrian Arab Republic"
+            },
+            {
+              "year": "2023",
+              "value": 10389799,
+              "country": "Tajikistan"
+            },
+            {
+              "year": "2023",
+              "value": 66617606,
+              "country": "Tanzania"
+            },
+            {
+              "year": "2023",
+              "value": 71702435,
+              "country": "Thailand"
+            },
+            {
+              "year": "2023",
+              "value": 1384286,
+              "country": "Timor-Leste"
+            },
+            {
+              "year": "2023",
+              "value": 9304337,
+              "country": "Togo"
+            },
+            {
+              "year": "2023",
+              "value": 104597,
+              "country": "Tonga"
+            },
+            {
+              "year": "2023",
+              "value": 1367510,
+              "country": "Trinidad and Tobago"
+            },
+            {
+              "year": "2023",
+              "value": 12200431,
+              "country": "Tunisia"
+            },
+            {
+              "year": "2023",
+              "value": 85325965,
+              "country": "Turkiye"
+            },
+            {
+              "year": "2023",
+              "value": 7364438,
+              "country": "Turkmenistan"
+            },
+            {
+              "year": "2023",
+              "value": 46198,
+              "country": "Turks and Caicos Islands"
+            },
+            {
+              "year": "2023",
+              "value": 9816,
+              "country": "Tuvalu"
+            },
+            {
+              "year": "2023",
+              "value": 48656601,
+              "country": "Uganda"
+            },
+            {
+              "year": "2023",
+              "value": 37732836,
+              "country": "Ukraine"
+            },
+            {
+              "year": "2023",
+              "value": 10483751,
+              "country": "United Arab Emirates"
+            },
+            {
+              "year": "2023",
+              "value": 68492000,
+              "country": "United Kingdom"
+            },
+            {
+              "year": "2023",
+              "value": 336806231,
+              "country": "United States"
+            },
+            {
+              "year": "2023",
+              "value": 3388081,
+              "country": "Uruguay"
+            },
+            {
+              "year": "2023",
+              "value": 35652307,
+              "country": "Uzbekistan"
+            },
+            {
+              "year": "2023",
+              "value": 320409,
+              "country": "Vanuatu"
+            },
+            {
+              "year": "2023",
+              "value": 28300854,
+              "country": "Venezuela, RB"
+            },
+            {
+              "year": "2023",
+              "value": 14405468,
+              "country": "Guinea"
+            },
+            {
+              "year": "2023",
+              "value": 2153339,
+              "country": "Guinea-Bissau"
+            },
+            {
+              "year": "2023",
+              "value": 826353,
+              "country": "Guyana"
+            },
+            {
+              "year": "2023",
+              "value": 11637398,
+              "country": "Haiti"
+            },
+            {
+              "year": "2023",
+              "value": 10644851,
+              "country": "Honduras"
+            },
+            {
+              "year": "2023",
+              "value": 7536100,
+              "country": "Hong Kong SAR, China"
+            },
+            {
+              "year": "2023",
+              "value": 9592186,
+              "country": "Hungary"
+            },
+            {
+              "year": "2023",
+              "value": 385663,
+              "country": "Iceland"
+            },
+            {
+              "year": "2023",
+              "value": 1438069596,
+              "country": "India"
+            },
+            {
+              "year": "2023",
+              "value": 281190067,
+              "country": "Indonesia"
+            },
+            {
+              "year": "2023",
+              "value": 90608707,
+              "country": "Iran, Islamic Rep."
+            },
+            {
+              "year": "2023",
+              "value": 45074049,
+              "country": "Iraq"
+            },
+            {
+              "year": "2023",
+              "value": 5311538,
+              "country": "Ireland"
+            },
+            {
+              "year": "2023",
+              "value": 84165,
+              "country": "Isle of Man"
+            },
+            {
+              "year": "2023",
+              "value": 589889543,
+              "country": "Latin America & Caribbean"
+            },
+            {
+              "year": "2023",
+              "value": 642397939,
+              "country": "TLA"
+            },
+            {
+              "year": "2023",
+              "value": 1160824674,
+              "country": "LDC"
+            },
+            {
+              "year": "2023",
+              "value": 6498875200,
+              "country": "LMY"
+            },
+            {
+              "year": "2023",
+              "value": 607774703,
+              "country": "Low income"
+            },
+            {
+              "year": "2023",
+              "value": 3082002881,
+              "country": "Lower middle income"
+            },
+            {
+              "year": "2023",
+              "value": 797801454,
+              "country": "Middle East & North Africa"
+            },
+            {
+              "year": "2023",
+              "value": 729077445,
+              "country": "Middle East and North Africa"
+            },
+            {
+              "year": "2023",
+              "value": 723911670,
+              "country": "TMN"
+            },
+            {
+              "year": "2023",
+              "value": 5891100497,
+              "country": "MIC"
+            },
+            {
+              "year": "2023",
+              "value": 376954413,
+              "country": "North America"
+            },
+            {
+              "year": "2023",
+              "value": 1387897706,
+              "country": "OED"
+            },
+            {
+              "year": "2023",
+              "value": 12822134,
+              "country": "Small States"
+            },
+            {
+              "year": "2023",
+              "value": 2689224,
+              "country": "Small States"
+            },
+            {
+              "year": "2023",
+              "value": 1121315547,
+              "country": "PST"
+            },
+            {
+              "year": "2023",
+              "value": 1078224044,
+              "country": "PRE"
+            },
+            {
+              "year": "2023",
+              "value": 20031262,
+              "country": "SST"
+            },
+            {
+              "year": "2023",
+              "value": 1662580579,
+              "country": "South Asia"
+            },
+            {
+              "year": "2023",
+              "value": 1662580579,
+              "country": "TSA"
+            },
+            {
+              "year": "2023",
+              "value": 1259889959,
+              "country": "Sub-Saharan Africa"
+            },
+            {
+              "year": "2023",
+              "value": 1131078494,
+              "country": "SSA"
+            },
+            {
+              "year": "2023",
+              "value": 1259889959,
+              "country": "TSS"
+            },
+            {
+              "year": "2023",
+              "value": 2809097616,
+              "country": "Upper middle income"
+            },
+            {
+              "year": "2023",
+              "value": 8064057930,
+              "country": "World"
+            },
+            {
+              "year": "2023",
+              "value": 41454761,
+              "country": "Afghanistan"
+            },
+            {
+              "year": "2023",
+              "value": 2414095,
+              "country": "Albania"
+            },
+            {
+              "year": "2023",
+              "value": 46164219,
+              "country": "Algeria"
+            },
+            {
+              "year": "2023",
+              "value": 47521,
+              "country": "American Samoa"
+            },
+            {
+              "year": "2023",
+              "value": 80856,
+              "country": "Andorra"
+            },
+            {
+              "year": "2023",
+              "value": 36749906,
+              "country": "Angola"
+            },
+            {
+              "year": "2023",
+              "value": 93316,
+              "country": "Antigua and Barbuda"
+            },
+            {
+              "year": "2023",
+              "value": 45538401,
+              "country": "Argentina"
+            },
+            {
+              "year": "2023",
+              "value": 750491370,
+              "country": "Eastern and Southern Africa"
+            },
+            {
+              "year": "2023",
+              "value": 509398589,
+              "country": "Western and Central Africa"
+            },
+            {
+              "year": "2023",
+              "value": 482105978,
+              "country": "ARB"
+            },
+            {
+              "year": "2023",
+              "value": 4519904,
+              "country": "CSS"
+            },
+            {
+              "year": "2023",
+              "value": 100183707,
+              "country": "CEB"
+            },
+            {
+              "year": "2023",
+              "value": 3511607650,
+              "country": "EAR"
+            },
+            {
+              "year": "2023",
+              "value": 12244159,
+              "country": "Bolivia"
+            },
+            {
+              "year": "2023",
+              "value": 3185073,
+              "country": "Bosnia and Herzegovina"
+            },
+            {
+              "year": "2023",
+              "value": 2480244,
+              "country": "Botswana"
+            },
+            {
+              "year": "2023",
+              "value": 211140729,
+              "country": "Brazil"
+            },
+            {
+              "year": "2023",
+              "value": 38985,
+              "country": "British Virgin Islands"
+            },
+            {
+              "year": "2023",
+              "value": 458949,
+              "country": "Brunei Darussalam"
+            },
+            {
+              "year": "2023",
+              "value": 6446596,
+              "country": "Bulgaria"
+            },
+            {
+              "year": "2023",
+              "value": 23025776,
+              "country": "Burkina Faso"
+            },
+            {
+              "year": "2023",
+              "value": 13689450,
+              "country": "Burundi"
+            },
+            {
+              "year": "2023",
+              "value": 522331,
+              "country": "Cabo Verde"
+            },
+            {
+              "year": "2023",
+              "value": 17423880,
+              "country": "Cambodia"
+            },
+            {
+              "year": "2023",
+              "value": 28372687,
+              "country": "Cameroon"
+            },
+            {
+              "year": "2023",
+              "value": 40083484,
+              "country": "Canada"
+            },
+            {
+              "year": "2023",
+              "value": 33702731,
+              "country": "Saudi Arabia"
+            },
+            {
+              "year": "2023",
+              "value": 18077573,
+              "country": "Senegal"
+            },
+            {
+              "year": "2023",
+              "value": 6623183,
+              "country": "Serbia"
+            },
+            {
+              "year": "2023",
+              "value": 119773,
+              "country": "Seychelles"
+            },
+            {
+              "year": "2023",
+              "value": 8460512,
+              "country": "Sierra Leone"
+            },
+            {
+              "year": "2023",
+              "value": 5917648,
+              "country": "Singapore"
+            },
+            {
+              "year": "2023",
+              "value": 42749,
+              "country": "Sint Maarten (Dutch part)"
+            },
+            {
+              "year": "2023",
+              "value": 5426740,
+              "country": "Slovak Republic"
+            },
+            {
+              "year": "2023",
+              "value": 2120461,
+              "country": "Slovenia"
+            },
+            {
+              "year": "2023",
+              "value": 800005,
+              "country": "Solomon Islands"
+            },
+            {
+              "year": "2023",
+              "value": 18358615,
+              "country": "Somalia"
+            },
+            {
+              "year": "2023",
+              "value": 63212384,
+              "country": "South Africa"
+            },
+            {
+              "year": "2023",
+              "value": 11483374,
+              "country": "South Sudan"
+            },
+            {
+              "year": "2023",
+              "value": 48352528,
+              "country": "Spain"
+            },
+            {
+              "year": "2023",
+              "value": 6844146,
+              "country": "Paraguay"
+            },
+            {
+              "year": "2023",
+              "value": 33845617,
+              "country": "Peru"
+            },
+            {
+              "year": "2023",
+              "value": 114891199,
+              "country": "Philippines"
+            },
+            {
+              "year": "2023",
+              "value": 36687353,
+              "country": "Poland"
+            },
+            {
+              "year": "2023",
+              "value": 10578174,
+              "country": "Portugal"
+            },
+            {
+              "year": "2023",
+              "value": 3203792,
+              "country": "Puerto Rico"
+            },
+            {
+              "year": "2023",
+              "value": 2656032,
+              "country": "Qatar"
+            },
+            {
+              "year": "2023",
+              "value": 19061062,
+              "country": "Romania"
+            },
+            {
+              "year": "2023",
+              "value": 143826130,
+              "country": "Russian Federation"
+            },
+            {
+              "year": "2023",
+              "value": 13954471,
+              "country": "Rwanda"
+            },
+            {
+              "year": "2023",
+              "value": 216663,
+              "country": "Samoa"
+            },
+            {
+              "year": "2023",
+              "value": 33860,
+              "country": "San Marino"
+            },
+            {
+              "year": "2023",
+              "value": 230871,
+              "country": "Sao Tome and Principe"
+            },
+            {
+              "year": "2023",
+              "value": 552747,
+              "country": "Malta"
+            },
+            {
+              "year": "2023",
+              "value": 38827,
+              "country": "Marshall Islands"
+            },
+            {
+              "year": "2023",
+              "value": 5022441,
+              "country": "Mauritania"
+            },
+            {
+              "year": "2023",
+              "value": 1248647,
+              "country": "Mauritius"
+            },
+            {
+              "year": "2023",
+              "value": 129739759,
+              "country": "Mexico"
+            },
+            {
+              "year": "2023",
+              "value": 112630,
+              "country": "Micronesia, Fed. Sts."
+            },
+            {
+              "year": "2023",
+              "value": 2457783,
+              "country": "Moldova"
+            },
+            {
+              "year": "2023",
+              "value": 38956,
+              "country": "Monaco"
+            },
+            {
+              "year": "2023",
+              "value": 3481145,
+              "country": "Mongolia"
+            },
+            {
+              "year": "2023",
+              "value": 623529,
+              "country": "Montenegro"
+            },
+            {
+              "year": "2023",
+              "value": 37712505,
+              "country": "Morocco"
+            },
+            {
+              "year": "2023",
+              "value": 33635160,
+              "country": "Mozambique"
+            },
+            {
+              "year": "2023",
+              "value": 54133798,
+              "country": "Myanmar"
+            },
+            {
+              "year": "2023",
+              "value": 2963095,
+              "country": "Namibia"
+            },
+            {
+              "year": "2023",
+              "value": 11875,
+              "country": "Nauru"
+            },
+            {
+              "year": "2023",
+              "value": 29694614,
+              "country": "Nepal"
+            },
+            {
+              "year": "2023",
+              "value": 17877117,
+              "country": "Netherlands"
+            },
+            {
+              "year": "2023",
+              "value": 289870,
+              "country": "New Caledonia"
+            },
+            {
+              "year": "2023",
+              "value": 5200000,
+              "country": "New Zealand"
+            },
+            {
+              "year": "2023",
+              "value": 6823613,
+              "country": "Nicaragua"
+            },
+            {
+              "year": "2023",
+              "value": 26159867,
+              "country": "Niger"
+            },
+            {
+              "year": "2023",
+              "value": 227882945,
+              "country": "Nigeria"
+            },
+            {
+              "year": "2023",
+              "value": 1827816,
+              "country": "North Macedonia"
+            },
+            {
+              "year": "2023",
+              "value": 45143,
+              "country": "Northern Mariana Islands"
+            },
+            {
+              "year": "2023",
+              "value": 5519601,
+              "country": "Norway"
+            },
+            {
+              "year": "2023",
+              "value": 5049269,
+              "country": "Oman"
+            },
+            {
+              "year": "2023",
+              "value": 247504495,
+              "country": "Pakistan"
+            },
+            {
+              "year": "2023",
+              "value": 17727,
+              "country": "Palau"
+            },
+            {
+              "year": "2023",
+              "value": 4458759,
+              "country": "Panama"
+            },
+            {
+              "year": "2023",
+              "value": 10389635,
+              "country": "Papua New Guinea"
+            },
+            {
+              "year": "2023",
+              "value": 1344976,
+              "country": "Cyprus"
+            },
+            {
+              "year": "2023",
+              "value": 10864042,
+              "country": "Czechia"
+            },
+            {
+              "year": "2023",
+              "value": 5946952,
+              "country": "Denmark"
+            },
+            {
+              "year": "2023",
+              "value": 1152944,
+              "country": "Djibouti"
+            },
+            {
+              "year": "2023",
+              "value": 66510,
+              "country": "Dominica"
+            },
+            {
+              "year": "2023",
+              "value": 11331265,
+              "country": "Dominican Republic"
+            },
+            {
+              "year": "2023",
+              "value": 17980083,
+              "country": "Ecuador"
+            },
+            {
+              "year": "2023",
+              "value": 114535772,
+              "country": "Egypt, Arab Rep."
+            },
+            {
+              "year": "2023",
+              "value": 6309624,
+              "country": "El Salvador"
+            },
+            {
+              "year": "2023",
+              "value": 1847549,
+              "country": "Equatorial Guinea"
+            },
+            {
+              "year": "2023",
+              "value": 3470390,
+              "country": "Eritrea"
+            },
+            {
+              "year": "2023",
+              "value": 1370286,
+              "country": "Estonia"
+            },
+            {
+              "year": "2023",
+              "value": 1230506,
+              "country": "Eswatini"
+            },
+            {
+              "year": "2023",
+              "value": 2384441485,
+              "country": "East Asia & Pacific"
+            },
+            {
+              "year": "2023",
+              "value": 2137527754,
+              "country": "East Asia and Pacific"
+            },
+            {
+              "year": "2023",
+              "value": 2111139152,
+              "country": "TEA"
+            },
+            {
+              "year": "2023",
+              "value": 349762722,
+              "country": "EMU"
+            },
+            {
+              "year": "2023",
+              "value": 924773523,
+              "country": "Europe & Central Asia"
+            },
+            {
+              "year": "2023",
+              "value": 248721385,
+              "country": "Europe and Central Asia"
+            },
+            {
+              "year": "2023",
+              "value": 458602212,
+              "country": "TEC"
+            },
+            {
+              "year": "2023",
+              "value": 448897545,
+              "country": "EUU"
+            },
+            {
+              "year": "2023",
+              "value": 1057033168,
+              "country": "FCS"
+            },
+            {
+              "year": "2023",
+              "value": 917304254,
+              "country": "HPC"
+            },
+            {
+              "year": "2023",
+              "value": 1408190184,
+              "country": "High income"
+            },
+            {
+              "year": "2023",
+              "value": 4952212190,
+              "country": "IBRD only"
+            },
+            {
+              "year": "2023",
+              "value": 6858521511,
+              "country": "IBT"
+            },
+            {
+              "year": "2023",
+              "value": 664395892,
+              "country": "IDA blend"
+            },
+            {
+              "year": "2023",
+              "value": 1241913429,
+              "country": "IDA only"
+            },
+            {
+              "year": "2023",
+              "value": 1906309321,
+              "country": "International Development Association"
+            },
+            {
+              "year": "2023",
+              "value": 2326296729,
+              "country": "LTE"
+            },
+            {
+              "year": "2023",
+              "value": 657616517,
+              "country": "Latin America & Caribbean"
+            }
+          ]
+        },
+        "key": "country",
+        "fields": [
+          "year",
+          "value",
+          "country"
+        ]
+      }
+    }
+  ],
+  "projection": {
+    "type": "equalEarth"
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "fill": "#eee",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      },
+      "transform": [
+        {
+          "filter": "isValid(datum.value)"
+        }
+      ],
+      "encoding": {
+        "color": {
+          "field": "value",
+          "type": "quantitative",
+          "scale": {
+            "scheme": "blues"
+          },
+          "legend": {
+            "title": "Persons",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.0f"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,356 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Trade (% of GDP) vs. Foreign direct investment, net inflows (% of GDP)"
+    ],
+    "subtitle": [
+      "China, 2010-2022",
+      "Percentage of GDP"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "country": "China",
+        "trade_of_gdp": 49.854072,
+        "foreign_direct_investment_net_inflows_of": 3.93542
+      },
+      {
+        "year": "2011",
+        "country": "China",
+        "trade_of_gdp": 49.945827,
+        "foreign_direct_investment_net_inflows_of": 3.650692
+      },
+      {
+        "year": "2012",
+        "country": "China",
+        "trade_of_gdp": 47.480213,
+        "foreign_direct_investment_net_inflows_of": 2.780991
+      },
+      {
+        "year": "2013",
+        "country": "China",
+        "trade_of_gdp": 45.916041,
+        "foreign_direct_investment_net_inflows_of": 2.985987
+      },
+      {
+        "year": "2014",
+        "country": "China",
+        "trade_of_gdp": 44.068456,
+        "foreign_direct_investment_net_inflows_of": 2.511559
+      },
+      {
+        "year": "2015",
+        "country": "China",
+        "trade_of_gdp": 38.697185,
+        "foreign_direct_investment_net_inflows_of": 2.149573
+      },
+      {
+        "year": "2016",
+        "country": "China",
+        "trade_of_gdp": 36.177171,
+        "foreign_direct_investment_net_inflows_of": 1.525395
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "trade_of_gdp": 36.950853,
+        "foreign_direct_investment_net_inflows_of": 1.32469
+      },
+      {
+        "year": "2018",
+        "country": "China",
+        "trade_of_gdp": 36.894384,
+        "foreign_direct_investment_net_inflows_of": 1.66362
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "trade_of_gdp": 35.454435,
+        "foreign_direct_investment_net_inflows_of": 1.285492
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "trade_of_gdp": 34.337778,
+        "foreign_direct_investment_net_inflows_of": 1.687708
+      },
+      {
+        "year": "2021",
+        "country": "China",
+        "trade_of_gdp": 36.642879,
+        "foreign_direct_investment_net_inflows_of": 1.890345
+      },
+      {
+        "year": "2022",
+        "country": "China",
+        "trade_of_gdp": 37.512556,
+        "foreign_direct_investment_net_inflows_of": 1.038414
+      }
+    ]
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Trade (% of GDP) (Percentage of GDP)",
+        "color": "#34A7F2",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#34A7F2",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "trade_of_gdp",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "trade_of_gdp",
+            "title": "Trade (% of GDP) (Percentage of GDP)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "Foreign direct investment, net inflows (% of GDP) (Percentage of GDP)",
+        "color": "#FF9800",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#FF9800",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "foreign_direct_investment_net_inflows_of",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "foreign_direct_investment_net_inflows_of",
+            "title": "Foreign direct investment, net inflows (% of GDP) (Percentage of GDP)",
+            "format": ".1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared"
+    },
+    "axis": {
+      "x": "independent"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

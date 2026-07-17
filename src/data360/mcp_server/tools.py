@@ -5,14 +5,21 @@ concise docstrings to reduce token context bloat, and validation schemas.
 """
 
 import json
-from typing import Any, Literal
+import os
+import threading
+from typing import Any, Literal, Optional
 
 import pydantic_core
+from fastmcp.apps import AppConfig
+from fastmcp.exceptions import ToolError
+from fastmcp.tools import ToolResult
 from fastmcp.tools.tool import Tool
+from mcp.types import TextContent
 
 from data360 import api as data360_api
 from data360 import providers as data360_providers
 from data360 import visualization as data360_viz
+from data360 import viz_config as data360_viz_config
 
 from ._server_definition import mcp
 from .tool_spans import instrument_mcp_tool
@@ -32,6 +39,24 @@ def _compact_aggregation_serializer(data: Any) -> str:
     if hasattr(data, "to_compact"):
         return json.dumps(data.to_compact(), separators=(",", ":"))
     return pydantic_core.to_json(data, fallback=str).decode()
+
+
+def _normalize_disaggregation_filters(filters: dict[str, Any] | None) -> dict[str, str | None] | None:
+    """Normalize user-provided disaggregation filters.
+    Converts list values (e.g., ["F", "M"]) to comma-separated strings (e.g., "F,M")
+    to conform to the underlying API support while remaining type-flexible for LLM callers.
+    """
+    if filters is None:
+        return None
+    normalized = {}
+    for k, v in filters.items():
+        if v is None:
+            normalized[k] = None
+        elif isinstance(v, list):
+            normalized[k] = ",".join(str(item).strip() for item in v if item is not None)
+        else:
+            normalized[k] = str(v)
+    return normalized
 
 
 # ---------------------------------------------------------------------------
@@ -72,6 +97,15 @@ async def _search_indicators(
         dedupe: De-duplicate indicators across query results.
         database: Optional database name or ID to filter search results (e.g. "wdi", "wgi", "World Development Indicators"). Multiple databases can be queried at once by separating them with a semicolon (e.g. "pip; lpgd; sgi").
     """
+    # Robustness fallback: if queries is passed as a list of exactly 1 item,
+    # normalize it to a single query parameter to prevent validation failure.
+    if queries is not None:
+        clean_queries = [q.strip() for q in queries if q and q.strip()]
+        if len(clean_queries) == 1:
+            if not query:
+                query = clean_queries[0]
+            queries = None
+
     return await data360_api.search(
         query=query,
         required_country=required_country,
@@ -138,12 +172,13 @@ async def _get_data(
     database_id: str,
     indicator_id: str,
     country_code: str | None = None,
-    disaggregation_filters: dict[str, str | None] | None = None,
+    disaggregation_filters: dict[str, Any] | None = None,
     start_year: int | None = None,
     end_year: int | None = None,
     limit: int = 50,
     offset: int = 0,
     ref_area_filter: Literal["none", "member_economies_only"] = "member_economies_only",
+    year: int | None = None,
 ) -> Any:
     """Retrieve indicator observations from the Data360 API.
 
@@ -162,12 +197,22 @@ async def _get_data(
         limit: Max records per page (default 50, max 100).
         offset: Number of records to skip for pagination.
         ref_area_filter: Filter mode: "member_economies_only" (default) or "none".
+        year: Specific single year to retrieve data for. Maps internally to start_year and end_year.
     """
+    if year is not None:
+        if start_year is None:
+            start_year = year
+        if end_year is None:
+            end_year = year
+
+
+    norm_filters = _normalize_disaggregation_filters(disaggregation_filters)
+
     return await data360_api.get_data(
         database_id=database_id,
         indicator_id=indicator_id,
         country_code=country_code,
-        disaggregation_filters=disaggregation_filters,
+        disaggregation_filters=norm_filters,
         start_year=start_year,
         end_year=end_year,
         limit=limit,
@@ -232,7 +277,8 @@ async def _get_data_api_url(
     country_code: str | None = None,
     start_year: int | None = None,
     end_year: int | None = None,
-    disaggregation_filters: dict[str, str | None] | None = None,
+    disaggregation_filters: dict[str, Any] | None = None,
+    year: int | None = None,
 ) -> str:
     """Generate the raw Data360 API URL for an indicator request.
 
@@ -246,16 +292,138 @@ async def _get_data_api_url(
         start_year: Start year (inclusive). Defaults to last 5 years if omitted.
         end_year: End year (inclusive). Defaults to current year if omitted.
         disaggregation_filters: Optional dimension filters.
+        year: Specific single year to generate the URL for. Maps internally to start_year and end_year.
     """
+    if year is not None:
+        if start_year is None:
+            start_year = year
+        if end_year is None:
+            end_year = year
+
+
+    norm_filters = _normalize_disaggregation_filters(disaggregation_filters)
+
     return await data360_api.get_data_api_url(
         database_id=database_id,
         indicator_id=indicator_id,
         country_code=country_code,
         start_year=start_year,
         end_year=end_year,
-        disaggregation_filters=disaggregation_filters,
+        disaggregation_filters=norm_filters,
     )
 
+
+
+
+
+# ---------------------------------------------------------------------------
+# Bundled Vega library cache (thread-safe, loaded once on first use)
+# ---------------------------------------------------------------------------
+
+_vega_libs_lock = threading.Lock()
+_vega_libs_cache: tuple[str, str, str, str] | None = None
+
+
+def get_cached_vega_libs() -> tuple[str, str, str, str]:
+    """Load and cache local Vega library scripts from static/libs (thread-safe)."""
+    global _vega_libs_cache
+    if _vega_libs_cache is not None:
+        return _vega_libs_cache
+    with _vega_libs_lock:
+        if _vega_libs_cache is not None:  # double-check after acquiring lock
+            return _vega_libs_cache
+        from pathlib import Path
+        import logging
+
+        libs_dir = (
+            Path(__file__).resolve().parent.parent.parent.parent / "static" / "libs"
+        )
+        try:
+            vega_js = (libs_dir / "vega.js").read_text(encoding="utf-8")
+            vega_lite_js = (libs_dir / "vega-lite.js").read_text(encoding="utf-8")
+            vega_embed_js = (libs_dir / "vega-embed.js").read_text(encoding="utf-8")
+            vega_interp_js = (libs_dir / "vega-interpreter.js").read_text(
+                encoding="utf-8"
+            )
+        except Exception as e:
+            logging.getLogger("data360").warning(
+                "Failed to load local Vega library scripts: %s", e
+            )
+            vega_js = vega_lite_js = vega_embed_js = vega_interp_js = ""
+        _vega_libs_cache = (vega_js, vega_lite_js, vega_embed_js, vega_interp_js)
+        return _vega_libs_cache
+
+
+# ---------------------------------------------------------------------------
+# Markdown summary helper (text content block for viz ToolResults)
+# ---------------------------------------------------------------------------
+
+
+def _make_text_summary(
+    spec: "dict[str, Any] | None",
+    strategy: str,
+    reason: str,
+    warning: str | None = None,
+    subtitle_line: str | None = None,
+    source_line: str | None = None,
+    url: str | None = None,
+) -> str:
+    """Build a markdown summary table from a Vega-Lite spec for the text content block."""
+    import pandas as pd
+
+    lines: list[str] = []
+
+    if warning:
+        lines.append(f"### Warning\n{warning}\n")
+
+    lines.append(f"### Data Summary ({strategy})")
+    lines.append(reason)
+    if subtitle_line:
+        lines.append(f"*{subtitle_line}*")
+    lines.append("")
+
+    data_rows: list[dict] = []
+    if isinstance(spec, dict):
+        data_rows = spec.get("data", {}).get("values", [])
+
+    if data_rows:
+        try:
+            df = pd.DataFrame(data_rows)
+            # Reorder: put time/area columns first
+            cols = list(df.columns)
+            for p in reversed(
+                ["TIME_PERIOD", "time_period", "REF_AREA", "ref_area"]
+            ):
+                if p in cols:
+                    cols.remove(p)
+                    cols.insert(0, p)
+            df = df[cols]
+
+            headers = [c.replace("_", " ").title() for c in df.columns]
+            lines.append("| " + " | ".join(headers) + " |")
+            lines.append("| " + " | ".join(["---"] * len(df.columns)) + " |")
+            for _, row in df.iterrows():
+                vals = []
+                for col in df.columns:
+                    v = row[col]
+                    if v is None or (isinstance(v, float) and pd.isna(v)):
+                        vals.append("")
+                    elif isinstance(v, float):
+                        vals.append(f"{v:,.2f}")
+                    else:
+                        vals.append(str(v))
+                lines.append("| " + " | ".join(vals) + " |")
+        except Exception:
+            lines.append("No tabular data available.")
+    else:
+        lines.append("No data available.")
+
+    if source_line:
+        lines.append(f"\n*{source_line}*")
+    if url:
+        lines.append(f"\n*Vega-Lite Spec URL:* {url}")
+
+    return "\n".join(lines)
 
 async def _get_viz_spec(
     database_id: str,
@@ -263,14 +431,16 @@ async def _get_viz_spec(
     country_code: str | None = None,
     start_year: int | None = None,
     end_year: int | None = None,
-    disaggregation_filters: dict[str, str | None] | None = None,
+    disaggregation_filters: dict[str, Any] | None = None,
     chart_type: str | None = None,
     relevant_fields: list[str] | None = None,
     custom_constraints: list[str] | None = None,
     use_default_constraints: bool = True,
-    chart_title: str | None = None,
+    chart_title: str | dict | None = None,
     series_labels: dict[str, str] | None = None,
-) -> dict[str, Any]:
+    strategy_override: str | None = None,
+    year: int | None = None,
+) -> ToolResult:
     """Generate a Vega-Lite chart from a single Data360 indicator.
 
     Use when the user requests a chart or plot for a single indicator.
@@ -284,26 +454,96 @@ async def _get_viz_spec(
         start_year: Start year (inclusive). Defaults to last 5 years if omitted.
         end_year: End year (inclusive). Defaults to current year if omitted.
         disaggregation_filters: Optional dimension filters.
-        chart_type: Optional chart type (e.g. "line", "bar", "strip", "heatmap").
+        chart_type: Optional chart type suggestion. If omitted (recommended), the routing engine automatically determines the optimal chart type and strategy based on the data profile. Do not specify this argument unless the user explicitly requested a specific chart type.
         relevant_fields: Fields to include in visual encodings.
         custom_constraints: Custom Draco design rules.
         use_default_constraints: Whether to apply default Draco design constraints.
-        chart_title: Title for the chart.
+        chart_title: A concise, human-synthesized title summarizing the data insight (e.g. 'Renewable Energy Share in South Asia (2020)'). Prefer clean, natural phrasing instead of raw long indicator names.
         series_labels: Rename dimension codes for legend (e.g. {"WGI_EST": "Estimate"}).
+        strategy_override: Explicitly force a chart strategy (e.g. "stacked_bar", "temporal_single").
+        year: Specific single year to generate the chart for. Maps internally to start_year and end_year.
     """
-    return await data360_viz.get_viz_spec(
+    if year is not None:
+        if start_year is None:
+            start_year = year
+        if end_year is None:
+            end_year = year
+
+    norm_filters = _normalize_disaggregation_filters(disaggregation_filters)
+
+    res = await data360_viz.get_viz_spec(
         database_id=database_id,
         indicator_id=indicator_id,
         country_code=country_code,
         start_year=start_year,
         end_year=end_year,
-        disaggregation_filters=disaggregation_filters,
+        disaggregation_filters=norm_filters,
         chart_type=chart_type,
         relevant_fields=relevant_fields,
         custom_constraints=custom_constraints,
         use_default_constraints=use_default_constraints,
         chart_title=chart_title,
         series_labels=series_labels,
+        strategy_override=strategy_override,
+    )
+
+    if res.get("error"):
+        raise ToolError(res["error"])
+
+    url = res.get("url")
+    strategy = res.get("strategy") or "unknown"
+    reason = res.get("reason") or ""
+    warning = res.get("warning")
+    source_line = res.get("source_line")
+    subtitle_line = res.get("subtitle_line")
+
+    # Prefer the spec already carried in the result dict (populated by _ok() in
+    # visualization.py). The disk-reload below is a fallback for callers that
+    # do not propagate the spec (e.g. when the chart URL points to an external
+    # charts API rather than the local static file server).
+    spec: dict | None = res.get("spec") or None
+    if spec is None and url:
+        try:
+            spec_id = url.split("/")[-1].replace("_vega.json", "")
+            if os.environ.get("PYTEST_CURRENT_TEST"):
+                specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+            else:
+                server_dir = os.path.dirname(os.path.abspath(__file__))
+                project_root = os.path.abspath(os.path.join(server_dir, "..", "..", ".."))
+                specs_dir = os.path.join(project_root, "static", "viz_specs")
+            vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
+            if os.path.exists(vega_path):
+                with open(vega_path, "r") as f:
+                    spec = json.load(f)
+        except Exception:
+            pass
+
+    text_summary = _make_text_summary(
+        spec=spec,
+        strategy=strategy,
+        reason=reason,
+        warning=warning,
+        source_line=source_line,
+        subtitle_line=subtitle_line,
+        url=url,
+    )
+
+    structured = {
+        "spec": spec,
+        "strategy": strategy,
+        "url": url,
+        "error": None,
+        "warning": warning,
+        "reason": reason,
+        "source_line": source_line,
+        "subtitle_line": subtitle_line,
+    }
+    return ToolResult(
+        content=[
+            TextContent(type="text", text=json.dumps(structured)),
+            TextContent(type="text", text=text_summary),
+        ],
+        structured_content=structured,
     )
 
 
@@ -312,11 +552,13 @@ async def _get_multi_indicator_viz_spec(
     country_code: str | None = None,
     start_year: int | None = None,
     end_year: int | None = None,
-    disaggregation_filters: dict[str, str | None] | None = None,
+    disaggregation_filters: dict[str, Any] | None = None,
     chart_type: str | None = None,
-    chart_title: str | None = None,
+    chart_title: str | dict | None = None,
     series_labels: dict[str, str] | None = None,
-) -> dict[str, Any]:
+    strategy_override: str | None = None,
+    year: int | None = None,
+) -> ToolResult:
     """Generate a Vega-Lite chart comparing multiple Data360 indicators.
 
     Use when you need to compare 2–4 indicators (e.g. via scatterplot or dual-axis line chart).
@@ -328,28 +570,109 @@ async def _get_multi_indicator_viz_spec(
         start_year: Start year (inclusive). Defaults to last 5 years if omitted.
         end_year: End year (inclusive). Defaults to current year if omitted.
         disaggregation_filters: Optional dimension filters.
-        chart_type: Optional chart type override (e.g. "scatter", "line").
-        chart_title: Title for the chart.
+        chart_type: Optional chart type suggestion. If omitted (recommended), the routing engine automatically determines the optimal chart type and strategy based on the data profile. Do not specify this argument unless the user explicitly requested a specific chart type.
+        chart_title: A concise, human-synthesized title summarizing the data insight (e.g. 'Renewable Energy Share in South Asia (2020)'). Prefer clean, natural phrasing instead of raw long indicator names.
         series_labels: Rename dimension codes for legend.
+        strategy_override: Explicitly force a chart strategy (e.g. "stacked_bar", "vconcat_panels").
+        year: Specific single year to compare indicators for. Maps internally to start_year and end_year.
     """
-    return await data360_viz.get_multi_indicator_viz_spec(
+    if year is not None:
+        if start_year is None:
+            start_year = year
+        if end_year is None:
+            end_year = year
+
+    norm_filters = _normalize_disaggregation_filters(disaggregation_filters)
+
+    res = await data360_viz.get_multi_indicator_viz_spec(
         indicator_ids=indicator_ids,
         country_code=country_code,
         start_year=start_year,
         end_year=end_year,
-        disaggregation_filters=disaggregation_filters,
+        disaggregation_filters=norm_filters,
         chart_type=chart_type,
         chart_title=chart_title,
         series_labels=series_labels,
+        strategy_override=strategy_override,
+    )
+
+    if res.get("error"):
+        raise ToolError(res["error"])
+
+    url = res.get("url")
+    strategy = res.get("strategy") or "unknown"
+    reason = res.get("reason") or ""
+    warning = res.get("warning")
+    source_line = res.get("source_line")
+    subtitle_line = res.get("subtitle_line")
+
+    # Prefer the spec already carried in the result dict (populated by _ok() in
+    # visualization.py). The disk-reload below is a fallback for callers that
+    # do not propagate the spec (e.g. when the chart URL points to an external
+    # charts API rather than the local static file server).
+    spec: dict | None = res.get("spec") or None
+    if spec is None and url:
+        try:
+            spec_id = url.split("/")[-1].replace("_vega.json", "")
+            if os.environ.get("PYTEST_CURRENT_TEST"):
+                specs_dir = os.path.join(os.getcwd(), "static", "viz_specs")
+            else:
+                server_dir = os.path.dirname(os.path.abspath(__file__))
+                project_root = os.path.abspath(os.path.join(server_dir, "..", "..", ".."))
+                specs_dir = os.path.join(project_root, "static", "viz_specs")
+            vega_path = os.path.join(specs_dir, f"{spec_id}_vega.json")
+            if os.path.exists(vega_path):
+                with open(vega_path, "r") as f:
+                    spec = json.load(f)
+        except Exception:
+            pass
+
+    text_summary = _make_text_summary(
+        spec=spec,
+        strategy=strategy,
+        reason=reason,
+        warning=warning,
+        source_line=source_line,
+        subtitle_line=subtitle_line,
+        url=url,
+    )
+
+    structured = {
+        "spec": spec,
+        "strategy": strategy,
+        "url": url,
+        "error": None,
+        "warning": warning,
+        "reason": reason,
+        "source_line": source_line,
+        "subtitle_line": subtitle_line,
+    }
+    return ToolResult(
+        content=[
+            TextContent(type="text", text=json.dumps(structured)),
+            TextContent(type="text", text=text_summary),
+        ],
+        structured_content=structured,
     )
 
 
 def _get_supported_chart_types() -> str:
     """Return supported chart types and their data requirements as JSON.
 
-    Use when deciding which chart_type value to pass to visualization tools.
+    **DEPRECATED**: Read the ``data360://viz/chart-grammar`` resource instead.
+    This tool is preserved for backward compatibility.
     """
-    return data360_viz.get_supported_chart_types()
+    import json
+
+    result = data360_viz.get_supported_chart_types()
+    parsed = json.loads(result)
+    parsed["_deprecation_notice"] = (
+        "This tool is deprecated. Read the data360://viz/chart-grammar resource "
+        "for comprehensive chart strategy rules. The data_profile in every viz "
+        "response now includes per-indicator ranges and scale compatibility."
+    )
+    return json.dumps(parsed, indent=2)
+
 
 
 async def _expand_country_group(
@@ -369,7 +692,7 @@ async def _summarize_data(
     database_id: str,
     indicator_id: str,
     country_code: str | None = None,
-    disaggregation_filters: dict[str, str | None] | None = None,
+    disaggregation_filters: dict[str, Any] | None = None,
     start_year: int | None = None,
     end_year: int | None = None,
     group_by: list[str] | None = None,
@@ -388,11 +711,13 @@ async def _summarize_data(
         end_year: End year (inclusive). Defaults to current year if omitted.
         group_by: Dimensions to group by (default is ["ref_area"]).
     """
+    norm_filters = _normalize_disaggregation_filters(disaggregation_filters)
+
     return await data360_api.summarize_data(
         database_id=database_id,
         indicator_id=indicator_id,
         country_code=country_code,
-        disaggregation_filters=disaggregation_filters,
+        disaggregation_filters=norm_filters,
         start_year=start_year,
         end_year=end_year,
         group_by=group_by,
@@ -407,7 +732,7 @@ async def _rank_countries(
     year: int | None = None,
     order: Literal["desc", "asc"] = "desc",
     top_n: int = 10,
-    disaggregation_filters: dict[str, str | None] | None = None,
+    disaggregation_filters: dict[str, Any] | None = None,
     rank_universe: Literal["explicit", "all_member_economies"] = "explicit",
 ) -> Any:
     """Rank countries by indicator value for a specific year.
@@ -426,6 +751,8 @@ async def _rank_countries(
         disaggregation_filters: Optional dimension filters.
         rank_universe: "explicit" (default, uses codes/group) or "all_member_economies" (world).
     """
+    norm_filters = _normalize_disaggregation_filters(disaggregation_filters)
+
     return await data360_api.rank_countries(
         database_id=database_id,
         indicator_id=indicator_id,
@@ -434,7 +761,7 @@ async def _rank_countries(
         year=year,
         order=order,
         top_n=top_n,
-        disaggregation_filters=disaggregation_filters,
+        disaggregation_filters=norm_filters,
         rank_universe=rank_universe,
     )
 
@@ -447,7 +774,7 @@ async def _compare_countries(
     include_time_series: bool = False,
     start_year: int | None = None,
     end_year: int | None = None,
-    disaggregation_filters: dict[str, str | None] | None = None,
+    disaggregation_filters: dict[str, Any] | None = None,
 ) -> Any:
     """Compare an indicator across multiple countries (2 to 8).
 
@@ -465,6 +792,8 @@ async def _compare_countries(
         end_year: End year for time-series alignment. Defaults to current year if omitted.
         disaggregation_filters: Optional dimension filters.
     """
+    norm_filters = _normalize_disaggregation_filters(disaggregation_filters)
+
     return await data360_api.compare_countries(
         database_id=database_id,
         indicator_id=indicator_id,
@@ -473,7 +802,7 @@ async def _compare_countries(
         include_time_series=include_time_series,
         start_year=start_year,
         end_year=end_year,
-        disaggregation_filters=disaggregation_filters,
+        disaggregation_filters=norm_filters,
     )
 
 
@@ -524,6 +853,7 @@ get_data_api_url = mcp.tool(
 get_viz_spec = mcp.tool(
     instrument_mcp_tool(_get_viz_spec, tool_name="data360_get_viz_spec"),
     name="data360_get_viz_spec",
+    app=AppConfig(resource_uri="ui://data360-chart/index.html"),
 )
 
 get_multi_indicator_viz_spec = mcp.tool(
@@ -532,6 +862,7 @@ get_multi_indicator_viz_spec = mcp.tool(
         tool_name="data360_get_multi_indicator_viz_spec",
     ),
     name="data360_get_multi_indicator_viz_spec",
+    app=AppConfig(resource_uri="ui://data360-chart/index.html"),
 )
 
 get_supported_chart_types = mcp.tool(
@@ -576,3 +907,699 @@ compare_countries = mcp.add_tool(
         serializer=_compact_aggregation_serializer,
     )
 )
+
+
+
+@mcp.resource("ui://data360-chart/index.html")
+def data360_chart_html() -> str:
+    """HTML resource for the Data360 self-contained Vega-Lite chart viewer Custom HTML app."""
+    vega_js, vega_lite_js, vega_embed_js, vega_interpreter_js = get_cached_vega_libs()
+    html_template = """<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data360 Vega-Lite Renderer</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 8px;
+      background: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    #vis {
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+    }
+  </style>
+  <script>{vega_js}</script>
+  <script>{vega_interpreter_js}</script>
+  <script>{vega_lite_js}</script>
+  <script>{vega_embed_js}</script>
+</head>
+<body>
+  <div id="vis"></div>
+
+  <script type="module">
+    class McpAppClient {
+      constructor() {
+        this.pendingRequests = new Map();
+        this.requestId = 0;
+        this.initialized = false;
+        this.hostContext = null;
+        window.addEventListener('message', (e) => this.handleMessage(e));
+        this.initialize();
+      }
+
+      async initialize() {
+        try {
+          const result = await this.request('ui/initialize', {
+            appInfo: { name: 'Data360 Chart', version: '1.0.0' },
+            appCapabilities: {},
+            protocolVersion: '2025-11-21'
+          });
+          this.hostContext = result.hostContext;
+          this.initialized = true;
+          this.notify('ui/notifications/initialized', {});
+          this.reportSize();
+        } catch (error) {
+          console.error('Failed to initialize MCP App:', error);
+        }
+      }
+
+      handleMessage(event) {
+        const data = event.data;
+        if (!data || typeof data !== 'object') return;
+        if ('id' in data && this.pendingRequests.has(data.id)) {
+          const { resolve, reject } = this.pendingRequests.get(data.id);
+          this.pendingRequests.delete(data.id);
+          if (data.error) {
+            reject(new Error(data.error.message));
+          } else {
+            resolve(data.result);
+          }
+          return;
+        }
+        if (data.method === 'ui/notifications/tool-result') {
+          try {
+            const result = data.params;
+            let spec = null;
+            let strategy = null;
+            if (result.structuredContent) {
+              spec = result.structuredContent.spec;
+              strategy = result.structuredContent.strategy;
+            }
+            if (!spec && result.content) {
+              const textBlock = result.content.find(c => c.type === 'text');
+              if (textBlock) {
+                try {
+                  const payload = JSON.parse(textBlock.text);
+                  spec = payload.spec;
+                  strategy = payload.strategy;
+                } catch (e) {
+                  // Ignore JSON parse error for plain text
+                }
+              }
+            }
+            renderChart(spec, strategy);
+          } catch (e) {
+            console.error('Error parsing tool result:', e);
+          }
+        }
+      }
+
+      request(method, params) {
+        return new Promise((resolve, reject) => {
+          const id = ++this.requestId;
+          this.pendingRequests.set(id, { resolve, reject });
+          window.parent.postMessage({ jsonrpc: '2.0', id, method, params }, '*');
+          setTimeout(() => {
+            if (this.pendingRequests.has(id)) {
+              this.pendingRequests.delete(id);
+              reject(new Error('Request timed out'));
+            }
+          }, 30000);
+        });
+      }
+
+      notify(method, params) {
+        window.parent.postMessage({ jsonrpc: '2.0', method, params }, '*');
+      }
+
+      reportSize() {
+        this.notify('ui/notifications/size-changed', {
+          height: document.body.scrollHeight
+        });
+      }
+    }
+
+    const mcpApp = new McpAppClient();
+    const visDiv = document.getElementById('vis');
+
+    function renderChart(spec, strategy) {
+      if (!spec) {
+        visDiv.innerHTML = '<p>No visualization spec available</p>';
+        mcpApp.reportSize();
+        return;
+      }
+
+      try {
+        vegaEmbed("#vis", spec, {
+          actions: false,
+          theme: mcpApp.hostContext?.theme === 'dark' ? 'dark' : 'default',
+          ast: true,
+          expr: vega.expressionInterpreter
+        }).then(() => {
+          mcpApp.reportSize();
+        }).catch(err => {
+          console.error(err);
+          visDiv.innerHTML = `<p style="color:red;">Failed to render chart spec: ${err.message}</p>`;
+          mcpApp.reportSize();
+        });
+      } catch (e) {
+        visDiv.innerHTML = `<p style="color:red;">Error preparing spec: ${e.message}</p>`;
+        mcpApp.reportSize();
+      }
+    }
+
+    window.addEventListener('load', () => {
+      mcpApp.reportSize();
+    });
+  </script>
+</body>
+</html>
+"""
+    return html_template.replace("{vega_js}", vega_js).replace("{vega_lite_js}", vega_lite_js).replace("{vega_embed_js}", vega_embed_js).replace("{vega_interpreter_js}", vega_interpreter_js)
+
+
+
+async def _search_indicators_for_ui(
+    query: str,
+    database: Optional[str] = None,
+    limit: int = 20,
+) -> list[dict]:
+    """Private helper: returns a flat indicator list for the UI HTML app.
+
+    Not registered as an MCP tool — called internally by data360_indicator_explorer
+    and by the /api/indicators/search FastAPI endpoint.
+    """
+    if not query.strip():
+        return []
+    res = await _search_indicators(query=query, database=database, limit=limit)
+    indicators_data = []
+    if hasattr(res, "indicators") and res.indicators:
+        for ind in res.indicators:
+            indicators_data.append({
+                "idno": ind.idno,
+                "database_id": ind.database_id,
+                "database_name": ind.database_name,
+                "name": ind.name,
+                "truncated_definition": ind.truncated_definition,
+                "time_period_range": ind.time_period_range,
+            })
+    return indicators_data
+
+
+
+@mcp.resource("ui://data360-choice/index.html")
+def data360_choice_html() -> str:
+    """HTML resource for the Data360 self-contained choice Custom HTML app."""
+    return """<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data360 Option Selector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    :root, .light {
+      --bg-color: transparent;
+      --text-color: #0f172a;
+      --card-bg: #f1f5f9;
+      --card-border: transparent;
+      --btn-hover: #e2e8f0;
+      --btn-border: #cbd5e1;
+      --muted-color: #64748b;
+    }
+
+    .dark {
+      --bg-color: transparent;
+      --text-color: #cbd5e1;
+      --card-bg: #1e293b;
+      --card-border: transparent;
+      --btn-hover: #334155;
+      --btn-border: #475569;
+      --muted-color: #94a3b8;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not(.light) {
+        --bg-color: transparent;
+        --text-color: #cbd5e1;
+        --card-bg: #1e293b;
+        --card-border: transparent;
+        --btn-hover: #334155;
+        --btn-border: #475569;
+        --muted-color: #94a3b8;
+      }
+    }
+
+    body {
+      margin: 0;
+      padding: 8px 12px;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      box-sizing: border-box;
+    }
+    .prompt-title {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text-color);
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    }
+    .choices-container {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .choice-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex: 1 1 calc(33.333% - 8px);
+      min-width: 180px;
+      padding: 16px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.25rem;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      outline: none;
+      box-sizing: border-box;
+      transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .choice-card:hover:not(:disabled) {
+      background: var(--btn-hover);
+      border-color: var(--btn-border);
+      transform: translateY(-1px);
+    }
+    .choice-card:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    .choice-card:disabled {
+      cursor: not-allowed;
+    }
+    .choice-card:disabled:not(.selected) {
+      opacity: 0.4;
+    }
+    .choice-card.selected {
+      background: var(--btn-hover) !important;
+      border-color: var(--btn-border) !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .choice-text {
+      flex-grow: 1;
+      margin-bottom: 16px;
+      line-height: 1.35;
+    }
+    .routing-icon {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+    .response-sent {
+      font-size: 0.9rem;
+      color: var(--muted-color);
+      margin-top: 12px;
+      display: none;
+    }
+    .choice-card.specify-mode {
+      cursor: default;
+      transform: none !important;
+      background: var(--btn-hover);
+      border-color: var(--btn-border);
+      width: 100%;
+      flex: 1 1 100%;
+      align-items: stretch;
+    }
+    .specify-input {
+      flex-grow: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      font-family: inherit;
+      font-weight: 500;
+      padding: 4px 0;
+      width: 100%;
+    }
+    .specify-input::placeholder {
+      color: var(--muted-color);
+      opacity: 0.6;
+    }
+    .specify-submit-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--text-color);
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      outline: none;
+      transition: transform 0.1s;
+    }
+    .specify-submit-btn:hover {
+      transform: scale(1.1);
+    }
+    .specify-submit-btn:active {
+      transform: scale(1.0);
+    }
+  </style>
+</head>
+<body>
+  <p class="prompt-title" id="card-prompt">Loading...</p>
+  <div class="choices-container" id="choices-container"></div>
+  <div class="response-sent" id="sent-msg">Response sent.</div>
+
+  <script type="module">
+    class McpAppClient {
+      constructor() {
+        this.pendingRequests = new Map();
+        this.requestId = 0;
+        this.initialized = false;
+        this.hostContext = null;
+        window.addEventListener('message', (e) => this.handleMessage(e));
+        this.initialize();
+      }
+
+      async initialize() {
+        try {
+          const result = await this.request('ui/initialize', {
+            appInfo: { name: 'Data360 Choice', version: '1.0.0' },
+            appCapabilities: {},
+            protocolVersion: '2025-11-21'
+          });
+          this.hostContext = result.hostContext;
+          this.initialized = true;
+          this.notify('ui/notifications/initialized', {});
+          this.applyTheme();
+          this.reportSize();
+        } catch (error) {
+          console.error('Failed to initialize MCP App:', error);
+        }
+      }
+
+      applyTheme() {
+        const theme = this.hostContext?.theme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('light');
+        } else {
+          document.documentElement.classList.add('light');
+          document.documentElement.classList.remove('dark');
+        }
+      }
+
+      handleMessage(event) {
+        const data = event.data;
+        if (!data || typeof data !== 'object') return;
+        if ('id' in data && this.pendingRequests.has(data.id)) {
+          const { resolve, reject } = this.pendingRequests.get(data.id);
+          this.pendingRequests.delete(data.id);
+          if (data.error) {
+            reject(new Error(data.error.message));
+          } else {
+            resolve(data.result);
+          }
+          return;
+        }
+        if (data.method === 'ui/notifications/host-context-changed') {
+          this.hostContext = { ...this.hostContext, ...data.params };
+          this.applyTheme();
+          return;
+        }
+        if (data.method === 'ui/notifications/tool-result') {
+          try {
+            const result = data.params;
+            let payload = null;
+            if (result.content) {
+              const textBlock = result.content.find(c => c.type === 'text');
+              if (textBlock) {
+                payload = JSON.parse(textBlock.text);
+              }
+            }
+            if (payload) {
+              renderChoiceCard(payload);
+            }
+          } catch (e) {
+            console.error('Error parsing tool result:', e);
+          }
+        }
+      }
+
+      request(method, params) {
+        return new Promise((resolve, reject) => {
+          const id = ++this.requestId;
+          this.pendingRequests.set(id, { resolve, reject });
+          window.parent.postMessage({ jsonrpc: '2.0', id, method, params }, '*');
+          setTimeout(() => {
+            if (this.pendingRequests.has(id)) {
+              this.pendingRequests.delete(id);
+              reject(new Error('Request timed out'));
+            }
+          }, 30000);
+        });
+      }
+
+      notify(method, params) {
+        window.parent.postMessage({ jsonrpc: '2.0', method, params }, '*');
+      }
+
+      reportSize() {
+        this.notify('ui/notifications/size-changed', {
+          height: document.body.scrollHeight
+        });
+      }
+
+      async sendMessageToChat(text) {
+        return this.request('ui/message', {
+          role: 'user',
+          content: [{ type: 'text', text }]
+        });
+      }
+    }
+
+    const mcpApp = new McpAppClient();
+    const promptEl = document.getElementById('card-prompt');
+    const containerEl = document.getElementById('choices-container');
+    const sentMsgEl = document.getElementById('sent-msg');
+
+    function renderChoiceCard(payload) {
+      const prompt = payload.prompt || "";
+      const options = payload.options || [];
+
+      promptEl.textContent = prompt;
+      containerEl.innerHTML = "";
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-card';
+
+        const txtDiv = document.createElement('div');
+        txtDiv.className = 'choice-text';
+        txtDiv.textContent = opt;
+
+        const iconDiv = document.createElement('div');
+        iconDiv.className = 'routing-icon';
+        iconDiv.textContent = '↪';
+
+        btn.appendChild(txtDiv);
+        btn.appendChild(iconDiv);
+
+        btn.addEventListener('click', async (e) => {
+          const lowerOpt = opt.toLowerCase();
+          if (lowerOpt.includes('specify') || lowerOpt.includes('other') || lowerOpt.includes('custom') || lowerOpt.includes('enter') || opt.endsWith('...')) {
+            if (btn.classList.contains('specify-mode')) {
+              return;
+            }
+
+            // Enter specify mode
+            btn.classList.add('specify-mode');
+            btn.innerHTML = '';
+
+            // Disable other buttons
+            const cards = containerEl.querySelectorAll('.choice-card');
+            cards.forEach(c => {
+              if (c !== btn) {
+                c.style.opacity = '0.3';
+                c.disabled = true;
+              }
+            });
+
+            const form = document.createElement('form');
+            form.style.display = 'flex';
+            form.style.width = '100%';
+            form.style.gap = '8px';
+            form.style.alignItems = 'center';
+            form.style.boxSizing = 'border-box';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'specify-input';
+            let placeholder = 'Type here...';
+            if (opt.toLowerCase().includes('country')) {
+              placeholder = 'Enter country name...';
+            } else if (opt.toLowerCase().includes('year') || opt.toLowerCase().includes('range') || opt.toLowerCase().includes('timeframe')) {
+              placeholder = 'e.g. 2015-2020';
+            }
+            input.placeholder = placeholder;
+            input.required = true;
+
+            // Focus input
+            setTimeout(() => input.focus(), 10);
+
+            // Handle Escape key to cancel/revert specify mode
+            input.addEventListener('keydown', (ev) => {
+              if (ev.key === 'Escape') {
+                ev.preventDefault();
+                ev.stopPropagation();
+                renderChoiceCard(payload);
+              }
+            });
+
+            const submitBtn = document.createElement('button');
+            submitBtn.type = 'submit';
+            submitBtn.className = 'specify-submit-btn';
+            submitBtn.textContent = '↪';
+
+            form.appendChild(input);
+            form.appendChild(submitBtn);
+            btn.appendChild(form);
+
+            mcpApp.reportSize();
+
+            form.addEventListener('click', (ev) => ev.stopPropagation());
+            form.addEventListener('submit', async (ev) => {
+              ev.preventDefault();
+              const val = input.value.trim();
+              if (!val) return;
+
+              btn.classList.remove('specify-mode');
+              btn.classList.add('selected');
+              btn.innerHTML = '';
+
+              const finalTxt = document.createElement('div');
+              finalTxt.className = 'choice-text';
+              finalTxt.textContent = val;
+
+              const finalIcon = document.createElement('div');
+              finalIcon.className = 'routing-icon';
+              finalIcon.textContent = '↪';
+
+              btn.appendChild(finalTxt);
+              btn.appendChild(finalIcon);
+
+              try {
+                await mcpApp.sendMessageToChat(`\u21AA\uFE0E *${val}*`);
+              } catch (err) {
+                console.error(err);
+                btn.classList.remove('selected');
+                // Restore original list on error
+                renderChoiceCard(payload);
+              }
+            });
+            return;
+          }
+
+          const cards = containerEl.querySelectorAll('.choice-card');
+          cards.forEach(c => c.disabled = true);
+          btn.classList.add('selected');
+
+          mcpApp.reportSize();
+
+          try {
+            await mcpApp.sendMessageToChat(`\u21AA\uFE0E *${opt}*`);
+          } catch (err) {
+            console.error(err);
+            btn.classList.remove('selected');
+            cards.forEach(c => c.disabled = false);
+            mcpApp.reportSize();
+          }
+        });
+        containerEl.appendChild(btn);
+      });
+
+      mcpApp.reportSize();
+      setTimeout(() => mcpApp.reportSize(), 50);
+    }
+
+    window.addEventListener('load', () => {
+      mcpApp.reportSize();
+    });
+  </script>
+</body>
+</html>
+"""
+
+
+@mcp.tool(
+    name="data360_interactive_choices",
+    app=AppConfig(resource_uri="ui://data360-choice/index.html", prefers_border=False),
+)
+async def data360_interactive_choices(
+    prompt: str,
+    options: list[str],
+    title: Optional[str] = None,
+) -> ToolResult:
+    """Present the user with a set of options to choose from using a custom HTML renderer.
+
+    Always call this tool to provide follow-ups and elicitations based on the natural flow of the
+    conversation and the type of information being discussed. Your goal is to anticipate the
+    user's next question or provide an easy way to steer a broad topic.
+
+    Call this tool in the following scenarios:
+
+    1. Single Follow-up (1 choice):
+       - The "Obvious Next Step": When there is one highly logical action to take after your response.
+         For example, if you explain a mathematical concept, offer a follow-up to walk through a practical example.
+       - Deep Dives into Jargon: If your response introduces a complex technical term or a new concept,
+         offer a single follow-up to explain that specific term so the main response does not get too cluttered.
+       - Launching Interactive Tools: If you mention that you can build a widget or run a simulation,
+         provide a single button to let the user trigger that specific interactive element directly.
+
+    2. Multiple Choices (2+ choices):
+       - Broad Overviews & Branching Paths: When you give a high-level summary of a massive topic,
+         use this to let the user choose exactly which sub-category or "branch" you want to zoom in on next.
+       - Disambiguation (Clarifying Intent): If the user's request is open-ended or could be interpreted in
+         a few different ways, present options so the user can clarify exactly which direction they meant to take.
+         Examples:
+         * GDP/Metric variant: "Real GDP per capita (constant 2015 US$)" vs "Nominal GDP per capita (current US$)"
+         * Timeframe/Year range: "Latest available year" vs "Historical trend (last 10 years)" vs "Specify a custom range"
+         * Breakdown/Disaggregation: "Total economy average" vs "Break down by gender (Male vs Female)" vs "Break down by geographic area (Urban vs Rural)"
+       - Menus and Brainstorming: When generating lists of ideas (like different programming frameworks,
+         design patterns, or troubleshooting steps), use this to act like a clickable menu, letting the user
+         instantly select the one you want to explore.
+
+    3. Non-exhaustive Lists (CRITICAL):
+       - If you present a list of choices that is not exhaustive (such as listing a few popular countries,
+         specific years, indicator variants, or breakdowns), you MUST always dynamically include a customizable
+         option as the last item in the options list.
+         Examples:
+         * Country list: options=["Kenya", "Nigeria", "South Africa", "United States", "India", "Specify another country..."]
+         * Year list: options=["2024 (latest)", "Last 5 years", "Last 10 years", "Specify a custom range"]
+         * Breakdowns: options=["Total Average", "Breakdown by Gender", "Other (specify)"]
+
+    Essentially, surface these components whenever you can save the user the effort of typing out the
+    logical next prompt, or when the conversation has reached a crossroads and you need the user to choose
+    the direction.
+
+    Args:
+        prompt: The question or decision to present to the user.
+        options: List of options the user can choose from.
+        title: Optional heading for the card.
+    """
+    payload = {
+        "prompt": prompt,
+        "options": options,
+        "title": title or "Choose an Option"
+    }
+    return ToolResult(
+        content=[TextContent(type="text", text=json.dumps(payload))]
+    )
+

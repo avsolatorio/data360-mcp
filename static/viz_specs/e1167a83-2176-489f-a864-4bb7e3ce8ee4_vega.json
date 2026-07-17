@@ -1,0 +1,512 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "People in each phase of food insecurity classification"
+    ],
+    "subtitle": [
+      "Central African Republic",
+      "Series: 1 - Minimal, 2 - Stressed, 3 - Crisis, 4 - Emergency, 5 - Famine"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020-09",
+        "value": 1058613.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 1058613.0
+      },
+      {
+        "year": "2021-09",
+        "value": 1194811.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 1194811.0
+      },
+      {
+        "year": "2022-09",
+        "value": 1434325.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 1434325.0
+      },
+      {
+        "year": "2023-04",
+        "value": 1559101.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 1559101.0
+      },
+      {
+        "year": "2023-09",
+        "value": 1603687.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 1603687.0
+      },
+      {
+        "year": "2024-10",
+        "value": 1746917.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal",
+        "_label_y": 1754073.34
+      },
+      {
+        "year": "2020-09",
+        "value": 1756781.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 1756781.0
+      },
+      {
+        "year": "2021-09",
+        "value": 1652643.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 1652643.0
+      },
+      {
+        "year": "2022-09",
+        "value": 2004079.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 2004079.0
+      },
+      {
+        "year": "2023-04",
+        "value": 2181483.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 2181483.0
+      },
+      {
+        "year": "2023-09",
+        "value": 2505127.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 2505127.0
+      },
+      {
+        "year": "2024-10",
+        "value": 2752713.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed",
+        "_label_y": 2752713.0
+      },
+      {
+        "year": "2020-09",
+        "value": 1520732.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 1520732.0
+      },
+      {
+        "year": "2021-09",
+        "value": 1475713.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 1475713.0
+      },
+      {
+        "year": "2022-09",
+        "value": 2011128.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 2011128.0
+      },
+      {
+        "year": "2023-04",
+        "value": 1766459.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 1766459.0
+      },
+      {
+        "year": "2023-09",
+        "value": 1669168.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 1669168.0
+      },
+      {
+        "year": "2024-10",
+        "value": 1663412.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis",
+        "_label_y": 1656255.66
+      },
+      {
+        "year": "2020-09",
+        "value": 407877.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 407877.0
+      },
+      {
+        "year": "2021-09",
+        "value": 619565.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 619565.0
+      },
+      {
+        "year": "2022-09",
+        "value": 641565.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 641565.0
+      },
+      {
+        "year": "2023-04",
+        "value": 621627.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 621627.0
+      },
+      {
+        "year": "2023-09",
+        "value": 350690.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 350690.0
+      },
+      {
+        "year": "2024-10",
+        "value": 307271.0,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency",
+        "_label_y": 307271.0
+      },
+      {
+        "year": "2020-09",
+        "value": null,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2021-09",
+        "value": null,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2022-09",
+        "value": null,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2023-04",
+        "value": null,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2023-09",
+        "value": null,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      },
+      {
+        "year": "2024-10",
+        "value": null,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine",
+        "_label_y": null
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyearmonth",
+          "axis": {
+            "title": null,
+            "format": "%b %Y",
+            "tickCount": 8,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "People in each phase of food insecurity classification",
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyearmonth",
+            "format": "%b %Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_2",
+            "title": "Dimension 2",
+            "type": "nominal"
+          },
+          {
+            "field": "_label_y",
+            "title": " Label Y"
+          },
+          {
+            "value": "People in each phase of food insecurity classification",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "comp_breakdown_2",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "comp_breakdown_2"
+          ]
+        },
+        {
+          "calculate": "datum._last._label_y",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "comp_breakdown_2",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "comp_breakdown_2",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,581 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "BRICS GDP Per Capita (2010-2022)",
+    "subtitle": [
+      "2010-2022",
+      "US dollars, 2015 constant prices"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2016",
+        "value": 1694.46535,
+        "country": "India"
+      },
+      {
+        "year": "2011",
+        "value": 6275.716343,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 1788.697703,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 1883.357727,
+        "country": "India"
+      },
+      {
+        "year": "2015",
+        "value": 8175.332851,
+        "country": "China"
+      },
+      {
+        "year": "2020",
+        "value": 10573.379406,
+        "country": "China"
+      },
+      {
+        "year": "2010",
+        "value": 8792.634361,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 10356.292489,
+        "country": "China"
+      },
+      {
+        "year": "2016",
+        "value": 8577.843767,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 8628.253089,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 8771.440513,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": 9067.993163,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 8435.011433,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 9277.713867,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2015",
+        "value": 1583.998159,
+        "country": "India"
+      },
+      {
+        "year": "2021",
+        "value": 1965.309434,
+        "country": "India"
+      },
+      {
+        "year": "2021",
+        "value": 10231.318359,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2021",
+        "value": 8799.229458,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 9032.084816,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 6112.273825,
+        "country": "South Africa"
+      },
+      {
+        "year": "2020",
+        "value": 9632.325195,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2011",
+        "value": 6067.124827,
+        "country": "South Africa"
+      },
+      {
+        "year": "2022",
+        "value": 2098.211245,
+        "country": "India"
+      },
+      {
+        "year": "2014",
+        "value": 1484.316407,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 9798.578906,
+        "country": "China"
+      },
+      {
+        "year": "2012",
+        "value": 9167.499239,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013",
+        "value": 1399.453798,
+        "country": "India"
+      },
+      {
+        "year": "2011",
+        "value": 9120.820313,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2013",
+        "value": 9366.739324,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 11830.298768,
+        "country": "China"
+      },
+      {
+        "year": "2014",
+        "value": 9493.8125,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2018",
+        "value": 6117.270141,
+        "country": "South Africa"
+      },
+      {
+        "year": "2012",
+        "value": 1333.096266,
+        "country": "India"
+      },
+      {
+        "year": "2010",
+        "value": 8755.120117,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2021",
+        "value": 5750.909375,
+        "country": "South Africa"
+      },
+      {
+        "year": "2015",
+        "value": 8936.196617,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 10119.115234,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2018",
+        "value": 9674.787109,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2016",
+        "value": 8679.225288,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 9221.350456,
+        "country": "China"
+      },
+      {
+        "year": "2014",
+        "value": 7686.373695,
+        "country": "China"
+      },
+      {
+        "year": "2014",
+        "value": 6155.005895,
+        "country": "South Africa"
+      },
+      {
+        "year": "2013",
+        "value": 7197.937319,
+        "country": "China"
+      },
+      {
+        "year": "2010",
+        "value": 1235.159391,
+        "country": "India"
+      },
+      {
+        "year": "2011",
+        "value": 1281.610544,
+        "country": "India"
+      },
+      {
+        "year": "2019",
+        "value": 1936.030677,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 8722.336303,
+        "country": "Brazil"
+      },
+      {
+        "year": "2012",
+        "value": 9464.010742,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2014",
+        "value": 9338.342783,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 9418.996094,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2020",
+        "value": 5569.584833,
+        "country": "South Africa"
+      },
+      {
+        "year": "2010",
+        "value": 5953.945065,
+        "country": "South Africa"
+      },
+      {
+        "year": "2012",
+        "value": 6723.090037,
+        "country": "China"
+      },
+      {
+        "year": "2010",
+        "value": 5764.650124,
+        "country": "China"
+      },
+      {
+        "year": "2013",
+        "value": 9601.537109,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2016",
+        "value": 9269.317383,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2021",
+        "value": 11469.317451,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 6125.692051,
+        "country": "South Africa"
+      },
+      {
+        "year": "2019",
+        "value": 9882.024414,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2022",
+        "value": 5786.865053,
+        "country": "South Africa"
+      },
+      {
+        "year": "2013",
+        "value": 6170.876709,
+        "country": "South Africa"
+      },
+      {
+        "year": "2016",
+        "value": 6095.29506,
+        "country": "South Africa"
+      },
+      {
+        "year": "2020",
+        "value": 1806.501106,
+        "country": "India"
+      },
+      {
+        "year": "2012",
+        "value": 6121.557839,
+        "country": "South Africa"
+      },
+      {
+        "year": "2019",
+        "value": 6032.829726,
+        "country": "South Africa"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "US dollars, 2015 constant prices",
+            "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1f') : '$'+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": "$,.2f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "GDP per capita (constant 2015 US$)",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

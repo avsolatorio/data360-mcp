@@ -1,0 +1,328 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years) vs. Carbon dioxide (CO2) emissions",
+      "excluding LULUCF per capita"
+    ],
+    "subtitle": [
+      "2019"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2019",
+        "country": "Australia",
+        "life_expectancy_at_birth_total_years": 82.9,
+        "carbon_dioxide_co2_emissions_excluding_l": 16.100707,
+        "_x_norm": 0.8960301601852918,
+        "_y_norm": 0.8174550222292726,
+        "_dist_from_center": 0.25761757891497583,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "life_expectancy_at_birth_total_years": 75.809,
+        "carbon_dioxide_co2_emissions_excluding_l": 2.258699,
+        "_x_norm": 0.38979560788874884,
+        "_y_norm": 0.024174190661458983,
+        "_dist_from_center": 0.238555208873288,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Canada",
+        "life_expectancy_at_birth_total_years": 82.158537,
+        "carbon_dioxide_co2_emissions_excluding_l": 16.19086,
+        "_x_norm": 0.8430962735896838,
+        "_y_norm": 0.8226216603939329,
+        "_dist_from_center": 0.2217997887064653,
+        "_show_label": false
+      },
+      {
+        "year": "2019",
+        "country": "France",
+        "life_expectancy_at_birth_total_years": 82.826829,
+        "carbon_dioxide_co2_emissions_excluding_l": 4.79214,
+        "_x_norm": 0.8908063993016235,
+        "_y_norm": 0.16936484386784298,
+        "_dist_from_center": 0.26204924820563585,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 70.746,
+        "carbon_dioxide_co2_emissions_excluding_l": 1.836882,
+        "_x_norm": 0.02834228137945606,
+        "_y_norm": 0.0,
+        "_dist_from_center": 0.4724610035343362,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Indonesia",
+        "life_expectancy_at_birth_total_years": 70.349,
+        "carbon_dioxide_co2_emissions_excluding_l": 2.339795,
+        "_x_norm": 0.0,
+        "_y_norm": 0.028821775196652393,
+        "_dist_from_center": 0.47200891952883395,
+        "_show_label": false
+      },
+      {
+        "year": "2019",
+        "country": "Japan",
+        "life_expectancy_at_birth_total_years": 84.356341,
+        "carbon_dioxide_co2_emissions_excluding_l": 8.874567,
+        "_x_norm": 1.0,
+        "_y_norm": 0.4033273647228299,
+        "_dist_from_center": 0.25934559841143273,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "Saudi Arabia",
+        "life_expectancy_at_birth_total_years": 78.313,
+        "carbon_dioxide_co2_emissions_excluding_l": 19.285946,
+        "_x_norm": 0.5685590148765566,
+        "_y_norm": 1.0,
+        "_dist_from_center": 0.2547003385208439,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "United States",
+        "life_expectancy_at_birth_total_years": 78.787805,
+        "carbon_dioxide_co2_emissions_excluding_l": 15.043966,
+        "_x_norm": 0.6024558836684282,
+        "_y_norm": 0.7568935502786854,
+        "_dist_from_center": 0.07649150427306597,
+        "_show_label": true
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Life expectancy at birth, total (years"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "carbon_dioxide_co2_emissions_excluding_l",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Carbon dioxide (CO2) emissions excluding LULUCF per capita (Tonnes)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "life_expectancy_at_birth_total_years",
+            "title": "Life expectancy at birth, total (years",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "carbon_dioxide_co2_emissions_excluding_l",
+            "title": "Carbon dioxide (CO2) emissions excluding LULUCF per capita (Tonnes)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "carbon_dioxide_co2_emissions_excluding_l",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum._show_label",
+            "value": 1
+          },
+          "value": 0
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

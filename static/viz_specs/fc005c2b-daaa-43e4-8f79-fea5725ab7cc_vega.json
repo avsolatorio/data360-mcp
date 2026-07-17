@@ -1,0 +1,694 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP (annual % growth) | Inflation, consumer prices (annual % growth) | Trade (%",
+      "of GDP)"
+    ],
+    "subtitle": [
+      "United States, 1995-2022"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1995",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.684431
+      },
+      {
+        "year": "1996",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 3.772773
+      },
+      {
+        "year": "1997",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 4.447128
+      },
+      {
+        "year": "1998",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 4.483133
+      },
+      {
+        "year": "1999",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 4.788425
+      },
+      {
+        "year": "2000",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 4.077586
+      },
+      {
+        "year": "2001",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 0.955538
+      },
+      {
+        "year": "2002",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 1.700447
+      },
+      {
+        "year": "2003",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.795606
+      },
+      {
+        "year": "2004",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 3.847772
+      },
+      {
+        "year": "2005",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 3.48355
+      },
+      {
+        "year": "2006",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.78454
+      },
+      {
+        "year": "2007",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.003858
+      },
+      {
+        "year": "2008",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 0.113587
+      },
+      {
+        "year": "2009",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": -2.5765
+      },
+      {
+        "year": "2010",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.695193
+      },
+      {
+        "year": "2011",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 1.564407
+      },
+      {
+        "year": "2012",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.289113
+      },
+      {
+        "year": "2013",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.11783
+      },
+      {
+        "year": "2014",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.52382
+      },
+      {
+        "year": "2015",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.94555
+      },
+      {
+        "year": "2016",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 1.819451
+      },
+      {
+        "year": "2017",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.457622
+      },
+      {
+        "year": "2018",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.966505
+      },
+      {
+        "year": "2019",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.583825
+      },
+      {
+        "year": "2020",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": -2.081376
+      },
+      {
+        "year": "2021",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 6.152022
+      },
+      {
+        "year": "2022",
+        "country": "United States",
+        "indicator_name_melted": "Gdp",
+        "indicator_value_melted": 2.524214
+      },
+      {
+        "year": "1995",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.80542
+      },
+      {
+        "year": "1996",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.931204
+      },
+      {
+        "year": "1997",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.33769
+      },
+      {
+        "year": "1998",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.552279
+      },
+      {
+        "year": "1999",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.188027
+      },
+      {
+        "year": "2000",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 3.376857
+      },
+      {
+        "year": "2001",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.826171
+      },
+      {
+        "year": "2002",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.586032
+      },
+      {
+        "year": "2003",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.270095
+      },
+      {
+        "year": "2004",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.677237
+      },
+      {
+        "year": "2005",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 3.392747
+      },
+      {
+        "year": "2006",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 3.225944
+      },
+      {
+        "year": "2007",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.852672
+      },
+      {
+        "year": "2008",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 3.8391
+      },
+      {
+        "year": "2009",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": -0.355546
+      },
+      {
+        "year": "2010",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.640043
+      },
+      {
+        "year": "2011",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 3.156842
+      },
+      {
+        "year": "2012",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.069337
+      },
+      {
+        "year": "2013",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.464833
+      },
+      {
+        "year": "2014",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.622223
+      },
+      {
+        "year": "2015",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 0.118627
+      },
+      {
+        "year": "2016",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.261583
+      },
+      {
+        "year": "2017",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.13011
+      },
+      {
+        "year": "2018",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 2.442583
+      },
+      {
+        "year": "2019",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.81221
+      },
+      {
+        "year": "2020",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 1.233584
+      },
+      {
+        "year": "2021",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 4.697859
+      },
+      {
+        "year": "2022",
+        "country": "United States",
+        "indicator_name_melted": "Inflation",
+        "indicator_value_melted": 8.0028
+      },
+      {
+        "year": "1995",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 22.453382
+      },
+      {
+        "year": "1996",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 22.687072
+      },
+      {
+        "year": "1997",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 23.428328
+      },
+      {
+        "year": "1998",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 22.825894
+      },
+      {
+        "year": "1999",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 23.31357
+      },
+      {
+        "year": "2000",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 25.102986
+      },
+      {
+        "year": "2001",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 22.967183
+      },
+      {
+        "year": "2002",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 22.286384
+      },
+      {
+        "year": "2003",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 22.627297
+      },
+      {
+        "year": "2004",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 24.448057
+      },
+      {
+        "year": "2005",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 25.638557
+      },
+      {
+        "year": "2006",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 26.975286
+      },
+      {
+        "year": "2007",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 28.012016
+      },
+      {
+        "year": "2008",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 29.867788
+      },
+      {
+        "year": "2009",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 24.759528
+      },
+      {
+        "year": "2010",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 28.219883
+      },
+      {
+        "year": "2011",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 30.842479
+      },
+      {
+        "year": "2012",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 30.68184
+      },
+      {
+        "year": "2013",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 29.941306
+      },
+      {
+        "year": "2014",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 29.906569
+      },
+      {
+        "year": "2015",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 27.688214
+      },
+      {
+        "year": "2016",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 26.452598
+      },
+      {
+        "year": "2017",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 27.125338
+      },
+      {
+        "year": "2018",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 27.445359
+      },
+      {
+        "year": "2019",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 26.258481
+      },
+      {
+        "year": "2020",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 23.139944
+      },
+      {
+        "year": "2021",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 25.232726
+      },
+      {
+        "year": "2022",
+        "country": "United States",
+        "indicator_name_melted": "Trade",
+        "indicator_value_melted": 26.907898
+      }
+    ]
+  },
+  "width": 680,
+  "height": 350,
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    },
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "indicator_value_melted",
+      "type": "quantitative",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Inflation, consumer prices (annual % growth) (Percentage change per annum)",
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "color": {
+      "field": "indicator_name_melted",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6"
+        ]
+      },
+      "legend": {
+        "title": null,
+        "orient": "bottom",
+        "offset": 12
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "field": "indicator_name_melted",
+        "title": "Indicator",
+        "type": "nominal"
+      },
+      {
+        "field": "indicator_value_melted",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.1f"
+      }
+    ]
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

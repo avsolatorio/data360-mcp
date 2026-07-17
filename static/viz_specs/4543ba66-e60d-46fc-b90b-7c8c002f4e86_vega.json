@@ -1,0 +1,892 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP per Capita (constant 2015 US$) vs GDP Growth (annual %) - USA, Brazil, Japan (2011-2025)",
+    "subtitle": [
+      "Brazil, Japan, United States, 2011-2025"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2011",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9067.993163
+      },
+      {
+        "year": "2011",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 33306.180226
+      },
+      {
+        "year": "2011",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 53215.536231
+      },
+      {
+        "year": "2012",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9167.499239
+      },
+      {
+        "year": "2012",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 33909.491186
+      },
+      {
+        "year": "2012",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 54000.841078
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9366.739324
+      },
+      {
+        "year": "2013",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 34636.692475
+      },
+      {
+        "year": "2013",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 54728.86018
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9338.342783
+      },
+      {
+        "year": "2014",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 34996.879676
+      },
+      {
+        "year": "2014",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 55665.241119
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8936.196617
+      },
+      {
+        "year": "2015",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 35664.644611
+      },
+      {
+        "year": "2015",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 56849.469792
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8577.843767
+      },
+      {
+        "year": "2016",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 35934.446789
+      },
+      {
+        "year": "2016",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 57430.84993
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8628.253089
+      },
+      {
+        "year": "2017",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 36547.735744
+      },
+      {
+        "year": "2017",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 58435.970754
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8722.336303
+      },
+      {
+        "year": "2018",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 36899.384708
+      },
+      {
+        "year": "2018",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 59817.65568
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8771.440513
+      },
+      {
+        "year": "2019",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 36837.258365
+      },
+      {
+        "year": "2019",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 61047.964824
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8435.011433
+      },
+      {
+        "year": "2020",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 35363.299695
+      },
+      {
+        "year": "2020",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 59533.609024
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 8799.229458
+      },
+      {
+        "year": "2021",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 36792.556429
+      },
+      {
+        "year": "2021",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 63096.785615
+      },
+      {
+        "year": "2022",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9032.084816
+      },
+      {
+        "year": "2022",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 37448.350482
+      },
+      {
+        "year": "2022",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 64322.233282
+      },
+      {
+        "year": "2023",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9288.027015
+      },
+      {
+        "year": "2023",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 37902.54922
+      },
+      {
+        "year": "2023",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 65667.28158
+      },
+      {
+        "year": "2024",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9566.745187
+      },
+      {
+        "year": "2024",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 37976.637179
+      },
+      {
+        "year": "2024",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 66856.51317
+      },
+      {
+        "year": "2025",
+        "country": "Brazil",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 9747.995578
+      },
+      {
+        "year": "2025",
+        "country": "Japan",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 38619.336707
+      },
+      {
+        "year": "2025",
+        "country": "United States",
+        "indicator": "GDP per capita (constant 2015 US$)",
+        "value": 67945.61465
+      },
+      {
+        "year": "2011",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 3.974423
+      },
+      {
+        "year": "2011",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": -0.200358
+      },
+      {
+        "year": "2011",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.564407
+      },
+      {
+        "year": "2012",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.921176
+      },
+      {
+        "year": "2012",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.648935
+      },
+      {
+        "year": "2012",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.289113
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 3.004823
+      },
+      {
+        "year": "2013",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.997277
+      },
+      {
+        "year": "2013",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.11783
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 0.503956
+      },
+      {
+        "year": "2014",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 0.905915
+      },
+      {
+        "year": "2014",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.52382
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": -3.545763
+      },
+      {
+        "year": "2015",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.799977
+      },
+      {
+        "year": "2015",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.94555
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": -3.275917
+      },
+      {
+        "year": "2016",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 0.704986
+      },
+      {
+        "year": "2016",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.819451
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.322869
+      },
+      {
+        "year": "2017",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.623451
+      },
+      {
+        "year": "2017",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.457622
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.783667
+      },
+      {
+        "year": "2018",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 0.834144
+      },
+      {
+        "year": "2018",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.966505
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.220778
+      },
+      {
+        "year": "2019",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": -0.308497
+      },
+      {
+        "year": "2019",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.583825
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": -3.276759
+      },
+      {
+        "year": "2020",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": -4.283279
+      },
+      {
+        "year": "2020",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": -2.081376
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 4.762604
+      },
+      {
+        "year": "2021",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 3.564195
+      },
+      {
+        "year": "2021",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 6.152022
+      },
+      {
+        "year": "2022",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 3.016694
+      },
+      {
+        "year": "2022",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.331648
+      },
+      {
+        "year": "2022",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.524214
+      },
+      {
+        "year": "2023",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 3.241655
+      },
+      {
+        "year": "2023",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 0.720785
+      },
+      {
+        "year": "2023",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.934363
+      },
+      {
+        "year": "2024",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 3.419315
+      },
+      {
+        "year": "2024",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": -0.240084
+      },
+      {
+        "year": "2024",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.793187
+      },
+      {
+        "year": "2025",
+        "country": "Brazil",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.285746
+      },
+      {
+        "year": "2025",
+        "country": "Japan",
+        "indicator": "GDP growth (annual %)",
+        "value": 1.193113
+      },
+      {
+        "year": "2025",
+        "country": "United States",
+        "indicator": "GDP growth (annual %)",
+        "value": 2.161382
+      }
+    ]
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "GDP growth (annual %)",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 310,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "GDP growth (annual %)"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "GDP growth (annual %)",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Brazil",
+              "Japan",
+              "United States"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "GDP per capita (constant 2015 US$)",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 310,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "GDP per capita (constant 2015 US$)"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "GDP per capita (constant 2015 US$)",
+            "format": ",.0f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Brazil",
+              "Japan",
+              "United States"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": "Economy",
+            "labelLimit": 250,
+            "columns": 3,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

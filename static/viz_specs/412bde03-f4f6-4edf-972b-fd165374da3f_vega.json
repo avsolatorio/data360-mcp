@@ -1,0 +1,499 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Renewable energy consumption (% of total final energy consumption)"
+    ],
+    "subtitle": [
+      "2010-2021",
+      "Percentage of total final energy consumption"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "value": 8.8,
+        "country": "Argentina"
+      },
+      {
+        "year": "2010",
+        "value": 46.8,
+        "country": "Brazil"
+      },
+      {
+        "year": "2010",
+        "value": 27.0,
+        "country": "Chile"
+      },
+      {
+        "year": "2010",
+        "value": 30.6,
+        "country": "Colombia"
+      },
+      {
+        "year": "2010",
+        "value": 9.4,
+        "country": "Mexico"
+      },
+      {
+        "year": "2011",
+        "value": 8.8,
+        "country": "Argentina"
+      },
+      {
+        "year": "2011",
+        "value": 45.2,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": 28.8,
+        "country": "Chile"
+      },
+      {
+        "year": "2011",
+        "value": 29.6,
+        "country": "Colombia"
+      },
+      {
+        "year": "2011",
+        "value": 9.1,
+        "country": "Mexico"
+      },
+      {
+        "year": "2012",
+        "value": 8.6,
+        "country": "Argentina"
+      },
+      {
+        "year": "2012",
+        "value": 43.5,
+        "country": "Brazil"
+      },
+      {
+        "year": "2012",
+        "value": 30.3,
+        "country": "Chile"
+      },
+      {
+        "year": "2012",
+        "value": 29.6,
+        "country": "Colombia"
+      },
+      {
+        "year": "2012",
+        "value": 9.0,
+        "country": "Mexico"
+      },
+      {
+        "year": "2013",
+        "value": 8.9,
+        "country": "Argentina"
+      },
+      {
+        "year": "2013",
+        "value": 42.3,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013",
+        "value": 30.2,
+        "country": "Chile"
+      },
+      {
+        "year": "2013",
+        "value": 32.0,
+        "country": "Colombia"
+      },
+      {
+        "year": "2013",
+        "value": 9.2,
+        "country": "Mexico"
+      },
+      {
+        "year": "2014",
+        "value": 9.8,
+        "country": "Argentina"
+      },
+      {
+        "year": "2014",
+        "value": 41.7,
+        "country": "Brazil"
+      },
+      {
+        "year": "2014",
+        "value": 27.0,
+        "country": "Chile"
+      },
+      {
+        "year": "2014",
+        "value": 32.1,
+        "country": "Colombia"
+      },
+      {
+        "year": "2014",
+        "value": 9.8,
+        "country": "Mexico"
+      },
+      {
+        "year": "2015",
+        "value": 9.4,
+        "country": "Argentina"
+      },
+      {
+        "year": "2015",
+        "value": 43.7,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 25.1,
+        "country": "Chile"
+      },
+      {
+        "year": "2015",
+        "value": 31.1,
+        "country": "Colombia"
+      },
+      {
+        "year": "2015",
+        "value": 9.2,
+        "country": "Mexico"
+      },
+      {
+        "year": "2016",
+        "value": 9.4,
+        "country": "Argentina"
+      },
+      {
+        "year": "2016",
+        "value": 45.4,
+        "country": "Brazil"
+      },
+      {
+        "year": "2016",
+        "value": 24.6,
+        "country": "Chile"
+      },
+      {
+        "year": "2016",
+        "value": 30.5,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 9.2,
+        "country": "Mexico"
+      },
+      {
+        "year": "2017",
+        "value": 10.4,
+        "country": "Argentina"
+      },
+      {
+        "year": "2017",
+        "value": 45.3,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 24.1,
+        "country": "Chile"
+      },
+      {
+        "year": "2017",
+        "value": 32.2,
+        "country": "Colombia"
+      },
+      {
+        "year": "2017",
+        "value": 10.1,
+        "country": "Mexico"
+      },
+      {
+        "year": "2018",
+        "value": 10.5,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": 46.9,
+        "country": "Brazil"
+      },
+      {
+        "year": "2018",
+        "value": 25.5,
+        "country": "Chile"
+      },
+      {
+        "year": "2018",
+        "value": 30.4,
+        "country": "Colombia"
+      },
+      {
+        "year": "2018",
+        "value": 10.3,
+        "country": "Mexico"
+      },
+      {
+        "year": "2019",
+        "value": 10.7,
+        "country": "Argentina"
+      },
+      {
+        "year": "2019",
+        "value": 47.5,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 25.3,
+        "country": "Chile"
+      },
+      {
+        "year": "2019",
+        "value": 31.5,
+        "country": "Colombia"
+      },
+      {
+        "year": "2019",
+        "value": 10.3,
+        "country": "Mexico"
+      },
+      {
+        "year": "2020",
+        "value": 9.8,
+        "country": "Argentina"
+      },
+      {
+        "year": "2020",
+        "value": 50.0,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 26.7,
+        "country": "Chile"
+      },
+      {
+        "year": "2020",
+        "value": 32.0,
+        "country": "Colombia"
+      },
+      {
+        "year": "2020",
+        "value": 12.3,
+        "country": "Mexico"
+      },
+      {
+        "year": "2021",
+        "value": 9.2,
+        "country": "Argentina"
+      },
+      {
+        "year": "2021",
+        "value": 46.5,
+        "country": "Brazil"
+      },
+      {
+        "year": "2021",
+        "value": 24.2,
+        "country": "Chile"
+      },
+      {
+        "year": "2021",
+        "value": 29.7,
+        "country": "Colombia"
+      },
+      {
+        "year": "2021",
+        "value": 13.0,
+        "country": "Mexico"
+      }
+    ]
+  },
+  "mark": {
+    "type": "area",
+    "tooltip": true,
+    "line": true,
+    "opacity": 0.8
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "stack": "zero",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Percentage of total final energy consumption",
+        "labelExpr": "format(datum.value, '.1f') + '%'"
+      },
+      "scale": {}
+    },
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ],
+        "domain": [
+          "Argentina",
+          "Brazil",
+          "Chile",
+          "Colombia",
+          "Mexico"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Economy",
+        "labelLimit": 250,
+        "columns": 3
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Renewable energy consumption (% of total final energy consumption)",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

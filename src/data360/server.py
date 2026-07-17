@@ -3,12 +3,16 @@ import json
 import logging
 import os
 import uuid
+
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
+from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from data360.mcp_server.resources import CORSStaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request as StarletteRequest
 
@@ -268,6 +272,15 @@ app.add_middleware(AuditLogMiddleware)
 # SecurityValidationMiddleware is enabled for incoming request validation.
 app.add_middleware(SecurityValidationMiddleware)
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Instrument FastAPI for incoming request tracking
 if mcp_settings.env != "local" and _connection_string:
     try:
@@ -291,10 +304,68 @@ async def root():
 
 
 
-# Mount static files FIRST (more specific path must come before catch-all)
-static_dir = os.path.join(os.getcwd(), "static")
+class VizSpecRequest(BaseModel):
+    database_id: str
+    indicator_id: str
+    country_code: str | None = None
+    start_year: int | None = None
+    end_year: int | None = None
+    disaggregation_filters: dict[str, str | None] | None = None
+    chart_type: str | None = None
+    relevant_fields: list[str] | None = None
+    chart_title: str | None = None
+    series_labels: dict[str, str] | None = None
+
+
+@app.post("/api/viz-spec")
+async def get_viz_spec_endpoint(req: VizSpecRequest):
+    from data360 import visualization as data360_viz
+
+    try:
+        # Pass charts_api_url_override=None to force local static file storage,
+        # avoiding mutation of the shared @ft.cache singleton (which is a race condition
+        # under concurrent requests). The HTML app always wants local specs for direct
+        # file access; blob storage routing happens via the MCP tool path, not this endpoint.
+        res = await data360_viz.get_viz_spec(
+            database_id=req.database_id,
+            indicator_id=req.indicator_id,
+            country_code=req.country_code,
+            start_year=req.start_year,
+            end_year=req.end_year,
+            disaggregation_filters=req.disaggregation_filters,
+            chart_type=req.chart_type,
+            relevant_fields=req.relevant_fields,
+            chart_title=req.chart_title,
+            series_labels=req.series_labels,
+            charts_api_url_override=None,
+        )
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+    if res.get("error"):
+        return JSONResponse(status_code=400, content={"error": res.get("error")})
+
+    spec = res.get("spec")
+    if not spec:
+        return JSONResponse(status_code=500, content={"error": "Vega-Lite spec was not generated."})
+
+    return {k: v for k, v in {
+        "spec": spec,
+        "reason": res.get("reason"),
+        "strategy": res.get("strategy"),
+    }.items() if v is not None}
+
+
+
+
+if os.environ.get("PYTEST_CURRENT_TEST"):
+    static_dir = os.path.join(os.getcwd(), "static")
+else:
+    server_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(server_dir, "..", ".."))
+    static_dir = os.path.join(project_root, "static")
 os.makedirs(static_dir, exist_ok=True)
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
+app.mount("/static", CORSStaticFiles(directory=static_dir), name="static")
 # Mount MCP app at root — the path="/mcp" in http_app() handles the /mcp route
 app.mount("/", mcp_app)
 

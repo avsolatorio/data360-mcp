@@ -1,0 +1,378 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years) vs. GDP per capita (constant 2015 US$)"
+    ],
+    "subtitle": [
+      "Nigeria, 2005-2020"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2005",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 49.538,
+        "gdp_per_capita_constant_2015_us": 1889.251753
+      },
+      {
+        "year": "2006",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 49.876,
+        "gdp_per_capita_constant_2015_us": 1949.158568
+      },
+      {
+        "year": "2007",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 50.381,
+        "gdp_per_capita_constant_2015_us": 2020.833163
+      },
+      {
+        "year": "2008",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 50.748,
+        "gdp_per_capita_constant_2015_us": 2098.283392
+      },
+      {
+        "year": "2009",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 51.08,
+        "gdp_per_capita_constant_2015_us": 2204.607256
+      },
+      {
+        "year": "2010",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 51.315,
+        "gdp_per_capita_constant_2015_us": 2315.466765
+      },
+      {
+        "year": "2011",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 51.49,
+        "gdp_per_capita_constant_2015_us": 2370.976571
+      },
+      {
+        "year": "2012",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 51.688,
+        "gdp_per_capita_constant_2015_us": 2403.653879
+      },
+      {
+        "year": "2013",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 51.827,
+        "gdp_per_capita_constant_2015_us": 2495.341066
+      },
+      {
+        "year": "2014",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 51.94,
+        "gdp_per_capita_constant_2015_us": 2583.61557
+      },
+      {
+        "year": "2015",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 51.939,
+        "gdp_per_capita_constant_2015_us": 2585.733607
+      },
+      {
+        "year": "2016",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 52.189,
+        "gdp_per_capita_constant_2015_us": 2481.814904
+      },
+      {
+        "year": "2017",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 52.397,
+        "gdp_per_capita_constant_2015_us": 2441.712364
+      },
+      {
+        "year": "2018",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 52.669,
+        "gdp_per_capita_constant_2015_us": 2431.778578
+      },
+      {
+        "year": "2019",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 53.009,
+        "gdp_per_capita_constant_2015_us": 2431.535285
+      },
+      {
+        "year": "2020",
+        "country": "Nigeria",
+        "life_expectancy_at_birth_total_years": 53.072,
+        "gdp_per_capita_constant_2015_us": 2228.686314
+      }
+    ]
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Life expectancy at birth, total (years)",
+        "color": "#34A7F2",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#34A7F2",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#34A7F2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "life_expectancy_at_birth_total_years",
+            "title": "Life expectancy at birth, total (years)",
+            "format": ",.1f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)",
+        "color": "#FF9800",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "color": "#FF9800",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "gdp_per_capita_constant_2015_us",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "value": "#FF9800"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_per_capita_constant_2015_us",
+            "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)",
+            "format": ",.0f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared"
+    },
+    "axis": {
+      "x": "independent"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

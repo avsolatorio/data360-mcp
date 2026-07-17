@@ -1,0 +1,398 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP (annual % growth)"
+    ],
+    "subtitle": [
+      "2015-2022",
+      "Percentage change per annum"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2016",
+        "value": 8.256306,
+        "country": "India"
+      },
+      {
+        "year": "2017",
+        "value": 6.795383,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 6.453851,
+        "country": "India"
+      },
+      {
+        "year": "2015",
+        "value": 6.981623,
+        "country": "China"
+      },
+      {
+        "year": "2020",
+        "value": 2.339504,
+        "country": "China"
+      },
+      {
+        "year": "2019",
+        "value": 6.067378,
+        "country": "China"
+      },
+      {
+        "year": "2016",
+        "value": -3.275917,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 1.322869,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 1.220778,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": -3.276759,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": -1.972719,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2015",
+        "value": 7.996254,
+        "country": "India"
+      },
+      {
+        "year": "2021",
+        "value": 9.689592,
+        "country": "India"
+      },
+      {
+        "year": "2021",
+        "value": 5.866492,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2021",
+        "value": 4.762604,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 3.016694,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": 1.321862,
+        "country": "South Africa"
+      },
+      {
+        "year": "2020",
+        "value": -2.653654,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2022",
+        "value": 7.609365,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 6.757806,
+        "country": "China"
+      },
+      {
+        "year": "2022",
+        "value": 3.133854,
+        "country": "China"
+      },
+      {
+        "year": "2018",
+        "value": 1.556784,
+        "country": "South Africa"
+      },
+      {
+        "year": "2021",
+        "value": 4.858649,
+        "country": "South Africa"
+      },
+      {
+        "year": "2015",
+        "value": -3.545763,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": -1.435371,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2018",
+        "value": 2.806341,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2016",
+        "value": 6.773689,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 6.891239,
+        "country": "China"
+      },
+      {
+        "year": "2019",
+        "value": 3.871437,
+        "country": "India"
+      },
+      {
+        "year": "2018",
+        "value": 1.783667,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 1.826705,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2020",
+        "value": -6.168918,
+        "country": "South Africa"
+      },
+      {
+        "year": "2016",
+        "value": 0.193671,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2021",
+        "value": 8.570384,
+        "country": "China"
+      },
+      {
+        "year": "2017",
+        "value": 1.157947,
+        "country": "South Africa"
+      },
+      {
+        "year": "2019",
+        "value": 2.198076,
+        "country": "Russian Federation"
+      },
+      {
+        "year": "2022",
+        "value": 2.058137,
+        "country": "South Africa"
+      },
+      {
+        "year": "2016",
+        "value": 0.664552,
+        "country": "South Africa"
+      },
+      {
+        "year": "2020",
+        "value": -5.777725,
+        "country": "India"
+      },
+      {
+        "year": "2019",
+        "value": 0.259936,
+        "country": "South Africa"
+      }
+    ]
+  },
+  "mark": {
+    "type": "bar",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "stack": "zero",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Percentage change per annum",
+        "labelExpr": "format(datum.value, '.1f') + '%'"
+      },
+      "scale": {
+        "zero": true
+      }
+    },
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ],
+        "domain": [
+          "Brazil",
+          "China",
+          "India",
+          "Russian Federation",
+          "South Africa"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "title": "Economy",
+        "labelLimit": 100,
+        "columns": 3
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "GDP (annual % growth)",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 640,
+  "height": 320,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

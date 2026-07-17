@@ -17,6 +17,7 @@ if not _os.environ.get("PYTEST_CURRENT_TEST") and not _os.environ.get("PYTEST_RU
     load_dotenv()
 del _os
 
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -68,6 +69,7 @@ class MCPServerSettings(BaseSettings):
         description="Per-check timeout in seconds for GET /ready outbound probes.",
     )
 
+
     model_config = SettingsConfigDict(env_prefix="MCP_")
 
 
@@ -75,7 +77,7 @@ class Data360Settings(BaseSettings):
     """Configuration settings for Data360 API integration."""
 
     api_base_url: str = Field(
-        ...,
+        default="https://data360api.worldbank.org",
         description="Base URL for the Data360 API",
     )
     codelist_api_base_url: str = Field(

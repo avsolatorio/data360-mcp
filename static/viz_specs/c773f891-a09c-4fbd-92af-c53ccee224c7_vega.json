@@ -1,0 +1,354 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Greenhouse Gas Emissions in Transport (2010\u20132020)",
+    "subtitle": [
+      "China, India, United States, 2010-2020",
+      "Tonnes of CO2-equivalent",
+      "Note: 99 duplicate data rows were averaged."
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020",
+        "country": "China",
+        "value": 926.88
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "value": 275.57
+      },
+      {
+        "year": "2020",
+        "country": "United States",
+        "value": 1557.73
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "value": 970.38
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "value": 316.45
+      },
+      {
+        "year": "2019",
+        "country": "United States",
+        "value": 1814.99
+      },
+      {
+        "year": "2018",
+        "country": "China",
+        "value": 976.44
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "value": 313.61
+      },
+      {
+        "year": "2018",
+        "country": "United States",
+        "value": 1820.22
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "value": 901.3
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "value": 298.71
+      },
+      {
+        "year": "2017",
+        "country": "United States",
+        "value": 1780.84
+      },
+      {
+        "year": "2016",
+        "country": "China",
+        "value": 868.04
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "value": 276.28
+      },
+      {
+        "year": "2016",
+        "country": "United States",
+        "value": 1768.3
+      },
+      {
+        "year": "2015",
+        "country": "China",
+        "value": 850.57
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "value": 264.4
+      },
+      {
+        "year": "2015",
+        "country": "United States",
+        "value": 1756.19
+      },
+      {
+        "year": "2014",
+        "country": "China",
+        "value": 790.7
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "value": 241.81
+      },
+      {
+        "year": "2014",
+        "country": "United States",
+        "value": 1693.99
+      },
+      {
+        "year": "2013",
+        "country": "China",
+        "value": 760.69
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "value": 232.0
+      },
+      {
+        "year": "2013",
+        "country": "United States",
+        "value": 1700.9
+      },
+      {
+        "year": "2012",
+        "country": "China",
+        "value": 704.19
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "value": 227.07
+      },
+      {
+        "year": "2012",
+        "country": "United States",
+        "value": 1649.51
+      },
+      {
+        "year": "2011",
+        "country": "China",
+        "value": 638.59
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "value": 214.56
+      },
+      {
+        "year": "2011",
+        "country": "United States",
+        "value": 1686.21
+      },
+      {
+        "year": "2010",
+        "country": "China",
+        "value": 584.09
+      },
+      {
+        "year": "2010",
+        "country": "India",
+        "value": 197.84
+      },
+      {
+        "year": "2010",
+        "country": "United States",
+        "value": 1733.12
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Tonnes of CO2-equivalent",
+        "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ",.0f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      }
+    ],
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Economy",
+        "labelLimit": 250,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

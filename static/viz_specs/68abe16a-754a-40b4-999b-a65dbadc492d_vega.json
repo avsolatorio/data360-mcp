@@ -1,0 +1,315 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP per Capita vs CO2 Emissions per Capita in South America (2019)",
+    "subtitle": [
+      "2019"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2019",
+        "country": "ARG",
+        "gdp_per_capita": 12706.397811,
+        "carbon_dioxide_co2_emissions_excluding_l": 4.075041,
+        "_x_norm": 1.0,
+        "_y_norm": 0.8968560084271939,
+        "_dist_from_center": 0.407494691424765,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "BOL",
+        "gdp_per_capita": 3207.386952,
+        "carbon_dioxide_co2_emissions_excluding_l": 1.884926,
+        "_x_norm": 0.0,
+        "_y_norm": 0.18698970909974885,
+        "_dist_from_center": 0.34797544220945986,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "BRA",
+        "gdp_per_capita": 8771.440513,
+        "carbon_dioxide_co2_emissions_excluding_l": 2.258699,
+        "_x_norm": 0.5857508369651184,
+        "_y_norm": 0.3081380763309295,
+        "_dist_from_center": 0.04416420379421456,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "COL",
+        "gdp_per_capita": 6439.963598,
+        "carbon_dioxide_co2_emissions_excluding_l": 1.724387,
+        "_x_norm": 0.34030665865985826,
+        "_y_norm": 0.1349553520784377,
+        "_dist_from_center": 0.15875955824455643,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "ECU",
+        "gdp_per_capita": 5971.389384,
+        "carbon_dioxide_co2_emissions_excluding_l": 2.41784,
+        "_x_norm": 0.29097792107282394,
+        "_y_norm": 0.3597193096183454,
+        "_dist_from_center": 0.06336890157299226,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "PER",
+        "gdp_per_capita": 6626.260835,
+        "carbon_dioxide_co2_emissions_excluding_l": 1.792701,
+        "_x_norm": 0.3599189361659408,
+        "_y_norm": 0.15709747994489917,
+        "_dist_from_center": 0.13720484270502056,
+        "_show_label": false
+      },
+      {
+        "year": "2019",
+        "country": "PRY",
+        "gdp_per_capita": 6243.536209,
+        "carbon_dioxide_co2_emissions_excluding_l": 1.308016,
+        "_x_norm": 0.31962793832616243,
+        "_y_norm": 0.0,
+        "_dist_from_center": 0.28253408063247065,
+        "_show_label": true
+      },
+      {
+        "year": "2019",
+        "country": "SUR",
+        "gdp_per_capita": 8677.30522,
+        "carbon_dioxide_co2_emissions_excluding_l": 4.393266,
+        "_x_norm": 0.5758408269233035,
+        "_y_norm": 1.0,
+        "_dist_from_center": 0.2557518310284105,
+        "_show_label": true
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP (US dollars, 2015 constant prices)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "carbon_dioxide_co2_emissions_excluding_l",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Carbon dioxide (CO2) emissions excluding LULUCF (Tonnes)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_per_capita",
+            "title": "GDP (US dollars, 2015 constant prices)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "carbon_dioxide_co2_emissions_excluding_l",
+            "title": "Carbon dioxide (CO2) emissions excluding LULUCF (Tonnes)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "carbon_dioxide_co2_emissions_excluding_l",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum._show_label",
+            "value": 1
+          },
+          "value": 0
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

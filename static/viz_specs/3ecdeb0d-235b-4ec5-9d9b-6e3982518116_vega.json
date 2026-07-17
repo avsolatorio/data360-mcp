@@ -1,0 +1,465 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP per capita (current US$)"
+    ],
+    "subtitle": [
+      "Qatar, 1970-2024",
+      "US Dollars"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2008",
+        "value": 80781.403919,
+        "country": "Qatar"
+      },
+      {
+        "year": "2017",
+        "value": 63279.876749,
+        "country": "Qatar"
+      },
+      {
+        "year": "2002",
+        "value": 27226.659351,
+        "country": "Qatar"
+      },
+      {
+        "year": "2003",
+        "value": 31602.470865,
+        "country": "Qatar"
+      },
+      {
+        "year": "2018",
+        "value": 71039.930824,
+        "country": "Qatar"
+      },
+      {
+        "year": "1994",
+        "value": 14764.877136,
+        "country": "Qatar"
+      },
+      {
+        "year": "1991",
+        "value": 15133.49694,
+        "country": "Qatar"
+      },
+      {
+        "year": "1987",
+        "value": 13718.791152,
+        "country": "Qatar"
+      },
+      {
+        "year": "1988",
+        "value": 14682.021847,
+        "country": "Qatar"
+      },
+      {
+        "year": "1981",
+        "value": 29504.940381,
+        "country": "Qatar"
+      },
+      {
+        "year": "1979",
+        "value": 21776.638175,
+        "country": "Qatar"
+      },
+      {
+        "year": "1973",
+        "value": 4905.342651,
+        "country": "Qatar"
+      },
+      {
+        "year": "2013",
+        "value": 103697.062789,
+        "country": "Qatar"
+      },
+      {
+        "year": "2019",
+        "value": 66841.362319,
+        "country": "Qatar"
+      },
+      {
+        "year": "2010",
+        "value": 76462.611949,
+        "country": "Qatar"
+      },
+      {
+        "year": "2020",
+        "value": 51683.568108,
+        "country": "Qatar"
+      },
+      {
+        "year": "2001",
+        "value": 25870.799186,
+        "country": "Qatar"
+      },
+      {
+        "year": "2005",
+        "value": 53949.676409,
+        "country": "Qatar"
+      },
+      {
+        "year": "2004",
+        "value": 41035.500838,
+        "country": "Qatar"
+      },
+      {
+        "year": "1999",
+        "value": 20233.684683,
+        "country": "Qatar"
+      },
+      {
+        "year": "2024",
+        "value": 76688.694174,
+        "country": "Qatar"
+      },
+      {
+        "year": "1986",
+        "value": 13213.209362,
+        "country": "Qatar"
+      },
+      {
+        "year": "1989",
+        "value": 15242.50689,
+        "country": "Qatar"
+      },
+      {
+        "year": "1985",
+        "value": 16815.041963,
+        "country": "Qatar"
+      },
+      {
+        "year": "1980",
+        "value": 28375.48525,
+        "country": "Qatar"
+      },
+      {
+        "year": "1975",
+        "value": 13013.68381,
+        "country": "Qatar"
+      },
+      {
+        "year": "2012",
+        "value": 108470.387023,
+        "country": "Qatar"
+      },
+      {
+        "year": "2006",
+        "value": 62582.445314,
+        "country": "Qatar"
+      },
+      {
+        "year": "2015",
+        "value": 68985.243338,
+        "country": "Qatar"
+      },
+      {
+        "year": "2000",
+        "value": 27535.182941,
+        "country": "Qatar"
+      },
+      {
+        "year": "1992",
+        "value": 16280.293882,
+        "country": "Qatar"
+      },
+      {
+        "year": "1983",
+        "value": 19616.032039,
+        "country": "Qatar"
+      },
+      {
+        "year": "1982",
+        "value": 24384.59385,
+        "country": "Qatar"
+      },
+      {
+        "year": "1977",
+        "value": 16057.725272,
+        "country": "Qatar"
+      },
+      {
+        "year": "1974",
+        "value": 13539.558797,
+        "country": "Qatar"
+      },
+      {
+        "year": "1971",
+        "value": 2951.769415,
+        "country": "Qatar"
+      },
+      {
+        "year": "1970",
+        "value": 2593.822963,
+        "country": "Qatar"
+      },
+      {
+        "year": "2016",
+        "value": 61253.6218,
+        "country": "Qatar"
+      },
+      {
+        "year": "2011",
+        "value": 103261.510293,
+        "country": "Qatar"
+      },
+      {
+        "year": "2009",
+        "value": 60785.735155,
+        "country": "Qatar"
+      },
+      {
+        "year": "2023",
+        "value": 81816.979797,
+        "country": "Qatar"
+      },
+      {
+        "year": "2021",
+        "value": 71751.93634,
+        "country": "Qatar"
+      },
+      {
+        "year": "2014",
+        "value": 95840.689893,
+        "country": "Qatar"
+      },
+      {
+        "year": "2007",
+        "value": 65954.341953,
+        "country": "Qatar"
+      },
+      {
+        "year": "2022",
+        "value": 88701.468976,
+        "country": "Qatar"
+      },
+      {
+        "year": "1998",
+        "value": 17665.440844,
+        "country": "Qatar"
+      },
+      {
+        "year": "1993",
+        "value": 14769.719332,
+        "country": "Qatar"
+      },
+      {
+        "year": "1996",
+        "value": 17124.792086,
+        "country": "Qatar"
+      },
+      {
+        "year": "1995",
+        "value": 15822.509071,
+        "country": "Qatar"
+      },
+      {
+        "year": "1997",
+        "value": 20522.8013,
+        "country": "Qatar"
+      },
+      {
+        "year": "1990",
+        "value": 16721.620771,
+        "country": "Qatar"
+      },
+      {
+        "year": "1978",
+        "value": 16757.098246,
+        "country": "Qatar"
+      },
+      {
+        "year": "1984",
+        "value": 19272.261609,
+        "country": "Qatar"
+      },
+      {
+        "year": "1976",
+        "value": 15710.320814,
+        "country": "Qatar"
+      },
+      {
+        "year": "1972",
+        "value": 3482.877836,
+        "country": "Qatar"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "US Dollars",
+        "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1f') : '$'+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "year",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": "$,.2f"
+      },
+      {
+        "field": "country",
+        "title": "Country",
+        "type": "nominal"
+      }
+    ],
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Country",
+        "labelLimit": 250,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

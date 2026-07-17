@@ -1,0 +1,345 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP (annual % growth) vs. Inflation, consumer prices (annual % growth)"
+    ],
+    "subtitle": [
+      "2019",
+      "Percentage change per annum"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2019",
+        "country": "Argentina",
+        "gdp_annual_growth": -2.000861,
+        "inflation_consumer_prices_annual_growth": 53.548304
+      },
+      {
+        "year": "2019",
+        "country": "Australia",
+        "gdp_annual_growth": 2.194017,
+        "inflation_consumer_prices_annual_growth": 1.610771
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "gdp_annual_growth": 1.220778,
+        "inflation_consumer_prices_annual_growth": 3.732976
+      },
+      {
+        "year": "2019",
+        "country": "Canada",
+        "gdp_annual_growth": 1.908432,
+        "inflation_consumer_prices_annual_growth": 1.949269
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "gdp_annual_growth": 6.067378,
+        "inflation_consumer_prices_annual_growth": 2.899234
+      },
+      {
+        "year": "2019",
+        "country": "France",
+        "gdp_annual_growth": 2.027446,
+        "inflation_consumer_prices_annual_growth": 1.108255
+      },
+      {
+        "year": "2019",
+        "country": "Germany",
+        "gdp_annual_growth": 0.977735,
+        "inflation_consumer_prices_annual_growth": 1.44566
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "gdp_annual_growth": 3.871437,
+        "inflation_consumer_prices_annual_growth": 3.729506
+      },
+      {
+        "year": "2019",
+        "country": "Indonesia",
+        "gdp_annual_growth": 5.019288,
+        "inflation_consumer_prices_annual_growth": 3.030585
+      },
+      {
+        "year": "2019",
+        "country": "Italy",
+        "gdp_annual_growth": 0.429163,
+        "inflation_consumer_prices_annual_growth": 0.611247
+      },
+      {
+        "year": "2019",
+        "country": "Japan",
+        "gdp_annual_growth": -0.308497,
+        "inflation_consumer_prices_annual_growth": 0.468776
+      },
+      {
+        "year": "2019",
+        "country": "Korea, Rep.",
+        "gdp_annual_growth": 2.313802,
+        "inflation_consumer_prices_annual_growth": 0.383
+      },
+      {
+        "year": "2019",
+        "country": "Mexico",
+        "gdp_annual_growth": -0.392691,
+        "inflation_consumer_prices_annual_growth": 3.635961
+      },
+      {
+        "year": "2019",
+        "country": "Russian Federation",
+        "gdp_annual_growth": 2.198076,
+        "inflation_consumer_prices_annual_growth": 4.472026
+      },
+      {
+        "year": "2019",
+        "country": "Saudi Arabia",
+        "gdp_annual_growth": 1.651589,
+        "inflation_consumer_prices_annual_growth": -1.192986
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "gdp_annual_growth": 0.259936,
+        "inflation_consumer_prices_annual_growth": 4.102851
+      },
+      {
+        "year": "2019",
+        "country": "Turkiye",
+        "gdp_annual_growth": 1.301624,
+        "inflation_consumer_prices_annual_growth": 15.176822
+      },
+      {
+        "year": "2019",
+        "country": "United Kingdom",
+        "gdp_annual_growth": 1.256299,
+        "inflation_consumer_prices_annual_growth": 1.738105
+      },
+      {
+        "year": "2019",
+        "country": "United States",
+        "gdp_annual_growth": 2.583825,
+        "inflation_consumer_prices_annual_growth": 1.81221
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP (annual % growth) (Percentage change per annum)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "inflation_consumer_prices_annual_growth",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Inflation, consumer prices (annual % growth) (Percentage change per annum)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_annual_growth",
+            "title": "GDP (annual % growth) (Percentage change per annum)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "inflation_consumer_prices_annual_growth",
+            "title": "Inflation, consumer prices (annual % growth) (Percentage change per annum)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_annual_growth",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "inflation_consumer_prices_annual_growth",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

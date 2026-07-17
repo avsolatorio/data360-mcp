@@ -1,0 +1,1980 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Government Effectiveness Across World Bank Regions",
+    "subtitle": [
+      "1996-2004",
+      "Showing 50 of 191 economies by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Andorra",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Angola",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 2,
+        "country": "Albania",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 6,
+        "country": "Argentina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Armenia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Antigua and Barbuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 5,
+        "country": "Australia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 5,
+        "country": "Austria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 2,
+        "country": "Azerbaijan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Burundi",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 5,
+        "country": "Belgium",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Benin",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 2,
+        "country": "Burkina Faso",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Bulgaria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Bahrain",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 2,
+        "country": "Bahamas, The",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 2,
+        "country": "Bosnia and Herzegovina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Belarus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Belize",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Bermuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 4,
+        "country": "Bolivia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 6,
+        "country": "Brazil",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Barbados",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 2,
+        "country": "Brunei Darussalam",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Bhutan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Botswana",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 5,
+        "country": "Canada",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 6,
+        "country": "Chile",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 5,
+        "country": "China",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Cote d'Ivoire",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Cameroon",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 2,
+        "country": "Congo, Dem. Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 2,
+        "country": "Congo, Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 6,
+        "country": "Colombia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Comoros",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 5,
+        "country": "Costa Rica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Cuba",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Cayman Islands",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Cyprus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 5,
+        "country": "Czechia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Djibouti",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 1,
+        "country": "Dominica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 5,
+        "country": "Denmark",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Dominican Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 3,
+        "country": "Algeria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 4,
+        "country": "Ecuador",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 4,
+        "country": "Egypt, Arab Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Andorra",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Angola",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 2,
+        "country": "Albania",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 6,
+        "country": "Argentina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 2,
+        "country": "Armenia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Antigua and Barbuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 5,
+        "country": "Australia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 5,
+        "country": "Austria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Azerbaijan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Burundi",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 5,
+        "country": "Belgium",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Benin",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 2,
+        "country": "Burkina Faso",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Bulgaria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Bahrain",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 2,
+        "country": "Bahamas, The",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 2,
+        "country": "Bosnia and Herzegovina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 2,
+        "country": "Belarus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Belize",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Bermuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 4,
+        "country": "Bolivia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 6,
+        "country": "Brazil",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Barbados",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 2,
+        "country": "Brunei Darussalam",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Bhutan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Botswana",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 5,
+        "country": "Canada",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 6,
+        "country": "Chile",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 5,
+        "country": "China",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Cote d'Ivoire",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Cameroon",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 2,
+        "country": "Congo, Dem. Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 2,
+        "country": "Congo, Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 6,
+        "country": "Colombia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Comoros",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 5,
+        "country": "Costa Rica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Cuba",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Cayman Islands",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Cyprus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 5,
+        "country": "Czechia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Djibouti",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1,
+        "country": "Dominica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 5,
+        "country": "Denmark",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Dominican Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 3,
+        "country": "Algeria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 4,
+        "country": "Ecuador",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 4,
+        "country": "Egypt, Arab Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Andorra",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Angola",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Albania",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 6,
+        "country": "Argentina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Armenia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Antigua and Barbuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "Australia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "Austria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 4,
+        "country": "Azerbaijan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Burundi",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "Belgium",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Benin",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 2,
+        "country": "Burkina Faso",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 4,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "Bulgaria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Bahrain",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 2,
+        "country": "Bahamas, The",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Bosnia and Herzegovina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Belarus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Belize",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Bermuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "Bolivia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 6,
+        "country": "Brazil",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Barbados",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 2,
+        "country": "Brunei Darussalam",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Bhutan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Botswana",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "Canada",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 6,
+        "country": "Chile",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "China",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Cote d'Ivoire",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Cameroon",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 2,
+        "country": "Congo, Dem. Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 2,
+        "country": "Congo, Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 6,
+        "country": "Colombia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Comoros",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "Costa Rica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Cuba",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Cayman Islands",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Cyprus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 6,
+        "country": "Czechia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Djibouti",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 1,
+        "country": "Dominica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "Denmark",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Dominican Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 3,
+        "country": "Algeria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 5,
+        "country": "Ecuador",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 4,
+        "country": "Egypt, Arab Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Andorra",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 2,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 4,
+        "country": "Angola",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 4,
+        "country": "Albania",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 7,
+        "country": "Argentina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 4,
+        "country": "Armenia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Antigua and Barbuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 5,
+        "country": "Australia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 6,
+        "country": "Austria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 5,
+        "country": "Azerbaijan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 2,
+        "country": "Burundi",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 6,
+        "country": "Belgium",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 2,
+        "country": "Benin",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 3,
+        "country": "Burkina Faso",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 5,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 6,
+        "country": "Bulgaria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 5,
+        "country": "Bahrain",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 2,
+        "country": "Bahamas, The",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 4,
+        "country": "Bosnia and Herzegovina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 4,
+        "country": "Belarus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Belize",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Bermuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 6,
+        "country": "Bolivia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 7,
+        "country": "Brazil",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Barbados",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 2,
+        "country": "Brunei Darussalam",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Bhutan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 6,
+        "country": "Botswana",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 2,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 5,
+        "country": "Canada",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 7,
+        "country": "Chile",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 7,
+        "country": "China",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 4,
+        "country": "Cote d'Ivoire",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 4,
+        "country": "Cameroon",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 3,
+        "country": "Congo, Dem. Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 2,
+        "country": "Congo, Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 7,
+        "country": "Colombia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Comoros",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 6,
+        "country": "Costa Rica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 4,
+        "country": "Cuba",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Cayman Islands",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 3,
+        "country": "Cyprus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 7,
+        "country": "Czechia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Djibouti",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 1,
+        "country": "Dominica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 6,
+        "country": "Denmark",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 5,
+        "country": "Dominican Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 4,
+        "country": "Algeria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 6,
+        "country": "Ecuador",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 5,
+        "country": "Egypt, Arab Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Andorra",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 2,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Angola",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 4,
+        "country": "Albania",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 7,
+        "country": "Argentina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 4,
+        "country": "Armenia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Antigua and Barbuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Australia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 6,
+        "country": "Austria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Azerbaijan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 2,
+        "country": "Burundi",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 6,
+        "country": "Belgium",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 2,
+        "country": "Benin",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 3,
+        "country": "Burkina Faso",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 6,
+        "country": "Bulgaria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Bahrain",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 2,
+        "country": "Bahamas, The",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 4,
+        "country": "Bosnia and Herzegovina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 4,
+        "country": "Belarus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Belize",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Bermuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 6,
+        "country": "Bolivia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 7,
+        "country": "Brazil",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Barbados",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 2,
+        "country": "Brunei Darussalam",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Bhutan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 6,
+        "country": "Botswana",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 2,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Canada",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 7,
+        "country": "Chile",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 7,
+        "country": "China",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 4,
+        "country": "Cote d'Ivoire",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Cameroon",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 3,
+        "country": "Congo, Dem. Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 2,
+        "country": "Congo, Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 7,
+        "country": "Colombia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Comoros",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 6,
+        "country": "Costa Rica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 4,
+        "country": "Cuba",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Cayman Islands",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 3,
+        "country": "Cyprus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 7,
+        "country": "Czechia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Djibouti",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 1,
+        "country": "Dominica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 6,
+        "country": "Denmark",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Dominican Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Algeria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 6,
+        "country": "Ecuador",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 5,
+        "country": "Egypt, Arab Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 1,
+        "country": "Andorra",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 4,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Angola",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 5,
+        "country": "Albania",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 8,
+        "country": "Argentina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 5,
+        "country": "Armenia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 2,
+        "country": "Antigua and Barbuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 5,
+        "country": "Australia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Austria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Azerbaijan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 4,
+        "country": "Burundi",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Belgium",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 4,
+        "country": "Benin",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 5,
+        "country": "Burkina Faso",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Bangladesh",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 7,
+        "country": "Bulgaria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 5,
+        "country": "Bahrain",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 2,
+        "country": "Bahamas, The",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Bosnia and Herzegovina",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 4,
+        "country": "Belarus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 2,
+        "country": "Belize",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 1,
+        "country": "Bermuda",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 7,
+        "country": "Bolivia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 8,
+        "country": "Brazil",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 2,
+        "country": "Barbados",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 2,
+        "country": "Brunei Darussalam",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 2,
+        "country": "Bhutan",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 7,
+        "country": "Botswana",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 4,
+        "country": "Central African Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 5,
+        "country": "Canada",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 8,
+        "country": "Chile",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 8,
+        "country": "China",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Cote d'Ivoire",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 7,
+        "country": "Cameroon",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Congo, Dem. Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 4,
+        "country": "Congo, Rep.",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 8,
+        "country": "Colombia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 3,
+        "country": "Comoros",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 7,
+        "country": "Costa Rica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 5,
+        "country": "Cuba",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 1,
+        "country": "Cayman Islands",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 5,
+        "country": "Cyprus",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 8,
+        "country": "Czechia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 3,
+        "country": "Djibouti",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 2,
+        "country": "Dominica",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Denmark",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 7,
+        "country": "Dominican Republic",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Algeria",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 7,
+        "country": "Ecuador",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 6,
+        "country": "Egypt, Arab Rep.",
+        "comp_breakdown_1": "Number of sources"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          1.0,
+          8.0
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Worldwide Governance Indicators: Government Effectiveness",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "field": "comp_breakdown_1",
+        "title": "Dimension 1",
+        "type": "nominal"
+      },
+      {
+        "value": "Worldwide Governance Indicators: Government Effectiveness",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

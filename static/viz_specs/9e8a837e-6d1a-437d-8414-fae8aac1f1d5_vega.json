@@ -1,0 +1,1374 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Georgia \u2014 Government Effectiveness (WGI), all available breakdowns",
+    "subtitle": [
+      "Georgia, 1996-2024"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "1996",
+        "value": 25.946273,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "1998",
+        "value": 25.768796,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2000",
+        "value": 34.2974,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2002",
+        "value": 27.805032,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2003",
+        "value": 27.627786,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2004",
+        "value": 37.120999,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2005",
+        "value": 39.462197,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2006",
+        "value": 43.816341,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2007",
+        "value": 47.010025,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2008",
+        "value": 51.040461,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2009",
+        "value": 52.977581,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2010",
+        "value": 55.459613,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2011",
+        "value": 61.900975,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2012",
+        "value": 63.274714,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2013",
+        "value": 62.05615,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2014",
+        "value": 61.639505,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2015",
+        "value": 60.477051,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2016",
+        "value": 62.962795,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2017",
+        "value": 63.657909,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2018",
+        "value": 61.101802,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2019",
+        "value": 61.283431,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2020",
+        "value": 57.332284,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2021",
+        "value": 60.120296,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2022",
+        "value": 59.943003,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2023",
+        "value": 62.765864,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "2024",
+        "value": 60.212147,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance score (0-100)"
+      },
+      {
+        "year": "1996",
+        "value": 0.443969,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "1998",
+        "value": 0.443969,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2000",
+        "value": 0.439664,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2002",
+        "value": 0.373904,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2003",
+        "value": 0.373904,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2004",
+        "value": 0.300595,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2005",
+        "value": 0.278295,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2006",
+        "value": 0.245446,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2007",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2008",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2009",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2010",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2011",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2012",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2013",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2014",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2015",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2016",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2017",
+        "value": 0.243561,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2018",
+        "value": 0.258954,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2019",
+        "value": 0.258954,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2020",
+        "value": 0.261223,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2021",
+        "value": 0.261223,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2022",
+        "value": 0.247982,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2023",
+        "value": 0.258465,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "2024",
+        "value": 0.25331,
+        "country": "Georgia",
+        "comp_breakdown_1": "Standard error of the governance estimate"
+      },
+      {
+        "year": "1996",
+        "value": -1.306016,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "1998",
+        "value": -1.315144,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2000",
+        "value": -0.87652,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2002",
+        "value": -1.210421,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2003",
+        "value": -1.219537,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2004",
+        "value": -0.731304,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2005",
+        "value": -0.610896,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2006",
+        "value": -0.386964,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2007",
+        "value": -0.222714,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2008",
+        "value": -0.01543,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2009",
+        "value": 0.084196,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2010",
+        "value": 0.211846,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2011",
+        "value": 0.543123,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2012",
+        "value": 0.613774,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2013",
+        "value": 0.551104,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2014",
+        "value": 0.529676,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2015",
+        "value": 0.469891,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2016",
+        "value": 0.597732,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2017",
+        "value": 0.633482,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2018",
+        "value": 0.502022,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2019",
+        "value": 0.511363,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2020",
+        "value": 0.308157,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2021",
+        "value": 0.451543,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2022",
+        "value": 0.442425,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2023",
+        "value": 0.587604,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "2024",
+        "value": 0.456267,
+        "country": "Georgia",
+        "comp_breakdown_1": "Governance estimate (approx. -2.5 to +2.5)"
+      },
+      {
+        "year": "1996",
+        "value": 1.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1998",
+        "value": 1.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2000",
+        "value": 2.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2002",
+        "value": 3.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2003",
+        "value": 3.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2004",
+        "value": 5.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2005",
+        "value": 6.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2006",
+        "value": 8.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2007",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2008",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2009",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2010",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2011",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2012",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2013",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2014",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2015",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2016",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2017",
+        "value": 9.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2018",
+        "value": 7.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2019",
+        "value": 7.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2020",
+        "value": 6.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2021",
+        "value": 6.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2022",
+        "value": 7.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2023",
+        "value": 7.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "2024",
+        "value": 8.0,
+        "country": "Georgia",
+        "comp_breakdown_1": "Number of sources"
+      },
+      {
+        "year": "1996",
+        "value": 11.788898,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "1998",
+        "value": 11.61142,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2000",
+        "value": 20.277303,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2002",
+        "value": 15.881918,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2003",
+        "value": 15.704673,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2004",
+        "value": 27.535563,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2005",
+        "value": 30.587866,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2006",
+        "value": 35.989522,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2007",
+        "value": 39.243308,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2008",
+        "value": 43.273744,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2009",
+        "value": 45.210864,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2010",
+        "value": 47.692895,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2011",
+        "value": 54.134258,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2012",
+        "value": 55.507997,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2013",
+        "value": 54.289433,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2014",
+        "value": 53.872788,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2015",
+        "value": 52.710333,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2016",
+        "value": 55.196078,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2017",
+        "value": 55.891192,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2018",
+        "value": 52.844225,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2019",
+        "value": 53.025853,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2020",
+        "value": 49.002364,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2021",
+        "value": 51.790376,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2022",
+        "value": 52.035305,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2023",
+        "value": 54.523873,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2024",
+        "value": 52.134543,
+        "country": "Georgia",
+        "comp_breakdown_1": "Lower bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "1996",
+        "value": 40.103649,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "1998",
+        "value": 39.926172,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2000",
+        "value": 48.317497,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2002",
+        "value": 39.728146,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2003",
+        "value": 39.5509,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2004",
+        "value": 46.706434,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2005",
+        "value": 48.336527,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2006",
+        "value": 51.64316,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2007",
+        "value": 54.776742,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2008",
+        "value": 58.807179,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2009",
+        "value": 60.744299,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2010",
+        "value": 63.22633,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2011",
+        "value": 69.667692,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2012",
+        "value": 71.041432,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2013",
+        "value": 69.822867,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2014",
+        "value": 69.406223,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2015",
+        "value": 68.243768,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2016",
+        "value": 70.729513,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2017",
+        "value": 71.424627,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2018",
+        "value": 69.35938,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2019",
+        "value": 69.541009,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2020",
+        "value": 65.662203,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2021",
+        "value": 68.450215,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2022",
+        "value": 67.850701,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2023",
+        "value": 71.007856,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      },
+      {
+        "year": "2024",
+        "value": 68.289751,
+        "country": "Georgia",
+        "comp_breakdown_1": "Upper bound of the 90% confidence interval for the governance score"
+      }
+    ]
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Standard error of the governance estimate, Governance estimate (approx. -2.5 to +2.5)",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 180,
+      "transform": [
+        {
+          "filter": {
+            "field": "comp_breakdown_1",
+            "oneOf": [
+              "Standard error of the governance estimate",
+              "Governance estimate (approx. -2.5 to +2.5)"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "year",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "comp_breakdown_1",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Standard error of the governance estimate",
+              "Governance estimate (approx. -2.5 to +2.5)"
+            ],
+            "range": [
+              "#34A7F2",
+              "#FF9800"
+            ]
+          },
+          "legend": {
+            "orient": "bottom",
+            "labelFontSize": 11,
+            "symbolSize": 80,
+            "labelLimit": 0,
+            "direction": "vertical"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "year",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "Number of sources",
+        "color": "#664AB6",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 140,
+      "transform": [
+        {
+          "filter": {
+            "field": "comp_breakdown_1",
+            "equal": "Number of sources"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "color": "#664AB6"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "year",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "labels": false
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "year",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Number of sources",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": [
+          "Lower bound of the 90% confidence interval for the governance score, Governance score (0-100), Upper",
+          "bound of the 90% confidence interval for the governance score"
+        ],
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 680,
+      "height": 180,
+      "transform": [
+        {
+          "filter": {
+            "field": "comp_breakdown_1",
+            "oneOf": [
+              "Lower bound of the 90% confidence interval for the governance score",
+              "Governance score (0-100)",
+              "Upper bound of the 90% confidence interval for the governance score"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "year",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1f') : ''+format(datum.value,'.2f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "comp_breakdown_1",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Lower bound of the 90% confidence interval for the governance score",
+              "Governance score (0-100)",
+              "Upper bound of the 90% confidence interval for the governance score"
+            ],
+            "range": [
+              "#4EC2C0",
+              "#F3578E",
+              "#081079"
+            ]
+          },
+          "legend": {
+            "orient": "bottom",
+            "labelFontSize": 11,
+            "symbolSize": 80,
+            "labelLimit": 0,
+            "direction": "vertical"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "year",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.1f"
+          },
+          {
+            "field": "country",
+            "title": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          }
+        ]
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "independent"
+    }
+  },
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

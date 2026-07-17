@@ -119,7 +119,18 @@ export function parseSpec(spec: VLSpec, palette: string[]): ParsedSpec {
       : (spec.data?.values ?? []);
 
   const isQuantitative = spec.encoding?.color?.type === "quantitative";
-  const colorField = isQuantitative ? null : (spec.encoding?.color?.field ?? null);
+  let colorField = isQuantitative ? null : (spec.encoding?.color?.field ?? null);
+
+  // Suppress the interactive legend when the color field is already shown on an
+  // axis (e.g. country on the Y-axis of a horizontal bar chart). In those cases
+  // the legend would duplicate information that is already readable from the
+  // axis labels, so we treat it as if there were no color grouping.
+  const xField = spec.encoding?.x?.field ?? null;
+  const yField = spec.encoding?.y?.field ?? null;
+  if (colorField && (colorField === xField || colorField === yField)) {
+    colorField = null;
+  }
+
   const specTitle =
     typeof spec.title === "string"
       ? spec.title

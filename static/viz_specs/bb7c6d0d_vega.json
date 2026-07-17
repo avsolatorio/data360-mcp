@@ -1,0 +1,1659 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "WB_WDI_NY_GDP_PCAP_KD | WB_WDI_NY_GDP_MKTP_KD_ZG | WB_WDI_FP_CPI_TOTL_ZG"
+    ],
+    "subtitle": [
+      "2010-2022"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4400.0812935
+      },
+      {
+        "year": "2010",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 2887.620907
+      },
+      {
+        "year": "2010",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 621.828488
+      },
+      {
+        "year": "2010",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4379.8100585
+      },
+      {
+        "year": "2010",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 2978.4923989999998
+      },
+      {
+        "year": "2011",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4535.983792999999
+      },
+      {
+        "year": "2011",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3142.5891975
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 643.42593
+      },
+      {
+        "year": "2011",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4562.560171
+      },
+      {
+        "year": "2011",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3035.1466914999996
+      },
+      {
+        "year": "2012",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4584.7102075
+      },
+      {
+        "year": "2012",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3365.4739285
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 669.276327
+      },
+      {
+        "year": "2012",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4734.017414
+      },
+      {
+        "year": "2012",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3061.9770355
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4684.8720735
+      },
+      {
+        "year": "2013",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3602.8578745
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 702.919952
+      },
+      {
+        "year": "2013",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4801.6462655000005
+      },
+      {
+        "year": "2013",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3086.6810885
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4669.4233695
+      },
+      {
+        "year": "2014",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3846.917351
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 745.8633175
+      },
+      {
+        "year": "2014",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4747.2743835
+      },
+      {
+        "year": "2014",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3078.2098605
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4466.325427
+      },
+      {
+        "year": "2015",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4091.157237
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 795.9972065
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4637.8705740000005
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3056.7978435
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4287.283925
+      },
+      {
+        "year": "2016",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4342.9994885
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 851.360828
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4634.755527
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3047.9798060000003
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4314.787979
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4614.1208475
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 897.746543
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4710.4113995
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3063.424999
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4362.059985
+      },
+      {
+        "year": "2018",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4902.668356
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 944.905789
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4838.796725
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3059.4134625
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4386.3306455
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 5181.1799335
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 969.951057
+      },
+      {
+        "year": "2019",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4942.111245
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 3016.544831
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4215.867337
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 5287.859455
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 900.3616905
+      },
+      {
+        "year": "2020",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4814.8357705
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 2781.7079575
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4401.996031
+      },
+      {
+        "year": "2021",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 5738.943917500001
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 987.499513
+      },
+      {
+        "year": "2021",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 5118.5924255
+      },
+      {
+        "year": "2021",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 2877.884012
+      },
+      {
+        "year": "2022",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 4517.550755
+      },
+      {
+        "year": "2022",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 5916.716311
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 1052.9103049999999
+      },
+      {
+        "year": "2022",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 5058.839931500001
+      },
+      {
+        "year": "2022",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_PCAP_KD",
+        "value": 2894.461595
+      },
+      {
+        "year": "2010",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4400.0812935
+      },
+      {
+        "year": "2010",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 2887.620907
+      },
+      {
+        "year": "2010",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 621.828488
+      },
+      {
+        "year": "2010",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4379.8100585
+      },
+      {
+        "year": "2010",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 2978.4923989999998
+      },
+      {
+        "year": "2011",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4535.983792999999
+      },
+      {
+        "year": "2011",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3142.5891975
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 643.42593
+      },
+      {
+        "year": "2011",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4562.560171
+      },
+      {
+        "year": "2011",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3035.1466914999996
+      },
+      {
+        "year": "2012",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4584.7102075
+      },
+      {
+        "year": "2012",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3365.4739285
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 669.276327
+      },
+      {
+        "year": "2012",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4734.017414
+      },
+      {
+        "year": "2012",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3061.9770355
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4684.8720735
+      },
+      {
+        "year": "2013",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3602.8578745
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 702.919952
+      },
+      {
+        "year": "2013",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4801.6462655000005
+      },
+      {
+        "year": "2013",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3086.6810885
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4669.4233695
+      },
+      {
+        "year": "2014",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3846.917351
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 745.8633175
+      },
+      {
+        "year": "2014",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4747.2743835
+      },
+      {
+        "year": "2014",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3078.2098605
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4466.325427
+      },
+      {
+        "year": "2015",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4091.157237
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 795.9972065
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4637.8705740000005
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3056.7978435
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4287.283925
+      },
+      {
+        "year": "2016",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4342.9994885
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 851.360828
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4634.755527
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3047.9798060000003
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4314.787979
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4614.1208475
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 897.746543
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4710.4113995
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3063.424999
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4362.059985
+      },
+      {
+        "year": "2018",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4902.668356
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 944.905789
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4838.796725
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3059.4134625
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4386.3306455
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 5181.1799335
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 969.951057
+      },
+      {
+        "year": "2019",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4942.111245
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 3016.544831
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4215.867337
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 5287.859455
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 900.3616905
+      },
+      {
+        "year": "2020",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4814.8357705
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 2781.7079575
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4401.996031
+      },
+      {
+        "year": "2021",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 5738.943917500001
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 987.499513
+      },
+      {
+        "year": "2021",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 5118.5924255
+      },
+      {
+        "year": "2021",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 2877.884012
+      },
+      {
+        "year": "2022",
+        "country": "Brazil",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 4517.550755
+      },
+      {
+        "year": "2022",
+        "country": "China",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 5916.716311
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 1052.9103049999999
+      },
+      {
+        "year": "2022",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 5058.839931500001
+      },
+      {
+        "year": "2022",
+        "country": "South Africa",
+        "indicator": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "value": 2894.461595
+      },
+      {
+        "year": "2010",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 5.038727
+      },
+      {
+        "year": "2010",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.175325
+      },
+      {
+        "year": "2010",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 11.98939
+      },
+      {
+        "year": "2010",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.849392
+      },
+      {
+        "year": "2010",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 4.067496
+      },
+      {
+        "year": "2011",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.63645
+      },
+      {
+        "year": "2011",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 5.553899
+      },
+      {
+        "year": "2011",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 8.911793
+      },
+      {
+        "year": "2011",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 8.440465
+      },
+      {
+        "year": "2011",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 5.000853
+      },
+      {
+        "year": "2012",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 5.403499
+      },
+      {
+        "year": "2012",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 2.619524
+      },
+      {
+        "year": "2012",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 9.478997
+      },
+      {
+        "year": "2012",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 5.074743
+      },
+      {
+        "year": "2012",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 5.737971
+      },
+      {
+        "year": "2013",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.204311
+      },
+      {
+        "year": "2013",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 2.62105
+      },
+      {
+        "year": "2013",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 10.017878
+      },
+      {
+        "year": "2013",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.754668
+      },
+      {
+        "year": "2013",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 5.780169
+      },
+      {
+        "year": "2014",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.32904
+      },
+      {
+        "year": "2014",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 1.921642
+      },
+      {
+        "year": "2014",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.665657
+      },
+      {
+        "year": "2014",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 7.82017
+      },
+      {
+        "year": "2014",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.13283
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 9.029901
+      },
+      {
+        "year": "2015",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 1.437024
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 4.906973
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 15.534396
+      },
+      {
+        "year": "2015",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 4.518691
+      },
+      {
+        "year": "2016",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 8.739144
+      },
+      {
+        "year": "2016",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 2.000002
+      },
+      {
+        "year": "2016",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 4.948216
+      },
+      {
+        "year": "2016",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 7.042437
+      },
+      {
+        "year": "2016",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.602908
+      },
+      {
+        "year": "2017",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.446373
+      },
+      {
+        "year": "2017",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 1.593136
+      },
+      {
+        "year": "2017",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.328173
+      },
+      {
+        "year": "2017",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.683331
+      },
+      {
+        "year": "2017",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 5.186187
+      },
+      {
+        "year": "2018",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.66485
+      },
+      {
+        "year": "2018",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 2.07479
+      },
+      {
+        "year": "2018",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.938826
+      },
+      {
+        "year": "2018",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 2.878314
+      },
+      {
+        "year": "2018",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 4.509873
+      },
+      {
+        "year": "2019",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.732976
+      },
+      {
+        "year": "2019",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 2.899234
+      },
+      {
+        "year": "2019",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.729506
+      },
+      {
+        "year": "2019",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 4.472026
+      },
+      {
+        "year": "2019",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 4.102851
+      },
+      {
+        "year": "2020",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.211768
+      },
+      {
+        "year": "2020",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 2.419422
+      },
+      {
+        "year": "2020",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.623437
+      },
+      {
+        "year": "2020",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.382198
+      },
+      {
+        "year": "2020",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 3.232388
+      },
+      {
+        "year": "2021",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 8.30166
+      },
+      {
+        "year": "2021",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 0.981015
+      },
+      {
+        "year": "2021",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 5.131407
+      },
+      {
+        "year": "2021",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.694459
+      },
+      {
+        "year": "2021",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 4.618745
+      },
+      {
+        "year": "2022",
+        "country": "Brazil",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 9.280106
+      },
+      {
+        "year": "2022",
+        "country": "China",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 1.973576
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 6.699034
+      },
+      {
+        "year": "2022",
+        "country": "Russian Federation",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 13.74368
+      },
+      {
+        "year": "2022",
+        "country": "South Africa",
+        "indicator": "WB_WDI_FP_CPI_TOTL_ZG",
+        "value": 7.039873
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "shared"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "WB_WDI_FP_CPI_TOTL_ZG",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "WB_WDI_FP_CPI_TOTL_ZG"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "WB_WDI_FP_CPI_TOTL_ZG",
+            "format": ",.1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Brazil",
+              "China",
+              "India",
+              "Russian Federation",
+              "South Africa"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "WB_WDI_NY_GDP_MKTP_KD_ZG"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "WB_WDI_NY_GDP_MKTP_KD_ZG",
+            "format": ",.0f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Brazil",
+              "China",
+              "India",
+              "Russian Federation",
+              "South Africa"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    },
+    {
+      "title": {
+        "text": "WB_WDI_NY_GDP_PCAP_KD",
+        "color": null,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "indicator",
+            "equal": "WB_WDI_NY_GDP_PCAP_KD"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "WB_WDI_NY_GDP_PCAP_KD",
+            "format": ",.0f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ],
+            "domain": [
+              "Brazil",
+              "China",
+              "India",
+              "Russian Federation",
+              "South Africa"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "direction": "vertical",
+            "title": "Economy",
+            "labelLimit": 250,
+            "symbolType": "stroke"
+          }
+        }
+      }
+    }
+  ],
+  "columns": 1,
+  "config": {
+    "legend": {
+      "orient": "bottom",
+      "direction": "horizontal",
+      "columns": 3,
+      "title": "Country",
+      "labelLimit": 200,
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

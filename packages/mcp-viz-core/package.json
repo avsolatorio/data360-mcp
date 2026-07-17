@@ -1,6 +1,6 @@
 {
   "name": "@data360/mcp-viz-core",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Framework-agnostic Vega-Lite prep and World Bank theme for Data360 MCP viz tools.",
   "type": "module",
   "main": "./dist/index.js",

@@ -1,0 +1,469 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Control of Corruption: Estimate (Brazil, Argentina, Colombia, 2010-2022)",
+    "subtitle": [
+      "Argentina, Brazil, Colombia, 2010-2022",
+      "Score"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "value": -0.35523,
+        "country": "Argentina"
+      },
+      {
+        "year": "2010",
+        "value": 0.0438064,
+        "country": "Brazil"
+      },
+      {
+        "year": "2010",
+        "value": -0.423333,
+        "country": "Colombia"
+      },
+      {
+        "year": "2011",
+        "value": -0.364099,
+        "country": "Argentina"
+      },
+      {
+        "year": "2011",
+        "value": 0.168382,
+        "country": "Brazil"
+      },
+      {
+        "year": "2011",
+        "value": -0.317528,
+        "country": "Colombia"
+      },
+      {
+        "year": "2012",
+        "value": -0.445909,
+        "country": "Argentina"
+      },
+      {
+        "year": "2012",
+        "value": -0.0468542,
+        "country": "Brazil"
+      },
+      {
+        "year": "2012",
+        "value": -0.422298,
+        "country": "Colombia"
+      },
+      {
+        "year": "2013",
+        "value": -0.434016,
+        "country": "Argentina"
+      },
+      {
+        "year": "2013",
+        "value": -0.0976997,
+        "country": "Brazil"
+      },
+      {
+        "year": "2013",
+        "value": -0.441053,
+        "country": "Colombia"
+      },
+      {
+        "year": "2014",
+        "value": -0.549443,
+        "country": "Argentina"
+      },
+      {
+        "year": "2014",
+        "value": -0.365746,
+        "country": "Brazil"
+      },
+      {
+        "year": "2014",
+        "value": -0.397179,
+        "country": "Colombia"
+      },
+      {
+        "year": "2015",
+        "value": -0.580869,
+        "country": "Argentina"
+      },
+      {
+        "year": "2015",
+        "value": -0.457373,
+        "country": "Brazil"
+      },
+      {
+        "year": "2015",
+        "value": -0.35224,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": -0.298965,
+        "country": "Argentina"
+      },
+      {
+        "year": "2016",
+        "value": -0.445451,
+        "country": "Brazil"
+      },
+      {
+        "year": "2016",
+        "value": -0.384033,
+        "country": "Colombia"
+      },
+      {
+        "year": "2017",
+        "value": -0.308798,
+        "country": "Argentina"
+      },
+      {
+        "year": "2017",
+        "value": -0.559336,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": -0.429445,
+        "country": "Colombia"
+      },
+      {
+        "year": "2018",
+        "value": -0.0986682,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": -0.480606,
+        "country": "Brazil"
+      },
+      {
+        "year": "2018",
+        "value": -0.339971,
+        "country": "Colombia"
+      },
+      {
+        "year": "2019",
+        "value": -0.10694,
+        "country": "Argentina"
+      },
+      {
+        "year": "2019",
+        "value": -0.407679,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": -0.283157,
+        "country": "Colombia"
+      },
+      {
+        "year": "2020",
+        "value": -0.163781,
+        "country": "Argentina"
+      },
+      {
+        "year": "2020",
+        "value": -0.428935,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": -0.251916,
+        "country": "Colombia"
+      },
+      {
+        "year": "2021",
+        "value": -0.422273,
+        "country": "Argentina"
+      },
+      {
+        "year": "2021",
+        "value": -0.498798,
+        "country": "Brazil"
+      },
+      {
+        "year": "2021",
+        "value": -0.365435,
+        "country": "Colombia"
+      },
+      {
+        "year": "2022",
+        "value": -0.44703,
+        "country": "Argentina"
+      },
+      {
+        "year": "2022",
+        "value": -0.566063,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": -0.361808,
+        "country": "Colombia"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Index",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".2f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "Control of Corruption: Estimate",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "rule",
+        "color": "#999999",
+        "strokeWidth": 1.0,
+        "strokeDash": [
+          4,
+          3
+        ],
+        "opacity": 0.8,
+        "tooltip": false
+      },
+      "encoding": {
+        "y": {
+          "datum": 0
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

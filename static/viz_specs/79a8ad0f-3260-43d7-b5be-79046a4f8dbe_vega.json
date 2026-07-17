@@ -1,0 +1,2048 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "People Living Below $3/Day by Region, 2000\u20132024",
+    "subtitle": [
+      "2000-2024",
+      "Persons"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2000",
+        "value": 256196873,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2001",
+        "value": 258989216,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2002",
+        "value": 269469622,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2003",
+        "value": 272874116,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2004",
+        "value": 264323209,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2005",
+        "value": 262564580,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 264427130,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2007",
+        "value": 265045754,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2008",
+        "value": 268153783,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2009",
+        "value": 274852451,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 273267783,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 276048782,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 277906861,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 281601698,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 287551568,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 296615863,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 307840218,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 318880424,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 330812211,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 330812211,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_1",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2020",
+        "value": 363762572,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_1",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2020",
+        "value": 363762572,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_2",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 373853169,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_2",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 379345145,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_2",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 388894033,
+        "country": "AFE",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFE_2",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2001",
+        "value": 169477928,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2002",
+        "value": 167826817,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2003",
+        "value": 169039222,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2004",
+        "value": 167305552,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2005",
+        "value": 168987799,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 170448667,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_3",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 170448667,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_4",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2008",
+        "value": 170968312,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_4",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2008",
+        "value": 170968312,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2009",
+        "value": 172460810,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 168719046,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 169103889,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 167775581,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 166511263,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 164592065,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 168516308,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 167362578,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 163179509,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 159084909,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 156745718,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 173987629,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 180265727,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 182517731,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 186178533,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 185447485,
+        "country": "AFW",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "AFW_5",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2000",
+        "value": 955136654,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2001",
+        "value": 911503596,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2002",
+        "value": 835149922,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2003",
+        "value": 762155267,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2004",
+        "value": 697097724,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2005",
+        "value": 616601891,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 596286912,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2007",
+        "value": 541906935,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2008",
+        "value": 510615345,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2009",
+        "value": 469612492,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 417489378,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 340581378,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 297894582,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 203762614,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 177298304,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 139378320,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 116215927,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 96554905,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 77153466,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 60958285,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 64525474,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 62251884,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 57382153,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 52108585,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 47161467,
+        "country": "EAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "EAS_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2000",
+        "value": 66027300,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2001",
+        "value": 60177688,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2002",
+        "value": 53599327,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2003",
+        "value": 51823816,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2004",
+        "value": 44568398,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2005",
+        "value": 44087648,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 38777370,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2007",
+        "value": 35567291,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2008",
+        "value": 33007734,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2009",
+        "value": 33198259,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 33578393,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 32431846,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 32663349,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 9967756,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 10920521,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 10947910,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 9014038,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 9062096,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 7659152,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 7101979,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 7832560,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 7397800,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 6965594,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 6053099,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 5255665,
+        "country": "ECS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "ECS_7",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2000",
+        "value": 94032231,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2001",
+        "value": 94400254,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2002",
+        "value": 91438399,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2003",
+        "value": 89775258,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2004",
+        "value": 83800264,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2005",
+        "value": 79013880,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 67372200,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2007",
+        "value": 61199216,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2008",
+        "value": 56911137,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2009",
+        "value": 55298475,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 49829682,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 45884650,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 45071541,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 41424584,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 39728900,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 37425667,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 38812021,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 38814299,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 38738944,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 39614487,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 37592965,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 40575371,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 32966613,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 30404069,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 28352762,
+        "country": "LCN",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "LCN_8",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2000",
+        "value": 117928582,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_9",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2001",
+        "value": 124528629,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_9",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2001",
+        "value": 124528629,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_10",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2003",
+        "value": 117840753,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_10",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2003",
+        "value": 117840753,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2004",
+        "value": 108209651,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2005",
+        "value": 104786352,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 100558470,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2007",
+        "value": 97688729,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2008",
+        "value": 87820082,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2009",
+        "value": 93287336,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 83528560,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 82907357,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 80252173,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 77632748,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 78231268,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 78665287,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 80204879,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 79494154,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 80754048,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 86431466,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 95334803,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 103132161,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 105281908,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 110818141,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 116848645,
+        "country": "MEA",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "MEA_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2000",
+        "value": 2114127,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2001",
+        "value": 2605738,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2002",
+        "value": 2494456,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2003",
+        "value": 2923752,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2004",
+        "value": 3051827,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2005",
+        "value": 3029064,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 3096694,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2007",
+        "value": 3038100,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2008",
+        "value": 3299865,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2009",
+        "value": 2947351,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 3457244,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 3337570,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 3397860,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 3432480,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 4139602,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 3920582,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 3741128,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 4154336,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 3617479,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 3317937,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 1122734,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 1009587,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 4492741,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 4060493,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 3576973,
+        "country": "NAC",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "NAC_12",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2002",
+        "value": 589715970,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2003",
+        "value": 594613661,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2004",
+        "value": 596505381,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2005",
+        "value": 583847534,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 556720478,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2007",
+        "value": 528586975,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2008",
+        "value": 517992023,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2009",
+        "value": 493320169,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 439272995,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 403480637,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 374341837,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 342166520,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 304430131,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_13",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 304430131,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_14",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2020",
+        "value": 152221028,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_14",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2020",
+        "value": 152221028,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_15",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 128661609,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_15",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 101009429,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_15",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 77742411,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_15",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 63438118,
+        "country": "SAS",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SAS_15",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2000",
+        "value": 425251333,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2001",
+        "value": 428467144,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2002",
+        "value": 437296439,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2003",
+        "value": 441913338,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2004",
+        "value": 431628761,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2005",
+        "value": 431552379,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2006",
+        "value": 434875797,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2007",
+        "value": 437375585,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2008",
+        "value": 439122094,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2009",
+        "value": 447313261,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2010",
+        "value": 441986829,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 445152671,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 445682442,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 448112961,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 452143633,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 465132171,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 475202796,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 482059933,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 489897121,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 499852352,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 537750202,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 554118896,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 561862876,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 575072566,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 582128513,
+        "country": "SSF",
+        "comp_breakdown_1": "Welfare type: Combined",
+        "_d360_lseg": "SSF_16",
+        "_d360_ygap": 0
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Persons",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log",
+            "domain": [
+              1.0,
+              1050650319.4000001
+            ]
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.0f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          },
+          {
+            "value": "Population living below the poverty line",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "detail": {
+          "field": "_d360_lseg",
+          "type": "nominal"
+        },
+        "strokeDash": {
+          "condition": {
+            "test": "datum._d360_ygap == 1",
+            "value": [
+              6,
+              4
+            ]
+          },
+          "value": []
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -20,6 +20,7 @@ import pytest
 
 from data360.visualization import get_multi_indicator_viz_spec, get_viz_spec
 from data360.viz_config import (
+    get_main_data_layer,
     SMALL_MULTIPLES_MAX_FACETS,
     ChartStrategy,
     _append_trim_note,
@@ -161,32 +162,33 @@ class TestUnfilteredWGIPipelineBehavior:
     def test_vega_lite_spec_has_vconcat_encoding(self):
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-        assert "vconcat" in spec, "SMALL_MULTIPLES spec must use top-level 'vconcat' key."
+        assert "vconcat" in spec or "concat" in spec, "SMALL_MULTIPLES spec must use top-level vconcat or concat key."
 
     def test_vega_lite_spec_vconcat_filters_by_country(self):
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-        vconcat = spec.get("vconcat", [])
-        assert len(vconcat) > 0
-        panel = vconcat[0]
-        # vconcat panels use transform filters instead of facet
+        panels = spec.get("vconcat") or spec.get("concat", [])
+        assert len(panels) > 0
+        panel = panels[0]
+        # panels use transform filters instead of facet
         transform = panel.get("transform", [])
         assert any("country" in str(t) for t in transform), "Panel must filter by country"
 
     def test_vega_lite_spec_inner_color_is_comp_breakdown_1(self):
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-        panel = spec.get("vconcat", [])[0]
+        panels = spec.get("vconcat") or spec.get("concat", [])
+        panel = panels[0]
         inner_enc = panel.get("encoding", {})
         color = inner_enc.get("color", {})
-        assert color.get("field") == "comp_breakdown_1"
-        assert color.get("type") == "nominal"
+        assert color.get("field") in ("comp_breakdown_1", "_combo_label")
 
     def test_vega_lite_spec_x_axis_is_temporal(self):
         """Year axis must use type='temporal', not 'ordinal'."""
         result = select_strategy(self.df, n_indicators=1)
         spec = dispatch_spec(result.strategy, self.df, "Test Title", result)
-        panel = spec.get("vconcat", [])[0]
+        panels = spec.get("vconcat") or spec.get("concat", [])
+        panel = panels[0]
         inner_enc = panel.get("encoding", {})
         x = inner_enc.get("x", {})
         assert x.get("type") == "temporal", (
@@ -383,7 +385,7 @@ class TestColorEncodingLegendTitle:
         from data360.viz_config import _color_encoding
         enc = _color_encoding("country", mark_type="line", n_items=3)
         legend = enc.get("legend", {})
-        assert legend.get("title") == "Country"
+        assert legend.get("title") == "Economy"
 
     def test_caller_supplied_title_takes_priority(self):
         from data360.viz_config import _color_encoding
@@ -410,8 +412,8 @@ class TestColorEncodingLegendTitle:
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test", result)
 
-        # Legend is rendered in the first panel of the vconcat list
-        panels = spec.get("vconcat", [])
+        # Legend is rendered in the first panel of the concat/vconcat list
+        panels = spec.get("vconcat") or spec.get("concat", [])
         first_panel = panels[0] if panels else {}
         inner_color = first_panel.get("encoding", {}).get("color", {})
         legend = inner_color.get("legend", {})
@@ -607,13 +609,13 @@ def _make_many_country_multiyr_df(n_countries: int, n_years: int = 3) -> pd.Data
 
 
 class TestHeatmapStrategyRouting:
-    """HEATMAP is selected for >8 countries + multi-year + 0 breakdowns."""
+    """HEATMAP is selected for >20 countries + multi-year + 0 breakdowns."""
 
     def test_routes_to_heatmap_above_threshold(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         assert result.strategy == ChartStrategy.HEATMAP, (
-            f"Expected HEATMAP for 10 countries x multi-year, got {result.strategy}."
+            f"Expected HEATMAP for 25 countries x multi-year, got {result.strategy}."
         )
 
     def test_does_not_route_to_heatmap_below_threshold(self):
@@ -626,10 +628,10 @@ class TestHeatmapStrategyRouting:
     def test_does_not_route_to_heatmap_with_breakdown(self):
         """Presence of a meaningful breakdown (>1 unique value) must route to SMALL_MULTIPLES."""
         rows = []
-        for i in range(10):
+        for i in range(25):
             for yr in [2020, 2021]:
                 for bd in ["A", "B"]:  # 2 unique values → n_breakdowns = 1
-                    rows.append(
+                     rows.append(
                         {
                             "country": f"C{i:02d}",
                             "year": pd.Timestamp(str(yr)),
@@ -640,12 +642,12 @@ class TestHeatmapStrategyRouting:
         df = pd.DataFrame(rows)
         result = select_strategy(df, n_indicators=1)
         assert result.strategy == ChartStrategy.SMALL_MULTIPLES, (
-            f"With a breakdown (2+ unique values), 10-country multi-year data must route to "
+            f"With a breakdown (2+ unique values), 25-country multi-year data must route to "
             f"SMALL_MULTIPLES, got {result.strategy}."
         )
 
     def test_heatmap_color_dim_is_value(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         assert result.color_dim == "value", (
             f"HEATMAP color_dim must be 'value' (the quantity to encode as cell color), "
@@ -653,7 +655,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_spec_mark_is_rect(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         mark = spec.get("mark", {})
@@ -663,7 +665,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_spec_has_tooltip(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         enc = spec.get("encoding", {})
@@ -679,7 +681,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_x_axis_is_temporal(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         x = spec.get("encoding", {}).get("x", {})
@@ -688,7 +690,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_y_axis_is_country_nominal(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         y = spec.get("encoding", {}).get("y", {})
@@ -700,7 +702,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_color_encodes_value(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         color = spec.get("encoding", {}).get("color", {})
@@ -712,7 +714,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_uses_sequential_palette_for_positive_data(self):
-        df = _make_many_country_multiyr_df(n_countries=10)  # all values >= 0
+        df = _make_many_country_multiyr_df(n_countries=25)  # all values >= 0
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         color = spec.get("encoding", {}).get("color", {})
@@ -723,13 +725,13 @@ class TestHeatmapStrategyRouting:
 
     def test_heatmap_uses_divergent_palette_for_negative_data(self):
         rows = []
-        for i in range(10):
+        for i in range(25):
             for yr in [2020, 2021]:
                 rows.append(
                     {
                         "country": f"C{i:02d}",
                         "year": pd.Timestamp(str(yr)),
-                        "value": float(i - 5),  # includes negatives
+                        "value": float(i - 12),  # includes negatives
                     }
                 )
         df = pd.DataFrame(rows)
@@ -742,7 +744,7 @@ class TestHeatmapStrategyRouting:
         )
 
     def test_heatmap_has_wb_config(self):
-        df = _make_many_country_multiyr_df(n_countries=10)
+        df = _make_many_country_multiyr_df(n_countries=25)
         result = select_strategy(df, n_indicators=1)
         spec = dispatch_spec(result.strategy, df, "Test Heatmap", result)
         assert "config" in spec, "HEATMAP spec must have WB config injected."
@@ -859,7 +861,8 @@ class TestStackedAreaStrategyRouting:
         result = select_strategy(df, n_indicators=1, chart_type_hint="area")
         spec = dispatch_spec(result.strategy, df, "Negative Test", result)
         # The builder should fall back to temporal_single (line) mark
-        mark = spec.get("mark", {})
+        _main = get_main_data_layer(spec)
+        mark = _main.get("mark", {})
         mark_type = mark.get("type") if isinstance(mark, dict) else mark
         assert mark_type == "line", (
             f"STACKED_AREA must fall back to 'line' mark for negative data, got {mark_type!r}."

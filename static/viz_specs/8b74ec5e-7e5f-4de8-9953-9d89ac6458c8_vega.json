@@ -1,0 +1,488 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Access to electricity (% of population)"
+    ],
+    "subtitle": [
+      "Ethiopia, Kenya, 2000-2022",
+      "Percentage of population"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2016",
+        "value": 53.1,
+        "country": "Kenya"
+      },
+      {
+        "year": "2010",
+        "value": 19.2,
+        "country": "Kenya"
+      },
+      {
+        "year": "2002",
+        "value": 18.9,
+        "country": "Kenya"
+      },
+      {
+        "year": "2019",
+        "value": 48.0,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2022",
+        "value": 55.4,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2005",
+        "value": 24.5,
+        "country": "Kenya"
+      },
+      {
+        "year": "2014",
+        "value": 36.0,
+        "country": "Kenya"
+      },
+      {
+        "year": "2017",
+        "value": 55.8,
+        "country": "Kenya"
+      },
+      {
+        "year": "2013",
+        "value": 30.8,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2013",
+        "value": 40.1,
+        "country": "Kenya"
+      },
+      {
+        "year": "2011",
+        "value": 23.0,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2011",
+        "value": 36.2,
+        "country": "Kenya"
+      },
+      {
+        "year": "2018",
+        "value": 44.8,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2012",
+        "value": 29.0,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2012",
+        "value": 38.1,
+        "country": "Kenya"
+      },
+      {
+        "year": "2020",
+        "value": 71.5,
+        "country": "Kenya"
+      },
+      {
+        "year": "2002",
+        "value": 11.9,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2004",
+        "value": 22.6,
+        "country": "Kenya"
+      },
+      {
+        "year": "2001",
+        "value": 17.0,
+        "country": "Kenya"
+      },
+      {
+        "year": "2021",
+        "value": 54.2,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2022",
+        "value": 76.0,
+        "country": "Kenya"
+      },
+      {
+        "year": "2018",
+        "value": 61.2,
+        "country": "Kenya"
+      },
+      {
+        "year": "2006",
+        "value": 26.4,
+        "country": "Kenya"
+      },
+      {
+        "year": "2014",
+        "value": 27.2,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2016",
+        "value": 42.9,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2007",
+        "value": 28.3,
+        "country": "Kenya"
+      },
+      {
+        "year": "2017",
+        "value": 44.3,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2019",
+        "value": 69.7,
+        "country": "Kenya"
+      },
+      {
+        "year": "2004",
+        "value": 15.2,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2010",
+        "value": 25.5,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2008",
+        "value": 22.0,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2005",
+        "value": 14.0,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2006",
+        "value": 18.6,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2009",
+        "value": 23.0,
+        "country": "Kenya"
+      },
+      {
+        "year": "2015",
+        "value": 41.6,
+        "country": "Kenya"
+      },
+      {
+        "year": "2020",
+        "value": 51.1,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2008",
+        "value": 30.3,
+        "country": "Kenya"
+      },
+      {
+        "year": "2003",
+        "value": 16.0,
+        "country": "Kenya"
+      },
+      {
+        "year": "2007",
+        "value": 20.3,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2021",
+        "value": 76.5,
+        "country": "Kenya"
+      },
+      {
+        "year": "2000",
+        "value": 15.2,
+        "country": "Kenya"
+      },
+      {
+        "year": "2015",
+        "value": 29.0,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2009",
+        "value": 23.7,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2000",
+        "value": 12.7,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2003",
+        "value": 13.5,
+        "country": "Ethiopia"
+      },
+      {
+        "year": "2001",
+        "value": 10.2,
+        "country": "Ethiopia"
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Percentage of population",
+            "labelExpr": "format(datum.value, '.1f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "value": "Access to electricity (% of population)",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last.value",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

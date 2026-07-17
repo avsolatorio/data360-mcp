@@ -130,30 +130,30 @@ class TestXTemporalEncoding:
     def test_annual_uses_temporal_with_timeunit_year(self):
         enc = _x_temporal_encoding("annual")
         assert enc["type"] == "temporal"
-        assert enc.get("timeUnit") == "year"
+        assert enc.get("timeUnit") == "utcyear"
         assert enc["field"] == "year"
 
     def test_monthly_uses_temporal_with_timeunit_yearmonth(self):
         enc = _x_temporal_encoding("monthly")
         assert enc["type"] == "temporal"
-        assert enc.get("timeUnit") == "yearmonth"
+        assert enc.get("timeUnit") == "utcyearmonth"
         assert "axis" in enc
         assert enc["axis"]["format"] == "%b %Y"
 
     def test_quarterly_uses_temporal_with_timeunit_yearquarter(self):
         enc = _x_temporal_encoding("quarterly")
         assert enc["type"] == "temporal"
-        assert enc.get("timeUnit") == "yearquarter"
+        assert enc.get("timeUnit") == "utcyearquarter"
 
     def test_daily_uses_temporal_without_timeunit(self):
         enc = _x_temporal_encoding("daily")
         assert enc["type"] == "temporal"
-        assert "timeUnit" not in enc
+        assert enc.get("timeUnit") == "utcyearmonthdate"
 
     def test_unknown_freq_falls_back_to_annual(self):
         enc = _x_temporal_encoding("unknown")  # type: ignore[arg-type]
         assert enc["type"] == "temporal"
-        assert enc.get("timeUnit") == "year"
+        assert enc.get("timeUnit") == "utcyear"
 
     def test_returns_independent_copy(self):
         """Modifying the returned dict must not affect subsequent calls."""

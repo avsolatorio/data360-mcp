@@ -1,0 +1,219 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP per capita (constant 2015 US$)"
+    ],
+    "subtitle": [
+      "2022",
+      "US dollars, 2015 constant prices",
+      "Showing 12 of 19 economies by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2022",
+        "value": 61200.458896,
+        "country": "Australia"
+      },
+      {
+        "year": "2022",
+        "value": 45883.005894,
+        "country": "Canada"
+      },
+      {
+        "year": "2022",
+        "value": 44817.131633,
+        "country": "Germany"
+      },
+      {
+        "year": "2022",
+        "value": 38868.330333,
+        "country": "France"
+      },
+      {
+        "year": "2022",
+        "value": 37448.350482,
+        "country": "Japan"
+      },
+      {
+        "year": "2022",
+        "value": 35809.013811,
+        "country": "Korea, Rep."
+      },
+      {
+        "year": "2022",
+        "value": 33891.886653,
+        "country": "Italy"
+      },
+      {
+        "year": "2022",
+        "value": 13276.823211,
+        "country": "Argentina"
+      },
+      {
+        "year": "2022",
+        "value": 11830.298768,
+        "country": "China"
+      },
+      {
+        "year": "2022",
+        "value": 9032.084816,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 4024.912253,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2022",
+        "value": 2098.211245,
+        "country": "India"
+      }
+    ]
+  },
+  "mark": {
+    "type": "circle",
+    "cornerRadiusEnd": 3,
+    "size": 80
+  },
+  "encoding": {
+    "x": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Value",
+        "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1f') : '$'+format(datum.value,'.2f')"
+      },
+      "scale": {
+        "type": "log",
+        "zero": false
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "sort": "-x",
+      "axis": {
+        "title": null,
+        "labelColor": "#111111",
+        "labelFontWeight": "bold",
+        "labelLimit": 160
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "nominal"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": "$,.2f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "GDP per capita (constant 2015 US$)",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 500,
+  "height": 264,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

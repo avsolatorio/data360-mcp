@@ -1,0 +1,572 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Unemployment, total (% of total labor force) \u2014 Ghana, Nigeria, C\u00f4te d'Ivoire",
+    "subtitle": [
+      "Cote d'Ivoire, Ghana, Nigeria, 2010-2024",
+      "Percentage of labor force"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2012",
+        "value": 7.223,
+        "country": "Cote d'Ivoire",
+        "_label_y": 7.223,
+        "_d360_lseg": "Cote d'Ivoire_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 4.255,
+        "country": "Cote d'Ivoire",
+        "_label_y": 4.255,
+        "_d360_lseg": "Cote d'Ivoire_0",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 4.255,
+        "country": "Cote d'Ivoire",
+        "_label_y": 4.255,
+        "_d360_lseg": "Cote d'Ivoire_1",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2016",
+        "value": 1.896,
+        "country": "Cote d'Ivoire",
+        "_label_y": 1.896,
+        "_d360_lseg": "Cote d'Ivoire_1",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2016",
+        "value": 1.896,
+        "country": "Cote d'Ivoire",
+        "_label_y": 1.896,
+        "_d360_lseg": "Cote d'Ivoire_2",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 3.272,
+        "country": "Cote d'Ivoire",
+        "_label_y": 3.272,
+        "_d360_lseg": "Cote d'Ivoire_2",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 3.272,
+        "country": "Cote d'Ivoire",
+        "_label_y": 3.272,
+        "_d360_lseg": "Cote d'Ivoire_3",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2019",
+        "value": 2.401,
+        "country": "Cote d'Ivoire",
+        "_label_y": 2.401,
+        "_d360_lseg": "Cote d'Ivoire_3",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2019",
+        "value": 2.401,
+        "country": "Cote d'Ivoire",
+        "_label_y": 2.401,
+        "_d360_lseg": "Cote d'Ivoire_4",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 2.31,
+        "country": "Cote d'Ivoire",
+        "_label_y": 2.31,
+        "_d360_lseg": "Cote d'Ivoire_4",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2010",
+        "value": 5.384,
+        "country": "Ghana",
+        "_label_y": 5.384,
+        "_d360_lseg": "Ghana_5",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2013",
+        "value": 2.173,
+        "country": "Ghana",
+        "_label_y": 2.173,
+        "_d360_lseg": "Ghana_5",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2013",
+        "value": 2.173,
+        "country": "Ghana",
+        "_label_y": 2.173,
+        "_d360_lseg": "Ghana_6",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2015",
+        "value": 6.806,
+        "country": "Ghana",
+        "_label_y": 6.806,
+        "_d360_lseg": "Ghana_6",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2015",
+        "value": 6.806,
+        "country": "Ghana",
+        "_label_y": 6.806,
+        "_d360_lseg": "Ghana_7",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2017",
+        "value": 3.369,
+        "country": "Ghana",
+        "_label_y": 3.369,
+        "_d360_lseg": "Ghana_7",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2017",
+        "value": 3.369,
+        "country": "Ghana",
+        "_label_y": 3.369,
+        "_d360_lseg": "Ghana_8",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2021",
+        "value": 3.195,
+        "country": "Ghana",
+        "_label_y": 3.195,
+        "_d360_lseg": "Ghana_8",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2021",
+        "value": 3.195,
+        "country": "Ghana",
+        "_label_y": 3.195,
+        "_d360_lseg": "Ghana_9",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 2.87,
+        "country": "Ghana",
+        "_label_y": 2.87,
+        "_d360_lseg": "Ghana_9",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 3.245,
+        "country": "Ghana",
+        "_label_y": 3.245,
+        "_d360_lseg": "Ghana_9",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 3.972,
+        "country": "Ghana",
+        "_label_y": 3.972,
+        "_d360_lseg": "Ghana_9",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 3.77,
+        "country": "Nigeria",
+        "_label_y": 3.77,
+        "_d360_lseg": "Nigeria_10",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2013",
+        "value": 3.711,
+        "country": "Nigeria",
+        "_label_y": 3.711,
+        "_d360_lseg": "Nigeria_10",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2013",
+        "value": 3.711,
+        "country": "Nigeria",
+        "_label_y": 3.711,
+        "_d360_lseg": "Nigeria_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 4.562,
+        "country": "Nigeria",
+        "_label_y": 4.562,
+        "_d360_lseg": "Nigeria_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 4.311,
+        "country": "Nigeria",
+        "_label_y": 4.311,
+        "_d360_lseg": "Nigeria_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 7.06,
+        "country": "Nigeria",
+        "_label_y": 7.06,
+        "_d360_lseg": "Nigeria_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 8.389,
+        "country": "Nigeria",
+        "_label_y": 8.389,
+        "_d360_lseg": "Nigeria_11",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 8.389,
+        "country": "Nigeria",
+        "_label_y": 8.389,
+        "_d360_lseg": "Nigeria_12",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2019",
+        "value": 4.448,
+        "country": "Nigeria",
+        "_label_y": 4.448,
+        "_d360_lseg": "Nigeria_12",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2019",
+        "value": 4.448,
+        "country": "Nigeria",
+        "_label_y": 4.448,
+        "_d360_lseg": "Nigeria_13",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 3.827,
+        "country": "Nigeria",
+        "_label_y": 3.827,
+        "_d360_lseg": "Nigeria_13",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 3.827,
+        "country": "Nigeria",
+        "_label_y": 3.827,
+        "_d360_lseg": "Nigeria_14",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 3.074,
+        "country": "Nigeria",
+        "_label_y": 3.074,
+        "_d360_lseg": "Nigeria_14",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2024",
+        "value": 3.454,
+        "country": "Nigeria",
+        "_label_y": 3.454,
+        "_d360_lseg": "Nigeria_14",
+        "_d360_ygap": 0
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Percentage of labor force",
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false,
+            "domain": [
+              0,
+              10
+            ]
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ".1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "_label_y",
+            "title": " Label Y"
+          },
+          {
+            "value": "Unemployment, total",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "detail": {
+          "field": "_d360_lseg",
+          "type": "nominal"
+        },
+        "strokeDash": {
+          "condition": {
+            "test": "datum._d360_ygap == 1",
+            "value": [
+              6,
+              4
+            ]
+          },
+          "value": []
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last._label_y",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              10
+            ]
+          }
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

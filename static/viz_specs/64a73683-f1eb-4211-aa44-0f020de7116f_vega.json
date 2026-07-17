@@ -1,0 +1,546 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Gini index (0\u2013100), Philippines, Viet Nam, and Indonesia \u2014 all available years (2010\u20132023)",
+    "subtitle": [
+      "Indonesia, Philippines, Viet Nam, 2010-2023",
+      "0-100 scale"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2010",
+        "value": 39.3,
+        "country": "Viet Nam",
+        "_label_y": 39.3,
+        "_d360_lseg": "Viet Nam_0",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 35.6,
+        "country": "Viet Nam",
+        "_label_y": 35.6,
+        "_d360_lseg": "Viet Nam_0",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2012",
+        "value": 35.6,
+        "country": "Viet Nam",
+        "_label_y": 35.6,
+        "_d360_lseg": "Viet Nam_1",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2014",
+        "value": 34.8,
+        "country": "Viet Nam",
+        "_label_y": 34.8,
+        "_d360_lseg": "Viet Nam_1",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2014",
+        "value": 34.8,
+        "country": "Viet Nam",
+        "_label_y": 34.8,
+        "_d360_lseg": "Viet Nam_2",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2016",
+        "value": 35.3,
+        "country": "Viet Nam",
+        "_label_y": 35.3,
+        "_d360_lseg": "Viet Nam_2",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2016",
+        "value": 35.3,
+        "country": "Viet Nam",
+        "_label_y": 35.3,
+        "_d360_lseg": "Viet Nam_3",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 35.7,
+        "country": "Viet Nam",
+        "_label_y": 35.7,
+        "_d360_lseg": "Viet Nam_3",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 35.7,
+        "country": "Viet Nam",
+        "_label_y": 35.7,
+        "_d360_lseg": "Viet Nam_4",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2020",
+        "value": 36.8,
+        "country": "Viet Nam",
+        "_label_y": 36.8,
+        "_d360_lseg": "Viet Nam_4",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2020",
+        "value": 36.8,
+        "country": "Viet Nam",
+        "_label_y": 36.8,
+        "_d360_lseg": "Viet Nam_5",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2022",
+        "value": 36.1,
+        "country": "Viet Nam",
+        "_label_y": 36.338,
+        "_d360_lseg": "Viet Nam_5",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2010",
+        "value": 34.6,
+        "country": "Indonesia",
+        "_label_y": 34.6,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2011",
+        "value": 37.9,
+        "country": "Indonesia",
+        "_label_y": 37.9,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 37.1,
+        "country": "Indonesia",
+        "_label_y": 37.1,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2013",
+        "value": 38.9,
+        "country": "Indonesia",
+        "_label_y": 38.9,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2014",
+        "value": 38.8,
+        "country": "Indonesia",
+        "_label_y": 38.8,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2015",
+        "value": 38.2,
+        "country": "Indonesia",
+        "_label_y": 38.2,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2016",
+        "value": 36.9,
+        "country": "Indonesia",
+        "_label_y": 36.9,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2017",
+        "value": 36.4,
+        "country": "Indonesia",
+        "_label_y": 36.4,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2018",
+        "value": 36.3,
+        "country": "Indonesia",
+        "_label_y": 36.3,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2019",
+        "value": 35.4,
+        "country": "Indonesia",
+        "_label_y": 35.4,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2020",
+        "value": 35.3,
+        "country": "Indonesia",
+        "_label_y": 35.3,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2021",
+        "value": 35.5,
+        "country": "Indonesia",
+        "_label_y": 35.5,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2022",
+        "value": 35.5,
+        "country": "Indonesia",
+        "_label_y": 35.5,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2023",
+        "value": 36.1,
+        "country": "Indonesia",
+        "_label_y": 35.862,
+        "_d360_lseg": "Indonesia_6",
+        "_d360_ygap": 0
+      },
+      {
+        "year": "2012",
+        "value": 46.5,
+        "country": "Philippines",
+        "_label_y": 46.5,
+        "_d360_lseg": "Philippines_7",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2015",
+        "value": 44.6,
+        "country": "Philippines",
+        "_label_y": 44.6,
+        "_d360_lseg": "Philippines_7",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2015",
+        "value": 44.6,
+        "country": "Philippines",
+        "_label_y": 44.6,
+        "_d360_lseg": "Philippines_8",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 42.3,
+        "country": "Philippines",
+        "_label_y": 42.3,
+        "_d360_lseg": "Philippines_8",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2018",
+        "value": 42.3,
+        "country": "Philippines",
+        "_label_y": 42.3,
+        "_d360_lseg": "Philippines_9",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2021",
+        "value": 40.7,
+        "country": "Philippines",
+        "_label_y": 40.7,
+        "_d360_lseg": "Philippines_9",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2021",
+        "value": 40.7,
+        "country": "Philippines",
+        "_label_y": 40.7,
+        "_d360_lseg": "Philippines_10",
+        "_d360_ygap": 1
+      },
+      {
+        "year": "2023",
+        "value": 39.3,
+        "country": "Philippines",
+        "_label_y": 39.3,
+        "_d360_lseg": "Philippines_10",
+        "_d360_ygap": 1
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "0-100 scale",
+            "labelExpr": "abs(datum.value)>=1e12 ? ''+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? ''+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? ''+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? ''+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? ''+format(datum.value,',.1~f') : abs(datum.value)>=1 ? ''+format(datum.value,'.1~f') : ''+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": ",.1f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "_label_y",
+            "title": " Label Y"
+          },
+          {
+            "value": "Gini index",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "detail": {
+          "field": "_d360_lseg",
+          "type": "nominal"
+        },
+        "strokeDash": {
+          "condition": {
+            "test": "datum._d360_ygap == 1",
+            "value": [
+              6,
+              4
+            ]
+          },
+          "value": []
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last._label_y",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

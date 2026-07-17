@@ -1,0 +1,420 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Gross domestic product, constant prices, Percent change"
+    ],
+    "subtitle": [
+      "Indonesia, Malaysia, 2000-2022",
+      "Percentage change"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2000",
+        "value": 4.979,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2000",
+        "value": 8.671,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2001",
+        "value": 3.643,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2001",
+        "value": 0.518,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2002",
+        "value": 4.499,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2002",
+        "value": 5.391,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2003",
+        "value": 4.78,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2003",
+        "value": 5.789,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2004",
+        "value": 5.031,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2004",
+        "value": 6.783,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2005",
+        "value": 5.693,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2005",
+        "value": 4.976,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2006",
+        "value": 5.501,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2006",
+        "value": 5.584,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2007",
+        "value": 6.345,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2007",
+        "value": 6.299,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2008",
+        "value": 7.442,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2008",
+        "value": 4.832,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2009",
+        "value": 4.702,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2009",
+        "value": -1.514,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2010",
+        "value": 6.378,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2010",
+        "value": 7.528,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2011",
+        "value": 6.17,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011",
+        "value": 5.293,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2012",
+        "value": 6.03,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2012",
+        "value": 5.474,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2013",
+        "value": 5.557,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2013",
+        "value": 4.694,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2014",
+        "value": 5.007,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2014",
+        "value": 6.007,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2015",
+        "value": 4.876,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2015",
+        "value": 5.007,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2016",
+        "value": 5.033,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016",
+        "value": 4.45,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2017",
+        "value": 5.07,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2017",
+        "value": 5.813,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2018",
+        "value": 5.174,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2018",
+        "value": 4.843,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2019",
+        "value": 5.019,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2019",
+        "value": 4.413,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2020",
+        "value": -2.066,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2020",
+        "value": -5.457,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2021",
+        "value": 3.703,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2021",
+        "value": 3.298,
+        "country": "Malaysia"
+      },
+      {
+        "year": "2022",
+        "value": 5.307,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2022",
+        "value": 8.65,
+        "country": "Malaysia"
+      }
+    ]
+  },
+  "mark": {
+    "type": "line",
+    "strokeWidth": 3,
+    "strokeCap": "round",
+    "point": {
+      "filled": true,
+      "size": 56
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "axis": {
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold",
+        "tickCount": 5,
+        "title": "Percentage change",
+        "labelExpr": "format(datum.value, '.1f') + '%'"
+      },
+      "scale": {
+        "zero": false
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      }
+    ],
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "range": [
+          "#34A7F2",
+          "#FF9800",
+          "#664AB6",
+          "#4EC2C0",
+          "#F3578E",
+          "#081079",
+          "#0C7C68",
+          "#AA0000",
+          "#DDDA21"
+        ]
+      },
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "title": "Economy",
+        "labelLimit": 250,
+        "columns": 3,
+        "symbolType": "stroke"
+      }
+    }
+  },
+  "width": 600,
+  "height": 350,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

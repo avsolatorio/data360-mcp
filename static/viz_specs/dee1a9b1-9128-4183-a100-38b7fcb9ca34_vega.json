@@ -1,0 +1,377 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "Life expectancy at birth, total (years) vs. Labor force participation rate, male"
+    ],
+    "subtitle": [
+      "2015"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2015",
+        "country": "Australia",
+        "life_expectancy_at_birth_total_years": 82.4,
+        "labor_force_participation_rate_male": 71.176,
+        "_x_norm": 0.9036555542054407,
+        "_y_norm": 0.4801948350335448,
+        "_dist_from_center": 0.16333005100025,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Brazil",
+        "life_expectancy_at_birth_total_years": 75.106,
+        "labor_force_participation_rate_male": 75.709,
+        "_x_norm": 0.39950505608898906,
+        "_y_norm": 0.6884937046227371,
+        "_dist_from_center": 0.04562911043408088,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Canada",
+        "life_expectancy_at_birth_total_years": 81.825854,
+        "labor_force_participation_rate_male": 70.942,
+        "_x_norm": 0.8639714313796157,
+        "_y_norm": 0.46944214686150143,
+        "_dist_from_center": 0.1334089852489604,
+        "_show_label": false
+      },
+      {
+        "year": "2015",
+        "country": "France",
+        "life_expectancy_at_birth_total_years": 82.321951,
+        "labor_force_participation_rate_male": 60.726,
+        "_x_norm": 0.8982609226963244,
+        "_y_norm": 0.0,
+        "_dist_from_center": 0.40861176254692766,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Germany",
+        "life_expectancy_at_birth_total_years": 80.641463,
+        "labor_force_participation_rate_male": 66.259,
+        "_x_norm": 0.7821080762089763,
+        "_y_norm": 0.25425052844407686,
+        "_dist_from_center": 0.13997776943234502,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "India",
+        "life_expectancy_at_birth_total_years": 69.326,
+        "labor_force_participation_rate_male": 78.035,
+        "_x_norm": 0.0,
+        "_y_norm": 0.7953772631191984,
+        "_dist_from_center": 0.3372477275677882,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Indonesia",
+        "life_expectancy_at_birth_total_years": 69.52,
+        "labor_force_participation_rate_male": 82.488,
+        "_x_norm": 0.013408993232052753,
+        "_y_norm": 1.0,
+        "_dist_from_center": 0.4867708078674445,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Japan",
+        "life_expectancy_at_birth_total_years": 83.793902,
+        "labor_force_participation_rate_male": 70.209,
+        "_x_norm": 1.0,
+        "_y_norm": 0.4357595809208714,
+        "_dist_from_center": 0.25412683144346204,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Korea, Rep.",
+        "life_expectancy_at_birth_total_years": 82.02439,
+        "labor_force_participation_rate_male": 72.802,
+        "_x_norm": 0.8776939462266191,
+        "_y_norm": 0.5549122323315875,
+        "_dist_from_center": 0.1456680702758745,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Mexico",
+        "life_expectancy_at_birth_total_years": 74.431,
+        "labor_force_participation_rate_male": 78.568,
+        "_x_norm": 0.3528500538640641,
+        "_y_norm": 0.8198694972888521,
+        "_dist_from_center": 0.12396960194363177,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Russian Federation",
+        "life_expectancy_at_birth_total_years": 71.183415,
+        "labor_force_participation_rate_male": 71.312,
+        "_x_norm": 0.1283817791964586,
+        "_y_norm": 0.48644426063780893,
+        "_dist_from_center": 0.1382838601028453,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Saudi Arabia",
+        "life_expectancy_at_birth_total_years": 77.776,
+        "labor_force_participation_rate_male": 79.084,
+        "_x_norm": 0.5840515093342489,
+        "_y_norm": 0.8435805532579728,
+        "_dist_from_center": 0.12511225279841998,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "Turkiye",
+        "life_expectancy_at_birth_total_years": 76.539,
+        "labor_force_participation_rate_male": 71.384,
+        "_x_norm": 0.49855189784946036,
+        "_y_norm": 0.48975278007536077,
+        "_dist_from_center": 0.00010710251602232073,
+        "_show_label": true
+      },
+      {
+        "year": "2015",
+        "country": "United States",
+        "life_expectancy_at_birth_total_years": 78.690244,
+        "labor_force_participation_rate_male": 68.638,
+        "_x_norm": 0.6472427031922118,
+        "_y_norm": 0.3635695248598477,
+        "_dist_from_center": 0.04029368819031748,
+        "_show_label": true
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Life expectancy at birth, total (years"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "labor_force_participation_rate_male",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Labor force participation rate, male (Percentage of men)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "life_expectancy_at_birth_total_years",
+            "title": "Life expectancy at birth, total (years",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "labor_force_participation_rate_male",
+            "title": "Labor force participation rate, male (Percentage of men)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "labor_force_participation_rate_male",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum._show_label",
+            "value": 1
+          },
+          "value": 0
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

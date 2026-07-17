@@ -1,0 +1,3161 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Multidimensional Poverty Across Regions",
+    "subtitle": [
+      "2008-2024",
+      "Percentage of population",
+      "Showing 50 of 152 economies by most recent data \u2014 specify a subset for the full view"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2013",
+        "value": 1.1,
+        "country": "Argentina"
+      },
+      {
+        "year": "2016",
+        "value": 22.8,
+        "country": "Honduras"
+      },
+      {
+        "year": "2016",
+        "value": 19.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2016",
+        "value": 3.1,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2011",
+        "value": 1.7,
+        "country": "Chile"
+      },
+      {
+        "year": "2011",
+        "value": 12.4,
+        "country": "Colombia"
+      },
+      {
+        "year": "2014",
+        "value": 11.7,
+        "country": "Colombia"
+      },
+      {
+        "year": "2014",
+        "value": 36.6,
+        "country": "Comoros"
+      },
+      {
+        "year": "2014",
+        "value": 2.6,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2014",
+        "value": 1.4,
+        "country": "Croatia"
+      },
+      {
+        "year": "2014",
+        "value": 1.6,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2017",
+        "value": 15.5,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2017",
+        "value": 2.8,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2017",
+        "value": 1.4,
+        "country": "Israel"
+      },
+      {
+        "year": "2017",
+        "value": 2.9,
+        "country": "Italy"
+      },
+      {
+        "year": "2018",
+        "value": 22.7,
+        "country": "Honduras"
+      },
+      {
+        "year": "2018",
+        "value": 13.2,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2018",
+        "value": 3.3,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2018",
+        "value": 1.3,
+        "country": "Israel"
+      },
+      {
+        "year": "2016",
+        "value": 1.3,
+        "country": "Argentina"
+      },
+      {
+        "year": "2016",
+        "value": 2.5,
+        "country": "Armenia"
+      },
+      {
+        "year": "2016",
+        "value": 0.7,
+        "country": "Austria"
+      },
+      {
+        "year": "2016",
+        "value": 0.5,
+        "country": "Israel"
+      },
+      {
+        "year": "2016",
+        "value": 3.1,
+        "country": "Italy"
+      },
+      {
+        "year": "2011",
+        "value": 2.3,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2011",
+        "value": 1.4,
+        "country": "United States"
+      },
+      {
+        "year": "2011",
+        "value": 0.4,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2015",
+        "value": 0.7,
+        "country": "Chile"
+      },
+      {
+        "year": "2015",
+        "value": 10.9,
+        "country": "Colombia"
+      },
+      {
+        "year": "2009",
+        "value": 2.0,
+        "country": "Belgium"
+      },
+      {
+        "year": "2020",
+        "value": 2.6,
+        "country": "Chile"
+      },
+      {
+        "year": "2020",
+        "value": 14.4,
+        "country": "Colombia"
+      },
+      {
+        "year": "2020",
+        "value": 20.0,
+        "country": "Comoros"
+      },
+      {
+        "year": "2020",
+        "value": 3.4,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2020",
+        "value": 0.6,
+        "country": "Croatia"
+      },
+      {
+        "year": "2016",
+        "value": 0.5,
+        "country": "Malta"
+      },
+      {
+        "year": "2013",
+        "value": 2.3,
+        "country": "Latvia"
+      },
+      {
+        "year": "2010",
+        "value": 3.6,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2019",
+        "value": 11.7,
+        "country": "Colombia"
+      },
+      {
+        "year": "2019",
+        "value": 1.8,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2016",
+        "value": 7.3,
+        "country": "Brazil"
+      },
+      {
+        "year": "2016",
+        "value": 3.7,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2013",
+        "value": 29.5,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2013",
+        "value": 5.4,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2013",
+        "value": 10.9,
+        "country": "Peru"
+      },
+      {
+        "year": "2013",
+        "value": 4.6,
+        "country": "Portugal"
+      },
+      {
+        "year": "2013",
+        "value": 1.4,
+        "country": "Sweden"
+      },
+      {
+        "year": "2014",
+        "value": 3.5,
+        "country": "Armenia"
+      },
+      {
+        "year": "2014",
+        "value": 0.2,
+        "country": "Austria"
+      },
+      {
+        "year": "2014",
+        "value": 1.0,
+        "country": "Belgium"
+      },
+      {
+        "year": "2016",
+        "value": 1.4,
+        "country": "Sweden"
+      },
+      {
+        "year": "2016",
+        "value": 0.3,
+        "country": "Thailand"
+      },
+      {
+        "year": "2017",
+        "value": 1.5,
+        "country": "United States"
+      },
+      {
+        "year": "2017",
+        "value": 0.2,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2016",
+        "value": 1.3,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2016",
+        "value": 1.4,
+        "country": "United States"
+      },
+      {
+        "year": "2016",
+        "value": 0.2,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2023",
+        "value": 1.3,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2023",
+        "value": 9.0,
+        "country": "Colombia"
+      },
+      {
+        "year": "2017",
+        "value": 10.9,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2017",
+        "value": 7.7,
+        "country": "Brazil"
+      },
+      {
+        "year": "2017",
+        "value": 2.5,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2017",
+        "value": 10.1,
+        "country": "Colombia"
+      },
+      {
+        "year": "2017",
+        "value": 2.0,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2017",
+        "value": 0.9,
+        "country": "Croatia"
+      },
+      {
+        "year": "2017",
+        "value": 1.4,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2017",
+        "value": 0.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2018",
+        "value": 0.3,
+        "country": "Thailand"
+      },
+      {
+        "year": "2018",
+        "value": 1.1,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2011",
+        "value": 0.8,
+        "country": "Austria"
+      },
+      {
+        "year": "2011",
+        "value": 1.5,
+        "country": "Belgium"
+      },
+      {
+        "year": "2010",
+        "value": 1.8,
+        "country": "Israel"
+      },
+      {
+        "year": "2010",
+        "value": 3.4,
+        "country": "Italy"
+      },
+      {
+        "year": "2010",
+        "value": 0.3,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2010",
+        "value": 0.8,
+        "country": "Malta"
+      },
+      {
+        "year": "2019",
+        "value": 1.2,
+        "country": "United States"
+      },
+      {
+        "year": "2019",
+        "value": 0.1,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2010",
+        "value": 0.7,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2019",
+        "value": 7.7,
+        "country": "Brazil"
+      },
+      {
+        "year": "2019",
+        "value": 2.1,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2013",
+        "value": 0.8,
+        "country": "Finland"
+      },
+      {
+        "year": "2013",
+        "value": 1.1,
+        "country": "France"
+      },
+      {
+        "year": "2013",
+        "value": 14.9,
+        "country": "Georgia"
+      },
+      {
+        "year": "2013",
+        "value": 4.1,
+        "country": "Greece"
+      },
+      {
+        "year": "2011",
+        "value": 14.0,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2011",
+        "value": 4.5,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2020",
+        "value": 1.3,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2019",
+        "value": 0.3,
+        "country": "Thailand"
+      },
+      {
+        "year": "2019",
+        "value": 1.4,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2019",
+        "value": 9.7,
+        "country": "Georgia"
+      },
+      {
+        "year": "2019",
+        "value": 3.0,
+        "country": "Greece"
+      },
+      {
+        "year": "2015",
+        "value": 3.5,
+        "country": "Portugal"
+      },
+      {
+        "year": "2023",
+        "value": 0.6,
+        "country": "Belgium"
+      },
+      {
+        "year": "2023",
+        "value": 5.5,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2023",
+        "value": 4.3,
+        "country": "Brazil"
+      },
+      {
+        "year": "2020",
+        "value": 0.5,
+        "country": "United States"
+      },
+      {
+        "year": "2015",
+        "value": 23.7,
+        "country": "Honduras"
+      },
+      {
+        "year": "2018",
+        "value": 1.3,
+        "country": "United States"
+      },
+      {
+        "year": "2018",
+        "value": 0.1,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2017",
+        "value": 0.2,
+        "country": "Thailand"
+      },
+      {
+        "year": "2017",
+        "value": 1.2,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2008",
+        "value": 2.7,
+        "country": "Spain"
+      },
+      {
+        "year": "2008",
+        "value": 1.1,
+        "country": "Sweden"
+      },
+      {
+        "year": "2019",
+        "value": 5.8,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2019",
+        "value": 0.8,
+        "country": "Estonia"
+      },
+      {
+        "year": "2019",
+        "value": 1.0,
+        "country": "Finland"
+      },
+      {
+        "year": "2019",
+        "value": 0.6,
+        "country": "France"
+      },
+      {
+        "year": "2021",
+        "value": 8.9,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2021",
+        "value": 3.8,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2020",
+        "value": 0.6,
+        "country": "Latvia"
+      },
+      {
+        "year": "2020",
+        "value": 0.7,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2010",
+        "value": 1.1,
+        "country": "Sweden"
+      },
+      {
+        "year": "2010",
+        "value": 1.0,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 6.4,
+        "country": "Peru"
+      },
+      {
+        "year": "2021",
+        "value": 1.6,
+        "country": "Portugal"
+      },
+      {
+        "year": "2023",
+        "value": 0.2,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2023",
+        "value": 1.4,
+        "country": "United States"
+      },
+      {
+        "year": "2023",
+        "value": 0.2,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2023",
+        "value": 4.1,
+        "country": "Uzbekistan"
+      },
+      {
+        "year": "2018",
+        "value": 0.3,
+        "country": "Malta"
+      },
+      {
+        "year": "2018",
+        "value": 0.3,
+        "country": "Moldova"
+      },
+      {
+        "year": "2012",
+        "value": 2.8,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2012",
+        "value": 1.3,
+        "country": "Croatia"
+      },
+      {
+        "year": "2012",
+        "value": 1.9,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2012",
+        "value": 0.1,
+        "country": "Czechia"
+      },
+      {
+        "year": "2012",
+        "value": 1.1,
+        "country": "Denmark"
+      },
+      {
+        "year": "2022",
+        "value": 1.5,
+        "country": "United States"
+      },
+      {
+        "year": "2022",
+        "value": 0.2,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2022",
+        "value": 4.4,
+        "country": "Uzbekistan"
+      },
+      {
+        "year": "2023",
+        "value": 1.6,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2023",
+        "value": 0.7,
+        "country": "Latvia"
+      },
+      {
+        "year": "2015",
+        "value": 1.3,
+        "country": "Latvia"
+      },
+      {
+        "year": "2021",
+        "value": 5.6,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2021",
+        "value": 1.9,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2022",
+        "value": 5.6,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2022",
+        "value": 5.4,
+        "country": "Brazil"
+      },
+      {
+        "year": "2022",
+        "value": 1.6,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2008",
+        "value": 1.0,
+        "country": "Malta"
+      },
+      {
+        "year": "2022",
+        "value": 7.2,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2022",
+        "value": 0.6,
+        "country": "Estonia"
+      },
+      {
+        "year": "2022",
+        "value": 1.8,
+        "country": "Finland"
+      },
+      {
+        "year": "2022",
+        "value": 1.1,
+        "country": "France"
+      },
+      {
+        "year": "2022",
+        "value": 7.8,
+        "country": "Georgia"
+      },
+      {
+        "year": "2015",
+        "value": 0.9,
+        "country": "Finland"
+      },
+      {
+        "year": "2015",
+        "value": 1.2,
+        "country": "France"
+      },
+      {
+        "year": "2015",
+        "value": 10.6,
+        "country": "Georgia"
+      },
+      {
+        "year": "2015",
+        "value": 4.2,
+        "country": "Greece"
+      },
+      {
+        "year": "2015",
+        "value": 0.8,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2015",
+        "value": 0.0,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2015",
+        "value": 5.0,
+        "country": "Spain"
+      },
+      {
+        "year": "2020",
+        "value": 2.0,
+        "country": "Portugal"
+      },
+      {
+        "year": "2022",
+        "value": 0.1,
+        "country": "Moldova"
+      },
+      {
+        "year": "2011",
+        "value": 0.8,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2011",
+        "value": 0.1,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2011",
+        "value": 3.2,
+        "country": "Spain"
+      },
+      {
+        "year": "2022",
+        "value": 8.2,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2022",
+        "value": 2.9,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2022",
+        "value": 0.3,
+        "country": "Israel"
+      },
+      {
+        "year": "2022",
+        "value": 2.4,
+        "country": "Italy"
+      },
+      {
+        "year": "2015",
+        "value": 0.3,
+        "country": "Thailand"
+      },
+      {
+        "year": "2015",
+        "value": 1.7,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2015",
+        "value": 2.7,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2015",
+        "value": 0.9,
+        "country": "Croatia"
+      },
+      {
+        "year": "2015",
+        "value": 1.6,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2015",
+        "value": 0.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2015",
+        "value": 1.0,
+        "country": "Denmark"
+      },
+      {
+        "year": "2022",
+        "value": 0.1,
+        "country": "Thailand"
+      },
+      {
+        "year": "2022",
+        "value": 0.6,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2022",
+        "value": 2.1,
+        "country": "Greece"
+      },
+      {
+        "year": "2022",
+        "value": 3.5,
+        "country": "Spain"
+      },
+      {
+        "year": "2022",
+        "value": 2.4,
+        "country": "Sweden"
+      },
+      {
+        "year": "2024",
+        "value": 0.4,
+        "country": "Chile"
+      },
+      {
+        "year": "2024",
+        "value": 8.8,
+        "country": "Colombia"
+      },
+      {
+        "year": "2024",
+        "value": 14.0,
+        "country": "Comoros"
+      },
+      {
+        "year": "2024",
+        "value": 1.3,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2024",
+        "value": 1.3,
+        "country": "United States"
+      },
+      {
+        "year": "2024",
+        "value": 0.2,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2024",
+        "value": 2.7,
+        "country": "Uzbekistan"
+      },
+      {
+        "year": "2024",
+        "value": 10.3,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2024",
+        "value": 1.6,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2024",
+        "value": 8.2,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2024",
+        "value": 4.2,
+        "country": "Georgia"
+      },
+      {
+        "year": "2010",
+        "value": 1.3,
+        "country": "West Bank and Gaza"
+      },
+      {
+        "year": "2012",
+        "value": 1.3,
+        "country": "Argentina"
+      },
+      {
+        "year": "2016",
+        "value": 1.5,
+        "country": "West Bank and Gaza"
+      },
+      {
+        "year": "2014",
+        "value": 1.4,
+        "country": "Latvia"
+      },
+      {
+        "year": "2017",
+        "value": 1.1,
+        "country": "Latvia"
+      },
+      {
+        "year": "2014",
+        "value": 3.5,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2014",
+        "value": 0.6,
+        "country": "Israel"
+      },
+      {
+        "year": "2014",
+        "value": 2.5,
+        "country": "Italy"
+      },
+      {
+        "year": "2018",
+        "value": 10.4,
+        "country": "Colombia"
+      },
+      {
+        "year": "2018",
+        "value": 2.5,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2012",
+        "value": 12.8,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2012",
+        "value": 3.9,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2012",
+        "value": 2.2,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2012",
+        "value": 1.4,
+        "country": "United States"
+      },
+      {
+        "year": "2012",
+        "value": 0.4,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2013",
+        "value": 6.5,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2013",
+        "value": 5.7,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2013",
+        "value": 11.4,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2013",
+        "value": 1.1,
+        "country": "Estonia"
+      },
+      {
+        "year": "2013",
+        "value": 24.2,
+        "country": "Honduras"
+      },
+      {
+        "year": "2013",
+        "value": 28.5,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2013",
+        "value": 3.2,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2013",
+        "value": 0.6,
+        "country": "Israel"
+      },
+      {
+        "year": "2013",
+        "value": 2.9,
+        "country": "Italy"
+      },
+      {
+        "year": "2014",
+        "value": 0.4,
+        "country": "Thailand"
+      },
+      {
+        "year": "2014",
+        "value": 1.3,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2017",
+        "value": 2.8,
+        "country": "Greece"
+      },
+      {
+        "year": "2017",
+        "value": 22.1,
+        "country": "Honduras"
+      },
+      {
+        "year": "2013",
+        "value": 1.8,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2013",
+        "value": 1.4,
+        "country": "United States"
+      },
+      {
+        "year": "2013",
+        "value": 0.4,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2015",
+        "value": 2.9,
+        "country": "Armenia"
+      },
+      {
+        "year": "2015",
+        "value": 0.7,
+        "country": "Austria"
+      },
+      {
+        "year": "2011",
+        "value": 7.8,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2011",
+        "value": 8.2,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2011",
+        "value": 15.1,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2011",
+        "value": 1.2,
+        "country": "Estonia"
+      },
+      {
+        "year": "2011",
+        "value": 3.8,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2011",
+        "value": 1.4,
+        "country": "Israel"
+      },
+      {
+        "year": "2011",
+        "value": 2.9,
+        "country": "Italy"
+      },
+      {
+        "year": "2013",
+        "value": 12.1,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2013",
+        "value": 3.9,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2022",
+        "value": 0.7,
+        "country": "Chile"
+      },
+      {
+        "year": "2022",
+        "value": 9.7,
+        "country": "Colombia"
+      },
+      {
+        "year": "2022",
+        "value": 1.7,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2018",
+        "value": 7.0,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2018",
+        "value": 0.4,
+        "country": "Estonia"
+      },
+      {
+        "year": "2018",
+        "value": 1.0,
+        "country": "Finland"
+      },
+      {
+        "year": "2018",
+        "value": 1.6,
+        "country": "France"
+      },
+      {
+        "year": "2014",
+        "value": 4.0,
+        "country": "Portugal"
+      },
+      {
+        "year": "2016",
+        "value": 2.0,
+        "country": "Belgium"
+      },
+      {
+        "year": "2016",
+        "value": 12.7,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2008",
+        "value": 0.8,
+        "country": "Finland"
+      },
+      {
+        "year": "2008",
+        "value": 0.6,
+        "country": "France"
+      },
+      {
+        "year": "2008",
+        "value": 3.2,
+        "country": "Greece"
+      },
+      {
+        "year": "2019",
+        "value": 1.8,
+        "country": "Norway"
+      },
+      {
+        "year": "2019",
+        "value": 3.2,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2012",
+        "value": 7.3,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2012",
+        "value": 7.4,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2012",
+        "value": 13.1,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2012",
+        "value": 1.1,
+        "country": "Estonia"
+      },
+      {
+        "year": "2017",
+        "value": 1.0,
+        "country": "Sweden"
+      },
+      {
+        "year": "2018",
+        "value": 0.5,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2018",
+        "value": 0.0,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2012",
+        "value": 28.1,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2012",
+        "value": 3.0,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2012",
+        "value": 0.8,
+        "country": "Israel"
+      },
+      {
+        "year": "2012",
+        "value": 2.7,
+        "country": "Italy"
+      },
+      {
+        "year": "2016",
+        "value": 1.1,
+        "country": "Croatia"
+      },
+      {
+        "year": "2016",
+        "value": 1.6,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2016",
+        "value": 0.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2016",
+        "value": 0.6,
+        "country": "Denmark"
+      },
+      {
+        "year": "2016",
+        "value": 4.5,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2016",
+        "value": 5.8,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2012",
+        "value": 1.1,
+        "country": "Austria"
+      },
+      {
+        "year": "2012",
+        "value": 1.0,
+        "country": "Belgium"
+      },
+      {
+        "year": "2018",
+        "value": 1.7,
+        "country": "Argentina"
+      },
+      {
+        "year": "2018",
+        "value": 2.9,
+        "country": "Armenia"
+      },
+      {
+        "year": "2018",
+        "value": 0.6,
+        "country": "Austria"
+      },
+      {
+        "year": "2019",
+        "value": 0.2,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2019",
+        "value": 0.0,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2018",
+        "value": 3.9,
+        "country": "Spain"
+      },
+      {
+        "year": "2018",
+        "value": 1.7,
+        "country": "Sweden"
+      },
+      {
+        "year": "2008",
+        "value": 0.6,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2008",
+        "value": 0.2,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2020",
+        "value": 1.2,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2023",
+        "value": 7.0,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2023",
+        "value": 2.5,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2023",
+        "value": 2.3,
+        "country": "Italy"
+      },
+      {
+        "year": "2018",
+        "value": 11.0,
+        "country": "Georgia"
+      },
+      {
+        "year": "2018",
+        "value": 1.9,
+        "country": "Greece"
+      },
+      {
+        "year": "2017",
+        "value": 0.4,
+        "country": "Malta"
+      },
+      {
+        "year": "2017",
+        "value": 0.3,
+        "country": "Moldova"
+      },
+      {
+        "year": "2012",
+        "value": 27.7,
+        "country": "Honduras"
+      },
+      {
+        "year": "2023",
+        "value": 1.2,
+        "country": "Argentina"
+      },
+      {
+        "year": "2023",
+        "value": 1.9,
+        "country": "Armenia"
+      },
+      {
+        "year": "2010",
+        "value": 1.4,
+        "country": "United States"
+      },
+      {
+        "year": "2010",
+        "value": 0.5,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2018",
+        "value": 2.4,
+        "country": "Norway"
+      },
+      {
+        "year": "2018",
+        "value": 24.4,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2018",
+        "value": 4.0,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2010",
+        "value": 11.7,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2010",
+        "value": 14.1,
+        "country": "Peru"
+      },
+      {
+        "year": "2010",
+        "value": 4.2,
+        "country": "Portugal"
+      },
+      {
+        "year": "2021",
+        "value": 0.3,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2021",
+        "value": 0.0,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2021",
+        "value": 0.2,
+        "country": "Malta"
+      },
+      {
+        "year": "2015",
+        "value": 11.4,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2015",
+        "value": 5.1,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2019",
+        "value": 0.4,
+        "country": "Latvia"
+      },
+      {
+        "year": "2019",
+        "value": 1.0,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2019",
+        "value": 0.6,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2015",
+        "value": 1.4,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2015",
+        "value": 1.3,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2015",
+        "value": 0.6,
+        "country": "Malta"
+      },
+      {
+        "year": "2021",
+        "value": 2.2,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2021",
+        "value": 5.9,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2021",
+        "value": 7.7,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2021",
+        "value": 0.4,
+        "country": "Estonia"
+      },
+      {
+        "year": "2022",
+        "value": 3.7,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2022",
+        "value": 6.0,
+        "country": "Peru"
+      },
+      {
+        "year": "2022",
+        "value": 1.6,
+        "country": "Portugal"
+      },
+      {
+        "year": "2020",
+        "value": 0.4,
+        "country": "Malta"
+      },
+      {
+        "year": "2020",
+        "value": 0.1,
+        "country": "Moldova"
+      },
+      {
+        "year": "2022",
+        "value": 1.3,
+        "country": "Latvia"
+      },
+      {
+        "year": "2018",
+        "value": 7.4,
+        "country": "Peru"
+      },
+      {
+        "year": "2018",
+        "value": 2.6,
+        "country": "Portugal"
+      },
+      {
+        "year": "2019",
+        "value": 0.6,
+        "country": "Belgium"
+      },
+      {
+        "year": "2019",
+        "value": 6.7,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2014",
+        "value": 1.1,
+        "country": "Argentina"
+      },
+      {
+        "year": "2021",
+        "value": 2.2,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2021",
+        "value": 0.5,
+        "country": "Croatia"
+      },
+      {
+        "year": "2021",
+        "value": 1.0,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2021",
+        "value": 0.1,
+        "country": "Czechia"
+      },
+      {
+        "year": "2021",
+        "value": 0.7,
+        "country": "Denmark"
+      },
+      {
+        "year": "2022",
+        "value": 1.3,
+        "country": "Argentina"
+      },
+      {
+        "year": "2024",
+        "value": 27.1,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2024",
+        "value": 2.3,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2024",
+        "value": 4.3,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2024",
+        "value": 3.4,
+        "country": "Brazil"
+      },
+      {
+        "year": "2024",
+        "value": 0.1,
+        "country": "Thailand"
+      },
+      {
+        "year": "2011",
+        "value": 1.2,
+        "country": "Argentina"
+      },
+      {
+        "year": "2011",
+        "value": 0.7,
+        "country": "West Bank and Gaza"
+      },
+      {
+        "year": "2016",
+        "value": 10.6,
+        "country": "Colombia"
+      },
+      {
+        "year": "2016",
+        "value": 2.7,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2013",
+        "value": 0.9,
+        "country": "Norway"
+      },
+      {
+        "year": "2017",
+        "value": 0.6,
+        "country": "Chile"
+      },
+      {
+        "year": "2014",
+        "value": 1.3,
+        "country": "Norway"
+      },
+      {
+        "year": "2014",
+        "value": 6.0,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2014",
+        "value": 10.0,
+        "country": "Peru"
+      },
+      {
+        "year": "2014",
+        "value": 0.9,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2014",
+        "value": 0.0,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2017",
+        "value": 2.3,
+        "country": "Norway"
+      },
+      {
+        "year": "2017",
+        "value": 3.3,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2017",
+        "value": 8.9,
+        "country": "Peru"
+      },
+      {
+        "year": "2017",
+        "value": 1.4,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2017",
+        "value": 1.0,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2018",
+        "value": 3.0,
+        "country": "Italy"
+      },
+      {
+        "year": "2013",
+        "value": 0.9,
+        "country": "Chile"
+      },
+      {
+        "year": "2013",
+        "value": 12.8,
+        "country": "Colombia"
+      },
+      {
+        "year": "2014",
+        "value": 1.0,
+        "country": "Finland"
+      },
+      {
+        "year": "2014",
+        "value": 1.1,
+        "country": "France"
+      },
+      {
+        "year": "2014",
+        "value": 12.0,
+        "country": "Georgia"
+      },
+      {
+        "year": "2016",
+        "value": 2.1,
+        "country": "Norway"
+      },
+      {
+        "year": "2016",
+        "value": 9.2,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2016",
+        "value": 0.6,
+        "country": "Estonia"
+      },
+      {
+        "year": "2016",
+        "value": 1.4,
+        "country": "Finland"
+      },
+      {
+        "year": "2016",
+        "value": 1.8,
+        "country": "France"
+      },
+      {
+        "year": "2014",
+        "value": 2.2,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2014",
+        "value": 1.2,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2009",
+        "value": 1.2,
+        "country": "Austria"
+      },
+      {
+        "year": "2009",
+        "value": 1.4,
+        "country": "Norway"
+      },
+      {
+        "year": "2010",
+        "value": 23.8,
+        "country": "Honduras"
+      },
+      {
+        "year": "2010",
+        "value": 35.8,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2011",
+        "value": 24.8,
+        "country": "Honduras"
+      },
+      {
+        "year": "2019",
+        "value": 20.3,
+        "country": "Honduras"
+      },
+      {
+        "year": "2019",
+        "value": 11.3,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2019",
+        "value": 4.3,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2019",
+        "value": 0.9,
+        "country": "Israel"
+      },
+      {
+        "year": "2018",
+        "value": 7.6,
+        "country": "Brazil"
+      },
+      {
+        "year": "2018",
+        "value": 2.2,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2009",
+        "value": 2.8,
+        "country": "Latvia"
+      },
+      {
+        "year": "2014",
+        "value": 1.6,
+        "country": "United States"
+      },
+      {
+        "year": "2014",
+        "value": 0.3,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2011",
+        "value": 1.8,
+        "country": "Latvia"
+      },
+      {
+        "year": "2023",
+        "value": 2.8,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2023",
+        "value": 6.9,
+        "country": "Peru"
+      },
+      {
+        "year": "2010",
+        "value": 0.7,
+        "country": "France"
+      },
+      {
+        "year": "2010",
+        "value": 23.7,
+        "country": "Georgia"
+      },
+      {
+        "year": "2010",
+        "value": 3.4,
+        "country": "Greece"
+      },
+      {
+        "year": "2017",
+        "value": 1.6,
+        "country": "Finland"
+      },
+      {
+        "year": "2017",
+        "value": 1.5,
+        "country": "France"
+      },
+      {
+        "year": "2017",
+        "value": 11.1,
+        "country": "Georgia"
+      },
+      {
+        "year": "2010",
+        "value": 0.8,
+        "country": "Norway"
+      },
+      {
+        "year": "2010",
+        "value": 35.4,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2009",
+        "value": 0.8,
+        "country": "Finland"
+      },
+      {
+        "year": "2009",
+        "value": 0.6,
+        "country": "France"
+      },
+      {
+        "year": "2009",
+        "value": 3.4,
+        "country": "Greece"
+      },
+      {
+        "year": "2013",
+        "value": 2.9,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2013",
+        "value": 1.5,
+        "country": "Croatia"
+      },
+      {
+        "year": "2013",
+        "value": 1.9,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2013",
+        "value": 0.1,
+        "country": "Czechia"
+      },
+      {
+        "year": "2013",
+        "value": 1.6,
+        "country": "Denmark"
+      },
+      {
+        "year": "2019",
+        "value": 2.4,
+        "country": "Italy"
+      },
+      {
+        "year": "2019",
+        "value": 9.7,
+        "country": "Kiribati"
+      },
+      {
+        "year": "2014",
+        "value": 5.2,
+        "country": "Spain"
+      },
+      {
+        "year": "2014",
+        "value": 1.1,
+        "country": "Sweden"
+      },
+      {
+        "year": "2016",
+        "value": 1.2,
+        "country": "Latvia"
+      },
+      {
+        "year": "2016",
+        "value": 1.9,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2016",
+        "value": 1.2,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2014",
+        "value": 11.8,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2014",
+        "value": 3.5,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2012",
+        "value": 0.9,
+        "country": "Norway"
+      },
+      {
+        "year": "2013",
+        "value": 0.3,
+        "country": "Austria"
+      },
+      {
+        "year": "2013",
+        "value": 1.6,
+        "country": "Belgium"
+      },
+      {
+        "year": "2013",
+        "value": 1.7,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2013",
+        "value": 0.7,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2013",
+        "value": 0.6,
+        "country": "Malta"
+      },
+      {
+        "year": "2011",
+        "value": 1.1,
+        "country": "Sweden"
+      },
+      {
+        "year": "2011",
+        "value": 0.5,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 1.5,
+        "country": "Finland"
+      },
+      {
+        "year": "2021",
+        "value": 1.4,
+        "country": "France"
+      },
+      {
+        "year": "2021",
+        "value": 10.8,
+        "country": "Georgia"
+      },
+      {
+        "year": "2021",
+        "value": 2.1,
+        "country": "Greece"
+      },
+      {
+        "year": "2010",
+        "value": 9.3,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2010",
+        "value": 16.8,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2010",
+        "value": 1.1,
+        "country": "Estonia"
+      },
+      {
+        "year": "2010",
+        "value": 0.8,
+        "country": "Finland"
+      },
+      {
+        "year": "2011",
+        "value": 10.3,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2011",
+        "value": 13.1,
+        "country": "Peru"
+      },
+      {
+        "year": "2011",
+        "value": 4.8,
+        "country": "Portugal"
+      },
+      {
+        "year": "2017",
+        "value": 0.5,
+        "country": "Denmark"
+      },
+      {
+        "year": "2017",
+        "value": 3.3,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2017",
+        "value": 4.8,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2017",
+        "value": 8.1,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2017",
+        "value": 0.6,
+        "country": "Estonia"
+      },
+      {
+        "year": "2017",
+        "value": 2.9,
+        "country": "Portugal"
+      },
+      {
+        "year": "2008",
+        "value": 2.8,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2008",
+        "value": 0.1,
+        "country": "Czechia"
+      },
+      {
+        "year": "2008",
+        "value": 2.5,
+        "country": "Denmark"
+      },
+      {
+        "year": "2015",
+        "value": 1.5,
+        "country": "United States"
+      },
+      {
+        "year": "2015",
+        "value": 0.3,
+        "country": "Uruguay"
+      },
+      {
+        "year": "2014",
+        "value": 0.6,
+        "country": "Malta"
+      },
+      {
+        "year": "2011",
+        "value": 1.5,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2011",
+        "value": 0.4,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2011",
+        "value": 0.8,
+        "country": "Malta"
+      },
+      {
+        "year": "2021",
+        "value": 0.3,
+        "country": "Moldova"
+      },
+      {
+        "year": "2023",
+        "value": 1.3,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2023",
+        "value": 3.3,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2023",
+        "value": 0.5,
+        "country": "Malta"
+      },
+      {
+        "year": "2008",
+        "value": 0.6,
+        "country": "Estonia"
+      },
+      {
+        "year": "2020",
+        "value": 0.3,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2020",
+        "value": 0.0,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2020",
+        "value": 4.2,
+        "country": "Spain"
+      },
+      {
+        "year": "2009",
+        "value": 1.5,
+        "country": "Croatia"
+      },
+      {
+        "year": "2009",
+        "value": 2.5,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2009",
+        "value": 0.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2010",
+        "value": 1.3,
+        "country": "Moldova"
+      },
+      {
+        "year": "2015",
+        "value": 1.6,
+        "country": "Norway"
+      },
+      {
+        "year": "2015",
+        "value": 26.0,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2015",
+        "value": 5.2,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2015",
+        "value": 9.7,
+        "country": "Peru"
+      },
+      {
+        "year": "2009",
+        "value": 3.4,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2009",
+        "value": 0.3,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2009",
+        "value": 1.0,
+        "country": "Malta"
+      },
+      {
+        "year": "2021",
+        "value": 0.1,
+        "country": "Thailand"
+      },
+      {
+        "year": "2021",
+        "value": 1.0,
+        "country": "Turkiye"
+      },
+      {
+        "year": "2010",
+        "value": 1.5,
+        "country": "Belgium"
+      },
+      {
+        "year": "2020",
+        "value": 2.8,
+        "country": "Greece"
+      },
+      {
+        "year": "2023",
+        "value": 1.6,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2023",
+        "value": 0.4,
+        "country": "Croatia"
+      },
+      {
+        "year": "2023",
+        "value": 1.0,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2023",
+        "value": 0.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2023",
+        "value": 0.8,
+        "country": "Denmark"
+      },
+      {
+        "year": "2023",
+        "value": 2.2,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2008",
+        "value": 2.1,
+        "country": "Norway"
+      },
+      {
+        "year": "2012",
+        "value": 1.6,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2012",
+        "value": 0.3,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2012",
+        "value": 0.7,
+        "country": "Malta"
+      },
+      {
+        "year": "2023",
+        "value": 5.7,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2023",
+        "value": 6.2,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2023",
+        "value": 0.4,
+        "country": "Estonia"
+      },
+      {
+        "year": "2023",
+        "value": 1.7,
+        "country": "Finland"
+      },
+      {
+        "year": "2023",
+        "value": 1.3,
+        "country": "France"
+      },
+      {
+        "year": "2008",
+        "value": 4.5,
+        "country": "Portugal"
+      },
+      {
+        "year": "2021",
+        "value": 3.4,
+        "country": "Spain"
+      },
+      {
+        "year": "2021",
+        "value": 1.5,
+        "country": "Sweden"
+      },
+      {
+        "year": "2020",
+        "value": 1.1,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2020",
+        "value": 0.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2020",
+        "value": 0.8,
+        "country": "Denmark"
+      },
+      {
+        "year": "2020",
+        "value": 3.2,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2020",
+        "value": 9.0,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2011",
+        "value": 3.0,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2011",
+        "value": 1.2,
+        "country": "Croatia"
+      },
+      {
+        "year": "2011",
+        "value": 2.1,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2011",
+        "value": 0.1,
+        "country": "Czechia"
+      },
+      {
+        "year": "2011",
+        "value": 1.0,
+        "country": "Denmark"
+      },
+      {
+        "year": "2019",
+        "value": 0.6,
+        "country": "Croatia"
+      },
+      {
+        "year": "2019",
+        "value": 1.3,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2019",
+        "value": 0.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2019",
+        "value": 0.7,
+        "country": "Denmark"
+      },
+      {
+        "year": "2019",
+        "value": 2.6,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2019",
+        "value": 5.4,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2010",
+        "value": 0.1,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2010",
+        "value": 3.1,
+        "country": "Spain"
+      },
+      {
+        "year": "2021",
+        "value": 2.1,
+        "country": "Armenia"
+      },
+      {
+        "year": "2021",
+        "value": 0.5,
+        "country": "Austria"
+      },
+      {
+        "year": "2021",
+        "value": 0.7,
+        "country": "Belgium"
+      },
+      {
+        "year": "2015",
+        "value": 2.0,
+        "country": "Belgium"
+      },
+      {
+        "year": "2022",
+        "value": 1.9,
+        "country": "Armenia"
+      },
+      {
+        "year": "2022",
+        "value": 0.6,
+        "country": "Austria"
+      },
+      {
+        "year": "2022",
+        "value": 0.6,
+        "country": "Belgium"
+      },
+      {
+        "year": "2022",
+        "value": 0.4,
+        "country": "Norway"
+      },
+      {
+        "year": "2021",
+        "value": 1.4,
+        "country": "Argentina"
+      },
+      {
+        "year": "2021",
+        "value": 0.6,
+        "country": "Latvia"
+      },
+      {
+        "year": "2021",
+        "value": 0.4,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2021",
+        "value": 2.7,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2017",
+        "value": 1.1,
+        "country": "Argentina"
+      },
+      {
+        "year": "2015",
+        "value": 1.3,
+        "country": "Sweden"
+      },
+      {
+        "year": "2022",
+        "value": 0.5,
+        "country": "Croatia"
+      },
+      {
+        "year": "2022",
+        "value": 0.8,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2022",
+        "value": 0.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2022",
+        "value": 0.7,
+        "country": "Denmark"
+      },
+      {
+        "year": "2022",
+        "value": 2.2,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2022",
+        "value": 5.2,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2024",
+        "value": 1.0,
+        "country": "Argentina"
+      },
+      {
+        "year": "2024",
+        "value": 0.8,
+        "country": "Armenia"
+      },
+      {
+        "year": "2024",
+        "value": 18.4,
+        "country": "Honduras"
+      },
+      {
+        "year": "2023",
+        "value": 2.0,
+        "country": "West Bank and Gaza"
+      },
+      {
+        "year": "2012",
+        "value": 13.8,
+        "country": "Colombia"
+      },
+      {
+        "year": "2011",
+        "value": 0.7,
+        "country": "Norway"
+      },
+      {
+        "year": "2011",
+        "value": 33.1,
+        "country": "Pakistan"
+      },
+      {
+        "year": "2009",
+        "value": 39.2,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2009",
+        "value": 2.7,
+        "country": "Italy"
+      },
+      {
+        "year": "2019",
+        "value": 1.7,
+        "country": "Argentina"
+      },
+      {
+        "year": "2019",
+        "value": 2.4,
+        "country": "Armenia"
+      },
+      {
+        "year": "2019",
+        "value": 0.6,
+        "country": "Austria"
+      },
+      {
+        "year": "2016",
+        "value": 10.5,
+        "country": "Georgia"
+      },
+      {
+        "year": "2016",
+        "value": 3.5,
+        "country": "Greece"
+      },
+      {
+        "year": "2010",
+        "value": 14.5,
+        "country": "Colombia"
+      },
+      {
+        "year": "2014",
+        "value": 4.2,
+        "country": "Greece"
+      },
+      {
+        "year": "2014",
+        "value": 25.4,
+        "country": "Honduras"
+      },
+      {
+        "year": "2012",
+        "value": 27.4,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2012",
+        "value": 1.8,
+        "country": "Latvia"
+      },
+      {
+        "year": "2016",
+        "value": 5.4,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2016",
+        "value": 9.1,
+        "country": "Peru"
+      },
+      {
+        "year": "2016",
+        "value": 3.0,
+        "country": "Portugal"
+      },
+      {
+        "year": "2009",
+        "value": 0.6,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2009",
+        "value": 0.2,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2015",
+        "value": 22.6,
+        "country": "Indonesia"
+      },
+      {
+        "year": "2015",
+        "value": 3.1,
+        "country": "Iran, Islamic Rep."
+      },
+      {
+        "year": "2015",
+        "value": 0.5,
+        "country": "Israel"
+      },
+      {
+        "year": "2015",
+        "value": 3.6,
+        "country": "Italy"
+      },
+      {
+        "year": "2012",
+        "value": 8.4,
+        "country": "Paraguay"
+      },
+      {
+        "year": "2012",
+        "value": 12.1,
+        "country": "Peru"
+      },
+      {
+        "year": "2012",
+        "value": 4.5,
+        "country": "Portugal"
+      },
+      {
+        "year": "2010",
+        "value": 1.6,
+        "country": "Argentina"
+      },
+      {
+        "year": "2010",
+        "value": 0.8,
+        "country": "Austria"
+      },
+      {
+        "year": "2018",
+        "value": 0.6,
+        "country": "Belgium"
+      },
+      {
+        "year": "2018",
+        "value": 9.7,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2009",
+        "value": 4.0,
+        "country": "Portugal"
+      },
+      {
+        "year": "2008",
+        "value": 2.0,
+        "country": "Belgium"
+      },
+      {
+        "year": "2008",
+        "value": 2.7,
+        "country": "Bulgaria"
+      },
+      {
+        "year": "2021",
+        "value": 11.5,
+        "country": "Colombia"
+      },
+      {
+        "year": "2017",
+        "value": 2.4,
+        "country": "Armenia"
+      },
+      {
+        "year": "2017",
+        "value": 0.3,
+        "country": "Austria"
+      },
+      {
+        "year": "2017",
+        "value": 2.1,
+        "country": "Belgium"
+      },
+      {
+        "year": "2020",
+        "value": 0.4,
+        "country": "Estonia"
+      },
+      {
+        "year": "2020",
+        "value": 1.4,
+        "country": "Finland"
+      },
+      {
+        "year": "2020",
+        "value": 1.0,
+        "country": "France"
+      },
+      {
+        "year": "2020",
+        "value": 12.0,
+        "country": "Georgia"
+      },
+      {
+        "year": "2023",
+        "value": 0.2,
+        "country": "Moldova"
+      },
+      {
+        "year": "2012",
+        "value": 1.2,
+        "country": "Sweden"
+      },
+      {
+        "year": "2012",
+        "value": 0.6,
+        "country": "Thailand"
+      },
+      {
+        "year": "2008",
+        "value": 2.5,
+        "country": "Italy"
+      },
+      {
+        "year": "2020",
+        "value": 2.2,
+        "country": "Argentina"
+      },
+      {
+        "year": "2020",
+        "value": 1.5,
+        "country": "Armenia"
+      },
+      {
+        "year": "2020",
+        "value": 0.7,
+        "country": "Austria"
+      },
+      {
+        "year": "2017",
+        "value": 0.6,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2017",
+        "value": 0.0,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2017",
+        "value": 4.1,
+        "country": "Spain"
+      },
+      {
+        "year": "2010",
+        "value": 2.7,
+        "country": "Costa Rica"
+      },
+      {
+        "year": "2010",
+        "value": 1.8,
+        "country": "Croatia"
+      },
+      {
+        "year": "2010",
+        "value": 2.6,
+        "country": "Cyprus"
+      },
+      {
+        "year": "2010",
+        "value": 0.1,
+        "country": "Czechia"
+      },
+      {
+        "year": "2010",
+        "value": 1.2,
+        "country": "Denmark"
+      },
+      {
+        "year": "2010",
+        "value": 7.8,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2019",
+        "value": 6.8,
+        "country": "Peru"
+      },
+      {
+        "year": "2019",
+        "value": 1.7,
+        "country": "Portugal"
+      },
+      {
+        "year": "2020",
+        "value": 0.6,
+        "country": "Belgium"
+      },
+      {
+        "year": "2020",
+        "value": 7.6,
+        "country": "Bolivia"
+      },
+      {
+        "year": "2023",
+        "value": 0.5,
+        "country": "Slovak Republic"
+      },
+      {
+        "year": "2023",
+        "value": 0.0,
+        "country": "Slovenia"
+      },
+      {
+        "year": "2023",
+        "value": 3.2,
+        "country": "Spain"
+      },
+      {
+        "year": "2008",
+        "value": 1.8,
+        "country": "Latvia"
+      },
+      {
+        "year": "2008",
+        "value": 2.5,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2008",
+        "value": 0.2,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2021",
+        "value": 0.6,
+        "country": "Israel"
+      },
+      {
+        "year": "2021",
+        "value": 2.4,
+        "country": "Italy"
+      },
+      {
+        "year": "2008",
+        "value": 0.5,
+        "country": "Austria"
+      },
+      {
+        "year": "2018",
+        "value": 18.5,
+        "country": "Lao PDR"
+      },
+      {
+        "year": "2018",
+        "value": 0.8,
+        "country": "Latvia"
+      },
+      {
+        "year": "2018",
+        "value": 1.4,
+        "country": "Lithuania"
+      },
+      {
+        "year": "2018",
+        "value": 0.7,
+        "country": "Luxembourg"
+      },
+      {
+        "year": "2011",
+        "value": 0.7,
+        "country": "Finland"
+      },
+      {
+        "year": "2011",
+        "value": 0.6,
+        "country": "France"
+      },
+      {
+        "year": "2011",
+        "value": 21.7,
+        "country": "Georgia"
+      },
+      {
+        "year": "2011",
+        "value": 3.8,
+        "country": "Greece"
+      },
+      {
+        "year": "2014",
+        "value": 0.0,
+        "country": "Czechia"
+      },
+      {
+        "year": "2014",
+        "value": 2.0,
+        "country": "Denmark"
+      },
+      {
+        "year": "2014",
+        "value": 5.8,
+        "country": "Dominican Republic"
+      },
+      {
+        "year": "2014",
+        "value": 4.8,
+        "country": "Ecuador"
+      },
+      {
+        "year": "2014",
+        "value": 10.8,
+        "country": "El Salvador"
+      },
+      {
+        "year": "2014",
+        "value": 1.1,
+        "country": "Estonia"
+      },
+      {
+        "year": "2009",
+        "value": 2.0,
+        "country": "Thailand"
+      }
+    ]
+  },
+  "mark": {
+    "type": "rect",
+    "tooltip": true
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "utcyear",
+      "axis": {
+        "title": null,
+        "format": "%Y",
+        "tickCount": 5,
+        "labelAngle": 0,
+        "grid": false,
+        "gridColor": "#CED4DE",
+        "gridDash": [
+          4,
+          2
+        ],
+        "labelColor": "#666666",
+        "titleColor": "#111111",
+        "titleFontWeight": "bold"
+      }
+    },
+    "y": {
+      "field": "country",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelFontWeight": "bold"
+      }
+    },
+    "color": {
+      "field": "value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "yellowgreenblue",
+        "domain": [
+          0.0,
+          39.2
+        ]
+      },
+      "legend": {
+        "type": "gradient",
+        "title": "Percentage of population",
+        "orient": "top",
+        "direction": "horizontal",
+        "gradientLength": 200,
+        "gradientThickness": 12,
+        "labelFontSize": 10
+      }
+    },
+    "tooltip": [
+      {
+        "field": "year",
+        "title": "Year",
+        "type": "temporal",
+        "timeUnit": "utcyear",
+        "format": "%Y"
+      },
+      {
+        "field": "value",
+        "title": "Value",
+        "type": "quantitative",
+        "format": ".1f"
+      },
+      {
+        "field": "country",
+        "title": "Economy",
+        "type": "nominal"
+      },
+      {
+        "value": "Multidimensional poverty headcount ratio (World Bank)",
+        "title": "Indicator"
+      }
+    ]
+  },
+  "width": 600,
+  "height": {
+    "step": 15
+  },
+  "config": {
+    "legend": {
+      "symbolType": "square",
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

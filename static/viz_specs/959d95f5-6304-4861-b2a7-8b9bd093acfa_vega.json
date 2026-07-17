@@ -1,0 +1,316 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "GDP per capita (constant 2015 US$) vs. Life expectancy at birth, total (years)"
+    ],
+    "subtitle": [
+      "2022"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2022",
+        "country": "Argentina",
+        "gdp_per_capita_constant_2015_us": 13276.823211,
+        "life_expectancy_at_birth_total_years": 75.806
+      },
+      {
+        "year": "2022",
+        "country": "Brazil",
+        "gdp_per_capita_constant_2015_us": 9032.084816,
+        "life_expectancy_at_birth_total_years": 74.872
+      },
+      {
+        "year": "2022",
+        "country": "China",
+        "gdp_per_capita_constant_2015_us": 11830.298768,
+        "life_expectancy_at_birth_total_years": 78.202
+      },
+      {
+        "year": "2022",
+        "country": "Colombia",
+        "gdp_per_capita_constant_2015_us": 6856.725905,
+        "life_expectancy_at_birth_total_years": 76.508
+      },
+      {
+        "year": "2022",
+        "country": "Egypt, Arab Rep.",
+        "gdp_per_capita_constant_2015_us": 4029.782955,
+        "life_expectancy_at_birth_total_years": 71.01
+      },
+      {
+        "year": "2022",
+        "country": "Germany",
+        "gdp_per_capita_constant_2015_us": 44817.131633,
+        "life_expectancy_at_birth_total_years": 80.608049
+      },
+      {
+        "year": "2022",
+        "country": "India",
+        "gdp_per_capita_constant_2015_us": 2098.211245,
+        "life_expectancy_at_birth_total_years": 71.698
+      },
+      {
+        "year": "2022",
+        "country": "Indonesia",
+        "gdp_per_capita_constant_2015_us": 4024.912253,
+        "life_expectancy_at_birth_total_years": 70.925
+      },
+      {
+        "year": "2022",
+        "country": "Japan",
+        "gdp_per_capita_constant_2015_us": 37448.350482,
+        "life_expectancy_at_birth_total_years": 83.996341
+      },
+      {
+        "year": "2022",
+        "country": "Mexico",
+        "gdp_per_capita_constant_2015_us": 10013.247923,
+        "life_expectancy_at_birth_total_years": 73.973
+      },
+      {
+        "year": "2022",
+        "country": "Pakistan",
+        "gdp_per_capita_constant_2015_us": 1642.28067,
+        "life_expectancy_at_birth_total_years": 67.417
+      },
+      {
+        "year": "2022",
+        "country": "South Africa",
+        "gdp_per_capita_constant_2015_us": 5786.865053,
+        "life_expectancy_at_birth_total_years": 65.454
+      },
+      {
+        "year": "2022",
+        "country": "United Kingdom",
+        "gdp_per_capita_constant_2015_us": 48410.09517,
+        "life_expectancy_at_birth_total_years": 81.01122
+      },
+      {
+        "year": "2022",
+        "country": "United States",
+        "gdp_per_capita_constant_2015_us": 64322.233282,
+        "life_expectancy_at_birth_total_years": 77.434146
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1,
+        "size": 70
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita_constant_2015_us",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)"
+          },
+          "scale": {
+            "zero": false,
+            "type": "log"
+          }
+        },
+        "y": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative",
+          "axis": {
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "Life expectancy at birth, total (years)"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "nominal"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "gdp_per_capita_constant_2015_us",
+            "title": "GDP per capita (constant 2015 US$) (US dollars, 2015 constant prices)",
+            "format": ",.2f",
+            "type": "quantitative"
+          },
+          {
+            "field": "life_expectancy_at_birth_total_years",
+            "title": "Life expectancy at birth, total (years)",
+            "format": ",.2f",
+            "type": "quantitative"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 10,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "gdp_per_capita_constant_2015_us",
+          "type": "quantitative",
+          "scale": {
+            "type": "log",
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "life_expectancy_at_birth_total_years",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "width": 600,
+  "height": 450,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

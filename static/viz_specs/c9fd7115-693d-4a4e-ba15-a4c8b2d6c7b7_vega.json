@@ -1,0 +1,971 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": [
+      "People in each phase of food insecurity classification"
+    ],
+    "subtitle": [
+      "Afghanistan"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2020-04",
+        "value": 8925701.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2020-09",
+        "value": 8904766.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2021-03",
+        "value": 8669926.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2021-10",
+        "value": 7953993.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2022-03",
+        "value": 7451417.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2022-09",
+        "value": 9354762.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2023-04",
+        "value": 10130341.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2023-10",
+        "value": 13786711.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2024-03",
+        "value": 14114122.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2024-10",
+        "value": 14192140.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "1 - Minimal"
+      },
+      {
+        "year": "2020-04",
+        "value": 10942434.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2020-09",
+        "value": 11336140.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2021-03",
+        "value": 11781317.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2021-10",
+        "value": 13613416.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2022-03",
+        "value": 14625723.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2022-09",
+        "value": 15398877.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2023-04",
+        "value": 15756673.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2023-10",
+        "value": 17687250.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2024-03",
+        "value": 16210478.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2024-10",
+        "value": 20204146.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "2 - Stressed"
+      },
+      {
+        "year": "2020-04",
+        "value": 7383363.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2020-09",
+        "value": 7544564.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2021-03",
+        "value": 7766480.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2021-10",
+        "value": 11988297.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2022-03",
+        "value": 13036510.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2022-09",
+        "value": 12536200.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2023-04",
+        "value": 13854267.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2023-10",
+        "value": 10617293.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2024-03",
+        "value": 11287840.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2024-10",
+        "value": 9798949.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "3 - Crisis"
+      },
+      {
+        "year": "2020-04",
+        "value": 3474062.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2020-09",
+        "value": 3604700.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2021-03",
+        "value": 3172449.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2021-10",
+        "value": 6856155.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2022-03",
+        "value": 6593329.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2022-09",
+        "value": 4437464.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2023-04",
+        "value": 3359317.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2023-10",
+        "value": 2441346.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2024-03",
+        "value": 2920160.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2024-10",
+        "value": 1811656.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "4 - Emergency"
+      },
+      {
+        "year": "2020-04",
+        "value": null,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      },
+      {
+        "year": "2020-09",
+        "value": null,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      },
+      {
+        "year": "2021-03",
+        "value": null,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      },
+      {
+        "year": "2021-10",
+        "value": null,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      },
+      {
+        "year": "2022-03",
+        "value": 20324.0,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      },
+      {
+        "year": "2022-09",
+        "value": null,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      },
+      {
+        "year": "2023-04",
+        "value": null,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      },
+      {
+        "year": "2023-10",
+        "value": null,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      },
+      {
+        "year": "2024-03",
+        "value": null,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      },
+      {
+        "year": "2024-10",
+        "value": null,
+        "country": "Afghanistan",
+        "comp_breakdown_1": "Analysis Period Classification : Current Measurement",
+        "comp_breakdown_2": "5 - Famine"
+      }
+    ]
+  },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "color": "independent"
+    }
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "concat": [
+    {
+      "title": {
+        "text": "1 - Minimal",
+        "color": "#34A7F2",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "comp_breakdown_2",
+            "equal": "1 - Minimal"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "color": "#34A7F2"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyearmonth",
+          "axis": {
+            "title": null,
+            "format": "%b %Y",
+            "tickCount": 8,
+            "labelAngle": -45,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyearmonth",
+            "format": "%b %Y"
+          },
+          {
+            "field": "value",
+            "title": "1 - Minimal",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_2",
+            "title": "Dimension 2",
+            "type": "nominal"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "2 - Stressed",
+        "color": "#FF9800",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "comp_breakdown_2",
+            "equal": "2 - Stressed"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "color": "#FF9800"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyearmonth",
+          "axis": {
+            "title": null,
+            "format": "%b %Y",
+            "tickCount": 8,
+            "labelAngle": -45,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyearmonth",
+            "format": "%b %Y"
+          },
+          {
+            "field": "value",
+            "title": "2 - Stressed",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_2",
+            "title": "Dimension 2",
+            "type": "nominal"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "3 - Crisis",
+        "color": "#664AB6",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "comp_breakdown_2",
+            "equal": "3 - Crisis"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "color": "#664AB6"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyearmonth",
+          "axis": {
+            "title": null,
+            "format": "%b %Y",
+            "tickCount": 8,
+            "labelAngle": -45,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyearmonth",
+            "format": "%b %Y"
+          },
+          {
+            "field": "value",
+            "title": "3 - Crisis",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_2",
+            "title": "Dimension 2",
+            "type": "nominal"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "4 - Emergency",
+        "color": "#4EC2C0",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "comp_breakdown_2",
+            "equal": "4 - Emergency"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "color": "#4EC2C0"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyearmonth",
+          "axis": {
+            "title": null,
+            "format": "%b %Y",
+            "tickCount": 8,
+            "labelAngle": -45,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyearmonth",
+            "format": "%b %Y"
+          },
+          {
+            "field": "value",
+            "title": "4 - Emergency",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_2",
+            "title": "Dimension 2",
+            "type": "nominal"
+          }
+        ]
+      }
+    },
+    {
+      "title": {
+        "text": "5 - Famine",
+        "color": "#F3578E",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "anchor": "start",
+        "offset": 4
+      },
+      "width": 280,
+      "height": 200,
+      "transform": [
+        {
+          "filter": {
+            "field": "comp_breakdown_2",
+            "equal": "5 - Famine"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        },
+        "color": "#F3578E"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyearmonth",
+          "axis": {
+            "title": null,
+            "format": "%b %Y",
+            "tickCount": 8,
+            "labelAngle": -45,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": null,
+            "labelExpr": "format(datum.value, '.1~f') + '%'"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyearmonth",
+            "format": "%b %Y"
+          },
+          {
+            "field": "value",
+            "title": "5 - Famine",
+            "format": ".1f",
+            "type": "quantitative"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_1",
+            "title": "Dimension 1",
+            "type": "nominal"
+          },
+          {
+            "field": "comp_breakdown_2",
+            "title": "Dimension 2",
+            "type": "nominal"
+          }
+        ]
+      }
+    }
+  ],
+  "columns": 2,
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}

@@ -1,0 +1,1430 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "GDP per capita (constant 2015 US$): Nigeria, Ghana, Kenya (1960\u20132024)",
+    "subtitle": [
+      "Ghana, Kenya, Nigeria, 1960-2024",
+      "US dollars, 2015 constant prices"
+    ]
+  },
+  "data": {
+    "values": [
+      {
+        "year": "2016",
+        "value": 1517.977961,
+        "country": "Kenya",
+        "_label_y": 1517.977961
+      },
+      {
+        "year": "1999",
+        "value": 1224.634046,
+        "country": "Kenya",
+        "_label_y": 1224.634046
+      },
+      {
+        "year": "2010",
+        "value": 1340.164674,
+        "country": "Kenya",
+        "_label_y": 1340.164674
+      },
+      {
+        "year": "2013",
+        "value": 1718.597048,
+        "country": "Ghana",
+        "_label_y": 1718.597048
+      },
+      {
+        "year": "2019",
+        "value": 1999.553722,
+        "country": "Ghana",
+        "_label_y": 1999.553722
+      },
+      {
+        "year": "2002",
+        "value": 1052.465916,
+        "country": "Ghana",
+        "_label_y": 1052.465916
+      },
+      {
+        "year": "2002",
+        "value": 1171.426252,
+        "country": "Kenya",
+        "_label_y": 1171.426252
+      },
+      {
+        "year": "2001",
+        "value": 1465.457203,
+        "country": "Nigeria",
+        "_label_y": 1465.457203
+      },
+      {
+        "year": "2023",
+        "value": 1811.216518,
+        "country": "Kenya",
+        "_label_y": 1811.216518
+      },
+      {
+        "year": "2004",
+        "value": 1824.802695,
+        "country": "Nigeria",
+        "_label_y": 1824.802695
+      },
+      {
+        "year": "2015",
+        "value": 1722.772828,
+        "country": "Ghana",
+        "_label_y": 1722.772828
+      },
+      {
+        "year": "2005",
+        "value": 1223.447385,
+        "country": "Kenya",
+        "_label_y": 1223.447385
+      },
+      {
+        "year": "2022",
+        "value": 2067.208959,
+        "country": "Ghana",
+        "_label_y": 2067.208959
+      },
+      {
+        "year": "1994",
+        "value": 1219.784111,
+        "country": "Kenya",
+        "_label_y": 1219.784111
+      },
+      {
+        "year": "1997",
+        "value": 1420.23878,
+        "country": "Nigeria",
+        "_label_y": 1420.23878
+      },
+      {
+        "year": "1988",
+        "value": 829.017388,
+        "country": "Ghana",
+        "_label_y": 829.017388
+      },
+      {
+        "year": "1989",
+        "value": 1320.507745,
+        "country": "Kenya",
+        "_label_y": 1320.507745
+      },
+      {
+        "year": "1984",
+        "value": 1198.094372,
+        "country": "Kenya",
+        "_label_y": 1198.094372
+      },
+      {
+        "year": "1987",
+        "value": 1398.248833,
+        "country": "Nigeria",
+        "_label_y": 1398.248833
+      },
+      {
+        "year": "1982",
+        "value": 1250.613969,
+        "country": "Kenya",
+        "_label_y": 1250.613969
+      },
+      {
+        "year": "1977",
+        "value": 918.336702,
+        "country": "Ghana",
+        "_label_y": 918.336702
+      },
+      {
+        "year": "1980",
+        "value": 891.578049,
+        "country": "Ghana",
+        "_label_y": 891.578049
+      },
+      {
+        "year": "1977",
+        "value": 2278.697218,
+        "country": "Nigeria",
+        "_label_y": 2278.697218
+      },
+      {
+        "year": "1976",
+        "value": 1100.656501,
+        "country": "Kenya",
+        "_label_y": 1100.656501
+      },
+      {
+        "year": "1974",
+        "value": 2267.044084,
+        "country": "Nigeria",
+        "_label_y": 2267.044084
+      },
+      {
+        "year": "1971",
+        "value": 1179.060744,
+        "country": "Ghana",
+        "_label_y": 1179.060744
+      },
+      {
+        "year": "1969",
+        "value": 1078.403571,
+        "country": "Ghana",
+        "_label_y": 1078.403571
+      },
+      {
+        "year": "1964",
+        "value": 1589.68156,
+        "country": "Nigeria",
+        "_label_y": 1589.68156
+      },
+      {
+        "year": "1962",
+        "value": 1124.533164,
+        "country": "Ghana",
+        "_label_y": 1124.533164
+      },
+      {
+        "year": "1962",
+        "value": 742.214803,
+        "country": "Kenya",
+        "_label_y": 742.214803
+      },
+      {
+        "year": "1963",
+        "value": 1547.483955,
+        "country": "Nigeria",
+        "_label_y": 1547.483955
+      },
+      {
+        "year": "1960",
+        "value": 1100.763052,
+        "country": "Ghana",
+        "_label_y": 1100.763052
+      },
+      {
+        "year": "2017",
+        "value": 2441.712364,
+        "country": "Nigeria",
+        "_label_y": 2441.712364
+      },
+      {
+        "year": "2014",
+        "value": 1450.593382,
+        "country": "Kenya",
+        "_label_y": 1450.593382
+      },
+      {
+        "year": "2017",
+        "value": 1542.33774,
+        "country": "Kenya",
+        "_label_y": 1542.33774
+      },
+      {
+        "year": "2013",
+        "value": 1413.941425,
+        "country": "Kenya",
+        "_label_y": 1413.941425
+      },
+      {
+        "year": "2011",
+        "value": 1370.580009,
+        "country": "Kenya",
+        "_label_y": 1370.580009
+      },
+      {
+        "year": "2006",
+        "value": 1185.265707,
+        "country": "Ghana",
+        "_label_y": 1185.265707
+      },
+      {
+        "year": "2020",
+        "value": 2228.686314,
+        "country": "Nigeria",
+        "_label_y": 2228.686314
+      },
+      {
+        "year": "2008",
+        "value": 1282.634169,
+        "country": "Ghana",
+        "_label_y": 1282.634169
+      },
+      {
+        "year": "2019",
+        "value": 2431.535285,
+        "country": "Nigeria",
+        "_label_y": 2431.535285
+      },
+      {
+        "year": "2012",
+        "value": 1396.301787,
+        "country": "Kenya",
+        "_label_y": 1396.301787
+      },
+      {
+        "year": "2005",
+        "value": 1889.251753,
+        "country": "Nigeria",
+        "_label_y": 1889.251753
+      },
+      {
+        "year": "2018",
+        "value": 1915.453232,
+        "country": "Ghana",
+        "_label_y": 1915.453232
+      },
+      {
+        "year": "2020",
+        "value": 1609.334141,
+        "country": "Kenya",
+        "_label_y": 1609.334141
+      },
+      {
+        "year": "2007",
+        "value": 1205.317058,
+        "country": "Ghana",
+        "_label_y": 1205.317058
+      },
+      {
+        "year": "2004",
+        "value": 1191.254436,
+        "country": "Kenya",
+        "_label_y": 1191.254436
+      },
+      {
+        "year": "2018",
+        "value": 2431.778578,
+        "country": "Nigeria",
+        "_label_y": 2431.778578
+      },
+      {
+        "year": "1998",
+        "value": 1419.317709,
+        "country": "Nigeria",
+        "_label_y": 1419.317709
+      },
+      {
+        "year": "2007",
+        "value": 2020.833163,
+        "country": "Nigeria",
+        "_label_y": 2020.833163
+      },
+      {
+        "year": "2004",
+        "value": 1108.304754,
+        "country": "Ghana",
+        "_label_y": 1108.304754
+      },
+      {
+        "year": "2001",
+        "value": 1202.293488,
+        "country": "Kenya",
+        "_label_y": 1202.293488
+      },
+      {
+        "year": "2001",
+        "value": 1035.226661,
+        "country": "Ghana",
+        "_label_y": 1035.226661
+      },
+      {
+        "year": "2005",
+        "value": 1143.311789,
+        "country": "Ghana",
+        "_label_y": 1143.311789
+      },
+      {
+        "year": "2022",
+        "value": 1747.531988,
+        "country": "Kenya",
+        "_label_y": 1747.531988
+      },
+      {
+        "year": "2000",
+        "value": 1022.275207,
+        "country": "Ghana",
+        "_label_y": 1022.275207
+      },
+      {
+        "year": "1995",
+        "value": 933.895312,
+        "country": "Ghana",
+        "_label_y": 933.895312
+      },
+      {
+        "year": "1994",
+        "value": 1433.388611,
+        "country": "Nigeria",
+        "_label_y": 1433.388611
+      },
+      {
+        "year": "1993",
+        "value": 1223.506167,
+        "country": "Kenya",
+        "_label_y": 1223.506167
+      },
+      {
+        "year": "1996",
+        "value": 954.325388,
+        "country": "Ghana",
+        "_label_y": 954.325388
+      },
+      {
+        "year": "2024",
+        "value": 2324.597024,
+        "country": "Nigeria",
+        "_label_y": 2324.597024
+      },
+      {
+        "year": "1990",
+        "value": 1577.196166,
+        "country": "Nigeria",
+        "_label_y": 1577.196166
+      },
+      {
+        "year": "1981",
+        "value": 1276.927788,
+        "country": "Kenya",
+        "_label_y": 1276.927788
+      },
+      {
+        "year": "1989",
+        "value": 849.686579,
+        "country": "Ghana",
+        "_label_y": 849.686579
+      },
+      {
+        "year": "1988",
+        "value": 1306.364337,
+        "country": "Kenya",
+        "_label_y": 1306.364337
+      },
+      {
+        "year": "1987",
+        "value": 803.92961,
+        "country": "Ghana",
+        "_label_y": 803.92961
+      },
+      {
+        "year": "1980",
+        "value": 1275.282697,
+        "country": "Kenya",
+        "_label_y": 1275.282697
+      },
+      {
+        "year": "1983",
+        "value": 700.396046,
+        "country": "Ghana",
+        "_label_y": 700.396046
+      },
+      {
+        "year": "1975",
+        "value": 1113.009776,
+        "country": "Kenya",
+        "_label_y": 1113.009776
+      },
+      {
+        "year": "1978",
+        "value": 2082.552799,
+        "country": "Nigeria",
+        "_label_y": 2082.552799
+      },
+      {
+        "year": "1982",
+        "value": 756.2945,
+        "country": "Ghana",
+        "_label_y": 756.2945
+      },
+      {
+        "year": "1981",
+        "value": 1834.287608,
+        "country": "Nigeria",
+        "_label_y": 1834.287608
+      },
+      {
+        "year": "1982",
+        "value": 1659.098144,
+        "country": "Nigeria",
+        "_label_y": 1659.098144
+      },
+      {
+        "year": "1979",
+        "value": 2155.789653,
+        "country": "Nigeria",
+        "_label_y": 2155.789653
+      },
+      {
+        "year": "1983",
+        "value": 1440.017478,
+        "country": "Nigeria",
+        "_label_y": 1440.017478
+      },
+      {
+        "year": "1979",
+        "value": 913.729023,
+        "country": "Ghana",
+        "_label_y": 913.729023
+      },
+      {
+        "year": "1980",
+        "value": 2177.415787,
+        "country": "Nigeria",
+        "_label_y": 2177.415787
+      },
+      {
+        "year": "1971",
+        "value": 2018.173215,
+        "country": "Nigeria",
+        "_label_y": 2018.173215
+      },
+      {
+        "year": "1968",
+        "value": 1218.433175,
+        "country": "Nigeria",
+        "_label_y": 1218.433175
+      },
+      {
+        "year": "1970",
+        "value": 831.801819,
+        "country": "Kenya",
+        "_label_y": 831.801819
+      },
+      {
+        "year": "1968",
+        "value": 1043.066525,
+        "country": "Ghana",
+        "_label_y": 1043.066525
+      },
+      {
+        "year": "1969",
+        "value": 1480.047119,
+        "country": "Nigeria",
+        "_label_y": 1480.047119
+      },
+      {
+        "year": "1967",
+        "value": 1064.839418,
+        "country": "Ghana",
+        "_label_y": 1064.839418
+      },
+      {
+        "year": "1967",
+        "value": 841.449011,
+        "country": "Kenya",
+        "_label_y": 841.449011
+      },
+      {
+        "year": "1964",
+        "value": 1144.138327,
+        "country": "Ghana",
+        "_label_y": 1144.138327
+      },
+      {
+        "year": "1963",
+        "value": 1146.372811,
+        "country": "Ghana",
+        "_label_y": 1146.372811
+      },
+      {
+        "year": "1963",
+        "value": 776.614053,
+        "country": "Kenya",
+        "_label_y": 776.614053
+      },
+      {
+        "year": "1970",
+        "value": 1808.394591,
+        "country": "Nigeria",
+        "_label_y": 1808.394591
+      },
+      {
+        "year": "1965",
+        "value": 1132.307026,
+        "country": "Ghana",
+        "_label_y": 1132.307026
+      },
+      {
+        "year": "1960",
+        "value": 792.95802,
+        "country": "Kenya",
+        "_label_y": 792.95802
+      },
+      {
+        "year": "1960",
+        "value": 1454.980919,
+        "country": "Nigeria",
+        "_label_y": 1454.980919
+      },
+      {
+        "year": "2013",
+        "value": 2495.341066,
+        "country": "Nigeria",
+        "_label_y": 2495.341066
+      },
+      {
+        "year": "2014",
+        "value": 2583.61557,
+        "country": "Nigeria",
+        "_label_y": 2583.61557
+      },
+      {
+        "year": "2018",
+        "value": 1596.690459,
+        "country": "Kenya",
+        "_label_y": 1596.690459
+      },
+      {
+        "year": "2006",
+        "value": 1263.541647,
+        "country": "Kenya",
+        "_label_y": 1263.541647
+      },
+      {
+        "year": "2014",
+        "value": 1726.369301,
+        "country": "Ghana",
+        "_label_y": 1726.369301
+      },
+      {
+        "year": "2016",
+        "value": 2481.814904,
+        "country": "Nigeria",
+        "_label_y": 2481.814904
+      },
+      {
+        "year": "2007",
+        "value": 1309.910929,
+        "country": "Kenya",
+        "_label_y": 1309.910929
+      },
+      {
+        "year": "2009",
+        "value": 2204.607256,
+        "country": "Nigeria",
+        "_label_y": 2204.607256
+      },
+      {
+        "year": "2023",
+        "value": 2280.677772,
+        "country": "Nigeria",
+        "_label_y": 2280.677772
+      },
+      {
+        "year": "2010",
+        "value": 1381.22795,
+        "country": "Ghana",
+        "_label_y": 1381.22795
+      },
+      {
+        "year": "2017",
+        "value": 1841.446362,
+        "country": "Ghana",
+        "_label_y": 1841.446362
+      },
+      {
+        "year": "2010",
+        "value": 2315.466765,
+        "country": "Nigeria",
+        "_label_y": 2315.466765
+      },
+      {
+        "year": "2009",
+        "value": 1311.630538,
+        "country": "Ghana",
+        "_label_y": 1311.630538
+      },
+      {
+        "year": "2019",
+        "value": 1645.709618,
+        "country": "Kenya",
+        "_label_y": 1645.709618
+      },
+      {
+        "year": "2012",
+        "value": 2403.653879,
+        "country": "Nigeria",
+        "_label_y": 2403.653879
+      },
+      {
+        "year": "1998",
+        "value": 992.206318,
+        "country": "Ghana",
+        "_label_y": 992.206318
+      },
+      {
+        "year": "2021",
+        "value": 2030.048665,
+        "country": "Ghana",
+        "_label_y": 2030.048665
+      },
+      {
+        "year": "2003",
+        "value": 1717.214511,
+        "country": "Nigeria",
+        "_label_y": 1717.214511
+      },
+      {
+        "year": "2015",
+        "value": 2585.733607,
+        "country": "Nigeria",
+        "_label_y": 2585.733607
+      },
+      {
+        "year": "2020",
+        "value": 1970.194115,
+        "country": "Ghana",
+        "_label_y": 1970.194115
+      },
+      {
+        "year": "2008",
+        "value": 2098.283392,
+        "country": "Nigeria",
+        "_label_y": 2098.283392
+      },
+      {
+        "year": "2022",
+        "value": 2254.290804,
+        "country": "Nigeria",
+        "_label_y": 2254.290804
+      },
+      {
+        "year": "1998",
+        "value": 1232.066581,
+        "country": "Kenya",
+        "_label_y": 1232.066581
+      },
+      {
+        "year": "1992",
+        "value": 890.313175,
+        "country": "Ghana",
+        "_label_y": 890.313175
+      },
+      {
+        "year": "1997",
+        "value": 970.995739,
+        "country": "Ghana",
+        "_label_y": 970.995739
+      },
+      {
+        "year": "1991",
+        "value": 1541.590663,
+        "country": "Nigeria",
+        "_label_y": 1541.590663
+      },
+      {
+        "year": "1991",
+        "value": 878.635704,
+        "country": "Ghana",
+        "_label_y": 878.635704
+      },
+      {
+        "year": "1992",
+        "value": 1571.190226,
+        "country": "Nigeria",
+        "_label_y": 1571.190226
+      },
+      {
+        "year": "1995",
+        "value": 1395.074885,
+        "country": "Nigeria",
+        "_label_y": 1395.074885
+      },
+      {
+        "year": "1986",
+        "value": 1245.98851,
+        "country": "Kenya",
+        "_label_y": 1245.98851
+      },
+      {
+        "year": "1990",
+        "value": 855.852507,
+        "country": "Ghana",
+        "_label_y": 855.852507
+      },
+      {
+        "year": "2024",
+        "value": 2173.003298,
+        "country": "Ghana",
+        "_label_y": 2173.003298
+      },
+      {
+        "year": "1985",
+        "value": 1428.927428,
+        "country": "Nigeria",
+        "_label_y": 1428.927428
+      },
+      {
+        "year": "1984",
+        "value": 1387.92176,
+        "country": "Nigeria",
+        "_label_y": 1387.92176
+      },
+      {
+        "year": "1986",
+        "value": 784.937924,
+        "country": "Ghana",
+        "_label_y": 784.937924
+      },
+      {
+        "year": "1987",
+        "value": 1274.22088,
+        "country": "Kenya",
+        "_label_y": 1274.22088
+      },
+      {
+        "year": "1979",
+        "value": 1251.319133,
+        "country": "Kenya",
+        "_label_y": 1251.319133
+      },
+      {
+        "year": "1978",
+        "value": 1203.767877,
+        "country": "Kenya",
+        "_label_y": 1203.767877
+      },
+      {
+        "year": "1978",
+        "value": 966.366546,
+        "country": "Ghana",
+        "_label_y": 966.366546
+      },
+      {
+        "year": "1974",
+        "value": 1140.552559,
+        "country": "Kenya",
+        "_label_y": 1140.552559
+      },
+      {
+        "year": "1976",
+        "value": 2214.322616,
+        "country": "Nigeria",
+        "_label_y": 2214.322616
+      },
+      {
+        "year": "1985",
+        "value": 762.747784,
+        "country": "Ghana",
+        "_label_y": 762.747784
+      },
+      {
+        "year": "1973",
+        "value": 1117.342458,
+        "country": "Ghana",
+        "_label_y": 1117.342458
+      },
+      {
+        "year": "1974",
+        "value": 1159.775762,
+        "country": "Ghana",
+        "_label_y": 1159.775762
+      },
+      {
+        "year": "1972",
+        "value": 2036.693978,
+        "country": "Nigeria",
+        "_label_y": 2036.693978
+      },
+      {
+        "year": "1966",
+        "value": 1058.323481,
+        "country": "Ghana",
+        "_label_y": 1058.323481
+      },
+      {
+        "year": "1966",
+        "value": 847.028482,
+        "country": "Kenya",
+        "_label_y": 847.028482
+      },
+      {
+        "year": "1968",
+        "value": 873.39632,
+        "country": "Kenya",
+        "_label_y": 873.39632
+      },
+      {
+        "year": "1962",
+        "value": 1455.817374,
+        "country": "Nigeria",
+        "_label_y": 1455.817374
+      },
+      {
+        "year": "1961",
+        "value": 1106.494568,
+        "country": "Ghana",
+        "_label_y": 1106.494568
+      },
+      {
+        "year": "1970",
+        "value": 1152.051767,
+        "country": "Ghana",
+        "_label_y": 1152.051767
+      },
+      {
+        "year": "1965",
+        "value": 768.312009,
+        "country": "Kenya",
+        "_label_y": 768.312009
+      },
+      {
+        "year": "1965",
+        "value": 1631.559875,
+        "country": "Nigeria",
+        "_label_y": 1631.559875
+      },
+      {
+        "year": "2011",
+        "value": 2370.976571,
+        "country": "Nigeria",
+        "_label_y": 2370.976571
+      },
+      {
+        "year": "2009",
+        "value": 1276.735035,
+        "country": "Kenya",
+        "_label_y": 1276.735035
+      },
+      {
+        "year": "2016",
+        "value": 1740.811019,
+        "country": "Ghana",
+        "_label_y": 1740.811019
+      },
+      {
+        "year": "2015",
+        "value": 1489.119598,
+        "country": "Kenya",
+        "_label_y": 1489.119598
+      },
+      {
+        "year": "2002",
+        "value": 1644.395189,
+        "country": "Nigeria",
+        "_label_y": 1644.395189
+      },
+      {
+        "year": "2008",
+        "value": 1273.772261,
+        "country": "Kenya",
+        "_label_y": 1273.772261
+      },
+      {
+        "year": "1999",
+        "value": 1010.881949,
+        "country": "Ghana",
+        "_label_y": 1010.881949
+      },
+      {
+        "year": "2003",
+        "value": 1169.144337,
+        "country": "Kenya",
+        "_label_y": 1169.144337
+      },
+      {
+        "year": "2000",
+        "value": 1421.67988,
+        "country": "Nigeria",
+        "_label_y": 1421.67988
+      },
+      {
+        "year": "2021",
+        "value": 1698.895783,
+        "country": "Kenya",
+        "_label_y": 1698.895783
+      },
+      {
+        "year": "2000",
+        "value": 1195.412969,
+        "country": "Kenya",
+        "_label_y": 1195.412969
+      },
+      {
+        "year": "2011",
+        "value": 1537.81834,
+        "country": "Ghana",
+        "_label_y": 1537.81834
+      },
+      {
+        "year": "2003",
+        "value": 1077.699909,
+        "country": "Ghana",
+        "_label_y": 1077.699909
+      },
+      {
+        "year": "2012",
+        "value": 1640.540721,
+        "country": "Ghana",
+        "_label_y": 1640.540721
+      },
+      {
+        "year": "2006",
+        "value": 1949.158568,
+        "country": "Nigeria",
+        "_label_y": 1949.158568
+      },
+      {
+        "year": "2021",
+        "value": 2206.664063,
+        "country": "Nigeria",
+        "_label_y": 2206.664063
+      },
+      {
+        "year": "2023",
+        "value": 2091.813356,
+        "country": "Ghana",
+        "_label_y": 2091.813356
+      },
+      {
+        "year": "1996",
+        "value": 1254.210252,
+        "country": "Kenya",
+        "_label_y": 1254.210252
+      },
+      {
+        "year": "1991",
+        "value": 1305.464157,
+        "country": "Kenya",
+        "_label_y": 1305.464157
+      },
+      {
+        "year": "1996",
+        "value": 1416.101895,
+        "country": "Nigeria",
+        "_label_y": 1416.101895
+      },
+      {
+        "year": "1995",
+        "value": 1237.882505,
+        "country": "Kenya",
+        "_label_y": 1237.882505
+      },
+      {
+        "year": "1997",
+        "value": 1226.195421,
+        "country": "Kenya",
+        "_label_y": 1226.195421
+      },
+      {
+        "year": "2024",
+        "value": 1858.8765,
+        "country": "Kenya",
+        "_label_y": 1858.8765
+      },
+      {
+        "year": "1993",
+        "value": 1498.95895,
+        "country": "Nigeria",
+        "_label_y": 1498.95895
+      },
+      {
+        "year": "1999",
+        "value": 1390.469211,
+        "country": "Nigeria",
+        "_label_y": 1390.469211
+      },
+      {
+        "year": "1994",
+        "value": 918.428723,
+        "country": "Ghana",
+        "_label_y": 918.428723
+      },
+      {
+        "year": "1993",
+        "value": 910.722898,
+        "country": "Ghana",
+        "_label_y": 910.722898
+      },
+      {
+        "year": "1992",
+        "value": 1255.938706,
+        "country": "Kenya",
+        "_label_y": 1255.938706
+      },
+      {
+        "year": "1985",
+        "value": 1204.919324,
+        "country": "Kenya",
+        "_label_y": 1204.919324
+      },
+      {
+        "year": "1986",
+        "value": 1391.478772,
+        "country": "Nigeria",
+        "_label_y": 1391.478772
+      },
+      {
+        "year": "1990",
+        "value": 1329.333128,
+        "country": "Kenya",
+        "_label_y": 1329.333128
+      },
+      {
+        "year": "1989",
+        "value": 1449.680176,
+        "country": "Nigeria",
+        "_label_y": 1449.680176
+      },
+      {
+        "year": "1988",
+        "value": 1461.191322,
+        "country": "Nigeria",
+        "_label_y": 1461.191322
+      },
+      {
+        "year": "1976",
+        "value": 924.779242,
+        "country": "Ghana",
+        "_label_y": 924.779242
+      },
+      {
+        "year": "1975",
+        "value": 986.613046,
+        "country": "Ghana",
+        "_label_y": 986.613046
+      },
+      {
+        "year": "1973",
+        "value": 1133.748285,
+        "country": "Kenya",
+        "_label_y": 1133.748285
+      },
+      {
+        "year": "1972",
+        "value": 1108.227141,
+        "country": "Kenya",
+        "_label_y": 1108.227141
+      },
+      {
+        "year": "1983",
+        "value": 1221.534859,
+        "country": "Kenya",
+        "_label_y": 1221.534859
+      },
+      {
+        "year": "1981",
+        "value": 836.50966,
+        "country": "Ghana",
+        "_label_y": 836.50966
+      },
+      {
+        "year": "1984",
+        "value": 741.569874,
+        "country": "Ghana",
+        "_label_y": 741.569874
+      },
+      {
+        "year": "1975",
+        "value": 2089.855078,
+        "country": "Nigeria",
+        "_label_y": 2089.855078
+      },
+      {
+        "year": "1977",
+        "value": 1165.368612,
+        "country": "Kenya",
+        "_label_y": 1165.368612
+      },
+      {
+        "year": "1973",
+        "value": 2093.638732,
+        "country": "Nigeria",
+        "_label_y": 2093.638732
+      },
+      {
+        "year": "1972",
+        "value": 1117.823153,
+        "country": "Ghana",
+        "_label_y": 1117.823153
+      },
+      {
+        "year": "1969",
+        "value": 906.636183,
+        "country": "Kenya",
+        "_label_y": 906.636183
+      },
+      {
+        "year": "1967",
+        "value": 1260.727124,
+        "country": "Nigeria",
+        "_label_y": 1260.727124
+      },
+      {
+        "year": "1971",
+        "value": 980.029449,
+        "country": "Kenya",
+        "_label_y": 980.029449
+      },
+      {
+        "year": "1966",
+        "value": 1528.594504,
+        "country": "Nigeria",
+        "_label_y": 1528.594504
+      },
+      {
+        "year": "1964",
+        "value": 783.777274,
+        "country": "Kenya",
+        "_label_y": 783.777274
+      },
+      {
+        "year": "1961",
+        "value": 704.532413,
+        "country": "Kenya",
+        "_label_y": 704.532413
+      },
+      {
+        "year": "1961",
+        "value": 1428.117093,
+        "country": "Nigeria",
+        "_label_y": 1428.117093
+      }
+    ]
+  },
+  "width": 600,
+  "height": 350,
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "point": {
+          "filled": true,
+          "size": 56
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "temporal",
+          "timeUnit": "utcyear",
+          "axis": {
+            "title": null,
+            "format": "%Y",
+            "tickCount": 5,
+            "labelAngle": 0,
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "value",
+          "type": "quantitative",
+          "axis": {
+            "grid": false,
+            "gridColor": "#CED4DE",
+            "gridDash": [
+              4,
+              2
+            ],
+            "labelColor": "#666666",
+            "titleColor": "#111111",
+            "titleFontWeight": "bold",
+            "tickCount": 5,
+            "title": "US dollars, 2015 constant prices",
+            "labelExpr": "abs(datum.value)>=1e12 ? '$'+format(datum.value/1e12,'.1~f')+'t' : abs(datum.value)>=1e9 ? '$'+format(datum.value/1e9,'.1~f')+'b' : abs(datum.value)>=1e6 ? '$'+format(datum.value/1e6,'.1~f')+'m' : abs(datum.value)>=1e3 ? '$'+format(datum.value/1e3,'.1~f')+'k' : abs(datum.value)>=10 ? '$'+format(datum.value,',.1~f') : abs(datum.value)>=1 ? '$'+format(datum.value,'.1~f') : '$'+format(datum.value,'.2~f')"
+          },
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "title": "Year",
+            "type": "temporal",
+            "timeUnit": "utcyear",
+            "format": "%Y"
+          },
+          {
+            "field": "value",
+            "title": "Value",
+            "type": "quantitative",
+            "format": "$,.2f"
+          },
+          {
+            "field": "country",
+            "title": "Economy",
+            "type": "nominal"
+          },
+          {
+            "field": "_label_y",
+            "title": " Label Y"
+          },
+          {
+            "value": "GDP per capita",
+            "title": "Indicator"
+          }
+        ],
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "argmax",
+              "field": "year",
+              "as": "_last"
+            }
+          ],
+          "groupby": [
+            "country"
+          ]
+        },
+        {
+          "calculate": "datum._last._label_y",
+          "as": "_end_value"
+        },
+        {
+          "calculate": "datum._last.year",
+          "as": "_end_year"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "tooltip": false
+      },
+      "encoding": {
+        "x": {
+          "field": "_end_year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "_end_value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "country",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#34A7F2",
+              "#FF9800",
+              "#664AB6",
+              "#4EC2C0",
+              "#F3578E",
+              "#081079",
+              "#0C7C68",
+              "#AA0000",
+              "#DDDA21"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF",
+    "font": "Noto Sans, Arial, sans-serif",
+    "title": {
+      "fontSize": 16,
+      "fontWeight": "bold",
+      "color": "#111111",
+      "lineHeight": 22,
+      "anchor": "start",
+      "offset": 8,
+      "subtitleFontSize": 12,
+      "subtitleColor": "#666666",
+      "subtitleFontWeight": "normal",
+      "subtitlePadding": 4,
+      "subtitleLineHeight": 18
+    },
+    "axis": {
+      "grid": false,
+      "labelColor": "#666666",
+      "labelFontSize": 12,
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "titleColor": "#111111",
+      "titleFontSize": 12,
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontWeight": "bold",
+      "gridColor": "#CED4DE",
+      "gridDash": [
+        4,
+        2
+      ],
+      "gridWidth": 1,
+      "domainColor": "#CED4DE",
+      "tickColor": "#CED4DE",
+      "tickCount": 5,
+      "labelOverlap": "greedy"
+    },
+    "legend": {
+      "labelColor": "#111111",
+      "labelFont": "Noto Sans, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "labelLimit": 300,
+      "titleColor": "#111111",
+      "titleFont": "Noto Sans, Arial, sans-serif",
+      "titleFontSize": 12,
+      "orient": "top",
+      "direction": "horizontal"
+    },
+    "range": {
+      "category": [
+        "#34A7F2",
+        "#FF9800",
+        "#664AB6",
+        "#4EC2C0",
+        "#F3578E",
+        "#081079",
+        "#0C7C68",
+        "#AA0000",
+        "#DDDA21"
+      ]
+    },
+    "view": {
+      "stroke": "transparent"
+    },
+    "line": {
+      "strokeWidth": 3,
+      "strokeCap": "round"
+    },
+    "point": {
+      "size": 60,
+      "stroke": "#FFFFFF",
+      "strokeWidth": 1
+    },
+    "bar": {
+      "cornerRadiusTopLeft": 2,
+      "cornerRadiusTopRight": 2
+    }
+  }
+}
