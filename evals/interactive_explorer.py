@@ -1448,7 +1448,26 @@ Return a single JSON object containing:
     client = OpenAI(api_key=api_key)
 
     def _judge(img_path: Path) -> dict:
-        b64 = base64.b64encode(img_path.read_bytes()).decode("utf-8")
+        from PIL import Image
+        import io
+
+        # Open image using Pillow to normalize color space and remove transparency
+        with Image.open(img_path) as img:
+            # Create a solid white background image matching the size
+            background = Image.new("RGB", img.size, (255, 255, 255))
+
+            # If the image has an alpha channel, use it as a mask when pasting
+            if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
+                background.paste(img, mask=img.convert("RGBA").split()[3])
+            else:
+                background.paste(img)
+
+            # Save the flattened RGB image as a JPEG to a byte buffer
+            buffer = io.BytesIO()
+            background.save(buffer, format="JPEG", quality=90)
+            jpeg_bytes = buffer.getvalue()
+
+        b64 = base64.b64encode(jpeg_bytes).decode("utf-8")
         response = client.chat.completions.create(
             model="gpt-4o",
             response_format={"type": "json_object"},
@@ -1461,7 +1480,7 @@ Return a single JSON object containing:
                     "role": "user",
                     "content": [
                         {"type": "text", "text": audit_prompt},
-                        {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64}"}}
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}}
                     ]
                 }
             ],
