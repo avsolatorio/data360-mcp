@@ -1483,11 +1483,9 @@ Return a single JSON object containing:
             )
 
             # Create test case with MLLMImage
+            image_obj = MLLMImage(url=str(temp_jpg_path), local=True)
             test_case = LLMTestCase(
-                input=[
-                    f"User Query Context: '{query}'\n{actual_countries_msg}",
-                    MLLMImage(url=str(temp_jpg_path), local=True)
-                ]
+                input=f"User Query Context: '{query}'\n{actual_countries_msg}\nChart screenshot: {image_obj}"
             )
 
             visual_metric.measure(test_case)
