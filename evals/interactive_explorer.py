@@ -2143,6 +2143,7 @@ HTML_CONTENT = """
     .history-score.high { background: rgba(16, 185, 129, 0.12); color: var(--success); }
     .history-score.mid { background: rgba(245, 158, 11, 0.12); color: var(--warning); }
     .history-score.low { background: rgba(239, 68, 68, 0.12); color: var(--danger); }
+    .history-score.na { background: rgba(156, 163, 175, 0.12); color: var(--text-muted); }
 
     .history-time {
       font-size: 11px;
@@ -3258,28 +3259,36 @@ HTML_CONTENT = """
           card.classList.add("active");
         }
 
-        const sysVal = (item.sys_vc_score !== null && item.sys_vc_score !== undefined) ? item.sys_vc_score : item.score;
-        const llmVal = (item.llm_vc_score !== null && item.llm_vc_score !== undefined) ? item.llm_vc_score : item.llm_score;
+        let sysText = "N/A";
+        let scoreClass = "na";
+        let sysTooltip = `Engine Visual: Not audited yet (Spec: ${item.score.toFixed(1)}/10)`;
+        if (item.sys_vc_score !== null && item.sys_vc_score !== undefined) {
+          sysText = item.sys_vc_score.toFixed(1);
+          if (item.sys_vc_score >= 7.5) scoreClass = "high";
+          else if (item.sys_vc_score >= 5.0) scoreClass = "mid";
+          else scoreClass = "low";
+          sysTooltip = `Engine Visual: ${item.sys_vc_score.toFixed(1)}/10 (Spec: ${item.score.toFixed(1)}/10)`;
+        }
 
-        let scoreClass = "low";
-        if (sysVal >= 7.5) scoreClass = "high";
-        else if (sysVal >= 5.0) scoreClass = "mid";
-
-        let llmScoreClass = "low";
-        if (llmVal >= 7.5) llmScoreClass = "high";
-        else if (llmVal >= 5.0) llmScoreClass = "mid";
+        let llmText = "N/A";
+        let llmScoreClass = "na";
+        let llmTooltip = `LLM Visual: Not audited yet (Spec: ${item.llm_score.toFixed(1)}/10)`;
+        if (item.llm_vc_score !== null && item.llm_vc_score !== undefined) {
+          llmText = item.llm_vc_score.toFixed(1);
+          if (item.llm_vc_score >= 7.5) llmScoreClass = "high";
+          else if (item.llm_vc_score >= 5.0) llmScoreClass = "mid";
+          else llmScoreClass = "low";
+          llmTooltip = `LLM Visual: ${item.llm_vc_score.toFixed(1)}/10 (Spec: ${item.llm_score.toFixed(1)}/10)`;
+        }
 
         const formattedTime = new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        const sysTooltip = `Engine Visual: ${sysVal.toFixed(1)}/10 (Spec: ${item.score.toFixed(1)}/10)`;
-        const llmTooltip = `LLM Visual: ${llmVal.toFixed(1)}/10 (Spec: ${item.llm_score.toFixed(1)}/10)`;
 
         card.innerHTML = `
           <div class="history-card-header">
             <span class="history-question">${item.question}</span>
             <div class="scores-badge">
-              <span class="history-score ${scoreClass}" title="${sysTooltip}">Engine: ${sysVal.toFixed(1)}</span>
-              <span class="history-score ${llmScoreClass}" title="${llmTooltip}">LLM: ${llmVal.toFixed(1)}</span>
+              <span class="history-score ${scoreClass}" title="${sysTooltip}">Engine: ${sysText}</span>
+              <span class="history-score ${llmScoreClass}" title="${llmTooltip}">LLM: ${llmText}</span>
             </div>
           </div>
           <div class="history-time">${formattedTime}</div>
