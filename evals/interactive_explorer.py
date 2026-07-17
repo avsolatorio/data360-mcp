@@ -3576,11 +3576,9 @@ HTML_CONTENT = """
           .catch(() => {});
 
         // Delay DOM-to-PNG screen capture slightly to guarantee rendering has finished
-        if (isNewRun) {
-          setTimeout(() => {
-            captureAndSaveRenderedCharts(scenarioId);
-          }, 1500);
-        }
+        setTimeout(() => {
+          captureAndSaveRenderedCharts(scenarioId);
+        }, 1500);
       }
 
       // Update Specs Code Tab
