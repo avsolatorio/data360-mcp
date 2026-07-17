@@ -896,12 +896,33 @@ def get_history():
         for p in REPORTS_DIR.glob(f"{prefix}*.json"):
             try:
                 data = json.loads(p.read_text())
+                scenario_id = data.get("scenario_id")
+
+                # Check for visual critique file
+                sys_vc_score = None
+                llm_vc_score = None
+                if scenario_id:
+                    vc_file = REPORTS_DIR / f"visual_critique_{scenario_id}.json"
+                    if vc_file.exists():
+                        try:
+                            vc_data = json.loads(vc_file.read_text())
+                            sys_vc = vc_data.get("system_visual_critique")
+                            if isinstance(sys_vc, dict):
+                                sys_vc_score = sys_vc.get("score")
+                            llm_vc = vc_data.get("llm_visual_critique")
+                            if isinstance(llm_vc, dict):
+                                llm_vc_score = llm_vc.get("score")
+                        except Exception:
+                            pass
+
                 reports.append({
                     "filename": p.name,
-                    "scenario_id": data.get("scenario_id"),
+                    "scenario_id": scenario_id,
                     "question": data.get("question"),
                     "score": data.get("system_score", data.get("score", 0.0)),
                     "llm_score": data.get("llm_score", 0.0),
+                    "sys_vc_score": sys_vc_score,
+                    "llm_vc_score": llm_vc_score,
                     "timestamp": data.get("timestamp"),
                 })
             except Exception:
@@ -3237,22 +3258,28 @@ HTML_CONTENT = """
           card.classList.add("active");
         }
 
+        const sysVal = (item.sys_vc_score !== null && item.sys_vc_score !== undefined) ? item.sys_vc_score : item.score;
+        const llmVal = (item.llm_vc_score !== null && item.llm_vc_score !== undefined) ? item.llm_vc_score : item.llm_score;
+
         let scoreClass = "low";
-        if (item.score >= 7.5) scoreClass = "high";
-        else if (item.score >= 5.0) scoreClass = "mid";
+        if (sysVal >= 7.5) scoreClass = "high";
+        else if (sysVal >= 5.0) scoreClass = "mid";
 
         let llmScoreClass = "low";
-        if (item.llm_score >= 7.5) llmScoreClass = "high";
-        else if (item.llm_score >= 5.0) llmScoreClass = "mid";
+        if (llmVal >= 7.5) llmScoreClass = "high";
+        else if (llmVal >= 5.0) llmScoreClass = "mid";
 
         const formattedTime = new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const sysTooltip = `Engine Visual: ${sysVal.toFixed(1)}/10 (Spec: ${item.score.toFixed(1)}/10)`;
+        const llmTooltip = `LLM Visual: ${llmVal.toFixed(1)}/10 (Spec: ${item.llm_score.toFixed(1)}/10)`;
 
         card.innerHTML = `
           <div class="history-card-header">
             <span class="history-question">${item.question}</span>
             <div class="scores-badge">
-              <span class="history-score ${scoreClass}" title="Engine Score">E: ${item.score.toFixed(1)}</span>
-              <span class="history-score ${llmScoreClass}" title="LLM Score">L: ${item.llm_score.toFixed(1)}</span>
+              <span class="history-score ${scoreClass}" title="${sysTooltip}">Engine: ${sysVal.toFixed(1)}</span>
+              <span class="history-score ${llmScoreClass}" title="${llmTooltip}">LLM: ${llmVal.toFixed(1)}</span>
             </div>
           </div>
           <div class="history-time">${formattedTime}</div>
