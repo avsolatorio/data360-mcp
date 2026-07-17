@@ -1444,12 +1444,12 @@ Return a single JSON object containing:
 - "critique": A detailed critique paragraph justifying the score based on visual evidence in the screenshot.
 - "recommendations": A list of specific design improvements."""
 
-    from openai import OpenAI
-    client = OpenAI(api_key=api_key)
-
     def _judge(img_path: Path) -> dict:
         from PIL import Image
-        import io
+        from deepeval.metrics import GEval
+        from deepeval.test_case import LLMTestCase, MLLMImage, SingleTurnParams
+
+        temp_jpg_path = img_path.with_suffix(".temp.jpg")
 
         # Open image using Pillow to normalize color space and remove transparency
         with Image.open(img_path) as img:
@@ -1462,31 +1462,63 @@ Return a single JSON object containing:
             else:
                 background.paste(img)
 
-            # Save the flattened RGB image as a JPEG to a byte buffer
-            buffer = io.BytesIO()
-            background.save(buffer, format="JPEG", quality=90)
-            jpeg_bytes = buffer.getvalue()
+            # Save the flattened RGB image as a JPEG to a temp file
+            background.save(temp_jpg_path, format="JPEG", quality=90)
 
-        b64 = base64.b64encode(jpeg_bytes).decode("utf-8")
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            response_format={"type": "json_object"},
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a professional visual chart auditor. Return only a JSON object with keys: score, critique, recommendations. No markdown formatting."
-                },
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": audit_prompt},
-                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}}
-                    ]
+        try:
+            # Create G-Eval Visual Audit Metric
+            visual_metric = GEval(
+                name="Visual Chart Quality Audit",
+                criteria=(
+                    "Evaluate the actual rendered chart screenshot image based on the query. "
+                    "You must evaluate layout, typography, design hierarchy, and color scheme. "
+                    "You MUST structure the evaluation reason as a valid JSON object string. "
+                    "The JSON object must contain exactly these keys:\n"
+                    "- 'critique': A detailed paragraph justifying the score based on visual evidence in the screenshot.\n"
+                    "- 'recommendations': A list of specific design improvements (as strings).\n"
+                    "Ensure the output reason is only the raw JSON string and does not contain markdown code fences (e.g. ```json ... ```)."
+                ),
+                evaluation_params=[SingleTurnParams.INPUT],
+                model="gpt-4o"
+            )
+
+            # Create test case with MLLMImage
+            test_case = LLMTestCase(
+                input=[
+                    f"User Query Context: '{query}'\n{actual_countries_msg}",
+                    MLLMImage(url=str(temp_jpg_path), local=True)
+                ]
+            )
+
+            visual_metric.measure(test_case)
+
+            # Get G-Eval score (G-Eval scores 0-1, so scale by 10)
+            score_val = (visual_metric.score or 0.0) * 10.0
+            reason_text = (visual_metric.reason or "").strip()
+
+            # Attempt to parse JSON from reason
+            try:
+                clean_reason = reason_text
+                if clean_reason.startswith("```"):
+                    lines = clean_reason.splitlines()
+                    if len(lines) > 2:
+                        clean_reason = "\n".join(lines[1:-1])
+                parsed = json.loads(clean_reason)
+                parsed["score"] = score_val
+                return parsed
+            except Exception as e:
+                print(f"[Visual Critique] Failed to parse JSON from G-Eval reason: {e}. Raw reason: {reason_text}")
+                return {
+                    "score": score_val,
+                    "critique": reason_text,
+                    "recommendations": []
                 }
-            ],
-            temperature=0.2
-        )
-        return json.loads(response.choices[0].message.content)
+        finally:
+            if temp_jpg_path.exists():
+                try:
+                    temp_jpg_path.unlink()
+                except Exception:
+                    pass
 
     critique_results = {
         "scenario_id": scenario_id,
