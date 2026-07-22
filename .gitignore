@@ -211,3 +211,6 @@ node_modules/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Generated viz specs
+static/viz_specs/
