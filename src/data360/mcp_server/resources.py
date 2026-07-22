@@ -368,7 +368,7 @@ async def vega_lite_renderer(spec: str | None = None) -> str:
 
     settings = get_mcp_server_settings()
     port = settings.port or 8021
-    server_base = f"http://localhost:{port}"
+    server_base = getattr(settings, "server_base_url", None) or f"http://localhost:{port}"
     return render_template("vega_lite_renderer.jinja2", server_base=server_base, pre_loaded_spec=spec)
 
 
