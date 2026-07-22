@@ -346,11 +346,13 @@ async def chart_grammar_resource() -> str:
     return CHART_GRAMMAR
 
 
-VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
+from jinja2 import Template
+
+VEGA_LITE_RENDERER_TEMPLATE = Template(r"""<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data360 Vega-Lite Renderer</title>
     <style>
       body {
@@ -366,32 +368,37 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
       }
       #error-display {
         display: none;
-        color: #721c24;
+        padding: 16px;
         background-color: #f8d7da;
+        color: #721c24;
         border: 1px solid #f5c6cb;
-        padding: 15px;
-        margin: 10px;
         border-radius: 4px;
+        margin: 8px;
+        font-family: monospace;
       }
       #error-display h3 {
         margin-top: 0;
-        margin-bottom: 8px;
+        color: #721c24;
       }
       #error-display pre {
         white-space: pre-wrap;
+        word-break: break-all;
         font-size: 11px;
-        margin-top: 10px;
-        background: #fff;
+        background: #f1b0b7;
         padding: 8px;
-        border: 1px solid #ddd;
-        font-family: monospace;
+        border-radius: 2px;
       }
     </style>
-    <script src="<<<SERVER_BASE>>>/static/libs/vega.js"></script>
-    <script src="<<<SERVER_BASE>>>/static/libs/vega-lite.js"></script>
-    <script src="<<<SERVER_BASE>>>/static/libs/vega-embed.js"></script>
+    <script src="{{ server_base }}/static/libs/vega.js"></script>
+    <script src="{{ server_base }}/static/libs/vega-lite.js"></script>
+    <script src="{{ server_base }}/static/libs/vega-embed.js"></script>
   </head>
   <body>
+    {% if pre_loaded_spec %}
+    <script>
+      window.PRE_LOADED_SPEC = {{ pre_loaded_spec | safe }};
+    </script>
+    {% endif %}
     <div id="vis"></div>
     <div id="error-display">
       <h3>Renderer Error</h3>
@@ -399,7 +406,7 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
       <pre id="error-stack"></pre>
     </div>
     <script type="module">
-      const serverBaseUrl = "<<<SERVER_BASE>>>";
+      const serverBaseUrl = "{{ server_base }}";
 
       function showError(message, stack) {
         document.getElementById('vis').style.display = 'none';
@@ -435,7 +442,7 @@ VEGA_LITE_RENDERER_HTML = """<!DOCTYPE html>
         logToServer("Unhandled promise rejection", { message: msg, stack: stack });
       });
 
-      import { App } from "<<<SERVER_BASE>>>/static/libs/ext-apps.js";
+      import { App } from "{{ server_base }}/static/libs/ext-apps.js";
 
       if (window.PRE_LOADED_SPEC) {
         vegaEmbed("#vis", window.PRE_LOADED_SPEC, {
@@ -508,8 +515,7 @@ Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
       }
     </script>
   </body>
-</html>
-"""
+</html>""")
 
 
 @mcp.resource(
@@ -534,13 +540,7 @@ async def vega_lite_renderer(spec: str | None = None) -> str:
     settings = get_mcp_server_settings()
     port = settings.port or 8021
     server_base = f"http://localhost:{port}"
-    # Use an explicit sentinel that cannot appear in real HTML/JS content.
-    # All occurrences in VEGA_LITE_RENDERER_HTML are replaced in one pass.
-    html = VEGA_LITE_RENDERER_HTML.replace("<<<SERVER_BASE>>>", server_base)
-    if spec:
-        injection = f"\n      window.PRE_LOADED_SPEC = {spec};\n"
-        html = html.replace("<body>", f"<body>\n    <script>{injection}</script>")
-    return html
+    return VEGA_LITE_RENDERER_TEMPLATE.render(server_base=server_base, pre_loaded_spec=spec)
 
 
 import os
