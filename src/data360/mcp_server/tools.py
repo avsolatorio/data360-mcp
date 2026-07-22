@@ -14,7 +14,6 @@ from fastmcp.apps import AppConfig
 from fastmcp.exceptions import ToolError
 from fastmcp.tools import ToolResult
 from fastmcp.tools.tool import Tool
-from jinja2 import Template
 from mcp.types import TextContent
 
 from data360 import api as data360_api
@@ -904,168 +903,15 @@ compare_countries = mcp.add_tool(
 
 
 
-DATA360_CHART_HTML_TEMPLATE = Template("""<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data360 Vega-Lite Renderer</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 8px;
-      background: transparent;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    #vis {
-      width: 100%;
-      height: 100%;
-      min-height: 400px;
-    }
-  </style>
-  <script>{{ vega_js | safe }}</script>
-  <script>{{ vega_interpreter_js | safe }}</script>
-  <script>{{ vega_lite_js | safe }}</script>
-  <script>{{ vega_embed_js | safe }}</script>
-</head>
-<body>
-  <div id="vis"></div>
-
-  <script type="module">
-    class McpAppClient {
-      constructor() {
-        this.pendingRequests = new Map();
-        this.requestId = 0;
-        this.initialized = false;
-        this.hostContext = null;
-        window.addEventListener('message', (e) => this.handleMessage(e));
-        this.initialize();
-      }
-
-      async initialize() {
-        try {
-          const result = await this.request('ui/initialize', {
-            appInfo: { name: 'Data360 Chart', version: '1.0.0' },
-            appCapabilities: {},
-            protocolVersion: '2025-11-21'
-          });
-          this.hostContext = result.hostContext;
-          this.initialized = true;
-          this.notify('ui/notifications/initialized', {});
-          this.reportSize();
-        } catch (error) {
-          console.error('Failed to initialize MCP App:', error);
-        }
-      }
-
-      handleMessage(event) {
-        const data = event.data;
-        if (!data || typeof data !== 'object') return;
-        if ('id' in data && this.pendingRequests.has(data.id)) {
-          const { resolve, reject } = this.pendingRequests.get(data.id);
-          this.pendingRequests.delete(data.id);
-          if (data.error) {
-            reject(new Error(data.error.message));
-          } else {
-            resolve(data.result);
-          }
-          return;
-        }
-        if (data.method === 'ui/notifications/tool-result') {
-          try {
-            const result = data.params;
-            let spec = null;
-            let strategy = null;
-            if (result.structuredContent) {
-              spec = result.structuredContent.spec;
-              strategy = result.structuredContent.strategy;
-            }
-            if (!spec && result.content) {
-              const textBlock = result.content.find(c => c.type === 'text');
-              if (textBlock) {
-                try {
-                  const payload = JSON.parse(textBlock.text);
-                  spec = payload.spec;
-                  strategy = payload.strategy;
-                } catch (e) {
-                  // Ignore JSON parse error for plain text
-                }
-              }
-            }
-            renderChart(spec, strategy);
-          } catch (e) {
-            console.error('Error parsing tool result:', e);
-          }
-        }
-      }
-
-      request(method, params) {
-        return new Promise((resolve, reject) => {
-          const id = ++this.requestId;
-          this.pendingRequests.set(id, { resolve, reject });
-          window.parent.postMessage({ jsonrpc: '2.0', id, method, params }, '*');
-          setTimeout(() => {
-            if (this.pendingRequests.has(id)) {
-              this.pendingRequests.delete(id);
-              reject(new Error('Request timed out'));
-            }
-          }, 30000);
-        });
-      }
-
-      notify(method, params) {
-        window.parent.postMessage({ jsonrpc: '2.0', method, params }, '*');
-      }
-
-      reportSize() {
-        this.notify('ui/notifications/size-changed', {
-          height: document.body.scrollHeight
-        });
-      }
-    }
-
-    const mcpApp = new McpAppClient();
-    const visDiv = document.getElementById('vis');
-
-    function renderChart(spec, strategy) {
-      if (!spec) {
-        visDiv.innerHTML = '<p>No visualization spec available</p>';
-        mcpApp.reportSize();
-        return;
-      }
-
-      try {
-        vegaEmbed("#vis", spec, {
-          actions: false,
-          theme: mcpApp.hostContext?.theme === 'dark' ? 'dark' : 'default',
-          ast: true,
-          expr: vega.expressionInterpreter
-        }).then(() => {
-          mcpApp.reportSize();
-        }).catch(err => {
-          console.error(err);
-          visDiv.innerHTML = `<p style="color:red;">Failed to render chart spec: ${err.message}</p>`;
-          mcpApp.reportSize();
-        });
-      } catch (e) {
-        visDiv.innerHTML = `<p style="color:red;">Error preparing spec: ${e.message}</p>`;
-        mcpApp.reportSize();
-      }
-    }
-
-    window.addEventListener('load', () => {
-      mcpApp.reportSize();
-    });
-  </script>
-</body>
-</html>""")
+from data360.templates import render_template
 
 
 @mcp.resource("ui://data360-chart/index.html")
 def data360_chart_html() -> str:
     """HTML resource for the Data360 self-contained Vega-Lite chart viewer Custom HTML app."""
     vega_js, vega_lite_js, vega_embed_js, vega_interpreter_js = get_cached_vega_libs()
-    return DATA360_CHART_HTML_TEMPLATE.render(
+    return render_template(
+        "data360_chart.jinja2",
         vega_js=vega_js,
         vega_lite_js=vega_lite_js,
         vega_embed_js=vega_embed_js,
