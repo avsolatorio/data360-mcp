@@ -903,7 +903,7 @@ compare_countries = mcp.add_tool(
 
 
 
-from data360.templates import render_template
+from data360.templates.render import render_template
 
 
 @mcp.resource("ui://data360-chart/index.html")
