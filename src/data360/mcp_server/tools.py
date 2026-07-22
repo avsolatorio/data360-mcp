@@ -342,8 +342,10 @@ def get_cached_vega_libs() -> tuple[str, str, str, str]:
                 "Failed to load local Vega library scripts: %s", e
             )
             vega_js = vega_lite_js = vega_embed_js = vega_interp_js = ""
-        _vega_libs_cache = (vega_js, vega_lite_js, vega_embed_js, vega_interp_js)
-        return _vega_libs_cache
+        res = (vega_js, vega_lite_js, vega_embed_js, vega_interp_js)
+        if all(res):
+            _vega_libs_cache = res
+        return res
 
 
 # ---------------------------------------------------------------------------

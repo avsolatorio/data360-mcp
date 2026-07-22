@@ -526,8 +526,6 @@ Result JSON: ${result ? JSON.stringify(result, null, 2) : 'null'}
             resource_domains=[
                 "http://localhost:*",
                 "http://127.0.0.1:*",
-                "https://unpkg.com",
-                "https://cdn.jsdelivr.net",
                 "'unsafe-eval'",
             ],
         )
