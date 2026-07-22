@@ -19,8 +19,18 @@ MAPPINGS = [
 ]
 
 
-def sync_libs():
+def sync_libs(force: bool = False):
     os.makedirs(STATIC_LIBS_DIR, exist_ok=True)
+
+    # Fast path: Return early if all target libraries already exist and are non-empty
+    all_present = not force and all(
+        os.path.exists(os.path.join(STATIC_LIBS_DIR, dest_fn))
+        and os.path.getsize(os.path.join(STATIC_LIBS_DIR, dest_fn)) > 0
+        for _, _, dest_fn in MAPPINGS
+    )
+    if all_present:
+        return
+
     node_modules = os.path.join(PROJECT_ROOT, "node_modules")
 
     # If node_modules is missing or any package is missing, auto-run npm install
@@ -56,4 +66,5 @@ def sync_libs():
 
 
 if __name__ == "__main__":
-    sync_libs()
+    force_sync = "--force" in sys.argv or "-f" in sys.argv
+    sync_libs(force=force_sync)
