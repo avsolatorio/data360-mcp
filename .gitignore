@@ -218,6 +218,8 @@ static/libs/vega.js
 static/libs/vega-lite.js
 static/libs/vega-embed.js
 static/libs/vega-interpreter.js
+static/libs/ext-apps.js
+
 
 
 # macOS metadata

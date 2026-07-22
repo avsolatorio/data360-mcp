@@ -11,10 +11,10 @@
     "sync-libs": "python3 scripts/sync_static_libs.py"
   },
   "devDependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.7.4",
     "vega": "^5.30.0",
     "vega-embed": "^6.29.0",
     "vega-interpreter": "^1.0.5",
     "vega-lite": "^5.23.0"
   }
 }
-

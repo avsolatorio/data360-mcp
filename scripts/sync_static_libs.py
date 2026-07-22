@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sync Vega static libraries from official npm packages into static/libs/.
+Sync Vega and MCP static libraries from official npm packages into static/libs/.
 """
 import os
 import shutil
@@ -15,6 +15,7 @@ MAPPINGS = [
     ("vega-lite", "build/vega-lite.min.js", "vega-lite.js"),
     ("vega-embed", "build/vega-embed.min.js", "vega-embed.js"),
     ("vega-interpreter", "build/vega-interpreter.min.js", "vega-interpreter.js"),
+    ("@modelcontextprotocol/ext-apps", "dist/src/app-with-deps.js", "ext-apps.js"),
 ]
 
 
@@ -29,7 +30,7 @@ def sync_libs():
     )
 
     if missing_any:
-        print("Installing npm dependencies to fetch official Vega packages...")
+        print("Installing npm dependencies to fetch official packages...")
         try:
             subprocess.run(["npm", "install"], cwd=PROJECT_ROOT, check=True)
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
