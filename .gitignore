@@ -214,3 +214,8 @@ __marimo__/
 
 # Generated viz specs
 static/viz_specs/
+
+# macOS metadata
+.DS_Store
+*.DS_Store
+
