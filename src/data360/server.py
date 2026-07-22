@@ -340,7 +340,8 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
             charts_api_url_override=None,
         )
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        _logger.exception("Failed to generate viz spec: %s", e)
+        return JSONResponse(status_code=500, content={"error": "Failed to generate visualization spec due to an internal error."})
 
     if res.get("error"):
         return JSONResponse(status_code=400, content={"error": res.get("error")})

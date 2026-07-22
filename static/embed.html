@@ -26,6 +26,18 @@
 <body>
     <div id="vis"></div>
     <script>
+        function showError(msg, isRed = true) {
+            const container = document.getElementById('vis');
+            container.innerHTML = '';
+            const p = document.createElement('p');
+            if (isRed) {
+                p.style.color = 'red';
+            }
+            p.style.padding = '10px';
+            p.textContent = msg;
+            container.appendChild(p);
+        }
+
         try {
             const params = new URLSearchParams(window.location.search);
             const specStr = params.get('spec');
@@ -37,13 +49,13 @@
                     width: 'container',
                     height: 'container'
                 }).catch(err => {
-                    document.getElementById('vis').innerHTML = "<p style='color:red;padding:10px;'>Render Error: " + err.message + "</p>";
+                    showError('Render Error: ' + err.message);
                 });
             } else {
-                document.getElementById('vis').innerHTML = "<p style='padding:10px;'>No visualization spec provided.</p>";
+                showError('No visualization spec provided.', false);
             }
         } catch (e) {
-            document.getElementById('vis').innerHTML = "<p style='color:red;padding:10px;'>Error parsing spec: " + e.message + "</p>";
+            showError('Error parsing spec: ' + e.message);
         }
     </script>
 </body>
