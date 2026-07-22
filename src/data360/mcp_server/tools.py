@@ -14,6 +14,7 @@ from fastmcp.apps import AppConfig
 from fastmcp.exceptions import ToolError
 from fastmcp.tools import ToolResult
 from fastmcp.tools.tool import Tool
+from jinja2 import Template
 from mcp.types import TextContent
 
 from data360 import api as data360_api
@@ -901,11 +902,7 @@ compare_countries = mcp.add_tool(
 
 
 
-@mcp.resource("ui://data360-chart/index.html")
-def data360_chart_html() -> str:
-    """HTML resource for the Data360 self-contained Vega-Lite chart viewer Custom HTML app."""
-    vega_js, vega_lite_js, vega_embed_js, vega_interpreter_js = get_cached_vega_libs()
-    html_template = """<!DOCTYPE html>
+DATA360_CHART_HTML_TEMPLATE = Template("""<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -924,10 +921,10 @@ def data360_chart_html() -> str:
       min-height: 400px;
     }
   </style>
-  <script>{vega_js}</script>
-  <script>{vega_interpreter_js}</script>
-  <script>{vega_lite_js}</script>
-  <script>{vega_embed_js}</script>
+  <script>{{ vega_js | safe }}</script>
+  <script>{{ vega_interpreter_js | safe }}</script>
+  <script>{{ vega_lite_js | safe }}</script>
+  <script>{{ vega_embed_js | safe }}</script>
 </head>
 <body>
   <div id="vis"></div>
@@ -1059,6 +1056,16 @@ def data360_chart_html() -> str:
     });
   </script>
 </body>
-</html>
-"""
-    return html_template.replace("{vega_js}", vega_js).replace("{vega_lite_js}", vega_lite_js).replace("{vega_embed_js}", vega_embed_js).replace("{vega_interpreter_js}", vega_interpreter_js)
+</html>""")
+
+
+@mcp.resource("ui://data360-chart/index.html")
+def data360_chart_html() -> str:
+    """HTML resource for the Data360 self-contained Vega-Lite chart viewer Custom HTML app."""
+    vega_js, vega_lite_js, vega_embed_js, vega_interpreter_js = get_cached_vega_libs()
+    return DATA360_CHART_HTML_TEMPLATE.render(
+        vega_js=vega_js,
+        vega_lite_js=vega_lite_js,
+        vega_embed_js=vega_embed_js,
+        vega_interpreter_js=vega_interpreter_js,
+    )
