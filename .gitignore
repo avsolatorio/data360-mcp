@@ -212,10 +212,14 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# Generated viz specs
+# Generated viz specs & static vendor libs
 static/viz_specs/
+static/libs/vega.js
+static/libs/vega-lite.js
+static/libs/vega-embed.js
+static/libs/vega-interpreter.js
+
 
 # macOS metadata
 .DS_Store
 *.DS_Store
-

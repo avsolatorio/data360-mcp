@@ -4,6 +4,7 @@ Sync Vega static libraries from official npm packages into static/libs/.
 """
 import os
 import shutil
+import subprocess
 import sys
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,10 +22,18 @@ def sync_libs():
     os.makedirs(STATIC_LIBS_DIR, exist_ok=True)
     node_modules = os.path.join(PROJECT_ROOT, "node_modules")
 
-    if not os.path.exists(node_modules):
-        print(f"Error: node_modules directory not found at {node_modules}.")
-        print("Please run 'npm install' first.")
-        sys.exit(1)
+    # If node_modules is missing or any package is missing, auto-run npm install
+    missing_any = not os.path.exists(node_modules) or any(
+        not os.path.exists(os.path.join(node_modules, pkg, src_rel))
+        for pkg, src_rel, _ in MAPPINGS
+    )
+
+    if missing_any:
+        print("Installing npm dependencies to fetch official Vega packages...")
+        try:
+            subprocess.run(["npm", "install"], cwd=PROJECT_ROOT, check=True)
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            print(f"Warning: Could not run npm install: {e}")
 
     copied = 0
     for pkg_name, src_rel, dest_filename in MAPPINGS:
@@ -38,7 +47,11 @@ def sync_libs():
         else:
             print(f"⚠ Warning: Could not find {src_path}")
 
-    print(f"\nDone. Synced {copied}/{len(MAPPINGS)} libraries to {STATIC_LIBS_DIR}")
+    if copied == len(MAPPINGS):
+        print(f"\nDone. Synced {copied}/{len(MAPPINGS)} libraries to {STATIC_LIBS_DIR}")
+    else:
+        print(f"\nWarning: Only synced {copied}/{len(MAPPINGS)} libraries.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
