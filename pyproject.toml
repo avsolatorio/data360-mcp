@@ -39,7 +39,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-data360 = ["tool_contract_version.json", "databases.json", "ref_area_groups.json"]
+data360 = ["tool_contract_version.json", "databases.json", "ref_area_groups.json", "templates/*.jinja2"]
 
 [tool.uv.workspace]
 members = ["packages/data360-mcp-agent"]
