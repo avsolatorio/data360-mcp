@@ -56,7 +56,7 @@
       <pre id="error-stack"></pre>
     </div>
     <script type="module">
-      const serverBaseUrl = "{{ server_base }}";
+      const serverBaseUrl = "{{ server_base }}" || window.location.origin;
 
       function showError(message, stack) {
         document.getElementById('vis').style.display = 'none';
@@ -92,7 +92,8 @@
         logToServer("Unhandled promise rejection", { message: msg, stack: stack });
       });
 
-      import { App } from "{{ server_base }}/static/libs/ext-apps.js";
+      const extAppsUrl = serverBaseUrl + "/static/libs/ext-apps.js";
+      const { App } = await import(extAppsUrl);
 
       if (window.PRE_LOADED_SPEC) {
         vegaEmbed("#vis", window.PRE_LOADED_SPEC, {
