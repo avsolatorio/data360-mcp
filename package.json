@@ -7,6 +7,14 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "sync-libs": "python3 scripts/sync_static_libs.py"
+  },
+  "devDependencies": {
+    "vega": "^5.30.0",
+    "vega-embed": "^6.29.0",
+    "vega-interpreter": "^1.0.5",
+    "vega-lite": "^5.23.0"
   }
 }
+
