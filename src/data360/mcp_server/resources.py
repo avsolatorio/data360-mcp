@@ -346,7 +346,7 @@ async def chart_grammar_resource() -> str:
     return CHART_GRAMMAR
 
 
-from data360.templates import render_template
+from data360.templates.render import render_template
 
 
 @mcp.resource(
