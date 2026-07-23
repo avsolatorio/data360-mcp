@@ -985,5 +985,6 @@ async def data360_interactive_choices(
         "title": title or "Choose an Option"
     }
     return ToolResult(
-        content=[TextContent(type="text", text=json.dumps(payload))]
+        content=[TextContent(type="text", text=json.dumps(payload))],
+        structured_content=payload,
     )
