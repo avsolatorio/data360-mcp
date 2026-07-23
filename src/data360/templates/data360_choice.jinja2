@@ -178,20 +178,25 @@
         this.hostContext = null;
         this.initialized = false;
         window.addEventListener('message', this.handleMessage.bind(this));
-        this.init();
+        this.initialize();
       }
 
-      async init() {
+      async initialize() {
         try {
           const result = await this.request('ui/initialize', {
+            appInfo: { name: 'Data360 Choice', version: '1.0.0' },
             appCapabilities: {},
             protocolVersion: '2025-11-21'
           });
-          this.hostContext = result.hostContext;
+          this.hostContext = result?.hostContext || null;
           this.initialized = true;
           this.notify('ui/notifications/initialized', {});
           this.applyTheme();
           this.reportSize();
+
+          if (result && result.toolResult) {
+            this.handleToolResult(result.toolResult);
+          }
         } catch (error) {
           console.error('Failed to initialize MCP App:', error);
         }
@@ -205,6 +210,28 @@
         } else {
           document.documentElement.classList.add('light');
           document.documentElement.classList.remove('dark');
+        }
+      }
+
+      handleToolResult(result) {
+        if (!result) return;
+        let payload = null;
+        if (result.prompt && result.options) {
+          payload = result;
+        } else if (result.structuredContent && result.structuredContent.prompt) {
+          payload = result.structuredContent;
+        } else if (result.content && Array.isArray(result.content)) {
+          const textBlock = result.content.find(c => c && c.type === 'text');
+          if (textBlock && textBlock.text) {
+            try {
+              payload = JSON.parse(textBlock.text);
+            } catch (e) {
+              console.error('Error parsing textBlock JSON:', e);
+            }
+          }
+        }
+        if (payload) {
+          renderChoiceCard(payload);
         }
       }
 
@@ -227,21 +254,7 @@
           return;
         }
         if (data.method === 'ui/notifications/tool-result') {
-          try {
-            const result = data.params;
-            let payload = null;
-            if (result.content) {
-              const textBlock = result.content.find(c => c.type === 'text');
-              if (textBlock) {
-                payload = JSON.parse(textBlock.text);
-              }
-            }
-            if (payload) {
-              renderChoiceCard(payload);
-            }
-          } catch (e) {
-            console.error('Error parsing tool result:', e);
-          }
+          this.handleToolResult(data.params);
         }
       }
 
