@@ -97,6 +97,10 @@ async def _search_indicators(
         dedupe: De-duplicate indicators across query results.
         database: Optional database name or ID to filter search results (e.g. "wdi", "wgi", "World Development Indicators"). Multiple databases can be queried at once by separating them with a semicolon (e.g. "pip; lpgd; sgi").
     """
+    if queries is not None and len(queries) == 1 and not query:
+        query = queries[0]
+        queries = None
+
     return await data360_api.search(
         query=query,
         required_country=required_country,
@@ -916,4 +920,70 @@ def data360_chart_html() -> str:
         vega_lite_js=vega_lite_js,
         vega_embed_js=vega_embed_js,
         vega_interpreter_js=vega_interpreter_js,
+    )
+
+
+@mcp.tool(
+    name="data360_interactive_choices",
+    app=AppConfig(resource_uri="ui://data360-choice/index.html", prefers_border=False),
+)
+async def data360_interactive_choices(
+    prompt: str,
+    options: list[str],
+    title: Optional[str] = None,
+) -> ToolResult:
+    """Present the user with a set of options to choose from using a custom HTML renderer.
+
+    Always call this tool to provide follow-ups and elicitations based on the natural flow of the
+    conversation and the type of information being discussed. Your goal is to anticipate the
+    user's next question or provide an easy way to steer a broad topic.
+
+    Call this tool in the following scenarios:
+
+    1. Single Follow-up (1 choice):
+       - The "Obvious Next Step": When there is one highly logical action to take after your response.
+         For example, if you explain a mathematical concept, offer a follow-up to walk through a practical example.
+       - Deep Dives into Jargon: If your response introduces a complex technical term or a new concept,
+         offer a single follow-up to explain that specific term so the main response does not get too cluttered.
+       - Launching Interactive Tools: If you mention that you can build a widget or run a simulation,
+         provide a single button to let the user trigger that specific interactive element directly.
+
+    2. Multiple Choices (2+ choices):
+       - Broad Overviews & Branching Paths: When you give a high-level summary of a massive topic,
+         use this to let the user choose exactly which sub-category or "branch" you want to zoom in on next.
+       - Disambiguation (Clarifying Intent): If the user's request is open-ended or could be interpreted in
+         a few different ways, present options so the user can clarify exactly which direction they meant to take.
+         Examples:
+         * GDP/Metric variant: "Real GDP per capita (constant 2015 US$)" vs "Nominal GDP per capita (current US$)"
+         * Timeframe/Year range: "Latest available year" vs "Historical trend (last 10 years)" vs "Specify a custom range"
+         * Breakdown/Disaggregation: "Total economy average" vs "Break down by gender (Male vs Female)" vs "Break down by geographic area (Urban vs Rural)"
+       - Menus and Brainstorming: When generating lists of ideas (like different programming frameworks,
+         design patterns, or troubleshooting steps), use this to act like a clickable menu, letting the user
+         instantly select the one you want to explore.
+
+    3. Non-exhaustive Lists (CRITICAL):
+       - If you present a list of choices that is not exhaustive (such as listing a few popular countries,
+         specific years, indicator variants, or breakdowns), you MUST always dynamically include a customizable
+         option as the last item in the options list.
+         Examples:
+         * Country list: options=["Kenya", "Nigeria", "South Africa", "United States", "India", "Specify another country..."]
+         * Year list: options=["2024 (latest)", "Last 5 years", "Last 10 years", "Specify a custom range"]
+         * Breakdowns: options=["Total Average", "Breakdown by Gender", "Other (specify)"]
+
+    Essentially, surface these components whenever you can save the user the effort of typing out the
+    logical next prompt, or when the conversation has reached a crossroads and you need the user to choose
+    the direction.
+
+    Args:
+        prompt: The question or decision to present to the user.
+        options: List of options the user can choose from.
+        title: Optional heading for the card.
+    """
+    payload = {
+        "prompt": prompt,
+        "options": options,
+        "title": title or "Choose an Option"
+    }
+    return ToolResult(
+        content=[TextContent(type="text", text=json.dumps(payload))]
     )

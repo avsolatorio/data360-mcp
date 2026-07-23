@@ -372,6 +372,13 @@ async def vega_lite_renderer(spec: str | None = None) -> str:
     return render_template("vega_lite_renderer.jinja2", server_base=server_base, pre_loaded_spec=spec)
 
 
+@mcp.resource("ui://data360-choice/index.html")
+async def data360_choice_html() -> str:
+    """HTML resource for the Data360 self-contained choice Custom HTML app."""
+    return render_template("data360_choice.jinja2")
+
+
+
 import os
 from fastapi.staticfiles import StaticFiles
 from starlette.requests import Request
