@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      include: ["src/viz-card", "src/search-card"],
+      include: ["src/viz-card", "src/search-card", "src/choice-card"],
       rollupTypes: true,
       tsconfigPath: "./tsconfig.json",
     }),
@@ -18,6 +18,7 @@ export default defineConfig({
       entry: {
         "viz-card": resolve(__dirname, "src/viz-card/index.ts"),
         "search-card": resolve(__dirname, "src/search-card/index.ts"),
+        "choice-card": resolve(__dirname, "src/choice-card/index.ts"),
       },
       formats: ["es", "cjs"],
       fileName: (format, entryName) =>
