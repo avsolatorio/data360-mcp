@@ -42,8 +42,7 @@ jobs:
             @data360/mcp-ui \
             @data360/mcp-ui-angular ; do
             local_ver=$(node -p "require('./packages/${name#@data360/}/package.json').version")
-            published=$(npm view "$name" version 2>/dev/null || echo "none")
-            if [ "$published" = "$local_ver" ]; then
+            if npm view "$name@$local_ver" >/dev/null 2>&1; then
               echo "SKIP $name@$local_ver (already on registry)"
               continue
             fi

@@ -1,7 +1,11 @@
-"""Ensure release-please version manifest and config stay in sync with package versions."""
+"""Ensure release-please version manifest and config stay in sync with package versions.
+
+Packages are versioned independently (no lockstep), so the manifest must match
+each package's own version rather than a single shared version.
+"""
 
 import json
-import re
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -11,9 +15,6 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = REPO_ROOT / ".github" / "release-please-config.json"
 MANIFEST_PATH = REPO_ROOT / ".github" / "release-please-manifest.json"
 NPM_WORKFLOW_PATH = REPO_ROOT / ".github" / "workflows" / "npm-release.yml"
-
-_PYPROJECT_VERSION = re.compile(r'^version\s*=\s*"([^"]+)"', re.MULTILINE)
-
 
 def _npm_version(name: str) -> str:
     data = json.loads((REPO_ROOT / "packages" / name / "package.json").read_text(encoding="utf-8"))
@@ -25,10 +26,10 @@ def _npm_version(name: str) -> str:
 
 
 def _py_version() -> str:
-    text = (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
-    match = _PYPROJECT_VERSION.search(text)
-    assert match is not None, "missing version = ... in pyproject.toml"
-    return match.group(1)
+    data = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    version = data["project"]["version"]
+    assert isinstance(version, str) and version.strip()
+    return version.strip()
 
 
 @pytest.fixture
