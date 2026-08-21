@@ -16,7 +16,31 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gi
 
 ---
 
-## Getting Started
+## Installation & Version Pinning
+
+Releases follow [Semantic Versioning](https://semver.org/); every release publishes a `vX.Y.Z` git tag plus a corresponding [GitHub Release](https://github.com/worldbank/data360-mcp/releases). Minor releases keep backward-compatible API contracts, so pin a major/minor to lock behavior.
+
+Install the Python server from PyPI and pin a known-good release:
+
+```bash
+pip install data360-mcp==0.1.3
+```
+
+Roll back to an earlier verified release by installing any prior version listed on the [Releases page](https://github.com/worldbank/data360-mcp/releases):
+
+```bash
+pip install data360-mcp==<previous-version>
+```
+
+The `@data360/*` npm UI packages are published on every release under the same version number; pin them the same way:
+
+```bash
+npm install @data360/mcp-ui@X.Y.Z
+```
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for how releases are cut.
+
+---
 
 ### Prerequisites
 
