@@ -27,8 +27,11 @@ jobs:
         run: |
           uv build
 
-      # Optional: sanity check the built artifacts before publishing
-      # e.g., install from dist/ and run smoke tests
+      - name: Smoke-test installable wheel
+        run: |
+          uv venv --seed
+          uv pip install --python .venv/bin/python --no-deps dist/*.whl
+          .venv/bin/python -c "import data360; print(f'ok {data360.__version__}')"
 
       - name: Publish to PyPI
         run: |
