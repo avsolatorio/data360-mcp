@@ -158,3 +158,13 @@ Native OData filters (specifically `contains` on text fields) often return incom
 The `dimensions` field in search results/metadata indicates *potential* breakdowns (e.g., `SEX`), but does **not guarantee** data exists for all values.
 - **Example**: An indicator might list `SEX` as a dimension but only contain data for `_T` (Total).
 - **Verification**: Use `get_disaggregation` to check *actual* available values for a specific indicator. It scans the data and returns only values present (e.g. `['F', '_T']` only, missing 'M').
+
+## Releases
+
+Releases are driven by [release-please](https://github.com/googleapis/release-please) and Conventional Commits.
+
+- **Version bump rules:** `fix:` → patch, `feat:` → minor, a `BREAKING CHANGE:` footer or `<type>!:` → major.
+- **How a release happens:** commits to `dev` make release-please maintain **one** Release PR that bumps all publishable packages together (Python `data360-mcp` and the `@data360/*` npm packages share one version).
+- **Cutting a release:** merge the Release PR. release-please creates the GitHub Release tagged `vX.Y.Z` and pushes the tag.
+- **Publication:** the tag triggers the PyPI publish workflow (`data360-mcp` only); the published release triggers the npm publish workflow (`@data360/tool-types`, `@data360/mcp-viz-core`, `@data360/mcp-ui`, `@data360/mcp-ui-angular`).
+- **Rollback:** pin consumers to any prior release—PyPI `pip install data360-mcp==X.Y.Z`, npm `@data360/mcp-ui@X.Y.Z` (see README).
