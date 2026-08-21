@@ -1,0 +1,7 @@
+{
+  ".": "0.1.2",
+  "packages/tool-types": "0.0.5",
+  "packages/mcp-viz-core": "0.0.3",
+  "packages/mcp-ui": "0.0.10",
+  "packages/mcp-ui-angular": "0.0.3"
+}

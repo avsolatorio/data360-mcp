@@ -1,0 +1,48 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "changelog-sections": [
+    { "type": "feat", "section": "Features", "hidden": false },
+    { "type": "fix", "section": "Bug Fixes", "hidden": false },
+    { "type": "chore", "section": "Miscellaneous", "hidden": true },
+    { "type": "docs", "section": "Documentation", "hidden": true },
+    { "type": "build", "section": "Build", "hidden": true },
+    { "type": "style", "section": "Style", "hidden": true }
+  ],
+  "include-v-in-tag": true,
+  "include-component-in-tag": false,
+  "packages": {
+    ".": {
+      "component": "data360-mcp",
+      "release-type": "python"
+    },
+    "packages/tool-types": {
+      "component": "@data360/tool-types",
+      "release-type": "node"
+    },
+    "packages/mcp-viz-core": {
+      "component": "@data360/mcp-viz-core",
+      "release-type": "node"
+    },
+    "packages/mcp-ui": {
+      "component": "@data360/mcp-ui",
+      "release-type": "node"
+    },
+    "packages/mcp-ui-angular": {
+      "component": "@data360/mcp-ui-angular",
+      "release-type": "node"
+    }
+  },
+  "plugins": {
+    "linked-versions": {
+      "groupName": "data360-mcp",
+      "merge": true,
+      "components": [
+        "data360-mcp",
+        "@data360/tool-types",
+        "@data360/mcp-viz-core",
+        "@data360/mcp-ui",
+        "@data360/mcp-ui-angular"
+      ]
+    }
+  }
+}
