@@ -78,6 +78,7 @@ cp .env.example .env
 | `DATA360_API_BASE_URL` | Base URL for the World Bank Data360 API | `https://data360api.worldbank.org` |
 | `MCP_PORT` | Port for the MCP server | `8000` |
 | `MCP_TRANSPORT` | Transport protocol (`http` or `sse`) | `http` |
+| `MCP_JSON_RESPONSE` | Streamable HTTP `/mcp` returns JSON (`true`) instead of SSE framing | `true` |
 | `MCP_CHARTS_API_URL` | Optional URL for an external chart rendering API | _(none)_ |
 
 ### Run the Server
@@ -101,6 +102,23 @@ uv run poe serve --port 8021 --transport sse
 | URL (http) | `http://localhost:8000/mcp` |
 | URL (sse) | `http://localhost:8021/sse` |
 | Docker / external | Replace `localhost` with `host.docker.internal` |
+
+`/mcp` defaults to JSON Streamable HTTP (`MCP_JSON_RESPONSE=true`) so proxies that reject `text/event-stream` Content-Length mismatches (for example Cloudflare) can complete `initialize` / `tools/list` / `tools/call`. Set `MCP_JSON_RESPONSE=false` to restore SSE-framed Streamable HTTP. Legacy SSE remains available via `--transport sse`.
+
+Registered tools are also callable as ordinary HTTP JSON (no MCP session):
+
+```bash
+curl -sS -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"curl","version":"0"}}}'
+
+curl -sS -X POST http://localhost:8000/api/v1/tools/data360_search_indicators \
+  -H "Content-Type: application/json" \
+  -d '{"query":"GDP per capita","required_country":"KEN","limit":3}'
+```
+
+List tool names: `GET /api/v1/tools`.
 
 ### Try the Demo
 

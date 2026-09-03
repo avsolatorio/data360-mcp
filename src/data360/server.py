@@ -6,19 +6,18 @@ import uuid
 
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from data360.mcp_server.resources import CORSStaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request as StarletteRequest
 
 from data360.config import get_mcp_server_settings, setup_logging
 from data360.health import get_liveness_body, run_readiness
 from data360.http_client import aclose_shared_httpx_client
+from data360.mcp_server.resources import CORSStaticFiles
 from data360.otel_setup import (
     configure_open_telemetry_for_server,
     instrument_httpx_outbound,
@@ -40,14 +39,18 @@ for _arg in sys.argv:
         try:
             _parsed_port = int(_arg.split("=", 1)[1])
         except ValueError:
-            logging.warning("Could not parse port from argv argument '%s'; using default.", _arg)
+            logging.warning(
+                "Could not parse port from argv argument '%s'; using default.", _arg
+            )
         break
     if _arg == "--port":
         _idx = sys.argv.index(_arg)
         try:
             _parsed_port = int(sys.argv[_idx + 1])
         except (ValueError, IndexError):
-            logging.warning("Could not parse port after '--port' in argv; using default.")
+            logging.warning(
+                "Could not parse port after '--port' in argv; using default."
+            )
         break
 if _parsed_port is not None:
     mcp_settings.port = _parsed_port
@@ -90,14 +93,71 @@ if mcp_settings.env != "local" and _connection_string:
         pass
 
 
+_HEALTH_PATHS = frozenset({"/mcp/health", "/mcp/ready"})
+_TOOLS_HTTP_PREFIX = "/api/v1/tools"
+
+
+def _is_tool_request_path(path: str) -> bool:
+    """True for MCP Streamable HTTP and standard HTTP tool routes (not health probes)."""
+    if path in _HEALTH_PATHS:
+        return False
+    return path.startswith("/mcp") or path.startswith(_TOOLS_HTTP_PREFIX)
+
+
+def _rest_tool_name(path: str) -> str | None:
+    """Extract tool name from POST /api/v1/tools/{name}; None for the list route."""
+    prefix = f"{_TOOLS_HTTP_PREFIX}/"
+    if not path.startswith(prefix):
+        return None
+    name = path[len(prefix) :].strip("/")
+    return name or None
+
+
+def _tool_security_error(tool_name: str, arguments: dict[str, Any]) -> str | None:
+    """Return a security error message, or None if the tool call is allowed."""
+    from data360.mcp_server.security_validator import (  # noqa: PLC0415
+        validate_search_arguments,
+        validate_tool_call,
+    )
+
+    if not isinstance(arguments, dict):
+        arguments = {}
+
+    is_valid, error_msg = validate_tool_call(tool_name, arguments)
+    if not is_valid:
+        return error_msg
+    if tool_name == "data360_search_indicators":
+        is_valid, error_msg = validate_search_arguments(arguments)
+        if not is_valid:
+            return error_msg
+    return None
+
+
+def _forbidden_response(
+    *,
+    path: str,
+    error_msg: str,
+    jsonrpc_id: Any = None,
+) -> JSONResponse:
+    """403 body: JSON-RPC on /mcp, plain JSON on standard HTTP tool routes."""
+    if path.startswith(_TOOLS_HTTP_PREFIX):
+        return JSONResponse(status_code=403, content={"error": error_msg})
+    return JSONResponse(
+        status_code=403,
+        content={
+            "jsonrpc": "2.0",
+            "id": jsonrpc_id,
+            "error": {"code": -32001, "message": error_msg},
+        },
+    )
+
+
 class SecurityValidationMiddleware(BaseHTTPMiddleware):
     """Validate MCP tool calls to prevent prompt injection and unauthorized access."""
 
     async def dispatch(self, request: Request, call_next):
-        # Only validate MCP JSON-RPC tool calls (not health probes under /mcp/*)
-        if request.url.path in ("/mcp/health", "/mcp/ready"):
-            return await call_next(request)
-        if not request.url.path.startswith("/mcp"):
+        # MCP Streamable HTTP route and standard HTTP tool routes (not health probes)
+        if not _is_tool_request_path(request.url.path):
             return await call_next(request)
 
         try:
@@ -107,6 +167,21 @@ class SecurityValidationMiddleware(BaseHTTPMiddleware):
                 return await call_next(request)
 
             body = json.loads(body_bytes)
+            rest_tool = _rest_tool_name(request.url.path)
+
+            # Standard HTTP route: body is tool arguments (not JSON-RPC)
+            if rest_tool is not None:
+                arguments = body if isinstance(body, dict) else {}
+                error_msg = _tool_security_error(rest_tool, arguments)
+                if error_msg:
+                    logging.warning(
+                        f"Security violation: {error_msg} | Tool: {rest_tool}"
+                    )
+                    return _forbidden_response(
+                        path=request.url.path, error_msg=error_msg
+                    )
+                return await call_next(request)
+
             method = body.get("method", "")
 
             # Log tools/list requests for monitoring (allowed but monitored)
@@ -119,46 +194,19 @@ class SecurityValidationMiddleware(BaseHTTPMiddleware):
 
             # Validate tools/call requests
             if method == "tools/call":
-                from data360.mcp_server.security_validator import (  # noqa: PLC0415
-                    validate_search_arguments,
-                    validate_tool_call,
-                )
-
                 params = body.get("params", {})
                 tool_name = params.get("name", "")
                 arguments = params.get("arguments", {})
-
-                # Validate tool call
-                is_valid, error_msg = validate_tool_call(tool_name, arguments)
-                if not is_valid:
+                error_msg = _tool_security_error(tool_name, arguments)
+                if error_msg:
                     logging.warning(
                         f"Security violation: {error_msg} | Tool: {tool_name}"
                     )
-                    return JSONResponse(
-                        status_code=403,
-                        content={
-                            "jsonrpc": "2.0",
-                            "id": body.get("id"),
-                            "error": {"code": -32001, "message": error_msg},
-                        },
+                    return _forbidden_response(
+                        path=request.url.path,
+                        error_msg=error_msg,
+                        jsonrpc_id=body.get("id"),
                     )
-
-                # Additional validation for all search term inputs
-                if tool_name == "data360_search_indicators":
-                    is_valid, error_msg = validate_search_arguments(arguments)
-                    if not is_valid:
-                        logging.warning(
-                            "Search query blocked: %s",
-                            str(arguments)[:200],
-                        )
-                        return JSONResponse(
-                            status_code=403,
-                            content={
-                                "jsonrpc": "2.0",
-                                "id": body.get("id"),
-                                "error": {"code": -32001, "message": error_msg},
-                            },
-                        )
 
         except json.JSONDecodeError:
             pass  # Let MCP handle invalid JSON
@@ -173,10 +221,8 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
     """Log structured audit entries for every MCP request."""
 
     async def dispatch(self, request: Request, call_next):
-        # Only audit MCP JSON-RPC calls (not health probes)
-        if request.url.path in ("/mcp/health", "/mcp/ready"):
-            return await call_next(request)
-        if not request.url.path.startswith("/mcp"):
+        # MCP Streamable HTTP route and standard HTTP tool routes (not health probes)
+        if not _is_tool_request_path(request.url.path):
             return await call_next(request)
         session_id = str(uuid.uuid4())
         requestor_id = request.headers.get(
@@ -189,11 +235,14 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
         prompt_hash = ""
         try:
             body = json.loads(body_bytes)
-            method = body.get("method", "")
-            params = body.get("params", {})
-            prompt = json.dumps(
-                {"method": method, "params": params}, separators=(",", ":")
-            )
+            if isinstance(body, dict) and "method" in body:
+                method = body.get("method", "")
+                params = body.get("params", {})
+                prompt = json.dumps(
+                    {"method": method, "params": params}, separators=(",", ":")
+                )
+            else:
+                prompt = json.dumps(body, separators=(",", ":"))
             prompt_hash = hashlib.sha256(prompt.encode()).hexdigest()[:16]
         except Exception:
             pass
@@ -226,11 +275,17 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
 
 
 from fastmcp import settings
+
 settings.stateless_http = True
 
-# NOTE: import to be able to run the server with all definitions loaded
+# MCP Streamable HTTP route: JSON responses avoid SSE framing that
+# Cloudflare rejects as Content-Length ProtocolViolation.
 # path="/mcp" means the MCP endpoint lives at /mcp (no trailing slash needed)
-mcp_app = mcp.http_app(path="/mcp")
+mcp_app = mcp.http_app(
+    path="/mcp",
+    json_response=mcp_settings.json_response,
+    stateless_http=True,
+)
 
 
 async def health_check(request: StarletteRequest) -> JSONResponse:
@@ -273,6 +328,7 @@ app.add_middleware(AuditLogMiddleware)
 app.add_middleware(SecurityValidationMiddleware)
 
 from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -300,8 +356,8 @@ async def root():
         "health": "/mcp/health",
         "ready": "/mcp/ready",
         "mcp": "/mcp",
+        "tools_http": "/api/v1/tools",
     }
-
 
 
 class VizSpecRequest(BaseModel):
@@ -315,6 +371,12 @@ class VizSpecRequest(BaseModel):
     relevant_fields: list[str] | None = None
     chart_title: str | None = None
     series_labels: dict[str, str] | None = None
+
+
+from data360.http_tools import tools_http_router  # noqa: E402
+
+# Standard HTTP routes: list tools and POST /api/v1/tools/{name}
+app.include_router(tools_http_router)
 
 
 @app.post("/api/viz-spec")
@@ -341,22 +403,31 @@ async def get_viz_spec_endpoint(req: VizSpecRequest):
         )
     except Exception as e:
         _logger.exception("Failed to generate viz spec: %s", e)
-        return JSONResponse(status_code=500, content={"error": "Failed to generate visualization spec due to an internal error."})
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Failed to generate visualization spec due to an internal error."
+            },
+        )
 
     if res.get("error"):
         return JSONResponse(status_code=400, content={"error": res.get("error")})
 
     spec = res.get("spec")
     if not spec:
-        return JSONResponse(status_code=500, content={"error": "Vega-Lite spec was not generated."})
+        return JSONResponse(
+            status_code=500, content={"error": "Vega-Lite spec was not generated."}
+        )
 
-    return {k: v for k, v in {
-        "spec": spec,
-        "reason": res.get("reason"),
-        "strategy": res.get("strategy"),
-    }.items() if v is not None}
-
-
+    return {
+        k: v
+        for k, v in {
+            "spec": spec,
+            "reason": res.get("reason"),
+            "strategy": res.get("strategy"),
+        }.items()
+        if v is not None
+    }
 
 
 if os.environ.get("PYTEST_CURRENT_TEST"):

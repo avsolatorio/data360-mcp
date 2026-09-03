@@ -18,7 +18,9 @@ _codelist_url = f"{_test_api}/data360/codelist"
 _codelist_probe_url = f"{_codelist_url}?type=REF_AREA"
 
 
-def _mock_codelist(httpx_mock: pytest_httpx.HTTPXMock, json_body: dict | None = None) -> None:
+def _mock_codelist(
+    httpx_mock: pytest_httpx.HTTPXMock, json_body: dict | None = None
+) -> None:
     httpx_mock.add_response(
         url=_codelist_probe_url,
         method="GET",
@@ -49,6 +51,7 @@ def test_root_discoverability(health_client: TestClient) -> None:
     assert body["health"] == "/mcp/health"
     assert body["ready"] == "/mcp/ready"
     assert body["mcp"] == "/mcp"
+    assert body["tools_http"] == "/api/v1/tools"
 
 
 @pytest.mark.asyncio
@@ -64,9 +67,7 @@ async def test_ready_all_ok(
         method="POST",
         json={"value": [{"series_description": {"database_id": "WB_WDI"}}]},
     )
-    _mock_codelist(
-        httpx_mock, {"value": [{"id": "USA", "name": "United States"}]}
-    )
+    _mock_codelist(httpx_mock, {"value": [{"id": "USA", "name": "United States"}]})
 
     code, body = await health_mod.run_readiness()
 
