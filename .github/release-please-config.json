@@ -32,8 +32,9 @@
       "release-type": "node"
     }
   },
-  "plugins": {
-    "linked-versions": {
+  "plugins": [
+    {
+      "type": "linked-versions",
       "groupName": "data360-mcp",
       "merge": true,
       "components": [
@@ -44,5 +45,5 @@
         "@data360/mcp-ui-angular"
       ]
     }
-  }
+  ]
 }
