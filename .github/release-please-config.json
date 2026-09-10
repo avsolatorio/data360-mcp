@@ -8,6 +8,7 @@
     { "type": "build", "section": "Build", "hidden": true },
     { "type": "style", "section": "Style", "hidden": true }
   ],
+  "pull-request-title-pattern": "chore: release v${version}",
   "include-v-in-tag": true,
   "include-component-in-tag": false,
   "packages": {
