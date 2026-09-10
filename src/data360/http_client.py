@@ -135,25 +135,27 @@ class _RetryingTransport(httpx.AsyncHTTPTransport):
         deadline = time.monotonic() + policy.budget_seconds
 
         for attempt in range(1, attempts + 1):
+            # Upper bound on this attempt's backoff delay (jitter is <= this value).
+            max_delay = min(
+                policy.backoff_max, policy.backoff_base * (2 ** (attempt - 1))
+            )
             try:
                 response = await super().handle_async_request(request)
             except _RETRYABLE_EXCEPTIONS as exc:
-                if attempt >= attempts or time.monotonic() >= deadline:
+                if attempt >= attempts or time.monotonic() + max_delay >= deadline:
                     raise
                 await self._backoff(request, attempt, exc)
                 continue
 
-            if (
-                response.status_code in policy.retry_status_codes
-                and attempt < attempts
-                and time.monotonic() < deadline
-            ):
+            if response.status_code in policy.retry_status_codes and attempt < attempts:
+                # Only schedule a retry if the backoff delay itself fits in the budget.
+                if time.monotonic() + max_delay >= deadline:
+                    return response
                 await response.aclose()
                 await self._backoff(request, attempt, None)
                 continue
 
             return response
-
         raise AssertionError("retry loop exited without a response")  # pragma: no cover
 
 
