@@ -12,11 +12,23 @@ from typing import Any
 import httpx
 
 from data360.config import get_data360_settings
-from data360.http_client import get_shared_httpx_client
+from data360.http_client import (
+    RETRY_SAFE_EXTENSION,
+    get_background_httpx_client,
+    get_shared_httpx_client,
+)
 
 data360_config = get_data360_settings()
 
 _logger = logging.getLogger(__name__)
+
+
+def _describe_error(exc: BaseException | None) -> str:
+    """Format an exception for logs; httpx timeouts often carry no message."""
+    if exc is None:
+        return "unknown error"
+    message = str(exc).strip()
+    return f"{type(exc).__name__}: {message}" if message else type(exc).__name__
 
 
 class DatabaseManager:
@@ -197,54 +209,37 @@ class DatabaseManager:
             await asyncio.sleep(sleep_for)
 
     async def _fetch_all(self) -> dict[str, str]:
-        """Fetch all datasets from the search endpoint using pagination."""
+        """Fetch all datasets from the search endpoint using pagination.
+
+        Runs on the background/bulk client; transient failures are retried by the
+        transport (bounded by the background retry budget), so failures propagate
+        to the caller which logs and keeps the existing cache.
+        """
         url = data360_config.search_url or f"{data360_config.api_url}/searchv2"
         mapping: dict[str, str] = {}
         skip = 0
         limit = 50
 
-        client = get_shared_httpx_client()
+        client = get_background_httpx_client()
         while True:
-            items = None
-            last_error = None
-            for attempt in range(3):
-                try:
-                    response = await client.post(
-                        url,
-                        headers={
-                            "accept": "*/*",
-                            "Content-Type": "application/json",
-                        },
-                        json={
-                            "filter": "type eq 'dataset' and (is_active ne false or is_active eq null)",
-                            "orderby": "series_description/name",
-                            "select": "series_description/database_id, series_description/name",
-                            "skip": skip,
-                            "top": limit,
-                        },
-                    )
-                    response.raise_for_status()
-                    data = response.json()
-                    items = data.get("value", [])
-                    break  # Success
-                except Exception as e:
-                    last_error = e
-                    _logger.warning(
-                        "Fetch attempt %d failed for skip=%d: %s",
-                        attempt + 1,
-                        skip,
-                        e,
-                    )
-                    if attempt < 2:
-                        await asyncio.sleep(2**attempt)  # Backoff: 1s, 2s
-
-            if items is None:
-                # All attempts failed
-                raise (
-                    last_error
-                    if last_error
-                    else Exception("Unknown error during fetch")
-                )
+            response = await client.post(
+                url,
+                headers={
+                    "accept": "*/*",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "filter": "type eq 'dataset' and (is_active ne false or is_active eq null)",
+                    "orderby": "series_description/name",
+                    "select": "series_description/database_id, series_description/name",
+                    "skip": skip,
+                    "top": limit,
+                },
+                extensions={RETRY_SAFE_EXTENSION: True},
+            )
+            response.raise_for_status()
+            data = response.json()
+            items = data.get("value", [])
 
             if not items:
                 break
@@ -604,7 +599,7 @@ class GroupHierarchyManager:
         hierarchy_url = _FMR_HIERARCHY_URL.format(version=hierarchy_version)
         codelist_url = _FMR_CODELIST_URL.format(version=codelist_version)
 
-        client = get_shared_httpx_client()
+        client = get_background_httpx_client()
         h_resp, cl_resp = await asyncio.gather(
             client.get(hierarchy_url, headers={"Accept": "application/json"}),
             client.get(codelist_url, headers={"Accept": "application/json"}),
@@ -842,6 +837,8 @@ class CodelistManager:
         self._extdataportal: dict[str, dict[str, str]] = {}
         self._initial_fetch_succeeded = False
         self._last_fetched: float = 0.0
+        self._last_fetch_error: Exception | None = None
+        self._fetch_task: asyncio.Task | None = None  # type: ignore[type-arg]
         self._bg_task: asyncio.Task | None = None  # type: ignore[type-arg]
 
     # ------------------------------------------------------------------
@@ -886,6 +883,9 @@ class CodelistManager:
     async def _fetch_extdataportal(self) -> dict[str, dict[str, str]]:
         """Fetch all dimension codelists from the extdataportal metadata API.
 
+        Runs on the background/bulk client: the payload is ~1.7 MB and nobody is
+        waiting on it, so it does not share the interactive pool or timeouts.
+
         Returns:
             Parsed {dimension: {code: name}} mapping.
 
@@ -893,8 +893,8 @@ class CodelistManager:
             httpx.HTTPStatusError / httpx.RequestError on network failure.
         """
         url = data360_config.codelist_api_base_url
-        client = get_shared_httpx_client()
-        response = await client.get(url, timeout=30.0)
+        client = get_background_httpx_client()
+        response = await client.get(url)
         response.raise_for_status()
         raw: dict = response.json()
         return self._parse_extdataportal_response(raw)
@@ -909,30 +909,64 @@ class CodelistManager:
             len(mapping.get(self._COMP_BREAKDOWN_KEY, {})),
         )
 
+    async def _fetch_and_apply_extdataportal(self) -> None:
+        """Run one catalog fetch and record the outcome instead of raising.
+
+        Failures are stored in ``_last_fetch_error`` so the background refresh loop
+        can apply its own backoff, and so a caller that stopped waiting never leaves
+        an unretrieved task exception behind.
+        """
+        try:
+            mapping = await self._fetch_extdataportal()
+        except Exception as exc:  # noqa: BLE001 - reported via _last_fetch_error
+            self._last_fetch_error = exc
+            _logger.warning(
+                "CodelistManager: extdataportal fetch failed (%s). "
+                "Dimension codes will display as raw values until the "
+                "next retry.",
+                _describe_error(exc),
+            )
+            return
+
+        self._last_fetch_error = None
+        self._apply_extdataportal(mapping)
+        self._initial_fetch_succeeded = True
+        self._last_fetched = time.monotonic()
+
+    def _start_extdataportal_fetch(self) -> "asyncio.Task[None]":
+        """Return the in-flight catalog fetch, starting one if none is running.
+
+        Single-flight: concurrent callers (request paths and the refresh loop)
+        share one 1.7 MB fetch instead of each starting their own.
+        """
+        task = self._fetch_task
+        if task is None or task.done():
+            task = asyncio.create_task(self._fetch_and_apply_extdataportal())
+            self._fetch_task = task
+        return task
+
     # ------------------------------------------------------------------
     # Lazy loader (same pattern as _ensure_loaded for REF_AREA)
     # ------------------------------------------------------------------
 
     async def _ensure_extdataportal_loaded(self) -> None:
-        """Fetch extdataportal codelists on first use (lazy load).
+        """Fetch extdataportal codelists on first use, without blocking the request.
 
-        Mirrors the pattern of ``_ensure_loaded()`` for REF_AREA: called at the
-        top of any async path that reads ``_extdataportal`` (e.g.
-        ``_map_dimension_codes``).  Subsequent calls are instant no-ops once the
-        data is populated.  Starts the background refresh loop on first call.
+        The catalog is bulk background data, so a request waits at most
+        ``DATA360_BACKGROUND_INLINE_WAIT_SECONDS`` for it and then continues with
+        raw dimension codes while the fetch finishes in the background. Callers
+        must therefore tolerate missing labels (``get_label`` already falls back
+        to the raw code).
         """
         if not self._extdataportal:
-            try:
-                mapping = await self._fetch_extdataportal()
-                self._apply_extdataportal(mapping)
-                self._initial_fetch_succeeded = True
-                self._last_fetched = time.monotonic()
-            except Exception as exc:
-                _logger.warning(
-                    "CodelistManager: extdataportal fetch failed (%s). "
-                    "Dimension codes will display as raw values until the "
-                    "next retry.",
-                    exc,
+            task = self._start_extdataportal_fetch()
+            budget = get_data360_settings().background_inline_wait_seconds
+            done, _ = await asyncio.wait({task}, timeout=budget)
+            if not done:
+                _logger.info(
+                    "CodelistManager: catalog still loading after %.1fs; serving raw "
+                    "dimension codes while the background fetch completes.",
+                    budget,
                 )
         self._ensure_background_refresh()
 
@@ -957,9 +991,10 @@ class CodelistManager:
     async def _background_refresh_loop(self) -> None:
         """Wake every TTL seconds and refresh from extdataportal.
 
-        On success the in-memory mapping is atomically replaced.
-        On failure the existing mapping is kept and a WARNING is logged;
-        the loop sleeps another full TTL before retrying.
+        Shares the single-flight fetch with request paths. On success the
+        in-memory mapping is atomically replaced. On failure the existing mapping
+        is kept, a WARNING is logged, and the loop backs off (initial load) or
+        waits another full TTL.
         """
         backoff = 5.0
         max_backoff = 900.0  # 15 minutes
@@ -971,38 +1006,34 @@ class CodelistManager:
                     await asyncio.sleep(sleep_for)
                     continue
 
-            try:
-                mapping = await self._fetch_extdataportal()
-                self._apply_extdataportal(mapping)
-                self._initial_fetch_succeeded = True
-                self._last_fetched = time.monotonic()
+            await self._start_extdataportal_fetch()
+            if self._last_fetch_error is None:
                 _logger.info(
                     "CodelistManager: background refresh completed — "
                     "%d dimensions, COMP_BREAKDOWN=%d codes.",
-                    len(mapping),
-                    len(mapping.get(self._COMP_BREAKDOWN_KEY, {})),
+                    len(self._extdataportal),
+                    len(self._extdataportal.get(self._COMP_BREAKDOWN_KEY, {})),
                 )
                 backoff = 5.0
                 sleep_for = self._TTL
-            except Exception as exc:
-                if not self._initial_fetch_succeeded:
-                    sleep_for = backoff
-                    backoff = min(backoff * 2 + random.uniform(0.1, 1.0), max_backoff)
-                    _logger.warning(
-                        "CodelistManager: initial background refresh failed (%s). "
-                        "Retrying in %.1f seconds.",
-                        exc,
-                        sleep_for,
-                    )
-                else:
-                    sleep_for = self._TTL
-                    self._last_fetched = time.monotonic()
-                    _logger.warning(
-                        "CodelistManager: background refresh failed (%s). "
-                        "Next attempt in %.0f days.",
-                        exc,
-                        self._TTL / 86400,
-                    )
+            elif not self._initial_fetch_succeeded:
+                sleep_for = backoff
+                backoff = min(backoff * 2 + random.uniform(0.1, 1.0), max_backoff)
+                _logger.warning(
+                    "CodelistManager: initial background refresh failed (%s). "
+                    "Retrying in %.1f seconds.",
+                    _describe_error(self._last_fetch_error),
+                    sleep_for,
+                )
+            else:
+                sleep_for = self._TTL
+                self._last_fetched = time.monotonic()
+                _logger.warning(
+                    "CodelistManager: background refresh failed (%s). "
+                    "Next attempt in %.0f days.",
+                    _describe_error(self._last_fetch_error),
+                    self._TTL / 86400,
+                )
 
             await asyncio.sleep(sleep_for)
 

@@ -19,12 +19,18 @@ Covers:
 """
 
 import asyncio
+import time
 from unittest.mock import AsyncMock, patch
 
 import pandas as pd
 import pytest
 
+from data360.config import get_data360_settings
 from data360.providers import CodelistManager
+
+_INLINE_BUDGET_CEILING_SECONDS = 1.0
+_INLINE_WAIT_HARD_TIMEOUT_SECONDS = 5.0
+_CONCURRENT_LOADERS = 4
 
 # ---------------------------------------------------------------------------
 # Shared fake API payload (minimal but realistic)
@@ -210,6 +216,74 @@ class TestEnsureExtdataportalLoaded:
         await mgr._ensure_extdataportal_loaded()
         # _extdataportal stays empty — graceful fallback
         assert mgr._extdataportal == {}
+
+
+class TestEnsureExtdataportalLoadedDoesNotBlock:
+    """The catalog is bulk background data: a request must never wait long on it."""
+
+    @pytest.mark.asyncio
+    async def test_slow_fetch_returns_budgeted_fallback_then_finishes(self, monkeypatch):
+        mgr = CodelistManager()
+        started = asyncio.Event()
+        release = asyncio.Event()
+
+        async def slow_fetch() -> dict:
+            started.set()
+            await release.wait()
+            return CodelistManager._parse_extdataportal_response(_FAKE_API)
+
+        mgr._fetch_extdataportal = slow_fetch
+        monkeypatch.setenv("DATA360_BACKGROUND_INLINE_WAIT_SECONDS", "0.02")
+        get_data360_settings.cache_clear()
+        try:
+            began = time.monotonic()
+            # wait_for keeps a regressed (unbounded) implementation from hanging the suite.
+            await asyncio.wait_for(
+                mgr._ensure_extdataportal_loaded(), timeout=_INLINE_WAIT_HARD_TIMEOUT_SECONDS
+            )
+            elapsed = time.monotonic() - began
+
+            assert started.is_set(), "the bulk fetch should have been started"
+            assert elapsed < _INLINE_BUDGET_CEILING_SECONDS
+            assert mgr._extdataportal == {}, "request must fall back to raw codes"
+            assert mgr._initial_fetch_succeeded is False
+
+            # The fetch keeps running and lands the catalog without the caller.
+            release.set()
+            task = mgr._fetch_task
+            assert task is not None
+            await task
+            assert "COMP_BREAKDOWN" in mgr._extdataportal
+            assert mgr._initial_fetch_succeeded is True
+        finally:
+            get_data360_settings.cache_clear()
+
+    @pytest.mark.asyncio
+    async def test_concurrent_callers_share_one_fetch(self):
+        mgr = CodelistManager()
+        calls: list[int] = []
+        blockers = asyncio.Event()
+
+        async def blocking_fetch() -> dict:
+            calls.append(1)
+            await blockers.wait()
+            return CodelistManager._parse_extdataportal_response(_FAKE_API)
+
+        mgr._fetch_extdataportal = blocking_fetch
+
+        first = asyncio.create_task(mgr._ensure_extdataportal_loaded())
+        await asyncio.sleep(0)  # let the first caller start the shared fetch
+        others = [
+            asyncio.create_task(mgr._ensure_extdataportal_loaded())
+            for _ in range(_CONCURRENT_LOADERS - 1)
+        ]
+        await asyncio.sleep(0)
+        blockers.set()
+        await asyncio.gather(first, *others)
+
+        assert len(calls) == 1, "concurrent loaders must share one catalog fetch"
+        assert "COMP_BREAKDOWN" in mgr._extdataportal
+        assert mgr._initial_fetch_succeeded is True
 
 
 # ============================================================================

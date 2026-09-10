@@ -203,6 +203,56 @@ class Data360Settings(BaseSettings):
         ),
     )
 
+    # ------------------------------------------------------------------
+    # Background / non-interactive bulk calls (dimension catalog, dataset
+    # catalogue, group hierarchy). Nobody is waiting on these, so they get
+    # their own client, their own connection pool, longer patience and a
+    # larger retry budget than the interactive profile above.
+    # ------------------------------------------------------------------
+    background_connect_timeout: float = Field(
+        default=5.0,
+        gt=0,
+        description="Seconds allowed to connect for background/bulk Data360 calls.",
+    )
+    background_read_timeout: float = Field(
+        default=30.0,
+        gt=0,
+        description=(
+            "Seconds allowed between response chunks for background/bulk calls. The "
+            "dimension catalog is ~1.7 MB and may stream slowly; this must not be "
+            "confused with the interactive read timeout."
+        ),
+    )
+    background_write_timeout: float = Field(
+        default=30.0,
+        gt=0,
+        description="Seconds allowed to send a background/bulk request body.",
+    )
+    background_pool_timeout: float = Field(
+        default=5.0,
+        gt=0,
+        description="Seconds a background/bulk call waits for a free connection.",
+    )
+    background_retry_max_attempts: int = Field(
+        default=3,
+        ge=1,
+        description="Attempts for retry-safe background/bulk requests.",
+    )
+    background_retry_budget_seconds: float = Field(
+        default=60.0,
+        gt=0,
+        description="Wall-clock ceiling for retrying one background/bulk request.",
+    )
+    background_inline_wait_seconds: float = Field(
+        default=2.0,
+        ge=0,
+        description=(
+            "How long a user-facing request may wait for background bulk data (the "
+            "dimension catalog) before continuing with raw codes while the fetch "
+            "finishes in the background. Set 0 to never wait."
+        ),
+    )
+
     model_config = SettingsConfigDict(env_prefix="DATA360_")
 
     @property
