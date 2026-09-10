@@ -68,7 +68,15 @@ class MCPServerSettings(BaseSettings):
         default=5.0,
         description="Per-check timeout in seconds for GET /ready outbound probes.",
     )
-
+    json_response: bool = Field(
+        default=True,
+        description=(
+            "When true, Streamable HTTP /mcp returns application/json instead of "
+            "text/event-stream framing. JSON responses carry a valid Content-Length "
+            "and are compatible with strict proxies (e.g. Cloudflare). Set "
+            "MCP_JSON_RESPONSE=false to restore SSE-framed Streamable HTTP."
+        ),
+    )
 
     model_config = SettingsConfigDict(env_prefix="MCP_")
 
