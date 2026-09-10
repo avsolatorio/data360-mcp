@@ -363,6 +363,14 @@ class MetadataResponse(BaseModel):
     error: str | None = Field(
         default=None, description="Error message if metadata retrieval failed"
     )
+    stale: bool = Field(
+        default=False,
+        description=(
+            "True when the Data360 API could not be reached and these values were "
+            "served from the last successful fetch instead. Treat them as possibly "
+            "out of date; `error` explains why the live call failed."
+        ),
+    )
 
 
 class IndicatorDataRequest(BaseModel):

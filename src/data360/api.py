@@ -20,9 +20,10 @@ from .errors import (
     NotFoundError,
     ParseError,
     classify_error,
+    is_transient_error,
 )
 from .errors import ValidationError as Data360ValidationError
-from .http_client import get_shared_httpx_client
+from .http_client import RETRY_SAFE_EXTENSION, get_shared_httpx_client
 from .models import (
     ComparisonSnapshot,
     ComparisonTimeSeries,
@@ -66,21 +67,75 @@ MAX_RETURN_STATEMENTS = 6
 DEFAULT_SEARCH_LIMIT = 5
 
 # ---------------------------------------------------------------------------
-# Metadata / disaggregation response caches (Comment 1+8 — avsolatorio PR #75)
+# Metadata response cache with degraded serving (Comment 1+8 — avsolatorio PR #75)
 # ---------------------------------------------------------------------------
 # Metadata changes rarely; a 1-day TTL prevents stale data on long-running
 # servers while eliminating redundant HTTP calls across multi-page aggregation
 # fetches (e.g. _fetch_all_pages issues one get_data call per page, each of
 # which would otherwise re-fetch the same metadata).
 _METADATA_CACHE_TTL = 86_400  # 24 hours in seconds
-_metadata_cache: cachetools.TTLCache = cachetools.TTLCache(
-    maxsize=256, ttl=_METADATA_CACHE_TTL
+_METADATA_CACHE_MAXSIZE = 256
+
+
+class _ResilientTtlCache:
+    """TTL cache that can serve a previous good value while the API is failing.
+
+    Three bounded tiers:
+
+    * ``_fresh`` — values younger than ``ttl``; the normal hit path.
+    * ``_last_good`` — the most recent successful value per key, kept past TTL
+      expiry so an upstream outage degrades to the last snapshot instead of an error.
+    * ``_degraded`` — outcomes produced while the upstream was failing, reused for
+      ``degraded_ttl`` seconds so a burst of callers does not re-hammer a slow
+      dependency once per call.
+    """
+
+    def __init__(self, *, ttl: float, degraded_ttl: float, maxsize: int) -> None:
+        self._fresh: cachetools.TTLCache = cachetools.TTLCache(maxsize=maxsize, ttl=ttl)
+        self._last_good: cachetools.LRUCache = cachetools.LRUCache(maxsize=maxsize)
+        self._degraded: cachetools.TTLCache = cachetools.TTLCache(
+            maxsize=maxsize, ttl=degraded_ttl
+        )
+        self._lock = threading.Lock()
+
+    def get(self, key: tuple[Any, ...]) -> Any:
+        with self._lock:
+            return self._fresh.get(key)
+
+    def get_degraded(self, key: tuple[Any, ...]) -> Any:
+        with self._lock:
+            return self._degraded.get(key)
+
+    def get_last_good(self, key: tuple[Any, ...]) -> Any:
+        with self._lock:
+            return self._last_good.get(key)
+
+    def set(self, key: tuple[Any, ...], value: Any) -> None:
+        """Record a successful value and clear any degraded outcome for the key."""
+        with self._lock:
+            self._fresh[key] = value
+            self._last_good[key] = value
+            self._degraded.pop(key, None)
+
+    def set_degraded(self, key: tuple[Any, ...], value: Any) -> None:
+        with self._lock:
+            self._degraded[key] = value
+
+    def clear(self) -> None:
+        with self._lock:
+            self._fresh.clear()
+            self._last_good.clear()
+            self._degraded.clear()
+
+
+_metadata_cache = _ResilientTtlCache(
+    ttl=_METADATA_CACHE_TTL,
+    degraded_ttl=data360_config.degradation_cooldown_seconds,
+    maxsize=_METADATA_CACHE_MAXSIZE,
 )
 _disaggregation_cache: cachetools.TTLCache = cachetools.TTLCache(
     maxsize=256, ttl=_METADATA_CACHE_TTL
 )
-# Locks to prevent thundering-herd on cache misses under async concurrency.
-_metadata_cache_lock = threading.Lock()
 _disaggregation_cache_lock = threading.Lock()
 
 _DIMENSIONS_API_CACHE_TTL = 600  # 10 minutes in seconds
@@ -254,6 +309,7 @@ async def _fetch_dimensions_raw_uncached(
             dimensions_url,
             json=payload,
             headers=headers,
+            extensions={RETRY_SAFE_EXTENSION: True},
         )
 
         if response.status_code in (400, 404, 417):
@@ -697,7 +753,9 @@ async def _search_raw(
     mcp_error: Data360MCPError | None = None
     try:
         client = get_shared_httpx_client()
-        response = await client.post(url, json=payload)
+        response = await client.post(
+            url, json=payload, extensions={RETRY_SAFE_EXTENSION: True}
+        )
         response.raise_for_status()
 
         try:
@@ -1630,7 +1688,9 @@ async def search_datasets(
 
     try:
         client = get_shared_httpx_client()
-        response = await client.post(url, json=payload)
+        response = await client.post(
+            url, json=payload, extensions={RETRY_SAFE_EXTENSION: True}
+        )
         response.raise_for_status()
 
         response_data = response.json()
@@ -1721,10 +1781,20 @@ async def get_metadata(
         fetch_disaggregation,
         required_country,
     )
-    with _metadata_cache_lock:
-        _cached = _metadata_cache.get(_cache_key)
+    _cached = _metadata_cache.get(_cache_key)
     if _cached is not None:
         return _cached
+
+    # A recent failed attempt is reused verbatim until the cooldown expires, so a
+    # slow downstream dependency is contacted once per window instead of per call.
+    _degraded = _metadata_cache.get_degraded(_cache_key)
+    if _degraded is not None:
+        _logger.info(
+            "Reusing degraded metadata for %s/%s (cooldown active)",
+            database_id,
+            indicator_id,
+        )
+        return _degraded
 
     # Resolve country codes if provided
     queried_countries = await _resolve_queried_countries(required_country)
@@ -1749,6 +1819,7 @@ async def get_metadata(
     indicator_metadata: dict[str, Any] | None = None
     disaggregations: list[dict[str, Any]] = []
     errors: list[str] = []
+    metadata_transient = False
     headers = {"accept": "*/*", "Content-Type": "application/json"}
 
     # Build query with optional select clause
@@ -1763,7 +1834,10 @@ async def get_metadata(
     try:
         client = get_shared_httpx_client()
         metadata_res = await client.post(
-            metadata_url, json=metadata_payload, headers=headers
+            metadata_url,
+            json=metadata_payload,
+            headers=headers,
+            extensions={RETRY_SAFE_EXTENSION: True},
         )
         metadata_res.raise_for_status()
 
@@ -1801,6 +1875,7 @@ async def get_metadata(
     except Exception as e:
         mcp_err = classify_error(e, context="metadata")
         errors.append(mcp_err.detail)
+        metadata_transient = is_transient_error(mcp_err)
 
     # 2. Fetch Dimensions
     if fetch_disaggregation:
@@ -1825,11 +1900,36 @@ async def get_metadata(
         disaggregation_options=disaggregations,
         error=error_message,
     )
-    # Only cache successful responses — don't cache errors so transient
-    # network failures don't persist for a full day.
-    if not error_message:
-        with _metadata_cache_lock:
-            _metadata_cache[_cache_key] = result
+    if error_message is None:
+        _metadata_cache.set(_cache_key, result)
+        return result
+
+    # The live metadata fetch failed. When the failure is transient, degrade to the
+    # last successful snapshot rather than an empty result: `error` keeps the reason,
+    # `stale` marks the values as possibly out of date, and fresher disaggregation
+    # options from this attempt win over the snapshot's.
+    if metadata_transient and indicator_metadata is None:
+        last_good = _metadata_cache.get_last_good(_cache_key)
+        if last_good is not None:
+            result = last_good.model_copy(
+                update={
+                    "stale": True,
+                    "error": error_message,
+                    "disaggregation_options": disaggregations
+                    or last_good.disaggregation_options,
+                }
+            )
+
+    # Hold the degraded outcome for the cooldown window so a burst of callers does
+    # not repeat the slow upstream calls; a later success replaces it via set().
+    _metadata_cache.set_degraded(_cache_key, result)
+    _logger.warning(
+        "Metadata degraded for %s/%s (cooldown %.0fs): %s",
+        database_id,
+        indicator_id,
+        data360_config.degradation_cooldown_seconds,
+        error_message,
+    )
     return result
 
 

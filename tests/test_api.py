@@ -2032,17 +2032,15 @@ class TestDimensionsResilienceAndParsing:
 
         # Clear the metadata cache so get_metadata does not hit the metadata cache itself,
         # forcing it to run the dimensions fetch logic.
-        from data360.api import _metadata_cache, _metadata_cache_lock
+        from data360.api import _metadata_cache
 
-        with _metadata_cache_lock:
-            _metadata_cache.clear()
+        _metadata_cache.clear()
 
         # Call get_metadata once: will fetch metadata and fetch dimensions (uncached)
         await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")
 
         # Clear the metadata cache again, but NOT the dimensions cache
-        with _metadata_cache_lock:
-            _metadata_cache.clear()
+        _metadata_cache.clear()
 
         # Call get_metadata again: will fetch metadata but reuse cached dimensions
         await get_metadata("WB_WDI", "WB_WDI_SP_POP_TOTL")

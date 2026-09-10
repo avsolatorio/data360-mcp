@@ -17,6 +17,9 @@ os.environ.setdefault("DATA360_METADATA_URL", f"{_test_api}/metadata")
 os.environ.setdefault("DATA360_DISAGGREGATION_URL", f"{_test_api}/disaggregation")
 os.environ.setdefault("DATA360_DIMENSIONS_URL", f"{_test_api}/portal/v1/dimensions")
 os.environ.setdefault("DATA360_DATA_URL", f"{_test_api}/data")
+# The suite asserts single-attempt error handling; retry behaviour is exercised
+# explicitly in tests/test_http_client.py.
+os.environ["DATA360_RETRY_MAX_ATTEMPTS"] = "1"
 
 import pytest
 
@@ -24,7 +27,6 @@ from data360.api import (
     _disaggregation_cache,
     _disaggregation_cache_lock,
     _metadata_cache,
-    _metadata_cache_lock,
     _dimensions_api_cache,
     _dimensions_api_cache_lock,
     _dimensions_api_inflight,
@@ -37,8 +39,7 @@ from data360.http_client import aclose_shared_httpx_client
 async def _isolate_data360_api_state():
     """Clear API TTL caches and shared httpx so tests do not share mocked responses."""
     if os.environ.get("PYTEST_RUNNING"):
-        with _metadata_cache_lock:
-            _metadata_cache.clear()
+        _metadata_cache.clear()
         with _disaggregation_cache_lock:
             _disaggregation_cache.clear()
         with _dimensions_api_cache_lock:
@@ -47,8 +48,7 @@ async def _isolate_data360_api_state():
             _dimensions_api_inflight.clear()
     yield
     if os.environ.get("PYTEST_RUNNING"):
-        with _metadata_cache_lock:
-            _metadata_cache.clear()
+        _metadata_cache.clear()
         with _disaggregation_cache_lock:
             _disaggregation_cache.clear()
         with _dimensions_api_cache_lock:

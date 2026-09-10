@@ -79,6 +79,10 @@ cp .env.example .env
 | `MCP_PORT` | Port for the MCP server | `8000` |
 | `MCP_TRANSPORT` | Transport protocol (`http` or `sse`) | `http` |
 | `MCP_CHARTS_API_URL` | Optional URL for an external chart rendering API | _(none)_ |
+| `DATA360_READ_TIMEOUT` | Seconds to wait for a Data360 API response (connect/write/pool have their own knobs) | `8` |
+| `DATA360_RETRY_MAX_ATTEMPTS` | Attempts for retry-safe requests (idempotent methods and read-only Data360 POSTs) | `3` |
+| `DATA360_RETRY_BUDGET_SECONDS` | Wall-clock ceiling for retrying one request; set `<= DATA360_READ_TIMEOUT` to never retry a timeout | `16` |
+| `DATA360_DEGRADATION_COOLDOWN_SECONDS` | How long a stale metadata snapshot is reused before the API is retried | `30` |
 
 ### Run the Server
 
