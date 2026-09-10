@@ -13,7 +13,7 @@ import pytest
 import pytest_httpx
 
 from data360 import http_client
-from data360.api import get_metadata
+from data360.api import _fetch_dimensions_with_cache, get_metadata
 from data360.config import get_data360_settings
 from data360.http_client import (
     RETRY_SAFE_EXTENSION,
@@ -209,3 +209,17 @@ async def test_metadata_query_is_retry_safe(
     assert result.stale is False
     assert (result.indicator_metadata or {}).get("name") == "Population, total"
     assert len(httpx_mock.get_requests()) == _AFTER_RETRY_AND_FOLLOW_UP
+
+
+@pytest.mark.asyncio
+async def test_dimensions_query_is_retry_safe(
+    httpx_mock: pytest_httpx.HTTPXMock, retry_env
+):
+    """The dimensions call site opts into retries as well."""
+    httpx_mock.add_exception(httpx.ReadTimeout("read timed out"), url=_DIMENSIONS_URL)
+    httpx_mock.add_response(url=_DIMENSIONS_URL, json={"dimensions": []})
+
+    result = await _fetch_dimensions_with_cache("WB_WDI", "WB_WDI_SP_POP_TOTL")
+
+    assert result == {"dimensions": []}
+    assert len(httpx_mock.get_requests()) == _AFTER_ONE_RETRY
