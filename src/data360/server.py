@@ -18,7 +18,7 @@ from starlette.requests import Request as StarletteRequest
 
 from data360.config import get_mcp_server_settings, setup_logging
 from data360.health import get_liveness_body, run_readiness
-from data360.http_client import aclose_shared_httpx_client
+from data360.http_client import aclose_all_httpx_clients
 from data360.otel_setup import (
     configure_open_telemetry_for_server,
     instrument_httpx_outbound,
@@ -254,10 +254,10 @@ mcp_app.add_route("/mcp/ready", ready_check, methods=["GET", "HEAD"])
 
 @asynccontextmanager
 async def _lifespan_with_http_cleanup(app: FastAPI):
-    """Run MCP startup/shutdown, then close the shared httpx client."""
+    """Run MCP startup/shutdown, then close the shared httpx clients."""
     async with mcp_app.router.lifespan_context(mcp_app):
         yield
-    await aclose_shared_httpx_client()
+    await aclose_all_httpx_clients()
 
 
 # https://gofastmcp.com/deployment/http#asgi-application

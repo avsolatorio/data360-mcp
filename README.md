@@ -83,6 +83,8 @@ cp .env.example .env
 | `DATA360_RETRY_MAX_ATTEMPTS` | Attempts for retry-safe requests (idempotent methods and read-only Data360 POSTs) | `3` |
 | `DATA360_RETRY_BUDGET_SECONDS` | Wall-clock ceiling for retrying one request; set `<= DATA360_READ_TIMEOUT` to never retry a timeout | `16` |
 | `DATA360_DEGRADATION_COOLDOWN_SECONDS` | How long a stale metadata snapshot is reused before the API is retried | `30` |
+| `DATA360_BACKGROUND_READ_TIMEOUT` | Read timeout for background/bulk calls (dimension catalog, dataset catalogue, group hierarchy) on their own client + pool | `30` |
+| `DATA360_BACKGROUND_INLINE_WAIT_SECONDS` | How long a user request may wait for the dimension catalog before serving raw codes (`0` never waits) | `2` |
 
 ### Run the Server
 

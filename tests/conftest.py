@@ -32,7 +32,7 @@ from data360.api import (
     _dimensions_api_inflight,
     _dimensions_api_inflight_lock,
 )
-from data360.http_client import aclose_shared_httpx_client
+from data360.http_client import aclose_all_httpx_clients
 
 
 @pytest.fixture(autouse=True)
@@ -55,7 +55,7 @@ async def _isolate_data360_api_state():
             _dimensions_api_cache.clear()
         with _dimensions_api_inflight_lock:
             _dimensions_api_inflight.clear()
-    await aclose_shared_httpx_client()
+    await aclose_all_httpx_clients()
 
 
 @pytest.fixture(autouse=True)
