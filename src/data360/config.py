@@ -133,6 +133,76 @@ class Data360Settings(BaseSettings):
         description="Confidentiality levels to limit the data observations to",
     )
 
+    # ------------------------------------------------------------------
+    # Outbound HTTP resilience (consumed by data360.http_client)
+    # ------------------------------------------------------------------
+    connect_timeout: float = Field(
+        default=3.0,
+        gt=0,
+        description="Seconds allowed for the TCP/TLS connection to the Data360 API.",
+    )
+    read_timeout: float = Field(
+        default=8.0,
+        gt=0,
+        description=(
+            "Seconds allowed for the Data360 API to send a response. Replaces the flat "
+            "30 s timeout that let a stalled dependency hold an MCP tool call open."
+        ),
+    )
+    write_timeout: float = Field(
+        default=8.0,
+        gt=0,
+        description="Seconds allowed for sending the request body to the Data360 API.",
+    )
+    pool_timeout: float = Field(
+        default=3.0,
+        gt=0,
+        description=(
+            "Seconds a request waits for a free connection in the shared pool before "
+            "failing, so bursts queue for seconds rather than a full read timeout."
+        ),
+    )
+    retry_max_attempts: int = Field(
+        default=3,
+        ge=1,
+        description=(
+            "Total attempts (first try included) for retry-safe requests. Applies to "
+            "idempotent methods and to Data360 read-only POSTs marked as retry-safe."
+        ),
+    )
+    retry_budget_seconds: float = Field(
+        default=16.0,
+        gt=0,
+        description=(
+            "Wall-clock ceiling for retrying a single request. With the default 8 s read "
+            "timeout one timeout retry fits, so a hung upstream is bounded at ~2x the read "
+            "timeout instead of the old flat 30 s; fast connection errors still get all "
+            "retry_max_attempts."
+        ),
+    )
+    retry_backoff_base: float = Field(
+        default=0.3,
+        ge=0,
+        description="Base delay for exponential backoff between attempts, in seconds.",
+    )
+    retry_backoff_max: float = Field(
+        default=2.0,
+        ge=0,
+        description="Upper bound for a single backoff delay, in seconds.",
+    )
+    retry_status_codes: list[int] = Field(
+        default=[429, 502, 503, 504],
+        description="HTTP status codes treated as transient and retried.",
+    )
+    degradation_cooldown_seconds: float = Field(
+        default=30.0,
+        ge=0,
+        description=(
+            "How long a degraded metadata outcome (stale snapshot or upstream error) is "
+            "reused before the Data360 API is retried, so an outage does not re-hammer it."
+        ),
+    )
+
     model_config = SettingsConfigDict(env_prefix="DATA360_")
 
     @property

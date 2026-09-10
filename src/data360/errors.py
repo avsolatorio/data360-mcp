@@ -317,6 +317,25 @@ class NotFoundError(Data360MCPError):
 # ---------------------------------------------------------------------------
 # Helper to convert exceptions into Data360MCPError
 # ---------------------------------------------------------------------------
+# HTTP statuses that usually clear on their own, so a cached degraded snapshot
+# may stand in for a live call while the upstream recovers.
+_TRANSIENT_HTTP_STATUS_CODES = frozenset({408, 425, 429, 500, 502, 503, 504})
+
+
+def is_transient_error(exc: Data360MCPError) -> bool:
+    """Return True when a failed Data360 call is likely to succeed later.
+
+    Used to decide whether a previous successful result may be served in place of
+    the failure. Non-transient outcomes (404, validation, parse errors) must not
+    be masked with stale data.
+    """
+    if isinstance(exc, (Data360TimeoutError, RequestError)):
+        return True
+    if isinstance(exc, APIError):
+        return exc.status_code in _TRANSIENT_HTTP_STATUS_CODES
+    return False
+
+
 def classify_error(exc: Exception, context: str) -> Data360MCPError:
     """Convert an exception into the appropriate Data360MCPError subclass.
 

@@ -14,6 +14,7 @@ from data360.errors import (
     RequestError,
     ValidationError,
     classify_error,
+    is_transient_error,
 )
 
 
@@ -104,6 +105,21 @@ class TestSubclasses:
         err = NotFoundError(context="indicator")
         assert err.error_code == "not_found:indicator"
         assert "not found" in err.detail.lower() or "no indicators" in err.detail.lower()
+
+
+class TestIsTransientError:
+    """Transient failures may be masked by a stale snapshot; permanent ones may not."""
+
+    def test_timeouts_and_network_errors_are_transient(self):
+        assert is_transient_error(Data360TimeoutError(context="metadata")) is True
+        assert is_transient_error(RequestError(context="metadata")) is True
+
+    def test_server_errors_are_transient(self):
+        assert is_transient_error(APIError(context="metadata", status_code=503)) is True
+
+    def test_not_found_and_validation_errors_are_not_transient(self):
+        assert is_transient_error(NotFoundError(context="metadata")) is False
+        assert is_transient_error(ValidationError(context="metadata")) is False
 
 
 class TestClassifyError:
