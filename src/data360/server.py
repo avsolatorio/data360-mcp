@@ -113,7 +113,25 @@ def _rest_tool_name(path: str) -> str | None:
     return name or None
 
 
-def _tool_security_error(tool_name: str, arguments: dict[str, Any]) -> str | None:
+def _rest_arguments_from_body(body_bytes: bytes) -> tuple[dict[str, Any], bool]:
+    """Parse REST tool arguments. Empty body is ``{}``; unparsed body is name-only."""
+    if not body_bytes:
+        return {}, True
+    try:
+        parsed = json.loads(body_bytes)
+    except json.JSONDecodeError:
+        return {}, False
+    if isinstance(parsed, dict):
+        return parsed, True
+    return {}, False
+
+
+def _tool_security_error(
+    tool_name: str,
+    arguments: dict[str, Any],
+    *,
+    validate_arguments: bool = True,
+) -> str | None:
     """Return a security error message, or None if the tool call is allowed."""
     from data360.mcp_server.security_validator import (  # noqa: PLC0415
         validate_search_arguments,
@@ -126,7 +144,7 @@ def _tool_security_error(tool_name: str, arguments: dict[str, Any]) -> str | Non
     is_valid, error_msg = validate_tool_call(tool_name, arguments)
     if not is_valid:
         return error_msg
-    if tool_name == "data360_search_indicators":
+    if validate_arguments and tool_name == "data360_search_indicators":
         is_valid, error_msg = validate_search_arguments(arguments)
         if not is_valid:
             return error_msg
@@ -160,19 +178,19 @@ class SecurityValidationMiddleware(BaseHTTPMiddleware):
         if not _is_tool_request_path(request.url.path):
             return await call_next(request)
 
+        rest_tool = _rest_tool_name(request.url.path)
+
         try:
-            # Read and parse body
             body_bytes = await request.body()
-            if not body_bytes:
-                return await call_next(request)
 
-            body = json.loads(body_bytes)
-            rest_tool = _rest_tool_name(request.url.path)
-
-            # Standard HTTP route: body is tool arguments (not JSON-RPC)
+            # REST tool calls must be validated even when the body is empty.
             if rest_tool is not None:
-                arguments = body if isinstance(body, dict) else {}
-                error_msg = _tool_security_error(rest_tool, arguments)
+                arguments, arguments_parsed = _rest_arguments_from_body(body_bytes)
+                error_msg = _tool_security_error(
+                    rest_tool,
+                    arguments,
+                    validate_arguments=arguments_parsed,
+                )
                 if error_msg:
                     logging.warning(
                         f"Security violation: {error_msg} | Tool: {rest_tool}"
@@ -182,6 +200,10 @@ class SecurityValidationMiddleware(BaseHTTPMiddleware):
                     )
                 return await call_next(request)
 
+            if not body_bytes:
+                return await call_next(request)
+
+            body = json.loads(body_bytes)
             method = body.get("method", "")
 
             # Log tools/list requests for monitoring (allowed but monitored)

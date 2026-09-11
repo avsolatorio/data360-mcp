@@ -97,3 +97,39 @@ def test_call_tool_http_unauthorized_tool_returns_403(client: TestClient) -> Non
     )
     assert response.status_code == 403
     assert "error" in response.json()
+
+
+def test_call_tool_http_unauthorized_tool_empty_body_returns_403(
+    client: TestClient,
+) -> None:
+    response = client.post("/api/v1/tools/system_admin_tool")
+    assert response.status_code == 403
+    assert "error" in response.json()
+
+
+def test_call_tool_http_search_empty_body_returns_403(client: TestClient) -> None:
+    response = client.post("/api/v1/tools/data360_search_indicators")
+    assert response.status_code == 403
+    assert "error" in response.json()
+
+
+def test_call_tool_http_unauthorized_tool_invalid_json_returns_403(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        "/api/v1/tools/system_admin_tool",
+        content=b"not-json",
+        headers={"Content-Type": "application/json"},
+    )
+    assert response.status_code == 403
+    assert "error" in response.json()
+
+
+def test_call_tool_http_search_invalid_json_returns_400(client: TestClient) -> None:
+    response = client.post(
+        "/api/v1/tools/data360_search_indicators",
+        content=b"not-json",
+        headers={"Content-Type": "application/json"},
+    )
+    assert response.status_code == 400
+    assert "JSON" in response.json()["error"]
